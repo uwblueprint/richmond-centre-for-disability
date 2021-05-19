@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --port ${PORT-3000}",
     "type-check": "tsc"
   },
   "dependencies": {
