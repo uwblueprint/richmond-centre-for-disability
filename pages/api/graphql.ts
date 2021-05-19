@@ -1,4 +1,4 @@
-import { apolloServer } from "@lib/resolvers"; // Apollo server
+import { apolloServer } from '@lib/resolvers'; // Apollo server
 
 export const config = {
   api: {
@@ -6,4 +6,4 @@ export const config = {
   },
 };
 
-export default apolloServer.createHandler({ path: "/api/graphql" });
+export default apolloServer.createHandler({ path: '/api/graphql' });

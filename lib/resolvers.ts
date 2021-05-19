@@ -1,10 +1,10 @@
-import { ApolloServer } from "apollo-server-micro"; // Apollo server micro
-import { typeDefs } from "@lib/schema"; // Type definitions
+import { ApolloServer } from 'apollo-server-micro'; // Apollo server micro
+import { typeDefs } from '@lib/schema'; // Type definitions
 
 const resolvers = {
   Query: {
     sayHello() {
-      return "Hello World!";
+      return 'Hello World!';
     },
   },
 };

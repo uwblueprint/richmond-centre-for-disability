@@ -43,7 +43,7 @@ function Header() {
 function Footer() {
   return (
     <div>
-      <p>&copy; 2020 Dancefest Adjudication Portal. v0.0.1.</p>
+      <p>&copy; 2021 Richmond Centre for Disability. v0.0.1.</p>
       <p>
         A project by{' '}
         <a href="https://uwblueprint.org/" target="_blank" rel="noopener noreferrer">
