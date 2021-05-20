@@ -5,23 +5,30 @@
     "dev": "next",
     "build": "next build",
     "start": "next start --port ${PORT-3000}",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "generate-graphql-types": "node ./lib/scripts/generate-graphql-types.js"
   },
   "dependencies": {
     "@apollo/client": "^3.3.19",
     "@chakra-ui/react": "^1.6.2",
     "@emotion/react": "11",
     "@emotion/styled": "11",
+    "@graphql-tools/load-files": "^6.3.2",
+    "@graphql-tools/merge": "^6.2.14",
     "@prisma/client": "^2.22.1",
     "apollo-server-micro": "^2.24.1",
     "framer-motion": "4",
     "graphql": "^15.5.0",
     "next": "latest",
+    "next-i18next": "^8.3.0",
     "next-images": "^1.7.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
   "devDependencies": {
+    "@graphql-codegen/add": "^2.0.2",
+    "@graphql-codegen/cli": "1.21.4",
+    "@graphql-codegen/typescript": "^1.22.0",
     "@types/node": "^12.12.21",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",

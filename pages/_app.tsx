@@ -1,10 +1,22 @@
 import { AppProps } from 'next/app'; // Next types
 import { ChakraProvider } from '@chakra-ui/react'; // ChakraProvider
+import { ApolloClient, InMemoryCache } from '@apollo/client'; // Apollo client
+import { ApolloProvider } from '@apollo/client/react'; // Apollo provider
+import { appWithTranslation } from 'next-i18next'; // HOC for adding translation to _app
 
-export default function App({ Component, pageProps }: AppProps): JSX.Element {
+const apolloClient = new ApolloClient({
+  uri: '/api/graphql',
+  cache: new InMemoryCache(),
+});
+
+function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <ChakraProvider>
-      <Component {...pageProps} />
+      <ApolloProvider client={apolloClient}>
+        <Component {...pageProps} />
+      </ApolloProvider>
     </ChakraProvider>
   );
 }
+
+export default appWithTranslation(App);

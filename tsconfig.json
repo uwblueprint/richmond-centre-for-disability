@@ -19,11 +19,12 @@
     "target": "esnext",
     "baseUrl": ".",
     "paths": {
+      "@assets/*": ["assets/*"],
       "@components/*": ["components/*"],
+      "@lib/*": ["lib/*", "lib/graphql/*"],
       "@pages/*": ["pages/*"],
-      "@utils/*": ["utils/*"],
-      "@lib/*": ["lib/*"],
-      "@assets/*": ["assets/*"]
+      "@public/*": ["public/*"],
+      "@tools/*": ["tools/*"]
     }
   },
   "exclude": ["node_modules"],

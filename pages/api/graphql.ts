@@ -1,4 +1,4 @@
-import { apolloServer } from '@lib/resolvers'; // Apollo server
+import { apolloServer } from '@lib/graphql/apollo'; // Apollo server
 
 export const config = {
   api: {
