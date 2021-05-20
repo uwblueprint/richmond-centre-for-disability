@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client'; // gql tag
-import { Meta } from '@lib/types'; // User schema
+import { Meta } from '@lib/types'; // Meta schema
 
 export const GET_METADATA_QUERY = gql`
   query GetOrgName {

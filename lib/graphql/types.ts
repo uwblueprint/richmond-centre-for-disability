@@ -17,10 +17,10 @@ export type Scalars = {
 
 export type Meta = {
   __typename?: 'Meta';
-  orgName?: Maybe<Scalars['String']>;
+  orgName: Scalars['String'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  meta?: Maybe<Meta>;
+  meta: Meta;
 };
