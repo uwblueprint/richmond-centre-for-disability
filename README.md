@@ -1,6 +1,6 @@
-# TypeScript Next.js example
+# Richmond Centre for Disability
 
-This is a really simple project that shows the usage of Next.js with TypeScript.
+A platform for people with disabilities to apply for accessible parking permits in Richmond, BC.
 
 ## Deploy your own
 
