@@ -1,0 +1,17 @@
+######################################################################
+### THIS IS AN AUTO-GENERATED FILE. PLEASE DO NOT MODIFY DIRECTLY. ###
+######################################################################
+
+type Query {
+  meta: Meta
+}
+
+type Meta {
+  orgName: String
+}
+
+schema {
+  query: Query
+}
+
+  

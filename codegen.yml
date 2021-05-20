@@ -1,0 +1,12 @@
+overwrite: true
+schema: 'http://localhost:3000/api/graphql'
+generates:
+  lib/graphql/types.ts:
+    plugins:
+      - add:
+          content:
+            - '/* eslint-disable */'
+            - '/**********************************************************************'
+            - ' *** THIS IS AN AUTO-GENERATED FILE. PLEASE DO NOT MODIFY DIRECTLY. ***'
+            - ' **********************************************************************/'
+      - typescript
