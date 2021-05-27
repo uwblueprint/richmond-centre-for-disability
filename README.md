@@ -1,29 +1,86 @@
 # Richmond Centre for Disability
 
-A platform for people with disabilities to apply for accessible parking permits in Richmond, BC.
+[Richmond Centre for Disability's (RCD)](https://www.rcdrichmond.org/) platform for people with
+disabilities to apply for accessible parking permits (APP) in Richmond, BC. The app consists of an
+applicant-facing application portal and an internal user/APP management portal.
 
-## Notes
+## General Architecture
 
-This example shows how to integrate the TypeScript type system into Next.js. Since TypeScript is
-supported out of the box with Next.js, all we have to do is to install TypeScript.
+1. [NodeJS](https://nodejs.org/en/) application powered by the [Next.JS](https://nextjs.org/)
+   framework.
+2. [Apollo](https://www.apollographql.com/) for [GraphQL](https://graphql.org/) server and client.
+3. [Chakra UI](https://chakra-ui.com/) for building accessible and responsive frontend components.
+4. [Prisma](https://www.prisma.io/) ORM for [PostgreSQL](https://www.postgresql.org/).
+5. [i18next](https://www.i18next.com/) for internationalization and app translations.
+6. Service: [Amazon SES](https://aws.amazon.com/ses/) for outbound email service.
+7. Service: [Railway](https://railway.app/) for application and database deploys.
 
+## Project structure
+
+```bash
+.
+├── assets # Assets
+├── components # Project components
+│   └── Layout.tsx
+├── lib # Library
+│   ├── graphql # Global GraphQL setup
+│   └── scripts # Scripts
+├── pages # Pages
+│   ├── _app.tsx
+│   ├── api # API routes
+│   └── index.tsx
+├── prisma # Prisma ORM
+│   └── schema.prisma # Prisma Schema
+├── public
+│   └── locales # Translations
+├── tools # Frontend tools
+│   ├── pages # Tools for pages
+│   └── components # Tools for components
+# Misc individual files
+├── .env.sample # Sample .env file
+├── README.md
+├── apollo.config.js
+├── codegen.yml
+├── next-env.d.ts
+├── next-i18next.config.js
+├── next.config.js
+├── package.json
+├── tsconfig.json
+└── yarn.lock
 ```
-npm install --save-dev typescript
+
+## Run locally
+
+Duplicate `.env.sample` to `.env` and replace configure environment variables.
+
+To run the application:
+
+```bash
+# Install dependencies
+yarn
+
+# Run locally
+yarn dev
 ```
 
-To enable TypeScript's features, we install the type declarations for React and Node.
+## Development
 
+After making changes to GraphQL schema, automatically generate the TypeScript types:
+
+```bash
+yarn generate-graphql-types
 ```
-npm install --save-dev @types/react @types/react-dom @types/node
-```
 
-When we run `next dev` the next time, Next.js will start looking for any `.ts` or `.tsx` files in
-our project and builds it. It even automatically creates a `tsconfig.json` file for our project with
-the recommended settings.
+[Railway](https://railway.app/) provides deploys for every PR!
 
-Next.js has built-in TypeScript declarations, so we'll get autocompletion for Next.js' modules
-straight away.
+## Deploy
 
-A `type-check` script is also added to `package.json`, which runs TypeScript's `tsc` CLI in `noEmit`
-mode to run type-checking separately. You can then include this, for example, in your `test`
-scripts.
+Deployment occurs automatically on push to the Main and Staging branches.
+[Railway](https://railway.app/) handles the continuous deployment of these branches.
+
+<!-- 1. Master Deploy: [ossdancefest.com](https://www.ossdancefest.com)
+2. Staging Deploy: [dancefest.dev](https://dancefest.dev) -->
+
+## License
+
+[MIT](https://github.com/uwblueprint/richmond-centre-for-disability/blob/main/LICENSE)
