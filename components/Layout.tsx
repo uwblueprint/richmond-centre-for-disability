@@ -8,7 +8,7 @@ type Props = {
   children: ReactNode;
 };
 
-export default function Layout({ children }: Props): JSX.Element {
+export default function Layout({ children }: Props) {
   return (
     <Box textAlign="center">
       <Flex flexDirection="column" minHeight="100vh">

@@ -21,6 +21,7 @@
     "paths": {
       "@assets/*": ["assets/*"],
       "@components/*": ["components/*"],
+      "@containers/*": ["containers/*"],
       "@lib/*": ["lib/*", "lib/graphql/*"],
       "@pages/*": ["pages/*"],
       "@public/*": ["public/*"],

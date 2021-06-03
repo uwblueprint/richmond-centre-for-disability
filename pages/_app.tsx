@@ -9,7 +9,7 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-function App({ Component, pageProps }: AppProps): JSX.Element {
+function App({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider>
       <ApolloProvider client={apolloClient}>

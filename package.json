@@ -23,7 +23,8 @@
     "next-i18next": "^8.3.0",
     "next-images": "^1.7.0",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "unstated-next": "^1.1.0"
   },
   "devDependencies": {
     "@graphql-codegen/add": "^2.0.2",
