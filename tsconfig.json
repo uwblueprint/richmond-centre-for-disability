@@ -23,6 +23,7 @@
       "@components/*": ["components/*"],
       "@lib/*": ["lib/*", "lib/graphql/*"],
       "@pages/*": ["pages/*"],
+      "@prisma/*": ["prisma/*"],
       "@public/*": ["public/*"],
       "@tools/*": ["tools/*"]
     }
