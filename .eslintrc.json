@@ -46,7 +46,7 @@
   },
   "overrides": [
     {
-      "files": ["pages/*.tsx"],
+      "files": ["pages/*.tsx", "components/*.tsx"],
       "rules": {
         "@typescript-eslint/explicit-module-boundary-types": 0
       }
