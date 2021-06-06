@@ -143,7 +143,7 @@ model Permit {
   receiptId      Int?         @map("receipt_id")
   active         Boolean      @default(true)
   applicationId  Int          @map("application_id")
-  applicantId    Int          @map("applicant_i")
+  applicantId    Int          @map("applicant_id")
   createdAt      DateTime     @default(now()) @db.Timestamptz(6) @map("created_at")
   updatedAt      DateTime     @map("updated_at")
   applicant      Applicant    @relation(fields: [applicantId], references: [id])
