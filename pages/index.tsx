@@ -9,7 +9,7 @@ import Layout from '@components/Layout'; // Layout
 import { GET_METADATA_QUERY, GetMetadataResponseType } from '@tools/pages/home'; // GQL types
 
 export default function Home() {
-  const [t] = useTranslation('common');
+  const { t } = useTranslation('common');
   const router = useRouter();
 
   const { data } = useQuery<GetMetadataResponseType, void>(GET_METADATA_QUERY);
@@ -30,7 +30,7 @@ export default function Home() {
 export const getStaticProps = async ({ locale }: { locale: string }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common', 'footer'])),
+      ...(await serverSideTranslations(locale, ['common'])),
     },
   };
 };
