@@ -6,7 +6,7 @@ applicant-facing application portal and an internal user/APP management portal.
 
 ## General Architecture
 
-1. [NodeJS](https://nodejs.org/en/) application powered by the [Next.JS](https://nextjs.org/)
+1. [NodeJS](https://nodejs.org/en/) application powered by the [NextJS](https://nextjs.org/)
    framework.
 2. [Apollo](https://www.apollographql.com/) for [GraphQL](https://graphql.org/) server and client.
 3. [Chakra UI](https://chakra-ui.com/) for building accessible and responsive frontend components.
@@ -22,6 +22,7 @@ applicant-facing application portal and an internal user/APP management portal.
 ├── assets # Assets
 ├── components # Project components
 │   └── Layout.tsx
+├── containers # State containers
 ├── lib # Library
 │   ├── graphql # Global GraphQL setup
 │   └── scripts # Scripts
@@ -51,7 +52,17 @@ applicant-facing application portal and an internal user/APP management portal.
 
 ## Run locally
 
-Duplicate `.env.sample` to `.env` and replace configure environment variables.
+Duplicate `.env.sample` to `.env` and configure environment variables.
+
+To deploy your database schema, run the following:
+
+```bash
+# Deploy schema.sql to Heroku Postgres
+heroku pg:psql -a YOUR_APP_NAME -f prisma/schema.sql
+
+# Regenerate Prisma schema and client
+npx prisma introspect && npx prisma generate
+```
 
 To run the application:
 
