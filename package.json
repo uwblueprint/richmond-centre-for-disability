@@ -6,7 +6,13 @@
     "build": "next build",
     "start": "next start --port ${PORT-3000}",
     "type-check": "tsc",
-    "generate-graphql-types": "node ./lib/scripts/generate-graphql-types.js"
+    "generate-graphql-types": "node ./lib/scripts/generate-graphql-types.js",
+    "lint": "yarn lint:prettier && yarn lint:eslint",
+    "lint:prettier": "prettier --check '**/*.{js,jsx,ts,tsx}'",
+    "lint:eslint": "eslint '**/*.{js,jsx,ts,tsx}' --cache --format stylish",
+    "fix": "yarn fix:eslint && yarn fix:prettier",
+    "fix:prettier": "prettier --write '**/*.{js,jsx,ts,tsx}'",
+    "fix:eslint": "eslint '**/*.{js,jsx,ts,tsx}' --format stylish --fix"
   },
   "dependencies": {
     "@apollo/client": "^3.3.19",
