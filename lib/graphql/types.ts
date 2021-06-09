@@ -15,12 +15,104 @@ export type Scalars = {
   Float: number;
 };
 
+export enum Aid {
+  Cane = 'CANE',
+  ElectricChair = 'ELECTRIC_CHAIR',
+  ManualChair = 'MANUAL_CHAIR',
+  Scooter = 'SCOOTER',
+  Walker = 'WALKER',
+}
+
+export enum ApplicantStatus {
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE',
+  Deceased = 'DECEASED',
+}
+
+export type CreateEmployeeInput = {
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  email: Scalars['String'];
+  role: Role;
+};
+
+export type CreateEmployeeResult = {
+  __typename?: 'CreateEmployeeResult';
+  ok: Scalars['Boolean'];
+};
+
+export type Employee = {
+  __typename?: 'Employee';
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  email: Scalars['String'];
+  role: Role;
+};
+
+export enum Gender {
+  Male = 'MALE',
+  Female = 'FEMALE',
+  Other = 'OTHER',
+}
+
 export type Meta = {
   __typename?: 'Meta';
   orgName: Scalars['String'];
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  createEmployee: CreateEmployeeResult;
+};
+
+export type MutationCreateEmployeeArgs = {
+  input: CreateEmployeeInput;
+};
+
+export enum PaymentType {
+  Mastercard = 'MASTERCARD',
+  Visa = 'VISA',
+  Etransfer = 'ETRANSFER',
+  Cash = 'CASH',
+  Cheque = 'CHEQUE',
+  Debit = 'DEBIT',
+  MoneyOrder = 'MONEY_ORDER',
+}
+
+export enum PhysicianStatus {
+  Deceased = 'DECEASED',
+  Cancelled = 'CANCELLED',
+  Retired = 'RETIRED',
+  Active = 'ACTIVE',
+  Resigned = 'RESIGNED',
+  TemporarilyInactive = 'TEMPORARILY_INACTIVE',
+  Relocated = 'RELOCATED',
+}
+
+export enum Province {
+  Bc = 'BC',
+  Ab = 'AB',
+  Sk = 'SK',
+  Mb = 'MB',
+  On = 'ON',
+  Qc = 'QC',
+  Ns = 'NS',
+  Pe = 'PE',
+  Nl = 'NL',
+  Nb = 'NB',
+  Nu = 'NU',
+  Nt = 'NT',
+  Yt = 'YT',
+}
+
 export type Query = {
   __typename?: 'Query';
   meta: Meta;
+  employees?: Maybe<Array<Employee>>;
 };
+
+export enum Role {
+  Admin = 'ADMIN',
+  Accounting = 'ACCOUNTING',
+  Secretary = 'SECRETARY',
+}

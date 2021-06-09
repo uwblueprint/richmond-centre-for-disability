@@ -1,0 +1,17 @@
+type Employee {
+  firstName: String!
+  lastName: String!
+  email: String!
+  role: Role!
+}
+
+input CreateEmployeeInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  role: Role!
+}
+
+type CreateEmployeeResult {
+  ok: Boolean!
+}
