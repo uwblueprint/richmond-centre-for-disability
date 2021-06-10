@@ -1,5 +1,7 @@
-/*eslint-disable */
+import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Resolver } from '@lib/resolvers'; // Resolver type
+import { EmployeeAlreadyExistsError } from '@lib/employees/errors'; // Employee errors
+import { DBErrorCode } from '@lib/db/errors'; // Database errors
 
 /**
  * Query all the RCD employees in the internal-facing app
@@ -19,14 +21,26 @@ export const createEmployee: Resolver = async (_, args, { prisma }) => {
     input: { firstName, lastName, email, role },
   } = args;
 
-  await prisma.employee.create({
-    data: {
-      firstName,
-      lastName,
-      email,
-      role,
-    },
-  });
+  let user;
+  try {
+    user = await prisma.employee.create({
+      data: {
+        firstName,
+        lastName,
+        email,
+        role,
+      },
+    });
+  } catch (err) {
+    if (err.code === DBErrorCode.UniqueConstraintFailed && err.meta.target.includes('email')) {
+      throw new EmployeeAlreadyExistsError(`Employee with email ${email} already exists`);
+    }
+  }
+
+  // Throw internal server error if user was not created
+  if (!user) {
+    throw new ApolloError('User was unable to be created');
+  }
 
   return {
     ok: true,
