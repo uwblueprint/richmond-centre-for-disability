@@ -50,7 +50,7 @@ function Header() {
 
 function Footer() {
   return (
-    <Flex height={16} justifyContent="center" alignItems="center">
+    <Flex height={20} flexDirection="column" justifyContent="center" alignItems="center">
       <p>&copy; 2021 Richmond Centre for Disability. v0.0.1.</p>
       <p>
         A project by{' '}

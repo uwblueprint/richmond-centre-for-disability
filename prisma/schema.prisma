@@ -8,166 +8,166 @@ datasource db {
 }
 
 model Applicant {
-  id                  Int                  @id @default(autoincrement())
-  firstName           String               @db.VarChar(255) @map("first_name")
-  middleName          String?              @db.VarChar(255) @map("middle_name")
-  lastName            String               @db.VarChar(255) @map("last_name")
-  dateOfBirth         DateTime             @db.Date @map("date_of_birth")
-  gender              Gender
-  email               String?              @unique @db.VarChar(255)
-  phone               String               @db.VarChar(50)
-  province            Province
-  city                String               @db.VarChar(255)
-  address             String               @db.VarChar(255)
-  postalCode          String               @db.Char(6) @map("postal_code")
-  rcdUserId           Int?                 @unique @map("rcd_user_id")
-  status              ApplicantStatus?
-  createdAt           DateTime             @default(now()) @db.Timestamptz(6) @map("created_at")
-  updatedAt           DateTime             @updatedAt @map("updated_at")
-  applications        Application[]
-  guardian            Guardian?
-  medicalInformation  MedicalInformation?
-  permits             Permit[]
+  id                 Int                 @id @default(autoincrement())
+  firstName          String              @map("first_name") @db.VarChar(255)
+  middleName         String?             @map("middle_name") @db.VarChar(255)
+  lastName           String              @map("last_name") @db.VarChar(255)
+  dateOfBirth        DateTime            @map("date_of_birth") @db.Date
+  gender             Gender
+  email              String?             @unique @db.VarChar(255)
+  phone              String              @db.VarChar(50)
+  province           Province
+  city               String              @db.VarChar(255)
+  address            String              @db.VarChar(255)
+  postalCode         String              @map("postal_code") @db.Char(6)
+  rcdUserId          Int?                @unique @map("rcd_user_id")
+  status             ApplicantStatus?
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  applications       Application[]
+  guardian           Guardian?
+  medicalInformation MedicalInformation?
+  permits            Permit[]
 
   @@map("applicants")
 }
 
 model Application {
-  id                          Int         @id @default(autoincrement())
-  firstName                   String      @db.VarChar(255) @map("first_name")
-  middleName                  String?     @db.VarChar(255) @map("middle_name")
-  lastName                    String      @db.VarChar(255) @map("last_name")
-  dateOfBirth                 DateTime    @db.Date @map("date_of_birth")
-  gender                      Gender
-  email                       String?     @db.VarChar(255)
-  phone                       String      @db.VarChar(50)
-  province                    Province
-  city                        String      @db.VarChar(255)
-  address                     String      @db.VarChar(255)
-  postalCode                  String      @db.Char(6) @map("postal_code")
-  notes                       String?
-  rcdUserId                   Int?        @map("rcd_user_id")
-  isRenewal                   Boolean     @default(true) @map("is_renewal")
-  poaFormUrl                  String?     @db.VarChar(255) @map("poa_form_url")
-  applicantId                 Int?        @map("applicant_id")
-  disability                  String      @db.VarChar(255)
-  affectsMobility             Boolean     @default(false) @map("affects_mobility")
-  mobilityAidRequired         Boolean     @default(false) @map("mobility_aid_required")
-  cannotWalk100m              Boolean     @default(false) @map("cannot_walk_100m")
-  aid                         Aid[]
-  physicianName               String      @db.VarChar(255) @map("physician_name")
-  physicianMspNumber          Int         @map("physician_msp_number")
-  physicianAddress            String      @db.VarChar(255) @map("physician_address")
-  physicianCity               String      @db.VarChar(255) @map("physician_city")
-  physicianProvince           Province    @map("physician_province")
-  physicianPostalCode         String      @db.Char(6) @map("physician_postal_code")
-  physicianPhone              String      @db.VarChar(50) @map("physician_phone")
-  phyiscianNotes              String?     @map("phyiscian_notes")
-  processingFee               Float       @map("processing_fee")
-  donationAmount              Float?      @map("donation_amount")
-  paymentMethod               PaymentType @map("payment_method")
-  shopifyConfirmationNumber   String      @unique @db.VarChar(255) @map("shopify_confirmation_number")
-  guardianFirstName           String?     @db.VarChar(255) @map("guardian_first_name")
-  guardianMiddleName          String?     @db.VarChar(255) @map("guardian_middle_name")
-  guardianLastName            String?     @db.VarChar(255) @map("guardian_last_name")
-  guardianPhone               String?     @db.VarChar(50) @map("guardian_phone")
-  guardianProvince            Province?   @map("guardian_province")
-  guardianCity                String?     @db.VarChar(255) @map("guardian_city")
-  guardianAddress             String?     @db.VarChar(255) @map("guardian_address")
-  guardianPostalCode          String?     @db.Char(6) @map("guardian_postal_code")
-  guardianRelationship        String?     @db.VarChar(50) @map("guardian_relationship")
-  guardianNotes               String?     @map("guardian_notes")
-  createdAt                   DateTime    @default(now()) @db.Timestamptz(6) @map("created_at")
-  updatedAt                   DateTime    @updatedAt @map("updated_at")
-  applicant                   Applicant?  @relation(fields: [applicantId], references: [id])
-  permits                     Permit[]
+  id                        Int         @id @default(autoincrement())
+  firstName                 String      @map("first_name") @db.VarChar(255)
+  middleName                String?     @map("middle_name") @db.VarChar(255)
+  lastName                  String      @map("last_name") @db.VarChar(255)
+  dateOfBirth               DateTime    @map("date_of_birth") @db.Date
+  gender                    Gender
+  email                     String?     @db.VarChar(255)
+  phone                     String      @db.VarChar(50)
+  province                  Province
+  city                      String      @db.VarChar(255)
+  address                   String      @db.VarChar(255)
+  postalCode                String      @map("postal_code") @db.Char(6)
+  notes                     String?
+  rcdUserId                 Int?        @map("rcd_user_id")
+  isRenewal                 Boolean     @default(true) @map("is_renewal")
+  poaFormUrl                String?     @map("poa_form_url") @db.VarChar(255)
+  applicantId               Int?        @map("applicant_id")
+  disability                String      @db.VarChar(255)
+  affectsMobility           Boolean     @default(false) @map("affects_mobility")
+  mobilityAidRequired       Boolean     @default(false) @map("mobility_aid_required")
+  cannotWalk100m            Boolean     @default(false) @map("cannot_walk_100m")
+  aid                       Aid[]
+  physicianName             String      @map("physician_name") @db.VarChar(255)
+  physicianMspNumber        Int         @map("physician_msp_number")
+  physicianAddress          String      @map("physician_address") @db.VarChar(255)
+  physicianCity             String      @map("physician_city") @db.VarChar(255)
+  physicianProvince         Province    @map("physician_province")
+  physicianPostalCode       String      @map("physician_postal_code") @db.Char(6)
+  physicianPhone            String      @map("physician_phone") @db.VarChar(50)
+  phyiscianNotes            String?     @map("phyiscian_notes")
+  processingFee             Float       @map("processing_fee")
+  donationAmount            Float?      @map("donation_amount")
+  paymentMethod             PaymentType @map("payment_method")
+  shopifyConfirmationNumber String      @unique @map("shopify_confirmation_number") @db.VarChar(255)
+  guardianFirstName         String?     @map("guardian_first_name") @db.VarChar(255)
+  guardianMiddleName        String?     @map("guardian_middle_name") @db.VarChar(255)
+  guardianLastName          String?     @map("guardian_last_name") @db.VarChar(255)
+  guardianPhone             String?     @map("guardian_phone") @db.VarChar(50)
+  guardianProvince          Province?   @map("guardian_province")
+  guardianCity              String?     @map("guardian_city") @db.VarChar(255)
+  guardianAddress           String?     @map("guardian_address") @db.VarChar(255)
+  guardianPostalCode        String?     @map("guardian_postal_code") @db.Char(6)
+  guardianRelationship      String?     @map("guardian_relationship") @db.VarChar(50)
+  guardianNotes             String?     @map("guardian_notes")
+  createdAt                 DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                 DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  applicant                 Applicant?  @relation(fields: [applicantId], references: [id])
+  permits                   Permit[]
 
   @@map("applications")
 }
 
 model Employee {
-  id         Int       @id @default(autoincrement())
-  firstName  String    @db.VarChar(255) @map("first_name")
-  lastName   String    @db.VarChar(255) @map("last_name")
-  email      String    @unique @db.VarChar(255)
-  role       Role
-  createdAt  DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
+  id        Int      @id @default(autoincrement())
+  firstName String   @map("first_name") @db.VarChar(255)
+  lastName  String   @map("last_name") @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  role      Role
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("employees")
 }
 
 model Guardian {
-  id           Int        @id @default(autoincrement())
-  firstName    String     @db.VarChar(255) @map("first_name")
-  middleName   String?    @db.VarChar(255) @map("middle_name")
-  lastName     String     @db.VarChar(255) @map("last_name")
-  address      String     @db.VarChar(255)
-  city         String     @db.VarChar(255)
+  id           Int       @id @default(autoincrement())
+  firstName    String    @map("first_name") @db.VarChar(255)
+  middleName   String?   @map("middle_name") @db.VarChar(255)
+  lastName     String    @map("last_name") @db.VarChar(255)
+  address      String    @db.VarChar(255)
+  city         String    @db.VarChar(255)
   province     Province
-  postalCode   String     @db.Char(6) @map("postal_code")
-  phone        String     @db.VarChar(50)
-  relationship String     @db.VarChar(255)
+  postalCode   String    @map("postal_code") @db.Char(6)
+  phone        String    @db.VarChar(50)
+  relationship String    @db.VarChar(255)
   notes        String?
-  applicantId  Int        @unique @map("applicant_id")
-  createdAt    DateTime   @default(now()) @db.Timestamptz(6) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
-  applicant    Applicant  @relation(fields: [applicantId], references: [id])
+  applicantId  Int       @unique @map("applicant_id")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  applicant    Applicant @relation(fields: [applicantId], references: [id])
 
   @@map("guardians")
 }
 
 model MedicalInformation {
-  id                    Int        @id @default(autoincrement())
-  disability            String     @db.VarChar(255)
-  affectsMobility       Boolean    @default(false) @map("affects_mobility")
-  mobilityAidRequired   Boolean    @default(false) @map("mobility_aid_required")
-  cannotWalk100m        Boolean    @default(false) @map("cannot_walk_100m")
-  notes                 String?
-  certificationDate     DateTime?  @db.Date @map("certification_date")
-  aid                   Aid[]
-  physicianId           Int        @map("physician_id")
-  applicantId           Int        @unique @map("applicant_id")
-  createdAt             DateTime   @default(now()) @db.Timestamptz(6) @map("created_at")
-  updatedAt             DateTime   @map("updated_at")
-  applicant             Applicant  @relation(fields: [applicantId], references: [id])
-  physician             Physician  @relation(fields: [physicianId], references: [id])
+  id                  Int       @id @default(autoincrement())
+  disability          String    @db.VarChar(255)
+  affectsMobility     Boolean   @default(false) @map("affects_mobility")
+  mobilityAidRequired Boolean   @default(false) @map("mobility_aid_required")
+  cannotWalk100m      Boolean   @default(false) @map("cannot_walk_100m")
+  notes               String?
+  certificationDate   DateTime? @map("certification_date") @db.Date
+  aid                 Aid[]
+  physicianId         Int       @map("physician_id")
+  applicantId         Int       @unique @map("applicant_id")
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  applicant           Applicant @relation(fields: [applicantId], references: [id])
+  physician           Physician @relation(fields: [physicianId], references: [id])
 
   @@map("medical_information")
 }
 
 model Permit {
-  id             Int          @id @default(autoincrement())
-  rcdPermitId    Int          @unique @map("rcd_permit_id")
-  expiryDate     DateTime     @db.Date @map("expiry_date")
-  receiptId      Int?         @map("receipt_id")
-  active         Boolean      @default(true)
-  applicationId  Int          @map("application_id")
-  applicantId    Int          @map("applicant_id")
-  createdAt      DateTime     @default(now()) @db.Timestamptz(6) @map("created_at")
-  updatedAt      DateTime     @map("updated_at")
-  applicant      Applicant    @relation(fields: [applicantId], references: [id])
-  application    Application  @relation(fields: [applicationId], references: [id])
+  id            Int         @id @default(autoincrement())
+  rcdPermitId   Int         @unique @map("rcd_permit_id")
+  expiryDate    DateTime    @map("expiry_date") @db.Date
+  receiptId     Int?        @map("receipt_id")
+  active        Boolean     @default(true)
+  applicationId Int         @map("application_id")
+  applicantId   Int         @map("applicant_id")
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  applicant     Applicant   @relation(fields: [applicantId], references: [id])
+  application   Application @relation(fields: [applicationId], references: [id])
 
   @@map("permits")
 }
 
 model Physician {
-  id                  Int                   @id @default(autoincrement())
-  firstName           String                @db.VarChar(255) @map("first_name")
-  lastName            String                @db.VarChar(255) @map("last_name")
-  mspNumber           Int                   @unique @map("msp_number")
-  address             String                @db.VarChar(255)
-  city                String                @db.VarChar(255)
-  province            Province
-  postalCode          String                @db.Char(6) @map("postal_code")
-  phone               String                @db.VarChar(50)
-  status              PhysicianStatus
-  notes               String?
-  createdAt           DateTime              @default(now()) @db.Timestamptz(6) @map("created_at")
-  updatedAt           DateTime              @updatedAt @map("updated_at")
-  medicalInformation  MedicalInformation[]
-  
+  id                 Int                  @id @default(autoincrement())
+  firstName          String               @map("first_name") @db.VarChar(255)
+  lastName           String               @map("last_name") @db.VarChar(255)
+  mspNumber          Int                  @unique @map("msp_number")
+  address            String               @db.VarChar(255)
+  city               String               @db.VarChar(255)
+  province           Province
+  postalCode         String               @map("postal_code") @db.Char(6)
+  phone              String               @db.VarChar(50)
+  status             PhysicianStatus
+  notes              String?
+  createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  medicalInformation MedicalInformation[]
+
   @@map("physicians")
 }
 
@@ -235,7 +235,7 @@ enum Province {
   NU
   NT
   YT
-  
+
   @@map("province")
 }
 
@@ -243,6 +243,6 @@ enum Role {
   ADMIN
   ACCOUNTING
   SECRETARY
-  
+
   @@map("role")
 }
