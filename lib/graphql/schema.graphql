@@ -1,3 +1,70 @@
 type Query {
   meta: Meta!
+  employees: [Employee!]
+}
+
+type Mutation {
+  createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
+}
+
+enum Role {
+  ADMIN
+  ACCOUNTING
+  SECRETARY
+}
+
+enum Province {
+  BC
+  AB
+  SK
+  MB
+  ON
+  QC
+  NS
+  PE
+  NL
+  NB
+  NU
+  NT
+  YT
+}
+
+enum PaymentType {
+  MASTERCARD
+  VISA
+  ETRANSFER
+  CASH
+  CHEQUE
+  DEBIT
+  MONEY_ORDER
+}
+
+enum ApplicantStatus {
+  ACTIVE
+  INACTIVE
+  DECEASED
+}
+
+enum Aid {
+  CANE
+  ELECTRIC_CHAIR
+  MANUAL_CHAIR
+  SCOOTER
+  WALKER
+}
+
+enum PhysicianStatus {
+  DECEASED
+  CANCELLED
+  RETIRED
+  ACTIVE
+  RESIGNED
+  TEMPORARILY_INACTIVE
+  RELOCATED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
 }
