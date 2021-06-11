@@ -80,6 +80,24 @@ export type CreateEmployeeResult = {
   ok: Scalars['Boolean'];
 };
 
+export type CreatePhysicianInput = {
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  mspNumber: Scalars['Int'];
+  address: Scalars['String'];
+  city: Scalars['String'];
+  province: Province;
+  postalCode: Scalars['String'];
+  phone: Scalars['String'];
+  status: PhysicianStatus;
+  notes?: Maybe<Scalars['String']>;
+};
+
+export type CreatePhysicianResult = {
+  __typename?: 'CreatePhysicianResult';
+  ok: Scalars['Boolean'];
+};
+
 export type Employee = {
   __typename?: 'Employee';
   firstName: Scalars['String'];
@@ -103,6 +121,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createApplicant: CreateApplicantResult;
   createEmployee: CreateEmployeeResult;
+  createPhysician: CreatePhysicianResult;
 };
 
 export type MutationCreateApplicantArgs = {
@@ -111,6 +130,10 @@ export type MutationCreateApplicantArgs = {
 
 export type MutationCreateEmployeeArgs = {
   input: CreateEmployeeInput;
+};
+
+export type MutationCreatePhysicianArgs = {
+  input: CreatePhysicianInput;
 };
 
 export enum PaymentType {
@@ -122,6 +145,20 @@ export enum PaymentType {
   Debit = 'DEBIT',
   MoneyOrder = 'MONEY_ORDER',
 }
+
+export type Physician = {
+  __typename?: 'Physician';
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  mspNumber: Scalars['Int'];
+  address: Scalars['String'];
+  city: Scalars['String'];
+  province: Province;
+  postalCode: Scalars['String'];
+  phone: Scalars['String'];
+  status: PhysicianStatus;
+  notes?: Maybe<Scalars['String']>;
+};
 
 export enum PhysicianStatus {
   Deceased = 'DECEASED',
@@ -154,6 +191,7 @@ export type Query = {
   meta: Meta;
   applicants?: Maybe<Array<Applicant>>;
   employees?: Maybe<Array<Employee>>;
+  physicians?: Maybe<Array<Physician>>;
 };
 
 export enum Role {

@@ -1,6 +1,7 @@
 import { meta } from '@lib/meta/resolvers'; // Metadata resolvers
 import { employees, createEmployee } from '@lib/employees/resolvers'; // Employee resolvers
 import { applicants, createApplicant } from '@lib/applicants/resolvers'; // Applicant resolvers
+import { physicians, createPhysician } from '@lib/physicians/resolvers'; // Physician resolvers
 import { IFieldResolver } from 'graphql-tools'; // GraphQL field resolver
 import { Context } from '@lib/context'; // Context type
 import { dateScalar } from '@lib/scalars'; // Custom date scalar implementation
@@ -13,10 +14,12 @@ const resolvers = {
     meta,
     applicants,
     employees,
+    physicians,
   },
   Mutation: {
     createApplicant,
     createEmployee,
+    createPhysician,
   },
   Date: dateScalar,
 };
