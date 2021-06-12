@@ -28,11 +28,11 @@ export default NextAuth({
   providers: [
     Providers.Email({
       server: {
-        host: process.env.NA_EMAIL_HOST,
-        port: process.env.NA_EMAIL_PORT,
+        host: process.env.NA_EMAIL_HOST as string,
+        port: parseInt(process.env.NA_EMAIL_PORT as string, 10),
         auth: {
-          user: process.env.NA_EMAIL_USER,
-          pass: process.env.NA_EMAIL_PASSWORD,
+          user: process.env.NA_EMAIL_USER as string,
+          pass: process.env.NA_EMAIL_PASSWORD as string,
         },
       },
       from: process.env.NA_EMAIL_FROM,
