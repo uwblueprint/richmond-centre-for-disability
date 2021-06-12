@@ -2,7 +2,8 @@ import NextAuth from 'next-auth'; // Next Auth
 import Providers from 'next-auth/providers'; // Next Auth providers
 import Adapters from 'next-auth/adapters'; // Next Auth adapters
 import prisma from '@prisma/index'; // Prisma client
-// TODO: import sendVerificationRequest
+import sendVerificationRequest from '@lib/auth/sendVerificationRequest'; // Send verification email
+import { VerifySignInError } from '@lib/auth/errors'; // Error raised when failing to verify signin
 
 /**
  * Database config for Next Auth
@@ -31,12 +32,12 @@ export default NextAuth({
         port: process.env.NA_EMAIL_PORT,
         auth: {
           user: process.env.NA_EMAIL_USER,
-          pass: process.env.NA_EMAIL_PASS,
+          pass: process.env.NA_EMAIL_PASSWORD,
         },
       },
       from: process.env.NA_EMAIL_FROM,
       maxAge: 24 * 60, // 1 hour max life for login request
-      // TODO: sendVerificationRequest
+      sendVerificationRequest,
     }),
   ],
   adapter: Adapters.Prisma.Adapter({
@@ -72,6 +73,26 @@ export default NextAuth({
       user ? (token.id = user.id) : null;
 
       return Promise.resolve(token);
+    },
+    signIn: async user => {
+      if (!user || !user.email) {
+        return false;
+      }
+
+      // Check if user email exists in DB (throw error if not found)
+      let employee;
+      try {
+        employee = await prisma.employee.findUnique({
+          where: {
+            email: user.email,
+          },
+          rejectOnNotFound: true,
+        });
+      } catch {
+        throw new VerifySignInError('Error signing in');
+      }
+
+      return !!employee;
     },
   },
   database: databaseConfig,
