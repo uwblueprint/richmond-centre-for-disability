@@ -1,0 +1,23 @@
+scalar Date
+
+type Permit {
+  rcdPermitId: Int!
+  expiryDate: Date!
+  receiptId: Int
+  active: Boolean!
+  applicationId: Int! #TODO: add reference to application table
+  applicantId: Int! #TODO: add reference to applicant table
+}
+
+input CreatePermitInput {
+  rcdPermitId: Int!
+  expiryDate: Date!
+  receiptId: Int
+  active: Boolean!
+  applicationId: Int! #TODO: add reference to application table
+  applicantId: Int! #TODO: add reference to applicant table
+}
+
+type CreatePermitResult {
+  ok: Boolean!
+}
