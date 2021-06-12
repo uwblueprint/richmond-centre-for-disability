@@ -86,13 +86,14 @@ model Application {
 }
 
 model Employee {
-  id        Int      @id @default(autoincrement())
-  firstName String   @map("first_name") @db.VarChar(255)
-  lastName  String   @map("last_name") @db.VarChar(255)
-  email     String   @unique @db.VarChar(255)
-  role      Role
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id            Int       @id @default(autoincrement())
+  firstName     String    @map("first_name") @db.VarChar(255)
+  lastName      String    @map("last_name") @db.VarChar(255)
+  email         String    @unique @db.VarChar(255)
+  emailVerified DateTime? @map("email_verified") @db.Timestamptz(6)
+  role          Role
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("employees")
 }
@@ -171,6 +172,17 @@ model Physician {
   @@map("physicians")
 }
 
+model VerificationRequest {
+  id         Int      @id @default(autoincrement())
+  identifier String   @db.VarChar(255)
+  token      String   @unique @db.VarChar(255)
+  expires    DateTime @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("verification_requests")
+}
+
 enum Aid {
   CANE
   ELECTRIC_CHAIR
@@ -178,7 +190,7 @@ enum Aid {
   SCOOTER
   WALKER
 
-  @@map("aid")
+   @@map("aid")
 }
 
 enum ApplicantStatus {
@@ -186,7 +198,7 @@ enum ApplicantStatus {
   INACTIVE
   DECEASED
 
-  @@map("applicantstatus")
+   @@map("applicantstatus")
 }
 
 enum Gender {
@@ -194,7 +206,7 @@ enum Gender {
   FEMALE
   OTHER
 
-  @@map("gender")
+   @@map("gender")
 }
 
 enum PaymentType {
@@ -206,7 +218,7 @@ enum PaymentType {
   DEBIT
   MONEY_ORDER
 
-  @@map("paymenttype")
+   @@map("paymenttype")
 }
 
 enum PhysicianStatus {
@@ -218,7 +230,7 @@ enum PhysicianStatus {
   TEMPORARILY_INACTIVE
   RELOCATED
 
-  @@map("physicianstatus")
+   @@map("physicianstatus")
 }
 
 enum Province {
@@ -236,7 +248,7 @@ enum Province {
   NT
   YT
 
-  @@map("province")
+   @@map("province")
 }
 
 enum Role {
@@ -244,5 +256,5 @@ enum Role {
   ACCOUNTING
   SECRETARY
 
-  @@map("role")
+   @@map("role")
 }

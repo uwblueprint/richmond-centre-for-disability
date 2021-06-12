@@ -36,11 +36,22 @@ CREATE TYPE Gender as ENUM('MALE', 'FEMALE', 'OTHER');
 
 -- Create employees table
 CREATE TABLE employees (
+  id                SERIAL PRIMARY KEY NOT NULL,
+  first_name        VARCHAR(255) NOT NULL,
+  last_name         VARCHAR(255) NOT NULL,
+  email             VARCHAR(255) UNIQUE NOT NULL,
+  email_verified    TIMESTAMPTZ,
+  role              Role NOT NULL,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create email verification requests table
+CREATE TABLE verification_requests (
   id            SERIAL PRIMARY KEY NOT NULL,
-  first_name    VARCHAR(255) NOT NULL, 
-  last_name     VARCHAR(255) NOT NULL,
-  email         VARCHAR(255) UNIQUE NOT NULL,
-  role          Role NOT NULL,
+  identifier    VARCHAR(255) NOT NULL,
+  token         VARCHAR(255) NOT NULL UNIQUE,
+  expires       TIMESTAMPTZ NOT NULL,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
