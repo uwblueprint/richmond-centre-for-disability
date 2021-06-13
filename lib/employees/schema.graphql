@@ -1,4 +1,5 @@
 type Employee {
+  id: ID!
   firstName: String!
   lastName: String!
   email: String!

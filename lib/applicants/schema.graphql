@@ -1,0 +1,46 @@
+# TODO: Integrate commented out types (ApplicantStatus, Application, Guardian, MedicalInformation, Permit)
+
+type Applicant {
+  id: ID!
+  firstName: String!
+  middleName: String
+  lastName: String!
+  dateOfBirth: Date!
+  gender: Gender!
+  email: String
+  phone: String!
+  province: Province!
+  city: String!
+  address: String!
+  postalCode: String!
+  rcdUserId: Int
+  # status: ApplicantStatus
+  # applications: [Application!]
+  # guardian: Guardian
+  # medicalInformation: MedicalInformation
+  # permits: [Permit!]
+}
+
+input CreateApplicantInput {
+  firstName: String!
+  middleName: String
+  lastName: String!
+  dateOfBirth: Date!
+  gender: Gender!
+  email: String
+  phone: String!
+  province: Province!
+  city: String!
+  address: String!
+  postalCode: String!
+  rcdUserId: Int
+  # status: ApplicantStatus
+  # applications: [Application!]
+  # guardian: Guardian
+  # medicalInformation: MedicalInformation
+  # permits: [Permit!]
+}
+
+type CreateApplicantResult {
+  ok: Boolean!
+}

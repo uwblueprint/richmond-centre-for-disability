@@ -1,11 +1,15 @@
 type Query {
   meta: Meta!
+  applicants: [Applicant!]
   employees: [Employee!]
 }
 
 type Mutation {
+  createApplicant(input: CreateApplicantInput!): CreateApplicantResult!
   createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
 }
+
+scalar Date
 
 enum Role {
   ADMIN

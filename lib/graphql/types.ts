@@ -13,6 +13,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** Date custom scalar type */
+  Date: any;
 };
 
 export enum Aid {
@@ -23,11 +25,48 @@ export enum Aid {
   Walker = 'WALKER',
 }
 
+export type Applicant = {
+  __typename?: 'Applicant';
+  id: Scalars['ID'];
+  firstName: Scalars['String'];
+  middleName?: Maybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  dateOfBirth: Scalars['Date'];
+  gender: Gender;
+  email?: Maybe<Scalars['String']>;
+  phone: Scalars['String'];
+  province: Province;
+  city: Scalars['String'];
+  address: Scalars['String'];
+  postalCode: Scalars['String'];
+  rcdUserId?: Maybe<Scalars['Int']>;
+};
+
 export enum ApplicantStatus {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE',
   Deceased = 'DECEASED',
 }
+
+export type CreateApplicantInput = {
+  firstName: Scalars['String'];
+  middleName?: Maybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  dateOfBirth: Scalars['Date'];
+  gender: Gender;
+  email?: Maybe<Scalars['String']>;
+  phone: Scalars['String'];
+  province: Province;
+  city: Scalars['String'];
+  address: Scalars['String'];
+  postalCode: Scalars['String'];
+  rcdUserId?: Maybe<Scalars['Int']>;
+};
+
+export type CreateApplicantResult = {
+  __typename?: 'CreateApplicantResult';
+  ok: Scalars['Boolean'];
+};
 
 export type CreateEmployeeInput = {
   firstName: Scalars['String'];
@@ -62,7 +101,12 @@ export type Meta = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createApplicant: CreateApplicantResult;
   createEmployee: CreateEmployeeResult;
+};
+
+export type MutationCreateApplicantArgs = {
+  input: CreateApplicantInput;
 };
 
 export type MutationCreateEmployeeArgs = {
@@ -108,6 +152,7 @@ export enum Province {
 export type Query = {
   __typename?: 'Query';
   meta: Meta;
+  applicants?: Maybe<Array<Applicant>>;
   employees?: Maybe<Array<Employee>>;
 };
 
