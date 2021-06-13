@@ -6,9 +6,6 @@ type Query {
 
 type Mutation {
   createApplicant(input: CreateApplicantInput!): CreateApplicantResult!
-}
-
-type Mutation {
   createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
 }
 
