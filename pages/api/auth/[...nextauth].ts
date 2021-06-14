@@ -36,7 +36,7 @@ export default NextAuth({
         },
       },
       from: process.env.NA_EMAIL_FROM,
-      maxAge: 24 * 60, // 1 hour max life for login request
+      maxAge: 60 * 60, // 1 hour max life for login request
       sendVerificationRequest,
     }),
   ],
@@ -75,7 +75,7 @@ export default NextAuth({
       return Promise.resolve(token);
     },
     signIn: async user => {
-      if (!user || !user.email) {
+      if (!user?.email) {
         return false;
       }
 
