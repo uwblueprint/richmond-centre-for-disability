@@ -89,8 +89,8 @@ yarn generate-graphql-types
 Deployment occurs automatically on push to the Main and Staging branches.
 [Railway](https://railway.app/) handles the continuous deployment of these branches.
 
-<!-- 1. Master Deploy: [ossdancefest.com](https://www.ossdancefest.com)
-2. Staging Deploy: [dancefest.dev](https://dancefest.dev) -->
+<!-- 1. Master Deploy: []()
+2. Staging Deploy: []() -->
 
 ## License
 

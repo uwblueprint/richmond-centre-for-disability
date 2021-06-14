@@ -3,6 +3,7 @@ import { ChakraProvider } from '@chakra-ui/react'; // ChakraProvider
 import { ApolloClient, InMemoryCache } from '@apollo/client'; // Apollo client
 import { ApolloProvider } from '@apollo/client/react'; // Apollo provider
 import { appWithTranslation } from 'next-i18next'; // HOC for adding translation to _app
+import { Provider } from 'next-auth/client'; // Next Auth provider
 
 const apolloClient = new ApolloClient({
   uri: '/api/graphql',
@@ -11,11 +12,13 @@ const apolloClient = new ApolloClient({
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <ChakraProvider>
-      <ApolloProvider client={apolloClient}>
-        <Component {...pageProps} />
-      </ApolloProvider>
-    </ChakraProvider>
+    <Provider session={pageProps.session}>
+      <ChakraProvider>
+        <ApolloProvider client={apolloClient}>
+          <Component {...pageProps} />
+        </ApolloProvider>
+      </ChakraProvider>
+    </Provider>
   );
 }
 
