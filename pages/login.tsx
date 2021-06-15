@@ -2,8 +2,8 @@ import { useState } from 'react'; // State
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession, signIn } from 'next-auth/client'; // Session management
 import { Input, Heading, Button, Container } from '@chakra-ui/react'; // Chakra UI
-
-import Layout from '@components/Layout'; // Layout wrapper
+// TODO: Replace with internal Layout component
+import Layout from '@components/applicant/Layout'; // Layout wrapper
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
 
 export default function Login() {

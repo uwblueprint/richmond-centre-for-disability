@@ -6,7 +6,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'; //
 import { useSession, signOut } from 'next-auth/client'; // Session hook and signOut handler
 
 import { Heading, Button } from '@chakra-ui/react'; // Chakra UI
-import Layout from '@components/Layout'; // Layout
+import Layout from '@components/applicant/Layout'; // Layout
 import { GET_METADATA_QUERY, GetMetadataResponseType } from '@tools/pages/home'; // GQL types
 
 export default function Home() {
