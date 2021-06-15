@@ -1308,6 +1308,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@fontsource/noto-sans@^4.4.5":
+  version "4.4.5"
+  resolved "https://registry.yarnpkg.com/@fontsource/noto-sans/-/noto-sans-4.4.5.tgz#0053bf374f8d5222908c825aa1db6a3078a79cf6"
+  integrity sha512-1P+AMhUvjfpMwuDsLHG1F95ij1SULGM8IiW/4RmdP7+ZHJuvBsSG465Ujps34IDio5bcv6OaLpGyU1YBVTTe+Q==
+
 "@graphql-codegen/add@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/add/-/add-2.0.2.tgz#4acbb95be9ebb859a3cebfe7132fdf49ffe06dd8"
