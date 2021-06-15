@@ -1,6 +1,6 @@
 import { Container, Heading } from '@chakra-ui/react'; // Chakra UI
-
-import Layout from '@components/Layout'; // Layout component
+// TODO: Replace with internal Layout component
+import Layout from '@components/applicant/Layout'; // Layout component
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage hook
 
 export default function Verify() {
