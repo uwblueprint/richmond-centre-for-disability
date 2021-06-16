@@ -48,6 +48,58 @@ export enum ApplicantStatus {
   Deceased = 'DECEASED',
 }
 
+export type Application = {
+  __typename?: 'Application';
+  /** Applicant information */
+  firstName: Scalars['String'];
+  middleName: Scalars['String'];
+  lastName: Scalars['String'];
+  dateOfBirth: Scalars['Date'];
+  gender: Gender;
+  email: Scalars['String'];
+  phone: Scalars['String'];
+  province: Province;
+  city: Scalars['String'];
+  address: Scalars['String'];
+  postalCode: Scalars['String'];
+  notes?: Maybe<Scalars['String']>;
+  rcdUserId?: Maybe<Scalars['Int']>;
+  isRenewal: Scalars['Boolean'];
+  poaFormUrl?: Maybe<Scalars['String']>;
+  applicantId?: Maybe<Scalars['Int']>;
+  /** Medical information */
+  disability: Scalars['String'];
+  affectsMobility: Scalars['Boolean'];
+  mobilityAidRequired: Scalars['Boolean'];
+  cannotWalk100m: Scalars['Boolean'];
+  aid?: Maybe<Array<Aid>>;
+  /** Physician Information */
+  physicianName: Scalars['String'];
+  physicianMspNumber: Scalars['Int'];
+  physicianAddress: Scalars['String'];
+  physicianCity: Scalars['String'];
+  physicianProvince: Province;
+  physicianPostalCode: Scalars['String'];
+  physicianPhone: Scalars['String'];
+  physicianNotes?: Maybe<Scalars['String']>;
+  /** Payment Information */
+  processingFee: Scalars['Float'];
+  donationAmount?: Maybe<Scalars['Float']>;
+  paymentMethod: PaymentType;
+  shopifyConfirmationNumber: Scalars['String'];
+  /** Guardian */
+  guardianFirstName?: Maybe<Scalars['String']>;
+  guardianMiddleName?: Maybe<Scalars['String']>;
+  guardianLastName?: Maybe<Scalars['String']>;
+  guardianPhone?: Maybe<Scalars['String']>;
+  guardianProvince?: Maybe<Province>;
+  guardianCity?: Maybe<Scalars['String']>;
+  guardianAddress?: Maybe<Scalars['String']>;
+  guardianPostalCode?: Maybe<Scalars['String']>;
+  guardianRelationship?: Maybe<Scalars['String']>;
+  guardianNotes?: Maybe<Scalars['String']>;
+};
+
 export type CreateApplicantInput = {
   firstName: Scalars['String'];
   middleName?: Maybe<Scalars['String']>;
@@ -65,6 +117,62 @@ export type CreateApplicantInput = {
 
 export type CreateApplicantResult = {
   __typename?: 'CreateApplicantResult';
+  ok: Scalars['Boolean'];
+};
+
+export type CreateApplicationInput = {
+  /** Applicant information */
+  firstName: Scalars['String'];
+  middleName: Scalars['String'];
+  lastName: Scalars['String'];
+  dateOfBirth: Scalars['Date'];
+  gender: Gender;
+  email: Scalars['String'];
+  phone: Scalars['String'];
+  province: Province;
+  city: Scalars['String'];
+  address: Scalars['String'];
+  postalCode: Scalars['String'];
+  notes?: Maybe<Scalars['String']>;
+  rcdUserId?: Maybe<Scalars['Int']>;
+  isRenewal: Scalars['Boolean'];
+  poaFormUrl?: Maybe<Scalars['String']>;
+  applicantId?: Maybe<Scalars['Int']>;
+  /** Medical information */
+  disability: Scalars['String'];
+  affectsMobility: Scalars['Boolean'];
+  mobilityAidRequired: Scalars['Boolean'];
+  cannotWalk100m: Scalars['Boolean'];
+  aid?: Maybe<Array<Aid>>;
+  /** Physician Information */
+  physicianName: Scalars['String'];
+  physicianMspNumber: Scalars['Int'];
+  physicianAddress: Scalars['String'];
+  physicianCity: Scalars['String'];
+  physicianProvince: Province;
+  physicianPostalCode: Scalars['String'];
+  physicianPhone: Scalars['String'];
+  physicianNotes?: Maybe<Scalars['String']>;
+  /** Payment Information */
+  processingFee: Scalars['Float'];
+  donationAmount?: Maybe<Scalars['Float']>;
+  paymentMethod: PaymentType;
+  shopifyConfirmationNumber: Scalars['String'];
+  /** Guardian */
+  guardianFirstName?: Maybe<Scalars['String']>;
+  guardianMiddleName?: Maybe<Scalars['String']>;
+  guardianLastName?: Maybe<Scalars['String']>;
+  guardianPhone?: Maybe<Scalars['String']>;
+  guardianProvince?: Maybe<Province>;
+  guardianCity?: Maybe<Scalars['String']>;
+  guardianAddress?: Maybe<Scalars['String']>;
+  guardianPostalCode?: Maybe<Scalars['String']>;
+  guardianRelationship?: Maybe<Scalars['String']>;
+  guardianNotes?: Maybe<Scalars['String']>;
+};
+
+export type CreateApplicationResult = {
+  __typename?: 'CreateApplicationResult';
   ok: Scalars['Boolean'];
 };
 
@@ -100,6 +208,7 @@ export type CreatePhysicianResult = {
 
 export type Employee = {
   __typename?: 'Employee';
+  id: Scalars['ID'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   email: Scalars['String'];
@@ -122,6 +231,7 @@ export type Mutation = {
   createApplicant: CreateApplicantResult;
   createEmployee: CreateEmployeeResult;
   createPhysician: CreatePhysicianResult;
+  createApplication: CreateApplicationResult;
 };
 
 export type MutationCreateApplicantArgs = {
@@ -134,6 +244,10 @@ export type MutationCreateEmployeeArgs = {
 
 export type MutationCreatePhysicianArgs = {
   input: CreatePhysicianInput;
+};
+
+export type MutationCreateApplicationArgs = {
+  input: CreateApplicationInput;
 };
 
 export enum PaymentType {
@@ -192,6 +306,7 @@ export type Query = {
   applicants?: Maybe<Array<Applicant>>;
   employees?: Maybe<Array<Employee>>;
   physicians?: Maybe<Array<Physician>>;
+  applications?: Maybe<Array<Application>>;
 };
 
 export enum Role {
