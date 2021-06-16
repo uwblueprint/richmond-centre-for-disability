@@ -2,6 +2,7 @@ import { extendTheme } from '@chakra-ui/react'; // Extend default Chakra UI them
 import colors from '@tools/theme/colors'; // Theme colors
 import typography from '@tools/theme/typography'; // Theme typography
 import space from '@tools/theme/spacing'; // Theme spacing
+import shadows from '@tools/theme/shadows'; // Theme shadows
 import textStyles from '@tools/theme/text-styles'; // Text styles
 
 // Component styles
@@ -15,6 +16,7 @@ const theme = extendTheme({
   colors,
   ...typography,
   space,
+  shadows,
   components: { Button, Form, FormLabel, Checkbox, Alert },
   textStyles,
 });
