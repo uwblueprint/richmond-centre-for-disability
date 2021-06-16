@@ -1,7 +1,7 @@
-import { useState } from 'react'; // State
+import { useState, KeyboardEvent } from 'react'; // React
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession, signIn } from 'next-auth/client'; // Session management
-import { Input, Heading, Button, Container } from '@chakra-ui/react'; // Chakra UI
+import { FormControl, FormLabel, Input, Button, Container, FormHelperText } from '@chakra-ui/react'; // Chakra UI
 
 import Layout from '@components/Layout'; // Layout wrapper
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
@@ -20,12 +20,30 @@ export default function Login() {
     signIn('email', { email });
   };
 
+  /**
+   * Log in with email when the 'Enter' key is pressed
+   */
+  const handleKeyUp = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      signInWithEmail();
+    }
+  };
+
   return (
     <Layout>
       <Container>
-        <Heading>Login</Heading>
-        <Input value={email} onChange={event => setEmail(event.target.value)} />
-        <Button onClick={signInWithEmail}>Log in</Button>{' '}
+        <FormControl>
+          <FormLabel>Login</FormLabel>
+          <Input
+            type="email"
+            placeholder="Your email"
+            value={email}
+            onChange={event => setEmail(event.target.value)}
+            onKeyUp={handleKeyUp}
+          />
+          <FormHelperText>Please enter an RCD email</FormHelperText>
+        </FormControl>
+        <Button onClick={signInWithEmail}>Log in</Button>
       </Container>
     </Layout>
   );

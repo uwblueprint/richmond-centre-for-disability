@@ -6,8 +6,8 @@ import { appWithTranslation } from 'next-i18next'; // HOC for adding translation
 import { Provider } from 'next-auth/client'; // Next Auth provider
 
 import theme from '@tools/theme'; // Design system theme config
-import '@fontsource/noto-sans/400.css';
-import '@fontsource/noto-sans/700.css';
+import '@fontsource/noto-sans/400.css'; // Noto sans normal
+import '@fontsource/noto-sans/700.css'; // Noto sans bold
 
 const apolloClient = new ApolloClient({
   uri: '/api/graphql',
