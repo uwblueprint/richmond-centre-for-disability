@@ -1,6 +1,5 @@
-scalar Date
-
 type Permit {
+  id: ID!
   rcdPermitId: Int!
   expiryDate: Date!
   receiptId: Int
