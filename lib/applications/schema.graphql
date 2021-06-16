@@ -1,7 +1,6 @@
-scalar Date
-
 type Application {
   # Applicant information
+  id: ID!
   firstName: String!
   middleName: String!
   lastName: String!

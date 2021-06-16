@@ -1,6 +1,9 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Resolver } from '@lib/resolvers'; // Resolver type
-import { ShopifyConfirmationNumberAlreadyExistsError, ApplicantIdDoesNotExistError } from '@lib/applications/errors'; // Employee errors
+import {
+  ShopifyConfirmationNumberAlreadyExistsError,
+  ApplicantIdDoesNotExistError,
+} from '@lib/applications/errors'; // Employee errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 
 /**
@@ -17,41 +20,40 @@ export const applications: Resolver = async (_parent, _args, { prisma }) => {
  * @returns Status of operation (ok, error)
  */
 export const createApplication: Resolver = async (_, args, { prisma }) => {
-  
   const {
-    input: { 
+    input: {
       firstName,
-      middleName, 
-      lastName, 
+      middleName,
+      lastName,
       dateOfBirth,
       gender,
-      email, 
-      phone, 
+      email,
+      phone,
       province,
-      city, 
-      address, 
-      postalCode, 
+      city,
+      address,
+      postalCode,
       notes,
       rcdUserId,
-      isRenewal, 
+      isRenewal,
       poaFormUrl,
       applicantId,
-      disability, 
-      affectsMobility , 
-      mobilityAidRequired, 
-      cannotWalk100m , 
+      disability,
+      affectsMobility,
+      mobilityAidRequired,
+      cannotWalk100m,
       aid,
-      physicianName, 
+      physicianName,
       physicianMspNumber,
-      physicianAddress, 
-      physicianCity, 
-      physicianProvince, 
-      physicianPostalCode, 
-      physicianPhone, 
+      physicianAddress,
+      physicianCity,
+      physicianProvince,
+      physicianPostalCode,
+      physicianPhone,
       physicianNotes,
-      processingFee, 
+      processingFee,
       donationAmount,
-      paymentMethod, 
+      paymentMethod,
       shopifyConfirmationNumber,
       guardianFirstName,
       guardianMiddleName,
@@ -71,37 +73,37 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
     application = await prisma.application.create({
       data: {
         firstName,
-        middleName, 
-        lastName, 
+        middleName,
+        lastName,
         dateOfBirth,
         gender,
-        email, 
-        phone, 
+        email,
+        phone,
         province,
-        city, 
-        address, 
-        postalCode, 
+        city,
+        address,
+        postalCode,
         notes,
         rcdUserId,
-        isRenewal, 
+        isRenewal,
         poaFormUrl,
         applicantId,
-        disability, 
-        affectsMobility , 
-        mobilityAidRequired, 
-        cannotWalk100m , 
+        disability,
+        affectsMobility,
+        mobilityAidRequired,
+        cannotWalk100m,
         aid,
-        physicianName, 
+        physicianName,
         physicianMspNumber,
-        physicianAddress, 
-        physicianCity, 
-        physicianProvince, 
-        physicianPostalCode, 
-        physicianPhone, 
+        physicianAddress,
+        physicianCity,
+        physicianProvince,
+        physicianPostalCode,
+        physicianPhone,
         physicianNotes,
-        processingFee, 
+        processingFee,
         donationAmount,
-        paymentMethod, 
+        paymentMethod,
         shopifyConfirmationNumber,
         guardianFirstName,
         guardianMiddleName,
@@ -116,12 +118,20 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
       },
     });
   } catch (err) {
-    if (err.code === DBErrorCode.UniqueConstraintFailed && err.meta.target.includes('shopifyConfirmationNumber')) {
-      throw new ShopifyConfirmationNumberAlreadyExistsError(`Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`);
-    }
-    else if (err.code === DBErrorCode.ForeignKeyConstraintFailed && err.meta.target.includes('applicantId')) {
+    if (
+      err.code === DBErrorCode.UniqueConstraintFailed &&
+      err.meta.target.includes('shopifyConfirmationNumber')
+    ) {
+      throw new ShopifyConfirmationNumberAlreadyExistsError(
+        `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
+      );
+    } else if (
+      err.code === DBErrorCode.ForeignKeyConstraintFailed &&
+      err.meta.target.includes('applicantId')
+    ) {
       throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
     }
+    //TODO: also add check for length constraint error - dependent on Emilios PR
   }
 
   // Throw internal server error if application was not created

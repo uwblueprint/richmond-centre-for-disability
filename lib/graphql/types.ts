@@ -51,6 +51,7 @@ export enum ApplicantStatus {
 export type Application = {
   __typename?: 'Application';
   /** Applicant information */
+  id: Scalars['ID'];
   firstName: Scalars['String'];
   middleName: Scalars['String'];
   lastName: Scalars['String'];
