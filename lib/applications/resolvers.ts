@@ -3,8 +3,10 @@ import { Resolver } from '@lib/resolvers'; // Resolver type
 import {
   ShopifyConfirmationNumberAlreadyExistsError,
   ApplicantIdDoesNotExistError,
+  ApplicationFieldTooLongError,
 } from '@lib/applications/errors'; // Employee errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
+import { Prisma } from '.prisma/client';
 
 /**
  * Query all the RCD applications in the internal-facing app
@@ -21,117 +23,34 @@ export const applications: Resolver = async (_parent, _args, { prisma }) => {
  */
 export const createApplication: Resolver = async (_, args, { prisma }) => {
   const {
-    input: {
-      firstName,
-      middleName,
-      lastName,
-      dateOfBirth,
-      gender,
-      email,
-      phone,
-      province,
-      city,
-      address,
-      postalCode,
-      notes,
-      rcdUserId,
-      isRenewal,
-      poaFormUrl,
-      applicantId,
-      disability,
-      affectsMobility,
-      mobilityAidRequired,
-      cannotWalk100m,
-      aid,
-      physicianName,
-      physicianMspNumber,
-      physicianAddress,
-      physicianCity,
-      physicianProvince,
-      physicianPostalCode,
-      physicianPhone,
-      physicianNotes,
-      processingFee,
-      donationAmount,
-      paymentMethod,
-      shopifyConfirmationNumber,
-      guardianFirstName,
-      guardianMiddleName,
-      guardianLastName,
-      guardianPhone,
-      guardianProvince,
-      guardianCity,
-      guardianAddress,
-      guardianPostalCode,
-      guardianRelationship,
-      guardianNotes,
-    },
+    input: { applicantId, shopifyConfirmationNumber },
   } = args;
 
   let application;
   try {
     application = await prisma.application.create({
-      data: {
-        firstName,
-        middleName,
-        lastName,
-        dateOfBirth,
-        gender,
-        email,
-        phone,
-        province,
-        city,
-        address,
-        postalCode,
-        notes,
-        rcdUserId,
-        isRenewal,
-        poaFormUrl,
-        applicantId,
-        disability,
-        affectsMobility,
-        mobilityAidRequired,
-        cannotWalk100m,
-        aid,
-        physicianName,
-        physicianMspNumber,
-        physicianAddress,
-        physicianCity,
-        physicianProvince,
-        physicianPostalCode,
-        physicianPhone,
-        physicianNotes,
-        processingFee,
-        donationAmount,
-        paymentMethod,
-        shopifyConfirmationNumber,
-        guardianFirstName,
-        guardianMiddleName,
-        guardianLastName,
-        guardianPhone,
-        guardianProvince,
-        guardianCity,
-        guardianAddress,
-        guardianPostalCode,
-        guardianRelationship,
-        guardianNotes,
-      },
+      data: { ...args.input },
     });
   } catch (err) {
-    if (
-      err.code === DBErrorCode.UniqueConstraintFailed &&
-      err.meta.target.includes('shopifyConfirmationNumber')
-    ) {
-      throw new ShopifyConfirmationNumberAlreadyExistsError(
-        `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
-      );
-    } else if (
-      err.code === DBErrorCode.ForeignKeyConstraintFailed &&
-      err.meta.target.includes('applicantId')
-    ) {
-      throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (
+        err.code === DBErrorCode.UniqueConstraintFailed &&
+        err.meta.target.includes('shopifyConfirmationNumber')
+      ) {
+        throw new ShopifyConfirmationNumberAlreadyExistsError(
+          `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
+        );
+      } else if (
+        err.code === DBErrorCode.ForeignKeyConstraintFailed &&
+        err.meta.target.includes('applicantId')
+      ) {
+        throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
+      } else if (err.code === DBErrorCode.LengthConstraintFailed) {
+        throw new ApplicationFieldTooLongError(
+          'Length constraint failed, provided value too long for an application field.'
+        );
+      }
     }
-    //TODO: also add check for length constraint error
   }
 
   // Throw internal server error if application was not created

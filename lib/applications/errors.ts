@@ -14,10 +14,21 @@ export class ShopifyConfirmationNumberAlreadyExistsError extends ApolloError {
 /**
  * Applicant ID does not exist
  */
- export class ApplicantIdDoesNotExistError extends ApolloError {
+export class ApplicantIdDoesNotExistError extends ApolloError {
   constructor(message: string) {
     super(message, 'APPLICANT_ID_DOES_NOT_EXIST');
 
     Object.defineProperty(this, 'name', { value: 'ApplicantIdDoesNotExistError' });
+  }
+}
+
+/**
+ * Applicantion field too long error
+ */
+export class ApplicationFieldTooLongError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'APPLICATION_FIELD_TOO_LONG');
+
+    Object.defineProperty(this, 'name', { value: 'ApplicationFieldTooLongError' });
   }
 }
