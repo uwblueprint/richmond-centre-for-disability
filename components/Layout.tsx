@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import Link from 'next/link'; // Dynamic routing
 import Head from 'next/head'; // HTML head handling
 
-import { Heading, Box, Flex } from '@chakra-ui/react'; // Chakra UI
+import { Text, Box, Flex } from '@chakra-ui/react'; // Chakra UI
 
 type Props = {
   children: ReactNode;
@@ -39,11 +39,11 @@ function Meta() {
 function Header() {
   return (
     <Flex height={32} justifyContent="center" alignItems="center">
-      <h1>
-        <Link href="/">
-          <Heading as="h1">RCD</Heading>
-        </Link>
-      </h1>
+      <Link href="/">
+        <Text as="h1" textStyle="display-xlarge">
+          RCD
+        </Text>
+      </Link>
     </Flex>
   );
 }
