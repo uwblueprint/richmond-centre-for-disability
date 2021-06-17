@@ -38,6 +38,7 @@ export default function Login() {
             <Input
               type="email"
               placeholder="Your email"
+              isDisabled={isSigningIn}
               value={email}
               onChange={event => setEmail(event.target.value)}
             />
