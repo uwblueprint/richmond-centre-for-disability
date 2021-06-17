@@ -131,7 +131,7 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
     ) {
       throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
     }
-    //TODO: also add check for length constraint error - dependent on Emilios PR
+    //TODO: also add check for length constraint error
   }
 
   // Throw internal server error if application was not created
