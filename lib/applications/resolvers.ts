@@ -6,7 +6,6 @@ import {
   ApplicationFieldTooLongError,
 } from '@lib/applications/errors'; // Employee errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
-import { Prisma } from '.prisma/client';
 
 /**
  * Query all the RCD applications in the internal-facing app
@@ -32,24 +31,22 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
       data: { ...args.input },
     });
   } catch (err) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      if (
-        err.code === DBErrorCode.UniqueConstraintFailed &&
-        err.meta.target.includes('shopifyConfirmationNumber')
-      ) {
-        throw new ShopifyConfirmationNumberAlreadyExistsError(
-          `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
-        );
-      } else if (
-        err.code === DBErrorCode.ForeignKeyConstraintFailed &&
-        err.meta.target.includes('applicantId')
-      ) {
-        throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
-      } else if (err.code === DBErrorCode.LengthConstraintFailed) {
-        throw new ApplicationFieldTooLongError(
-          'Length constraint failed, provided value too long for an application field.'
-        );
-      }
+    if (
+      err.code === DBErrorCode.UniqueConstraintFailed &&
+      err.meta?.target.includes('shopifyConfirmationNumber')
+    ) {
+      throw new ShopifyConfirmationNumberAlreadyExistsError(
+        `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
+      );
+    } else if (
+      err.code === DBErrorCode.ForeignKeyConstraintFailed &&
+      err.meta.target.includes('applicantId')
+    ) {
+      throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
+    } else if (err.code === DBErrorCode.LengthConstraintFailed) {
+      throw new ApplicationFieldTooLongError(
+        'Length constraint failed, provided value too long for an application field.'
+      );
     }
   }
 
