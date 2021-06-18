@@ -1,9 +1,10 @@
 import { ReactNode } from 'react'; // React
 import Head from 'next/head'; // HTML head handling
 import Link from 'next/link'; // Client side linking
+import Image from 'next/image'; // Optimized images
 import { useSession, signOut } from 'next-auth/client'; // Session management
 
-import { Box, Flex, Center, Grid, Button, Image, Text } from '@chakra-ui/react'; // Chakra UI
+import { Box, Flex, Center, Grid, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import { Role } from '@lib/types'; // Role enum
 import Logo from '@assets/logo.svg'; // Logo
 
@@ -51,7 +52,8 @@ function Header() {
     <Center height={24} width="100%" backgroundColor="#f4f6fc">
       <Flex height="100%" width="100%" maxWidth={{ xl: '1280px' }} justifyContent="space-between">
         <Flex flexGrow={1} padding={2} alignItems="center">
-          <Image src={Logo} alt="RCD Logo" height="100%" display="inline-block" marginRight={8} />
+          <Image src={Logo} alt="RCD Logo" height="100%" width="100%" />
+
           {session && (
             <>
               <Link href="#">

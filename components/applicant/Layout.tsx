@@ -1,19 +1,9 @@
 import { ReactNode } from 'react'; // React
 import Head from 'next/head'; // HTML head handling
 import Link from 'next/link'; // Client-side linking
+import Image from 'next/image'; // Optimized images
 
-import {
-  Box,
-  Flex,
-  Grid,
-  GridItem,
-  Image,
-  Button,
-  Center,
-  Text,
-  Spacer,
-  Divider,
-} from '@chakra-ui/react'; // Chakra UI
+import { Box, Flex, Grid, GridItem, Button, Center, Text, Spacer, Divider } from '@chakra-ui/react'; // Chakra UI
 import Logo from '@assets/logo.svg'; // Logo
 
 type Props = {
@@ -61,7 +51,9 @@ function Header() {
       <ApplicantGrid alignItems="center">
         <GridItem colSpan={1}>
           <Link href="/">
-            <Image src={Logo} alt="RCD Logo" cursor="pointer" />
+            <Box cursor="pointer">
+              <Image src={Logo} alt="RCD Logo" height="100%" width="100%" />
+            </Box>
           </Link>
         </GridItem>
         <GridItem colSpan={9}>
@@ -90,7 +82,7 @@ function Footer() {
     <Center flexDirection="column" width="100%" paddingTop={20} backgroundColor="#f4f6fc">
       <ApplicantGrid marginBottom={10}>
         <GridItem colSpan={2} textAlign="left">
-          <Image src={Logo} alt="RCD Logo" marginBottom={2} />
+          <Image src={Logo} alt="RCD Logo" height="100%" width="100%" />
           <a href="https://www.rcdrichmond.org/">
             <Text textStyle="heading">Go to main site</Text>
           </a>
