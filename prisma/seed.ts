@@ -1,5 +1,5 @@
 import prisma from '../prisma/index'; // Relative path required, path aliases throw error with seed command
-import { Role } from '../lib/graphql/types'; // Relative path required, path aliases throw error with seed command
+import { Role } from '@prisma/client';
 
 const main = async () => {
   if (process.env.NODE_ENV === 'production') {
@@ -10,7 +10,15 @@ const main = async () => {
 };
 
 const prodSeed = async () => {
-  return;
+  const employees = [
+    {
+      firstName: 'Oustan',
+      lastName: 'Ding',
+      email: 'oustanding+employee@uwblueprint.org',
+    },
+  ];
+
+  await employeeUpsert(employees);
 };
 
 const devSeed = async () => {
@@ -52,19 +60,25 @@ const devSeed = async () => {
     },
   ];
 
+  await employeeUpsert(employees);
+};
+
+const employeeUpsert = async (
+  employees: { firstName: string; lastName: string; email: string }[]
+) => {
   const employeeUpserts = [];
 
   for (const employee of employees) {
     const employeeUpsert = await prisma.employee.upsert({
       where: { email: employee.email },
       update: {
-        role: Role.Admin,
+        role: Role.ADMIN,
         firstName: employee.firstName,
         lastName: employee.lastName,
         emailVerified: new Date().toISOString(),
       },
       create: {
-        role: Role.Admin,
+        role: Role.ADMIN,
         email: employee.email,
         firstName: employee.firstName,
         lastName: employee.lastName,
