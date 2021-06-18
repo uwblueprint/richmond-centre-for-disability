@@ -62,6 +62,9 @@ heroku pg:psql -a YOUR_APP_NAME -f prisma/schema.sql
 
 # Regenerate Prisma schema and client
 npx prisma introspect && npx prisma generate
+
+# Seeding the database with sample data
+npx prisma db seed --preview-feature
 ```
 
 To run the application:
