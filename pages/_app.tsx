@@ -5,6 +5,10 @@ import { ApolloProvider } from '@apollo/client/react'; // Apollo provider
 import { appWithTranslation } from 'next-i18next'; // HOC for adding translation to _app
 import { Provider } from 'next-auth/client'; // Next Auth provider
 
+import theme from '@tools/theme'; // Design system theme config
+import '@fontsource/noto-sans/400.css'; // Noto sans normal
+import '@fontsource/noto-sans/700.css'; // Noto sans bold
+
 const apolloClient = new ApolloClient({
   uri: '/api/graphql',
   cache: new InMemoryCache(),
@@ -13,7 +17,7 @@ const apolloClient = new ApolloClient({
 function App({ Component, pageProps }: AppProps) {
   return (
     <Provider session={pageProps.session}>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <ApolloProvider client={apolloClient}>
           <Component {...pageProps} />
         </ApolloProvider>
