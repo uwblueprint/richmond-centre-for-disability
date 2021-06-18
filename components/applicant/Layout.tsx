@@ -1,18 +1,7 @@
 import { ReactNode } from 'react';
 import Head from 'next/head'; // HTML head handling
 
-import {
-  Box,
-  Flex,
-  Grid,
-  GridItem,
-  Heading,
-  Image,
-  Button,
-  Center,
-  Text,
-  Spacer,
-} from '@chakra-ui/react'; // Chakra UI
+import { Box, Flex, Grid, GridItem, Image, Button, Center, Text, Spacer } from '@chakra-ui/react'; // Chakra UI
 import Logo from '@assets/logo.svg'; // Logo
 
 type Props = {
@@ -29,9 +18,7 @@ export default function Layout({ children, header = true, footer = true }: Props
       <Flex flexDirection="column" alignItems="center" minHeight="100vh">
         {header && <Header />}
         <Box maxWidth={{ xl: 1200 }} flexGrow={1} paddingTop={20}>
-          <Grid templateColumns="repeat(12, 1fr)" gap={6}>
-            {children}
-          </Grid>
+          <ApplicantGrid>{children}</ApplicantGrid>
         </Box>
         {footer && <Footer />}
       </Flex>
@@ -59,22 +46,24 @@ function Meta() {
 function Header() {
   return (
     <Center height={36} width="100%" backgroundColor="#f4f6fc">
-      <Grid maxWidth={{ xl: 1200 }} templateColumns="repeat(12, 1fr)" alignItems="center" gap={6}>
+      <ApplicantGrid alignItems="center">
         <GridItem colSpan={1}>
           <Image src={Logo} alt="RCD Logo" />
         </GridItem>
-        <GridItem colSpan={3}>
-          <Heading fontSize={18} textAlign="left">
+        <GridItem colSpan={9}>
+          <Text textStyle="body-bold" textAlign="left">
             Richmond Centre for Disability
-          </Heading>
-          <Heading fontSize={18} fontWeight={400} textAlign="left">
+          </Text>
+          <Text textStyle="body-regular" textAlign="left">
             Accessible Parking Permit
-          </Heading>
+          </Text>
         </GridItem>
         <GridItem colStart={11} colSpan={2}>
-          <Button width="100%">Go to main site</Button>
+          <Button variant="outline" size="lg">
+            Go to main site
+          </Button>
         </GridItem>
-      </Grid>
+      </ApplicantGrid>
     </Center>
   );
 }
@@ -89,40 +78,38 @@ function Footer() {
       alignItems="center"
       backgroundColor="#f4f6fc"
     >
-      <Grid flexGrow={1} maxWidth={{ xl: '1200px' }} templateColumns="repeat(12, 1fr)" gap={6}>
+      <ApplicantGrid>
         <GridItem colSpan={2} textAlign="left">
           <Image src={Logo} alt="RCD Logo" />
-          <Text>Go to main site</Text>
+          <Text textStyle="heading">Go to main site</Text>
         </GridItem>
         <GridItem colSpan={10}>
           <Flex>
-            <Box flex={1} textAlign="left">
-              <Text>Location</Text>
-              <Text>
-                #842 - 5300, No.3 Rd{'\n'} Lansdowne Centre{'\n'} Richmond, BC
+            <Box textAlign="left">
+              <Text textStyle="body-bold">Location</Text>
+              <Text textStyle="body-regular">
+                #842 - 5300, No.3 Rd Lansdowne Centre Richmond, BC
               </Text>
             </Box>
-            <Spacer />
-            <Box flex={1} textAlign="left">
-              <Text>Contact Info</Text>
-              <Text>
-                Tel: 604-232-2404{'\n'}
-                Email: rcd@rcdrichmond.org
-              </Text>
+            <Spacer minWidth={16} />
+            <Box textAlign="left">
+              <Text textStyle="body-bold">Contact Info</Text>
+              <Text textStyle="body-regular">Tel: 604-232-2404</Text>
+              <Text textStyle="body-regular">Email: rcd@rcdrichmond.org</Text>
             </Box>
-            <Spacer />
-            <Box flex={1} textAlign="left">
-              <Text>Hours</Text>
-              <Text>
-                Monday to Friday{'\n'}
-                11 a.m. to 4 p.m.{'\n\n'}
-                We are closed on{'\n'} statutory holidays
+            <Spacer minWidth={16} />
+            <Box textAlign="left">
+              <Text textStyle="body-bold">Hours</Text>
+              <Text textStyle="body-regular">Monday to Friday </Text>
+              <Text textStyle="body-regular" marginBottom={4}>
+                11 a.m. to 4 p.m.
               </Text>
+              <Text textStyle="body-regular">We are closed on statutory holidays</Text>
             </Box>
-            <Spacer />
-            <Box flex={1} textAlign="left">
-              <Text>Social Media</Text>
-              <Text>
+            <Spacer minWidth={16} />
+            <Box textAlign="left">
+              <Text textStyle="body-bold">Social Media</Text>
+              <Text textStyle="body-regular">
                 Youtube {'\n'}
                 Instagram{'\n'}
                 Twitter{'\n'}
@@ -131,7 +118,7 @@ function Footer() {
             </Box>
           </Flex>
         </GridItem>
-      </Grid>
+      </ApplicantGrid>
     </Flex>
     // <Flex height={20} flexDirection="column" justifyContent="center" alignItems="center">
     //   <p>&copy; 2021 Richmond Centre for Disability. v0.0.1.</p>
@@ -143,5 +130,26 @@ function Footer() {
     //     .
     //   </p>
     // </Flex>
+  );
+}
+
+// Grid configuration for applicant-facing pages
+type ApplicantGridProps = {
+  children: ReactNode;
+  alignItems?: string;
+};
+
+function ApplicantGrid({ children, alignItems }: ApplicantGridProps) {
+  return (
+    <Grid
+      flexGrow={1}
+      maxWidth={{ xl: '1200px' }}
+      marginX="120px"
+      templateColumns="repeat(12, 1fr)"
+      gap="20px"
+      alignItems={alignItems}
+    >
+      {children}
+    </Grid>
   );
 }
