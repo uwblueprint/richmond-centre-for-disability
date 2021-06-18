@@ -6,7 +6,6 @@ import { useSession, signOut } from 'next-auth/client'; // Session management
 
 import { Box, Flex, Center, Grid, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import { Role } from '@lib/types'; // Role enum
-import Logo from '@assets/logo.svg'; // Logo
 
 type Props = {
   children: ReactNode;
@@ -52,7 +51,7 @@ function Header() {
     <Center height={24} width="100%" backgroundColor="#f4f6fc">
       <Flex height="100%" width="100%" maxWidth={{ xl: '1280px' }} justifyContent="space-between">
         <Flex flexGrow={1} padding={2} alignItems="center">
-          <Image src={Logo} alt="RCD Logo" height="100%" width="100%" />
+          <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} />
 
           {session && (
             <>

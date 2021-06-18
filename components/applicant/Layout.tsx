@@ -4,7 +4,6 @@ import Link from 'next/link'; // Client-side linking
 import Image from 'next/image'; // Optimized images
 
 import { Box, Flex, Grid, GridItem, Button, Center, Text, Spacer, Divider } from '@chakra-ui/react'; // Chakra UI
-import Logo from '@assets/logo.svg'; // Logo
 
 type Props = {
   children: ReactNode;
@@ -52,7 +51,7 @@ function Header() {
         <GridItem colSpan={1}>
           <Link href="/">
             <Box cursor="pointer">
-              <Image src={Logo} alt="RCD Logo" height="100%" width="100%" />
+              <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} />
             </Box>
           </Link>
         </GridItem>
@@ -82,7 +81,7 @@ function Footer() {
     <Center flexDirection="column" width="100%" paddingTop={20} backgroundColor="#f4f6fc">
       <ApplicantGrid marginBottom={10}>
         <GridItem colSpan={2} textAlign="left">
-          <Image src={Logo} alt="RCD Logo" height="100%" width="100%" />
+          <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} />
           <a href="https://www.rcdrichmond.org/">
             <Text textStyle="heading">Go to main site</Text>
           </a>
