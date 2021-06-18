@@ -1,9 +1,20 @@
 import { useState, SyntheticEvent } from 'react'; // React
 import { GetServerSideProps } from 'next'; // Get server side props
+import Image from 'next/image';
 import { getSession, signIn } from 'next-auth/client'; // Session management
-import { FormControl, FormLabel, Input, Button, GridItem, FormHelperText } from '@chakra-ui/react'; // Chakra UI
+import {
+  Text,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  Container,
+  Box,
+  Center,
+  Flex,
+  VStack,
+} from '@chakra-ui/react'; // Chakra UI
 
-import Layout from '@components/internal/Layout'; // Layout wrapper
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
 
 export default function Login() {
@@ -30,26 +41,56 @@ export default function Login() {
   };
 
   return (
-    <Layout>
-      <GridItem colSpan={12}>
-        <form onSubmit={handleSubmit}>
-          <FormControl>
-            <FormLabel>Login</FormLabel>
-            <Input
-              type="email"
-              placeholder="Your email"
-              isDisabled={isSigningIn}
-              value={email}
-              onChange={event => setEmail(event.target.value)}
-            />
-            <FormHelperText>Please enter an RCD email</FormHelperText>
-          </FormControl>
-          <Button onClick={signInWithEmail} isLoading={isSigningIn} loadingText="Logging In">
-            Log in
-          </Button>
-        </form>
-      </GridItem>
-    </Layout>
+    <Center minHeight="100vh" bg="background.grey">
+      <Box
+        borderWidth="1px"
+        borderRadius="12px"
+        bg="background.white"
+        height="60%"
+        width="37.5%"
+        paddingBottom="3%"
+        overflow="hidden"
+      >
+        <Container maxWidth="82.5%">
+          <VStack width="100%" spacing={12} marginTop="5%">
+            <Flex direction="column" style={{ gap: '10px' }}>
+              <Image src="/assets/rcd_logo.svg" height={120} width={120} />
+              <Text as="h1" textStyle="display-medium" align="center">
+                Richmond Centre for Disability <br />
+                Employee Login
+              </Text>
+            </Flex>
+
+            <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+              <FormControl>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  type="email"
+                  isDisabled={isSigningIn}
+                  value={email}
+                  onChange={event => setEmail(event.target.value)}
+                  height="51px"
+                />
+              </FormControl>
+              <Button
+                onClick={signInWithEmail}
+                isLoading={isSigningIn}
+                loadingText="Continue with Email"
+                width="100%"
+                height="46px"
+                marginTop="7.5%"
+              >
+                <Text textStyle="button-semibold">Continue with Email</Text>
+              </Button>
+            </form>
+
+            <Text as="p" textStyle="body-regular">
+              <b>Don&apos;t have an account?</b> Please contact your administrator for access.
+            </Text>
+          </VStack>
+        </Container>
+      </Box>
+    </Center>
   );
 }
 
