@@ -51,7 +51,7 @@ function Header() {
         <GridItem colSpan={1}>
           <Link href="/">
             <Box cursor="pointer">
-              <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} />
+              <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} priority />
             </Box>
           </Link>
         </GridItem>
@@ -81,7 +81,7 @@ function Footer() {
     <Center flexDirection="column" width="100%" paddingTop={20} backgroundColor="#f4f6fc">
       <ApplicantGrid marginBottom={10}>
         <GridItem colSpan={2} textAlign="left">
-          <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} />
+          <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} priority />
           <a href="https://www.rcdrichmond.org/">
             <Text textStyle="heading">Go to main site</Text>
           </a>

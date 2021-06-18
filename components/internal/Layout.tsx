@@ -51,7 +51,7 @@ function Header() {
     <Center height={24} width="100%" backgroundColor="#f4f6fc">
       <Flex height="100%" width="100%" maxWidth={{ xl: '1280px' }} justifyContent="space-between">
         <Flex flexGrow={1} padding={2} alignItems="center">
-          <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} />
+          <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} priority />
 
           {session && (
             <>
