@@ -19,7 +19,6 @@
     "target": "esnext",
     "baseUrl": ".",
     "paths": {
-      "@assets/*": ["assets/*"],
       "@components/*": ["components/*"],
       "@containers/*": ["containers/*"],
       "@lib/*": ["lib/*", "lib/graphql/*"],

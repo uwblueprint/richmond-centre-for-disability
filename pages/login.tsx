@@ -1,9 +1,9 @@
 import { useState, SyntheticEvent } from 'react'; // React
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession, signIn } from 'next-auth/client'; // Session management
-import { FormControl, FormLabel, Input, Button, Container, FormHelperText } from '@chakra-ui/react'; // Chakra UI
+import { FormControl, FormLabel, Input, Button, GridItem, FormHelperText } from '@chakra-ui/react'; // Chakra UI
 
-import Layout from '@components/Layout'; // Layout wrapper
+import Layout from '@components/internal/Layout'; // Layout wrapper
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
 
 export default function Login() {
@@ -31,7 +31,7 @@ export default function Login() {
 
   return (
     <Layout>
-      <Container>
+      <GridItem colSpan={12}>
         <form onSubmit={handleSubmit}>
           <FormControl>
             <FormLabel>Login</FormLabel>
@@ -48,7 +48,7 @@ export default function Login() {
             Log in
           </Button>
         </form>
-      </Container>
+      </GridItem>
     </Layout>
   );
 }

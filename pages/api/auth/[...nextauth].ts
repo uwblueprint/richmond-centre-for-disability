@@ -65,12 +65,16 @@ export default NextAuth({
     session: async (session, user) => {
       session.role = user.role;
       session.id = user.id;
+      session.firstName = user.firstName;
+      session.lastName = user.lastName;
 
       return Promise.resolve(session);
     },
     jwt: async (token, user) => {
       user ? (token.role = user.role) : null;
       user ? (token.id = user.id) : null;
+      user ? (token.firstName = user.firstName) : null;
+      user ? (token.lastName = user.lastName) : null;
 
       return Promise.resolve(token);
     },
