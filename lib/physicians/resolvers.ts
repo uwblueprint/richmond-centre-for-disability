@@ -3,6 +3,7 @@ import { Resolver } from '@lib/resolvers'; // Resolver type
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { PhysicianCreateError } from '@lib/physicians/errors'; // Physician error
 import { Prisma } from '.prisma/client';
+import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format';
 
 /**
  * Query all physicians of RCD applicants
@@ -22,6 +23,8 @@ export const createPhysician: Resolver = async (_, args, { prisma }) => {
 
   let physician;
   try {
+    input.postalCode = formatPostalCode(input.postalCode);
+    input.phone = formatPhoneNumber(input.phone);
     physician = await prisma.physician.create({
       data: { ...input },
     });

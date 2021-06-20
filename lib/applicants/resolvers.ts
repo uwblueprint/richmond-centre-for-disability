@@ -2,6 +2,7 @@ import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Resolver } from '@lib/resolvers'; // Resolver type
 import { ApplicantAlreadyExistsError } from '@lib/applicants/errors'; // Employee errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
+import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format';
 
 /**
  * Query all the RCD applicants in the internal-facing app
@@ -17,18 +18,18 @@ export const applicants: Resolver = async (_parent, _args, { prisma }) => {
  * @returns Status of operation (ok, error)
  */
 export const createApplicant: Resolver = async (_, args, { prisma }) => {
-  const {
-    input: { email },
-  } = args;
+  const { input } = args;
 
   let applicant;
   try {
+    input.postalCode = formatPostalCode(input.postalCode);
+    input.phone = formatPhoneNumber(input.phone);
     applicant = await prisma.applicant.create({
       data: { ...args.input },
     });
   } catch (err) {
     if (err.code === DBErrorCode.UniqueConstraintFailed && err.meta.target.includes('email')) {
-      throw new ApplicantAlreadyExistsError(`Applicant with email ${email} already exists`);
+      throw new ApplicantAlreadyExistsError(`Applicant with email ${input.email} already exists`);
     }
   }
 
