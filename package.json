@@ -12,7 +12,8 @@
     "lint:eslint": "eslint '**/*.{js,jsx,ts,tsx}' --cache --format stylish",
     "fix": "yarn fix:eslint && yarn fix:prettier",
     "fix:prettier": "prettier --write '**/*.{js,jsx,ts,tsx}'",
-    "fix:eslint": "eslint '**/*.{js,jsx,ts,tsx}' --format stylish --fix"
+    "fix:eslint": "eslint '**/*.{js,jsx,ts,tsx}' --format stylish --fix",
+    "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\""
   },
   "dependencies": {
     "@apollo/client": "^3.3.19",
@@ -29,7 +30,6 @@
     "next": "latest",
     "next-auth": "^3.26.1",
     "next-i18next": "^8.3.0",
-    "next-images": "^1.7.0",
     "nodemailer": "^6.6.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -53,6 +53,7 @@
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.0",
     "prisma": "^2.25.0",
+    "ts-node": "^10.0.0",
     "typescript": "^4.2.4"
   },
   "husky": {
