@@ -73,7 +73,7 @@ export default function Login() {
         <Container maxWidth="82.5%">
           <VStack width="100%" spacing={12} marginTop="5%">
             <Flex direction="column" style={{ gap: '10px' }}>
-              <Image src="/assets/rcd_logo.svg" height={120} width={120} />
+              <Image src="/assets/logo.svg" height={120} width={120} />
               <Text as="h1" textStyle="display-medium" align="center">
                 Richmond Centre for Disability Employee Login
               </Text>
