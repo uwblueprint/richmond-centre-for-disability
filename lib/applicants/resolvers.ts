@@ -22,10 +22,12 @@ export const createApplicant: Resolver = async (_, args, { prisma }) => {
 
   let applicant;
   try {
-    input.postalCode = formatPostalCode(input.postalCode);
-    input.phone = formatPhoneNumber(input.phone);
     applicant = await prisma.applicant.create({
-      data: { ...args.input },
+      data: {
+        ...input,
+        postalCode: formatPostalCode(input.postalCode),
+        phone: formatPhoneNumber(input.phone),
+      },
     });
   } catch (err) {
     if (err.code === DBErrorCode.UniqueConstraintFailed && err.meta.target.includes('email')) {

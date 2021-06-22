@@ -23,10 +23,12 @@ export const createPhysician: Resolver = async (_, args, { prisma }) => {
 
   let physician;
   try {
-    input.postalCode = formatPostalCode(input.postalCode);
-    input.phone = formatPhoneNumber(input.phone);
     physician = await prisma.physician.create({
-      data: { ...input },
+      data: {
+        ...input,
+        postalCode: formatPostalCode(input.postalCode),
+        phone: formatPhoneNumber(input.phone),
+      },
     });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
