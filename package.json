@@ -52,7 +52,7 @@
     "husky": "4",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.0",
-    "prisma": "^2.22.1",
+    "prisma": "^2.25.0",
     "typescript": "^4.2.4"
   },
   "husky": {

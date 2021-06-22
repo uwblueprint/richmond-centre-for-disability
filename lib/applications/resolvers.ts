@@ -40,7 +40,7 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
       );
     } else if (
       err.code === DBErrorCode.ForeignKeyConstraintFailed &&
-      err.meta.target.includes('applicantId')
+      err.meta?.target.includes('applicantId')
     ) {
       throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
     } else if (err.code === DBErrorCode.LengthConstraintFailed) {

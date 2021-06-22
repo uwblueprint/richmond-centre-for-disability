@@ -23,7 +23,7 @@ export class ApplicantIdDoesNotExistError extends ApolloError {
 }
 
 /**
- * Applicantion field too long error
+ * Application field too long error
  */
 export class ApplicationFieldTooLongError extends ApolloError {
   constructor(message: string) {

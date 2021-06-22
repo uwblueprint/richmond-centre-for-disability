@@ -73,7 +73,7 @@ export type Application = {
   affectsMobility: Scalars['Boolean'];
   mobilityAidRequired: Scalars['Boolean'];
   cannotWalk100m: Scalars['Boolean'];
-  aid?: Maybe<Array<Aid>>;
+  aid: Array<Aid>;
   /** Physician Information */
   physicianName: Scalars['String'];
   physicianMspNumber: Scalars['Int'];
@@ -144,7 +144,7 @@ export type CreateApplicationInput = {
   affectsMobility: Scalars['Boolean'];
   mobilityAidRequired: Scalars['Boolean'];
   cannotWalk100m: Scalars['Boolean'];
-  aid?: Maybe<Array<Aid>>;
+  aid: Array<Aid>;
   /** Physician Information */
   physicianName: Scalars['String'];
   physicianMspNumber: Scalars['Int'];

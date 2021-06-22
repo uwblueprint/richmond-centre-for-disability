@@ -23,7 +23,7 @@ type Application {
   affectsMobility: Boolean!
   mobilityAidRequired: Boolean!
   cannotWalk100m: Boolean!
-  aid: [Aid!]
+  aid: [Aid!]!
 
   #Physician Information
   physicianName: String!
@@ -78,7 +78,7 @@ input CreateApplicationInput {
   affectsMobility: Boolean!
   mobilityAidRequired: Boolean!
   cannotWalk100m: Boolean!
-  aid: [Aid!]
+  aid: [Aid!]!
 
   #Physician Information
   physicianName: String!
