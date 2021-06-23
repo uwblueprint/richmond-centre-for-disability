@@ -109,7 +109,7 @@ export default function Login() {
                     <Text textStyle="button-semibold">Continue with Email</Text>
                   </Button>
                 </form>
-                <Text as="p" textStyle="body-regular">
+                <Text as="p" textStyle="caption" width="100%">
                   <b>Don&apos;t have an account?</b> Please contact your administrator for access.
                 </Text>
               </>
@@ -119,7 +119,7 @@ export default function Login() {
                   We just sent an email to {email}. <br />
                   There should be a link in your inbox to log in.
                 </Text>
-                <Text as="p" textStyle="body-regular">
+                <Text as="p" textStyle="caption">
                   <b>Didn&apos;t get an email?</b> Check your spam or trash folder or{' '}
                   <Link
                     onClick={() => {
