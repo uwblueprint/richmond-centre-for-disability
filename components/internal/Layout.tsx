@@ -9,19 +9,21 @@ import { Role } from '@lib/types'; // Role enum
 
 type Props = {
   children: ReactNode;
+  header?: boolean;
+  footer?: boolean;
 };
 
 // Internal Layout component
-export default function Layout({ children }: Props) {
+export default function Layout({ children, header = true, footer = true }: Props) {
   return (
-    <Box textAlign="center">
+    <Box textAlign="center" bg="background.grey">
       <Meta />
       <Flex flexDirection="column" alignItems="center" minHeight="100vh">
-        <Header />
-        <Box flexGrow={1} paddingTop={20}>
+        {header && <Header />}
+        <Flex flexGrow={1} width="100%" justifyContent="center">
           <InternalGrid isContent>{children}</InternalGrid>
-        </Box>
-        <Footer />
+        </Flex>
+        {footer && <Footer />}
       </Flex>
     </Box>
   );
