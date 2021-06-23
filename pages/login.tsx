@@ -106,7 +106,9 @@ export default function Login() {
                         height="46px"
                         marginTop="7.5%"
                       >
-                        <Text textStyle="button-semibold">Continue with Email</Text>
+                        <Text as="span" textStyle="button-semibold">
+                          Continue with Email
+                        </Text>
                       </Button>
                     </form>
                     <Text as="p" textStyle="caption" width="100%" textAlign="left">
