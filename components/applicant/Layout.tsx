@@ -18,9 +18,9 @@ export default function Layout({ children, header = true, footer = true }: Props
       <Meta />
       <Flex flexDirection="column" alignItems="center" minHeight="100vh">
         {header && <Header />}
-        <Box flexGrow={1} paddingTop={20}>
+        <Flex flexGrow={1} width="100%" justifyContent="center">
           <ApplicantGrid isContent>{children}</ApplicantGrid>
-        </Box>
+        </Flex>
         {footer && <Footer />}
       </Flex>
     </Box>
