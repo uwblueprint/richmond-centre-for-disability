@@ -3,12 +3,14 @@ type Query {
   applicants: [Applicant!]
   employees: [Employee!]
   physicians: [Physician!]
+  applications: [Application!]
 }
 
 type Mutation {
   createApplicant(input: CreateApplicantInput!): CreateApplicantResult!
   createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
   createPhysician(input: CreatePhysicianInput!): CreatePhysicianResult!
+  createApplication(input: CreateApplicationInput!): CreateApplicationResult!
 }
 
 scalar Date

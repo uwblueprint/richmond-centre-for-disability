@@ -62,7 +62,7 @@ model Application {
   physicianProvince         Province    @map("physician_province")
   physicianPostalCode       String      @map("physician_postal_code") @db.Char(6)
   physicianPhone            String      @map("physician_phone") @db.VarChar(50)
-  phyiscianNotes            String?     @map("phyiscian_notes")
+  physicianNotes            String?     @map("physician_notes")
   processingFee             Float       @map("processing_fee")
   donationAmount            Float?      @map("donation_amount")
   paymentMethod             PaymentType @map("payment_method")

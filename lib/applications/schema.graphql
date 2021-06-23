@@ -1,0 +1,114 @@
+type Application {
+  # Applicant information
+  id: ID!
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  dateOfBirth: Date!
+  gender: Gender!
+  email: String!
+  phone: String!
+  province: Province!
+  city: String!
+  address: String!
+  postalCode: String!
+  notes: String
+  rcdUserId: Int
+  isRenewal: Boolean!
+  poaFormUrl: String
+  applicantId: Int
+  
+  # Medical information
+  disability: String!
+  affectsMobility: Boolean!
+  mobilityAidRequired: Boolean!
+  cannotWalk100m: Boolean!
+  aid: [Aid!]!
+
+  #Physician Information
+  physicianName: String!
+  physicianMspNumber: Int!
+  physicianAddress: String!
+  physicianCity: String!
+  physicianProvince: Province!
+  physicianPostalCode: String!
+  physicianPhone: String!
+  physicianNotes: String
+  
+  #Payment Information
+  processingFee: Float!
+  donationAmount: Float
+  paymentMethod: PaymentType!
+  shopifyConfirmationNumber: String!
+  
+  #Guardian
+  guardianFirstName: String
+  guardianMiddleName: String
+  guardianLastName: String
+  guardianPhone: String
+  guardianProvince: Province 
+  guardianCity: String
+  guardianAddress: String
+  guardianPostalCode: String
+  guardianRelationship: String
+  guardianNotes: String
+}
+
+input CreateApplicationInput {
+  # Applicant information
+  firstName: String!
+  middleName: String!
+  lastName: String!
+  dateOfBirth: Date!
+  gender: Gender!
+  email: String!
+  phone: String!
+  province: Province!
+  city: String!
+  address: String!
+  postalCode: String!
+  notes: String
+  rcdUserId: Int
+  isRenewal: Boolean!
+  poaFormUrl: String
+  applicantId: Int
+  
+  # Medical information
+  disability: String!
+  affectsMobility: Boolean!
+  mobilityAidRequired: Boolean!
+  cannotWalk100m: Boolean!
+  aid: [Aid!]!
+
+  #Physician Information
+  physicianName: String!
+  physicianMspNumber: Int!
+  physicianAddress: String!
+  physicianCity: String!
+  physicianProvince: Province!
+  physicianPostalCode: String!
+  physicianPhone: String!
+  physicianNotes: String
+  
+  #Payment Information
+  processingFee: Float!
+  donationAmount: Float
+  paymentMethod: PaymentType!
+  shopifyConfirmationNumber: String!
+  
+  #Guardian
+  guardianFirstName: String
+  guardianMiddleName: String
+  guardianLastName: String
+  guardianPhone: String
+  guardianProvince: Province 
+  guardianCity: String
+  guardianAddress: String
+  guardianPostalCode: String
+  guardianRelationship: String
+  guardianNotes: String
+}
+
+type CreateApplicationResult {
+  ok: Boolean!
+}

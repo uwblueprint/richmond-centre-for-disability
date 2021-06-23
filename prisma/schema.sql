@@ -165,7 +165,7 @@ CREATE TABLE applications (
   physician_province      Province NOT NULL,
   physician_postal_code   CHAR(6) NOT NULL,
   physician_phone         VARCHAR(50) NOT NULL,
-  phyiscian_notes                    TEXT,
+  physician_notes         TEXT,
   -- Payment information
   processing_fee                 FLOAT NOT NULL,
   donation_amount                FLOAT,
