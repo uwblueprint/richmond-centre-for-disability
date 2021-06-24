@@ -10,3 +10,25 @@ export class PermitAlreadyExistsError extends ApolloError {
     Object.defineProperty(this, 'name', { value: 'PermitAlreadyExistsError' });
   }
 }
+
+/**
+ * Applicant ID does not exist
+ */
+export class ApplicantIdDoesNotExistError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'APPLICANT_ID_DOES_NOT_EXIST');
+
+    Object.defineProperty(this, 'name', { value: 'ApplicantIdDoesNotExistError' });
+  }
+}
+
+/**
+ * Application ID does not exist
+ */
+export class ApplicationIdDoesNotExistError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'APPLICATION_ID_DOES_NOT_EXIST');
+
+    Object.defineProperty(this, 'name', { value: 'ApplicationIdDoesNotExistError' });
+  }
+}
