@@ -1,5 +1,3 @@
-//import { useRouter } from 'next/router'; // Routing
-//import { useQuery } from '@apollo/client'; // GQL
 import { useTranslation } from 'next-i18next'; // Translation hook
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {
@@ -21,7 +19,6 @@ import Layout from '@components/applicant/Layout'; // Layout wrapper
 
 export default function Landing() {
   const { t } = useTranslation('common');
-  //const router = useRouter();
 
   return (
     <Layout>
