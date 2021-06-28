@@ -1,5 +1,5 @@
 import { Role } from '@prisma/client';
-import { Resolver } from '@lib/graphql/resolvers';
+import { Resolver } from '@lib/resolvers';
 
 /**
  * authorize is a wrapper function around graphQL resolvers that grants or denies access to certain resources based on an employee's role.

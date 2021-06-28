@@ -8,7 +8,7 @@ import { IFieldResolver } from 'graphql-tools'; // GraphQL field resolver
 import { Context } from '@lib/context'; // Context type
 import { dateScalar } from '@lib/scalars'; // Custom date scalar implementation
 import { authorize } from '@lib/authorization';
-import { Role } from '@lib/graphql/types';
+import { Role } from '@lib/types';
 
 // Resolver type
 export type Resolver<P = undefined> = IFieldResolver<P, Context>;
