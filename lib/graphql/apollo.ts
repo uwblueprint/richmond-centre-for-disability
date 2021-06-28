@@ -12,5 +12,5 @@ export const apolloServer = new ApolloServer({
       'schema.polling.enable': false, // Disable infinite schema introspection
     },
   },
-  context: context,
+  context,
 });

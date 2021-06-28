@@ -7,27 +7,28 @@ import { permits, createPermit } from '@lib/permits/resolvers';
 import { IFieldResolver } from 'graphql-tools'; // GraphQL field resolver
 import { Context } from '@lib/context'; // Context type
 import { dateScalar } from '@lib/scalars'; // Custom date scalar implementation
-import { authenticate } from '@lib/auth-guards';
+import { authorize } from '@lib/authorization';
 import { Role } from '@lib/graphql/types';
 
 // Resolver type
 export type Resolver<P = undefined> = IFieldResolver<P, Context>;
 
+// authorize is a wrapper around graphQL resolvers that protects and restricts routes based on RCD employee roles.
 const resolvers = {
   Query: {
-    meta: meta,
-    applicants: authenticate(applicants, [Role.Admin, Role.Secretary]),
-    employees: authenticate(employees, [Role.Admin]),
-    physicians: authenticate(physicians, [Role.Admin, Role.Secretary]),
-    applications: authenticate(applications, [Role.Admin, Role.Secretary]),
-    permits: authenticate(permits, [Role.Admin, Role.Secretary]),
+    meta,
+    applicants: authorize(applicants, [Role.Admin, Role.Secretary]),
+    employees: authorize(employees, [Role.Admin]),
+    physicians: authorize(physicians, [Role.Admin, Role.Secretary]),
+    applications: authorize(applications, [Role.Admin, Role.Secretary]),
+    permits: authorize(permits, [Role.Admin, Role.Secretary]),
   },
   Mutation: {
-    createApplicant: authenticate(createApplicant, [Role.Admin, Role.Secretary]),
-    createEmployee: authenticate(createEmployee, [Role.Admin]),
-    createPhysician: authenticate(createPhysician, [Role.Admin, Role.Secretary]),
-    createApplication: authenticate(createApplication, [Role.Admin, Role.Secretary]),
-    createPermit: authenticate(createPermit, [Role.Admin, Role.Secretary]),
+    createApplicant: authorize(createApplicant, [Role.Admin, Role.Secretary]),
+    createEmployee: authorize(createEmployee, [Role.Admin]),
+    createPhysician: authorize(createPhysician, [Role.Admin, Role.Secretary]),
+    createApplication: authorize(createApplication, [Role.Admin, Role.Secretary]),
+    createPermit: authorize(createPermit, [Role.Admin, Role.Secretary]),
   },
   Date: dateScalar,
 };

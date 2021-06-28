@@ -9,7 +9,7 @@ export type Context = {
   session: Session | null;
 };
 
-export default async function context(req: MicroRequest): Promise<Context> {
+export default async function context({ req }: { req: MicroRequest }): Promise<Context> {
   const session = await getSession({ req });
 
   return {
