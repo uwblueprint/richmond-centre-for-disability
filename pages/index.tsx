@@ -241,7 +241,6 @@ export default function Landing() {
       </GridItem>
       <GridItem colSpan={4} colStart={9}>
         <Box
-          maxWidth="385px"
           borderWidth="1px"
           borderRadius="12px"
           bg="background.white"
