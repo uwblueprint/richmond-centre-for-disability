@@ -12,10 +12,20 @@ const textStyles = {
     fontWeight: 'semibold',
     lineHeight: '140%',
   },
+  'display-medium-bold': {
+    fontSize: '28px',
+    fontWeight: 'bold',
+    lineHeight: '140%',
+  },
   'display-medium': {
     fontSize: '28px',
     fontWeight: 'normal',
     lineHeight: '140%',
+  },
+  'display-small-semibold': {
+    fontSize: '24px',
+    fontWeight: 'semibold',
+    lineHeight: '150%',
   },
   'display-small': {
     fontSize: '24px',
@@ -47,6 +57,11 @@ const textStyles = {
     fontSize: '16px',
     fontWeight: 'normal',
     lineHeight: '150%',
+  },
+  'xsmall-medium': {
+    fontSize: '14px',
+    fontWeight: 'medium',
+    lineHeight: '120%',
   },
   xsmall: {
     fontSize: '14px',
