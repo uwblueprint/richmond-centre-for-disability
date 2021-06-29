@@ -1,5 +1,6 @@
 import { useTranslation } from 'next-i18next'; // Translation hook
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import Link from 'next/link'; // Link
 import {
   Text,
   Divider,
@@ -10,7 +11,6 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  Link,
   UnorderedList,
   ListItem,
   Button,
@@ -32,7 +32,7 @@ export default function Landing() {
           off in person to RCD.{' '}
         </Text>
       </GridItem>
-      <GridItem colSpan={5} colStart={1} mt="28px">
+      <GridItem colSpan={5} colStart={1} mt="28px" textAlign="left">
         <Text as="h2" textStyle="display-medium" align="left" fontWeight="semibold">
           Option 1: Online Service
         </Text>
@@ -53,26 +53,7 @@ export default function Landing() {
             <Text as="p">Complete the online form and pay a $26 processing fee</Text>
           </ListItem>
         </UnorderedList>
-      </GridItem>
-      <GridItem colSpan={5} colStart={7} mt="28px">
-        <Text as="h2" textStyle="display-medium" align="left" fontWeight="semibold">
-          Option 2: Download Form
-        </Text>
-        <Text as="p" textStyle="body-regular" align="left" mt="24px">
-          If you would prefer to fill out a replacement form for a lost or stolen parking permit by
-          hand, or want to request a new parking permit, please download the appropriate form below.
-          <br></br>
-          <br></br>
-          After completing the form, either email (
-          <b>
-            <a href="mailto:parkingpermit@richmond.org">parkingpermit@rcdrichmond.org</a>
-          </b>
-          ), mail or drop it off in person to RCD!
-        </Text>
-      </GridItem>
-
-      <GridItem colSpan={5} colStart={1} textAlign="left" mt="12px">
-        <Link href="#" style={{ textDecoration: 'none' }}>
+        <Link href="#">
           <Button
             colorScheme="primary"
             variant="solid"
@@ -81,14 +62,13 @@ export default function Landing() {
             width="320px"
             height="48px"
             radius="6px"
+            mt="48px"
             p="12px 25px 12px 25px"
           >
             <Text as="span">Renew your permit online</Text>
           </Button>
         </Link>
-      </GridItem>
-      <GridItem colSpan={5} colStart={7} textAlign="left" mt="12px">
-        <Link href="#" style={{ textDecoration: 'none' }}>
+        <Link href="#">
           <Button
             colorScheme="primary"
             variant="solid"
@@ -97,14 +77,29 @@ export default function Landing() {
             width="320px"
             height="48px"
             radius="6px"
+            mt="32px"
             p="12px 25px 12px 25px"
           >
             <Text as="span">Download new form</Text>
           </Button>
         </Link>
       </GridItem>
-      <GridItem colSpan={5} colStart={1} textAlign="left" mt="12px">
-        <Link href="#" style={{ textDecoration: 'none' }}>
+      <GridItem colSpan={5} colStart={7} mt="28px" textAlign="left">
+        <Text as="h2" textStyle="display-medium" align="left" fontWeight="semibold">
+          Option 2: Download Form
+        </Text>
+        <Text as="p" textStyle="body-regular" align="left" mt="24px">
+          If you would prefer to fill out a replacement form for a lost or stolen parking permit by
+          hand, or want to request a new parking permit, please download the appropriate form below.
+        </Text>
+        <Text as="p" textStyle="body-regular" align="left" mt="24px">
+          After completing the form, either email (
+          <b>
+            <a href="mailto:parkingpermit@richmond.org">parkingpermit@rcdrichmond.org</a>
+          </b>
+          ), mail or drop it off in person to RCD!
+        </Text>
+        <Link href="#">
           <Button
             colorScheme="primary"
             variant="solid"
@@ -113,14 +108,13 @@ export default function Landing() {
             width="320px"
             height="48px"
             radius="6px"
+            mt="36px"
             p="12px 25px 12px 25px"
           >
             <Text as="span">Request a replacement online</Text>
           </Button>
         </Link>
-      </GridItem>
-      <GridItem colSpan={5} colStart={7} textAlign="left" mt="12px">
-        <Link href="#" style={{ textDecoration: 'none' }}>
+        <Link href="#">
           <Button
             colorScheme="primary"
             variant="solid"
@@ -129,6 +123,7 @@ export default function Landing() {
             width="320px"
             height="48px"
             radius="6px"
+            mt="32px"
             p="12px 25px 12px 25px"
           >
             <Text as="span">Download replacement form</Text>
@@ -136,7 +131,7 @@ export default function Landing() {
         </Link>
       </GridItem>
       <GridItem colSpan={12} colStart={0} mb="44px" mt="52px">
-        <Divider borderColor="black.400" />
+        <Divider borderColor="#AAAAAA" />
       </GridItem>
       <GridItem colSpan={8} colStart={1} mb="64px">
         <Text as="h2" textStyle="display-large" textAlign="left">
@@ -146,7 +141,7 @@ export default function Landing() {
           Have any questions about our online services or our services? Look below to see some of
           the most frequently asked questions.
         </Text>
-        <Accordion defaultIndex={[]} allowMultiple mt="24px">
+        <Accordion allowMultiple mt="24px">
           <AccordionItem>
             <h2>
               <AccordionButton>
@@ -257,7 +252,7 @@ export default function Landing() {
             Have more questions?
           </Text>
           <Text as="p" textStyle="body-regular" textAlign="left">
-            Please contact RCD via phone at <br /> <b>604-232-2404</b> or via email at{' '}
+            Please contact RCD via phone at <b>604-232-2404</b> or via email at{' '}
             <b>
               <a href="mailto:parkingpermit@richmond.org">parkingpermit@rcdrichmond.org</a>
             </b>
