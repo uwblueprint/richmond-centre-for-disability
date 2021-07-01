@@ -19,7 +19,6 @@ applicant-facing application portal and an internal user/APP management portal.
 
 ```bash
 .
-├── assets # Assets
 ├── components # Project components
 │   └── Layout.tsx
 ├── containers # State containers
@@ -33,6 +32,7 @@ applicant-facing application portal and an internal user/APP management portal.
 ├── prisma # Prisma ORM
 │   └── schema.prisma # Prisma Schema
 ├── public
+│   ├── assets # Assets
 │   └── locales # Translations
 ├── tools # Frontend tools
 │   ├── pages # Tools for pages
