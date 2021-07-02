@@ -43,9 +43,9 @@ const textStyles = {
     lineHeight: '130%',
     textTransform: 'uppercase',
   },
-  'button-bold': {
+  'button-semibold': {
     fontSize: '18px',
-    fontWeight: 'bold',
+    fontWeight: 'semibold',
     lineHeight: '24px',
   },
   'button-regular': {
