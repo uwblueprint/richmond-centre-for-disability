@@ -3,22 +3,22 @@
  */
 const textStyles = {
   'display-xlarge': {
-    fontSize: '48px',
+    fontSize: '40px',
     fontWeight: 'semibold',
     lineHeight: '140%',
   },
   'display-large': {
-    fontSize: '36px',
+    fontSize: '28px',
     fontWeight: 'semibold',
     lineHeight: '140%',
   },
   'display-medium-bold': {
-    fontSize: '28px',
+    fontSize: '26px',
     fontWeight: 'bold',
     lineHeight: '140%',
   },
   'display-medium': {
-    fontSize: '28px',
+    fontSize: '26px',
     fontWeight: 'normal',
     lineHeight: '140%',
   },
@@ -43,6 +43,16 @@ const textStyles = {
     lineHeight: '130%',
     textTransform: 'uppercase',
   },
+  'button-bold': {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    lineHeight: '24px',
+  },
+  'button-regular': {
+    fontSize: '18px',
+    fontWeight: 'normal',
+    lineHeight: '24px',
+  },
   'body-regular': {
     fontSize: '18px',
     fontWeight: 'normal',
@@ -61,12 +71,12 @@ const textStyles = {
   'xsmall-medium': {
     fontSize: '14px',
     fontWeight: 'medium',
-    lineHeight: '120%',
+    lineHeight: '150%',
   },
   xsmall: {
     fontSize: '14px',
     fontWeight: 'normal',
-    lineHeight: '120%',
+    lineHeight: '150%',
   },
 };
 
