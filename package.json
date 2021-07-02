@@ -27,12 +27,12 @@
     "apollo-server-micro": "^2.24.1",
     "framer-motion": "4",
     "graphql": "^15.5.0",
-    "next": "latest",
+    "next": "^11.0.0",
     "next-auth": "^3.26.1",
     "next-i18next": "^8.3.0",
     "nodemailer": "^6.6.1",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "unstated-next": "^1.1.0"
   },
   "devDependencies": {
