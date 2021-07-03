@@ -1,11 +1,27 @@
 import { ReactNode } from 'react'; // React
 import Head from 'next/head'; // HTML head handling
-import Link from 'next/link'; // Client side linking
 import Image from 'next/image'; // Optimized images
 import { useSession, signOut } from 'next-auth/client'; // Session management
+import { useRouter } from 'next/router'; // Routing
 
-import { Box, Flex, Center, Grid, Button, Text } from '@chakra-ui/react'; // Chakra UI
+import {
+  Box,
+  Flex,
+  Center,
+  Grid,
+  Button,
+  Text,
+  Tabs,
+  TabList,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from '@chakra-ui/react'; // Chakra UI
+import { ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import { Role } from '@lib/types'; // Role enum
+import { InternalPagePath, getTabIndex } from '@tools/components/internal/layout'; // Routing enums and tools
+import Tab from '@components/internal/navbar/Tab'; // Custom Tab component
 
 type Props = {
   children: ReactNode;
@@ -33,8 +49,11 @@ export default function Layout({ children, header = true, footer = true }: Props
 function Meta() {
   return (
     <Head>
-      <title>Richmond Centre for Disability Admin Portal</title>
-      <meta name="title" content="Richmond Centre for Disability Admin Portal" />
+      <title>RCD APP Management System</title>
+      <meta
+        name="title"
+        content="Richmond Centre for Disability's Accessible Parking Permit Management System"
+      />
       <meta
         name="description"
         content="Internal accessible parking permit management system for RCD"
@@ -47,58 +66,79 @@ function Meta() {
 
 // Header
 function Header() {
-  const [session] = useSession();
+  const [session] = useSession(); // Get user session
+  const router = useRouter(); // Get router
+
+  const { pathname } = router;
 
   return (
-    <Center height={24} width="100%" backgroundColor="#f4f6fc">
-      <Flex height="100%" width="100%" maxWidth={{ xl: '1280px' }} justifyContent="space-between">
-        <Flex flexGrow={1} padding={2} alignItems="center">
-          <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} priority />
-
+    <Flex
+      height="80px"
+      width="100%"
+      backgroundColor="#f4f6fc"
+      borderBottom="1px solid"
+      borderBottomColor="border.secondary"
+    >
+      <Flex height="100%" width="100%" justifyContent="space-between" marginX="40px">
+        <Flex alignItems="center">
+          <Box marginRight="12px">
+            <Image src="/assets/logo.svg" alt="RCD Logo" height={48} width={31} priority />
+          </Box>
+          <Box>
+            <Text as="h2" textStyle="button-semibold">
+              APP Management System
+            </Text>
+            <Text as="h3" textStyle="xsmall" textAlign="left">
+              For RCD
+            </Text>
+          </Box>
+        </Flex>
+        <Flex flexGrow={1} justifyContent="center" alignItems="center">
           {session && (
             <>
-              <Link href="#">
-                <Text textStyle="body-regular" display="inline-block" marginRight={8}>
-                  Requests
-                </Text>
-              </Link>
-              <Link href="#">
-                <Text textStyle="body-regular" display="inline-block" marginRight={8}>
-                  Permit Holders
-                </Text>
-              </Link>
-              {session.role === Role.Admin && (
-                <Link href="#">
-                  <Text textStyle="body-regular" display="inline-block" marginRight={8}>
-                    Admin Management
-                  </Text>
-                </Link>
-              )}
+              <Tabs height="100%" index={getTabIndex(pathname)}>
+                <TabList height="100%" borderBottomColor="transparent">
+                  <Tab path={InternalPagePath.Requests}>Requests</Tab>
+                  <Tab path={InternalPagePath.PermitHolders}>Permit Holders</Tab>
+                  <Tab path={InternalPagePath.Reports}>Reports</Tab>
+                  {session.role === Role.Admin && (
+                    <Tab path={InternalPagePath.AdminManagement}>Admin Management</Tab>
+                  )}
+                </TabList>
+              </Tabs>
             </>
           )}
         </Flex>
         <Flex alignItems="center">
           {session && (
             <>
-              <Text
-                textStyle="body-regular"
-                color="primary"
-                display="inline-block"
-                marginRight={8}
-              >{`${session.firstName} ${session.lastName}`}</Text>
-              <Button
-                onClick={() => {
-                  sessionStorage.clear();
-                  signOut();
-                }}
-              >
-                Sign out
-              </Button>
+              <Menu placement="bottom-end">
+                <MenuButton
+                  as={Button}
+                  rightIcon={<ChevronDownIcon />}
+                  variant="ghost"
+                  color="black"
+                >
+                  <Text as="p" textStyle="button-semibold">
+                    {`${session.firstName} ${session.lastName}`}
+                  </Text>
+                </MenuButton>
+                <MenuList>
+                  <MenuItem
+                    onClick={() => {
+                      sessionStorage.clear();
+                      signOut();
+                    }}
+                  >
+                    Sign out
+                  </MenuItem>
+                </MenuList>
+              </Menu>
             </>
           )}
         </Flex>
       </Flex>
-    </Center>
+    </Flex>
   );
 }
 

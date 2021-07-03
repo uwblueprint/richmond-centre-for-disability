@@ -153,12 +153,11 @@ export default function Login() {
 export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
 
-  // If user is authenticated, redirect to homepage
-  // TODO: Redirect to internal management page
+  // If user is authenticated, redirect to admin homepage
   if (session) {
     return {
       redirect: {
-        destination: '/',
+        destination: '/admin',
         permanent: false,
       },
     };

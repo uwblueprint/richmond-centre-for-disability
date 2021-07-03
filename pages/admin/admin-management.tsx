@@ -3,12 +3,12 @@ import { getSession } from 'next-auth/client'; // Session management
 import { Text, GridItem } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
 
-// Internal home page - view APP requests
-export default function Requests() {
+// Internal home page
+export default function AdminManagement() {
   return (
     <Layout>
       <GridItem colSpan={12} marginTop="64px">
-        <Text textStyle="display-xlarge">Internal management portal</Text>
+        <Text textStyle="display-xlarge">Admin Management</Text>
       </GridItem>
     </Layout>
   );
