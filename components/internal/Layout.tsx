@@ -97,7 +97,7 @@ function Header() {
         <Flex flexGrow={1} justifyContent="center" alignItems="center">
           {session && (
             <>
-              <Tabs height="100%" index={getTabIndex(pathname, session.role)}>
+              <Tabs height="100%" index={getTabIndex(pathname, session.role as Role)}>
                 <TabList height="100%" borderBottomColor="transparent">
                   {authorize(session, [Role.Secretary]) && (
                     <>
