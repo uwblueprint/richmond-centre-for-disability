@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { Text, GridItem } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
+import { authorize } from '@tools/authorization'; // Page authorization
 
 // Internal home page
 export default function AdminManagement() {
@@ -15,18 +16,20 @@ export default function AdminManagement() {
 }
 
 export const getServerSideProps: GetServerSideProps = async context => {
-  const session = getSession(context);
+  const session = await getSession(context);
 
-  if (!session) {
+  // Only admins can access this page
+  if (authorize(session, [])) {
     return {
-      redirect: {
-        destination: '/admin/login',
-        permanent: false,
-      },
+      props: {},
     };
   }
 
+  // If user is not admin, redirect to login
   return {
-    props: {},
+    redirect: {
+      destination: '/admin/login',
+      permanent: false,
+    },
   };
 };

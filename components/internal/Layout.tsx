@@ -22,6 +22,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import { Role } from '@lib/types'; // Role enum
 import { InternalPagePath, getTabIndex } from '@tools/components/internal/layout'; // Routing enums and tools
 import Tab from '@components/internal/navbar/Tab'; // Custom Tab component
+import { authorize } from '@tools/authorization';
 
 type Props = {
   children: ReactNode;
@@ -96,12 +97,18 @@ function Header() {
         <Flex flexGrow={1} justifyContent="center" alignItems="center">
           {session && (
             <>
-              <Tabs height="100%" index={getTabIndex(pathname)}>
+              <Tabs height="100%" index={getTabIndex(pathname, session.role)}>
                 <TabList height="100%" borderBottomColor="transparent">
-                  <Tab path={InternalPagePath.Requests}>Requests</Tab>
-                  <Tab path={InternalPagePath.PermitHolders}>Permit Holders</Tab>
-                  <Tab path={InternalPagePath.Reports}>Reports</Tab>
-                  {session.role === Role.Admin && (
+                  {authorize(session, [Role.Secretary]) && (
+                    <>
+                      <Tab path={InternalPagePath.Requests}>Requests</Tab>
+                      <Tab path={InternalPagePath.PermitHolders}>Permit Holders</Tab>
+                    </>
+                  )}
+                  {authorize(session, [Role.Accounting]) && (
+                    <Tab path={InternalPagePath.Reports}>Reports</Tab>
+                  )}
+                  {authorize(session, []) && (
                     <Tab path={InternalPagePath.AdminManagement}>Admin Management</Tab>
                   )}
                 </TabList>

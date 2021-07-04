@@ -10,6 +10,7 @@ const Tabs: ComponentMultiStyleConfig = {
           _selected: {
             color: 'primary',
             borderColor: 'primary',
+            textStyle: 'button-semibold',
           },
         },
       };

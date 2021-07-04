@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
 
+import { Role } from '@lib/types'; // Role enum
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
 
 export default function Login() {
@@ -153,8 +154,19 @@ export default function Login() {
 export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
 
-  // If user is authenticated, redirect to admin homepage
+  // If user is authenticated, redirect to appropriate page
   if (session) {
+    // If user is accounting, redirect to reports
+    if (session.role === Role.Accounting) {
+      return {
+        redirect: {
+          destination: '/admin/reports',
+          permanent: false,
+        },
+      };
+    }
+
+    // Otherwise, redirect to APP requests
     return {
       redirect: {
         destination: '/admin',
@@ -163,7 +175,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
     };
   }
 
-  // Otherwise, return the login page
+  // Otherwise, remain on the login page
   return {
     props: {},
   };
