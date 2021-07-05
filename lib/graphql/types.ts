@@ -43,6 +43,8 @@ export type Applicant = {
   postalCode: Scalars['String'];
   rcdUserId?: Maybe<Scalars['Int']>;
   acceptedTOC?: Maybe<Scalars['Date']>;
+  /** status: ApplicantStatus */
+  applications?: Maybe<Array<Application>>;
 };
 
 export enum ApplicantStatus {

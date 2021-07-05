@@ -1,7 +1,7 @@
 type Query {
   meta: Meta!
   applicants: [Applicant!]
-  employees: [Employee!]
+  employees(input: QueryEmployeeInput): [Employee!]
   physicians: [Physician!]
   applications: [Application!]
   permits: [Permit!]

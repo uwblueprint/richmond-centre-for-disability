@@ -4,11 +4,17 @@ import { EmployeeAlreadyExistsError } from '@lib/employees/errors'; // Employee 
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 
 /**
- * Query all the RCD employees in the internal-facing app
- * @returns All RCD employees
+ * Queries for RCD employees in the internal-facing app
+ * @returns An array of RCD employees
  */
-export const employees: Resolver = async (_parent, _args, { prisma }) => {
-  const employees = await prisma.employee.findMany();
+export const employees: Resolver = async (_parent, args, { prisma }) => {
+  // Destructure across two lines to prevent TypeScript nested-destructure complaints
+  const { input } = args;
+  let { id } = input || {};
+  // Casts id to number to satisfy Prisma type constraints
+  id = parseInt(id) || undefined;
+
+  const employees = await prisma.employee.findMany({ where: { id: id } });
   return employees;
 };
 
