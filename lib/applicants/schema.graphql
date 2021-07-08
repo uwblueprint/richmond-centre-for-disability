@@ -11,7 +11,8 @@ type Applicant {
   phone: String!
   province: Province!
   city: String!
-  address: String!
+  addressLine1: String!
+  addressLine2: String
   postalCode: String!
   rcdUserId: Int
   # status: ApplicantStatus
@@ -31,7 +32,8 @@ input CreateApplicantInput {
   phone: String!
   province: Province!
   city: String!
-  address: String!
+  addressLine1: String!
+  addressLine2: String
   postalCode: String!
   rcdUserId: Int
   # status: ApplicantStatus

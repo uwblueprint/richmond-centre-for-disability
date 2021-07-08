@@ -37,7 +37,8 @@ export type Applicant = {
   phone: Scalars['String'];
   province: Province;
   city: Scalars['String'];
-  address: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2?: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
   rcdUserId?: Maybe<Scalars['Int']>;
 };
@@ -61,7 +62,8 @@ export type Application = {
   phone: Scalars['String'];
   province: Province;
   city: Scalars['String'];
-  address: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2?: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
   notes?: Maybe<Scalars['String']>;
   rcdUserId?: Maybe<Scalars['Int']>;
@@ -77,7 +79,8 @@ export type Application = {
   /** Physician Information */
   physicianName: Scalars['String'];
   physicianMspNumber: Scalars['Int'];
-  physicianAddress: Scalars['String'];
+  physicianAddressLine1: Scalars['String'];
+  physicianAddressLine2?: Maybe<Scalars['String']>;
   physicianCity: Scalars['String'];
   physicianProvince: Province;
   physicianPostalCode: Scalars['String'];
@@ -95,7 +98,8 @@ export type Application = {
   guardianPhone?: Maybe<Scalars['String']>;
   guardianProvince?: Maybe<Province>;
   guardianCity?: Maybe<Scalars['String']>;
-  guardianAddress?: Maybe<Scalars['String']>;
+  guardianAddressLine1?: Maybe<Scalars['String']>;
+  guardianAddressLine2?: Maybe<Scalars['String']>;
   guardianPostalCode?: Maybe<Scalars['String']>;
   guardianRelationship?: Maybe<Scalars['String']>;
   guardianNotes?: Maybe<Scalars['String']>;
@@ -111,7 +115,8 @@ export type CreateApplicantInput = {
   phone: Scalars['String'];
   province: Province;
   city: Scalars['String'];
-  address: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2?: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
   rcdUserId?: Maybe<Scalars['Int']>;
 };
@@ -132,7 +137,8 @@ export type CreateApplicationInput = {
   phone: Scalars['String'];
   province: Province;
   city: Scalars['String'];
-  address: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2?: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
   notes?: Maybe<Scalars['String']>;
   rcdUserId?: Maybe<Scalars['Int']>;
@@ -148,7 +154,8 @@ export type CreateApplicationInput = {
   /** Physician Information */
   physicianName: Scalars['String'];
   physicianMspNumber: Scalars['Int'];
-  physicianAddress: Scalars['String'];
+  physicianAddressLine1: Scalars['String'];
+  physicianAddressLine2?: Maybe<Scalars['String']>;
   physicianCity: Scalars['String'];
   physicianProvince: Province;
   physicianPostalCode: Scalars['String'];
@@ -166,7 +173,8 @@ export type CreateApplicationInput = {
   guardianPhone?: Maybe<Scalars['String']>;
   guardianProvince?: Maybe<Province>;
   guardianCity?: Maybe<Scalars['String']>;
-  guardianAddress?: Maybe<Scalars['String']>;
+  guardianAddressLine1?: Maybe<Scalars['String']>;
+  guardianAddressLine2?: Maybe<Scalars['String']>;
   guardianPostalCode?: Maybe<Scalars['String']>;
   guardianRelationship?: Maybe<Scalars['String']>;
   guardianNotes?: Maybe<Scalars['String']>;
@@ -189,11 +197,26 @@ export type CreateEmployeeResult = {
   ok: Scalars['Boolean'];
 };
 
+export type CreatePermitInput = {
+  rcdPermitId: Scalars['Int'];
+  expiryDate: Scalars['Date'];
+  receiptId?: Maybe<Scalars['Int']>;
+  active: Scalars['Boolean'];
+  applicationId: Scalars['Int'];
+  applicantId: Scalars['Int'];
+};
+
+export type CreatePermitResult = {
+  __typename?: 'CreatePermitResult';
+  ok: Scalars['Boolean'];
+};
+
 export type CreatePhysicianInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   mspNumber: Scalars['Int'];
-  address: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2?: Maybe<Scalars['String']>;
   city: Scalars['String'];
   province: Province;
   postalCode: Scalars['String'];
@@ -233,6 +256,7 @@ export type Mutation = {
   createEmployee: CreateEmployeeResult;
   createPhysician: CreatePhysicianResult;
   createApplication: CreateApplicationResult;
+  createPermit: CreatePermitResult;
 };
 
 export type MutationCreateApplicantArgs = {
@@ -251,6 +275,10 @@ export type MutationCreateApplicationArgs = {
   input: CreateApplicationInput;
 };
 
+export type MutationCreatePermitArgs = {
+  input: CreatePermitInput;
+};
+
 export enum PaymentType {
   Mastercard = 'MASTERCARD',
   Visa = 'VISA',
@@ -261,12 +289,24 @@ export enum PaymentType {
   MoneyOrder = 'MONEY_ORDER',
 }
 
+export type Permit = {
+  __typename?: 'Permit';
+  id: Scalars['ID'];
+  rcdPermitId: Scalars['Int'];
+  expiryDate: Scalars['Date'];
+  receiptId?: Maybe<Scalars['Int']>;
+  active: Scalars['Boolean'];
+  applicationId: Scalars['Int'];
+  applicantId: Scalars['Int'];
+};
+
 export type Physician = {
   __typename?: 'Physician';
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   mspNumber: Scalars['Int'];
-  address: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2?: Maybe<Scalars['String']>;
   city: Scalars['String'];
   province: Province;
   postalCode: Scalars['String'];
@@ -308,6 +348,7 @@ export type Query = {
   employees?: Maybe<Array<Employee>>;
   physicians?: Maybe<Array<Physician>>;
   applications?: Maybe<Array<Application>>;
+  permits?: Maybe<Array<Permit>>;
 };
 
 export enum Role {
