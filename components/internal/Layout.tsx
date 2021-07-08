@@ -50,10 +50,10 @@ export default function Layout({ children, header = true, footer = true }: Props
 function Meta() {
   return (
     <Head>
-      <title>RCD APP Management System</title>
+      <title>RCD APP Administration Portal</title>
       <meta
         name="title"
-        content="Richmond Centre for Disability's Accessible Parking Permit Management System"
+        content="Richmond Centre for Disability's Accessible Parking Permit Administration Portal"
       />
       <meta
         name="description"
@@ -87,7 +87,7 @@ function Header() {
           </Box>
           <Box>
             <Text as="h2" textStyle="button-semibold">
-              APP Management System
+              APP Administration Portal
             </Text>
             <Text as="h3" textStyle="xsmall" textAlign="left">
               For RCD
