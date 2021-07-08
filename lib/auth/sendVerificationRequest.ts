@@ -14,7 +14,7 @@ const sendVerificationRequest: SendVerificationRequest = ({
       {
         to: email,
         from,
-        subject: 'Sign in to RCD APP Platform',
+        subject: 'Your temporary RCD APP Administration Portal login',
         text: text({ email, url }),
         html: html({ email, url }),
       },
@@ -51,7 +51,7 @@ const html = (config: EmailConfig) => {
       style="
         background-color: #ffffff;
         text-align: center;
-        font-family: Verdana, Arial', sans-serif;
+        font-family: Arial, sans-serif;
       "
     >
       <div
@@ -96,7 +96,7 @@ const html = (config: EmailConfig) => {
           >
             Click the button below to authenticate as ${escapedEmail}
             <br />
-            and sign into RCD APP Management System.
+            and sign into RCD APP Administration Portal.
           </p>
           <a
             href="${url}"
@@ -106,11 +106,12 @@ const html = (config: EmailConfig) => {
               padding: 12px 24px;
               border-radius: 6px;
               font-size: 18px;
+              font-weight: 600;
               line-height: 150%;
               text-decoration: none;
             "
           >
-            Log into RCD APP Management System
+            Log into RCD APP Administration Portal
           </a>
           <p
             style="
@@ -135,7 +136,7 @@ const html = (config: EmailConfig) => {
  */
 const text = (config: EmailConfig) => {
   const { url, email } = config;
-  return `Log into RCD APP Manager as ${email}:\n${url}]\n\n`;
+  return `Log into RCD APP Administration Portal as ${email}:\n${url}]\n\n`;
 };
 
 export default sendVerificationRequest;
