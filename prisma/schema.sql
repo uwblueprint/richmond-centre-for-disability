@@ -92,6 +92,7 @@ CREATE TABLE applicants (
   postal_code               CHAR(6) NOT NULL,
   rcd_user_id               INTEGER UNIQUE,
   status                    ApplicantStatus,
+  accepted_TOC              TIMESTAMPTZ,
   created_at                TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at                TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

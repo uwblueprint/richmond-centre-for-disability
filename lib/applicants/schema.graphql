@@ -16,6 +16,7 @@ type Applicant {
   addressLine2: String
   postalCode: String!
   rcdUserId: Int
+  acceptedTOC: Date
   # status: ApplicantStatus
   # applications: [Application!]
   # guardian: Guardian
@@ -38,6 +39,7 @@ input CreateApplicantInput {
   addressLine2: String
   postalCode: String!
   rcdUserId: Int
+  acceptedTOC: Date
   # status: ApplicantStatus
   # applications: [Application!]
   # guardian: Guardian
