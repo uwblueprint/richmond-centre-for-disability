@@ -33,6 +33,7 @@ export type Applicant = {
   lastName: Scalars['String'];
   dateOfBirth: Scalars['Date'];
   gender: Gender;
+  customGender?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   province: Province;
@@ -41,6 +42,7 @@ export type Applicant = {
   addressLine2?: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
   rcdUserId?: Maybe<Scalars['Int']>;
+  acceptedTOC?: Maybe<Scalars['Date']>;
 };
 
 export enum ApplicantStatus {
@@ -58,6 +60,7 @@ export type Application = {
   lastName: Scalars['String'];
   dateOfBirth: Scalars['Date'];
   gender: Gender;
+  customGender?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   phone: Scalars['String'];
   province: Province;
@@ -111,6 +114,7 @@ export type CreateApplicantInput = {
   lastName: Scalars['String'];
   dateOfBirth: Scalars['Date'];
   gender: Gender;
+  customGender?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   province: Province;
@@ -119,6 +123,7 @@ export type CreateApplicantInput = {
   addressLine2?: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
   rcdUserId?: Maybe<Scalars['Int']>;
+  acceptedTOC?: Maybe<Scalars['Date']>;
 };
 
 export type CreateApplicantResult = {
@@ -133,6 +138,7 @@ export type CreateApplicationInput = {
   lastName: Scalars['String'];
   dateOfBirth: Scalars['Date'];
   gender: Gender;
+  customGender?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   phone: Scalars['String'];
   province: Province;
