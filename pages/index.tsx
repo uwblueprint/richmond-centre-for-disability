@@ -22,7 +22,7 @@ export default function Landing() {
 
   return (
     <Layout>
-      <GridItem colSpan={8} colStart={1} mt="64px">
+      <GridItem colSpan={8} colStart={1}>
         <Text as="h1" textStyle="display-xlarge" align="left">
           {t('landing')}
         </Text>
@@ -53,7 +53,7 @@ export default function Landing() {
             <Text as="p">Complete the online form and pay a $26 processing fee</Text>
           </ListItem>
         </UnorderedList>
-        <Link href="#">
+        <Link href="/verify-identity">
           <Button
             colorScheme="primary"
             variant="solid"

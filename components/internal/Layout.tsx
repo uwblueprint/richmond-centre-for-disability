@@ -25,9 +25,9 @@ import Tab from '@components/internal/navbar/Tab'; // Custom Tab component
 import { authorize } from '@tools/authorization';
 
 type Props = {
-  children: ReactNode;
-  header?: boolean;
-  footer?: boolean;
+  readonly children: ReactNode;
+  readonly header?: boolean;
+  readonly footer?: boolean;
 };
 
 // Internal Layout component
