@@ -7,6 +7,7 @@ type Applicant {
   lastName: String!
   dateOfBirth: Date!
   gender: Gender!
+  customGender: String
   email: String
   phone: String!
   province: Province!
@@ -28,6 +29,7 @@ input CreateApplicantInput {
   lastName: String!
   dateOfBirth: Date!
   gender: Gender!
+  customGender: String
   email: String
   phone: String!
   province: Province!
