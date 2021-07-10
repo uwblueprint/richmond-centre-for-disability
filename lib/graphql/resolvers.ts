@@ -17,18 +17,18 @@ export type Resolver<P = undefined> = IFieldResolver<P, Context>;
 const resolvers = {
   Query: {
     meta,
-    applicants: authorize(applicants, [Role.Admin, Role.Secretary]),
-    employees: authorize(employees, [Role.Admin]),
-    physicians: authorize(physicians, [Role.Admin, Role.Secretary]),
-    applications: authorize(applications, [Role.Admin, Role.Secretary]),
-    permits: authorize(permits, [Role.Admin, Role.Secretary]),
+    applicants: authorize(applicants, [Role.Secretary]),
+    employees: authorize(employees),
+    physicians: authorize(physicians, [Role.Secretary]),
+    applications: authorize(applications, [Role.Secretary]),
+    permits: authorize(permits, [Role.Secretary]),
   },
   Mutation: {
-    createApplicant: authorize(createApplicant, [Role.Admin, Role.Secretary]),
-    createEmployee: authorize(createEmployee, [Role.Admin]),
-    createPhysician: authorize(createPhysician, [Role.Admin, Role.Secretary]),
-    createApplication: authorize(createApplication, [Role.Admin, Role.Secretary]),
-    createPermit: authorize(createPermit, [Role.Admin, Role.Secretary]),
+    createApplicant: authorize(createApplicant, [Role.Secretary]),
+    createEmployee: authorize(createEmployee),
+    createPhysician: authorize(createPhysician, [Role.Secretary]),
+    createApplication: authorize(createApplication, [Role.Secretary]),
+    createPermit: authorize(createPermit, [Role.Secretary]),
   },
   Date: dateScalar,
 };
