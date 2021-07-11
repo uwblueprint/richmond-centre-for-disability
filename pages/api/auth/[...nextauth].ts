@@ -50,8 +50,8 @@ export default NextAuth({
     },
   }),
   pages: {
-    error: '/',
-    verifyRequest: '/verify',
+    error: '/admin',
+    verifyRequest: '/admin/verify',
   },
   session: {
     jwt: true,
