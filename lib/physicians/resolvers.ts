@@ -10,7 +10,11 @@ import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format';
  * @returns All physicians of RCD applicants
  */
 export const physicians: Resolver = async (_parent, _args, { prisma }) => {
-  const physicians = await prisma.physician.findMany();
+  const physicians = await prisma.physician.findMany({
+    include: {
+      medicalInformation: true,
+    },
+  });
   return physicians;
 };
 

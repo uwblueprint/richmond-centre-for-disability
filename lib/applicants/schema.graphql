@@ -18,7 +18,7 @@ type Applicant {
   rcdUserId: Int
   acceptedTOC: Date
   # status: ApplicantStatus
-  # applications: [Application!]
+  applications: [Application!]
   # guardian: Guardian
   # medicalInformation: MedicalInformation
   # permits: [Permit!]
