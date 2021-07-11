@@ -11,13 +11,14 @@ import Form from '@tools/theme/components/form'; // Form control styles
 import FormLabel from '@tools/theme/components/form-label'; // Form label styles
 import Checkbox from '@tools/theme/components/checkbox'; // Checkbox styles
 import Alert from '@tools/theme/components/alert'; // Alert styles (shared by Toast)
+import Tabs from '@tools/theme/components/tabs'; // Tabs styles
 
 const theme = extendTheme({
   colors,
   ...typography,
   space,
   shadows,
-  components: { Button, Form, FormLabel, Checkbox, Alert },
+  components: { Button, Form, FormLabel, Checkbox, Alert, Tabs },
   textStyles,
 });
 

@@ -5,12 +5,12 @@ import Layout from '@components/internal/Layout'; // Layout component
 import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 
-// Internal home page - view APP requests
-export default function Requests() {
+// Internal home page
+export default function Reports() {
   return (
     <Layout>
       <GridItem colSpan={12} marginTop="64px">
-        <Text textStyle="display-xlarge">Internal management portal</Text>
+        <Text textStyle="display-xlarge">Reports</Text>
       </GridItem>
     </Layout>
   );
@@ -19,14 +19,14 @@ export default function Requests() {
 export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
 
-  // Only secretaries and admins can access APP requests
-  if (authorize(session, [Role.Secretary])) {
+  // Only accounting and admins can access reports
+  if (authorize(session, [Role.Accounting])) {
     return {
       props: {},
     };
   }
 
-  // Redirect to login if roles requirement not satisfied
+  // If user is not accounting or admin, redirect to login
   return {
     redirect: {
       destination: '/admin/login',
