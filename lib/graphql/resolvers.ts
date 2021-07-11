@@ -7,25 +7,28 @@ import { permits, createPermit } from '@lib/permits/resolvers';
 import { IFieldResolver } from 'graphql-tools'; // GraphQL field resolver
 import { Context } from '@lib/context'; // Context type
 import { dateScalar } from '@lib/scalars'; // Custom date scalar implementation
+import { authorize } from '@lib/authorization';
+import { Role } from '@lib/types';
 
 // Resolver type
 export type Resolver<P = undefined> = IFieldResolver<P, Context>;
 
+// authorize is a wrapper around graphQL resolvers that protects and restricts routes based on RCD employee roles.
 const resolvers = {
   Query: {
     meta,
-    applicants,
-    employees,
-    physicians,
-    applications,
-    permits,
+    applicants: authorize(applicants, [Role.Secretary]),
+    employees: authorize(employees),
+    physicians: authorize(physicians, [Role.Secretary]),
+    applications: authorize(applications, [Role.Secretary]),
+    permits: authorize(permits, [Role.Secretary]),
   },
   Mutation: {
-    createApplicant,
-    createEmployee,
-    createPhysician,
-    createApplication,
-    createPermit,
+    createApplicant: authorize(createApplicant, [Role.Secretary]),
+    createEmployee: authorize(createEmployee),
+    createPhysician: authorize(createPhysician, [Role.Secretary]),
+    createApplication: authorize(createApplication, [Role.Secretary]),
+    createPermit: authorize(createPermit, [Role.Secretary]),
   },
   Date: dateScalar,
 };
