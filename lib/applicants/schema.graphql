@@ -17,11 +17,11 @@ type Applicant {
   postalCode: String!
   rcdUserId: Int
   acceptedTOC: Date
-  # status: ApplicantStatus
+  status: ApplicantStatus
   applications: [Application!]
-  # guardian: Guardian
-  # medicalInformation: MedicalInformation
-  # permits: [Permit!]
+  guardian: Guardian
+  medicalInformation: MedicalInformation
+  permits: [Permit!]
 }
 
 input CreateApplicantInput {

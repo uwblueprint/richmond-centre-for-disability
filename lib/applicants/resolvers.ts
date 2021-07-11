@@ -13,6 +13,8 @@ export const applicants: Resolver = async (_parent, _args, { prisma }) => {
     include: {
       applications: true,
       permits: true,
+      guardian: true,
+      medicalInformation: true,
     },
   });
   return applicants;

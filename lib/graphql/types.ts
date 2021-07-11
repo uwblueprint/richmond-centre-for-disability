@@ -43,8 +43,11 @@ export type Applicant = {
   postalCode: Scalars['String'];
   rcdUserId?: Maybe<Scalars['Int']>;
   acceptedTOC?: Maybe<Scalars['Date']>;
-  /** status: ApplicantStatus */
+  status?: Maybe<ApplicantStatus>;
   applications?: Maybe<Array<Application>>;
+  guardian?: Maybe<Guardian>;
+  medicalInformation?: Maybe<MedicalInformation>;
+  permits?: Maybe<Array<Permit>>;
 };
 
 export enum ApplicantStatus {
@@ -252,6 +255,36 @@ export enum Gender {
   Female = 'FEMALE',
   Other = 'OTHER',
 }
+
+export type Guardian = {
+  __typename?: 'Guardian';
+  id: Scalars['ID'];
+  firstName: Scalars['String'];
+  middleName?: Maybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  address: Scalars['String'];
+  city: Scalars['String'];
+  province: Province;
+  postalCode: Scalars['String'];
+  phone: Scalars['String'];
+  relationship: Scalars['String'];
+  notes?: Maybe<Scalars['String']>;
+  applicant: Applicant;
+};
+
+export type MedicalInformation = {
+  __typename?: 'MedicalInformation';
+  id: Scalars['ID'];
+  disability: Scalars['String'];
+  affectsMobility: Scalars['Boolean'];
+  mobilityAidRequired: Scalars['Boolean'];
+  cannotWalk100m: Scalars['Boolean'];
+  notes?: Maybe<Scalars['String']>;
+  certificationDate?: Maybe<Scalars['Date']>;
+  aid?: Maybe<Array<Maybe<Aid>>>;
+  applicant: Applicant;
+  physician: Physician;
+};
 
 export type Meta = {
   __typename?: 'Meta';

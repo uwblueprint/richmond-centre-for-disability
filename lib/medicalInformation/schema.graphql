@@ -1,0 +1,12 @@
+type MedicalInformation {
+  id: ID!
+  disability: String!
+  affectsMobility: Boolean!
+  mobilityAidRequired: Boolean!
+  cannotWalk100m: Boolean!
+  notes: String
+  certificationDate: Date
+  aid: [Aid]
+  applicant: Applicant!
+  physician: Physician!
+}
