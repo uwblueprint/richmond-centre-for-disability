@@ -60,6 +60,16 @@ const colors = {
     informative: '#98C6CD',
     gray: '#E2E8F0',
   },
+  badge: {
+    completed: '#EEEEEE',
+    inProgress: '#D9F1F8',
+    pending: '#FFF0BC',
+    rejected: '#FFE7DF',
+    expiring: '#FFEBD4',
+    expired: '#FFE7DF',
+    active: '#F1F8F5',
+    inactive: '#FFF4F4',
+  },
 };
 
 export default colors;

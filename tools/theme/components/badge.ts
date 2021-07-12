@@ -17,32 +17,30 @@ const Badge: ComponentSingleStyleConfig = {
 
   // Variants (completed, inProgress, pending, rejected, expiring, expired, active, inactive)
   variants: {
-    completed: () => {
-      return {
-        bg: '#EEEEEE',
-      };
+    completed: {
+      bg: 'badge.completed',
     },
-    inProgress: () => ({
-      bg: '#D9F1F8',
-    }),
-    pending: () => ({
-      bg: '#FFF0BC',
-    }),
-    rejected: () => ({
-      bg: '#FFE7DF',
-    }),
-    expiring: () => ({
-      bg: '#FFEBD4',
-    }),
-    expired: () => ({
-      bg: '#FFE7DF',
-    }),
-    active: () => ({
-      bg: 'background.success',
-    }),
-    inactive: () => ({
-      bg: 'background.critical',
-    }),
+    inProgress: {
+      bg: 'badge.inProgress',
+    },
+    pending: {
+      bg: 'badge.pending',
+    },
+    rejected: {
+      bg: 'badge.rejected',
+    },
+    expiring: {
+      bg: 'badge.expiring',
+    },
+    expired: {
+      bg: 'badge.expired',
+    },
+    active: {
+      bg: 'badge.active',
+    },
+    inactive: {
+      bg: 'badge.inactive',
+    },
   },
 };
 
