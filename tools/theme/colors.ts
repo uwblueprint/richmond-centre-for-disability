@@ -66,7 +66,6 @@ const colors = {
     pending: '#FFF0BC',
     rejected: '#FFE7DF',
     expiring: '#FFEBD4',
-    expired: '#FFE7DF',
     active: '#F1F8F5',
     inactive: '#FFF4F4',
   },
