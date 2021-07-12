@@ -2,21 +2,13 @@ import { Badge, Box } from '@chakra-ui/react'; // Chakra UI
 import Image from 'next/image'; // Optimized images
 
 type Props = {
-  variant:
-    | 'completed'
-    | 'inProgress'
-    | 'pending'
-    | 'rejected'
-    | 'expiring'
-    | 'expired'
-    | 'active'
-    | 'inactive';
+  variant: 'completed' | 'inProgress' | 'pending' | 'rejected' | 'expiring' | 'expired' | 'active';
 };
 
-export function ApplicantStatusBadge({ variant }: Props) {
+export function RequestStatusBadge({ variant }: Props) {
   /**
-   * Renders the applicant status badge content (icon + text)
-   * @param variant for specifying applicant status badge type
+   * Renders the request status badge content (icon + text)
+   * @param variant for specifying request status badge type
    * @returns {JSX.Element} contents of the badge
    */
   const _renderBadgeContent = (variant: Props['variant']): JSX.Element => {
@@ -106,7 +98,6 @@ export function ApplicantStatusBadge({ variant }: Props) {
           </>
         );
       case 'active':
-      default:
         return (
           <>
             <Image
@@ -125,7 +116,7 @@ export function ApplicantStatusBadge({ variant }: Props) {
 
   return (
     <Badge variant={variant}>
-      <Box ml="-1" mr="2">
+      <Box ml="-4px" mr="8px">
         {_renderBadgeContent(variant)}
       </Box>
     </Badge>

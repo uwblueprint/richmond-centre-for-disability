@@ -33,7 +33,7 @@ const Badge: ComponentSingleStyleConfig = {
       bg: 'badge.expiring',
     },
     expired: {
-      bg: 'badge.rejected',
+      bg: 'badge.expired',
     },
     active: {
       bg: 'badge.active',

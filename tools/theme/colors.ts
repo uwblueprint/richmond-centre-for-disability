@@ -65,6 +65,7 @@ const colors = {
     inProgress: '#D9F1F8',
     pending: '#FFF0BC',
     rejected: '#FFE7DF',
+    expired: '#FFE7DF',
     expiring: '#FFEBD4',
     active: '#F1F8F5',
     inactive: '#FFF4F4',
