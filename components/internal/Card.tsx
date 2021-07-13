@@ -7,7 +7,7 @@ export default function Card(props: BoxProps) {
       flexDirection="column"
       alignItems="flex-start"
       padding="20px 24px 24px"
-      position="absolute"
+      // position="absolute"
       background="#FFFFFF"
       border="1px solid"
       borderColor="#C9CCCF"
