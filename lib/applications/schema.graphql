@@ -6,11 +6,13 @@ type Application {
   lastName: String!
   dateOfBirth: Date!
   gender: Gender!
+  customGender: String
   email: String!
   phone: String!
   province: Province!
   city: String!
-  address: String!
+  addressLine1: String!
+  addressLine2: String
   postalCode: String!
   notes: String
   rcdUserId: Int
@@ -28,7 +30,8 @@ type Application {
   #Physician Information
   physicianName: String!
   physicianMspNumber: Int!
-  physicianAddress: String!
+  physicianAddressLine1: String!
+  physicianAddressLine2: String
   physicianCity: String!
   physicianProvince: Province!
   physicianPostalCode: String!
@@ -48,7 +51,8 @@ type Application {
   guardianPhone: String
   guardianProvince: Province 
   guardianCity: String
-  guardianAddress: String
+  guardianAddressLine1: String
+  guardianAddressLine2: String
   guardianPostalCode: String
   guardianRelationship: String
   guardianNotes: String
@@ -61,11 +65,13 @@ input CreateApplicationInput {
   lastName: String!
   dateOfBirth: Date!
   gender: Gender!
+  customGender: String
   email: String!
   phone: String!
   province: Province!
   city: String!
-  address: String!
+  addressLine1: String!
+  addressLine2: String
   postalCode: String!
   notes: String
   rcdUserId: Int
@@ -83,7 +89,8 @@ input CreateApplicationInput {
   #Physician Information
   physicianName: String!
   physicianMspNumber: Int!
-  physicianAddress: String!
+  physicianAddressLine1: String!
+  physicianAddressLine2: String
   physicianCity: String!
   physicianProvince: Province!
   physicianPostalCode: String!
@@ -103,7 +110,8 @@ input CreateApplicationInput {
   guardianPhone: String
   guardianProvince: Province 
   guardianCity: String
-  guardianAddress: String
+  guardianAddressLine1: String
+  guardianAddressLine2: String
   guardianPostalCode: String
   guardianRelationship: String
   guardianNotes: String

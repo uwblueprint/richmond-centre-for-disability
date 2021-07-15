@@ -7,13 +7,16 @@ type Applicant {
   lastName: String!
   dateOfBirth: Date!
   gender: Gender!
+  customGender: String
   email: String
   phone: String!
   province: Province!
   city: String!
-  address: String!
+  addressLine1: String!
+  addressLine2: String
   postalCode: String!
   rcdUserId: Int
+  acceptedTOC: Date
   # status: ApplicantStatus
   # applications: [Application!]
   # guardian: Guardian
@@ -27,13 +30,16 @@ input CreateApplicantInput {
   lastName: String!
   dateOfBirth: Date!
   gender: Gender!
+  customGender: String
   email: String
   phone: String!
   province: Province!
   city: String!
-  address: String!
+  addressLine1: String!
+  addressLine2: String
   postalCode: String!
   rcdUserId: Int
+  acceptedTOC: Date
   # status: ApplicantStatus
   # applications: [Application!]
   # guardian: Guardian
