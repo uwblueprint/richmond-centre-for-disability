@@ -8,9 +8,9 @@ export default function Card(rest: BoxProps) {
       alignItems="flex-start"
       padding="20px 24px 24px"
       // position="absolute"
-      background="#FFFFFF"
+      background="white"
       border="1px solid"
-      borderColor="#C9CCCF"
+      borderColor="border.secondary"
       boxSizing="border-box"
       borderRadius="8px"
       {...rest}
