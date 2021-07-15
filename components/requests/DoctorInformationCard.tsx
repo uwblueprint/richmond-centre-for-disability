@@ -1,13 +1,14 @@
-import { Box, HStack, Text, Divider, SimpleGrid } from '@chakra-ui/react';
+import { Box, HStack, Text, Divider, SimpleGrid, Link } from '@chakra-ui/react';
 import Card from '@components/internal/Card';
 
 type doctorInformationProps = {
   readonly name: string;
-  readonly userId: number;
-  readonly email: string;
+  readonly mspNumber: number;
   readonly phoneNumber: string;
+  readonly province: string;
+  readonly city: string;
   readonly address: string;
-  readonly updated: boolean;
+  readonly postalCode: string;
 };
 
 export default function DoctorInformationCard(props: doctorInformationProps) {
@@ -32,11 +33,9 @@ export default function DoctorInformationCard(props: doctorInformationProps) {
           </HStack>
         </Box>
         <Box>
-          <Text textStyle="body-bold" color="#1E4FC2">
-            <a href="">
-              <u>Edit</u>
-            </a>
-          </Text>
+          <Link textStyle="body-bold" color="primary" textDecoration="underline">
+            Edit
+          </Link>
         </Box>
       </HStack>
       <Divider pt="20px" />
@@ -51,7 +50,7 @@ export default function DoctorInformationCard(props: doctorInformationProps) {
           <Text textStyle="body-regular">MSP #</Text>
         </Box>
         <Box>
-          <Text textStyle="body-regular">{props.userId}</Text>
+          <Text textStyle="body-regular">{props.mspNumber}</Text>
         </Box>
         <Box w="200px" h="27px">
           <Text textStyle="body-regular">Phone</Text>
@@ -64,9 +63,11 @@ export default function DoctorInformationCard(props: doctorInformationProps) {
         </Box>
         <Box>
           <Text textStyle="body-regular">{props.address}</Text>
-          <Text textStyle="body-regular">Waterloo ON</Text>
+          <Text textStyle="body-regular">
+            {props.city} {props.province}
+          </Text>
           <Text textStyle="body-regular">Canada</Text>
-          <Text textStyle="body-regular"> H2J 3D8</Text>
+          <Text textStyle="body-regular"> {props.postalCode}</Text>
         </Box>
       </SimpleGrid>
     </Card>

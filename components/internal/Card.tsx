@@ -1,6 +1,6 @@
 import { Box, BoxProps } from '@chakra-ui/react';
 
-export default function Card(props: BoxProps) {
+export default function Card(rest: BoxProps) {
   return (
     <Box
       display="flex"
@@ -13,7 +13,7 @@ export default function Card(props: BoxProps) {
       borderColor="#C9CCCF"
       boxSizing="border-box"
       borderRadius="8px"
-      {...props}
+      {...rest}
     />
   );
 }

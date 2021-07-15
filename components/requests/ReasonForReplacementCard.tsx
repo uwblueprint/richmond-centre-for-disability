@@ -1,4 +1,4 @@
-import { Box, HStack, Text, Divider, SimpleGrid } from '@chakra-ui/react';
+import { Box, HStack, Text, Divider, SimpleGrid, Link } from '@chakra-ui/react';
 import Card from '@components/internal/Card';
 
 type replacementProps = {
@@ -17,35 +17,31 @@ export default function ReasonForReplacementCard(props: replacementProps) {
             <Text textStyle="display-small-semibold">Reason for Replacement</Text>
           </HStack>
         </Box>
-        <Box>
-          <Text textStyle="body-bold" color="#1E4FC2">
-            <a href="">
-              <u>Edit</u>
-            </a>
-          </Text>
-        </Box>
+        <Link textStyle="body-bold" color="primary" textDecoration="underline">
+          Edit
+        </Link>
       </HStack>
       <Divider pt="24px" />
-      <SimpleGrid columns={2} spacingY="12px" pt="20px">
-        <Box width="60px">
+      <SimpleGrid columns={2} spacingY="12px" spacingX="20px" pt="20px">
+        <Box w="200px" h="27px">
           <Text textStyle="body-regular">Cause</Text>
         </Box>
-        <Box width="100px">
+        <Box>
           <Text textStyle="body-regular">{props.cause}</Text>
         </Box>
-        <Box width="150px">
+        <Box w="200px" h="27px">
           <Text textStyle="body-regular">Event timestamp</Text>
         </Box>
         <Box>
           <Text textStyle="body-regular">{props.timestamp}</Text>
         </Box>
-        <Box width="150px">
+        <Box w="200px" h="27px">
           <Text textStyle="body-regular">Location Lost</Text>
         </Box>
         <Box>
           <Text textStyle="body-regular">{props.locationLost}</Text>
         </Box>
-        <Box width="150px">
+        <Box w="200px" h="27px">
           <Text textStyle="body-regular">Event description</Text>
         </Box>
         <Box>

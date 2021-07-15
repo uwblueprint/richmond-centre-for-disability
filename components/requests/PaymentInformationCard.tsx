@@ -1,10 +1,23 @@
-import { Box, HStack, Text, Divider, SimpleGrid } from '@chakra-ui/react';
+import { Box, HStack, Text, Divider, SimpleGrid, Link, VStack } from '@chakra-ui/react';
 import Card from '@components/internal/Card';
+import { PaymentType } from '@lib/graphql/types';
 
 type paymentInformationProps = {
   readonly permitFee: number;
   readonly dontation: number;
-  readonly address: string;
+  readonly paymentType: PaymentType;
+
+  readonly shippingAddress: string;
+  readonly shippingCity: string;
+  readonly shippingProvince: string;
+  readonly shippingCountry: string;
+  readonly shippingPostalCode: string;
+
+  readonly billingAddress: string;
+  readonly billingCity: string;
+  readonly billingProvince: string;
+  readonly billingCountry: string;
+  readonly billingPostalCode: string;
 };
 
 export default function PaymentInformationCard(props: paymentInformationProps) {
@@ -14,61 +27,63 @@ export default function PaymentInformationCard(props: paymentInformationProps) {
         <Box w="600px">
           <Text textStyle="display-small-semibold">Payment, Shipping, and Billing Information</Text>
         </Box>
-        <Box w="10vw">
-          <Text textStyle="body-bold" color="#1E4FC2">
-            <a href="">
-              <u>Edit</u>
-            </a>
-          </Text>
+        <Box>
+          <Link textStyle="body-bold" color="primary" textDecoration="underline">
+            Edit
+          </Link>
         </Box>
       </HStack>
       <Divider pt="20px" />
-      <SimpleGrid columns={1} spacingX="20px" spacingY="12px" pt="20px">
+      <VStack align="left" spacing="12px" pt="20px">
         <Box w="200px" h="27px">
           <Text textStyle="body-bold">Fees</Text>
         </Box>
-      </SimpleGrid>
-      <SimpleGrid columns={2} spacingX="70px" spacingY="12px" pt="20px">
-        <Box>
-          <Text textStyle="body-regular">Permit Fees(Fixed)</Text>
-        </Box>
-        <Box>
-          <Text textStyle="body-regular">${props.permitFee}</Text>
-        </Box>
-        <Box>
-          <Text textStyle="body-regular">Donation</Text>
-        </Box>
-        <Box>
-          <Text textStyle="body-regular">${props.dontation}</Text>
-        </Box>
-        <Box>
-          <Text textStyle="caption">Paid with Master Card</Text>
-        </Box>
-      </SimpleGrid>
+        <SimpleGrid columns={2} spacingX="70px" spacingY="12px">
+          <Box>
+            <Text textStyle="body-regular">Permit Fees(Fixed)</Text>
+          </Box>
+          <Box>
+            <Text textStyle="body-regular">${props.permitFee}</Text>
+          </Box>
+          <Box>
+            <Text textStyle="body-regular">Donation</Text>
+          </Box>
+          <Box>
+            <Text textStyle="body-regular">${props.dontation}</Text>
+          </Box>
+          <Box>
+            <Text textStyle="caption">Paid with {props.paymentType}</Text>
+          </Box>
+        </SimpleGrid>
+      </VStack>
       <Divider pt="20px" />
       <SimpleGrid columns={2} spacingX="150px" spacingY="12px" pt="20px">
-        <SimpleGrid columns={1}>
+        <VStack spacingY="12px" align="left">
           <Box>
             <Text textStyle="body-bold">Shipping Address</Text>
           </Box>
           <Box>
-            <Text textStyle="body-regular">{props.address}</Text>
-            <Text textStyle="body-regular">Waterloo ON</Text>
-            <Text textStyle="body-regular">Canada</Text>
-            <Text textStyle="body-regular"> H2J 3D8</Text>
+            <Text textStyle="body-regular">{props.shippingAddress}</Text>
+            <Text textStyle="body-regular">
+              {props.shippingCity} {props.shippingProvince}
+            </Text>
+            <Text textStyle="body-regular">{props.shippingCountry}</Text>
+            <Text textStyle="body-regular">{props.shippingPostalCode}</Text>
           </Box>
-        </SimpleGrid>
-        <SimpleGrid columns={1} spacingY="12px">
-          <Box w="200px" h="27px">
+        </VStack>
+        <VStack spacingY="12px" align="left">
+          <Box>
             <Text textStyle="body-bold">Billing Address</Text>
           </Box>
           <Box>
-            <Text textStyle="body-regular">{props.address}</Text>
-            <Text textStyle="body-regular">Waterloo ON</Text>
-            <Text textStyle="body-regular">Canada</Text>
-            <Text textStyle="body-regular"> H2J 3D8</Text>
+            <Text textStyle="body-regular">{props.billingAddress}</Text>
+            <Text textStyle="body-regular">
+              {props.billingCity} {props.billingProvince}
+            </Text>
+            <Text textStyle="body-regular">{props.billingCountry}</Text>
+            <Text textStyle="body-regular">{props.billingPostalCode}</Text>
           </Box>
-        </SimpleGrid>
+        </VStack>
       </SimpleGrid>
     </Card>
   );
