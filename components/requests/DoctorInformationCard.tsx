@@ -29,36 +29,46 @@ export default function DoctorInformationCard(props: doctorInformationProps) {
                 <u>Edit</u>
               </a>
             </Text>
-          </Box>
-        </HStack>
-        <Divider pt="20px" />
-        <SimpleGrid columns={2} spacingX="20px" spacingY="12px" pt="20px">
-          <Box w="200px" h="27px">
-            <Text textStyle="body-regular">Name</Text>
-          </Box>
-          <Box>
-            <Text textStyle="body-regular">{props.name}</Text>
-          </Box>
-          <Box w="200px" h="27px">
-            <Text textStyle="body-regular">MSP #</Text>
-          </Box>
-          <Box>
-            <Text textStyle="body-regular">{props.userId}</Text>
-          </Box>
-          <Box w="200px" h="27px">
-            <Text textStyle="body-regular">Phone</Text>
-          </Box>
-          <Box>
-            <Text textStyle="body-regular">{props.phoneNumber}</Text>
-          </Box>
-          <Box w="200px" h="27px">
-            <Text textStyle="body-regular">Address</Text>
-          </Box>
-          <Box>
-            <Text textStyle="body-regular">{props.address}</Text>
-          </Box>
-        </SimpleGrid>
-      </Card>
-    </div>
+          </HStack>
+        </Box>
+        <Box>
+          <Text textStyle="body-bold" color="#1E4FC2">
+            <a href="">
+              <u>Edit</u>
+            </a>
+          </Text>
+        </Box>
+      </HStack>
+      <Divider pt="20px" />
+      <SimpleGrid columns={2} spacingX="20px" spacingY="12px" pt="20px">
+        <Box w="200px" h="27px">
+          <Text textStyle="body-regular">Name</Text>
+        </Box>
+        <Box>
+          <Text textStyle="body-regular">{props.name}</Text>
+        </Box>
+        <Box w="200px" h="27px">
+          <Text textStyle="body-regular">MSP #</Text>
+        </Box>
+        <Box>
+          <Text textStyle="body-regular">{props.userId}</Text>
+        </Box>
+        <Box w="200px" h="27px">
+          <Text textStyle="body-regular">Phone</Text>
+        </Box>
+        <Box>
+          <Text textStyle="body-regular">{props.phoneNumber}</Text>
+        </Box>
+        <Box w="200px" h="27px">
+          <Text textStyle="body-regular">Address</Text>
+        </Box>
+        <Box>
+          <Text textStyle="body-regular">{props.address}</Text>
+          <Text textStyle="body-regular">Waterloo ON</Text>
+          <Text textStyle="body-regular">Canada</Text>
+          <Text textStyle="body-regular"> H2J 3D8</Text>
+        </Box>
+      </SimpleGrid>
+    </Card>
   );
 }
