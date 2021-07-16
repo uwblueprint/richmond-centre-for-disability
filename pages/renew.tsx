@@ -22,6 +22,7 @@ import { Step, Steps } from 'chakra-ui-steps'; // Chakra UI Steps
 import Layout from '@components/applicant/Layout'; // Layout component
 import ReviewRequestField from '@components/applicant/renewals/ReviewRequestField'; // Field in Review Request section
 import useSteps from '@tools/components/Steps/useSteps'; // Custom hook for managing steps state
+import IncompleteSectionAlert from '@components/applicant/renewals/IncompleteSectionAlert'; // Alert box for incomplete form section
 
 export default function Renew() {
   // Steps state
@@ -61,7 +62,7 @@ export default function Renew() {
   // Whether each section has invalid inputs
   const invalidPersonalAddress =
     updatedAddress && (!personalAddressLine1 || !personalCity || !personalPostalCode);
-  const invalidContact = updatedContact && (!contactPhoneNumber || !contactEmailAddress);
+  const invalidContact = updatedContact && !contactPhoneNumber && !contactEmailAddress;
   const invalidDoctor =
     updatedDoctor &&
     (!doctorFirstName ||
@@ -156,6 +157,7 @@ export default function Renew() {
                   </FormControl>
                 </Box>
               )}
+              {invalidPersonalAddress && <IncompleteSectionAlert />}
               <Flex width="100%" justifyContent="flex-end">
                 <Link href="/">
                   <Button variant="outline" marginRight="32px">{`Go back to home page`}</Button>
@@ -221,6 +223,7 @@ export default function Renew() {
                   </FormControl>
                 </Box>
               )}
+              {invalidContact && <IncompleteSectionAlert />}
               <Flex width="100%" justifyContent="flex-end">
                 <Button
                   variant="outline"
@@ -336,6 +339,7 @@ export default function Renew() {
                   </FormControl>
                 </Box>
               )}
+              {invalidDoctor && <IncompleteSectionAlert />}
               <Flex width="100%" justifyContent="flex-end">
                 <Button
                   variant="outline"
