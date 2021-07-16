@@ -57,7 +57,7 @@ export default function Landing() {
           <Button
             colorScheme="primary"
             variant="solid"
-            fontWeight="normal"
+            fontWeight="semibold"
             size="lg"
             width="320px"
             height="48px"
@@ -72,7 +72,7 @@ export default function Landing() {
           <Button
             colorScheme="primary"
             variant="solid"
-            fontWeight="normal"
+            fontWeight="semibold"
             size="lg"
             width="320px"
             height="48px"
@@ -103,7 +103,7 @@ export default function Landing() {
           <Button
             colorScheme="primary"
             variant="solid"
-            fontWeight="normal"
+            fontWeight="semibold"
             size="lg"
             width="320px"
             height="48px"
@@ -118,7 +118,7 @@ export default function Landing() {
           <Button
             colorScheme="primary"
             variant="solid"
-            fontWeight="normal"
+            fontWeight="semibold"
             size="lg"
             width="320px"
             height="48px"

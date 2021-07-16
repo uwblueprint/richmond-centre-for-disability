@@ -63,13 +63,13 @@ export default function IdentityVerificationForm() {
                 onChange={event => setDateOfBirth(event.target.value)}
               />
               <FormHelperText>
-                {`Please enter your date of birth in YYYY/MM/DD format. For example, if you were born on
-            20th August 1950, you would enter 20/08/1950`}
+                {`Please enter your date of birth in YYYY-MM-DD format. For example, if you were born on
+            20th August 1950, you would enter 20-08-1950`}
               </FormHelperText>
             </FormControl>
             <Flex width="100%" justifyContent="flex-end">
               <Link href="/">
-                <Button variant="outline" marginRight="12px">{`Go Back to Home Page`}</Button>
+                <Button variant="outline" marginRight="12px">{`Go back to home page`}</Button>
               </Link>
               <Link href="/renew">
                 <Button

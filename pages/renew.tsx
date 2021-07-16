@@ -1,4 +1,4 @@
-import { useState } from 'react'; // React
+import { useState, useEffect } from 'react'; // React
 import Link from 'next/link'; // Next Link
 import {
   Flex,
@@ -55,6 +55,10 @@ export default function Renew() {
   // Confirmation/certification state
   const [certified, setCertified] = useState(false);
 
+  // Whether user is reviewing the form
+  const [isReviewing, setIsReviewing] = useState(false);
+
+  // Whether each section has invalid inputs
   const invalidPersonalAddress =
     updatedAddress && (!personalAddressLine1 || !personalCity || !personalPostalCode);
   const invalidContact = updatedContact && (!contactPhoneNumber || !contactEmailAddress);
@@ -67,6 +71,21 @@ export default function Renew() {
       !doctorCity ||
       !doctorPostalCode ||
       !doctorPhoneNumber);
+
+  /**
+   * Go to the review step (last step)
+   * Used when user needs to go to previous step to review information
+   */
+  const goToReview = () => {
+    goToStep(3);
+  };
+
+  // When the user arrives on the last step, they are in review mode
+  useEffect(() => {
+    if (activeStep === 3) {
+      setIsReviewing(true);
+    }
+  }, [activeStep, isReviewing]);
 
   return (
     <Layout>
@@ -112,8 +131,8 @@ export default function Renew() {
                     />
                     <FormHelperText>{`Street Address, P. O. Box, Company Name, c/o`}</FormHelperText>
                   </FormControl>
-                  <FormControl isRequired marginBottom="24px">
-                    <FormLabel>{`Address Line 2`}</FormLabel>
+                  <FormControl marginBottom="24px">
+                    <FormLabel>{`Address Line 2 (optional)`}</FormLabel>
                     <Input
                       value={personalAddressLine2}
                       onChange={event => setPersonalAddressLine2(event.target.value)}
@@ -139,13 +158,15 @@ export default function Renew() {
               )}
               <Flex width="100%" justifyContent="flex-end">
                 <Link href="/">
-                  <Button variant="outline" marginRight="32px">{`Go Back to Home Page`}</Button>
+                  <Button variant="outline" marginRight="32px">{`Go back to home page`}</Button>
                 </Link>
                 <Button
                   variant="solid"
-                  onClick={nextStep}
+                  onClick={isReviewing ? goToReview : nextStep}
                   disabled={invalidPersonalAddress}
-                >{`Continue`}</Button>
+                >
+                  {isReviewing ? `Review request` : `Next`}
+                </Button>
               </Flex>
             </Box>
           </Step>
@@ -208,9 +229,11 @@ export default function Renew() {
                 >{`Previous`}</Button>
                 <Button
                   variant="solid"
-                  onClick={nextStep}
+                  onClick={isReviewing ? goToReview : nextStep}
                   disabled={invalidContact}
-                >{`Next`}</Button>
+                >
+                  {isReviewing ? `Review request` : `Next`}
+                </Button>
               </Flex>
             </Box>
           </Step>
@@ -278,8 +301,8 @@ export default function Renew() {
                     />
                     <FormHelperText>{`Street Address, P. O. Box, Company Name, c/o`}</FormHelperText>
                   </FormControl>
-                  <FormControl isRequired marginBottom="24px">
-                    <FormLabel>{`Address Line 2`}</FormLabel>
+                  <FormControl marginBottom="24px">
+                    <FormLabel>{`Address Line 2 (optional)`}</FormLabel>
                     <Input
                       value={doctorAddressLine2}
                       onChange={event => setDoctorAddressLine2(event.target.value)}
@@ -321,9 +344,11 @@ export default function Renew() {
                 >{`Previous`}</Button>
                 <Button
                   variant="solid"
-                  onClick={nextStep}
+                  onClick={isReviewing ? goToReview : nextStep}
                   disabled={invalidDoctor}
-                >{`Continue`}</Button>
+                >
+                  {isReviewing ? `Review request` : `Next`}
+                </Button>
               </Flex>
             </Box>
           </Step>
@@ -419,7 +444,7 @@ export default function Renew() {
                 variant="solid"
                 onClick={nextStep}
                 disabled={!certified || invalidPersonalAddress || invalidContact || invalidDoctor}
-              >{`Proceed to Payment`}</Button>
+              >{`Proceed to payment`}</Button>
             </Flex>
           </Step>
         </Steps>

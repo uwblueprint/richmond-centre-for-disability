@@ -98,14 +98,14 @@ export default function TOSModal() {
             <Divider marginBottom="16px" />
             <Flex width="100%" justifyContent="flex-start" marginBottom="16px">
               <Text as="p" textStyle="body-bold">
-                Please read to the end to enable ”I Agree” button.
+                Please read to the end to enable ”I agree” button.
               </Text>
             </Flex>
             <Flex width="100%" justifyContent="flex-end">
               <Link href="/">
-                <Button variant="outline" marginRight="12px">{`Go Back to Home Page`}</Button>
+                <Button variant="outline" marginRight="12px">{`Go back to home page`}</Button>
               </Link>
-              <Button variant="solid" disabled={!finishedTOS} onClick={onClose}>{`I Agree`}</Button>
+              <Button variant="solid" disabled={!finishedTOS} onClick={onClose}>{`I agree`}</Button>
             </Flex>
           </Box>
         </ModalFooter>
