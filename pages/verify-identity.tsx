@@ -19,7 +19,7 @@ import TOSModal from '@components/applicant/renewals/TOSModal'; // TOS Modal
 export default function IdentityVerificationForm() {
   const [userId, setUserId] = useState('');
   const [phoneNumberSuffix, setPhoneNumberSuffix] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString().substring(0, 10));
 
   return (
     <Layout footer={false}>
@@ -56,7 +56,12 @@ export default function IdentityVerificationForm() {
             </FormControl>
             <FormControl isRequired textAlign="left" marginBottom="56px">
               <FormLabel>{`Date of Birth`}</FormLabel>
-              <Input type="date" width="184px" value={dateOfBirth} setValue={setDateOfBirth} />
+              <Input
+                type="date"
+                width="184px"
+                value={dateOfBirth}
+                onChange={event => setDateOfBirth(event.target.value)}
+              />
               <FormHelperText>
                 {`Please enter your date of birth in YYYY/MM/DD format. For example, if you were born on
             20th August 1950, you would enter 20/08/1950`}
@@ -67,13 +72,16 @@ export default function IdentityVerificationForm() {
                 <Button variant="outline" marginRight="12px">{`Go Back to Home Page`}</Button>
               </Link>
               <Link href="/renew">
-                <Button variant="solid">{`Continue`}</Button>
+                <Button
+                  variant="solid"
+                  disabled={!userId || !phoneNumberSuffix || !dateOfBirth}
+                >{`Continue`}</Button>
               </Link>
             </Flex>
           </Flex>
         </Flex>
         <TOSModal />
-      </GridItem>{' '}
+      </GridItem>
     </Layout>
   );
 }
