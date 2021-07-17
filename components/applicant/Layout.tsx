@@ -6,9 +6,9 @@ import Image from 'next/image'; // Optimized images
 import { Box, Flex, Grid, GridItem, Button, Center, Text, Spacer, Divider } from '@chakra-ui/react'; // Chakra UI
 
 type Props = {
-  children: ReactNode;
-  header?: boolean;
-  footer?: boolean;
+  readonly children: ReactNode;
+  readonly header?: boolean;
+  readonly footer?: boolean;
 };
 
 // Applicant Layout component
@@ -18,7 +18,7 @@ export default function Layout({ children, header = true, footer = true }: Props
       <Meta />
       <Flex flexDirection="column" alignItems="center" minHeight="100vh">
         {header && <Header />}
-        <Flex flexGrow={1} width="100%" justifyContent="center">
+        <Flex flexGrow={1} width="100%" justifyContent="center" marginY="64px">
           <ApplicantGrid isContent>{children}</ApplicantGrid>
         </Flex>
         {footer && <Footer />}
@@ -46,13 +46,13 @@ function Meta() {
 // Header
 function Header() {
   return (
-    <Center height={36} width="100%" backgroundColor="#f4f6fc">
+    <Center height="108px" width="100%" backgroundColor="#f4f6fc">
       <ApplicantGrid alignItems="center">
         <GridItem colSpan={1}>
           <Link href="/">
-            <Box cursor="pointer">
-              <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} priority />
-            </Box>
+            <Flex justifyContent="keft" cursor="pointer">
+              <Image src="/assets/logo.svg" alt="RCD Logo" height={68} width={48} priority />
+            </Flex>
           </Link>
         </GridItem>
         <GridItem colSpan={9}>

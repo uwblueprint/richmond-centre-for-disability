@@ -28,6 +28,7 @@ const Alert: ComponentMultiStyleConfig = {
           bg: `background.${colorScheme}`,
           border: '1px solid',
           borderColor: `border.${colorScheme}`,
+          borderRadius: '4px',
         },
         icon: {
           color: `secondary.${colorScheme}`,
