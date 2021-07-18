@@ -265,7 +265,8 @@ export type Guardian = {
   firstName: Scalars['String'];
   middleName?: Maybe<Scalars['String']>;
   lastName: Scalars['String'];
-  address: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2: Scalars['String'];
   city: Scalars['String'];
   province: Province;
   postalCode: Scalars['String'];

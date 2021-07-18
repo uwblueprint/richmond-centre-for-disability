@@ -3,7 +3,8 @@ type Guardian {
   firstName: String!
   middleName: String
   lastName: String!
-  address: String!
+  addressLine1: String!
+  addressLine2: String!
   city: String!
   province: Province!
   postalCode: String!

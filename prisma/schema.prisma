@@ -14,17 +14,17 @@ model Applicant {
   lastName           String              @map("last_name") @db.VarChar(255)
   dateOfBirth        DateTime            @map("date_of_birth") @db.Date
   gender             Gender
-  custom_gender      String?             @db.VarChar(255)
+  customGender       String?             @map("custom_gender") @db.VarChar(255)
   email              String?             @unique @db.VarChar(255)
   phone              String              @db.VarChar(50)
   province           Province
   city               String              @db.VarChar(255)
-  address_line_1     String              @db.VarChar(255)
-  address_line_2     String?             @db.VarChar(255)
+  addressLine1       String              @map("address_line_1") @db.VarChar(255)
+  addressLine2       String?             @map("address_line_2") @db.VarChar(255)
   postalCode         String              @map("postal_code") @db.Char(6)
   rcdUserId          Int?                @unique @map("rcd_user_id")
   status             ApplicantStatus?
-  accepted_toc       DateTime?           @db.Timestamptz(6)
+  acceptedTOC        DateTime?           @map("accepted_toc") @db.Timestamptz(6)
   createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   applications       Application[]
@@ -42,13 +42,13 @@ model Application {
   lastName                  String      @map("last_name") @db.VarChar(255)
   dateOfBirth               DateTime    @map("date_of_birth") @db.Date
   gender                    Gender
-  custom_gender             String?     @db.VarChar(255)
+  customGender              String?     @map("custom_gender") @db.VarChar(255)
   email                     String?     @db.VarChar(255)
   phone                     String      @db.VarChar(50)
   province                  Province
   city                      String      @db.VarChar(255)
-  address_line_1            String      @db.VarChar(255)
-  address_line_2            String?     @db.VarChar(255)
+  addressLine1              String      @map("address_line_1") @db.VarChar(255)
+  addressLine2              String?     @map("address_line_2") @db.VarChar(255)
   postalCode                String      @map("postal_code") @db.Char(6)
   notes                     String?
   rcdUserId                 Int?        @map("rcd_user_id")
@@ -62,8 +62,8 @@ model Application {
   aid                       Aid[]
   physicianName             String      @map("physician_name") @db.VarChar(255)
   physicianMspNumber        Int         @map("physician_msp_number")
-  physician_address_line_1  String      @db.VarChar(255)
-  physician_address_line_2  String?     @db.VarChar(255)
+  physicianAddressLine1     String      @map("physician_address_line_1") @db.VarChar(255)
+  physicianAddressLine2     String?     @map("physician_address_line_2") @db.VarChar(255)
   physicianCity             String      @map("physician_city") @db.VarChar(255)
   physicianProvince         Province    @map("physician_province")
   physicianPostalCode       String      @map("physician_postal_code") @db.Char(6)
@@ -79,8 +79,8 @@ model Application {
   guardianPhone             String?     @map("guardian_phone") @db.VarChar(50)
   guardianProvince          Province?   @map("guardian_province")
   guardianCity              String?     @map("guardian_city") @db.VarChar(255)
-  guardian_address_line_1   String?     @db.VarChar(255)
-  guardian_address_line_2   String?     @db.VarChar(255)
+  guardianAddressLine1      String?     @map("guardian_address_line_1") @db.VarChar(255)
+  guardianAddressLine2      String?     @map("guardian_address_line_2") @db.VarChar(255)
   guardianPostalCode        String?     @map("guardian_postal_code") @db.Char(6)
   guardianRelationship      String?     @map("guardian_relationship") @db.VarChar(50)
   guardianNotes             String?     @map("guardian_notes")
@@ -106,22 +106,22 @@ model Employee {
 }
 
 model Guardian {
-  id             Int       @id @default(autoincrement())
-  firstName      String    @map("first_name") @db.VarChar(255)
-  middleName     String?   @map("middle_name") @db.VarChar(255)
-  lastName       String    @map("last_name") @db.VarChar(255)
-  address_line_1 String    @db.VarChar(255)
-  address_line_2 String?   @db.VarChar(255)
-  city           String    @db.VarChar(255)
-  province       Province
-  postalCode     String    @map("postal_code") @db.Char(6)
-  phone          String    @db.VarChar(50)
-  relationship   String    @db.VarChar(255)
-  notes          String?
-  applicantId    Int       @unique @map("applicant_id")
-  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  applicant      Applicant @relation(fields: [applicantId], references: [id])
+  id           Int       @id @default(autoincrement())
+  firstName    String    @map("first_name") @db.VarChar(255)
+  middleName   String?   @map("middle_name") @db.VarChar(255)
+  lastName     String    @map("last_name") @db.VarChar(255)
+  addressLine1 String    @map("address_line_1") @db.VarChar(255)
+  addressLine2 String?   @map("address_line_2") @db.VarChar(255)
+  city         String    @db.VarChar(255)
+  province     Province
+  postalCode   String    @map("postal_code") @db.Char(6)
+  phone        String    @db.VarChar(50)
+  relationship String    @db.VarChar(255)
+  notes        String?
+  applicantId  Int       @unique @map("applicant_id")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  applicant    Applicant @relation(fields: [applicantId], references: [id])
 
   @@map("guardians")
 }
@@ -166,8 +166,8 @@ model Physician {
   firstName          String               @map("first_name") @db.VarChar(255)
   lastName           String               @map("last_name") @db.VarChar(255)
   mspNumber          Int                  @unique @map("msp_number")
-  address_line_1     String               @db.VarChar(255)
-  address_line_2     String?              @db.VarChar(255)
+  addressLine1       String               @map("address_line_1") @db.VarChar(255)
+  addressLine2       String?              @map("address_line_2") @db.VarChar(255)
   city               String               @db.VarChar(255)
   province           Province
   postalCode         String               @map("postal_code") @db.Char(6)
