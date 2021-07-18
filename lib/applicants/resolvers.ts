@@ -9,14 +9,7 @@ import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format';
  * @returns All RCD applicants
  */
 export const applicants: Resolver = async (_parent, _args, { prisma }) => {
-  const applicants = await prisma.applicant.findMany({
-    include: {
-      applications: true,
-      permits: true,
-      guardian: true,
-      medicalInformation: true,
-    },
-  });
+  const applicants = await prisma.applicant.findMany();
   return applicants;
 };
 

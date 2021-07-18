@@ -8,7 +8,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
+  ID: number;
   String: string;
   Boolean: boolean;
   Int: number;
@@ -78,6 +78,7 @@ export type Application = {
   isRenewal: Scalars['Boolean'];
   poaFormUrl?: Maybe<Scalars['String']>;
   applicantId?: Maybe<Scalars['Int']>;
+  applicant?: Maybe<Applicant>;
   /** Medical information */
   disability: Scalars['String'];
   affectsMobility: Scalars['Boolean'];
@@ -111,6 +112,8 @@ export type Application = {
   guardianPostalCode?: Maybe<Scalars['String']>;
   guardianRelationship?: Maybe<Scalars['String']>;
   guardianNotes?: Maybe<Scalars['String']>;
+  /** Permit */
+  permit?: Maybe<Permit>;
 };
 
 export type CreateApplicantInput = {
@@ -281,9 +284,11 @@ export type MedicalInformation = {
   cannotWalk100m: Scalars['Boolean'];
   notes?: Maybe<Scalars['String']>;
   certificationDate?: Maybe<Scalars['Date']>;
-  aid?: Maybe<Array<Maybe<Aid>>>;
+  aid?: Maybe<Array<Aid>>;
   applicant: Applicant;
+  applicantId: Scalars['Int'];
   physician: Physician;
+  physicianId: Scalars['Int'];
 };
 
 export type Meta = {
@@ -337,7 +342,9 @@ export type Permit = {
   expiryDate: Scalars['Date'];
   receiptId?: Maybe<Scalars['Int']>;
   active: Scalars['Boolean'];
+  application: Application;
   applicationId: Scalars['Int'];
+  applicant: Applicant;
   applicantId: Scalars['Int'];
 };
 
@@ -390,6 +397,10 @@ export type Query = {
   physicians?: Maybe<Array<Physician>>;
   applications?: Maybe<Array<Application>>;
   permits?: Maybe<Array<Permit>>;
+};
+
+export type QueryEmployeeInput = {
+  id?: Maybe<Scalars['ID']>;
 };
 
 export enum Role {

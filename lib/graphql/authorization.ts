@@ -11,7 +11,7 @@ import { Resolver } from '@lib/resolvers';
 export const authorize =
   (resolver: Resolver, authorizedRoles: ReadonlyArray<Role> = []): Resolver =>
   (root, args, context, info) => {
-    const userRole = context.session?.user?.role;
+    const userRole = context.session?.role as Role;
 
     // If user is an Admin or has the necessary permissions, allow the query or mutation to go through.
     if (userRole && (userRole == Role.Admin || authorizedRoles.includes(userRole))) {

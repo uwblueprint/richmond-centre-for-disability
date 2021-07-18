@@ -1,5 +1,3 @@
-# TODO: Integrate commented out types (ApplicantStatus, Application, Guardian, MedicalInformation, Permit)
-
 type Applicant {
   id: ID!
   firstName: String!
@@ -40,11 +38,6 @@ input CreateApplicantInput {
   postalCode: String!
   rcdUserId: Int
   acceptedTOC: Date
-  # status: ApplicantStatus
-  # applications: [Application!]
-  # guardian: Guardian
-  # medicalInformation: MedicalInformation
-  # permits: [Permit!]
 }
 
 type CreateApplicantResult {

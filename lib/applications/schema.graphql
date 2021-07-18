@@ -19,7 +19,8 @@ type Application {
   isRenewal: Boolean!
   poaFormUrl: String
   applicantId: Int
-  
+  applicant: Applicant
+
   # Medical information
   disability: String!
   affectsMobility: Boolean!
@@ -37,25 +38,28 @@ type Application {
   physicianPostalCode: String!
   physicianPhone: String!
   physicianNotes: String
-  
+
   #Payment Information
   processingFee: Float!
   donationAmount: Float
   paymentMethod: PaymentType!
   shopifyConfirmationNumber: String!
-  
+
   #Guardian
   guardianFirstName: String
   guardianMiddleName: String
   guardianLastName: String
   guardianPhone: String
-  guardianProvince: Province 
+  guardianProvince: Province
   guardianCity: String
   guardianAddressLine1: String
   guardianAddressLine2: String
   guardianPostalCode: String
   guardianRelationship: String
   guardianNotes: String
+
+  # Permit
+  permit: Permit
 }
 
 input CreateApplicationInput {
@@ -78,7 +82,7 @@ input CreateApplicationInput {
   isRenewal: Boolean!
   poaFormUrl: String
   applicantId: Int
-  
+
   # Medical information
   disability: String!
   affectsMobility: Boolean!
@@ -96,19 +100,19 @@ input CreateApplicationInput {
   physicianPostalCode: String!
   physicianPhone: String!
   physicianNotes: String
-  
+
   #Payment Information
   processingFee: Float!
   donationAmount: Float
   paymentMethod: PaymentType!
   shopifyConfirmationNumber: String!
-  
+
   #Guardian
   guardianFirstName: String
   guardianMiddleName: String
   guardianLastName: String
   guardianPhone: String
-  guardianProvince: Province 
+  guardianProvince: Province
   guardianCity: String
   guardianAddressLine1: String
   guardianAddressLine2: String

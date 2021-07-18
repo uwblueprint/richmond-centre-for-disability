@@ -12,11 +12,7 @@ import { DBErrorCode } from '@lib/db/errors'; // Database errors
  * @returns All RCD applications
  */
 export const applications: Resolver = async (_parent, _args, { prisma }) => {
-  const applications = await prisma.application.findMany({
-    include: {
-      permits: true,
-    },
-  });
+  const applications = await prisma.application.findMany();
   return applications;
 };
 

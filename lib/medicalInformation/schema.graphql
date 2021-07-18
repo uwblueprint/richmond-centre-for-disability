@@ -6,7 +6,9 @@ type MedicalInformation {
   cannotWalk100m: Boolean!
   notes: String
   certificationDate: Date
-  aid: [Aid]
+  aid: [Aid!]
   applicant: Applicant!
+  applicantId: Int!
   physician: Physician!
+  physicianId: Int!
 }
