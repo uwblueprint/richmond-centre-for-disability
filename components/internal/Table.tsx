@@ -1,62 +1,57 @@
-import { useState } from 'react';
-import { Table as ChakraUITable, Th, Td, Thead, Tbody, Tr } from '@chakra-ui/react'; // Chakra UI Table
+import { Box, Table as ChakraTable, Th, Td, Thead, Tbody, Tr } from '@chakra-ui/react'; // Chakra UI
+import { useTable, Column } from 'react-table'; // React Table
+
+// Table Props
 type Props = {
-  readonly columns: ReadonlyArray<{
-    readonly name: string;
-    readonly value: string;
-    readonly isSortable: boolean;
-  }>;
-  readonly data: ReadonlyArray<{
-    readonly value: string;
-    //readonly dataEntry: {[key: string]: number};
-  }>;
+  readonly columns: Array<Column<any>>; // Depends on shape of data
+  readonly data: Array<any>; // Depends on shape of data
 };
-// const props = {
-//     data: [data1, data2, ...],
-//     columns: [{name: 'column1', value: 'valueofcolumn1'}, {}]
-// }
+
 export default function Table(props: Props) {
   const { columns, data } = props;
-  const [arrowDirection, setArrowDirection] = useState(1); // Let 1 = ASC, 0 = No sort, -1 = DESC
+
+  // Table rendering functions
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
+    columns,
+    data,
+  });
+
   return (
-    <>
-      <ChakraUITable>
+    <Box>
+      <ChakraTable {...getTableProps()}>
         <Thead>
-          <Tr>
-            {columns.map((column, i) => {
-              if (column.isSortable) {
-                return (
-                  <Th
-                    key={`column-${i}`}
-                    //   onClick={() => {
-                    //     changeSortOrder(); // Later on
-                    //   }}
-                  >
-                    {`${column.name} (sortable)`}
-                  </Th>
-                );
-              } else {
-                return <Th key={`column-${i}`}>{column.name}</Th>;
-              }
-            })}
-          </Tr>
+          {headerGroups.map(headerGroup => (
+            <Tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
+              {headerGroup.headers.map(column => (
+                <Th
+                  height="40px"
+                  paddingX="0"
+                  fontSize="18px"
+                  color="text.secondary"
+                  {...column.getHeaderProps()}
+                  key={column.id}
+                >
+                  {column.render('Header')}
+                </Th>
+              ))}
+            </Tr>
+          ))}
         </Thead>
-        <Tbody>
-          {data.map((value, i) => {
-            if (i == 0 || columns.length % i == 0) {
-              return (
-                <Tr>
-                  <Td>{value}</Td>
-                </Tr>
-              );
-            } else {
-              return <Td>{value}</Td>;
-            }
+        <Tbody {...getTableBodyProps()}>
+          {rows.map(row => {
+            prepareRow(row);
+            return (
+              <Tr {...row.getRowProps()} key={row.id}>
+                {row.cells.map(cell => (
+                  <Td height="80px" paddingX="0" {...cell.getCellProps()} key={row.id}>
+                    {cell.render('Cell')}
+                  </Td>
+                ))}
+              </Tr>
+            );
           })}
         </Tbody>
-      </ChakraUITable>
-      <p>{arrowDirection}</p>
-      <button onClick={() => setArrowDirection(arrowDirection + 1)}>change state</button>
-    </>
+      </ChakraTable>
+    </Box>
   );
 }

@@ -13,6 +13,10 @@ const colors = {
     informative: '#00A0AC',
     gray: '#EDF2F7',
   },
+  text: {
+    secondary: '#323741',
+    filler: '#A3AEBE',
+  },
   overlay: {
     primary: {
       20: '#084FA3',

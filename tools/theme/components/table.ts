@@ -2,10 +2,11 @@ import { ComponentMultiStyleConfig } from '@chakra-ui/theme'; // Multi component
 //import { lighten } from '@chakra-ui/theme-tools'; // Lighten colours
 
 const Table: ComponentMultiStyleConfig = {
-  parts: ['control'],
+  parts: ['table', 'thead', 'tbody', 'tr', 'th', 'td', 'caption'],
   baseStyle: {
     th: {
-      fontSize: '18px',
+      fontWeight: 'semibold',
+      lineHeight: '24px',
       textTransform: 'none',
       letterSpacing: 'none',
     },
@@ -14,4 +15,5 @@ const Table: ComponentMultiStyleConfig = {
     },
   },
 };
+
 export default Table;
