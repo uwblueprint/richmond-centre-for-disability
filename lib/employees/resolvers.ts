@@ -7,7 +7,7 @@ import { DBErrorCode } from '@lib/db/errors'; // Database errors
  * Queries for RCD employees in the internal-facing app
  * @returns An array of RCD employees
  */
-export const employees: Resolver = async (_parent, args, { prisma }) => {
+export const employees: Resolver = async (_parent, _args, { prisma }) => {
   const employees = await prisma.employee.findMany();
   return employees;
 };
