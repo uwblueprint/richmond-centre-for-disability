@@ -14,13 +14,14 @@ import Alert from '@tools/theme/components/alert'; // Alert styles (shared by To
 import Tabs from '@tools/theme/components/tabs'; // Tabs styles
 import Badge from '@tools/theme/components/badge'; // Badge styles
 import { StepsStyleConfig as Steps } from 'chakra-ui-steps'; // Steps styles (imported from chakra-ui-steps)
+import Table from '@tools/theme/components/table'; //Table styles
 
 const theme = extendTheme({
   colors,
   ...typography,
   space,
   shadows,
-  components: { Button, Form, FormLabel, Checkbox, Alert, Tabs, Badge, Steps },
+  components: { Button, Form, FormLabel, Checkbox, Alert, Tabs, Badge, Steps, Table },
   textStyles,
 });
 
