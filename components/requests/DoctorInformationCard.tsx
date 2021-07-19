@@ -24,7 +24,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
         <InfoSection title={`MSP #`}>{String(physician.mspNumber)}</InfoSection>
         <InfoSection title={`Phone`}>{physician.phone}</InfoSection>
         <InfoSection title={`Address`}>
-          {physician.address}
+          {physician.addressLine1}
           {`${physician.city} ${physician.province}`}
           {`Canada`}
           {physician.postalCode}

@@ -45,11 +45,6 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
       <Divider pt="24px" />
       <VStack spacing="12px" pt="12px" align="left">
         <HStack spacing="12px">
-          <Box>
-            <Text textStyle="body-regular" color="#1E4FC2">
-              <a href="">charmainewang@uwblueprint.org</a>
-            </Text>
-          </Box>
           {props.contactInfoUpdated && (
             <Text textStyle="caption" opacity="0.5">
               updated
@@ -57,7 +52,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
           )}
         </HStack>
         <Box>
-          <Link textStyle="body-bold" color="primary" textDecoration="underline">
+          <Link textStyle="body-regular" color="primary" textDecoration="underline">
             {applicant.email}
           </Link>
         </Box>
@@ -67,18 +62,13 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
       </VStack>
       <Divider pt="24px" />
       <VStack spacing="12px" pt="12px" align="left">
-        <HStack spacing="12px">
-          <Box>
-            <Text textStyle="body-regular">647-234-1029</Text>
-          </Box>
-          {props.addressInfoUpdated && (
-            <Text textStyle="caption" opacity="0.5">
-              updated
-            </Text>
-          )}
-        </HStack>
+        {props.addressInfoUpdated && (
+          <Text textStyle="caption" opacity="0.5">
+            updated
+          </Text>
+        )}
         <Box>
-          <Text textStyle="body-regular">{applicant.address}</Text>
+          <Text textStyle="body-regular">{applicant.addressLine1}</Text>
           <Text textStyle="body-regular">{applicant.city}</Text>
           <Text textStyle="body-regular">Canada</Text>
           <Text textStyle="body-regular">{applicant.province}</Text>
