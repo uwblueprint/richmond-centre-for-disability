@@ -1,75 +1,61 @@
-import { Box, HStack, Text, Divider, SimpleGrid, Link } from '@chakra-ui/react';
-import Card from '@components/internal/Card';
+import { Box, Text, Divider, SimpleGrid } from '@chakra-ui/react'; // Chakra UI
+import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
+import { Physician } from '@lib/graphql/types'; // Physician type
+import { MouseEventHandler } from 'react'; // React
 
-type doctorInformationProps = {
-  readonly name: string;
-  readonly mspNumber: number;
-  readonly phoneNumber: string;
-  readonly province: string;
-  readonly city: string;
-  readonly address: string;
-  readonly postalCode: string;
+type DoctorInformationProps = {
+  physician: Physician;
+  readonly handleEdit: MouseEventHandler;
+  readonly isUpdated?: boolean;
 };
 
-export default function DoctorInformationCard(props: doctorInformationProps) {
+export default function DoctorInformationCard(props: DoctorInformationProps) {
+  const { physician, handleEdit, isUpdated } = props;
   return (
-    <div>
-      <Card w="738px" h="346px">
-        <HStack spacing="250px">
-          <Box width="400px">
-            <HStack spacing="12px">
-              <Text textStyle="display-small-semibold">Doctor&apos;s Information</Text>
-              <Text textStyle="caption" opacity="0.5">
-                updated
-              </Text>
-            </HStack>
-          </Box>
-          <Box>
-            <Text textStyle="body-bold" color="#1E4FC2">
-              <a href="">
-                <u>Edit</u>
-              </a>
-            </Text>
-          </HStack>
-        </Box>
-        <Box>
-          <Link textStyle="body-bold" color="primary" textDecoration="underline">
-            Edit
-          </Link>
-        </Box>
-      </HStack>
+    <PermitHolderInfoCard
+      colSpan={7}
+      header={`Doctor's Information`}
+      updated={isUpdated}
+      handleEdit={handleEdit}
+    >
       <Divider pt="20px" />
       <SimpleGrid columns={2} spacingX="20px" spacingY="12px" pt="20px">
-        <Box w="200px" h="27px">
-          <Text textStyle="body-regular">Name</Text>
-        </Box>
-        <Box>
-          <Text textStyle="body-regular">{props.name}</Text>
-        </Box>
-        <Box w="200px" h="27px">
-          <Text textStyle="body-regular">MSP #</Text>
-        </Box>
-        <Box>
-          <Text textStyle="body-regular">{props.mspNumber}</Text>
-        </Box>
-        <Box w="200px" h="27px">
-          <Text textStyle="body-regular">Phone</Text>
-        </Box>
-        <Box>
-          <Text textStyle="body-regular">{props.phoneNumber}</Text>
-        </Box>
-        <Box w="200px" h="27px">
-          <Text textStyle="body-regular">Address</Text>
-        </Box>
-        <Box>
-          <Text textStyle="body-regular">{props.address}</Text>
-          <Text textStyle="body-regular">
-            {props.city} {props.province}
-          </Text>
-          <Text textStyle="body-regular">Canada</Text>
-          <Text textStyle="body-regular"> {props.postalCode}</Text>
-        </Box>
+        <InfoSection title={`Name`}>{`${physician.firstName} ${physician.lastName}`}</InfoSection>
+        <InfoSection title={`MSP #`}>{String(physician.mspNumber)}</InfoSection>
+        <InfoSection title={`Phone`}>{physician.phone}</InfoSection>
+        <InfoSection title={`Address`}>
+          {physician.address}
+          {`${physician.city} ${physician.province}`}
+          {`Canada`}
+          {physician.postalCode}
+        </InfoSection>
       </SimpleGrid>
-    </Card>
+    </PermitHolderInfoCard>
+  );
+}
+
+type InfoSectionProps = {
+  readonly title: string;
+  readonly children: string | ReadonlyArray<string>;
+};
+
+function InfoSection({ title, children }: InfoSectionProps) {
+  return (
+    <>
+      <Box w="200px" h="27px">
+        <Text textStyle="body-regular">{title}</Text>
+      </Box>
+      <Box>
+        {typeof children === 'string' ? (
+          <Text textStyle="body-regular">{children}</Text>
+        ) : (
+          children.map((paragraph, i) => (
+            <Text key={`paragraph-${i}`} textStyle="body-regular">
+              {paragraph}
+            </Text>
+          ))
+        )}
+      </Box>
+    </>
   );
 }

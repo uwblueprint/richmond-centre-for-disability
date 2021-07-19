@@ -1,53 +1,50 @@
-import { Box, HStack, Text, Divider, SimpleGrid, Link } from '@chakra-ui/react';
-import Card from '@components/internal/Card';
+import { Box, Text, Divider, SimpleGrid } from '@chakra-ui/react'; // Chakra UI
+import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
+import { MouseEventHandler } from 'react'; // React
 
-type replacementProps = {
+type ReplacementProps = {
   readonly cause: string;
   readonly timestamp: string;
   readonly locationLost: string;
   readonly description: string;
+  readonly handleEdit: MouseEventHandler;
+  readonly isUpdated?: boolean;
 };
 
-export default function ReasonForReplacementCard(props: replacementProps) {
+export default function ReasonForReplacementCard(props: ReplacementProps) {
+  const { isUpdated, handleEdit } = props;
   return (
-    <Card w="738px" h="396px">
-      <HStack spacing="250px">
-        <Box width="400px">
-          <HStack spacing="12px">
-            <Text textStyle="display-small-semibold">Reason for Replacement</Text>
-          </HStack>
-        </Box>
-        <Link textStyle="body-bold" color="primary" textDecoration="underline">
-          Edit
-        </Link>
-      </HStack>
+    <PermitHolderInfoCard
+      colSpan={7}
+      header={`Reason For Replacement`}
+      updated={isUpdated}
+      handleEdit={handleEdit}
+    >
       <Divider pt="24px" />
       <SimpleGrid columns={2} spacingY="12px" spacingX="20px" pt="20px">
-        <Box w="200px" h="27px">
-          <Text textStyle="body-regular">Cause</Text>
-        </Box>
-        <Box>
-          <Text textStyle="body-regular">{props.cause}</Text>
-        </Box>
-        <Box w="200px" h="27px">
-          <Text textStyle="body-regular">Event timestamp</Text>
-        </Box>
-        <Box>
-          <Text textStyle="body-regular">{props.timestamp}</Text>
-        </Box>
-        <Box w="200px" h="27px">
-          <Text textStyle="body-regular">Location Lost</Text>
-        </Box>
-        <Box>
-          <Text textStyle="body-regular">{props.locationLost}</Text>
-        </Box>
-        <Box w="200px" h="27px">
-          <Text textStyle="body-regular">Event description</Text>
-        </Box>
-        <Box>
-          <Text textStyle="body-regular">{props.description}</Text>
-        </Box>
+        <InfoSection title={`Cause`}>{props.cause}</InfoSection>
+        <InfoSection title={`Event Timestamp`}>{props.timestamp}</InfoSection>
+        <InfoSection title={`Location Lost`}>{props.locationLost}</InfoSection>
+        <InfoSection title={`Event Description`}>{props.description}</InfoSection>
       </SimpleGrid>
-    </Card>
+    </PermitHolderInfoCard>
+  );
+}
+
+type InfoSectionProps = {
+  readonly title: string;
+  readonly children: string;
+};
+
+function InfoSection({ title, children }: InfoSectionProps) {
+  return (
+    <>
+      <Box w="200px" h="27px">
+        <Text textStyle="body-regular">{title}</Text>
+      </Box>
+      <Box>
+        <Text textStyle="body-regular">{children}</Text>
+      </Box>
+    </>
   );
 }

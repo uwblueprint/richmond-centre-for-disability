@@ -1,8 +1,9 @@
-import { Box, HStack, Text, Divider, SimpleGrid, Link, VStack } from '@chakra-ui/react';
-import Card from '@components/internal/Card';
-import { PaymentType } from '@lib/graphql/types';
+import { Box, Text, Divider, SimpleGrid, VStack } from '@chakra-ui/react'; // Chakra UI
+import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
+import { PaymentType } from '@lib/graphql/types'; // PayementType Enum
+import { MouseEventHandler } from 'react'; // React
 
-type paymentInformationProps = {
+type PaymentInformationProps = {
   readonly permitFee: number;
   readonly dontation: number;
   readonly paymentType: PaymentType;
@@ -18,21 +19,20 @@ type paymentInformationProps = {
   readonly billingProvince: string;
   readonly billingCountry: string;
   readonly billingPostalCode: string;
+
+  readonly handleEdit: MouseEventHandler;
+  readonly isUpdated?: boolean;
 };
 
-export default function PaymentInformationCard(props: paymentInformationProps) {
+export default function PaymentInformationCard(props: PaymentInformationProps) {
+  const { isUpdated, handleEdit } = props;
   return (
-    <Card w="738px" h="456px">
-      <HStack spacing="50px">
-        <Box w="600px">
-          <Text textStyle="display-small-semibold">Payment, Shipping, and Billing Information</Text>
-        </Box>
-        <Box>
-          <Link textStyle="body-bold" color="primary" textDecoration="underline">
-            Edit
-          </Link>
-        </Box>
-      </HStack>
+    <PermitHolderInfoCard
+      colSpan={7}
+      header={`Payment, Shipping, and Billing Information`}
+      updated={isUpdated}
+      handleEdit={handleEdit}
+    >
       <Divider pt="20px" />
       <VStack align="left" spacing="12px" pt="20px">
         <Box w="200px" h="27px">
@@ -40,7 +40,7 @@ export default function PaymentInformationCard(props: paymentInformationProps) {
         </Box>
         <SimpleGrid columns={2} spacingX="70px" spacingY="12px">
           <Box>
-            <Text textStyle="body-regular">Permit Fees(Fixed)</Text>
+            <Text textStyle="body-regular">Permit Fees (Fixed)</Text>
           </Box>
           <Box>
             <Text textStyle="body-regular">${props.permitFee}</Text>
@@ -85,6 +85,6 @@ export default function PaymentInformationCard(props: paymentInformationProps) {
           </Box>
         </VStack>
       </SimpleGrid>
-    </Card>
+    </PermitHolderInfoCard>
   );
 }
