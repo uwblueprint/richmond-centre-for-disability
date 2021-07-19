@@ -1,5 +1,4 @@
 import { ComponentMultiStyleConfig } from '@chakra-ui/theme'; // Multi component style type
-//import { lighten } from '@chakra-ui/theme-tools'; // Lighten colours
 
 const Table: ComponentMultiStyleConfig = {
   parts: ['table', 'thead', 'tbody', 'tr', 'th', 'td', 'caption'],
