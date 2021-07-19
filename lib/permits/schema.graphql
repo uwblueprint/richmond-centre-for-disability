@@ -4,8 +4,10 @@ type Permit {
   expiryDate: Date!
   receiptId: Int
   active: Boolean!
-  applicationId: Int! #TODO: add reference to application table
-  applicantId: Int! #TODO: add reference to applicant table
+  application: Application!
+  applicationId: Int!
+  applicant: Applicant!
+  applicantId: Int!
 }
 
 input CreatePermitInput {
@@ -13,8 +15,8 @@ input CreatePermitInput {
   expiryDate: Date!
   receiptId: Int
   active: Boolean!
-  applicationId: Int! #TODO: add reference to application table
-  applicantId: Int! #TODO: add reference to applicant table
+  applicationId: Int!
+  applicantId: Int!
 }
 
 type CreatePermitResult {

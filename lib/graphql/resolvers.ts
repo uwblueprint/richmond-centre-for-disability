@@ -9,6 +9,18 @@ import { Context } from '@lib/context'; // Context type
 import { dateScalar } from '@lib/scalars'; // Custom date scalar implementation
 import { authorize } from '@lib/authorization';
 import { Role } from '@lib/types';
+import {
+  applicantApplicationsResolver,
+  applicantPermitsResolver,
+  applicantGuardianResolver,
+  applicantMedicalInformationResolver,
+} from '@lib/applicants/field-resolvers';
+import {
+  applicationApplicantResolver,
+  applicationPermitResolver,
+} from '@lib/applications/field-resolvers';
+import { medicalInformationPhysicianResolver } from '@lib/medicalInformation/field-resolvers';
+import { permitApplicantResolver, permitApplicationResolver } from '@lib/permits/field-resolvers';
 
 // Resolver type
 export type Resolver<P = undefined> = IFieldResolver<P, Context>;
@@ -31,6 +43,23 @@ const resolvers = {
     createPermit: authorize(createPermit, [Role.Secretary]),
   },
   Date: dateScalar,
+  Applicant: {
+    applications: applicantApplicationsResolver,
+    permits: applicantPermitsResolver,
+    guardian: applicantGuardianResolver,
+    medicalInformation: applicantMedicalInformationResolver,
+  },
+  Application: {
+    applicant: applicationApplicantResolver,
+    permit: applicationPermitResolver,
+  },
+  MedicalInformation: {
+    physician: medicalInformationPhysicianResolver,
+  },
+  Permit: {
+    applicant: permitApplicantResolver,
+    application: permitApplicationResolver,
+  },
 };
 
 export default resolvers;

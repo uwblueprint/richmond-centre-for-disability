@@ -10,6 +10,7 @@ export const apolloServer = new ApolloServer({
   playground: {
     settings: {
       'schema.polling.enable': false, // Disable infinite schema introspection
+      'request.credentials': 'include', // Include auth token in requests
     },
   },
   context,

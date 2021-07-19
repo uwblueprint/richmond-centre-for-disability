@@ -6,6 +6,10 @@ type Employee {
   role: Role!
 }
 
+input QueryEmployeeInput {
+  id: ID
+}
+
 input CreateEmployeeInput {
   firstName: String!
   lastName: String!

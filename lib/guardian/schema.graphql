@@ -1,0 +1,14 @@
+type Guardian {
+  id: ID!
+  firstName: String!
+  middleName: String
+  lastName: String!
+  addressLine1: String!
+  addressLine2: String
+  city: String!
+  province: Province!
+  postalCode: String!
+  phone: String!
+  relationship: String!
+  notes: String
+}

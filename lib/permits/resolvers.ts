@@ -21,30 +21,42 @@ export const permits: Resolver = async (_parent, _args, { prisma }) => {
  * @returns Status of operation (ok, error)
  */
 export const createPermit: Resolver = async (_, args, { prisma }) => {
-  const { input } = args;
+  const {
+    input: { applicantId, applicationId },
+  } = args;
 
   let permit;
   try {
     permit = await prisma.permit.create({
-      data: { ...input },
+      data: {
+        ...args.input,
+        applicant: {
+          connect: { id: applicantId },
+        },
+        application: {
+          connect: { id: applicationId },
+        },
+      },
     });
   } catch (err) {
     if (
       err.code === DBErrorCode.UniqueConstraintFailed &&
       err.meta.target.includes('rcdPermitId')
     ) {
-      throw new PermitAlreadyExistsError(`Permit with ID ${input.rcdPermitId} already exists`);
+      throw new PermitAlreadyExistsError(`Permit with ID ${args.input.rcdPermitId} already exists`);
     } else if (
       err.code === DBErrorCode.ForeignKeyConstraintFailed &&
       err.meta?.target.includes('applicantId')
     ) {
-      throw new ApplicantIdDoesNotExistError(`Applicant ID ${input.applicantId} does not exist`);
+      throw new ApplicantIdDoesNotExistError(
+        `Applicant ID ${args.input.applicantId} does not exist`
+      );
     } else if (
       err.code === DBErrorCode.ForeignKeyConstraintFailed &&
       err.meta?.target.includes('applicationId')
     ) {
       throw new ApplicationIdDoesNotExistError(
-        `Application ID ${input.applicationId} does not exist`
+        `Application ID ${args.input.applicationId} does not exist`
       );
     }
   }

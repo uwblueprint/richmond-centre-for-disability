@@ -28,7 +28,12 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
   let application;
   try {
     application = await prisma.application.create({
-      data: { ...args.input },
+      data: {
+        ...args.input,
+        applicant: {
+          connect: { id: applicantId },
+        },
+      },
     });
   } catch (err) {
     if (

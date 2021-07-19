@@ -10,3 +10,6 @@ generates:
             - ' *** THIS IS AN AUTO-GENERATED FILE. PLEASE DO NOT MODIFY DIRECTLY. ***'
             - ' **********************************************************************/'
       - typescript
+    config:
+      scalars:
+        ID: number
