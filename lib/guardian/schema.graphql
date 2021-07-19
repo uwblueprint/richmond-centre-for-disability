@@ -4,12 +4,11 @@ type Guardian {
   middleName: String
   lastName: String!
   addressLine1: String!
-  addressLine2: String!
+  addressLine2: String
   city: String!
   province: Province!
   postalCode: String!
   phone: String!
   relationship: String!
   notes: String
-  applicant: Applicant!
 }

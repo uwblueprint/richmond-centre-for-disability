@@ -266,14 +266,13 @@ export type Guardian = {
   middleName?: Maybe<Scalars['String']>;
   lastName: Scalars['String'];
   addressLine1: Scalars['String'];
-  addressLine2: Scalars['String'];
+  addressLine2?: Maybe<Scalars['String']>;
   city: Scalars['String'];
   province: Province;
   postalCode: Scalars['String'];
   phone: Scalars['String'];
   relationship: Scalars['String'];
   notes?: Maybe<Scalars['String']>;
-  applicant: Applicant;
 };
 
 export type MedicalInformation = {

@@ -1,5 +1,5 @@
 import prisma from '../prisma/index'; // Relative path required, path aliases throw error with seed command
-import { Role, Gender, Province, PaymentType, Aid } from '../lib/graphql/types';
+import { Role, Gender, Province, PaymentType, Aid } from '../lib/graphql/types'; // Relative path required for seed script
 /**
  * Main program
  */
