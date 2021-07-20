@@ -29,24 +29,37 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
     <PermitHolderInfoCard colSpan={5} header={header} handleEdit={props.handleEdit}>
       <VStack spacing="12px" pt="12px" align="left">
         <Box>
-          <Text textStyle="body-regular">Permanent Permit Holder</Text>
+          <Text as="p" textStyle="body-regular">
+            Permanent Permit Holder
+          </Text>
         </Box>
         <Box>
-          <Text textStyle="body-regular">User ID: {applicant.rcdUserId}</Text>
+          <Text as="p" textStyle="body-regular">
+            User ID: {applicant.rcdUserId}
+          </Text>
         </Box>
         <Box>
           <HStack spacing="4px">
-            <Text textStyle="body-regular">Most Recent APP: #{props.mostRecentAPP}</Text>
+            <Text as="p" textStyle="body-regular">
+              Most Recent APP: #{props.mostRecentAPP}
+            </Text>
             <Badge variant="active">Active</Badge>
           </HStack>
-          <Text textStyle="xsmall">Expiring {props.expirationDate}</Text>
+          <Text as="p" textStyle="xsmall" color="secondary">
+            Expiring {props.expirationDate}
+          </Text>
         </Box>
       </VStack>
       <Divider pt="24px" />
       <VStack spacing="12px" pt="12px" align="left">
         <HStack spacing="12px">
+          <Box>
+            <Text as="h4" textStyle="body-bold">
+              Contact Information
+            </Text>
+          </Box>
           {props.contactInfoUpdated && (
-            <Text textStyle="caption" opacity="0.5">
+            <Text as="p" textStyle="caption" opacity="0.5">
               updated
             </Text>
           )}
@@ -57,21 +70,41 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
           </Link>
         </Box>
         <Box>
-          <Text textStyle="body-regular">{applicant.phone}</Text>
+          <Text as="p" textStyle="body-regular">
+            {applicant.phone}
+          </Text>
         </Box>
       </VStack>
       <Divider pt="24px" />
       <VStack spacing="12px" pt="12px" align="left">
-        {props.addressInfoUpdated && (
-          <Text textStyle="caption" opacity="0.5">
-            updated
-          </Text>
-        )}
+        <HStack spacing="12px">
+          <Box>
+            <Text as="h4" textStyle="body-bold">
+              Home Address
+            </Text>
+          </Box>
+          {props.contactInfoUpdated && (
+            <Text as="p" textStyle="caption" opacity="0.5">
+              updated
+            </Text>
+          )}
+        </HStack>
         <Box>
-          <Text textStyle="body-regular">{applicant.addressLine1}</Text>
-          <Text textStyle="body-regular">{applicant.city}</Text>
-          <Text textStyle="body-regular">Canada</Text>
-          <Text textStyle="body-regular">{applicant.province}</Text>
+          <Text as="p" textStyle="body-regular">
+            {applicant.addressLine1}
+          </Text>
+          <Text as="p" textStyle="body-regular">
+            {applicant.addressLine2}
+          </Text>
+          <Text as="p" textStyle="body-regular">
+            {applicant.city} {applicant.province}
+          </Text>
+          <Text as="p" textStyle="body-regular">
+            Canada
+          </Text>
+          <Text as="p" textStyle="body-regular">
+            {applicant.postalCode}
+          </Text>
         </Box>
       </VStack>
     </PermitHolderInfoCard>

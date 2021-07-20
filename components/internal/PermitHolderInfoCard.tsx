@@ -30,7 +30,9 @@ export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
     >
       <Flex w="100%" justifyContent="flex-start" alignItems="center">
         {typeof header == 'string' ? (
-          <Text textStyle="display-small-semibold">{header}</Text>
+          <Text as="h5" textStyle="display-small-semibold">
+            {header}
+          </Text>
         ) : (
           <>{header}</>
         )}

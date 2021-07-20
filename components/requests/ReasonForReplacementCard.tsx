@@ -40,10 +40,14 @@ function InfoSection({ title, children }: InfoSectionProps) {
   return (
     <>
       <Box w="200px" h="27px">
-        <Text textStyle="body-regular">{title}</Text>
+        <Text as="p" textStyle="body-regular">
+          {title}
+        </Text>
       </Box>
       <Box>
-        <Text textStyle="body-regular">{children}</Text>
+        <Text as="p" textStyle="body-regular">
+          {children}
+        </Text>
       </Box>
     </>
   );
