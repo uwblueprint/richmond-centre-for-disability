@@ -19,7 +19,7 @@ export default function Layout({ children, header = true, footer = true }: Props
       <Flex flexDirection="column" alignItems="center" minHeight="100vh">
         {header && <Header />}
         <Flex flexGrow={1} width="100%" justifyContent="center" marginY="64px">
-          <ApplicantGrid isContent>{children}</ApplicantGrid>
+          <ApplicantGrid>{children}</ApplicantGrid>
         </Flex>
         {footer && <Footer />}
       </Flex>
@@ -47,7 +47,7 @@ function Meta() {
 function Header() {
   return (
     <Center height="108px" width="100%" backgroundColor="#f4f6fc">
-      <ApplicantGrid alignItems="center">
+      <ApplicantGrid alignItems="center" isContent={false}>
         <GridItem colSpan={1}>
           <Link href="/">
             <Flex justifyContent="keft" cursor="pointer">
@@ -79,7 +79,7 @@ function Header() {
 function Footer() {
   return (
     <Center flexDirection="column" width="100%" paddingTop={20} backgroundColor="#f4f6fc">
-      <ApplicantGrid marginBottom={10}>
+      <ApplicantGrid marginBottom={10} isContent={false}>
         <GridItem colSpan={2} textAlign="left">
           <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} priority />
           <a href="https://www.rcdrichmond.org/">
@@ -188,14 +188,14 @@ function ApplicantGrid({
   children,
   alignItems,
   marginBottom,
-  isContent = false,
+  isContent = true,
 }: ApplicantGridProps) {
   return (
     <Grid
       flexGrow={1}
       width="100%"
       maxWidth={{ xl: '1200px' }}
-      marginX={isContent ? undefined : '120px'}
+      marginX={isContent ? '120px' : undefined}
       templateColumns="repeat(12, 1fr)"
       gap="20px"
       alignItems={alignItems}
