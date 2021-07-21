@@ -29,7 +29,7 @@ export default function Landing() {
       <EditDoctorInformationModal />
       <EditPaymentDetailsModal />
       <EditReasonForReplacementModal />
-      <GridItem colSpan={8} colStart={1} mt="64px">
+      <GridItem colSpan={8} colStart={1}>
         <Text as="h1" textStyle="display-xlarge" align="left">
           {t('landing')}
         </Text>
