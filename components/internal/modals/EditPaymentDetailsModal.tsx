@@ -23,7 +23,7 @@ import {
   Grid,
   GridItem,
 } from '@chakra-ui/react'; // Chakra UI
-import React, { useState, SyntheticEvent } from 'react'; // React
+import { useState, SyntheticEvent } from 'react'; // React
 
 export default function EditPaymentDetailsModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -205,7 +205,6 @@ export default function EditPaymentDetailsModal() {
                       </FormControl>
 
                       <FormControl isRequired>
-                        {/* DESIGNER QUESTION: Make territory lower case to be consitsent? */}
                         <FormLabel>{'Province / Territory'}</FormLabel>
                         <Select
                           placeholder="Select provice / territory"

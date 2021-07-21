@@ -18,7 +18,7 @@ import {
   Radio,
   Textarea,
 } from '@chakra-ui/react'; // Chakra UI
-import React, { useState, SyntheticEvent } from 'react'; // React
+import { useState, SyntheticEvent } from 'react'; // React
 
 export default function EditReasonForReplacementModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -41,6 +41,7 @@ export default function EditReasonForReplacementModal() {
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
+    // TODO
   };
 
   return (
