@@ -10,13 +10,11 @@ import {
   FormErrorMessage,
   Input,
   Button,
-  GridItem,
   Box,
   Center,
   VStack,
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import Layout from '@components/internal/Layout'; // Layout component
 
 import { Role } from '@lib/types'; // Role enum
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
@@ -61,93 +59,88 @@ export default function Login() {
   const resendEmailToast = useToast();
 
   return (
-    <Layout header={false} footer={false}>
-      <GridItem colSpan={6} colStart={4}>
-        <Center height="100%" width="100%">
-          <Box
-            width="100%"
-            borderWidth="1px"
-            borderRadius="12px"
-            bg="background.white"
-            overflow="hidden"
-          >
-            <Box width="100%" padding={14}>
-              <VStack width="100%" spacing={12}>
-                <VStack spacing={2}>
-                  <Image src="/assets/logo.svg" height={120} width={120} />
-                  <Text as="h1" textStyle="display-medium" align="center">
-                    Richmond Centre for Disability Employee Login
-                  </Text>
-                </VStack>
+    <Center height="100vh" width="100vw">
+      <Box
+        width="640px"
+        borderWidth="1px"
+        borderRadius="12px"
+        bg="background.white"
+        overflow="hidden"
+      >
+        <Box width="100%" padding={14}>
+          <VStack width="100%" spacing={12}>
+            <VStack spacing={2}>
+              <Image src="/assets/logo.svg" height={120} width={120} />
+              <Text as="h1" textStyle="display-medium" align="center">
+                Richmond Centre for Disability Employee Login
+              </Text>
+            </VStack>
 
-                {/* If NextAuth's callback doesn't contain a URL, auth (sending email) wasn't successful. */}
-                {!authState?.url ? (
-                  <>
-                    <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-                      <FormControl isInvalid={!!emailInputError}>
-                        <FormLabel>Email</FormLabel>
-                        <Input
-                          height="51px"
-                          type="email"
-                          value={email}
-                          onChange={event => setEmail(event.target.value)}
-                          isDisabled={isSigningIn}
-                        />
-                        <FormErrorMessage>
-                          <Text as="span" textStyle="body-regular">
-                            {emailInputError}
-                          </Text>
-                        </FormErrorMessage>
-                      </FormControl>
-                      <Button
-                        onClick={handleSubmit}
-                        isLoading={isSigningIn}
-                        loadingText="Continue with Email"
-                        width="100%"
-                        height="46px"
-                        marginTop="7.5%"
-                      >
-                        <Text as="span" textStyle="button-semibold">
-                          Continue with Email
-                        </Text>
-                      </Button>
-                    </form>
-                    <Text as="p" textStyle="caption" width="100%" textAlign="left">
-                      <b>Don&apos;t have an account?</b> Please contact your administrator for
-                      access.
+            {/* If NextAuth's callback doesn't contain a URL, auth (sending email) wasn't successful. */}
+            {!authState?.url ? (
+              <>
+                <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+                  <FormControl isInvalid={!!emailInputError}>
+                    <FormLabel>Email</FormLabel>
+                    <Input
+                      height="51px"
+                      type="email"
+                      value={email}
+                      onChange={event => setEmail(event.target.value)}
+                      isDisabled={isSigningIn}
+                    />
+                    <FormErrorMessage>
+                      <Text as="span" textStyle="body-regular">
+                        {emailInputError}
+                      </Text>
+                    </FormErrorMessage>
+                  </FormControl>
+                  <Button
+                    onClick={handleSubmit}
+                    isLoading={isSigningIn}
+                    loadingText="Continue with Email"
+                    width="100%"
+                    height="46px"
+                    marginTop="7.5%"
+                  >
+                    <Text as="span" textStyle="button-semibold">
+                      Continue with Email
                     </Text>
-                  </>
-                ) : (
-                  <>
-                    <Text as="p" textStyle="body-regular" align="center">
-                      We just sent an email to {email}. <br />
-                      There should be a link in your inbox to log in.
-                    </Text>
-                    <Text as="p" textStyle="caption" textAlign="left">
-                      <b>Didn&apos;t get an email?</b> Check your spam or trash folder or{' '}
-                      <Link
-                        onClick={() => {
-                          signIn('email', { email, redirect: false });
-                          resendEmailToast({
-                            status: 'success',
-                            title: 'Login Email Resent',
-                            description: 'We just sent another email to your inbox.',
-                            variant: 'solid',
-                          });
-                        }}
-                        color="primary"
-                      >
-                        click here to resend an email.
-                      </Link>
-                    </Text>
-                  </>
-                )}
-              </VStack>
-            </Box>
-          </Box>
-        </Center>
-      </GridItem>
-    </Layout>
+                  </Button>
+                </form>
+                <Text as="p" textStyle="caption" width="100%" textAlign="left">
+                  <b>Don&apos;t have an account?</b> Please contact your administrator for access.
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text as="p" textStyle="body-regular" align="center">
+                  We just sent an email to {email}. <br />
+                  There should be a link in your inbox to log in.
+                </Text>
+                <Text as="p" textStyle="caption" textAlign="left">
+                  <b>Didn&apos;t get an email?</b> Check your spam or trash folder or{' '}
+                  <Link
+                    onClick={() => {
+                      signIn('email', { email, redirect: false });
+                      resendEmailToast({
+                        status: 'success',
+                        title: 'Login Email Resent',
+                        description: 'We just sent another email to your inbox.',
+                        variant: 'solid',
+                      });
+                    }}
+                    color="primary"
+                  >
+                    click here to resend an email.
+                  </Link>
+                </Text>
+              </>
+            )}
+          </VStack>
+        </Box>
+      </Box>
+    </Center>
   );
 }
 

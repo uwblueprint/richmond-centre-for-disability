@@ -38,7 +38,7 @@ export default function Layout({ children, header = true, footer = true }: Props
       <Flex flexDirection="column" alignItems="center" minHeight="100vh">
         {header && <Header />}
         <Flex flexGrow={1} width="100%" justifyContent="center">
-          <InternalGrid isContent>{children}</InternalGrid>
+          <InternalGrid>{children}</InternalGrid>
         </Flex>
         {footer && <Footer />}
       </Flex>
@@ -80,7 +80,7 @@ function Header() {
       borderBottom="1px solid"
       borderBottomColor="border.secondary"
     >
-      <Flex height="100%" width="100%" justifyContent="space-between" marginX="40px">
+      <Flex height="100%" width="100%" justifyContent="space-between" marginX="80px">
         <Flex alignItems="center">
           <Box marginRight="12px">
             <Image src="/assets/logo.svg" alt="RCD Logo" height={48} width={31} priority />
@@ -173,18 +173,12 @@ type InternalGridProps = {
   isContent?: boolean;
 };
 
-function InternalGrid({
-  children,
-  alignItems,
-  marginBottom,
-  isContent = false,
-}: InternalGridProps) {
+function InternalGrid({ children, alignItems, marginBottom, isContent = true }: InternalGridProps) {
   return (
     <Grid
       flexGrow={1}
       width="100%"
-      maxWidth={{ xl: '1280px' }}
-      marginX={isContent ? undefined : '80px'}
+      marginX={isContent ? '80px' : undefined}
       templateColumns="repeat(12, 1fr)"
       gap="20px"
       alignItems={alignItems}
