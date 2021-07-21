@@ -15,30 +15,30 @@ const Badge: ComponentSingleStyleConfig = {
     paddingY: '4px',
   },
 
-  // Variants (completed, inProgress, pending, rejected, expiring, expired, active, inactive)
+  // Variants (COMPLETED, INPROGRESS, PENDING, REJECTED, EXPIRING, EXPIRED, ACTIVE, INACTIVE)
   variants: {
-    completed: {
+    COMPLETED: {
       bg: 'badge.completed',
     },
-    inProgress: {
+    INPROGRESS: {
       bg: 'badge.inProgress',
     },
-    pending: {
+    PENDING: {
       bg: 'badge.pending',
     },
-    rejected: {
+    REJECTED: {
       bg: 'badge.rejected',
     },
-    expiring: {
+    EXPIRING: {
       bg: 'badge.expiring',
     },
-    expired: {
+    EXPIRED: {
       bg: 'badge.expired',
     },
-    active: {
+    ACTIVE: {
       bg: 'badge.active',
     },
-    inactive: {
+    INACTIVE: {
       bg: 'badge.inactive',
     },
   },
