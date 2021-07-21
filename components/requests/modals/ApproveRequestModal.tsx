@@ -8,17 +8,20 @@ import {
   ModalBody,
   Button,
   Text,
+  Box,
 } from '@chakra-ui/react'; // Chakra UI
+import { ReactNode } from 'react';
 
-type ApproveModalProps = {
+type ApproveRequestModalProps = {
   readonly onApprove: () => void;
+  readonly children: ReactNode;
 };
 
-export default function ApproveModal({ onApprove }: ApproveModalProps) {
+export default function ApproveRequestModal({ onApprove, children }: ApproveRequestModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Button onClick={onOpen}>Approve</Button>
+      <Box onClick={onOpen}>{children}</Box>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
@@ -34,7 +37,7 @@ export default function ApproveModal({ onApprove }: ApproveModalProps) {
           <ModalFooter>
             <Button
               bg="background.gray"
-              _hover={{ bg: 'background.gray' }}
+              _hover={{ bg: 'background.grayHover' }}
               color="black"
               marginRight={3}
               onClick={onClose}

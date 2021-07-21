@@ -101,6 +101,10 @@ export default function Request() {
   };
 
   // Edit personal information modal
+  const onComplete = () => {
+    // TODO: Make mutation call to modify Application's status to ApplicationStatus.COMPLETED
+    setApplication({ ...application, applicationStatus: 'COMPLETED' });
+  };
 
   // Edit doctor information/reason for replacement modal
 
@@ -115,6 +119,7 @@ export default function Request() {
           createdAt={createdAt}
           onApprove={onApprove}
           onReject={onReject}
+          onComplete={onComplete}
         />
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={7} textAlign="left">

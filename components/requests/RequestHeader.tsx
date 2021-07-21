@@ -1,9 +1,21 @@
-import { Box, Flex, Center, HStack, Text, Button } from '@chakra-ui/react'; // Chakra UI
-import { ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
+import {
+  Box,
+  Flex,
+  Center,
+  HStack,
+  Text,
+  Menu,
+  MenuList,
+  MenuItem,
+  MenuButton,
+  Button,
+} from '@chakra-ui/react'; // Chakra UI
+import { ChevronLeftIcon, ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import Link from 'next/link'; // Link
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge
-import ApproveModal from '@components/requests/ApproveModal'; // Approve modal button + modal
-import RejectModal from '@components/requests/RejectModal'; // Reject modal button + modal
+import ApproveRequestModal from '@components/requests/modals/ApproveRequestModal'; // Approve button + modal
+import RejectRequestModal from '@components/requests/modals/RejectRequestModal'; // Reject button + modal
+import CompleteRequestModal from '@components/requests/modals/CompleteRequestModal'; // Mark as complete button + modal
 
 type RequestHeaderProps = {
   readonly isRenewal: boolean;
@@ -12,6 +24,7 @@ type RequestHeaderProps = {
   readonly createdAt: string;
   readonly onApprove: () => void;
   readonly onReject: () => void;
+  readonly onComplete: () => void;
 };
 
 export default function RequestHeader({
@@ -20,21 +33,59 @@ export default function RequestHeader({
   createdAt,
   onApprove,
   onReject,
+  onComplete,
 }: RequestHeaderProps) {
   const rightButtons = () => {
     switch (applicationStatus) {
       case 'PENDING':
         return (
           <HStack spacing={3}>
-            <RejectModal onReject={onReject} />
-            <ApproveModal onApprove={onApprove} />
+            <RejectRequestModal onReject={onReject}>
+              <Button bg="secondary.critical" _hover={{ bg: 'secondary.criticalHover' }}>
+                Reject
+              </Button>
+            </RejectRequestModal>
+            <ApproveRequestModal onApprove={onApprove}>
+              <Button>Approve</Button>
+            </ApproveRequestModal>
           </HStack>
         );
       case 'INPROGRESS':
-        return <Button textStyle="button-semibold">Mark as Complete</Button>;
+        return <CompleteRequestModal onComplete={onComplete} />;
       default:
         return null;
     }
+  };
+
+  const moreActions = () => {
+    if (applicationStatus === 'INPROGRESS' || applicationStatus === 'REJECTED') {
+      return (
+        <Menu>
+          <MenuButton
+            as={Button}
+            rightIcon={<ChevronDownIcon />}
+            height="30px"
+            bg="background.gray"
+            _hover={{ bg: 'background.grayHover' }}
+            color="black"
+          >
+            Actions
+          </MenuButton>
+          <MenuList>
+            {applicationStatus === 'INPROGRESS' ? (
+              <RejectRequestModal onReject={onReject}>
+                <MenuItem>Reject request</MenuItem>
+              </RejectRequestModal>
+            ) : (
+              <ApproveRequestModal onApprove={onApprove}>
+                <MenuItem>Approve request</MenuItem>
+              </ApproveRequestModal>
+            )}
+          </MenuList>
+        </Menu>
+      );
+    }
+    return null;
   };
 
   return (
@@ -48,14 +99,17 @@ export default function RequestHeader({
       <Flex marginTop={8} alignItems="center">
         <Box>
           <Center>
-            <Text textStyle="display-xlarge" as="h1" marginRight={3}>
+            <Text textStyle="display-large" as="h1" marginRight={3}>
               {isRenewal ? 'Renewal' : 'Replacement'} Request
             </Text>
             <RequestStatusBadge variant={applicationStatus} />
           </Center>
-          <Text textStyle="caption" as="p">
-            Received {createdAt}
-          </Text>
+          <HStack spacing={3} marginTop={3}>
+            <Text textStyle="caption" as="p">
+              Received date: {createdAt}
+            </Text>
+            {moreActions()}
+          </HStack>
         </Box>
         <Box marginLeft="auto">{rightButtons()}</Box>
       </Flex>

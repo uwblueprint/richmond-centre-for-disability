@@ -8,19 +8,21 @@ import {
   ModalBody,
   Button,
   Text,
+  Box,
 } from '@chakra-ui/react'; // Chakra UI
+import { ReactNode } from 'react';
 
-type ApproveModalProps = {
+type RejectRequestModalProps = {
   readonly onReject: () => void;
+  readonly children: ReactNode;
 };
 
-export default function RejectModal({ onReject }: ApproveModalProps) {
+export default function RejectRequestModal({ onReject, children }: RejectRequestModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Button onClick={onOpen} bg="secondary.critical" _hover={{ bg: 'secondary.critical' }}>
-        Reject
-      </Button>
+      <Box onClick={onOpen}>{children}</Box>
+
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
@@ -35,7 +37,7 @@ export default function RejectModal({ onReject }: ApproveModalProps) {
           <ModalFooter>
             <Button
               bg="background.gray"
-              _hover={{ bg: 'background.gray' }}
+              _hover={{ bg: 'background.grayHover' }}
               color="black"
               marginRight={3}
               onClick={onClose}
@@ -48,6 +50,7 @@ export default function RejectModal({ onReject }: ApproveModalProps) {
                 onClose();
               }}
               bg="secondary.critical"
+              _hover={{ bg: 'secondary.criticalHover' }}
             >
               <Text textStyle="button-semibold">Reject</Text>
             </Button>

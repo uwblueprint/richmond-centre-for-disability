@@ -8,6 +8,7 @@ const colors = {
   primary: '#0B64CC',
   secondary: {
     critical: '#DF1414',
+    criticalHover: '#B21010',
     warning: '#B98900',
     success: '#377E62',
     informative: '#00A0AC',
@@ -53,6 +54,7 @@ const colors = {
     success: '#F1F8F5',
     informative: '#EBF9FC',
     gray: '#EDF2F7',
+    grayHover: '#CDD5DF',
   },
   border: {
     default: '#8C9196',
