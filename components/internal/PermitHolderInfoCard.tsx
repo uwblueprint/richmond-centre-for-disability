@@ -5,7 +5,7 @@ type PermitHolderInfoCardProps = GridItemProps & {
   children: ReactNode;
   header: ReactNode;
   updated?: boolean;
-  handleEdit: MouseEventHandler;
+  handleEdit?: MouseEventHandler;
 };
 
 /**
@@ -42,9 +42,16 @@ export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
           </Text>
         )}
         <Spacer />
-        <Link textStyle="body-bold" color="primary" textDecoration="underline" onClick={handleEdit}>
-          Edit
-        </Link>
+        {handleEdit && (
+          <Link
+            textStyle="body-bold"
+            color="primary"
+            textDecoration="underline"
+            onClick={handleEdit}
+          >
+            Edit
+          </Link>
+        )}
       </Flex>
       {children}
     </GridItem>

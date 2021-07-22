@@ -8,22 +8,25 @@ import {
   ModalBody,
   Button,
   Text,
+  Box,
 } from '@chakra-ui/react'; // Chakra UI
+import { ReactNode } from 'react';
 
 type CompleteRequestModalProps = {
   readonly onComplete: () => void;
+  readonly children: ReactNode;
 };
 
-export default function CompleteRequestModal({ onComplete }: CompleteRequestModalProps) {
+export default function CompleteRequestModal({ onComplete, children }: CompleteRequestModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Button onClick={onOpen}>Mark as Complete</Button>
+      <Box onClick={onOpen}>{children}</Box>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Complete Request</ModalHeader>
           <ModalBody>
             <Text textStyle="body-regular">
               Are you sure you want to mark this request as complete? Once completed, you may only

@@ -26,7 +26,7 @@ export default function ApproveRequestModal({ onApprove, children }: ApproveRequ
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Approve Request</ModalHeader>
           <ModalBody>
             <Text textStyle="body-regular">
               Are you sure you want to approve this request? Any information updated by the permit

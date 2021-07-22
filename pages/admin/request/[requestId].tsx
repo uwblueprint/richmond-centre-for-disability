@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { useState } from 'react'; // React
-import { GridItem, Box, Stack } from '@chakra-ui/react'; // Chakra UI
+import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
 import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
@@ -11,6 +11,7 @@ import DoctorInformationCard from '@components/requests/DoctorInformationCard'; 
 import PaymentInformationCard from '@components/requests/PaymentInformationCard'; // Payment information card
 import PersonalInformationCard from '@components/requests/PersonalInformationCard'; // Personal information card
 import ReasonForReplacementCard from '@components/requests/ReasonForReplacementCard'; // Reason for replacement card
+import ProcessingTasksCard from '@components/requests/ProcessingTasksCard'; // Processing tasks card
 
 // TEMPORARY MOCK DATA
 
@@ -69,6 +70,7 @@ const mockApplication = {
   permitFee: 5,
   donation: 10,
   paymentType: PaymentType.Visa,
+  applicationProcessingStepsCompleted: [] as number[], // The format of this will change. For now, 6 steps is complete.
 };
 
 // Individual request page
@@ -86,6 +88,7 @@ export default function Request() {
     permitFee,
     donation,
     paymentType,
+    applicationProcessingStepsCompleted,
   } = application;
 
   // Approve modal
@@ -110,6 +113,26 @@ export default function Request() {
 
   // Edit payment information modal
 
+  // Processing tasks completion handler
+  const onTaskComplete = (taskNum: number) => {
+    // TODO: Update the appropriate table
+    setApplication({
+      ...application,
+      applicationProcessingStepsCompleted: [...applicationProcessingStepsCompleted, taskNum],
+    });
+  };
+
+  // Removes the taskNum from the list of completed tasks
+  const onTaskUndo = (taskNum: number) => {
+    // TODO: Update the appropriate table
+    setApplication({
+      ...application,
+      applicationProcessingStepsCompleted: applicationProcessingStepsCompleted.filter(
+        _taskNum => _taskNum !== taskNum
+      ),
+    });
+  };
+
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={16}>
@@ -120,6 +143,7 @@ export default function Request() {
           onApprove={onApprove}
           onReject={onReject}
           onComplete={onComplete}
+          applicationProcessingStepsCompleted={applicationProcessingStepsCompleted}
         />
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={7} textAlign="left">
@@ -134,7 +158,11 @@ export default function Request() {
       <GridItem rowSpan={12} colSpan={7} marginTop={7} textAlign="left">
         <Stack spacing={5}>
           {applicationStatus == 'INPROGRESS' ? (
-            <Box></Box>
+            <ProcessingTasksCard
+              applicationProcessingStepsCompleted={applicationProcessingStepsCompleted}
+              onTaskComplete={onTaskComplete}
+              onTaskUndo={onTaskUndo}
+            />
           ) : isRenewal ? (
             <DoctorInformationCard physician={physician} handleEdit={() => {}} />
           ) : (

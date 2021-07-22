@@ -26,7 +26,7 @@ export default function RejectRequestModal({ onReject, children }: RejectRequest
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Reject Request</ModalHeader>
           <ModalBody>
             <Text textStyle="body-regular">
               Are you sure you want to reject this request? Any information updated by the permit

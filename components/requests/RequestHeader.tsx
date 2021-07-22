@@ -1,7 +1,6 @@
 import {
   Box,
   Flex,
-  Center,
   HStack,
   Text,
   Menu,
@@ -22,6 +21,7 @@ type RequestHeaderProps = {
   readonly applicationStatus: // TODO: Change this to the enum that we add
   'COMPLETED' | 'INPROGRESS' | 'PENDING' | 'REJECTED' | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
   readonly createdAt: string;
+  readonly applicationProcessingStepsCompleted: number[]; // The format of this will change. For now, 6 steps is complete.
   readonly onApprove: () => void;
   readonly onReject: () => void;
   readonly onComplete: () => void;
@@ -31,6 +31,7 @@ export default function RequestHeader({
   isRenewal,
   applicationStatus,
   createdAt,
+  applicationProcessingStepsCompleted,
   onApprove,
   onReject,
   onComplete,
@@ -51,7 +52,13 @@ export default function RequestHeader({
           </HStack>
         );
       case 'INPROGRESS':
-        return <CompleteRequestModal onComplete={onComplete} />;
+        return (
+          <CompleteRequestModal onComplete={onComplete}>
+            <Button disabled={applicationProcessingStepsCompleted.length !== 6}>
+              Mark as complete
+            </Button>
+          </CompleteRequestModal>
+        );
       default:
         return null;
     }
@@ -69,7 +76,7 @@ export default function RequestHeader({
             _hover={{ bg: 'background.grayHover' }}
             color="black"
           >
-            Actions
+            More Actions
           </MenuButton>
           <MenuList>
             {applicationStatus === 'INPROGRESS' ? (
@@ -98,12 +105,12 @@ export default function RequestHeader({
       </Link>
       <Flex marginTop={8} alignItems="center">
         <Box>
-          <Center>
+          <Flex alignItems="center">
             <Text textStyle="display-large" as="h1" marginRight={3}>
               {isRenewal ? 'Renewal' : 'Replacement'} Request
             </Text>
             <RequestStatusBadge variant={applicationStatus} />
-          </Center>
+          </Flex>
           <HStack spacing={3} marginTop={3}>
             <Text textStyle="caption" as="p">
               Received date: {createdAt}
