@@ -37,7 +37,7 @@ export default function Layout({ children, header = true, footer = true }: Props
       <Meta />
       <Flex flexDirection="column" alignItems="center" minHeight="100vh">
         {header && <Header />}
-        <Flex flexGrow={1} width="100%" justifyContent="center">
+        <Flex flexGrow={1} width="100%" justifyContent="center" paddingY="32px">
           <InternalGrid>{children}</InternalGrid>
         </Flex>
         {footer && <Footer />}
