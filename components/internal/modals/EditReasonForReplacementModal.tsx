@@ -27,7 +27,7 @@ export default function EditReasonForReplacementModal() {
 
   //   Lost Information state
   const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
-  const [timeStamp, setTimeStamp] = useState('');
+  const [timestamp, setTimestamp] = useState('');
   const [location, setLocation] = useState('');
   const [eventDescription, setEventDescription] = useState('');
 
@@ -41,7 +41,7 @@ export default function EditReasonForReplacementModal() {
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    // TODO
+    //  TODO: Will be addressed in API hookup
   };
 
   return (
@@ -55,10 +55,10 @@ export default function EditReasonForReplacementModal() {
         <ModalOverlay />
         <form onSubmit={handleSubmit}>
           <ModalContent paddingX="40px">
-            <ModalHeader paddingBottom="12px" paddingTop="24px">
+            <ModalHeader paddingBottom="12px" paddingTop="24px" paddingX="3px">
               <Text textStyle="display-medium-bold">{'Edit Reason for Replacement'}</Text>
             </ModalHeader>
-            <ModalBody paddingY="16px">
+            <ModalBody paddingY="16px" paddingX="3px">
               <FormControl as="fieldset" paddingBottom="24px">
                 <FormLabel as="legend" marginBottom="8px">
                   {'Reason'}
@@ -68,6 +68,7 @@ export default function EditReasonForReplacementModal() {
                     <Radio value="Lost">{'Lost'}</Radio>
                     <Radio value="Stolen">{'Stolen'}</Radio>
                     <Radio value="Other">{'Other'}</Radio>
+                    {/* Note: need to replace values with ReasonForReplacement enum when that is available */}
                   </Stack>
                 </RadioGroup>
               </FormControl>
@@ -86,17 +87,17 @@ export default function EditReasonForReplacementModal() {
 
                   <FormControl paddingBottom="24px">
                     <FormLabel>
-                      {'Time stamp '}
+                      {'Timestamp '}
                       <Box as="span" textStyle="body-regular">
                         {'(optional)'}
                       </Box>
                     </FormLabel>
                     <Input
-                      placeholder={'eg. 16:00 pm'}
-                      value={timeStamp}
-                      onChange={event => setTimeStamp(event.target.value)}
+                      placeholder={'eg. 04:00 pm'}
+                      value={timestamp}
+                      onChange={event => setTimestamp(event.target.value)}
                     />
-                    <FormHelperText color="#323741">{'hh:mm am/pm'}</FormHelperText>
+                    <FormHelperText color="text.seconday">{'hh:mm am/pm'}</FormHelperText>
                   </FormControl>
 
                   <FormControl isRequired paddingBottom="24px">
@@ -109,7 +110,7 @@ export default function EditReasonForReplacementModal() {
                   </FormControl>
 
                   <FormControl isRequired>
-                    <FormLabel>{'Event Description'}</FormLabel>
+                    <FormLabel>{'Event description'}</FormLabel>
                     <Textarea
                       placeholder={'Explain what happened.'}
                       value={eventDescription}
@@ -123,7 +124,7 @@ export default function EditReasonForReplacementModal() {
               {reason === 'Stolen' && (
                 <>
                   <FormControl isRequired paddingBottom="24px">
-                    <FormLabel>{'Police File Number'}</FormLabel>
+                    <FormLabel>{'Police file number'}</FormLabel>
                     <Input
                       value={policeFileNumber}
                       onChange={event => setPoliceFileNumber(event.target.value)}
@@ -145,7 +146,7 @@ export default function EditReasonForReplacementModal() {
 
                   <FormControl>
                     <FormLabel>
-                      {'Police Officer Name '}
+                      {'Police officer name '}
                       <Box as="span" textStyle="body-regular">
                         {'(optional)'}
                       </Box>
@@ -161,7 +162,7 @@ export default function EditReasonForReplacementModal() {
               {/* Conditionally renders this section if Other is selected as replacement reason */}
               {reason === 'Other' && (
                 <FormControl isRequired>
-                  <FormLabel>{'Event Description'}</FormLabel>
+                  <FormLabel>{'Event description'}</FormLabel>
                   <Textarea
                     placeholder={'Explain what happened.'}
                     value={otherEventDescription}

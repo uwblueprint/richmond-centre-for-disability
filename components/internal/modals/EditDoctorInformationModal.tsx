@@ -14,6 +14,7 @@ import {
   Stack,
   FormHelperText,
   Box,
+  Divider,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, SyntheticEvent } from 'react'; // React
 
@@ -31,7 +32,7 @@ export default function EditDoctorInformationModal() {
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    //  TODO
+    //  TODO: Will be addressed in API hookup
   };
   return (
     <>
@@ -49,12 +50,12 @@ export default function EditDoctorInformationModal() {
         <ModalOverlay />
         <form onSubmit={handleSubmit}>
           <ModalContent paddingX="40px">
-            <ModalHeader paddingBottom="12px" paddingTop="24px">
+            <ModalHeader paddingBottom="12px" paddingTop="24px" paddingX="3px">
               <Text textStyle="display-medium-bold">{"Edit Doctor's Information"}</Text>
             </ModalHeader>
-            <ModalBody paddingY="20px">
+            <ModalBody paddingY="20px" paddingX="3px">
               <Box paddingBottom="32px">
-                <Stack direction="row" spacing="20px">
+                <Stack direction="row" spacing="20px" marginBottom="24px">
                   <FormControl isRequired>
                     <FormLabel>{'First name'}</FormLabel>
                     <Input value={firstName} onChange={event => setFirstName(event.target.value)} />
@@ -67,37 +68,41 @@ export default function EditDoctorInformationModal() {
 
                 <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
-                    <FormLabel>{'Medical Services Plan Number'}</FormLabel>
+                    <FormLabel>{'Medical Services Plan number'}</FormLabel>
                     <Input value={mspNumber} onChange={event => setMspNumber(event.target.value)} />
                   </FormControl>
                   <FormControl isRequired>
-                    <FormLabel>{'Phone Number'}</FormLabel>
+                    <FormLabel>{'Phone number'}</FormLabel>
                     <Input
                       value={phoneNumber}
                       onChange={event => setPhoneNumber(event.target.value)}
+                      type="tel"
                     />
                   </FormControl>
                 </Stack>
               </Box>
+
+              {/* TODO: Customize Divider to change color  */}
+              <Divider />
 
               <Box paddingTop="32px">
                 <Text textStyle="heading" paddingBottom="24px">
                   {'Address'}
                 </Text>
                 <FormControl isRequired paddingBottom="24px">
-                  <FormLabel>{'Address Line 1'}</FormLabel>
+                  <FormLabel>{'Address line 1'}</FormLabel>
                   <Input
                     value={addressLine1}
                     onChange={event => setAddressLine1(event.target.value)}
                   />
-                  <FormHelperText color="#323741">
+                  <FormHelperText color="text.seconday">
                     {'Street Address, P.O. Box, Company Name, c/o'}
                   </FormHelperText>
                 </FormControl>
 
                 <FormControl paddingBottom="24px">
                   <FormLabel>
-                    {'Address Line 2 '}
+                    {'Address line 2 '}
                     <Box as="span" textStyle="body-regular">
                       {'(optional)'}
                     </Box>
@@ -106,7 +111,7 @@ export default function EditDoctorInformationModal() {
                     value={addressLine2}
                     onChange={event => setAddressLine2(event.target.value)}
                   />
-                  <FormHelperText color="#323741">
+                  <FormHelperText color="text.seconday">
                     {'Apartment, suite, unit, building, floor, etc'}
                   </FormHelperText>
                 </FormControl>
@@ -118,7 +123,7 @@ export default function EditDoctorInformationModal() {
                   </FormControl>
 
                   <FormControl isRequired>
-                    <FormLabel>{'Postal Code'}</FormLabel>
+                    <FormLabel>{'Postal code'}</FormLabel>
                     <Input
                       value={postalCode}
                       onChange={event => setPostalCode(event.target.value)}
@@ -127,7 +132,7 @@ export default function EditDoctorInformationModal() {
                 </Stack>
               </Box>
             </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingTop="0px">
+            <ModalFooter paddingBottom="24px" paddingTop="0px" paddingX="3px">
               <Button colorScheme="gray" variant="solid" onClick={onClose}>
                 {'Cancel'}
               </Button>

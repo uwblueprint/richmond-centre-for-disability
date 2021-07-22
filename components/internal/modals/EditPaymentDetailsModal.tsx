@@ -22,17 +22,19 @@ import {
   Select,
   Grid,
   GridItem,
+  Divider,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, SyntheticEvent } from 'react'; // React
+import { PaymentType } from '@lib/graphql/types';
 
 export default function EditPaymentDetailsModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentType | string>('');
   const [donation, setDonation] = useState('');
 
   //   Shipping address information state
-  const [hideShippingInfo, setHideShippingInfo] = useState(false); // Whether shipping information is visible
+  const [hideShippingInfo, setHideShippingInfo] = useState(true); // Whether shipping information is visible
   const [shippingFullName, setShippingFullName] = useState('');
   const [shippingAddressLine1, setShippingAddressLine1] = useState('');
   const [shippingAddressLine2, setShippingAddressLine2] = useState('');
@@ -41,11 +43,11 @@ export default function EditPaymentDetailsModal() {
   const [shippingCountry, setShippingCountry] = useState('');
   const [shippingPostalCode, setShippingPostalCode] = useState('');
 
-  //   TODO: Add error states for each field as follows
+  //   TODO: Add error states for each field as follows (post-mvp)
   // const [shippingFullNameInputError, setShippingFullNameInputError] = useState(''); // Error message displayed under input
 
   //   Billing address information state
-  const [hideBillingInfo, setHideBillingInfo] = useState(false); // Whether billing information is visible
+  const [hideBillingInfo, setHideBillingInfo] = useState(true); // Whether billing information is visible
   const [billingFullName, setBillingFullName] = useState('');
   const [billingAddressLine1, setBillingAddressLine1] = useState('');
   const [billingAddressLine2, setBillingAddressLine2] = useState('');
@@ -56,7 +58,8 @@ export default function EditPaymentDetailsModal() {
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    // TODO: Add error handling to each field as follows
+    // TODO: Will be addressed in API hookup
+    // TODO: Add error handling to each field as follows (post-mvp)
     // if (!hideShippingInfo) {
     //   if (!shippingFullName.length) {
     //     setShippingFullNameInputError("Please enter the recipient's full name.");
@@ -79,12 +82,17 @@ export default function EditPaymentDetailsModal() {
         <ModalOverlay />
         <form onSubmit={handleSubmit}>
           <ModalContent paddingX="40px">
-            <ModalHeader textStyle="display-medium-bold" paddingBottom="12px" paddingTop="24px">
+            <ModalHeader
+              textStyle="display-medium-bold"
+              paddingBottom="12px"
+              paddingTop="24px"
+              paddingX="3px"
+            >
               <Text textStyle="display-medium-bold">
                 {'Edit Payment, Shipping and Billing Details'}
               </Text>
             </ModalHeader>
-            <ModalBody paddingY="20px">
+            <ModalBody paddingY="20px" paddingX="3px">
               <Box paddingBottom="32px">
                 <Grid templateColumns="repeat(2, 1fr)" rowGap={'24px'}>
                   <GridItem rowSpan={2} colSpan={1}>
@@ -92,12 +100,12 @@ export default function EditPaymentDetailsModal() {
                       <FormLabel as="legend">{'Payment method'}</FormLabel>
                       <RadioGroup onChange={setPaymentMethod} value={paymentMethod}>
                         <Stack>
-                          <Radio value="Mastercard">{'Mastercard'}</Radio>
-                          <Radio value="Visa">{'Visa'}</Radio>
-                          <Radio value="Debit">{'Debit'}</Radio>
-                          <Radio value="Cash">{'Cash'}</Radio>
-                          <Radio value="Cheque">{'Cheque'}</Radio>
-                          <Radio value="E-transfer">{'E-transfer'}</Radio>
+                          <Radio value={PaymentType.Mastercard}>{'Mastercard'}</Radio>
+                          <Radio value={PaymentType.Visa}>{'Visa'}</Radio>
+                          <Radio value={PaymentType.Debit}>{'Debit'}</Radio>
+                          <Radio value={PaymentType.Cash}>{'Cash'}</Radio>
+                          <Radio value={PaymentType.Cheque}>{'Cheque'}</Radio>
+                          <Radio value={PaymentType.Etransfer}>{'E-transfer'}</Radio>
                         </Stack>
                       </RadioGroup>
                     </FormControl>
@@ -112,13 +120,15 @@ export default function EditPaymentDetailsModal() {
                         </Box>
                       </FormLabel>
                       <InputGroup>
-                        <InputLeftElement pointerEvents="none" color="#A3AEBE" fontSize="1.2em">
+                        <InputLeftElement
+                          pointerEvents="none"
+                          color="texticon.filler"
+                          fontSize="1.2em"
+                        >
                           {'$'}
                         </InputLeftElement>
                         <Input placeholder="26" />
                       </InputGroup>
-                      {/* TODO: Confirm if the helper text is wanted */}
-                      <FormHelperText>{'fixed cost'}</FormHelperText>
                     </FormControl>
                   </GridItem>
 
@@ -131,7 +141,11 @@ export default function EditPaymentDetailsModal() {
                         </Box>
                       </FormLabel>
                       <InputGroup>
-                        <InputLeftElement pointerEvents="none" color="#A3AEBE" fontSize="1.2em">
+                        <InputLeftElement
+                          pointerEvents="none"
+                          color="texticon.filler"
+                          fontSize="1.2em"
+                        >
                           {'$'}
                         </InputLeftElement>
                         <Input
@@ -143,6 +157,9 @@ export default function EditPaymentDetailsModal() {
                   </GridItem>
                 </Grid>
               </Box>
+
+              {/* TODO: Customize Divider to change color  */}
+              <Divider />
 
               <Box paddingY="32px">
                 <Text textStyle="heading" paddingBottom="24px">
@@ -168,20 +185,20 @@ export default function EditPaymentDetailsModal() {
                       />
                     </FormControl>
 
-                    <FormControl paddingBottom="24px">
-                      <FormLabel>{'Address Line 1'}</FormLabel>
+                    <FormControl isRequired paddingBottom="24px">
+                      <FormLabel>{'Address line 1'}</FormLabel>
                       <Input
                         value={shippingAddressLine1}
                         onChange={event => setShippingAddressLine1(event.target.value)}
                       />
-                      <FormHelperText color="#323741">
+                      <FormHelperText color="text.seconday">
                         {'Street Address, P.O. Box, Company Name, c/o'}
                       </FormHelperText>
                     </FormControl>
 
                     <FormControl paddingBottom="24px">
                       <FormLabel>
-                        {'Address Line 2 '}
+                        {'Address line 2 '}
                         <Box as="span" textStyle="body-regular">
                           {'(optional)'}
                         </Box>
@@ -190,7 +207,7 @@ export default function EditPaymentDetailsModal() {
                         value={shippingAddressLine2}
                         onChange={event => setShippingAddressLine2(event.target.value)}
                       />
-                      <FormHelperText color="#323741">
+                      <FormHelperText color="text.seconday">
                         {'Apartment, suite, unit, building, floor, etc'}
                       </FormHelperText>
                     </FormControl>
@@ -205,15 +222,15 @@ export default function EditPaymentDetailsModal() {
                       </FormControl>
 
                       <FormControl isRequired>
-                        <FormLabel>{'Province / Territory'}</FormLabel>
+                        <FormLabel>{'Province / territory'}</FormLabel>
                         <Select
-                          placeholder="Select provice / territory"
+                          placeholder="Select province / territory"
                           value={shippingProvince}
                           onChange={event => setShippingProvince(event.target.value)}
                         >
                           <option value="Ontario">{'Ontario'}</option>
                           <option value="British Columbia">{'British Columbia'}</option>
-                          {/* TODO: Add rest of provinces */}
+                          {/* TODO: when we add the rest of the provinces, use the Province enum in lib/graphql/types.ts */}
                         </Select>
                       </FormControl>
                     </Stack>
@@ -243,6 +260,9 @@ export default function EditPaymentDetailsModal() {
                 )}
               </Box>
 
+              {/* TODO: Customize Divider to change color  */}
+              <Divider />
+
               <Box paddingTop="32px">
                 <Text textStyle="heading" paddingBottom="24px">
                   {'Billing Address'}
@@ -268,19 +288,19 @@ export default function EditPaymentDetailsModal() {
                     </FormControl>
 
                     <FormControl isRequired paddingBottom="24px">
-                      <FormLabel>{'Address Line 1'}</FormLabel>
+                      <FormLabel>{'Address line 1'}</FormLabel>
                       <Input
                         value={billingAddressLine1}
                         onChange={event => setBillingAddressLine1(event.target.value)}
                       />
-                      <FormHelperText color="#323741">
+                      <FormHelperText color="text.seconday">
                         {'Street Address, P.O. Box, Company Name, c/o'}
                       </FormHelperText>
                     </FormControl>
 
                     <FormControl paddingBottom="24px">
                       <FormLabel>
-                        {'Address Line 2 '}
+                        {'Address line 2 '}
                         <Box as="span" textStyle="body-regular">
                           {'(optional)'}
                         </Box>
@@ -289,7 +309,7 @@ export default function EditPaymentDetailsModal() {
                         value={billingAddressLine2}
                         onChange={event => setBillingAddressLine2(event.target.value)}
                       />
-                      <FormHelperText color="#323741">
+                      <FormHelperText color="text.seconday">
                         {'Apartment, suite, unit, building, floor, etc'}
                       </FormHelperText>
                     </FormControl>
@@ -304,15 +324,15 @@ export default function EditPaymentDetailsModal() {
                       </FormControl>
 
                       <FormControl>
-                        <FormLabel>{'Province / Territory'}</FormLabel>
+                        <FormLabel>{'Province / territory'}</FormLabel>
                         <Select
-                          placeholder="Select provice / territory"
+                          placeholder="Select province / territory"
                           value={billingProvince}
                           onChange={event => setBillingProvince(event.target.value)}
                         >
                           <option value="Ontario">{'Ontario'}</option>
                           <option value="British Columbia">{'British Columbia'}</option>
-                          {/* TODO: Add rest of provinces */}
+                          {/* TODO: when we add the rest of the provinces, use the Province enum in lib/graphql/types.ts */}
                         </Select>
                       </FormControl>
                     </Stack>
@@ -341,7 +361,7 @@ export default function EditPaymentDetailsModal() {
                 )}
               </Box>
             </ModalBody>
-            <ModalFooter paddingBottom="24px">
+            <ModalFooter paddingBottom="24px" paddingX="3px">
               <Button colorScheme="gray" variant="solid" onClick={onClose}>
                 {'Cancel'}
               </Button>
