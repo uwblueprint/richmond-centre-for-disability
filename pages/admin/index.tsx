@@ -22,6 +22,7 @@ import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 
 // Placeholder columns
+// TODO: accessors should be the accessors for these fields in the DB
 const COLUMNS = [
   {
     Header: 'Name',
@@ -34,14 +35,17 @@ const COLUMNS = [
   {
     Header: 'Permit Type',
     accessor: 'permitType',
+    disableSortBy: true,
   },
   {
     Header: 'Request Type',
     accessor: 'requestType',
+    disableSortBy: true,
   },
   {
     Header: 'Status',
     accessor: 'status',
+    disableSortBy: true,
   },
 ];
 

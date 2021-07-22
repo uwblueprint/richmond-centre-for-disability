@@ -50,6 +50,12 @@
       "rules": {
         "@typescript-eslint/explicit-module-boundary-types": 0
       }
+    },
+    {
+      "files": ["types/*.d.ts"],
+      "rules": {
+        "@typescript-eslint/no-empty-interface": 0
+      }
     }
   ]
 }

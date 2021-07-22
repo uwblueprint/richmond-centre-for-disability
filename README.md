@@ -34,7 +34,7 @@ applicant-facing application portal and an internal user/APP management portal.
 ├── public
 │   ├── assets # Assets
 │   └── locales # Translations
-├── tools # Frontend tools
+├── tools # Tools that are not central to an app module (more frontend-heavy)
 │   ├── pages # Tools for pages
 │   └── components # Tools for components
 # Misc individual files
