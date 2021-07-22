@@ -199,7 +199,7 @@ enum Aid {
   SCOOTER
   WALKER
 
-   @@map("aid")
+  @@map("aid")
 }
 
 enum ApplicantStatus {
@@ -207,7 +207,7 @@ enum ApplicantStatus {
   INACTIVE
   DECEASED
 
-   @@map("applicantstatus")
+  @@map("applicantstatus")
 }
 
 enum Gender {
@@ -215,7 +215,7 @@ enum Gender {
   FEMALE
   OTHER
 
-   @@map("gender")
+  @@map("gender")
 }
 
 enum PaymentType {
@@ -227,7 +227,7 @@ enum PaymentType {
   DEBIT
   MONEY_ORDER
 
-   @@map("paymenttype")
+  @@map("paymenttype")
 }
 
 enum PhysicianStatus {
@@ -239,7 +239,7 @@ enum PhysicianStatus {
   TEMPORARILY_INACTIVE
   RELOCATED
 
-   @@map("physicianstatus")
+  @@map("physicianstatus")
 }
 
 enum Province {
@@ -257,7 +257,7 @@ enum Province {
   NT
   YT
 
-   @@map("province")
+  @@map("province")
 }
 
 enum Role {
@@ -265,5 +265,5 @@ enum Role {
   ACCOUNTING
   SECRETARY
 
-   @@map("role")
+  @@map("role")
 }
