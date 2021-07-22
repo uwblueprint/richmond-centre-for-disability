@@ -50,10 +50,10 @@ export default function EditDoctorInformationModal() {
         <ModalOverlay />
         <form onSubmit={handleSubmit}>
           <ModalContent paddingX="40px">
-            <ModalHeader paddingBottom="12px" paddingTop="24px" paddingX="3px">
+            <ModalHeader paddingBottom="12px" paddingTop="24px" paddingX="4px">
               <Text textStyle="display-medium-bold">{"Edit Doctor's Information"}</Text>
             </ModalHeader>
-            <ModalBody paddingY="20px" paddingX="3px">
+            <ModalBody paddingY="20px" paddingX="4px">
               <Box paddingBottom="32px">
                 <Stack direction="row" spacing="20px" marginBottom="24px">
                   <FormControl isRequired>
@@ -132,7 +132,7 @@ export default function EditDoctorInformationModal() {
                 </Stack>
               </Box>
             </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingTop="0px" paddingX="3px">
+            <ModalFooter paddingBottom="24px" paddingTop="0px" paddingX="4px">
               <Button colorScheme="gray" variant="solid" onClick={onClose}>
                 {'Cancel'}
               </Button>

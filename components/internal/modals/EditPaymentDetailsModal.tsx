@@ -34,7 +34,7 @@ export default function EditPaymentDetailsModal() {
   const [donation, setDonation] = useState('');
 
   //   Shipping address information state
-  const [hideShippingInfo, setHideShippingInfo] = useState(false); // Whether shipping information is visible
+  const [sameShippingAndHomeAddresses, setSameShippingAndHomeAddresses] = useState(false); // Whether shipping information is visible
   const [shippingFullName, setShippingFullName] = useState('');
   const [shippingAddressLine1, setShippingAddressLine1] = useState('');
   const [shippingAddressLine2, setShippingAddressLine2] = useState('');
@@ -47,7 +47,7 @@ export default function EditPaymentDetailsModal() {
   // const [shippingFullNameInputError, setShippingFullNameInputError] = useState(''); // Error message displayed under input
 
   //   Billing address information state
-  const [hideBillingInfo, setHideBillingInfo] = useState(false); // Whether billing information is visible
+  const [sameBillingAndHomeAddresses, setSameBillingAndHomeAddresses] = useState(false); // Whether billing information is visible
   const [billingFullName, setBillingFullName] = useState('');
   const [billingAddressLine1, setBillingAddressLine1] = useState('');
   const [billingAddressLine2, setBillingAddressLine2] = useState('');
@@ -86,13 +86,13 @@ export default function EditPaymentDetailsModal() {
               textStyle="display-medium-bold"
               paddingBottom="12px"
               paddingTop="24px"
-              paddingX="3px"
+              paddingX="4px"
             >
               <Text textStyle="display-medium-bold">
                 {'Edit Payment, Shipping and Billing Details'}
               </Text>
             </ModalHeader>
-            <ModalBody paddingY="20px" paddingX="3px">
+            <ModalBody paddingY="20px" paddingX="4px">
               <Box paddingBottom="32px">
                 <Grid templateColumns="repeat(2, 1fr)" rowGap={'24px'}>
                   <GridItem rowSpan={2} colSpan={1}>
@@ -168,14 +168,14 @@ export default function EditPaymentDetailsModal() {
 
                 <Checkbox
                   paddingBottom="24px"
-                  isChecked={hideShippingInfo}
-                  onChange={event => setHideShippingInfo(event.target.checked)}
+                  isChecked={sameShippingAndHomeAddresses}
+                  onChange={event => setSameShippingAndHomeAddresses(event.target.checked)}
                 >
                   {'Same as home address'}
                 </Checkbox>
 
                 {/* Section is hidden if same as home address checkbox is checked */}
-                {!hideShippingInfo && (
+                {!sameShippingAndHomeAddresses && (
                   <>
                     <FormControl isRequired paddingBottom="24px">
                       <FormLabel>{'Full name'}</FormLabel>
@@ -270,14 +270,14 @@ export default function EditPaymentDetailsModal() {
 
                 <Checkbox
                   paddingBottom="24px"
-                  isChecked={hideBillingInfo}
-                  onChange={event => setHideBillingInfo(event.target.checked)}
+                  isChecked={sameBillingAndHomeAddresses}
+                  onChange={event => setSameBillingAndHomeAddresses(event.target.checked)}
                 >
                   {'Same as home address'}
                 </Checkbox>
 
                 {/* Section is hidden if same as home address checkbox is checked */}
-                {!hideBillingInfo && (
+                {!sameBillingAndHomeAddresses && (
                   <>
                     <FormControl isRequired paddingBottom="24px">
                       <FormLabel>{'Full name'}</FormLabel>
@@ -361,7 +361,7 @@ export default function EditPaymentDetailsModal() {
                 )}
               </Box>
             </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingX="3px">
+            <ModalFooter paddingBottom="24px" paddingX="4px">
               <Button colorScheme="gray" variant="solid" onClick={onClose}>
                 {'Cancel'}
               </Button>
