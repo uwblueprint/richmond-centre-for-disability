@@ -34,7 +34,7 @@ export default function EditPaymentDetailsModal() {
   const [donation, setDonation] = useState('');
 
   //   Shipping address information state
-  const [hideShippingInfo, setHideShippingInfo] = useState(true); // Whether shipping information is visible
+  const [hideShippingInfo, setHideShippingInfo] = useState(false); // Whether shipping information is visible
   const [shippingFullName, setShippingFullName] = useState('');
   const [shippingAddressLine1, setShippingAddressLine1] = useState('');
   const [shippingAddressLine2, setShippingAddressLine2] = useState('');
@@ -47,7 +47,7 @@ export default function EditPaymentDetailsModal() {
   // const [shippingFullNameInputError, setShippingFullNameInputError] = useState(''); // Error message displayed under input
 
   //   Billing address information state
-  const [hideBillingInfo, setHideBillingInfo] = useState(true); // Whether billing information is visible
+  const [hideBillingInfo, setHideBillingInfo] = useState(false); // Whether billing information is visible
   const [billingFullName, setBillingFullName] = useState('');
   const [billingAddressLine1, setBillingAddressLine1] = useState('');
   const [billingAddressLine2, setBillingAddressLine2] = useState('');
