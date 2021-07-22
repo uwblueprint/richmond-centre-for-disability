@@ -23,6 +23,7 @@ import { useState, SyntheticEvent } from 'react'; // React
 export default function EditReasonForReplacementModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  // TODO: need to replace values with ReasonForReplacement enum when that is available
   const [reason, setReason] = useState('');
 
   //   Lost Information state
@@ -68,7 +69,7 @@ export default function EditReasonForReplacementModal() {
                     <Radio value="Lost">{'Lost'}</Radio>
                     <Radio value="Stolen">{'Stolen'}</Radio>
                     <Radio value="Other">{'Other'}</Radio>
-                    {/* Note: need to replace values with ReasonForReplacement enum when that is available */}
+                    {/* TODO: need to replace values with ReasonForReplacement enum when that is available */}
                   </Stack>
                 </RadioGroup>
               </FormControl>
