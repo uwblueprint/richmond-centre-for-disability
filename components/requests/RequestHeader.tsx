@@ -76,7 +76,7 @@ export default function RequestHeader({
             _hover={{ bg: 'background.grayHover' }}
             color="black"
           >
-            More Actions
+            <Text textStyle="caption">More Actions</Text>
           </MenuButton>
           <MenuList>
             {applicationStatus === 'INPROGRESS' ? (

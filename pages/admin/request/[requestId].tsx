@@ -150,7 +150,7 @@ export default function Request() {
         <PersonalInformationCard
           applicant={applicant}
           expirationDate={expirationDate}
-          mostRecentAPP={expirationDate}
+          mostRecentAPP={applicant.mostRecentAPP}
           handleEdit={() => {}}
           handleName={() => {}}
         />
