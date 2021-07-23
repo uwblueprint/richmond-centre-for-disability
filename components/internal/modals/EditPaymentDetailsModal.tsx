@@ -28,7 +28,7 @@ import { useState, SyntheticEvent } from 'react'; // React
 import { PaymentType } from '@lib/graphql/types';
 
 export default function EditPaymentDetailsModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose } = useDisclosure();
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentType | string>('');
   const [donation, setDonation] = useState('');
@@ -69,10 +69,6 @@ export default function EditPaymentDetailsModal() {
 
   return (
     <>
-      {/* Button will be removed before merging */}
-      <Button mt={3} onClick={onOpen}>
-        Open
-      </Button>
       <Modal
         onClose={onClose}
         isOpen={isOpen}

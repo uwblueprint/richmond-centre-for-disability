@@ -16,19 +16,12 @@ import {
   Button,
 } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/applicant/Layout'; // Layout wrapper
-import EditDoctorInformationModal from '@components/internal/modals/EditDoctorInformationModal'; // Layout wrapper
-import EditPaymentDetailsModal from '@components/internal/modals/EditPaymentDetailsModal';
-import EditReasonForReplacementModal from '@components/internal/modals/EditReasonForReplacementModal';
 
 export default function Landing() {
   const { t } = useTranslation('common');
 
   return (
     <Layout>
-      {/* For testing, will be removed before merging */}
-      <EditDoctorInformationModal />
-      <EditPaymentDetailsModal />
-      <EditReasonForReplacementModal />
       <GridItem colSpan={8} colStart={1}>
         <Text as="h1" textStyle="display-xlarge" align="left">
           {t('landing')}

@@ -19,7 +19,7 @@ import {
 import { useState, SyntheticEvent } from 'react'; // React
 
 export default function EditDoctorInformationModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose } = useDisclosure();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -36,11 +36,6 @@ export default function EditDoctorInformationModal() {
   };
   return (
     <>
-      {/* Button will be removed before merging */}
-      <Button mt={3} onClick={onOpen}>
-        Open
-      </Button>
-
       <Modal
         onClose={onClose}
         isOpen={isOpen}

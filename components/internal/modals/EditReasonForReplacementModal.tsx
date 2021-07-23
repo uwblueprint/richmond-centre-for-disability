@@ -21,7 +21,7 @@ import {
 import { useState, SyntheticEvent } from 'react'; // React
 
 export default function EditReasonForReplacementModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose } = useDisclosure();
 
   // TODO: need to replace values with ReasonForReplacement enum when that is available
   const [reason, setReason] = useState('');
@@ -47,11 +47,6 @@ export default function EditReasonForReplacementModal() {
 
   return (
     <>
-      {/* Button will be removed before merging */}
-      <Button mt={3} onClick={onOpen}>
-        Open
-      </Button>
-
       <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="lg">
         <ModalOverlay />
         <form onSubmit={handleSubmit}>
