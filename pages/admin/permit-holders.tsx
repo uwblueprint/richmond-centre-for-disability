@@ -9,7 +9,7 @@ import { authorize } from '@tools/authorization'; // Page authorization
 export default function PermitHolders() {
   return (
     <Layout>
-      <GridItem colSpan={12} marginTop="64px">
+      <GridItem colSpan={12}>
         <Text textStyle="display-xlarge">Permit Holders</Text>
       </GridItem>
     </Layout>

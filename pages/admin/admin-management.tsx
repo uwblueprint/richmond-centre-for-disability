@@ -8,7 +8,7 @@ import { authorize } from '@tools/authorization'; // Page authorization
 export default function AdminManagement() {
   return (
     <Layout>
-      <GridItem colSpan={12} marginTop="64px">
+      <GridItem colSpan={12}>
         <Text textStyle="display-xlarge">Admin Management</Text>
       </GridItem>
     </Layout>

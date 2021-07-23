@@ -78,7 +78,7 @@ const DATA = [
 export default function Requests() {
   return (
     <Layout>
-      <GridItem colSpan={12} marginTop="64px">
+      <GridItem colSpan={12}>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Requests</Text>
           <Button leftIcon={<AddIcon />} height="48px" padding="24px">
