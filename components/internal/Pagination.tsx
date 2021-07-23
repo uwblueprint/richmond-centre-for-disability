@@ -50,7 +50,13 @@ export default function Pagination(props: Props) {
   };
 
   return (
-    <HStack height="32px" display="inline-flex" spacing="20px" verticalAlign="center">
+    <HStack
+      height="24px"
+      display="inline-flex"
+      marginY="16px"
+      spacing="20px"
+      verticalAlign="center"
+    >
       <HStack spacing="4px">
         <Text as="p" textStyle="xsmall" display="inline">{`${lowerBound}-${upperBound}`}</Text>
         <Text
@@ -63,8 +69,8 @@ export default function Pagination(props: Props) {
       <HStack spacing="0">
         <IconButton
           icon={<ChevronLeftIcon />}
-          height="32px"
-          fontSize="14px"
+          height="24px"
+          size="sm"
           variant="unstyled"
           aria-label="previous page"
           disabled={isFirstPage}
@@ -72,8 +78,8 @@ export default function Pagination(props: Props) {
         />
         <IconButton
           icon={<ChevronRightIcon />}
-          height="32px"
-          fontSize="14px"
+          height="24px"
+          size="sm"
           variant="unstyled"
           aria-label="next page"
           disabled={isLastPage}
