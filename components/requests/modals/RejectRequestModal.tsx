@@ -10,7 +10,7 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { ReactNode } from 'react';
+import { ReactNode } from 'react'; // React JSX Type
 
 type RejectRequestModalProps = {
   readonly onReject: () => void;

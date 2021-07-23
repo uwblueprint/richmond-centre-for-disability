@@ -124,7 +124,7 @@ export default function Request() {
 
   // Removes the taskNum from the list of completed tasks
   const onTaskUndo = (taskNum: number) => {
-    // TODO: Update the appropriate table
+    // TODO: Update the appropriate table by NULLing the appropriate columns
     setApplication({
       ...application,
       applicationProcessingStepsCompleted: applicationProcessingStepsCompleted.filter(
@@ -151,20 +151,20 @@ export default function Request() {
           applicant={applicant}
           expirationDate={expirationDate}
           mostRecentAPP={applicant.mostRecentAPP}
-          handleEdit={() => {}}
+          onEdit={() => {}}
           handleName={() => {}}
         />
       </GridItem>
       <GridItem rowSpan={12} colSpan={7} marginTop={7} textAlign="left">
         <Stack spacing={5}>
-          {applicationStatus == 'INPROGRESS' ? (
+          {applicationStatus === 'INPROGRESS' ? (
             <ProcessingTasksCard
               applicationProcessingStepsCompleted={applicationProcessingStepsCompleted}
               onTaskComplete={onTaskComplete}
               onTaskUndo={onTaskUndo}
             />
           ) : isRenewal ? (
-            <DoctorInformationCard physician={physician} handleEdit={() => {}} />
+            <DoctorInformationCard physician={physician} onEdit={() => {}} />
           ) : (
             <ReasonForReplacementCard
               cause={replacement.cause}
@@ -172,7 +172,7 @@ export default function Request() {
               locationLost={replacement.locationLost}
               description={replacement.description}
               isUpdated={replacement.isUpdated}
-              handleEdit={() => {}}
+              onEdit={() => {}}
             />
           )}
           <PaymentInformationCard
@@ -189,7 +189,7 @@ export default function Request() {
             billingCity={applicant.city}
             billingProvince={applicant.province}
             billingPostalCode={applicant.postalCode}
-            handleEdit={() => {}}
+            onEdit={() => {}}
           />
         </Stack>
       </GridItem>

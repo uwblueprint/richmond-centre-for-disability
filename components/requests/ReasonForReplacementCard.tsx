@@ -7,18 +7,18 @@ type ReplacementProps = {
   readonly timestamp: string;
   readonly locationLost: string;
   readonly description: string;
-  readonly handleEdit: MouseEventHandler;
+  readonly onEdit: MouseEventHandler;
   readonly isUpdated?: boolean;
 };
 
 export default function ReasonForReplacementCard(props: ReplacementProps) {
-  const { isUpdated, handleEdit } = props;
+  const { isUpdated, onEdit } = props;
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Reason For Replacement`}
       updated={isUpdated}
-      handleEdit={handleEdit}
+      onEdit={onEdit}
     >
       <Divider pt="24px" />
       <SimpleGrid columns={2} spacingY="12px" spacingX="20px" pt="20px">

@@ -9,7 +9,7 @@ type PersonalInformationProps = {
   readonly mostRecentAPP: number;
   readonly contactInfoUpdated?: boolean;
   readonly addressInfoUpdated?: boolean;
-  readonly handleEdit: MouseEventHandler;
+  readonly onEdit: MouseEventHandler;
   readonly handleName: MouseEventHandler;
 };
 
@@ -26,7 +26,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
     </Link>
   );
   return (
-    <PermitHolderInfoCard colSpan={5} header={header} handleEdit={props.handleEdit}>
+    <PermitHolderInfoCard colSpan={5} header={header} onEdit={props.onEdit}>
       <VStack spacing="12px" pt="12px" align="left">
         <Box>
           <Text as="p" textStyle="body-regular">

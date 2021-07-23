@@ -5,18 +5,18 @@ import { MouseEventHandler } from 'react'; // React
 
 type DoctorInformationProps = {
   physician: Physician;
-  readonly handleEdit: MouseEventHandler;
+  readonly onEdit: MouseEventHandler;
   readonly isUpdated?: boolean;
 };
 
 export default function DoctorInformationCard(props: DoctorInformationProps) {
-  const { physician, handleEdit, isUpdated } = props;
+  const { physician, onEdit, isUpdated } = props;
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Doctor's Information`}
       updated={isUpdated}
-      handleEdit={handleEdit}
+      onEdit={onEdit}
     >
       <Divider pt="20px" />
       <SimpleGrid columns={2} spacingX="20px" spacingY="12px" pt="20px">

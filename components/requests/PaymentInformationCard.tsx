@@ -20,18 +20,18 @@ type PaymentInformationProps = {
   readonly billingCountry: string;
   readonly billingPostalCode: string;
 
-  readonly handleEdit: MouseEventHandler;
+  readonly onEdit: MouseEventHandler;
   readonly isUpdated?: boolean;
 };
 
 export default function PaymentInformationCard(props: PaymentInformationProps) {
-  const { isUpdated, handleEdit } = props;
+  const { isUpdated, onEdit } = props;
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Payment, Shipping, and Billing Information`}
       updated={isUpdated}
-      handleEdit={handleEdit}
+      onEdit={onEdit}
     >
       <Divider pt="20px" />
       <VStack align="left" spacing="12px" pt="20px">

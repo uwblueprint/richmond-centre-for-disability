@@ -36,7 +36,11 @@ export default function RequestHeader({
   onReject,
   onComplete,
 }: RequestHeaderProps) {
-  const rightButtons = () => {
+  /**
+   * Returns the appropriate header button(s) to be displayed depending on the current application status
+   * @returns Rendered button component(s) or null.
+   */
+  const _renderActionButtons = () => {
     switch (applicationStatus) {
       case 'PENDING':
         return (
@@ -64,7 +68,11 @@ export default function RequestHeader({
     }
   };
 
-  const moreActions = () => {
+  /**
+   * Returns the appropriate 'More Actions' dropdown to be displayed depending on the current application status
+]   * @returns Rendered 'More Actions' dropdown component or null
+   */
+  const _renderMoreActionsDropdown = () => {
     if (applicationStatus === 'INPROGRESS' || applicationStatus === 'REJECTED') {
       return (
         <Menu>
@@ -115,10 +123,10 @@ export default function RequestHeader({
             <Text textStyle="caption" as="p">
               Received date: {createdAt}
             </Text>
-            {moreActions()}
+            {_renderMoreActionsDropdown()}
           </HStack>
         </Box>
-        <Box marginLeft="auto">{rightButtons()}</Box>
+        <Box marginLeft="auto">{_renderActionButtons()}</Box>
       </Flex>
     </Box>
   );

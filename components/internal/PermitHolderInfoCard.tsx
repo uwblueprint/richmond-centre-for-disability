@@ -1,11 +1,11 @@
-import { GridItem, Flex, Text, Link, Spacer, GridItemProps } from '@chakra-ui/react'; // Chakra UI
+import { GridItem, Flex, Text, Spacer, GridItemProps, Button } from '@chakra-ui/react'; // Chakra UI
 import { MouseEventHandler, ReactNode } from 'react'; // React
 
 type PermitHolderInfoCardProps = GridItemProps & {
   children: ReactNode;
   header: ReactNode;
   updated?: boolean;
-  handleEdit?: MouseEventHandler;
+  onEdit?: MouseEventHandler;
 };
 
 /**
@@ -14,7 +14,7 @@ type PermitHolderInfoCardProps = GridItemProps & {
  * @returns custom Card.
  */
 export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
-  const { children, header, updated, handleEdit } = props;
+  const { children, header, updated, onEdit } = props;
   return (
     <GridItem
       display="flex"
@@ -42,15 +42,10 @@ export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
           </Text>
         )}
         <Spacer />
-        {handleEdit && (
-          <Link
-            textStyle="body-bold"
-            color="primary"
-            textDecoration="underline"
-            onClick={handleEdit}
-          >
-            Edit
-          </Link>
+        {onEdit && (
+          <Button color="primary" variant="ghost" textDecoration="underline" onClick={onEdit}>
+            <Text textStyle="body-bold">Edit</Text>
+          </Button>
         )}
       </Flex>
       {children}

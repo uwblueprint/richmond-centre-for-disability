@@ -1,4 +1,4 @@
-import { Divider, VStack, Button, Text, Link } from '@chakra-ui/react'; // Chakra UI
+import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import AssignNumberModal from '@components/requests/modals/AssignNumberModal'; // AssignNumber Modal component
 import ProcessingTaskStep from '@components/requests/ProcessingTaskStep'; // Processing Task Step
@@ -59,12 +59,20 @@ export default function ProcessingTasksCard({
     },
   ];
 
-  const taskAction = (taskId: number, isCompleted: boolean) => {
+  /**
+   * Returns the appropriate button to be displayed depending on the current step
+   * @param taskId - Step number (1-indexed)
+   * @param isCompleted - Whether the task has been completed or not
+   * @returns Edit/Undo/Action button.
+   */
+  const _renderTaskAction = (taskId: number, isCompleted: boolean) => {
     if (isCompleted) {
       return (
-        <Link textStyle="caption" textDecoration="underline" onClick={() => onTaskUndo(taskId)}>
-          Undo
-        </Link>
+        <Button variant="ghost" textDecoration="underline black" onClick={() => onTaskUndo(taskId)}>
+          <Text textStyle="caption" color="black">
+            Undo
+          </Text>
+        </Button>
       );
     }
 
@@ -133,7 +141,7 @@ export default function ProcessingTasksCard({
               key={idx}
               id={idx + 1}
             >
-              {taskAction(idx + 1, isCompleted)}
+              {_renderTaskAction(idx + 1, isCompleted)}
             </ProcessingTaskStep>
           );
         })}
