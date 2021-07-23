@@ -18,10 +18,15 @@ import {
   Radio,
   Textarea,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent } from 'react'; // React
+import { useState, SyntheticEvent, ReactNode } from 'react'; // React
 
-export default function EditReasonForReplacementModal() {
-  const { isOpen, onClose } = useDisclosure();
+type EditReasonForReplacementModalProps = {
+  children: ReactNode;
+};
+export default function EditReasonForReplacementModal({
+  children,
+}: EditReasonForReplacementModalProps) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   // TODO: need to replace values with ReasonForReplacement enum when that is available
   const [reason, setReason] = useState('');
@@ -43,10 +48,13 @@ export default function EditReasonForReplacementModal() {
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     //  TODO: Will be addressed in API hookup
+    onClose();
   };
 
   return (
     <>
+      <Box onClick={onOpen}>{children}</Box>
+
       <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="lg">
         <ModalOverlay />
         <form onSubmit={handleSubmit}>

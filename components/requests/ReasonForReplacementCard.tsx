@@ -1,24 +1,29 @@
-import { Box, Text, Divider, SimpleGrid } from '@chakra-ui/react'; // Chakra UI
+import { Box, Text, Divider, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
-import { MouseEventHandler } from 'react'; // React
+import EditReasonForReplacementModal from '@components/requests/modals/EditReasonForReplacementModal'; // Edit modal
 
 type ReplacementProps = {
   readonly cause: string;
   readonly timestamp: string;
   readonly locationLost: string;
   readonly description: string;
-  readonly onEdit: MouseEventHandler;
   readonly isUpdated?: boolean;
 };
 
 export default function ReasonForReplacementCard(props: ReplacementProps) {
-  const { isUpdated, onEdit } = props;
+  const { isUpdated } = props;
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Reason For Replacement`}
       updated={isUpdated}
-      onEdit={onEdit}
+      editModal={
+        <EditReasonForReplacementModal>
+          <Button color="primary" variant="ghost" textDecoration="underline">
+            <Text textStyle="body-bold">Edit</Text>
+          </Button>
+        </EditReasonForReplacementModal>
+      }
     >
       <Divider pt="24px" />
       <SimpleGrid columns={2} spacingY="12px" spacingX="20px" pt="20px">

@@ -153,7 +153,6 @@ export default function Request() {
           applicant={applicant}
           expirationDate={expirationDate}
           mostRecentAPP={applicant.mostRecentAPP}
-          onEdit={() => {}}
           handleName={() => {}}
         />
       </GridItem>
@@ -166,7 +165,7 @@ export default function Request() {
               onTaskUndo={onTaskUndo}
             />
           ) : isRenewal ? (
-            <DoctorInformationCard physician={physician} onEdit={() => {}} />
+            <DoctorInformationCard physician={physician} />
           ) : (
             <ReasonForReplacementCard
               cause={replacement.cause}
@@ -174,7 +173,6 @@ export default function Request() {
               locationLost={replacement.locationLost}
               description={replacement.description}
               isUpdated={replacement.isUpdated}
-              onEdit={() => {}}
             />
           )}
           <PaymentInformationCard
@@ -191,7 +189,6 @@ export default function Request() {
             billingCity={applicant.city}
             billingProvince={applicant.province}
             billingPostalCode={applicant.postalCode}
-            onEdit={() => {}}
           />
         </Stack>
       </GridItem>
