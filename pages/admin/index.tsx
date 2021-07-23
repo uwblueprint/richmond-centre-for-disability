@@ -20,6 +20,7 @@ import Layout from '@components/internal/Layout'; // Layout component
 import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
+import Pagination from '@components/internal/Pagination'; // Pagination component
 
 // Placeholder columns
 const COLUMNS = [
@@ -127,6 +128,9 @@ export default function Requests() {
               </Box>
             </Flex>
             <Table columns={COLUMNS} data={DATA} />
+            <Flex justifyContent="flex-end">
+              <Pagination pageSize={20} totalCount={150} />
+            </Flex>
           </Box>
         </Box>
       </GridItem>
