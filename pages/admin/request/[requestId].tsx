@@ -133,6 +133,8 @@ export default function Request() {
     });
   };
 
+  const areAllStepsComplete = applicationProcessingStepsCompleted.length === 6;
+
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={16}>
@@ -143,7 +145,7 @@ export default function Request() {
           onApprove={onApprove}
           onReject={onReject}
           onComplete={onComplete}
-          applicationProcessingStepsCompleted={applicationProcessingStepsCompleted}
+          areAllStepsComplete={areAllStepsComplete}
         />
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={7} textAlign="left">

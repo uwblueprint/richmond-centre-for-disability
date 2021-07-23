@@ -13,24 +13,24 @@ import {
   NumberInputField,
   Button,
   Text,
+  Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState } from 'react';
+import { useState, ReactNode } from 'react'; // React
 
 type AssignNumberModalProps = {
   readonly onAssign: (num: number) => void;
-  readonly buttonText: string;
   readonly modalTitle: string;
   readonly fieldName: string;
+  readonly children: ReactNode;
 };
 
 export default function AssignNumberModal({
   onAssign,
-  buttonText,
   modalTitle,
   fieldName,
+  children,
 }: AssignNumberModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   const [formValue, setFormValue] = useState('');
   const [formError, setFormError] = useState('');
 
@@ -46,16 +46,7 @@ export default function AssignNumberModal({
 
   return (
     <>
-      <Button
-        marginLeft="auto"
-        height="35px"
-        bg="background.gray"
-        _hover={{ bg: 'background.grayHover' }}
-        color="black"
-        onClick={onOpen}
-      >
-        <Text textStyle="xsmall-medium">{buttonText}</Text>
-      </Button>
+      <Box onClick={onOpen}>{children}</Box>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />

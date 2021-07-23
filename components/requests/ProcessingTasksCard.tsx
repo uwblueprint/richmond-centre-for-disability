@@ -15,8 +15,8 @@ export default function ProcessingTasksCard({
   onTaskComplete,
   onTaskUndo,
 }: ProcessingTasksCardProps) {
-  const [APPNumber, setAPPNumber] = useState<number | undefined>(undefined);
-  const [invoiceNumber, setInvoiceNumber] = useState<number | undefined>(undefined);
+  const [APPNumber, setAPPNumber] = useState<number | undefined>();
+  const [invoiceNumber, setInvoiceNumber] = useState<number | undefined>();
 
   const assignAPPNumber = (APPNumber: number) => {
     onTaskComplete(1);
@@ -31,7 +31,7 @@ export default function ProcessingTasksCard({
   const steps = [
     // Task 1: Assign new APP number: Assign number (MODAL)
     {
-      label: 'Assign new APP number' + (APPNumber ? `: ${APPNumber}` : ''),
+      label: 'Assign new APP number' + (!isNaN(Number(APPNumber)) ? `: ${APPNumber}` : ''),
     },
     // Task 2: Hole punch parking permit: Mark as complete (CHECK)
     {
@@ -60,40 +60,79 @@ export default function ProcessingTasksCard({
   ];
 
   /**
+   * Returns a button that undos the action taken to complete the step with ID == taskID
+   * @param taskId - Step number (1-indexed)
+   * @returns Undo button.
+   */
+  const _renderUndoButton = (taskId: number) => {
+    return (
+      <Button variant="ghost" textDecoration="underline black" onClick={() => onTaskUndo(taskId)}>
+        <Text textStyle="caption" color="black">
+          Undo
+        </Text>
+      </Button>
+    );
+  };
+
+  /**
    * Returns the appropriate button to be displayed depending on the current step
    * @param taskId - Step number (1-indexed)
    * @param isCompleted - Whether the task has been completed or not
    * @returns Edit/Undo/Action button.
    */
   const _renderTaskAction = (taskId: number, isCompleted: boolean) => {
-    if (isCompleted) {
-      return (
-        <Button variant="ghost" textDecoration="underline black" onClick={() => onTaskUndo(taskId)}>
-          <Text textStyle="caption" color="black">
-            Undo
-          </Text>
-        </Button>
-      );
-    }
-
     switch (taskId) {
       case 1:
         return (
           <AssignNumberModal
-            buttonText="Assign number"
             modalTitle="Assign New APP Number"
             fieldName="New APP number"
             onAssign={assignAPPNumber}
-          />
+          >
+            {!isNaN(Number(APPNumber)) ? (
+              <Button variant="ghost" textDecoration="underline black">
+                <Text textStyle="caption" color="black">
+                  Edit number
+                </Text>
+              </Button>
+            ) : (
+              <Button
+                marginLeft="auto"
+                height="35px"
+                bg="background.gray"
+                _hover={{ bg: 'background.grayHover' }}
+                color="black"
+              >
+                <Text textStyle="xsmall-medium">Assign number</Text>
+              </Button>
+            )}
+          </AssignNumberModal>
         );
       case 4:
         return (
           <AssignNumberModal
-            buttonText="Assign number"
             modalTitle="Assign Invoice Number"
             fieldName="Invoice number"
             onAssign={assignInvoiceNumber}
-          />
+          >
+            {!isNaN(Number(invoiceNumber)) ? (
+              <Button variant="ghost" textDecoration="underline black">
+                <Text textStyle="caption" color="black">
+                  Edit number
+                </Text>
+              </Button>
+            ) : (
+              <Button
+                marginLeft="auto"
+                height="35px"
+                bg="background.gray"
+                _hover={{ bg: 'background.grayHover' }}
+                color="black"
+              >
+                <Text textStyle="xsmall-medium">Assign number</Text>
+              </Button>
+            )}
+          </AssignNumberModal>
         );
       case 5: // TODO: Add file upload
         return (
@@ -112,7 +151,9 @@ export default function ProcessingTasksCard({
       case 2:
       case 3:
       case 6:
-        return (
+        return isCompleted ? (
+          _renderUndoButton(taskId)
+        ) : (
           <Button
             marginLeft="auto"
             height="35px"
