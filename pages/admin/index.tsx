@@ -11,6 +11,8 @@ import {
   Tab,
   Menu,
   MenuButton,
+  MenuList,
+  MenuItem,
   InputGroup,
   Input,
   InputLeftElement,
@@ -21,6 +23,22 @@ import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
+import { RequestStatusBadge } from '@components/internal/RequestStatusBadge'; //Status badge component
+
+function renderStatusBadge({ value }) {
+  return <RequestStatusBadge variant={value}></RequestStatusBadge>;
+}
+
+function renderUser({ value }) {
+  return (
+    <div>
+      <Text>{value.name}</Text>
+      <Text textStyle="caption" textColor="secondary">
+        ID: {value.id}
+      </Text>
+    </div>
+  );
+}
 
 // Placeholder columns
 // TODO: accessors should be the accessors for these fields in the DB
@@ -28,50 +46,66 @@ const COLUMNS = [
   {
     Header: 'Name',
     accessor: 'name',
+    Cell: renderUser,
+    minWidth: 240,
   },
   {
     Header: 'Date Received',
     accessor: 'dateReceived',
+    maxWidth: 240,
   },
   {
     Header: 'Permit Type',
     accessor: 'permitType',
     disableSortBy: true,
+    maxWidth: 180,
   },
   {
     Header: 'Request Type',
     accessor: 'requestType',
     disableSortBy: true,
+    maxWidth: 180,
   },
   {
     Header: 'Status',
     accessor: 'status',
     disableSortBy: true,
+    Cell: renderStatusBadge,
+    maxWidth: 180,
   },
 ];
 
 // Placeholder data
 const DATA = [
   {
-    name: 'Steve Rogers',
+    name: {
+      name: 'Steve Rogers',
+      id: '36565',
+    },
     dateReceived: 'Dec 21 2021, 8:30 pm',
     permitType: 'Permanent',
     requestType: 'Replacement',
-    status: 'In progress',
+    status: 'pending',
   },
   {
-    name: 'Steve Rogers',
+    name: {
+      name: 'Steve Rogers',
+      id: '36565',
+    },
     dateReceived: 'Dec 21 2021, 8:30 pm',
     permitType: 'Permanent',
     requestType: 'Replacement',
-    status: 'In progress',
+    status: 'inProgress',
   },
   {
-    name: 'Steve Rogers',
+    name: {
+      name: 'Steve Rogers',
+      id: '36565',
+    },
     dateReceived: 'Dec 21 2021, 8:30 pm',
     permitType: 'Permanent',
     requestType: 'Replacement',
-    status: 'In progress',
+    status: 'inProgress',
   },
 ];
 
@@ -82,9 +116,21 @@ export default function Requests() {
       <GridItem colSpan={12}>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Requests</Text>
-          <Button leftIcon={<AddIcon />} height="48px" padding="24px">
-            Create a request
-          </Button>
+          <Menu>
+            <MenuButton
+              as={Button}
+              leftIcon={<AddIcon width="14px" height="14px" />}
+              height="48px"
+              pl="24px"
+              pr="24px"
+            >
+              Create a request
+            </MenuButton>
+            <MenuList>
+              <MenuItem>Replacement Request</MenuItem>
+              <MenuItem>Renewal Request</MenuItem>
+            </MenuList>
+          </Menu>
         </Flex>
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
           <Tabs marginBottom="20px">
@@ -109,6 +155,11 @@ export default function Requests() {
                 >
                   Permit type: Permanent
                 </MenuButton>
+                <MenuList>
+                  <MenuItem>All (default)</MenuItem>
+                  <MenuItem>Permanent</MenuItem>
+                  <MenuItem>Temporary</MenuItem>
+                </MenuList>
               </Menu>
               <Menu>
                 <MenuButton
@@ -121,6 +172,11 @@ export default function Requests() {
                 >
                   Request type: Replacement
                 </MenuButton>
+                <MenuList>
+                  <MenuItem>All (default)</MenuItem>
+                  <MenuItem>Replacement</MenuItem>
+                  <MenuItem>Renewal</MenuItem>
+                </MenuList>
               </Menu>
               <Box flexGrow={1}>
                 <InputGroup>
