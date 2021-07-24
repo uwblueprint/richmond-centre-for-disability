@@ -16,6 +16,7 @@ import {
   InputGroup,
   Input,
   InputLeftElement,
+  useControllableState,
 } from '@chakra-ui/react'; // Chakra UI
 import { AddIcon, ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
@@ -111,6 +112,9 @@ const DATA = [
 
 // Internal home page - view APP requests
 export default function Requests() {
+  const [permitTypeFilter, setPermitTypeFilter] = useControllableState({ defaultValue: 'All' });
+  const [requestTypeFilter, setRequestTypeFilter] = useControllableState({ defaultValue: 'All' });
+
   return (
     <Layout>
       <GridItem colSpan={12}>
@@ -152,13 +156,33 @@ export default function Requests() {
                   marginRight="12px"
                   color="text.secondary"
                   borderColor="border.secondary"
+                  width="275px"
+                  textAlign="left"
                 >
-                  Permit type: Permanent
+                  Permit type: {permitTypeFilter}
                 </MenuButton>
                 <MenuList>
-                  <MenuItem>All (default)</MenuItem>
-                  <MenuItem>Permanent</MenuItem>
-                  <MenuItem>Temporary</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setPermitTypeFilter('All');
+                    }}
+                  >
+                    All
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setPermitTypeFilter('Permanent');
+                    }}
+                  >
+                    Permanent
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setPermitTypeFilter('Temporary');
+                    }}
+                  >
+                    Temporary
+                  </MenuItem>
                 </MenuList>
               </Menu>
               <Menu>
@@ -169,13 +193,33 @@ export default function Requests() {
                   marginRight="12px"
                   color="text.secondary"
                   borderColor="border.secondary"
+                  width="275px"
+                  textAlign="left"
                 >
-                  Request type: Replacement
+                  Request type: {requestTypeFilter}
                 </MenuButton>
                 <MenuList>
-                  <MenuItem>All (default)</MenuItem>
-                  <MenuItem>Replacement</MenuItem>
-                  <MenuItem>Renewal</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setRequestTypeFilter('All');
+                    }}
+                  >
+                    All
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setRequestTypeFilter('Replacement');
+                    }}
+                  >
+                    Replacement
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setRequestTypeFilter('Renewal');
+                    }}
+                  >
+                    Renewal
+                  </MenuItem>
                 </MenuList>
               </Menu>
               <Box flexGrow={1}>
