@@ -17,6 +17,7 @@ import {
   Input,
   InputLeftElement,
   useControllableState,
+  Wrap,
 } from '@chakra-ui/react'; // Chakra UI
 import { AddIcon, ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
@@ -27,7 +28,11 @@ import Pagination from '@components/internal/Pagination'; // Pagination componen
 import { RequestStatusBadge } from '@components/internal/RequestStatusBadge'; //Status badge component
 
 function renderStatusBadge({ value }) {
-  return <RequestStatusBadge variant={value}></RequestStatusBadge>;
+  return (
+    <Wrap>
+      <RequestStatusBadge variant={value}></RequestStatusBadge>
+    </Wrap>
+  );
 }
 
 function renderUser({ value }) {
@@ -49,23 +54,27 @@ const COLUMNS = [
     accessor: 'name',
     Cell: renderUser,
     minWidth: 240,
+    width: 280,
   },
   {
     Header: 'Date Received',
     accessor: 'dateReceived',
     maxWidth: 240,
+    width: 240,
   },
   {
     Header: 'Permit Type',
     accessor: 'permitType',
     disableSortBy: true,
     maxWidth: 180,
+    width: 180,
   },
   {
     Header: 'Request Type',
     accessor: 'requestType',
     disableSortBy: true,
     maxWidth: 180,
+    width: 180,
   },
   {
     Header: 'Status',
@@ -73,6 +82,7 @@ const COLUMNS = [
     disableSortBy: true,
     Cell: renderStatusBadge,
     maxWidth: 180,
+    width: 100,
   },
 ];
 

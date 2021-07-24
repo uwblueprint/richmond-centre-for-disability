@@ -53,6 +53,9 @@ export default function Table(props: Props) {
                   fontSize="18px"
                   color="text.secondary"
                   {...column.getHeaderProps(column.getSortByToggleProps())}
+                  width={column.width}
+                  minWidth={column.minWidth}
+                  maxWidth={column.maxWidth}
                   key={column.id}
                 >
                   <Flex>
