@@ -128,7 +128,12 @@ export default function EditUserInformationModal() {
 
                 <Stack direction="row" spacing="20px">
                   <FormControl>
-                    <FormLabel>{'Email'}</FormLabel>
+                    <FormLabel>
+                      {'Email '}
+                      <Box as="span" textStyle="caption">
+                        {'(optional)'}
+                      </Box>
+                    </FormLabel>
                     <Input
                       placeholder={'Email'}
                       value={email}
@@ -185,12 +190,17 @@ export default function EditUserInformationModal() {
                 <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
                     <FormLabel>{'City'}</FormLabel>
-                    <Input value={city} onChange={event => setCity(event.target.value)} />
+                    <Input
+                      placeholder={'City'}
+                      value={city}
+                      onChange={event => setCity(event.target.value)}
+                    />
                   </FormControl>
 
                   <FormControl isRequired>
                     <FormLabel>{'Postal code'}</FormLabel>
                     <Input
+                      placeholder={'X1X 1X1'}
                       value={postalCode}
                       onChange={event => setPostalCode(event.target.value)}
                     />
