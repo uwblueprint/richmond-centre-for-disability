@@ -27,7 +27,11 @@ import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import { RequestStatusBadge } from '@components/internal/RequestStatusBadge'; //Status badge component
 
-function renderStatusBadge({ value }) {
+type StatusProps = {
+  value: any;
+};
+
+function renderStatusBadge({ value }: StatusProps) {
   return (
     <Wrap>
       <RequestStatusBadge variant={value}></RequestStatusBadge>
@@ -35,7 +39,11 @@ function renderStatusBadge({ value }) {
   );
 }
 
-function renderUser({ value }) {
+type NameProps = {
+  readonly value: any;
+};
+
+function renderName({ value }: NameProps) {
   return (
     <div>
       <Text>{value.name}</Text>
@@ -52,7 +60,7 @@ const COLUMNS = [
   {
     Header: 'Name',
     accessor: 'name',
-    Cell: renderUser,
+    Cell: renderName,
     minWidth: 240,
     width: 280,
   },
@@ -116,7 +124,7 @@ const DATA = [
     dateReceived: 'Dec 21 2021, 8:30 pm',
     permitType: 'Permanent',
     requestType: 'Replacement',
-    status: 'inProgress',
+    status: 'completed',
   },
 ];
 
