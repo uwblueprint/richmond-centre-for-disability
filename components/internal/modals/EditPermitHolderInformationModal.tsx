@@ -14,20 +14,16 @@ import {
   Stack,
   FormHelperText,
   Box,
-  Select,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, SyntheticEvent } from 'react'; // React
-import { Gender } from '@lib/graphql/types'; // Gender Enum
 
-export default function EditUserInformationModal() {
+export default function EditPermitHolderInformationModal() {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   // Personal information state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString().substring(0, 10));
-  const [gender, setGender] = useState<Gender | string>('');
 
   // Contact information state
   const [email, setEmail] = useState('');
@@ -69,49 +65,17 @@ export default function EditUserInformationModal() {
               {/* Personal Information Section */}
               <Box paddingBottom="32px">
                 <Text textStyle="heading" paddingBottom="24px">
-                  {'Personal Information'}
+                  {'Personal information'}
                 </Text>
-                <Stack direction="row" spacing="20px" paddingBottom="24px">
+                <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
                     <FormLabel>{'First name'}</FormLabel>
-                    <Input
-                      placeholder={'First Name'}
-                      value={firstName}
-                      onChange={event => setFirstName(event.target.value)}
-                    />
+                    <Input value={firstName} onChange={event => setFirstName(event.target.value)} />
                   </FormControl>
 
                   <FormControl isRequired>
                     <FormLabel>{'Last name'}</FormLabel>
-                    <Input
-                      placeholder={'Last Name'}
-                      value={lastName}
-                      onChange={event => setLastName(event.target.value)}
-                    />
-                  </FormControl>
-                </Stack>
-
-                <Stack direction="row" spacing="20px">
-                  <FormControl isRequired>
-                    <FormLabel>{`Date of birth`}</FormLabel>
-                    <Input
-                      type="date"
-                      value={dateOfBirth}
-                      onChange={event => setDateOfBirth(event.target.value)}
-                    />
-                  </FormControl>
-
-                  <FormControl isRequired>
-                    <FormLabel>{'Gender'}</FormLabel>
-                    <Select
-                      placeholder="None Selected"
-                      value={gender}
-                      onChange={event => setGender(event.target.value)}
-                    >
-                      <option value={Gender.Male}>{'Male'}</option>
-                      <option value={Gender.Female}>{'Female'}</option>
-                      <option value={Gender.Other}>{'Other'}</option>
-                    </Select>
+                    <Input value={lastName} onChange={event => setLastName(event.target.value)} />
                   </FormControl>
                 </Stack>
               </Box>
@@ -128,15 +92,6 @@ export default function EditUserInformationModal() {
 
                 {/* DESIGNER QUESTION: IS EMAIL REQUIRED */}
                 <Stack direction="row" spacing="20px">
-                  <FormControl>
-                    <FormLabel>{'Email'}</FormLabel>
-                    <Input
-                      placeholder={'Email'}
-                      value={email}
-                      onChange={event => setEmail(event.target.value)}
-                    />
-                  </FormControl>
-
                   <FormControl isRequired>
                     <FormLabel>{'Phone number'}</FormLabel>
                     <Input
@@ -145,6 +100,16 @@ export default function EditUserInformationModal() {
                       onChange={event => setPhoneNumber(event.target.value)}
                       type="tel"
                     />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel>
+                      {'Email address '}
+                      <Box as="span" textStyle="body-regular">
+                        {'(optional)'}
+                      </Box>
+                    </FormLabel>
+                    <Input value={email} onChange={event => setEmail(event.target.value)} />
                   </FormControl>
                 </Stack>
               </Box>
@@ -156,13 +121,15 @@ export default function EditUserInformationModal() {
 
               <Box paddingTop="32px">
                 <Text textStyle="heading" paddingBottom="24px">
-                  {'Home Address'}
+                  {'Home Address '}
+                  <Box as="span" textStyle="caption">
+                    {'(must be in British Columbia)'}
+                  </Box>
                 </Text>
 
                 <FormControl isRequired paddingBottom="24px">
                   <FormLabel>{'Address line 1'}</FormLabel>
                   <Input
-                    placeholder={'Street Address, P.O box..'}
                     value={addressLine1}
                     onChange={event => setAddressLine1(event.target.value)}
                   />
@@ -172,9 +139,13 @@ export default function EditUserInformationModal() {
                 </FormControl>
 
                 <FormControl paddingBottom="24px">
-                  <FormLabel>{'Address line 2 '}</FormLabel>
+                  <FormLabel>
+                    {'Address line 2 '}
+                    <Box as="span" textStyle="caption">
+                      {'(optional)'}
+                    </Box>
+                  </FormLabel>
                   <Input
-                    placeholder={'Apartment, suite, unit..'}
                     value={addressLine2}
                     onChange={event => setAddressLine2(event.target.value)}
                   />
