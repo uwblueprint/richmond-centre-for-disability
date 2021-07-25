@@ -59,13 +59,13 @@ export default function EditPermitHolderInformationModal() {
               paddingTop="24px"
               paddingX="4px"
             >
-              <Text textStyle="display-medium-bold">{"Edit User's Information"}</Text>
+              <Text textStyle="display-medium-bold">{'Edit Permit Holder Information'}</Text>
             </ModalHeader>
             <ModalBody paddingY="20px" paddingX="4px">
               {/* Personal Information Section */}
               <Box paddingBottom="32px">
                 <Text textStyle="heading" paddingBottom="24px">
-                  {'Personal information'}
+                  {'Personal Information'}
                 </Text>
                 <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
