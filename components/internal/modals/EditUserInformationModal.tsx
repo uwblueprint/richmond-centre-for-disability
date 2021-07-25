@@ -126,7 +126,6 @@ export default function EditUserInformationModal() {
                   {'Contact Information'}
                 </Text>
 
-                {/* DESIGNER QUESTION: IS EMAIL REQUIRED */}
                 <Stack direction="row" spacing="20px">
                   <FormControl>
                     <FormLabel>{'Email'}</FormLabel>

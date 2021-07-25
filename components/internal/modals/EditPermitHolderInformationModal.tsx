@@ -90,7 +90,6 @@ export default function EditPermitHolderInformationModal() {
                   {'Contact Information'}
                 </Text>
 
-                {/* DESIGNER QUESTION: IS EMAIL REQUIRED */}
                 <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
                     <FormLabel>{'Phone number'}</FormLabel>
