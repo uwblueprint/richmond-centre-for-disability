@@ -84,7 +84,7 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
       >
         <ModalOverlay />
         <form onSubmit={handleSubmit}>
-          <ModalContent paddingX="40px">
+          <ModalContent paddingX="36px">
             <ModalHeader
               textStyle="display-medium-bold"
               paddingBottom="12px"
