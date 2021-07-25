@@ -25,7 +25,7 @@ import {
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, SyntheticEvent, ReactNode } from 'react'; // React
-import { PaymentType } from '@lib/graphql/types';
+import { PaymentType } from '@lib/graphql/types'; // PaymentType Enum
 
 type EditPaymentDetailsModalProps = {
   children: ReactNode;

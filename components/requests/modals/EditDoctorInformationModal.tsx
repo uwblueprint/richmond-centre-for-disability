@@ -51,7 +51,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
       >
         <ModalOverlay />
         <form onSubmit={handleSubmit}>
-          <ModalContent paddingX="40px">
+          <ModalContent paddingX="36px">
             <ModalHeader paddingBottom="12px" paddingTop="24px" paddingX="4px">
               <Text textStyle="display-medium-bold">{"Edit Doctor's Information"}</Text>
             </ModalHeader>
