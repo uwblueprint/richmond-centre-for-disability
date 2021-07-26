@@ -80,6 +80,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
                       onChange={event => setPhoneNumber(event.target.value)}
                       type="tel"
                     />
+                    <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
                   </FormControl>
                 </Stack>
               </Box>
@@ -130,6 +131,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
                       value={postalCode}
                       onChange={event => setPostalCode(event.target.value)}
                     />
+                    <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
                   </FormControl>
                 </Stack>
               </Box>

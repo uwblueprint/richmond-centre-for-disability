@@ -257,6 +257,7 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
                           value={shippingPostalCode}
                           onChange={event => setShippingPostalCode(event.target.value)}
                         />
+                        <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
                       </FormControl>
                     </Stack>
                   </>
@@ -358,6 +359,7 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
                           value={billingPostalCode}
                           onChange={event => setBillingPostalCode(event.target.value)}
                         />
+                        <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
                       </FormControl>
                     </Stack>
                   </>

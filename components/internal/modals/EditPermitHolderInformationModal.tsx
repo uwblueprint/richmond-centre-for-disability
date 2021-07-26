@@ -94,11 +94,11 @@ export default function EditPermitHolderInformationModal() {
                   <FormControl isRequired>
                     <FormLabel>{'Phone number'}</FormLabel>
                     <Input
-                      placeholder="000-000-000"
                       value={phoneNumber}
                       onChange={event => setPhoneNumber(event.target.value)}
                       type="tel"
                     />
+                    <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
                   </FormControl>
 
                   <FormControl>
@@ -165,6 +165,7 @@ export default function EditPermitHolderInformationModal() {
                       value={postalCode}
                       onChange={event => setPostalCode(event.target.value)}
                     />
+                    <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
                   </FormControl>
                 </Stack>
               </Box>

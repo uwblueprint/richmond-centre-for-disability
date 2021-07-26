@@ -74,20 +74,12 @@ export default function EditUserInformationModal() {
                 <Stack direction="row" spacing="20px" paddingBottom="24px">
                   <FormControl isRequired>
                     <FormLabel>{'First name'}</FormLabel>
-                    <Input
-                      placeholder={'First Name'}
-                      value={firstName}
-                      onChange={event => setFirstName(event.target.value)}
-                    />
+                    <Input value={firstName} onChange={event => setFirstName(event.target.value)} />
                   </FormControl>
 
                   <FormControl isRequired>
                     <FormLabel>{'Last name'}</FormLabel>
-                    <Input
-                      placeholder={'Last Name'}
-                      value={lastName}
-                      onChange={event => setLastName(event.target.value)}
-                    />
+                    <Input value={lastName} onChange={event => setLastName(event.target.value)} />
                   </FormControl>
                 </Stack>
 
@@ -134,21 +126,17 @@ export default function EditUserInformationModal() {
                         {'(optional)'}
                       </Box>
                     </FormLabel>
-                    <Input
-                      placeholder={'Email'}
-                      value={email}
-                      onChange={event => setEmail(event.target.value)}
-                    />
+                    <Input value={email} onChange={event => setEmail(event.target.value)} />
                   </FormControl>
 
                   <FormControl isRequired>
                     <FormLabel>{'Phone number'}</FormLabel>
                     <Input
-                      placeholder="000-000-000"
                       value={phoneNumber}
                       onChange={event => setPhoneNumber(event.target.value)}
                       type="tel"
                     />
+                    <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
                   </FormControl>
                 </Stack>
               </Box>
@@ -166,7 +154,6 @@ export default function EditUserInformationModal() {
                 <FormControl isRequired paddingBottom="24px">
                   <FormLabel>{'Address line 1'}</FormLabel>
                   <Input
-                    placeholder={'Street Address, P.O box..'}
                     value={addressLine1}
                     onChange={event => setAddressLine1(event.target.value)}
                   />
@@ -178,7 +165,6 @@ export default function EditUserInformationModal() {
                 <FormControl paddingBottom="24px">
                   <FormLabel>{'Address line 2 '}</FormLabel>
                   <Input
-                    placeholder={'Apartment, suite, unit..'}
                     value={addressLine2}
                     onChange={event => setAddressLine2(event.target.value)}
                   />
@@ -190,20 +176,16 @@ export default function EditUserInformationModal() {
                 <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
                     <FormLabel>{'City'}</FormLabel>
-                    <Input
-                      placeholder={'City'}
-                      value={city}
-                      onChange={event => setCity(event.target.value)}
-                    />
+                    <Input value={city} onChange={event => setCity(event.target.value)} />
                   </FormControl>
 
                   <FormControl isRequired>
                     <FormLabel>{'Postal code'}</FormLabel>
                     <Input
-                      placeholder={'X1X 1X1'}
                       value={postalCode}
                       onChange={event => setPostalCode(event.target.value)}
                     />
+                    <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
                   </FormControl>
                 </Stack>
               </Box>
