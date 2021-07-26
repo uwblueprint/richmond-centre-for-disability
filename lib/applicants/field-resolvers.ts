@@ -42,3 +42,43 @@ export const applicantMedicalInformationResolver: Resolver<Applicant> = async (
     where: { applicantId: parent?.id },
   });
 };
+
+/**
+ * Field resolver to fetch the medical history object associated with an applicant
+ * @returns MedicalHistory obejct
+ */
+
+export const applicantMedicalHistoryResolver: Resolver<Applicant> = async (
+  parent,
+  _args,
+  { prisma }
+) => {
+  const applications = await prisma.application.findMany({
+    where: {
+      applicantId: parent?.id,
+    },
+    select: {
+      physicianMspNumber: true,
+      id: true,
+    },
+  });
+
+  const physicians = await prisma.$transaction(
+    applications.map(application => {
+      return prisma.physician.findUnique({
+        where: {
+          mspNumber: application.physicianMspNumber,
+        },
+      });
+    })
+  );
+
+  const result = applications.map((application, i) => {
+    return {
+      applicationId: application.id,
+      physician: physicians[i],
+    };
+  });
+
+  return result;
+};

@@ -20,6 +20,7 @@ type Applicant {
   guardian: Guardian
   medicalInformation: MedicalInformation
   permits: [Permit!]
+  medicalHistory: [MedicalHistory!]
 }
 
 input CreateApplicantInput {
@@ -42,4 +43,9 @@ input CreateApplicantInput {
 
 type CreateApplicantResult {
   ok: Boolean!
+}
+
+type MedicalHistory {
+  applicationId: ID!
+  physician: Physician!
 }
