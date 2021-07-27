@@ -19,7 +19,7 @@ import {
   useControllableState,
   Wrap,
 } from '@chakra-ui/react'; // Chakra UI
-import { AddIcon, ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
+import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
 import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
@@ -138,6 +138,7 @@ export default function Requests() {
       <GridItem colSpan={12}>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Requests</Text>
+          {/* TODO
           <Menu>
             <MenuButton
               as={Button}
@@ -152,7 +153,7 @@ export default function Requests() {
               <MenuItem>Replacement Request</MenuItem>
               <MenuItem>Renewal Request</MenuItem>
             </MenuList>
-          </Menu>
+          </Menu> */}
         </Flex>
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
           <Tabs marginBottom="20px">
@@ -177,7 +178,12 @@ export default function Requests() {
                   width="275px"
                   textAlign="left"
                 >
-                  Permit type: {permitTypeFilter}
+                  <Text as="span" textStyle="button-semibold">
+                    Permit type:{' '}
+                  </Text>
+                  <Text as="span" textStyle="button-regular">
+                    {permitTypeFilter}
+                  </Text>
                 </MenuButton>
                 <MenuList>
                   <MenuItem
@@ -211,10 +217,15 @@ export default function Requests() {
                   marginRight="12px"
                   color="text.secondary"
                   borderColor="border.secondary"
-                  width="275px"
+                  width="300px"
                   textAlign="left"
                 >
-                  Request type: {requestTypeFilter}
+                  <Text as="span" textStyle="button-semibold">
+                    Request type:{' '}
+                  </Text>
+                  <Text as="span" textStyle="button-regular">
+                    {requestTypeFilter}
+                  </Text>
                 </MenuButton>
                 <MenuList>
                   <MenuItem
