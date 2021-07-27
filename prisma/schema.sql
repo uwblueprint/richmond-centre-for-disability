@@ -23,16 +23,22 @@ CREATE TYPE Province as ENUM(
 CREATE TYPE PaymentType as ENUM('MASTERCARD', 'VISA', 'ETRANSFER', 'CASH', 'CHEQUE', 'DEBIT', 'MONEY_ORDER');
 
 -- Create applicant status enum
-CREATE TYPE ApplicantStatus as ENUM('ACTIVE', 'INACTIVE', 'DECEASED');
+CREATE TYPE ApplicantStatus as ENUM('ACTIVE', 'INACTIVE');
 
 -- Create aid type enum
 CREATE TYPE Aid as ENUM('CANE', 'ELECTRIC_CHAIR', 'MANUAL_CHAIR', 'SCOOTER', 'WALKER');
 
 -- Create physician status enum
-CREATE TYPE PhysicianStatus as ENUM('DECEASED', 'CANCELLED', 'RETIRED', 'ACTIVE', 'RESIGNED', 'TEMPORARILY_INACTIVE', 'RELOCATED');
+CREATE TYPE PhysicianStatus as ENUM('ACTIVE', 'INACTIVE');
 
 -- Create gender enum
 CREATE TYPE Gender as ENUM('MALE', 'FEMALE', 'OTHER');
+
+-- Create application status enum
+CREATE TYPE ApplicationStatus as ENUM('PENDING', 'APPROVED', 'REJECTED', 'COMPLETED');
+
+-- Create reason for replacement enum
+CREATE TYPE ReasonForReplacement as ENUM('LOST', 'STOLEN', 'OTHER');
 
 -- Create employees table
 CREATE TABLE employees (
@@ -191,6 +197,18 @@ CREATE TABLE applications (
   guardian_postal_code    CHAR(6),
   guardian_relationship   VARCHAR(50),
   guardian_notes          TEXT,
+  -- Billing and shipping information
+  shipping_address_line_1                  VARCHAR(255),
+  shipping_address_line_2                  VARCHAR(255),
+  shipping_city                            VARCHAR(255),
+  shipping_province                        Province,
+  shipping_postal_code                     CHAR(6),
+  billing_address_same_as_shipping_address BOOLEAN NOT NULL DEFAULT false,
+  billing_address_line_1                   VARCHAR(255),
+  billing_address_line_2                   VARCHAR(255),
+  billing_city                             VARCHAR(255),
+  billing_province                         Province,
+  billing_postal_code                      CHAR(6),
   created_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY(applicant_id) REFERENCES applicants(id)
@@ -203,11 +221,45 @@ CREATE TABLE permits (
   expiry_date       DATE NOT NULL,
   receipt_id        INTEGER,
   active            BOOLEAN NOT NULL DEFAULT true,
-  application_id    INTEGER NOT NULL,
+  application_id    INTEGER NOT NULL UNIQUE,
   applicant_id      INTEGER NOT NULL,
   created_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   FOREIGN KEY(application_id) REFERENCES applications(id),
   FOREIGN KEY(applicant_id) REFERENCES applicants(id)
+);
+
+-- Create replacements table (subset of applications)
+CREATE TABLE replacements (
+  id                         SERIAL PRIMARY KEY NOT NULL,
+  reason                     ReasonForReplacement NOT NULL,
+  lost_timestamp             TIMESTAMPTZ,
+  lost_location              VARCHAR(255),
+  stolen_police_file_number  INTEGER,
+  stolen_jurisdiction        VARCHAR(255),
+  stolen_police_officer_name VARCHAR(255),
+  description                TEXT,
+  application_id             INTEGER UNIQUE NOT NULL,
+  created_at                 TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at                 TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY(application_id) REFERENCES applications(id)
+);
+
+-- Create application processing table
+CREATE TABLE application_processing (
+  id                  SERIAL PRIMARY KEY NOT NULL,
+  status              ApplicationStatus NOT NULL DEFAULT 'PENDING',
+  app_number          INTEGER UNIQUE,
+  app_holepunched     BOOLEAN NOT NULL DEFAULT false,
+  wallet_card_created BOOLEAN NOT NULL DEFAULT false,
+  invoice_number      INTEGER UNIQUE,
+  document_urls       VARCHAR(255) ARRAY,
+  app_mailed          BOOLEAN NOT NULL DEFAULT false,
+  application_id      INTEGER UNIQUE NOT NULL,
+  created_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY(application_id) REFERENCES applications(id)
 );
