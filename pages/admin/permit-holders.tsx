@@ -23,9 +23,10 @@ import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
-import { SetStateAction, Dispatch } from 'react';
-import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker';
-import 'react-day-picker/lib/style.css';
+import { SetStateAction, Dispatch } from 'react'; // setState prop
+import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker'; // Date picker
+import 'react-day-picker/lib/style.css'; // Date picker styling
+import Helmet from 'react-helmet'; // Date picker inline styling for range
 
 // Placeholder data
 
@@ -138,7 +139,7 @@ function DropDownItems({ items, setStateCallback }: DropDownItemsProps) {
     <>
       {items.map((value, i) => (
         <MenuItem
-          key={`item-${i}`}
+          key={`dropDownItem-${i}`}
           onClick={() => {
             setStateCallback(value);
           }}
@@ -147,6 +148,30 @@ function DropDownItems({ items, setStateCallback }: DropDownItemsProps) {
         </MenuItem>
       ))}
     </>
+  );
+}
+
+function DayPickerStyling() {
+  return (
+    <Helmet>
+      <style>{`
+        .Selectable .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
+          background-color: #f0f8ff !important;
+          color: #4a90e2;
+        }
+        .Selectable .DayPicker-Day {
+          border-radius: 0 !important;
+        }
+        .Selectable .DayPicker-Day--start {
+          border-top-left-radius: 50% !important;
+          border-bottom-left-radius: 50% !important;
+        }
+        .Selectable .DayPicker-Day--end {
+          border-top-right-radius: 50% !important;
+          border-bottom-right-radius: 50% !important;
+        }
+      `}</style>
+    </Helmet>
   );
 }
 
@@ -172,6 +197,8 @@ export default function PermitHolders() {
   const handleDayClick: DayPickerProps['onDayClick'] = day => {
     setRange(DateUtils.addDayToRange(day, range));
   };
+
+  const modifier = { start: range.from || undefined, end: range.to || undefined };
 
   return (
     <Layout>
@@ -225,20 +252,23 @@ export default function PermitHolders() {
                   borderColor="border.secondary"
                 >
                   Expiry date:
-                  {!range.from && !range.to && ' YYYY-MM-DD - YYYY-MM-DD'}
-                  {range.from && !range.to && ' YYYY-MM-DD - YYYY-MM-DD'}
+                  {!range.to && ' YYYY-MM-DD - YYYY-MM-DD'}
                   {range.from &&
                     range.to &&
-                    ` ${range.from.toLocaleDateString()} - ${range.to.toLocaleDateString()}`}
+                    ` ${range.from.toLocaleDateString('en-CA')} - ${range.to.toLocaleDateString(
+                      'en-CA'
+                    )}`}
                 </MenuButton>
                 <MenuList>
                   <DayPicker
                     className="Selectable"
                     numberOfMonths={2}
-                    selectedDays={[range]}
+                    selectedDays={[range.from || undefined, range]}
+                    modifiers={modifier}
                     onDayClick={handleDayClick}
                   />
                 </MenuList>
+                <DayPickerStyling />
               </Menu>
               <Box flexGrow={1}>
                 <InputGroup>
