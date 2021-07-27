@@ -44,10 +44,9 @@ export const applicantMedicalInformationResolver: Resolver<Applicant> = async (
 };
 
 /**
- * Field resolver to fetch the medical history object associated with an applicant
- * @returns MedicalHistory obejct
+ * Field resolver to fetch the medical history object associated with an applicant, including the physician and application ID for every completed application. The physician data is current (not from the time of the application).
+ * @returns Array of medical history records
  */
-
 export const applicantMedicalHistoryResolver: Resolver<Applicant> = async (
   parent,
   _args,

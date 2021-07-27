@@ -46,8 +46,8 @@ export const createApplicant: Resolver = async (_, args, { prisma }) => {
 };
 
 /**
- * Query one RCD applicant based on ID
- * @returns one applicant
+ * Query a RCD applicant based on ID
+ * @returns Applicant with given ID
  */
 export const applicant: Resolver = async (_parent, args, { prisma }) => {
   const applicant = await prisma.applicant.findUnique({
