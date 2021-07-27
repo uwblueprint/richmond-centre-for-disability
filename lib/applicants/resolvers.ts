@@ -89,13 +89,8 @@ export const createApplicant: Resolver = async (_, args, { prisma }) => {
 };
 
 /**
-<<<<<<< HEAD
  * Update an applicant
  * @returns Status of operation (ok)
-=======
- * Query a RCD applicant based on ID
- * @returns Applicant with given ID
->>>>>>> comment changes and grouped related APIs
  */
 export const updateApplicant: Resolver = async (_, args, { prisma }) => {
   const { input } = args;
