@@ -48,6 +48,7 @@ export type Applicant = {
   guardian?: Maybe<Guardian>;
   medicalInformation?: Maybe<MedicalInformation>;
   permits?: Maybe<Array<Permit>>;
+  medicalHistory?: Maybe<Array<MedicalHistory>>;
 };
 
 export enum ApplicantStatus {
@@ -275,6 +276,12 @@ export type Guardian = {
   notes?: Maybe<Scalars['String']>;
 };
 
+export type MedicalHistory = {
+  __typename?: 'MedicalHistory';
+  applicationId: Scalars['ID'];
+  physician: Physician;
+};
+
 export type MedicalInformation = {
   __typename?: 'MedicalInformation';
   id: Scalars['ID'];
@@ -397,6 +404,11 @@ export type Query = {
   physicians?: Maybe<Array<Physician>>;
   applications?: Maybe<Array<Application>>;
   permits?: Maybe<Array<Permit>>;
+  applicant?: Maybe<Applicant>;
+};
+
+export type QueryApplicantArgs = {
+  id: Scalars['ID'];
 };
 
 export type QueryEmployeeInput = {

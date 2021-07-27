@@ -1,6 +1,6 @@
 import { meta } from '@lib/meta/resolvers'; // Metadata resolvers
 import { employees, createEmployee } from '@lib/employees/resolvers'; // Employee resolvers
-import { applicants, createApplicant } from '@lib/applicants/resolvers'; // Applicant resolvers
+import { applicant, applicants, createApplicant } from '@lib/applicants/resolvers'; // Applicant resolvers
 import { physicians, createPhysician } from '@lib/physicians/resolvers'; // Physician resolvers
 import { applications, createApplication } from '@lib/applications/resolvers';
 import { permits, createPermit } from '@lib/permits/resolvers';
@@ -14,6 +14,7 @@ import {
   applicantPermitsResolver,
   applicantGuardianResolver,
   applicantMedicalInformationResolver,
+  applicantMedicalHistoryResolver,
 } from '@lib/applicants/field-resolvers';
 import {
   applicationApplicantResolver,
@@ -34,6 +35,7 @@ const resolvers = {
     physicians: authorize(physicians, [Role.Secretary]),
     applications: authorize(applications, [Role.Secretary]),
     permits: authorize(permits, [Role.Secretary]),
+    applicant: authorize(applicant, [Role.Secretary]),
   },
   Mutation: {
     createApplicant: authorize(createApplicant, [Role.Secretary]),
@@ -48,6 +50,7 @@ const resolvers = {
     permits: applicantPermitsResolver,
     guardian: applicantGuardianResolver,
     medicalInformation: applicantMedicalInformationResolver,
+    medicalHistory: applicantMedicalHistoryResolver,
   },
   Application: {
     applicant: applicationApplicantResolver,
