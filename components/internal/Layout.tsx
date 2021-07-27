@@ -173,7 +173,12 @@ type InternalGridProps = {
   isContent?: boolean;
 };
 
-function InternalGrid({ children, alignItems, marginBottom, isContent = true }: InternalGridProps) {
+function InternalGrid({
+  children,
+  alignItems,
+  marginBottom = 20,
+  isContent = true,
+}: InternalGridProps) {
   return (
     <Grid
       flexGrow={1}

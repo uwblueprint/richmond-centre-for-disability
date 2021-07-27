@@ -109,7 +109,7 @@ export default function RequestHeader({
           All requests
         </Text>
       </Link>
-      <Flex marginTop={8} alignItems="center">
+      <Flex marginTop={5} alignItems="center">
         <Box>
           <Flex alignItems="center">
             <Text textStyle="display-large" as="h1" marginRight={3}>

@@ -137,7 +137,7 @@ export default function Request() {
 
   return (
     <Layout>
-      <GridItem rowSpan={1} colSpan={12} marginTop={16}>
+      <GridItem rowSpan={1} colSpan={12} marginTop={3}>
         <RequestHeader
           isRenewal={isRenewal}
           applicationStatus={applicationStatus}
@@ -148,7 +148,7 @@ export default function Request() {
           areAllStepsComplete={areAllStepsComplete}
         />
       </GridItem>
-      <GridItem rowSpan={12} colSpan={5} marginTop={7} textAlign="left">
+      <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
         <PersonalInformationCard
           applicant={applicant}
           expirationDate={expirationDate}
@@ -156,7 +156,7 @@ export default function Request() {
           handleName={() => {}}
         />
       </GridItem>
-      <GridItem rowSpan={12} colSpan={7} marginTop={7} textAlign="left">
+      <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>
           {applicationStatus === 'INPROGRESS' ? (
             <ProcessingTasksCard
