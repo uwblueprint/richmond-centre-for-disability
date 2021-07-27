@@ -6,7 +6,6 @@ type Query {
   physicians: [Physician!]
   applications: [Application!]
   permits: [Permit!]
-  applicant(id: ID!): Applicant
 }
 
 type Mutation {
