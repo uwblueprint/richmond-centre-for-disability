@@ -46,7 +46,7 @@ export const createApplicant: Resolver = async (_, args, { prisma }) => {
 };
 
 /**
- * Query a RCD applicant based on ID
+ * Query an applicant based on ID
  * @returns Applicant with given ID
  */
 export const applicant: Resolver = async (_parent, args, { prisma }) => {
