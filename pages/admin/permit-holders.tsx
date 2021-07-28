@@ -11,22 +11,21 @@ import {
   InputGroup,
   Input,
   InputLeftElement,
-  useControllableState,
   MenuList,
   MenuItem,
   Wrap,
   Badge,
 } from '@chakra-ui/react'; // Chakra UI
-import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
+import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
 import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
-import { SetStateAction, Dispatch } from 'react'; // setState prop
+import { useState, SetStateAction, Dispatch } from 'react'; // React
 import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker'; // Date picker
 import 'react-day-picker/lib/style.css'; // Date picker styling
-import Helmet from 'react-helmet'; // Date picker inline styling for range
+import Helmet from 'react-helmet'; // Date picker inline styling for select range functionality
 
 // Placeholder data
 
@@ -43,7 +42,10 @@ const DATA = Array(10).fill({
   },
   email: 'charmainewang@rcd.org',
   phone: '000-000-0000',
-  recentAPP: '#XXXXXX',
+  recentAPP: {
+    appNumber: '#XXXXXX',
+    expiryDate: new Date(),
+  },
   userStatus: 'active',
 });
 
@@ -78,44 +80,21 @@ const COLUMNS = [
     Header: 'Recent APP',
     accessor: 'recentAPP',
     disableSortBy: true,
+    Cell: renderRecentAPP,
   },
   {
     Header: 'User Status',
     accessor: 'userStatus',
     disableSortBy: true,
-    Cell: renderStatusBadge,
+    Cell: renderUserStatusBadge,
   },
 ];
 
-type StatusProps = {
-  value: string;
-};
-
-function renderStatusBadge({ value }: StatusProps) {
-  return (
-    <Wrap>
-      <Badge variant={value}>{value.toUpperCase()}</Badge>
-    </Wrap>
-  );
-}
-
-type AddressProps = {
-  value: any;
-};
-
-function renderAddress({ value }: AddressProps) {
-  return (
-    <>
-      <Text>{value.address}</Text>
-      <Text textStyle="caption" textColor="secondary">
-        {value.postalCode}
-      </Text>
-    </>
-  );
-}
-
 type NameProps = {
-  value: any;
+  value: {
+    name: string;
+    id: number;
+  };
 };
 
 function renderName({ value }: NameProps) {
@@ -126,6 +105,62 @@ function renderName({ value }: NameProps) {
         {value.id}
       </Text>
     </>
+  );
+}
+
+type AddressProps = {
+  value: {
+    address: string;
+    city: string;
+    postalCode: string;
+  };
+};
+
+function renderAddress({ value }: AddressProps) {
+  return (
+    <>
+      <Text>{value.address}</Text>
+      <Text textStyle="caption" textColor="secondary">
+        {value.city}, {value.postalCode}
+      </Text>
+    </>
+  );
+}
+
+type UserStatusProps = {
+  value: 'active' | 'inactive';
+};
+
+function renderUserStatusBadge({ value }: UserStatusProps) {
+  return (
+    <Wrap>
+      <Badge variant={value}>{value.toUpperCase()}</Badge>
+    </Wrap>
+  );
+}
+
+type RecentAPPProps = {
+  value: {
+    appNumber: 'string';
+    expiryDate: Date;
+  };
+};
+
+function renderRecentAPP({ value }: RecentAPPProps) {
+  const today = new Date();
+  const expired = DateUtils.isPastDay(value.expiryDate);
+  const expiresSoon = DateUtils.isDayInRange(today, {
+    from: today,
+    to: DateUtils.addMonths(today, 1),
+  });
+  return (
+    <Flex>
+      <Text as="span" mr="9px">
+        {value.appNumber}
+      </Text>
+      {expired && <WarningTwoIcon color="secondary.critical" />}
+      {expiresSoon && <WarningIcon color="secondary.caution" />}
+    </Flex>
   );
 }
 
@@ -147,6 +182,24 @@ function DropDownItems({ items, setStateCallback }: DropDownItemsProps) {
           {value}
         </MenuItem>
       ))}
+    </>
+  );
+}
+
+type MenuTextProps = {
+  readonly name: string;
+  readonly value?: string;
+};
+
+function MenuText({ name, value }: MenuTextProps) {
+  return (
+    <>
+      <Text as="span" textStyle="button-semibold">
+        {`${name}: `}
+      </Text>
+      <Text as="span" textStyle="button-regular">
+        {value}
+      </Text>
     </>
   );
 }
@@ -177,11 +230,9 @@ function DayPickerStyling() {
 
 // Internal home page
 export default function PermitHolders() {
-  const [permitStatusFilter, setPermitStatusFilter] = useControllableState({ defaultValue: 'All' });
-  const [userStatusFilter, setUserStatusFilter] = useControllableState({ defaultValue: 'All' });
-  const [range, setRange] = useControllableState<RangeModifier>({
-    defaultValue: { from: undefined, to: undefined },
-  });
+  const [permitStatusFilter, setPermitStatusFilter] = useState('All');
+  const [userStatusFilter, setUserStatusFilter] = useState('All');
+  const [range, setRange] = useState<RangeModifier>({ from: undefined, to: undefined });
 
   const permitStatusOptions = [
     'All',
@@ -199,6 +250,15 @@ export default function PermitHolders() {
   };
 
   const modifier = { start: range.from || undefined, end: range.to || undefined };
+
+  const dateRangeString = () => {
+    if (!range.to) {
+      return 'YYYY-MM-DD - YYYY-MM-DD';
+    }
+    if (range.from && range.to) {
+      return `${range.from.toLocaleDateString('en-CA')} - ${range.to.toLocaleDateString('en-CA')}`;
+    }
+  };
 
   return (
     <Layout>
@@ -218,7 +278,7 @@ export default function PermitHolders() {
                   color="text.secondary"
                   borderColor="border.secondary"
                 >
-                  Permit Status: {permitStatusFilter}
+                  <MenuText name={`Permit Status`} value={permitStatusFilter} />
                 </MenuButton>
                 <MenuList>
                   <DropDownItems
@@ -236,7 +296,7 @@ export default function PermitHolders() {
                   color="text.secondary"
                   borderColor="border.secondary"
                 >
-                  User Status: {userStatusFilter}
+                  <MenuText name={`User Status`} value={userStatusFilter} />
                 </MenuButton>
                 <MenuList>
                   <DropDownItems items={userStatusOptions} setStateCallback={setUserStatusFilter} />
@@ -251,13 +311,7 @@ export default function PermitHolders() {
                   color="text.secondary"
                   borderColor="border.secondary"
                 >
-                  Expiry date:
-                  {!range.to && ' YYYY-MM-DD - YYYY-MM-DD'}
-                  {range.from &&
-                    range.to &&
-                    ` ${range.from.toLocaleDateString('en-CA')} - ${range.to.toLocaleDateString(
-                      'en-CA'
-                    )}`}
+                  <MenuText name={`Expiry date`} value={dateRangeString()} />
                 </MenuButton>
                 <MenuList>
                   <DayPicker

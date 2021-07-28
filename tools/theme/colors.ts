@@ -13,6 +13,7 @@ const colors = {
     success: '#377E62',
     informative: '#00A0AC',
     gray: '#EDF2F7',
+    caution: '#FF8A00',
   },
   text: {
     secondary: '#323741',
