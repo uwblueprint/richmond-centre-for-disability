@@ -16,10 +16,14 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent } from 'react'; // React
+import { useState, SyntheticEvent, ReactNode } from 'react'; // React
 
-export default function EditDoctorInformationModal() {
-  const { isOpen, onClose } = useDisclosure();
+type EditDoctorInformationModalProps = {
+  children: ReactNode;
+};
+
+export default function EditDoctorInformationModal({ children }: EditDoctorInformationModalProps) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -33,9 +37,12 @@ export default function EditDoctorInformationModal() {
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     //  TODO: Will be addressed in API hookup
+    onClose();
   };
   return (
     <>
+      <Box onClick={onOpen}>{children}</Box>
+
       <Modal
         onClose={onClose}
         isOpen={isOpen}

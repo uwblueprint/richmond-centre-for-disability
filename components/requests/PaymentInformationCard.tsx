@@ -1,7 +1,7 @@
-import { Box, Text, Divider, SimpleGrid, VStack } from '@chakra-ui/react'; // Chakra UI
+import { Box, Text, Divider, SimpleGrid, VStack, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
 import { PaymentType } from '@lib/graphql/types'; // PaymentType Enum
-import { MouseEventHandler } from 'react'; // React
+import EditPaymentDetailsModal from '@components/requests/modals/EditPaymentDetailsModal'; // Edit modal
 
 type PaymentInformationProps = {
   readonly permitFee: number;
@@ -20,18 +20,23 @@ type PaymentInformationProps = {
   readonly billingCountry: string;
   readonly billingPostalCode: string;
 
-  readonly handleEdit: MouseEventHandler;
   readonly isUpdated?: boolean;
 };
 
 export default function PaymentInformationCard(props: PaymentInformationProps) {
-  const { isUpdated, handleEdit } = props;
+  const { isUpdated } = props;
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Payment, Shipping, and Billing Information`}
       updated={isUpdated}
-      handleEdit={handleEdit}
+      editModal={
+        <EditPaymentDetailsModal>
+          <Button color="primary" variant="ghost" textDecoration="underline">
+            <Text textStyle="body-bold">Edit</Text>
+          </Button>
+        </EditPaymentDetailsModal>
+      }
     >
       <Divider pt="20px" />
       <VStack align="left" spacing="12px" pt="20px">

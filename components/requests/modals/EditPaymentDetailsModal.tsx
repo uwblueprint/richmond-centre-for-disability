@@ -24,11 +24,15 @@ import {
   GridItem,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent } from 'react'; // React
+import { useState, SyntheticEvent, ReactNode } from 'react'; // React
 import { PaymentType } from '@lib/graphql/types';
 
-export default function EditPaymentDetailsModal() {
-  const { isOpen, onClose } = useDisclosure();
+type EditPaymentDetailsModalProps = {
+  children: ReactNode;
+};
+
+export default function EditPaymentDetailsModal({ children }: EditPaymentDetailsModalProps) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentType | string>('');
   const [donation, setDonation] = useState('');
@@ -65,10 +69,13 @@ export default function EditPaymentDetailsModal() {
     //     setShippingFullNameInputError("Please enter the recipient's full name.");
     //   }
     // }
+    onClose();
   };
 
   return (
     <>
+      <Box onClick={onOpen}>{children}</Box>
+
       <Modal
         onClose={onClose}
         isOpen={isOpen}

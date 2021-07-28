@@ -6,10 +6,9 @@ import { MouseEventHandler } from 'react'; // React
 type PersonalInformationProps = {
   readonly applicant: Applicant;
   readonly expirationDate: string;
-  readonly mostRecentAPP: string;
+  readonly mostRecentAPP: number;
   readonly contactInfoUpdated?: boolean;
   readonly addressInfoUpdated?: boolean;
-  readonly handleEdit: MouseEventHandler;
   readonly handleName: MouseEventHandler;
 };
 
@@ -26,7 +25,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
     </Link>
   );
   return (
-    <PermitHolderInfoCard colSpan={5} header={header} handleEdit={props.handleEdit}>
+    <PermitHolderInfoCard colSpan={5} header={header}>
       <VStack spacing="12px" pt="12px" align="left">
         <Box>
           <Text as="p" textStyle="body-regular">
@@ -40,10 +39,10 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         </Box>
         <Box>
           <HStack spacing="4px">
-            <Text as="p" textStyle="body-regular">
-              Most Recent APP: #{props.mostRecentAPP}
+            <Text as="p" textStyle="body-regular" marginRight={2}>
+              Most recent APP: #{props.mostRecentAPP}
             </Text>
-            <Badge variant="active">Active</Badge>
+            <Badge variant="ACTIVE">Active</Badge>
           </HStack>
           <Text as="p" textStyle="xsmall" color="secondary">
             Expiring {props.expirationDate}

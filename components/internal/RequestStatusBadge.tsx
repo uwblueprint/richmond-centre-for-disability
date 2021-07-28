@@ -2,10 +2,10 @@ import { Badge, Box } from '@chakra-ui/react'; // Chakra UI
 import Image from 'next/image'; // Optimized images
 
 type Props = {
-  variant: 'completed' | 'inProgress' | 'pending' | 'rejected' | 'expiring' | 'expired' | 'active';
+  variant: 'COMPLETED' | 'INPROGRESS' | 'PENDING' | 'REJECTED' | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
 };
 
-export function RequestStatusBadge({ variant }: Props) {
+export default function RequestStatusBadge({ variant }: Props) {
   /**
    * Renders the request status badge content (icon + text)
    * @param variant for specifying request status badge type
@@ -13,7 +13,7 @@ export function RequestStatusBadge({ variant }: Props) {
    */
   const _renderBadgeContent = (variant: Props['variant']): JSX.Element => {
     switch (variant) {
-      case 'completed':
+      case 'COMPLETED':
         return (
           <>
             <Image
@@ -27,7 +27,7 @@ export function RequestStatusBadge({ variant }: Props) {
             </Box>
           </>
         );
-      case 'expiring':
+      case 'EXPIRING':
         return (
           <>
             <Image
@@ -41,7 +41,7 @@ export function RequestStatusBadge({ variant }: Props) {
             </Box>
           </>
         );
-      case 'expired':
+      case 'EXPIRED':
         return (
           <>
             <Image
@@ -55,7 +55,7 @@ export function RequestStatusBadge({ variant }: Props) {
             </Box>
           </>
         );
-      case 'pending':
+      case 'PENDING':
         return (
           <>
             <Image
@@ -69,7 +69,7 @@ export function RequestStatusBadge({ variant }: Props) {
             </Box>
           </>
         );
-      case 'rejected':
+      case 'REJECTED':
         return (
           <>
             <Image
@@ -83,7 +83,7 @@ export function RequestStatusBadge({ variant }: Props) {
             </Box>
           </>
         );
-      case 'inProgress':
+      case 'INPROGRESS':
         return (
           <>
             <Image
@@ -97,7 +97,7 @@ export function RequestStatusBadge({ variant }: Props) {
             </Box>
           </>
         );
-      case 'active':
+      case 'ACTIVE':
         return (
           <>
             <Image
