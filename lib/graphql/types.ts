@@ -22,7 +22,7 @@ export enum Aid {
   ElectricChair = 'ELECTRIC_CHAIR',
   ManualChair = 'MANUAL_CHAIR',
   Scooter = 'SCOOTER',
-  Walker = 'WALKER',
+  Walker = 'WALKER'
 }
 
 export type Applicant = {
@@ -251,6 +251,7 @@ export type CreatePhysicianResult = {
   ok: Scalars['Boolean'];
 };
 
+
 export type Employee = {
   __typename?: 'Employee';
   id: Scalars['ID'];
@@ -263,7 +264,7 @@ export type Employee = {
 export enum Gender {
   Male = 'MALE',
   Female = 'FEMALE',
-  Other = 'OTHER',
+  Other = 'OTHER'
 }
 
 export type Guardian = {
@@ -319,13 +320,16 @@ export type Mutation = {
   createPermit: CreatePermitResult;
 };
 
+
 export type MutationCreateApplicantArgs = {
   input: CreateApplicantInput;
 };
 
+
 export type MutationCreateEmployeeArgs = {
   input: CreateEmployeeInput;
 };
+
 
 export type MutationCreatePhysicianArgs = {
   input: CreatePhysicianInput;
@@ -339,6 +343,7 @@ export type MutationCreateApplicationArgs = {
   input: CreateApplicationInput;
 };
 
+
 export type MutationCreatePermitArgs = {
   input: CreatePermitInput;
 };
@@ -350,7 +355,7 @@ export enum PaymentType {
   Cash = 'CASH',
   Cheque = 'CHEQUE',
   Debit = 'DEBIT',
-  MoneyOrder = 'MONEY_ORDER',
+  MoneyOrder = 'MONEY_ORDER'
 }
 
 export type Permit = {
@@ -399,7 +404,7 @@ export enum Province {
   Nb = 'NB',
   Nu = 'NU',
   Nt = 'NT',
-  Yt = 'YT',
+  Yt = 'YT'
 }
 
 export type Query = {
@@ -412,6 +417,7 @@ export type Query = {
   applications?: Maybe<Array<Application>>;
   permits?: Maybe<Array<Permit>>;
 };
+
 
 export type QueryApplicantArgs = {
   id: Scalars['ID'];
@@ -430,7 +436,7 @@ export enum ReasonForReplacement {
 export enum Role {
   Admin = 'ADMIN',
   Accounting = 'ACCOUNTING',
-  Secretary = 'SECRETARY',
+  Secretary = 'SECRETARY'
 }
 
 export type UpsertPhysicianInput = {
