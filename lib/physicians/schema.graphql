@@ -1,31 +1,49 @@
 type Physician {
-    firstName: String!
-    lastName: String!
-    mspNumber: Int!
-    addressLine1: String!
-    addressLine2: String
-    city: String!
-    province: Province!
-    postalCode: String!
-    phone: String!
-    status: PhysicianStatus!
-    notes: String
+  firstName: String!
+  lastName: String!
+  mspNumber: Int!
+  addressLine1: String!
+  addressLine2: String
+  city: String!
+  province: Province!
+  postalCode: String!
+  phone: String!
+  status: PhysicianStatus!
+  notes: String
 }
 
 input CreatePhysicianInput {
-    firstName: String!
-    lastName: String!
-    mspNumber: Int!
-    addressLine1: String!
-    addressLine2: String
-    city: String!
-    province: Province!
-    postalCode: String!
-    phone: String!
-    status: PhysicianStatus!
-    notes: String
+  firstName: String!
+  lastName: String!
+  mspNumber: Int!
+  addressLine1: String!
+  addressLine2: String
+  city: String!
+  province: Province!
+  postalCode: String!
+  phone: String!
+  status: PhysicianStatus!
+  notes: String
 }
 
 type CreatePhysicianResult {
+  ok: Boolean!
+}
+
+input UpsertPhysicianInput {
+  mspNumber: Int!
+  firstName: String!
+  lastName: String!
+  addressLine1: String!
+  addressLine2: String
+  city: String!
+  province: Province!
+  postalCode: String!
+  phone: String!
+  status: PhysicianStatus!
+  notes: String
+}
+
+type UpsertPhysicianResult {
   ok: Boolean!
 }

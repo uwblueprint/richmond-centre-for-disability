@@ -54,3 +54,48 @@ export const createPhysician: Resolver = async (_, args, { prisma }) => {
     ok: true,
   };
 };
+
+/**
+ * Upsert a physician
+ * @returns Status of operation (ok)
+ */
+export const upsertPhysician: Resolver = async (_, args, { prisma }) => {
+  const { input } = args;
+  const { mspNumber, ...rest } = input;
+  const formattedPhysicianData = {
+    ...rest,
+    postalCode: formatPostalCode(input.postalCode),
+    phone: formatPhoneNumber(input.phone),
+  };
+
+  let upsertedPhysician;
+  try {
+    upsertedPhysician = await prisma.physician.upsert({
+      where: { mspNumber },
+      create: { mspNumber, ...formattedPhysicianData },
+      update: formattedPhysicianData,
+    });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === DBErrorCode.UniqueConstraintFailed) {
+        throw new PhysicianCreateError(
+          'Unique constraint failed, a new physician cannot be created with this MSP number'
+        );
+      }
+      if (err.code === DBErrorCode.LengthConstraintFailed) {
+        throw new PhysicianCreateError(
+          "Length constraint failed, provided value too long for the column's type"
+        );
+      }
+    }
+  }
+
+  // Throw internal server error if physician was not updated/created
+  if (!upsertedPhysician) {
+    throw new ApolloError('Physician was unable to be upserted');
+  }
+
+  return {
+    ok: true,
+  };
+};
