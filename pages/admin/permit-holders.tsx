@@ -53,39 +53,53 @@ const COLUMNS = [
   {
     Header: 'Name',
     accessor: 'name',
+    width: 180,
+    minWidth: 180,
     Cell: renderName,
   },
   {
     Header: 'Date of Birth',
     accessor: 'dateOfBirth',
     disableSortBy: true,
+    width: 140,
+    maxWidth: 140,
   },
   {
     Header: 'Home Address',
     accessor: 'homeAddress',
     disableSortBy: true,
+    width: 240,
+    minWidth: 240,
     Cell: renderAddress,
   },
   {
     Header: 'Email',
     accessor: 'email',
     disableSortBy: true,
+    width: 240,
+    minWidth: 240,
   },
   {
     Header: 'Phone #',
     accessor: 'phone',
     disableSortBy: true,
+    width: 140,
+    maxWidth: 140,
   },
   {
     Header: 'Recent APP',
     accessor: 'recentAPP',
     disableSortBy: true,
+    width: 140,
+    maxWidth: 140,
     Cell: renderRecentAPP,
   },
   {
     Header: 'User Status',
     accessor: 'userStatus',
     disableSortBy: true,
+    width: 120,
+    maxWidth: 120,
     Cell: renderUserStatusBadge,
   },
 ];
@@ -102,7 +116,7 @@ function renderName({ value }: NameProps) {
     <>
       <Text>{value.name}</Text>
       <Text textStyle="caption" textColor="secondary">
-        {value.id}
+        ID: {value.id}
       </Text>
     </>
   );
@@ -277,6 +291,8 @@ export default function PermitHolders() {
                   marginRight="12px"
                   color="text.secondary"
                   borderColor="border.secondary"
+                  textAlign="left"
+                  width="320px"
                 >
                   <MenuText name={`Permit Status`} value={permitStatusFilter} />
                 </MenuButton>
@@ -295,6 +311,8 @@ export default function PermitHolders() {
                   marginRight="12px"
                   color="text.secondary"
                   borderColor="border.secondary"
+                  textAlign="left"
+                  width="260px"
                 >
                   <MenuText name={`User Status`} value={userStatusFilter} />
                 </MenuButton>
@@ -310,6 +328,8 @@ export default function PermitHolders() {
                   marginRight="12px"
                   color="text.secondary"
                   borderColor="border.secondary"
+                  textAlign="left"
+                  width="420px"
                 >
                   <MenuText name={`Expiry date`} value={dateRangeString()} />
                 </MenuButton>
