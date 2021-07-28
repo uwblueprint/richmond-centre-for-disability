@@ -23,6 +23,7 @@ import { useState, SyntheticEvent, ReactNode } from 'react'; // React
 type EditReasonForReplacementModalProps = {
   children: ReactNode;
 };
+
 export default function EditReasonForReplacementModal({
   children,
 }: EditReasonForReplacementModalProps) {

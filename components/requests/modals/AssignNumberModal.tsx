@@ -16,6 +16,7 @@ import {
   Box,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, ReactNode } from 'react'; // React
+import { formatNumberInput } from '@lib/utils/format';
 
 type AssignNumberModalProps = {
   readonly onAssign: (num: number) => void;
@@ -24,6 +25,14 @@ type AssignNumberModalProps = {
   readonly children: ReactNode;
 };
 
+/**
+ * Chakra Modal with a single NumberInput that propagates up the value
+ * @param onAssign A function to call with the modal's field value when the user clicks the "Save" button
+ * @param modalTitle Text to display in the modal's header
+ * @param fieldName Text to display above the number input field
+ * @param children A React element to render with an onClick prop to open the modal
+ * @returns Rendered modal component that is used to assign numbers to a field
+ */
 export default function AssignNumberModal({
   onAssign,
   modalTitle,
@@ -39,8 +48,9 @@ export default function AssignNumberModal({
     const value = Number(formValue);
     if (isNaN(value)) {
       setFormError('Please enter a valid number');
+    } else {
+      onAssign(value);
     }
-    onAssign(value);
     onClose();
   };
 
@@ -58,7 +68,7 @@ export default function AssignNumberModal({
               <NumberInput
                 type="number"
                 value={formValue}
-                onChange={valueString => setFormValue(valueString.replace(/^\$/, ''))}
+                onChange={valueString => setFormValue(formatNumberInput(valueString))}
               >
                 <NumberInputField />
               </NumberInput>

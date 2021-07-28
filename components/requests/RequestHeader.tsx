@@ -21,7 +21,7 @@ type RequestHeaderProps = {
   readonly applicationStatus: // TODO: Change this to the enum that we add
   'COMPLETED' | 'INPROGRESS' | 'PENDING' | 'REJECTED' | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
   readonly createdAt: string;
-  readonly areAllStepsComplete: boolean;
+  readonly allStepsCompleted: boolean;
   readonly onApprove: () => void;
   readonly onReject: () => void;
   readonly onComplete: () => void;
@@ -31,7 +31,7 @@ export default function RequestHeader({
   isRenewal,
   applicationStatus,
   createdAt,
-  areAllStepsComplete,
+  allStepsCompleted,
   onApprove,
   onReject,
   onComplete,
@@ -58,7 +58,7 @@ export default function RequestHeader({
       case 'INPROGRESS':
         return (
           <CompleteRequestModal onComplete={onComplete}>
-            <Button disabled={!areAllStepsComplete}>Mark as complete</Button>
+            <Button disabled={!allStepsCompleted}>Mark as complete</Button>
           </CompleteRequestModal>
         );
       default:

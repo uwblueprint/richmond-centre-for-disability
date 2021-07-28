@@ -15,3 +15,12 @@ export const formatPhoneNumber = (phone: string): string => {
 export const formatPostalCode = (postalCode: string): string => {
   return postalCode?.replace(/[^A-Za-z\d]/g, '');
 };
+
+/**
+ * Format NumberInput string by removing all non-numeric characters. Ref: Chakra NumberInput docs.
+ * @param {string} numberInputString NumberInput's onChange value string to be formatted
+ * @returns {string} formatted number
+ */
+export const formatNumberInput = (numberInputString: string): string => {
+  return numberInputString.replace(/^\$/, '');
+};

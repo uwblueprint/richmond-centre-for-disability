@@ -31,7 +31,7 @@ export default function ProcessingTasksCard({
   const steps = [
     // Task 1: Assign new APP number: Assign number (MODAL)
     {
-      label: 'Assign new APP number' + (!isNaN(Number(APPNumber)) ? `: ${APPNumber}` : ''),
+      label: 'Assign new APP number' + (APPNumber === undefined ? '' : `: ${APPNumber}`),
     },
     // Task 2: Hole punch parking permit: Mark as complete (CHECK)
     {
@@ -45,7 +45,7 @@ export default function ProcessingTasksCard({
     },
     // Task 4: Assign invoice number: Assign number (MODAL)
     {
-      label: 'Assign invoice number' + (invoiceNumber ? `: ${invoiceNumber}` : ''),
+      label: 'Assign invoice number' + (invoiceNumber === undefined ? '' : `: ${invoiceNumber}`),
     },
     // Task 5: Upload document: Choose document (UPLOAD FILE)
     {
@@ -89,13 +89,7 @@ export default function ProcessingTasksCard({
             fieldName="New APP number"
             onAssign={assignAPPNumber}
           >
-            {!isNaN(Number(APPNumber)) ? (
-              <Button variant="ghost" textDecoration="underline black">
-                <Text textStyle="caption" color="black">
-                  Edit number
-                </Text>
-              </Button>
-            ) : (
+            {APPNumber === undefined ? (
               <Button
                 marginLeft="auto"
                 height="35px"
@@ -104,6 +98,12 @@ export default function ProcessingTasksCard({
                 color="black"
               >
                 <Text textStyle="xsmall-medium">Assign number</Text>
+              </Button>
+            ) : (
+              <Button variant="ghost" textDecoration="underline black">
+                <Text textStyle="caption" color="black">
+                  Edit number
+                </Text>
               </Button>
             )}
           </AssignNumberModal>
@@ -115,13 +115,7 @@ export default function ProcessingTasksCard({
             fieldName="Invoice number"
             onAssign={assignInvoiceNumber}
           >
-            {!isNaN(Number(invoiceNumber)) ? (
-              <Button variant="ghost" textDecoration="underline black">
-                <Text textStyle="caption" color="black">
-                  Edit number
-                </Text>
-              </Button>
-            ) : (
+            {invoiceNumber === undefined ? (
               <Button
                 marginLeft="auto"
                 height="35px"
@@ -130,6 +124,12 @@ export default function ProcessingTasksCard({
                 color="black"
               >
                 <Text textStyle="xsmall-medium">Assign number</Text>
+              </Button>
+            ) : (
+              <Button variant="ghost" textDecoration="underline black">
+                <Text textStyle="caption" color="black">
+                  Edit number
+                </Text>
               </Button>
             )}
           </AssignNumberModal>
