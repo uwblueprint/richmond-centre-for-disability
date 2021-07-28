@@ -1,5 +1,14 @@
+/* eslint-disable no-console */
 import prisma from '../prisma/index'; // Relative path required, path aliases throw error with seed command
-import { Role, Gender, Province, PaymentType, Aid } from '../lib/graphql/types'; // Relative path required for seed script
+import {
+  Role,
+  Gender,
+  Province,
+  PaymentType,
+  Aid,
+  ReasonForReplacement,
+} from '../lib/graphql/types'; // Relative path required for seed script
+
 /**
  * Main program
  */
@@ -66,6 +75,7 @@ const devSeed = async () => {
     },
   ];
   await employeeUpsert(employees);
+
   // Upsert applicants
   const applicants = [
     {
@@ -94,6 +104,7 @@ const devSeed = async () => {
     },
   ];
   await applicantUpsert(applicants);
+
   // Upsert applications
   const applications = [
     {
@@ -120,12 +131,64 @@ const devSeed = async () => {
       shopifyConfirmationNumber: '1234567',
       applicantId: 1,
     },
+    {
+      id: 2,
+      firstName: 'Applicant',
+      lastName: 'Two',
+      gender: Gender.Female,
+      phone: '0987654321',
+      province: Province.Bc,
+      city: 'Vancouver',
+      addressLine1: '789 Vancouver Rd.',
+      postalCode: 'B1C2D3',
+      disability: 'Requires walker',
+      aid: [Aid.Walker],
+      physicianName: 'Dr. Physician2',
+      physicianMspNumber: 67890,
+      physicianAddressLine1: '789 Alberta Rd.',
+      physicianCity: 'Calgary',
+      physicianProvince: Province.Ab,
+      physicianPostalCode: 'H4K3S0',
+      physicianPhone: '8264029163',
+      processingFee: 26,
+      paymentMethod: PaymentType.Cheque,
+      shopifyConfirmationNumber: '0145829',
+      applicantId: 2,
+    },
   ];
   await applicationUpsert(applications);
+
+  // Upsert replacements
+  const replacements = [
+    {
+      id: 1,
+      reason: ReasonForReplacement.Lost,
+      lostTimestamp: new Date(),
+      lostLocation: 'The library',
+      description: 'I lost my APP at the library',
+      applicationId: 2,
+    },
+  ];
+  await replacementUpsert(replacements);
+
+  // Upsert application processings
+  const applicationProcessings = [
+    {
+      id: 1,
+      applicationId: 1,
+    },
+    {
+      id: 2,
+      applicationId: 2,
+    },
+  ];
+  await applicationProcessingUpsert(applicationProcessings);
+
   // Upsert permits
   const permits = [{ rcdPermitId: 1, applicantId: 1, applicationId: 1 }];
   await permitUpsert(permits);
 };
+
 /**
  * Upsert employees
  * @param employees - Employees to upsert
@@ -152,10 +215,10 @@ const employeeUpsert = async (
       },
     });
     employeeUpserts.push(employeeUpsert);
-    // eslint-disable-next-line no-console
     console.log({ employeeUpsert });
   }
 };
+
 /**
  * Upsert applicants
  * @param applicants - Applicants to upsert
@@ -183,10 +246,10 @@ const applicantUpsert = async (
       create: { email, dateOfBirth: new Date().toISOString(), ...rest },
     });
     applicantUpserts.push(applicantUpsert);
-    // eslint-disable-next-line no-console
     console.log({ applicantUpsert });
   }
 };
+
 /**
  * Upsert applications
  * @param applications - Applications to upsert
@@ -225,10 +288,63 @@ const applicationUpsert = async (
       create: { id, dateOfBirth: new Date().toISOString(), ...rest },
     });
     applicationUpserts.push(applicationUpsert);
-    // eslint-disable-next-line no-console
     console.log({ applicationUpsert });
   }
 };
+
+/**
+ * Upsert replacement applications
+ * @param replacements - Replacement records to upsert
+ */
+const replacementUpsert = async (
+  replacements: {
+    id: number;
+    reason: ReasonForReplacement;
+    lostTimestamp?: Date;
+    lostLocation?: string;
+    stolenPoliceFileNumber?: number;
+    stolenJurisdiction?: string;
+    stolenPoliceOfficerName?: string;
+    description?: string;
+    applicationId: number;
+  }[]
+) => {
+  const replacementUpserts = [];
+  for (const replacement of replacements) {
+    const { id, ...rest } = replacement;
+    const replacementUpsert = await prisma.replacement.upsert({
+      where: { id },
+      update: { ...rest },
+      create: replacement,
+    });
+    replacementUpserts.push(replacementUpsert);
+    console.log({ replacementUpsert });
+  }
+};
+
+/**
+ * Upsert application processing records
+ * @param applicationProcessings - Application processing records to upsert
+ */
+const applicationProcessingUpsert = async (
+  applicationProcessings: {
+    id: number;
+    applicationId: number;
+  }[]
+) => {
+  const applicationProcessingUpserts = [];
+  for (const applicationProcessing of applicationProcessings) {
+    const { id, ...rest } = applicationProcessing;
+    const applicationProcessingUpsert = await prisma.applicationProcessing.upsert({
+      where: { id },
+      update: { ...rest },
+      create: applicationProcessing,
+    });
+    applicationProcessingUpserts.push(applicationProcessingUpsert);
+    console.log({ applicationProcessingUpsert });
+  }
+};
+
 /**
  * Upsert permits
  * @param permits - Permits to upsert
@@ -249,10 +365,10 @@ const permitUpsert = async (
       create: { rcdPermitId, expiryDate: new Date().toISOString(), ...rest },
     });
     permitUpserts.push(permitUpsert);
-    // eslint-disable-next-line no-console
     console.log({ permitUpsert });
   }
 };
+
 // Execute seeding
 main()
   .catch(e => {

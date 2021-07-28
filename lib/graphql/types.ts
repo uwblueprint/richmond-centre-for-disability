@@ -54,7 +54,6 @@ export type Applicant = {
 export enum ApplicantStatus {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE',
-  Deceased = 'DECEASED',
 }
 
 export type Application = {
@@ -116,6 +115,13 @@ export type Application = {
   /** Permit */
   permit?: Maybe<Permit>;
 };
+
+export enum ApplicationStatus {
+  Pending = 'PENDING',
+  Approved = 'APPROVED',
+  Rejected = 'REJECTED',
+  Completed = 'COMPLETED',
+}
 
 export type CreateApplicantInput = {
   firstName: Scalars['String'];
@@ -371,13 +377,8 @@ export type Physician = {
 };
 
 export enum PhysicianStatus {
-  Deceased = 'DECEASED',
-  Cancelled = 'CANCELLED',
-  Retired = 'RETIRED',
   Active = 'ACTIVE',
-  Resigned = 'RESIGNED',
-  TemporarilyInactive = 'TEMPORARILY_INACTIVE',
-  Relocated = 'RELOCATED',
+  Inactive = 'INACTIVE',
 }
 
 export enum Province {
@@ -414,6 +415,12 @@ export type QueryApplicantArgs = {
 export type QueryEmployeeInput = {
   id?: Maybe<Scalars['ID']>;
 };
+
+export enum ReasonForReplacement {
+  Lost = 'LOST',
+  Stolen = 'STOLEN',
+  Other = 'OTHER',
+}
 
 export enum Role {
   Admin = 'ADMIN',
