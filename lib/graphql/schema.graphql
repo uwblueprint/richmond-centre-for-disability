@@ -12,6 +12,7 @@ type Mutation {
   createApplicant(input: CreateApplicantInput!): CreateApplicantResult!
   createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
   createPhysician(input: CreatePhysicianInput!): CreatePhysicianResult!
+  upsertPhysician(input: UpsertPhysicianInput!): UpsertPhysicianResult!
   createApplication(input: CreateApplicationInput!): CreateApplicationResult!
   createPermit(input: CreatePermitInput!): CreatePermitResult!
 }

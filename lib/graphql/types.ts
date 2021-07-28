@@ -308,6 +308,7 @@ export type Mutation = {
   createApplicant: CreateApplicantResult;
   createEmployee: CreateEmployeeResult;
   createPhysician: CreatePhysicianResult;
+  upsertPhysician: UpsertPhysicianResult;
   createApplication: CreateApplicationResult;
   createPermit: CreatePermitResult;
 };
@@ -322,6 +323,10 @@ export type MutationCreateEmployeeArgs = {
 
 export type MutationCreatePhysicianArgs = {
   input: CreatePhysicianInput;
+};
+
+export type MutationUpsertPhysicianArgs = {
+  input: UpsertPhysicianInput;
 };
 
 export type MutationCreateApplicationArgs = {
@@ -400,11 +405,11 @@ export type Query = {
   __typename?: 'Query';
   meta: Meta;
   applicants?: Maybe<Array<Applicant>>;
+  applicant?: Maybe<Applicant>;
   employees?: Maybe<Array<Employee>>;
   physicians?: Maybe<Array<Physician>>;
   applications?: Maybe<Array<Application>>;
   permits?: Maybe<Array<Permit>>;
-  applicant?: Maybe<Applicant>;
 };
 
 export type QueryApplicantArgs = {
@@ -420,3 +425,22 @@ export enum Role {
   Accounting = 'ACCOUNTING',
   Secretary = 'SECRETARY',
 }
+
+export type UpsertPhysicianInput = {
+  mspNumber: Scalars['Int'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2?: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  province: Province;
+  postalCode: Scalars['String'];
+  phone: Scalars['String'];
+  status: PhysicianStatus;
+  notes?: Maybe<Scalars['String']>;
+};
+
+export type UpsertPhysicianResult = {
+  __typename?: 'UpsertPhysicianResult';
+  ok: Scalars['Boolean'];
+};

@@ -1,7 +1,7 @@
 import { meta } from '@lib/meta/resolvers'; // Metadata resolvers
 import { employees, createEmployee } from '@lib/employees/resolvers'; // Employee resolvers
 import { applicant, applicants, createApplicant } from '@lib/applicants/resolvers'; // Applicant resolvers
-import { physicians, createPhysician } from '@lib/physicians/resolvers'; // Physician resolvers
+import { physicians, createPhysician, upsertPhysician } from '@lib/physicians/resolvers'; // Physician resolvers
 import { applications, createApplication } from '@lib/applications/resolvers';
 import { permits, createPermit } from '@lib/permits/resolvers';
 import { IFieldResolver } from 'graphql-tools'; // GraphQL field resolver
@@ -41,6 +41,7 @@ const resolvers = {
     createApplicant: authorize(createApplicant, [Role.Secretary]),
     createEmployee: authorize(createEmployee),
     createPhysician: authorize(createPhysician, [Role.Secretary]),
+    upsertPhysician: authorize(upsertPhysician, [Role.Secretary]),
     createApplication: authorize(createApplication, [Role.Secretary]),
     createPermit: authorize(createPermit, [Role.Secretary]),
   },
