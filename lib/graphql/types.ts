@@ -53,7 +53,7 @@ export type Applicant = {
 
 export enum ApplicantStatus {
   Active = 'ACTIVE',
-  Inactive = 'INACTIVE',
+  Inactive = 'INACTIVE'
 }
 
 export type Application = {
@@ -120,7 +120,7 @@ export enum ApplicationStatus {
   Pending = 'PENDING',
   Approved = 'APPROVED',
   Rejected = 'REJECTED',
-  Completed = 'COMPLETED',
+  Completed = 'COMPLETED'
 }
 
 export type CreateApplicantInput = {
@@ -335,9 +335,11 @@ export type MutationCreatePhysicianArgs = {
   input: CreatePhysicianInput;
 };
 
+
 export type MutationUpsertPhysicianArgs = {
   input: UpsertPhysicianInput;
 };
+
 
 export type MutationCreateApplicationArgs = {
   input: CreateApplicationInput;
@@ -388,7 +390,7 @@ export type Physician = {
 
 export enum PhysicianStatus {
   Active = 'ACTIVE',
-  Inactive = 'INACTIVE',
+  Inactive = 'INACTIVE'
 }
 
 export enum Province {
@@ -430,7 +432,7 @@ export type QueryEmployeeInput = {
 export enum ReasonForReplacement {
   Lost = 'LOST',
   Stolen = 'STOLEN',
-  Other = 'OTHER',
+  Other = 'OTHER'
 }
 
 export enum Role {
