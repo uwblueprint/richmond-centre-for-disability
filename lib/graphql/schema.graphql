@@ -10,11 +10,14 @@ type Query {
 
 type Mutation {
   createApplicant(input: CreateApplicantInput!): CreateApplicantResult!
+  updateApplicant(input: UpdateApplicantInput!): UpdateApplicantResult!
   createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
   createPhysician(input: CreatePhysicianInput!): CreatePhysicianResult!
   upsertPhysician(input: UpsertPhysicianInput!): UpsertPhysicianResult!
   createApplication(input: CreateApplicationInput!): CreateApplicationResult!
   createPermit(input: CreatePermitInput!): CreatePermitResult!
+  updateMedicalInformation(input: UpdateMedicalInformationInput!): UpdateMedicalInformationResult!
+  updateGuardian(input: UpdateGuardianInput!): UpdateGuardianResult!
 }
 
 scalar Date

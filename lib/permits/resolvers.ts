@@ -4,7 +4,7 @@ import {
   PermitAlreadyExistsError,
   ApplicantIdDoesNotExistError,
   ApplicationIdDoesNotExistError,
-} from '@lib/permits/errors'; // Employee errors
+} from '@lib/permits/errors'; // Permit errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 
 /**

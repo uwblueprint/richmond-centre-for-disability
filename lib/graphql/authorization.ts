@@ -14,7 +14,7 @@ export const authorize =
     const userRole = context.session?.role as Role;
 
     // If user is an Admin or has the necessary permissions, allow the query or mutation to go through.
-    if (userRole && (userRole == Role.Admin || authorizedRoles.includes(userRole))) {
+    if (userRole && (userRole === Role.Admin || authorizedRoles.includes(userRole))) {
       return resolver(root, args, context, info);
     }
 
