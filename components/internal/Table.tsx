@@ -53,6 +53,9 @@ export default function Table(props: Props) {
                   fontSize="18px"
                   color="text.secondary"
                   {...column.getHeaderProps(column.getSortByToggleProps())}
+                  width={column.width}
+                  minWidth={column.minWidth}
+                  maxWidth={column.maxWidth}
                   key={column.id}
                 >
                   <Flex>
@@ -80,7 +83,13 @@ export default function Table(props: Props) {
             return (
               <Tr {...row.getRowProps()} key={row.id}>
                 {row.cells.map(cell => (
-                  <Td height="80px" paddingX="0" {...cell.getCellProps()} key={row.id}>
+                  <Td
+                    height="80px"
+                    paddingX="0"
+                    color="text.secondary"
+                    {...cell.getCellProps()}
+                    key={row.id}
+                  >
                     {cell.render('Cell')}
                   </Td>
                 ))}
