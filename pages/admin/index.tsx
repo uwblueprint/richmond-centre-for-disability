@@ -25,17 +25,17 @@ import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
-import { RequestStatusBadge } from '@components/internal/RequestStatusBadge'; //Status badge component
+import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
 
 type StatusProps = {
   readonly value:
-    | 'completed'
-    | 'inProgress'
-    | 'pending'
-    | 'rejected'
-    | 'expiring'
-    | 'expired'
-    | 'active';
+    | 'COMPLETED'
+    | 'INPROGRESS'
+    | 'PENDING'
+    | 'REJECTED'
+    | 'EXPIRING'
+    | 'EXPIRED'
+    | 'ACTIVE';
 };
 
 function renderStatusBadge({ value }: StatusProps) {
@@ -114,7 +114,7 @@ const DATA = [
     dateReceived: 'Dec 21 2021, 8:30 pm',
     permitType: 'Permanent',
     requestType: 'Replacement',
-    status: 'pending',
+    status: 'PENDING',
   },
   {
     name: {
@@ -124,7 +124,7 @@ const DATA = [
     dateReceived: 'Dec 21 2021, 8:30 pm',
     permitType: 'Permanent',
     requestType: 'Replacement',
-    status: 'inProgress',
+    status: 'INPROGRESS',
   },
   {
     name: {
@@ -134,7 +134,7 @@ const DATA = [
     dateReceived: 'Dec 21 2021, 8:30 pm',
     permitType: 'Permanent',
     requestType: 'Replacement',
-    status: 'completed',
+    status: 'COMPLETED',
   },
 ];
 
