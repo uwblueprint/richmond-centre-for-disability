@@ -28,7 +28,14 @@ import Pagination from '@components/internal/Pagination'; // Pagination componen
 import { RequestStatusBadge } from '@components/internal/RequestStatusBadge'; //Status badge component
 
 type StatusProps = {
-  value: any;
+  readonly value:
+    | 'completed'
+    | 'inProgress'
+    | 'pending'
+    | 'rejected'
+    | 'expiring'
+    | 'expired'
+    | 'active';
 };
 
 function renderStatusBadge({ value }: StatusProps) {
@@ -40,7 +47,10 @@ function renderStatusBadge({ value }: StatusProps) {
 }
 
 type NameProps = {
-  readonly value: any;
+  readonly value: {
+    name: string;
+    id: string;
+  };
 };
 
 function renderName({ value }: NameProps) {
@@ -138,7 +148,7 @@ export default function Requests() {
       <GridItem colSpan={12}>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Requests</Text>
-          {/* TODO
+          {/* TODO: 'Create a new request' function is out of scope for this term's MVP
           <Menu>
             <MenuButton
               as={Button}
