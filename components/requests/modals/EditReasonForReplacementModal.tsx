@@ -59,9 +59,11 @@ export default function EditReasonForReplacementModal({
       <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="lg">
         <ModalOverlay />
         <form onSubmit={handleSubmit}>
-          <ModalContent paddingX="40px">
+          <ModalContent paddingX="36px">
             <ModalHeader paddingBottom="12px" paddingTop="24px" paddingX="4px">
-              <Text textStyle="display-medium-bold">{'Edit Reason for Replacement'}</Text>
+              <Text as="h2" textStyle="display-medium-bold">
+                {'Edit Reason for Replacement'}
+              </Text>
             </ModalHeader>
             <ModalBody paddingY="16px" paddingX="4px">
               <FormControl as="fieldset" paddingBottom="24px">

@@ -16,65 +16,82 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
+import { useState, SyntheticEvent } from 'react'; // React
 
-type EditDoctorInformationModalProps = {
-  children: ReactNode;
-};
+export default function EditPermitHolderInformationModal() {
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
-export default function EditDoctorInformationModal({ children }: EditDoctorInformationModalProps) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  // Personal information state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [mspNumber, setMspNumber] = useState('');
+
+  // Contact information state
+  const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+
+  // Home address information state
   const [addressLine1, setAddressLine1] = useState('');
   const [addressLine2, setAddressLine2] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
+  //   TODO: Add error states for each field (post-mvp)
+
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    //  TODO: Will be addressed in API hookup
-    onClose();
+    // TODO: Will be addressed in API hookup
   };
+
   return (
     <>
-      <Box onClick={onOpen}>{children}</Box>
+      {/* Button will be removed before merging */}
+      <Button mt={3} onClick={onOpen}>
+        Open
+      </Button>
 
-      <Modal
-        onClose={onClose}
-        isOpen={isOpen}
-        scrollBehavior="inside"
-        size="3xl" //TODO: change to custom size
-      >
+      <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />
         <form onSubmit={handleSubmit}>
           <ModalContent paddingX="36px">
-            <ModalHeader paddingBottom="12px" paddingTop="24px" paddingX="4px">
+            <ModalHeader
+              textStyle="display-medium-bold"
+              paddingBottom="12px"
+              paddingTop="24px"
+              paddingX="4px"
+            >
               <Text as="h2" textStyle="display-medium-bold">
-                {"Edit Doctor's Information"}
+                {'Edit Permit Holder Information'}
               </Text>
             </ModalHeader>
             <ModalBody paddingY="20px" paddingX="4px">
+              {/* Personal Information Section */}
               <Box paddingBottom="32px">
-                <Stack direction="row" spacing="20px" marginBottom="24px">
+                <Text as="h3" textStyle="heading" paddingBottom="24px">
+                  {'Personal Information'}
+                </Text>
+                <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
                     <FormLabel>{'First name'}</FormLabel>
                     <Input value={firstName} onChange={event => setFirstName(event.target.value)} />
                   </FormControl>
+
                   <FormControl isRequired>
                     <FormLabel>{'Last name'}</FormLabel>
                     <Input value={lastName} onChange={event => setLastName(event.target.value)} />
                   </FormControl>
                 </Stack>
+              </Box>
+
+              <Divider borderColor="border.secondary" />
+
+              {/* Contact Information Section */}
+
+              <Box paddingY="32px">
+                <Text as="h3" textStyle="heading" paddingBottom="24px">
+                  {'Contact Information'}
+                </Text>
 
                 <Stack direction="row" spacing="20px">
-                  <FormControl isRequired>
-                    <FormLabel>{'Medical Services Plan number'}</FormLabel>
-                    <Input value={mspNumber} onChange={event => setMspNumber(event.target.value)} />
-                  </FormControl>
                   <FormControl isRequired>
                     <FormLabel>{'Phone number'}</FormLabel>
                     <Input
@@ -84,15 +101,31 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
                     />
                     <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
                   </FormControl>
+
+                  <FormControl>
+                    <FormLabel>
+                      {'Email address '}
+                      <Box as="span" textStyle="body-regular">
+                        {'(optional)'}
+                      </Box>
+                    </FormLabel>
+                    <Input value={email} onChange={event => setEmail(event.target.value)} />
+                  </FormControl>
                 </Stack>
               </Box>
 
               <Divider borderColor="border.secondary" />
 
+              {/* Home Address Section */}
+
               <Box paddingTop="32px">
                 <Text as="h3" textStyle="heading" paddingBottom="24px">
-                  {'Address'}
+                  {'Home Address '}
+                  <Box as="span" textStyle="caption">
+                    {'(must be in British Columbia)'}
+                  </Box>
                 </Text>
+
                 <FormControl isRequired paddingBottom="24px">
                   <FormLabel>{'Address line 1'}</FormLabel>
                   <Input
@@ -107,7 +140,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
                 <FormControl paddingBottom="24px">
                   <FormLabel>
                     {'Address line 2 '}
-                    <Box as="span" textStyle="body-regular">
+                    <Box as="span" textStyle="caption">
                       {'(optional)'}
                     </Box>
                   </FormLabel>
@@ -120,7 +153,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
                   </FormHelperText>
                 </FormControl>
 
-                <Stack direction="row" spacing="20px" paddingBottom="20px">
+                <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
                     <FormLabel>{'City'}</FormLabel>
                     <Input value={city} onChange={event => setCity(event.target.value)} />
@@ -137,7 +170,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
                 </Stack>
               </Box>
             </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingTop="0px" paddingX="4px">
+            <ModalFooter paddingBottom="24px" paddingX="4px">
               <Button colorScheme="gray" variant="solid" onClick={onClose}>
                 {'Cancel'}
               </Button>

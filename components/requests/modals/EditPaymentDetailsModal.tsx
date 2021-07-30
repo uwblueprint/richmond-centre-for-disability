@@ -25,7 +25,7 @@ import {
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, SyntheticEvent, ReactNode } from 'react'; // React
-import { PaymentType } from '@lib/graphql/types';
+import { PaymentType } from '@lib/graphql/types'; // PaymentType Enum
 
 type EditPaymentDetailsModalProps = {
   children: ReactNode;
@@ -84,14 +84,14 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
       >
         <ModalOverlay />
         <form onSubmit={handleSubmit}>
-          <ModalContent paddingX="40px">
+          <ModalContent paddingX="36px">
             <ModalHeader
               textStyle="display-medium-bold"
               paddingBottom="12px"
               paddingTop="24px"
               paddingX="4px"
             >
-              <Text textStyle="display-medium-bold">
+              <Text as="h2" textStyle="display-medium-bold">
                 {'Edit Payment, Shipping and Billing Details'}
               </Text>
             </ModalHeader>
@@ -161,11 +161,10 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
                 </Grid>
               </Box>
 
-              {/* TODO: Customize Divider to change color  */}
-              <Divider />
+              <Divider borderColor="border.secondary" />
 
               <Box paddingY="32px">
-                <Text textStyle="heading" paddingBottom="24px">
+                <Text as="h3" textStyle="heading" paddingBottom="24px">
                   {'Shipping Address'}
                 </Text>
 
@@ -257,17 +256,17 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
                           value={shippingPostalCode}
                           onChange={event => setShippingPostalCode(event.target.value)}
                         />
+                        <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
                       </FormControl>
                     </Stack>
                   </>
                 )}
               </Box>
 
-              {/* TODO: Customize Divider to change color  */}
-              <Divider />
+              <Divider borderColor="border.secondary" />
 
               <Box paddingTop="32px">
-                <Text textStyle="heading" paddingBottom="24px">
+                <Text as="h3" textStyle="heading" paddingBottom="24px">
                   {'Billing Address'}
                 </Text>
 
@@ -358,6 +357,7 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
                           value={billingPostalCode}
                           onChange={event => setBillingPostalCode(event.target.value)}
                         />
+                        <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
                       </FormControl>
                     </Stack>
                   </>
