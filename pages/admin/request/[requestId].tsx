@@ -5,8 +5,9 @@ import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
 import { Role, ApplicationStatus } from '@lib/types'; // Enum types
 import { authorize } from '@tools/authorization'; // Page authorization
-import { useQuery } from '@apollo/client'; // Apollo Client hooks
+import { useQuery, useMutation } from '@apollo/client'; // Apollo Client hooks
 import { GET_APPLICATION } from '@tools/pages/request/queries'; // Request page GraphQL queries
+import { APPROVE_APPLICATION, REJECT_APPLICATION } from '@tools/pages/request/mutations'; // Request page GraphQL queries
 
 import RequestHeader from '@components/requests/RequestHeader'; // Request header
 import DoctorInformationCard from '@components/requests/DoctorInformationCard'; // Doctor information card
@@ -82,6 +83,15 @@ export default function Request({ requestId }: RequestProps) {
     variables: { id: requestId },
   });
 
+  const [
+    approveApplication,
+    { approveApplicationData, approveApplicationLoading, approveApplicationError },
+  ] = useMutation(APPROVE_APPLICATION);
+  const [
+    rejectApplication,
+    { rejectApplicationData, rejectApplicationLoading, rejectApplicationError },
+  ] = useMutation(REJECT_APPLICATION);
+
   const [application, setApplication] = useState(mockApplication);
 
   const {
@@ -100,14 +110,14 @@ export default function Request({ requestId }: RequestProps) {
 
   // Approve modal
   const onApprove = () => {
-    // TODO: Make mutation call to modify Application's status to ApplicationStatus.Approved
     setApplication({ ...application, applicationStatus: ApplicationStatus.Approved });
+    approveApplication({ variables: { id: requestId } }); // TODO: Use application.applicationProcessing.id instead
   };
 
   // Reject modal
   const onReject = () => {
-    // TODO: Make mutation call to modify Application's status to ApplicationStatus.Rejected
     setApplication({ ...application, applicationStatus: ApplicationStatus.Rejected });
+    rejectApplication({ variables: { id: requestId } }); // TODO: Use application.applicationProcessing.id instead
   };
 
   // Edit personal information modal
