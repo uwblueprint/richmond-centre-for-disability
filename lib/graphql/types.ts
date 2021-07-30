@@ -22,7 +22,7 @@ export enum Aid {
   ElectricChair = 'ELECTRIC_CHAIR',
   ManualChair = 'MANUAL_CHAIR',
   Scooter = 'SCOOTER',
-  Walker = 'WALKER',
+  Walker = 'WALKER'
 }
 
 export type Applicant = {
@@ -53,7 +53,7 @@ export type Applicant = {
 
 export enum ApplicantStatus {
   Active = 'ACTIVE',
-  Inactive = 'INACTIVE',
+  Inactive = 'INACTIVE'
 }
 
 export type Application = {
@@ -120,7 +120,7 @@ export enum ApplicationStatus {
   Pending = 'PENDING',
   Approved = 'APPROVED',
   Rejected = 'REJECTED',
-  Completed = 'COMPLETED',
+  Completed = 'COMPLETED'
 }
 
 export type CreateApplicantInput = {
@@ -251,6 +251,7 @@ export type CreatePhysicianResult = {
   ok: Scalars['Boolean'];
 };
 
+
 export type Employee = {
   __typename?: 'Employee';
   id: Scalars['ID'];
@@ -263,7 +264,7 @@ export type Employee = {
 export enum Gender {
   Male = 'MALE',
   Female = 'FEMALE',
-  Other = 'OTHER',
+  Other = 'OTHER'
 }
 
 export type Guardian = {
@@ -319,25 +320,31 @@ export type Mutation = {
   createPermit: CreatePermitResult;
 };
 
+
 export type MutationCreateApplicantArgs = {
   input: CreateApplicantInput;
 };
+
 
 export type MutationCreateEmployeeArgs = {
   input: CreateEmployeeInput;
 };
 
+
 export type MutationCreatePhysicianArgs = {
   input: CreatePhysicianInput;
 };
+
 
 export type MutationUpsertPhysicianArgs = {
   input: UpsertPhysicianInput;
 };
 
+
 export type MutationCreateApplicationArgs = {
   input: CreateApplicationInput;
 };
+
 
 export type MutationCreatePermitArgs = {
   input: CreatePermitInput;
@@ -350,7 +357,7 @@ export enum PaymentType {
   Cash = 'CASH',
   Cheque = 'CHEQUE',
   Debit = 'DEBIT',
-  MoneyOrder = 'MONEY_ORDER',
+  MoneyOrder = 'MONEY_ORDER'
 }
 
 export type Permit = {
@@ -383,7 +390,7 @@ export type Physician = {
 
 export enum PhysicianStatus {
   Active = 'ACTIVE',
-  Inactive = 'INACTIVE',
+  Inactive = 'INACTIVE'
 }
 
 export enum Province {
@@ -399,7 +406,7 @@ export enum Province {
   Nb = 'NB',
   Nu = 'NU',
   Nt = 'NT',
-  Yt = 'YT',
+  Yt = 'YT'
 }
 
 export type Query = {
@@ -413,6 +420,7 @@ export type Query = {
   permits?: Maybe<Array<Permit>>;
 };
 
+
 export type QueryApplicantArgs = {
   id: Scalars['ID'];
 };
@@ -424,13 +432,13 @@ export type QueryEmployeeInput = {
 export enum ReasonForReplacement {
   Lost = 'LOST',
   Stolen = 'STOLEN',
-  Other = 'OTHER',
+  Other = 'OTHER'
 }
 
 export enum Role {
   Admin = 'ADMIN',
   Accounting = 'ACCOUNTING',
-  Secretary = 'SECRETARY',
+  Secretary = 'SECRETARY'
 }
 
 export type UpsertPhysicianInput = {
