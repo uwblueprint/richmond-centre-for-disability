@@ -40,6 +40,7 @@ export const GET_APPLICATION = gql`
       shopifyConfirmationNumber
 
       applicationProcessing {
+        id
         status
         appNumber
         appHolepunched

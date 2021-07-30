@@ -19,6 +19,9 @@ type Mutation {
   createPermit(input: CreatePermitInput!): CreatePermitResult!
   updateMedicalInformation(input: UpdateMedicalInformationInput!): UpdateMedicalInformationResult!
   updateGuardian(input: UpdateGuardianInput!): UpdateGuardianResult!
+  updateApplicationProcessing(
+    input: UpdateApplicationProcessingInput!
+  ): UpdateApplicationProcessingResult!
 }
 
 scalar Date

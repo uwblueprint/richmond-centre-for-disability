@@ -9,3 +9,18 @@ type ApplicationProcessing {
   appMailed: Boolean!
   updatedAt: Date!
 }
+
+input UpdateApplicationProcessingInput {
+  id: ID!
+  status: ApplicationStatus
+  appNumber: Int
+  appHolepunched: Boolean
+  walletCardCreated: Boolean
+  invoiceNumber: Int
+  documentUrl: String
+  appMailed: Boolean
+}
+
+type UpdateApplicationProcessingResult {
+  ok: Boolean!
+}

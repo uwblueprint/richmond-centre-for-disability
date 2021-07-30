@@ -138,7 +138,7 @@ export type ApplicationProcessing = {
   id: Scalars['ID'];
   status: ApplicationStatus;
   appNumber?: Maybe<Scalars['Int']>;
-  appHolePunched: Scalars['Boolean'];
+  appHolepunched: Scalars['Boolean'];
   walletCardCreated: Scalars['Boolean'];
   invoiceNumber?: Maybe<Scalars['Int']>;
   documentUrls?: Maybe<Array<Scalars['String']>>;

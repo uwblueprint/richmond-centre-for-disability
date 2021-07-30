@@ -4,6 +4,7 @@ import { applicant, applicants, createApplicant, updateApplicant } from '@lib/ap
 import { physicians, createPhysician, upsertPhysician } from '@lib/physicians/resolvers'; // Physician resolvers
 import { application, applications, createApplication } from '@lib/applications/resolvers';
 import { permits, createPermit } from '@lib/permits/resolvers';
+import { updateApplicationProcessing } from '@lib/applicationProcessing/resolvers';
 import { IFieldResolver } from 'graphql-tools'; // GraphQL field resolver
 import { Context } from '@lib/context'; // Context type
 import { dateScalar } from '@lib/scalars'; // Custom date scalar implementation
@@ -52,6 +53,7 @@ const resolvers = {
     createPermit: authorize(createPermit, [Role.Secretary]),
     updateMedicalInformation: authorize(updateMedicalInformation, [Role.Secretary]),
     updateGuardian: authorize(updateGuardian, [Role.Secretary]),
+    updateApplicationProcessing: authorize(updateApplicationProcessing, [Role.Secretary]),
   },
   Date: dateScalar,
   Applicant: {
