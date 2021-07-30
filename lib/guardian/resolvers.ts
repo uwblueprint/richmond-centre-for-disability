@@ -28,6 +28,7 @@ export const updateGuardian: Resolver = async (_, args, { prisma }) => {
   if (!updatedGuardian) {
     throw new ApolloError('Guardian was unable to be updated');
   }
+
   return {
     ok: true,
   };

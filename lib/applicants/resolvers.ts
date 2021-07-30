@@ -89,7 +89,7 @@ export const createApplicant: Resolver = async (_, args, { prisma }) => {
 };
 
 /**
- * Update an applicant (including guardian, medical information)
+ * Update an applicant
  * @returns Status of operation (ok)
  */
 export const updateApplicant: Resolver = async (_, args, { prisma }) => {
