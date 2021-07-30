@@ -2,7 +2,7 @@ import { meta } from '@lib/meta/resolvers'; // Metadata resolvers
 import { employees, createEmployee } from '@lib/employees/resolvers'; // Employee resolvers
 import { applicant, applicants, createApplicant, updateApplicant } from '@lib/applicants/resolvers'; // Applicant resolvers
 import { physicians, createPhysician, upsertPhysician } from '@lib/physicians/resolvers'; // Physician resolvers
-import { applications, createApplication } from '@lib/applications/resolvers';
+import { application, applications, createApplication } from '@lib/applications/resolvers';
 import { permits, createPermit } from '@lib/permits/resolvers';
 import { IFieldResolver } from 'graphql-tools'; // GraphQL field resolver
 import { Context } from '@lib/context'; // Context type
@@ -20,6 +20,7 @@ import {
 import {
   applicationApplicantResolver,
   applicationPermitResolver,
+  applicationApplicationProcessingResolver,
 } from '@lib/applications/field-resolvers'; // Application field resolvers
 import { permitApplicantResolver, permitApplicationResolver } from '@lib/permits/field-resolvers'; // Permit field resolvers
 import { updateMedicalInformation } from '@lib/medicalInformation/resolvers'; // Medical information resolvers
@@ -37,6 +38,7 @@ const resolvers = {
     employees: authorize(employees),
     physicians: authorize(physicians, [Role.Secretary]),
     applications: authorize(applications, [Role.Secretary]),
+    application: authorize(application, [Role.Secretary]),
     permits: authorize(permits, [Role.Secretary]),
     applicant: authorize(applicant, [Role.Secretary]),
   },
@@ -63,6 +65,7 @@ const resolvers = {
   Application: {
     applicant: applicationApplicantResolver,
     permit: applicationPermitResolver,
+    applicationProcessing: applicationApplicationProcessingResolver,
   },
   MedicalInformation: {
     physician: medicalInformationPhysicianResolver,

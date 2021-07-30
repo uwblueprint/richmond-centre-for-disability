@@ -25,3 +25,15 @@ export const applicationPermitResolver: Resolver<Application> = async (
 ) => {
   return await prisma.permit.findMany({ where: { applicationId: parent?.id } });
 };
+
+/**
+ * Field resolver to fetch the application_processing information associated with an application.
+ * @returns ApplicationProcessing object
+ */
+export const applicationApplicationProcessingResolver: Resolver<Application> = async (
+  parent,
+  _args,
+  { prisma }
+) => {
+  return await prisma.applicationProcessing.findUnique({ where: { applicationId: parent?.id } });
+};

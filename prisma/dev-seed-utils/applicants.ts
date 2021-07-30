@@ -21,6 +21,7 @@ const applicants = [
     status: ApplicantStatus.Active,
     guardianId: 1,
     medicalInformationId: 1,
+    status: ApplicantStatus.Active,
   },
   {
     id: 2,
@@ -37,6 +38,7 @@ const applicants = [
     status: ApplicantStatus.Active,
     guardianId: 2,
     medicalInformationId: 2,
+    status: ApplicantStatus.Active,
   },
   {
     id: 3,

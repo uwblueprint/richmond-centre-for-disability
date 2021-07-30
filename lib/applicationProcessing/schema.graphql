@@ -1,0 +1,11 @@
+type ApplicationProcessing {
+  id: ID!
+  status: ApplicationStatus!
+  appNumber: Int
+  appHolepunched: Boolean!
+  walletCardCreated: Boolean!
+  invoiceNumber: Int
+  documentUrls: [String!]
+  appMailed: Boolean!
+  updatedAt: Date!
+}

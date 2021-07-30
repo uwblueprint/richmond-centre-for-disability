@@ -135,10 +135,10 @@ export type Application = {
 
 export type ApplicationProcessing = {
   __typename?: 'ApplicationProcessing';
-  id: Scalars['Int'];
+  id: Scalars['ID'];
   status: ApplicationStatus;
   appNumber?: Maybe<Scalars['Int']>;
-  appHolepunched: Scalars['Boolean'];
+  appHolePunched: Scalars['Boolean'];
   walletCardCreated: Scalars['Boolean'];
   invoiceNumber?: Maybe<Scalars['Int']>;
   documentUrls?: Maybe<Array<Scalars['String']>>;
@@ -519,6 +519,7 @@ export type Query = {
   employees?: Maybe<Array<Employee>>;
   physicians?: Maybe<Array<Physician>>;
   applications?: Maybe<QueryApplicationsResult>;
+  application?: Maybe<Application>;
   permits?: Maybe<Array<Permit>>;
 };
 
@@ -547,6 +548,10 @@ export type QueryApplicationsResult = {
   __typename?: 'QueryApplicationsResult';
   result: Array<Application>;
   totalCount: Scalars['Int'];
+};
+
+export type QueryApplicationArgs = {
+  id: Scalars['ID'];
 };
 
 export type QueryEmployeeInput = {

@@ -9,6 +9,15 @@ import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
 
 /**
+ * Query an application by ID
+ * @returns Application with given ID
+ */
+export const application: Resolver = async (_parent, args, { prisma }) => {
+  const application = await prisma.application.findUnique({ where: { id: parseInt(args.id) } });
+  return application;
+};
+
+/**
  * Query and filter RCD applications from the internal facing app.
  * All fields are optional.
  *

@@ -63,6 +63,9 @@ type Application {
   # Permit
   permit: Permit
 
+  # Application Processing
+  applicationProcessing: ApplicationProcessing
+
   createdAt: Date!
 }
 

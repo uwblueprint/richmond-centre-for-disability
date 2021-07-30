@@ -3,8 +3,10 @@ import { getSession } from 'next-auth/client'; // Session management
 import { useState } from 'react'; // React
 import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
-import { Role } from '@lib/types'; // Role enum
+import { Role, ApplicationStatus } from '@lib/types'; // Enum types
 import { authorize } from '@tools/authorization'; // Page authorization
+import { useQuery } from '@apollo/client'; // Apollo Client hooks
+import { GET_APPLICATION } from '@tools/pages/request/queries'; // Request page GraphQL queries
 
 import RequestHeader from '@components/requests/RequestHeader'; // Request header
 import DoctorInformationCard from '@components/requests/DoctorInformationCard'; // Doctor information card
@@ -17,16 +19,9 @@ import ProcessingTasksCard from '@components/requests/ProcessingTasksCard'; // P
 
 // TODO: REMOVE THIS LATER. Need this to pass pipeline b/c mock applicant needs to satisfy the real Applicant type.
 /* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Gender, Province, PhysicianStatus, PaymentType } from '@lib/types';
 
-type ApplicationStatus =
-  | 'COMPLETED'
-  | 'INPROGRESS'
-  | 'PENDING'
-  | 'REJECTED'
-  | 'EXPIRING'
-  | 'EXPIRED'
-  | 'ACTIVE';
 const mockApplication = {
   applicant: {
     id: 1,
@@ -66,15 +61,27 @@ const mockApplication = {
   createdAt: new Date().toDateString(),
   expirationDate: new Date().toDateString(),
   isRenewal: true,
-  applicationStatus: 'PENDING' as ApplicationStatus, // Will be updated in the future as we'll be able to reference ApplicationStatus enum in types.ts
+  applicationStatus: ApplicationStatus.Pending,
   permitFee: 5,
   donation: 10,
   paymentType: PaymentType.Visa,
   applicationProcessingStepsCompleted: [] as number[], // The format of this will change. For now, 6 steps is complete.
 };
 
+type RequestProps = {
+  requestId: number;
+};
+
 // Individual request page
-export default function Request() {
+export default function Request({ requestId }: RequestProps) {
+  const {
+    loading: applicationLoading,
+    error: applicationError,
+    data: applicationData,
+  } = useQuery(GET_APPLICATION, {
+    variables: { id: requestId },
+  });
+
   const [application, setApplication] = useState(mockApplication);
 
   const {
@@ -93,20 +100,20 @@ export default function Request() {
 
   // Approve modal
   const onApprove = () => {
-    // TODO: Make mutation call to modify Application's status to ApplicationStatus.INPROGRESS
-    setApplication({ ...application, applicationStatus: 'INPROGRESS' });
+    // TODO: Make mutation call to modify Application's status to ApplicationStatus.Approved
+    setApplication({ ...application, applicationStatus: ApplicationStatus.Approved });
   };
 
   // Reject modal
   const onReject = () => {
-    // TODO: Make mutation call to modify Application's status to ApplicationStatus.REJECTED
-    setApplication({ ...application, applicationStatus: 'REJECTED' });
+    // TODO: Make mutation call to modify Application's status to ApplicationStatus.Rejected
+    setApplication({ ...application, applicationStatus: ApplicationStatus.Rejected });
   };
 
   // Edit personal information modal
   const onComplete = () => {
-    // TODO: Make mutation call to modify Application's status to ApplicationStatus.COMPLETED
-    setApplication({ ...application, applicationStatus: 'COMPLETED' });
+    // TODO: Make mutation call to modify Application's status to ApplicationStatus.Completed
+    setApplication({ ...application, applicationStatus: ApplicationStatus.Completed });
   };
 
   // Edit doctor information/reason for replacement modal
@@ -158,7 +165,7 @@ export default function Request() {
       </GridItem>
       <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>
-          {applicationStatus === 'INPROGRESS' ? (
+          {applicationStatus === 'APPROVED' ? (
             <ProcessingTasksCard
               applicationProcessingStepsCompleted={applicationProcessingStepsCompleted}
               onTaskComplete={onTaskComplete}
@@ -201,11 +208,10 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
   // Only secretaries and admins can access application information
   if (authorize(session, [Role.Secretary])) {
-    // TODO: get request/application information
-    // const requestId = context?.params?.requestId;
+    const requestId = context?.params?.requestId;
 
     return {
-      props: {},
+      props: { requestId },
     };
   }
 

@@ -5,6 +5,7 @@ type Query {
   employees: [Employee!]
   physicians: [Physician!]
   applications(filter: ApplicationsFilter): QueryApplicationsResult
+  application(id: ID!): Application
   permits: [Permit!]
 }
 

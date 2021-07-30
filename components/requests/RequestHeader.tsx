@@ -15,11 +15,11 @@ import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Req
 import ApproveRequestModal from '@components/requests/modals/ApproveRequestModal'; // Approve button + modal
 import RejectRequestModal from '@components/requests/modals/RejectRequestModal'; // Reject button + modal
 import CompleteRequestModal from '@components/requests/modals/CompleteRequestModal'; // Mark as complete button + modal
+import { ApplicationStatus } from '@lib/types'; // Types
 
 type RequestHeaderProps = {
   readonly isRenewal: boolean;
-  readonly applicationStatus: // TODO: Change this to the enum that we add
-  'COMPLETED' | 'INPROGRESS' | 'PENDING' | 'REJECTED' | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
+  readonly applicationStatus: ApplicationStatus;
   readonly createdAt: string;
   readonly allStepsCompleted: boolean;
   readonly onApprove: () => void;
@@ -55,7 +55,7 @@ export default function RequestHeader({
             </ApproveRequestModal>
           </HStack>
         );
-      case 'INPROGRESS':
+      case 'APPROVED':
         return (
           <CompleteRequestModal onComplete={onComplete}>
             <Button disabled={!allStepsCompleted}>Mark as complete</Button>
@@ -71,7 +71,7 @@ export default function RequestHeader({
 ]   * @returns Rendered 'More Actions' dropdown component or null
    */
   const _renderMoreActionsDropdown = () => {
-    if (applicationStatus === 'INPROGRESS' || applicationStatus === 'REJECTED') {
+    if (applicationStatus === 'APPROVED' || applicationStatus === 'REJECTED') {
       return (
         <Menu>
           <MenuButton
@@ -85,7 +85,7 @@ export default function RequestHeader({
             <Text textStyle="caption">More Actions</Text>
           </MenuButton>
           <MenuList>
-            {applicationStatus === 'INPROGRESS' ? (
+            {applicationStatus === 'APPROVED' ? (
               <RejectRequestModal onReject={onReject}>
                 <MenuItem>Reject request</MenuItem>
               </RejectRequestModal>

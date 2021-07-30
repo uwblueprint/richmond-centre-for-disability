@@ -69,7 +69,7 @@ const colors = {
   },
   badge: {
     completed: '#EEEEEE',
-    inProgress: '#D9F1F8',
+    approved: '#D9F1F8',
     pending: '#FFF0BC',
     rejected: '#FFE7DF',
     expired: '#FFE7DF',
