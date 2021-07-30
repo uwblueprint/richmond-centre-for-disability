@@ -94,7 +94,6 @@ export type Application = {
   poaFormUrl?: Maybe<Scalars['String']>;
   applicantId?: Maybe<Scalars['Int']>;
   applicant?: Maybe<Applicant>;
-  applicationProcessing?: Maybe<ApplicationProcessing>;
   /** Medical information */
   disability: Scalars['String'];
   affectsMobility: Scalars['Boolean'];
@@ -130,6 +129,10 @@ export type Application = {
   guardianNotes?: Maybe<Scalars['String']>;
   /** Permit */
   permit?: Maybe<Permit>;
+  /** Application Processing */
+  applicationProcessing?: Maybe<ApplicationProcessing>;
+  /** Replacement */
+  replacement?: Maybe<Replacement>;
   createdAt: Scalars['Date'];
 };
 
@@ -563,6 +566,19 @@ export enum ReasonForReplacement {
   Stolen = 'STOLEN',
   Other = 'OTHER'
 }
+
+export type Replacement = {
+  __typename?: 'Replacement';
+  id: Scalars['ID'];
+  reason: ReasonForReplacement;
+  lostTimestamp?: Maybe<Scalars['Date']>;
+  lostLocation?: Maybe<Scalars['String']>;
+  stolenPoliceFileNumber?: Maybe<Scalars['Int']>;
+  stolenJurisdiction?: Maybe<Scalars['String']>;
+  stolenPoliceOfficerName?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  applicationId: Scalars['ID'];
+};
 
 export enum Role {
   Admin = 'ADMIN',

@@ -66,6 +66,9 @@ type Application {
   # Application Processing
   applicationProcessing: ApplicationProcessing
 
+  # Replacement
+  replacement: Replacement
+
   createdAt: Date!
 }
 

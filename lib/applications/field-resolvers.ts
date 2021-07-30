@@ -37,3 +37,15 @@ export const applicationApplicationProcessingResolver: Resolver<Application> = a
 ) => {
   return await prisma.applicationProcessing.findUnique({ where: { applicationId: parent?.id } });
 };
+
+/**
+ * Field resolver to fetch the replacement information associated with an application.
+ * @returns Replacement object
+ */
+export const applicationReplacementResolver: Resolver<Application> = async (
+  parent,
+  _args,
+  { prisma }
+) => {
+  return await prisma.replacement.findUnique({ where: { applicationId: parent?.id } });
+};

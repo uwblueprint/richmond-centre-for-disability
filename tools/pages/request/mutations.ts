@@ -16,3 +16,11 @@ export const REJECT_APPLICATION = gql`
     }
   }
 `;
+
+export const UPDATE_APPLICATION_PROCESSING = gql`
+  mutation updateApplicationProcessing($input: UpdateApplicationProcessingInput!) {
+    updateApplicationProcessing(input: $input) {
+      ok
+    }
+  }
+`;

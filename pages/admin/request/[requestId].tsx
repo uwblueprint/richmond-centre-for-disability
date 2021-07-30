@@ -7,7 +7,11 @@ import { Role, ApplicationStatus } from '@lib/types'; // Enum types
 import { authorize } from '@tools/authorization'; // Page authorization
 import { useQuery, useMutation } from '@apollo/client'; // Apollo Client hooks
 import { GET_APPLICATION } from '@tools/pages/request/queries'; // Request page GraphQL queries
-import { APPROVE_APPLICATION, REJECT_APPLICATION } from '@tools/pages/request/mutations'; // Request page GraphQL queries
+import {
+  APPROVE_APPLICATION,
+  REJECT_APPLICATION,
+  UPDATE_APPLICATION_PROCESSING,
+} from '@tools/pages/request/mutations'; // Request page GraphQL queries
 
 import RequestHeader from '@components/requests/RequestHeader'; // Request header
 import DoctorInformationCard from '@components/requests/DoctorInformationCard'; // Doctor information card
@@ -91,6 +95,14 @@ export default function Request({ requestId }: RequestProps) {
     rejectApplication,
     { rejectApplicationData, rejectApplicationLoading, rejectApplicationError },
   ] = useMutation(REJECT_APPLICATION);
+  const [
+    updateApplicationProcessing,
+    {
+      updateApplicationProcessingData,
+      updateApplicationProcessingLoading,
+      updateApplicationProcessingError,
+    },
+  ] = useMutation(UPDATE_APPLICATION_PROCESSING);
 
   const [application, setApplication] = useState(mockApplication);
 
@@ -131,15 +143,46 @@ export default function Request({ requestId }: RequestProps) {
   // Edit payment information modal
 
   // Processing tasks completion handler
-  const onTaskComplete = (taskNum: number) => {
-    // TODO: Update the appropriate table
+  const onTaskComplete = (taskNum: number, taskArgs?: number | string) => {
     setApplication({
       ...application,
       applicationProcessingStepsCompleted: [...applicationProcessingStepsCompleted, taskNum],
     });
+    switch (taskNum) {
+      case 1:
+        updateApplicationProcessing({
+          variables: { input: { id: requestId, appNumber: taskArgs } },
+        }); // TODO: Use application.applicationProcessing.id instead
+        break;
+      case 2:
+        updateApplicationProcessing({
+          variables: { input: { id: requestId, appHolepunched: true } },
+        }); // TODO: Use application.applicationProcessing.id instead
+        break;
+      case 3:
+        updateApplicationProcessing({
+          variables: { input: { id: requestId, walletCardCreated: true } },
+        }); // TODO: Use application.applicationProcessing.id instead
+        break;
+      case 4:
+        updateApplicationProcessing({
+          variables: { input: { id: requestId, invoiceNumber: taskArgs } },
+        }); // TODO: Use application.applicationProcessing.id instead
+        break;
+      case 5:
+        updateApplicationProcessing({
+          variables: { input: { id: requestId, documentUrl: taskArgs } },
+        }); // TODO: Use application.applicationProcessing.id instead
+        break;
+      case 6:
+        updateApplicationProcessing({
+          variables: { input: { id: requestId, appMailed: true } },
+        }); // TODO: Use application.applicationProcessing.id instead
+        break;
+    }
   };
 
-  // Removes the taskNum from the list of completed tasks
+  // TODO: This function is unneeded; just call onTaskComplete and invert current bool values
   const onTaskUndo = (taskNum: number) => {
     // TODO: Update the appropriate table by NULLing the appropriate columns
     setApplication({

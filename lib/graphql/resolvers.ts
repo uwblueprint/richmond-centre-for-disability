@@ -27,6 +27,7 @@ import { permitApplicantResolver, permitApplicationResolver } from '@lib/permits
 import { updateMedicalInformation } from '@lib/medicalInformation/resolvers'; // Medical information resolvers
 import { medicalInformationPhysicianResolver } from '@lib/medicalInformation/field-resolvers'; // Medical information field resolvers
 import { updateGuardian } from '@lib/guardian/resolvers'; // Guardian resolvers
+import { applicationReplacementResolver } from '@lib/applications/field-resolvers'; // Application replacement resolver
 
 // Resolver type
 export type Resolver<P = undefined> = IFieldResolver<P, Context>;
@@ -68,6 +69,7 @@ const resolvers = {
     applicant: applicationApplicantResolver,
     permit: applicationPermitResolver,
     applicationProcessing: applicationApplicationProcessingResolver,
+    replacement: applicationReplacementResolver,
   },
   MedicalInformation: {
     physician: medicalInformationPhysicianResolver,

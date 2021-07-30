@@ -39,6 +39,17 @@ export const GET_APPLICATION = gql`
       paymentMethod
       shopifyConfirmationNumber
 
+      replacement {
+        id
+        reason
+        lostTimestamp
+        lostLocation
+        stolenPoliceFileNumber
+        stolenJurisdiction
+        stolenPoliceOfficerName
+        description
+      }
+
       applicationProcessing {
         id
         status

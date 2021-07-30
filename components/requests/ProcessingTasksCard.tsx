@@ -6,7 +6,7 @@ import { useState } from 'react'; // React
 
 type ProcessingTasksCardProps = {
   readonly applicationProcessingStepsCompleted: number[];
-  readonly onTaskComplete: (taskId: number) => void;
+  readonly onTaskComplete: (taskId: number, taskArgs?: number | string) => void;
   readonly onTaskUndo: (taskId: number) => void;
 };
 
@@ -19,12 +19,12 @@ export default function ProcessingTasksCard({
   const [invoiceNumber, setInvoiceNumber] = useState<number | undefined>();
 
   const assignAPPNumber = (APPNumber: number) => {
-    onTaskComplete(1);
+    onTaskComplete(1, APPNumber);
     setAPPNumber(APPNumber);
   };
 
   const assignInvoiceNumber = (invoiceNumber: number) => {
-    onTaskComplete(4);
+    onTaskComplete(4, invoiceNumber);
     setInvoiceNumber(invoiceNumber);
   };
 
