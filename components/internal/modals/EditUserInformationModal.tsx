@@ -63,12 +63,14 @@ export default function EditUserInformationModal() {
               paddingTop="24px"
               paddingX="4px"
             >
-              <Text textStyle="display-medium-bold">{"Edit User's Information"}</Text>
+              <Text as="h2" textStyle="display-medium-bold">
+                {"Edit User's Information"}
+              </Text>
             </ModalHeader>
             <ModalBody paddingY="20px" paddingX="4px">
               {/* Personal Information Section */}
               <Box paddingBottom="32px">
-                <Text textStyle="heading" paddingBottom="24px">
+                <Text as="h3" textStyle="heading" paddingBottom="24px">
                   {'Personal Information'}
                 </Text>
                 <Stack direction="row" spacing="20px" paddingBottom="24px">
@@ -108,13 +110,12 @@ export default function EditUserInformationModal() {
                 </Stack>
               </Box>
 
-              {/* TODO: Customize Divider to change color  */}
-              <Divider />
+              <Divider borderColor="border.secondary" />
 
               {/* Contact Information Section */}
 
               <Box paddingY="32px">
-                <Text textStyle="heading" paddingBottom="24px">
+                <Text as="h3" textStyle="heading" paddingBottom="24px">
                   {'Contact Information'}
                 </Text>
 
@@ -141,13 +142,12 @@ export default function EditUserInformationModal() {
                 </Stack>
               </Box>
 
-              {/* TODO: Customize Divider to change color  */}
-              <Divider />
+              <Divider borderColor="border.secondary" />
 
               {/* Home Address Section */}
 
               <Box paddingTop="32px">
-                <Text textStyle="heading" paddingBottom="24px">
+                <Text as="h3" textStyle="heading" paddingBottom="24px">
                   {'Home Address'}
                 </Text>
 

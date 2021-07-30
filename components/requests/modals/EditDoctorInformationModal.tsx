@@ -53,7 +53,9 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
         <form onSubmit={handleSubmit}>
           <ModalContent paddingX="36px">
             <ModalHeader paddingBottom="12px" paddingTop="24px" paddingX="4px">
-              <Text textStyle="display-medium-bold">{"Edit Doctor's Information"}</Text>
+              <Text as="h2" textStyle="display-medium-bold">
+                {"Edit Doctor's Information"}
+              </Text>
             </ModalHeader>
             <ModalBody paddingY="20px" paddingX="4px">
               <Box paddingBottom="32px">
@@ -85,11 +87,10 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
                 </Stack>
               </Box>
 
-              {/* TODO: Customize Divider to change color  */}
-              <Divider />
+              <Divider borderColor="border.secondary" />
 
               <Box paddingTop="32px">
-                <Text textStyle="heading" paddingBottom="24px">
+                <Text as="h3" textStyle="heading" paddingBottom="24px">
                   {'Address'}
                 </Text>
                 <FormControl isRequired paddingBottom="24px">

@@ -91,7 +91,7 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
               paddingTop="24px"
               paddingX="4px"
             >
-              <Text textStyle="display-medium-bold">
+              <Text as="h2" textStyle="display-medium-bold">
                 {'Edit Payment, Shipping and Billing Details'}
               </Text>
             </ModalHeader>
@@ -161,11 +161,10 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
                 </Grid>
               </Box>
 
-              {/* TODO: Customize Divider to change color  */}
-              <Divider />
+              <Divider borderColor="border.secondary" />
 
               <Box paddingY="32px">
-                <Text textStyle="heading" paddingBottom="24px">
+                <Text as="h3" textStyle="heading" paddingBottom="24px">
                   {'Shipping Address'}
                 </Text>
 
@@ -264,11 +263,10 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
                 )}
               </Box>
 
-              {/* TODO: Customize Divider to change color  */}
-              <Divider />
+              <Divider borderColor="border.secondary" />
 
               <Box paddingTop="32px">
-                <Text textStyle="heading" paddingBottom="24px">
+                <Text as="h3" textStyle="heading" paddingBottom="24px">
                   {'Billing Address'}
                 </Text>
 
