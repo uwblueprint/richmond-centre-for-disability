@@ -2,30 +2,80 @@ import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import AssignNumberModal from '@components/requests/modals/AssignNumberModal'; // AssignNumber Modal component
 import ProcessingTaskStep from '@components/requests/ProcessingTaskStep'; // Processing Task Step
-import { useState } from 'react'; // React
+import { ApplicationStatus } from '@lib/types'; // Types
+
+interface ApplicationProcessingData {
+  id: number;
+  status: ApplicationStatus;
+  appNumber: number;
+  appHolepunched: boolean;
+  walletCardCreated: boolean;
+  invoiceNumber: number;
+  documentUrls: string[];
+  appMailed: boolean;
+  updatedAt: Date;
+}
 
 type ProcessingTasksCardProps = {
-  readonly applicationProcessingStepsCompleted: number[];
+  readonly applicationProcessingData: ApplicationProcessingData;
   readonly onTaskComplete: (taskId: number, taskArgs?: number | string) => void;
-  readonly onTaskUndo: (taskId: number) => void;
+  readonly APPNumber?: number;
+  readonly invoiceNumber?: number;
 };
 
 export default function ProcessingTasksCard({
-  applicationProcessingStepsCompleted,
+  applicationProcessingData,
   onTaskComplete,
-  onTaskUndo,
+  APPNumber,
+  invoiceNumber,
 }: ProcessingTasksCardProps) {
-  const [APPNumber, setAPPNumber] = useState<number | undefined>();
-  const [invoiceNumber, setInvoiceNumber] = useState<number | undefined>();
-
   const assignAPPNumber = (APPNumber: number) => {
     onTaskComplete(1, APPNumber);
-    setAPPNumber(APPNumber);
   };
 
   const assignInvoiceNumber = (invoiceNumber: number) => {
     onTaskComplete(4, invoiceNumber);
-    setInvoiceNumber(invoiceNumber);
+  };
+
+  /**
+   * Returns a boolean indicating whether the current task is completed, using applicationProcessingData props
+   * @param taskId - Step number (1-indexed)
+   * @returns Boolean
+   */
+  const isTaskCompleted = (taskId: number) => {
+    switch (taskId) {
+      case 1:
+        if (!isNaN(applicationProcessingData.appNumber)) {
+          return true;
+        }
+        break;
+      case 2:
+        if (applicationProcessingData.appHolepunched) {
+          return true;
+        }
+        break;
+      case 3:
+        if (applicationProcessingData.walletCardCreated) {
+          return true;
+        }
+        break;
+      case 4:
+        if (!isNaN(applicationProcessingData.invoiceNumber)) {
+          return true;
+        }
+        break;
+      case 5:
+        if (applicationProcessingData.documentUrls?.length) {
+          return true;
+        }
+        break;
+      case 6:
+        if (applicationProcessingData.appMailed) {
+          return true;
+        }
+        break;
+    }
+    return false;
   };
 
   const steps = [
@@ -66,7 +116,11 @@ export default function ProcessingTasksCard({
    */
   const _renderUndoButton = (taskId: number) => {
     return (
-      <Button variant="ghost" textDecoration="underline black" onClick={() => onTaskUndo(taskId)}>
+      <Button
+        variant="ghost"
+        textDecoration="underline black"
+        onClick={() => onTaskComplete(taskId)}
+      >
         <Text textStyle="caption" color="black">
           Undo
         </Text>
@@ -173,7 +227,7 @@ export default function ProcessingTasksCard({
       <Divider pt="20px" />
       <VStack marginTop={5} spacing={10} alignItems="left" width="100%">
         {steps.map(({ label, description }, idx) => {
-          const isCompleted = applicationProcessingStepsCompleted.includes(idx + 1);
+          const isCompleted = isTaskCompleted(idx + 1);
           return (
             <ProcessingTaskStep
               label={label}

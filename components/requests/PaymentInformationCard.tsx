@@ -63,7 +63,7 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
           </Box>
           <Box>
             <Text as="p" textStyle="body-regular">
-              ${props.donation}
+              ${props.donation || 0}
             </Text>
           </Box>
           <Box>

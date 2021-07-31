@@ -9,6 +9,7 @@ export const GET_APPLICATION = gql`
       lastName
       gender
       customGender
+      dateOfBirth
       email
       phone
       province
@@ -38,6 +39,7 @@ export const GET_APPLICATION = gql`
       donationAmount
       paymentMethod
       shopifyConfirmationNumber
+      createdAt
 
       replacement {
         id
