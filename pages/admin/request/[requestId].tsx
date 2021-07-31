@@ -217,62 +217,66 @@ export default function Request({ requestId }: RequestProps) {
 
   return (
     <Layout>
-      <GridItem rowSpan={1} colSpan={12} marginTop={3}>
-        <RequestHeader
-          isRenewal={isRenewal}
-          applicationStatus={applicationProcessingStatus}
-          createdAt={createdAt}
-          onApprove={onApprove}
-          onReject={onReject}
-          onComplete={onComplete}
-          allStepsCompleted={allStepsCompleted}
-        />
-      </GridItem>
-      <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
-        <PersonalInformationCard
-          applicant={applicantData}
-          expirationDate={'August 30 2021'} // ???
-          mostRecentAPP={12345} // ???
-          handleName={() => {}}
-        />
-      </GridItem>
-      <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
-        <Stack spacing={5}>
-          {applicationProcessingStatus === ApplicationStatus.Approved ? (
-            <ProcessingTasksCard
-              applicationProcessingData={applicationProcessing}
-              onTaskComplete={onTaskComplete}
-              APPNumber={appNumber}
-              invoiceNumber={invoiceNumber}
+      {applicationData?.application && (
+        <>
+          <GridItem rowSpan={1} colSpan={12} marginTop={3}>
+            <RequestHeader
+              isRenewal={isRenewal}
+              applicationStatus={applicationProcessingStatus}
+              createdAt={createdAt}
+              onApprove={onApprove}
+              onReject={onReject}
+              onComplete={onComplete}
+              allStepsCompleted={allStepsCompleted}
             />
-          ) : isRenewal ? (
-            <DoctorInformationCard physician={physicianData} />
-          ) : (
-            <ReasonForReplacementCard
-              cause={replacement?.reason}
-              timestamp={replacement?.lostTimestamp}
-              locationLost={replacement?.locationLost}
-              description={replacement?.description}
-              isUpdated={replacement?.isUpdated}
+          </GridItem>
+          <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
+            <PersonalInformationCard
+              applicant={applicantData}
+              expirationDate={'August 30 2021'} // ???
+              mostRecentAPP={12345} // ???
+              handleName={() => {}}
             />
-          )}
-          <PaymentInformationCard
-            permitFee={processingFee}
-            donation={donationAmount}
-            paymentType={paymentMethod}
-            shippingCountry="Canada"
-            shippingAddress={addressLine1}
-            shippingCity={city}
-            shippingProvince={province}
-            shippingPostalCode={postalCode}
-            billingCountry="Canada"
-            billingAddress={addressLine1}
-            billingCity={city}
-            billingProvince={province}
-            billingPostalCode={postalCode}
-          />
-        </Stack>
-      </GridItem>
+          </GridItem>
+          <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
+            <Stack spacing={5}>
+              {applicationProcessingStatus === ApplicationStatus.Approved ? (
+                <ProcessingTasksCard
+                  applicationProcessingData={applicationProcessing}
+                  onTaskComplete={onTaskComplete}
+                  APPNumber={appNumber}
+                  invoiceNumber={invoiceNumber}
+                />
+              ) : isRenewal ? (
+                <DoctorInformationCard physician={physicianData} />
+              ) : (
+                <ReasonForReplacementCard
+                  cause={replacement?.reason}
+                  timestamp={replacement?.lostTimestamp}
+                  locationLost={replacement?.locationLost}
+                  description={replacement?.description}
+                  isUpdated={replacement?.isUpdated}
+                />
+              )}
+              <PaymentInformationCard
+                permitFee={processingFee}
+                donation={donationAmount}
+                paymentType={paymentMethod}
+                shippingCountry="Canada"
+                shippingAddress={addressLine1}
+                shippingCity={city}
+                shippingProvince={province}
+                shippingPostalCode={postalCode}
+                billingCountry="Canada"
+                billingAddress={addressLine1}
+                billingCity={city}
+                billingProvince={province}
+                billingPostalCode={postalCode}
+              />
+            </Stack>
+          </GridItem>
+        </>
+      )}
     </Layout>
   );
 }
