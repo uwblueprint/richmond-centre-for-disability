@@ -41,6 +41,14 @@ export const GET_APPLICATION = gql`
       shopifyConfirmationNumber
       createdAt
 
+      permit {
+        id
+        rcdPermitId
+        expiryDate
+        receiptId
+        active
+      }
+
       replacement {
         id
         reason

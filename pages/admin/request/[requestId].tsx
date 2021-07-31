@@ -101,10 +101,13 @@ export default function Request({ requestId }: RequestProps) {
 
     createdAt,
 
+    permit,
     replacement,
     applicationProcessing,
     applicant,
   } = applicationData?.application || {};
+
+  const { id: permitId, rcdPermitId, expiryDate, receiptId, active: isPermitActive } = permit || {};
 
   const {
     id: applicationProcessingId,
@@ -136,8 +139,8 @@ export default function Request({ requestId }: RequestProps) {
   };
 
   const physicianData = {
-    firstName: physicianName, // NOTE: We need to add physicianFirstName and physicianLastName to Application Model in DB
-    lastName: physicianName,
+    firstName: physicianName,
+    lastName: physicianName, // NOTE: This is here to satisfy Physician type requirements
     mspNumber: physicianMspNumber,
     addressLine1: physicianAddressLine1,
     addressLine2: physicianAddressLine2,
@@ -145,7 +148,7 @@ export default function Request({ requestId }: RequestProps) {
     province: physicianProvince,
     postalCode: physicianPostalCode,
     phone: physicianPhone,
-    status: PhysicianStatus.Active, // NOTE: We need to add physicianStatus to Application Model in DB
+    status: PhysicianStatus.Active, // NOTE: This is here to satisfy Physician type requirements
     notes: physicianNotes,
   };
 
@@ -223,7 +226,7 @@ export default function Request({ requestId }: RequestProps) {
             <RequestHeader
               isRenewal={isRenewal}
               applicationStatus={applicationProcessingStatus}
-              createdAt={createdAt}
+              createdAt={new Date(createdAt).toDateString()}
               onApprove={onApprove}
               onReject={onReject}
               onComplete={onComplete}
@@ -233,8 +236,8 @@ export default function Request({ requestId }: RequestProps) {
           <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
             <PersonalInformationCard
               applicant={applicantData}
-              expirationDate={'August 30 2021'} // ???
-              mostRecentAPP={12345} // ???
+              expirationDate={new Date(expiryDate).toDateString()}
+              mostRecentAPP={rcdPermitId}
               handleName={() => {}}
             />
           </GridItem>

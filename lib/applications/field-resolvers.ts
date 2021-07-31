@@ -23,7 +23,7 @@ export const applicationPermitResolver: Resolver<Application> = async (
   _args,
   { prisma }
 ) => {
-  return await prisma.permit.findMany({ where: { applicationId: parent?.id } });
+  return (await prisma.permit.findMany({ where: { applicationId: parent?.id } }))?.[0];
 };
 
 /**
