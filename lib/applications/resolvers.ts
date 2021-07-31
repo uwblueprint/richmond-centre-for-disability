@@ -166,3 +166,33 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
     ok: true,
   };
 };
+
+/**
+ * Updates the Application object with the optional values provided
+ * @returns Status of operation (ok, error)
+ */
+export const updateApplication: Resolver = async (_, args, { prisma }) => {
+  const { input } = args;
+  const { id, ...rest } = input;
+
+  let application;
+  try {
+    application = await prisma.application.update({
+      where: { id: parseInt(id) },
+      data: {
+        ...rest,
+      },
+    });
+  } catch (err) {
+    throw 'Error updating application.';
+  }
+
+  // Throw internal server error if application processing object was not updated
+  if (!application) {
+    throw new ApolloError('Application was unable to be updated');
+  }
+
+  return {
+    ok: true,
+  };
+};

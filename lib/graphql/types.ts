@@ -394,6 +394,7 @@ export type Mutation = {
   createPhysician: CreatePhysicianResult;
   upsertPhysician: UpsertPhysicianResult;
   createApplication: CreateApplicationResult;
+  updateApplication: UpdateApplicationResult;
   createPermit: CreatePermitResult;
   updateMedicalInformation: UpdateMedicalInformationResult;
   updateGuardian: UpdateGuardianResult;
@@ -427,6 +428,11 @@ export type MutationUpsertPhysicianArgs = {
 
 export type MutationCreateApplicationArgs = {
   input: CreateApplicationInput;
+};
+
+
+export type MutationUpdateApplicationArgs = {
+  input: UpdateApplicationInput;
 };
 
 
@@ -642,6 +648,11 @@ export type UpdateMedicalInformationInput = {
 
 export type UpdateMedicalInformationResult = {
   __typename?: 'UpdateMedicalInformationResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicationResult = {
+  __typename?: 'UpdateApplicationResult';
   ok: Scalars['Boolean'];
 };
 

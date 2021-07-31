@@ -8,6 +8,7 @@ import { authorize } from '@tools/authorization'; // Page authorization
 import { useQuery, useMutation } from '@apollo/client'; // Apollo Client hooks
 import { GET_APPLICATION } from '@tools/pages/request/queries'; // Request page GraphQL queries
 import {
+  UPDATE_APPLICATION,
   APPROVE_APPLICATION,
   REJECT_APPLICATION,
   UPDATE_APPLICATION_PROCESSING,
@@ -30,32 +31,55 @@ type RequestProps = {
 
 // Individual request page
 export default function Request({ requestId }: RequestProps) {
+  // QUERIES
   const {
+    data: applicationData,
     loading: applicationLoading,
     error: applicationError,
-    data: applicationData,
   } = useQuery(GET_APPLICATION, {
     variables: { id: requestId },
   });
 
+  // MUTATIONS
+  const [
+    updateApplication,
+    {
+      data: updateApplicationData,
+      loading: updateApplicationLoading,
+      error: updateApplicationError,
+    },
+  ] = useMutation(UPDATE_APPLICATION, {
+    refetchQueries: ['GetApplication'],
+  });
+
   const [
     approveApplication,
-    { approveApplicationData, approveApplicationLoading, approveApplicationError },
+    {
+      data: approveApplicationData,
+      loading: approveApplicationLoading,
+      error: approveApplicationError,
+    },
   ] = useMutation(APPROVE_APPLICATION, {
     refetchQueries: ['GetApplication'],
   });
+
   const [
     rejectApplication,
-    { rejectApplicationData, rejectApplicationLoading, rejectApplicationError },
+    {
+      data: rejectApplicationData,
+      loading: rejectApplicationLoading,
+      error: rejectApplicationError,
+    },
   ] = useMutation(REJECT_APPLICATION, {
     refetchQueries: ['GetApplication'],
   });
+
   const [
     updateApplicationProcessing,
     {
-      updateApplicationProcessingData,
-      updateApplicationProcessingLoading,
-      updateApplicationProcessingError,
+      data: updateApplicationProcessingData,
+      loading: updateApplicationProcessingLoading,
+      error: updateApplicationProcessingError,
     },
   ] = useMutation(UPDATE_APPLICATION_PROCESSING, {
     refetchQueries: ['GetApplication'],

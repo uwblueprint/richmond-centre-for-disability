@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client'; // GraphQL queries
 
+// Queries an Application by ID along with the associated permit, replacement, applicationProcessing, and applicant
 export const GET_APPLICATION = gql`
   query GetApplication($id: ID!) {
     application(id: $id) {

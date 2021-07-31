@@ -16,6 +16,7 @@ type Mutation {
   createPhysician(input: CreatePhysicianInput!): CreatePhysicianResult!
   upsertPhysician(input: UpsertPhysicianInput!): UpsertPhysicianResult!
   createApplication(input: CreateApplicationInput!): CreateApplicationResult!
+  updateApplication(input: UpdateApplicationInput!): UpdateApplicationResult!
   createPermit(input: CreatePermitInput!): CreatePermitResult!
   updateMedicalInformation(input: UpdateMedicalInformationInput!): UpdateMedicalInformationResult!
   updateGuardian(input: UpdateGuardianInput!): UpdateGuardianResult!
