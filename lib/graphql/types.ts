@@ -51,7 +51,7 @@ export type Applicant = {
   medicalInformation: MedicalInformation;
   permits?: Maybe<Array<Permit>>;
   medicalHistory?: Maybe<Array<MedicalHistory>>;
-  recentPermit: Permit;
+  recentPermit?: Maybe<Permit>;
 };
 
 export enum ApplicantStatus {
