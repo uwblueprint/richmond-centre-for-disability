@@ -1,5 +1,6 @@
 import { Resolver } from '@lib/resolvers'; // Resolver type
 import { Applicant } from '@lib/types'; // Applicant type
+import { SortOrder } from '@tools/types';
 
 /**
  * Field resolver to fetch all applications belonging to an applicant
@@ -80,4 +81,19 @@ export const applicantMedicalHistoryResolver: Resolver<Applicant> = async (
   });
 
   return result;
+};
+
+/**
+ * Field resolver to fetch the most recent permit of an applicant
+ * @returns Permit object
+ */
+export const applicantRecentPermitResolver: Resolver<Applicant> = async (
+  parent,
+  _args,
+  { prisma }
+) => {
+  return await prisma.permit.findFirst({
+    where: { applicantId: parent?.id },
+    orderBy: { createdAt: SortOrder.DESC },
+  });
 };

@@ -1,6 +1,15 @@
 type Query {
   meta: Meta!
-  applicants: [Applicant!]
+  applicants(
+    order: [[String]],
+    permitStatus: PermitStatus,
+    userStatus: UserStatus,
+    expiryDateRangeFrom: Date,
+    expiryDateRangeTo: Date,
+    search: String,
+    limit: Int,
+    offset: Int
+  ): [Applicant!]
   applicant(id: ID!): Applicant
   employees: [Employee!]
   physicians: [Physician!]
@@ -89,4 +98,15 @@ enum ReasonForReplacement {
   LOST
   STOLEN
   OTHER
+}
+
+enum PermitStatus {
+  VALID
+  EXPIRED
+  EXPIRING_THIRTY
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
 }

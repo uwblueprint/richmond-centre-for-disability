@@ -8,13 +8,80 @@ import {
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { MspNumberDoesNotExistError } from '@lib/physicians/errors'; // Physician errors
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
+import { PermitStatus } from '@tools/pages/permit-holders';
+import { DateUtils } from 'react-day-picker';
+import { SortOrder } from '@tools/types';
 
 /**
+ * TODO: update comments
  * Query all the RCD applicants in the internal-facing app
  * @returns All RCD applicants
  */
-export const applicants: Resolver = async (_parent, _args, { prisma }) => {
-  const applicants = await prisma.applicant.findMany();
+export const applicants: Resolver = async (_parent, args, { prisma }) => {
+  const {
+    order,
+    permitStatus,
+    userStatus,
+    expiryDateRangeFrom,
+    expiryDateRangeTo,
+    search,
+    limit,
+    offset,
+  } = args;
+
+  let expiryDateUpperBound, expiryDateLowerBound, nameSearch, userIDSearch;
+
+  const TODAY = new Date();
+
+  if (permitStatus === PermitStatus.VALID) {
+    expiryDateLowerBound = TODAY;
+  }
+  if (permitStatus === PermitStatus.EXPIRED) {
+    expiryDateUpperBound = TODAY;
+  }
+  if (permitStatus === PermitStatus.EXPIRING_THIRTY) {
+    expiryDateLowerBound = TODAY;
+    expiryDateUpperBound = DateUtils.addMonths(TODAY, 1);
+  }
+
+  if (parseInt(search)) {
+    userIDSearch = parseInt(search);
+  } else {
+    nameSearch = search.split(' ');
+  }
+
+  const sortingOrder: Record<string, SortOrder> = order
+    ? order.foreach((col: string, order: SortOrder) => (sortingOrder[col] = order))
+    : { name: SortOrder.ASC };
+
+  // TODO: add try catch
+  const applicants = await prisma.applicant.findMany({
+    skip: offset || undefined,
+    take: limit || 20,
+    where: {
+      id: userIDSearch,
+      status: userStatus || undefined,
+      OR: [
+        { firstName: { in: nameSearch } },
+        { middleName: { in: nameSearch } },
+        { lastName: { in: nameSearch } },
+      ],
+      permits: {
+        some: {
+          expiryDate: { gte: expiryDateUpperBound, lte: expiryDateLowerBound },
+          AND: [
+            {
+              expiryDate: {
+                gte: expiryDateRangeFrom || undefined,
+                lte: expiryDateRangeTo || undefined,
+              },
+            },
+          ],
+        },
+      },
+    },
+    orderBy: [{ firstName: sortingOrder['name'] }, { lastName: sortingOrder['name'] }],
+  });
   return applicants;
 };
 

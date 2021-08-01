@@ -23,6 +23,7 @@ type Applicant {
   medicalInformation: MedicalInformation!
   permits: [Permit!]
   medicalHistory: [MedicalHistory!]
+  recentPermit: Permit!
 }
 
 input CreateApplicantInput {
