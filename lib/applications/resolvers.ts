@@ -4,7 +4,7 @@ import {
   ShopifyConfirmationNumberAlreadyExistsError,
   ApplicantIdDoesNotExistError,
   ApplicationFieldTooLongError,
-} from '@lib/applications/errors'; // Employee errors
+} from '@lib/applications/errors'; // Application errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 
 /**

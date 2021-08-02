@@ -10,3 +10,14 @@ export class PhysicianCreateError extends ApolloError {
     Object.defineProperty(this, 'name', { value: 'PhysicianCreateError' });
   }
 }
+
+/**
+ * Physician with given MSP number doesn't exist
+ */
+export class MspNumberDoesNotExistError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'MSP_NUMBER_DOES_NOT_EXIST_ERROR');
+
+    Object.defineProperty(this, 'name', { value: 'MspNumberDoesNotExistError' });
+  }
+}
