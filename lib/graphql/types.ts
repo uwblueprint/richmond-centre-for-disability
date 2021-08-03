@@ -418,6 +418,11 @@ export type Query = {
   physicians?: Maybe<Array<Physician>>;
   applications?: Maybe<Array<Application>>;
   permits?: Maybe<Array<Permit>>;
+  applicant?: Maybe<Applicant>;
+};
+
+export type QueryApplicantArgs = {
+  id: Scalars['ID'];
 };
 
 
