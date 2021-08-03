@@ -77,10 +77,10 @@ export default function Landing() {
             width="320px"
             height="48px"
             radius="6px"
-            mt="32px"
+            mt="36px"
             p="12px 25px 12px 25px"
           >
-            <Text as="span">Download new form</Text>
+            <Text as="span">Request a replacement online</Text>
           </Button>
         </Link>
       </GridItem>
@@ -108,10 +108,10 @@ export default function Landing() {
             width="320px"
             height="48px"
             radius="6px"
-            mt="36px"
+            mt="32px"
             p="12px 25px 12px 25px"
           >
-            <Text as="span">Request a replacement online</Text>
+            <Text as="span">Download new form</Text>
           </Button>
         </Link>
         <Link href="#">
