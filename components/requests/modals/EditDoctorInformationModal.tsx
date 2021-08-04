@@ -15,7 +15,9 @@ import {
   FormHelperText,
   Box,
   Divider,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
+import SuccessFulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
 import { useState, SyntheticEvent, ReactNode } from 'react'; // React
 
 type EditDoctorInformationModalProps = {
@@ -34,11 +36,20 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
+  const successfulEditToast = useToast();
+
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     //  TODO: Will be addressed in API hookup
     onClose();
+
+    successfulEditToast({
+      render: () => (
+        <SuccessFulEditAlert>{'Doctor’s information has been edited.'}</SuccessFulEditAlert>
+      ),
+    });
   };
+
   return (
     <>
       <Box onClick={onOpen}>{children}</Box>
@@ -57,7 +68,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
                 {"Edit Doctor's Information"}
               </Text>
             </ModalHeader>
-            <ModalBody paddingY="20px" paddingX="4px">
+            <ModalBody paddingTop="20px" paddingX="4px">
               <Box paddingBottom="32px">
                 <Stack direction="row" spacing="20px" marginBottom="24px">
                   <FormControl isRequired>
@@ -137,7 +148,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
                 </Stack>
               </Box>
             </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingTop="0px" paddingX="4px">
+            <ModalFooter paddingBottom="24px" paddingTop="20px" paddingX="4px">
               <Button colorScheme="gray" variant="solid" onClick={onClose}>
                 {'Cancel'}
               </Button>

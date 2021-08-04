@@ -16,9 +16,11 @@ import {
   Box,
   Select,
   Divider,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, SyntheticEvent, ReactNode } from 'react'; // React
 import { Gender } from '@lib/graphql/types'; // Gender Enum
+import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
 
 type EditUserInformationModalProps = {
   children: ReactNode;
@@ -45,9 +47,18 @@ export default function EditUserInformationModal({ children }: EditUserInformati
 
   //   TODO: Add error states for each field (post-mvp)
 
+  const successfulEditToast = useToast();
+
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     // TODO: Will be addressed in API hookup
+    onClose();
+
+    successfulEditToast({
+      render: () => (
+        <SuccessfulEditAlert>{"User's information has been edited."}</SuccessfulEditAlert>
+      ),
+    });
   };
 
   return (
