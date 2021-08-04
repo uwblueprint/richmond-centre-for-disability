@@ -17,10 +17,14 @@ import {
   Select,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent } from 'react'; // React
+import { useState, SyntheticEvent, ReactNode } from 'react'; // React
 import { Gender } from '@lib/graphql/types'; // Gender Enum
 
-export default function EditUserInformationModal() {
+type EditUserInformationModalProps = {
+  children: ReactNode;
+};
+
+export default function EditUserInformationModal({ children }: EditUserInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   // Personal information state
@@ -48,10 +52,7 @@ export default function EditUserInformationModal() {
 
   return (
     <>
-      {/* Button will be removed before merging */}
-      <Button mt={3} onClick={onOpen}>
-        Open
-      </Button>
+      <Box onClick={onOpen}>{children}</Box>
 
       <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />
