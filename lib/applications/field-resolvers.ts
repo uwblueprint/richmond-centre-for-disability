@@ -10,7 +10,11 @@ export const applicationApplicantResolver: Resolver<Application> = async (
   _args,
   { prisma }
 ) => {
-  return await prisma.applicant.findUnique({ where: { id: parent?.applicantId || undefined } });
+  if (!parent.applicantId) {
+    return null;
+  }
+
+  return await prisma.applicant.findUnique({ where: { id: parent.applicantId } });
 };
 
 /**

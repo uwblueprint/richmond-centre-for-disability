@@ -5,9 +5,13 @@ import {
   ApplicantIdDoesNotExistError,
   ApplicationFieldTooLongError,
   ApplicationNotFoundError,
+  UpdatedFieldsMissingError,
 } from '@lib/applications/errors'; // Application errors
+import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
+import { Province, PaymentType } from '@lib/graphql/types'; // GraphQL types
+import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 
 /**
  * Query an application by ID
@@ -193,6 +197,162 @@ export const updateApplication: Resolver = async (_, args, { prisma }) => {
   // Throw internal server error if application processing object was not updated
   if (!application) {
     throw new ApolloError('Application was unable to be updated');
+  }
+
+  return {
+    ok: true,
+  };
+};
+
+/**
+ * Create a renewal application
+ * @returns Status of operation (ok)
+ */
+export const createRenewalApplication: Resolver = async (_, args, { prisma }) => {
+  const {
+    input: {
+      applicantId,
+      updatedAddress,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+      updatedContactInfo,
+      phone,
+      email,
+      updatedPhysician,
+      physicianFirstName,
+      physicianLastName,
+      physicianMspNumber,
+      physicianAddressLine1,
+      physicianAddressLine2,
+      physicianCity,
+      physicianPostalCode,
+      physicianPhone,
+    },
+  } = args;
+
+  // Validate that fields are present if address, contact info, or doctor are updated
+  // Validate updated address fields
+  if (updatedAddress && (!addressLine1 || !city || !postalCode)) {
+    throw new UpdatedFieldsMissingError('Missing updated personal address fields');
+  }
+
+  // Validate updated contact info fields (at least one of phone or email must be provided)
+  if (updatedContactInfo && !phone && !email) {
+    throw new UpdatedFieldsMissingError('Missing updated contact info fields');
+  }
+
+  // Validate updated doctor info fields
+  if (
+    updatedPhysician &&
+    (!physicianFirstName ||
+      !physicianLastName ||
+      !physicianMspNumber ||
+      !physicianAddressLine1 ||
+      !physicianCity ||
+      !physicianPostalCode)
+  ) {
+    throw new UpdatedFieldsMissingError('Missing updated physician fields');
+  }
+
+  // Retrieve applicant record
+  const applicant = await prisma.applicant.findUnique({
+    where: { id: applicantId },
+    include: { medicalInformation: { include: { physician: true } } },
+  });
+
+  // If applicant not found, throw error
+  if (!applicant) {
+    throw new ApplicantNotFoundError(`No applicant with ID ${applicantId} was found`);
+  }
+
+  const physician = applicant.medicalInformation?.physician;
+
+  // Temporary Shopify confirmation number placeholder
+  const currentDateTime = new Date().getTime().toString();
+  const shopifyConfirmationNumber = currentDateTime.substr(currentDateTime.length - 7);
+
+  let application;
+  try {
+    application = await prisma.application.create({
+      data: {
+        firstName: applicant.firstName,
+        lastName: applicant.lastName,
+        dateOfBirth: applicant.dateOfBirth,
+        gender: applicant.gender,
+        customGender: applicant.customGender,
+        email: updatedContactInfo && email ? email : applicant.email,
+        phone: updatedContactInfo && phone ? formatPhoneNumber(phone) : applicant.phone,
+        province: applicant.province,
+        city: updatedAddress && city ? city : applicant.city,
+        addressLine1: updatedAddress && addressLine1 ? addressLine1 : applicant.addressLine1,
+        addressLine2: updatedAddress && addressLine2 ? addressLine2 : applicant.addressLine2,
+        postalCode:
+          updatedAddress && postalCode ? formatPostalCode(postalCode) : applicant.postalCode,
+        isRenewal: true,
+        // TODO: Link with Shopify checkout
+        shopifyConfirmationNumber,
+        processingFee: 26,
+        paymentMethod: PaymentType.Cash,
+        // TODO: Modify logic when DB schema gets changed (medicalInfo is not undefined)
+        disability: applicant.medicalInformation?.disability || 'Placeholder disability',
+        physicianFirstName:
+          updatedPhysician && physicianFirstName
+            ? physicianFirstName
+            : physician?.firstName || 'Placeholder physician first name',
+        physicianLastName:
+          updatedPhysician && physicianLastName
+            ? physicianLastName
+            : physician?.lastName || 'Placeholder physician last name',
+        physicianMspNumber:
+          updatedPhysician && physicianMspNumber
+            ? physicianMspNumber
+            : physician?.mspNumber || 12345,
+        physicianAddressLine1:
+          updatedPhysician && physicianAddressLine1
+            ? physicianAddressLine1
+            : physician?.addressLine1 || 'Placeholder physician address line 1',
+        physicianAddressLine2:
+          updatedPhysician && physicianAddressLine2
+            ? physicianAddressLine2
+            : physician?.addressLine2 || 'Placeholder physician address line 2',
+        physicianCity:
+          updatedPhysician && physicianCity
+            ? physicianCity
+            : physician?.city || 'Placeholder physician city',
+        physicianPostalCode:
+          updatedPhysician && physicianPostalCode
+            ? physicianPostalCode
+            : physician?.postalCode || 'X0X0X0',
+        physicianPhone:
+          updatedPhysician && physicianPhone ? physicianPhone : physician?.phone || '1234567890',
+        physicianProvince: physician?.province || Province.Bc,
+      },
+    });
+  } catch (err) {
+    if (
+      err.code === DBErrorCode.UniqueConstraintFailed &&
+      err.meta?.target.includes('shopifyConfirmationNumber')
+    ) {
+      throw new ShopifyConfirmationNumberAlreadyExistsError(
+        `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
+      );
+    } else if (
+      err.code === DBErrorCode.ForeignKeyConstraintFailed &&
+      err.meta?.target.includes('applicantId')
+    ) {
+      throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
+    } else if (err.code === DBErrorCode.LengthConstraintFailed) {
+      throw new ApplicationFieldTooLongError(
+        'Length constraint failed, provided value too long for an application field.'
+      );
+    }
+  }
+
+  // Throw internal server error if renewal application was not created
+  if (!application) {
+    throw new ApolloError('Application was unable to be created');
   }
 
   return {

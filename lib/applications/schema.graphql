@@ -7,7 +7,7 @@ type Application {
   dateOfBirth: Date!
   gender: Gender!
   customGender: String
-  email: String!
+  email: String
   phone: String!
   province: Province!
   city: String!
@@ -95,7 +95,7 @@ input CreateApplicationInput {
   dateOfBirth: Date!
   gender: Gender!
   customGender: String
-  email: String!
+  email: String
   phone: String!
   province: Province!
   city: String!
@@ -245,5 +245,36 @@ input UpdateApplicationInput {
 }
 
 type UpdateApplicationResult {
+  ok: Boolean!
+}
+
+input CreateRenewalApplicationInput {
+  applicantId: Int!
+  updatedAddress: Boolean!
+  updatedContactInfo: Boolean!
+  updatedPhysician: Boolean!
+
+  # Personal address info (must be provided if updatedAddress === true)
+  addressLine1: String
+  addressLine2: String
+  city: String
+  postalCode: String
+
+  # Contact info (at least one must be provided if updatedContactInfo === true)
+  phone: String
+  email: String
+
+  # Doctor info (must be provided if updatedDoctor === true)
+  physicianFirstName: String
+  physicianLastName: String
+  physicianMspNumber: Int
+  physicianAddressLine1: String
+  physicianAddressLine2: String
+  physicianCity: String
+  physicianPostalCode: String
+  physicianPhone: String
+}
+
+type CreateRenewalApplicationResult {
   ok: Boolean!
 }

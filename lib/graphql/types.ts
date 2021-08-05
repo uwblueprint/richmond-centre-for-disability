@@ -205,7 +205,7 @@ export type CreateApplicantInput = {
   addressLine2?: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
   rcdUserId?: Maybe<Scalars['Int']>;
-  acceptedTOC?: Maybe<Scalars['Date']>;
+  acceptedTOS?: Maybe<Scalars['Date']>;
   medicalInformation: CreateMedicalInformationInput;
   guardian: CreateGuardianInput;
 };
@@ -223,7 +223,7 @@ export type CreateApplicationInput = {
   dateOfBirth: Scalars['Date'];
   gender: Gender;
   customGender?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
+  email?: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   province: Province;
   city: Scalars['String'];
@@ -344,6 +344,35 @@ export type CreatePhysicianInput = {
 
 export type CreatePhysicianResult = {
   __typename?: 'CreatePhysicianResult';
+  ok: Scalars['Boolean'];
+};
+
+export type CreateRenewalApplicationInput = {
+  applicantId: Scalars['Int'];
+  updatedAddress: Scalars['Boolean'];
+  updatedContactInfo: Scalars['Boolean'];
+  updatedPhysician: Scalars['Boolean'];
+  /** Personal address info (must be provided if updatedAddress === true) */
+  addressLine1?: Maybe<Scalars['String']>;
+  addressLine2?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  postalCode?: Maybe<Scalars['String']>;
+  /** Contact info (at least one must be provided if updatedContactInfo === true) */
+  phone?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  /** Doctor info (must be provided if updatedDoctor === true) */
+  physicianFirstName?: Maybe<Scalars['String']>;
+  physicianLastName?: Maybe<Scalars['String']>;
+  physicianMspNumber?: Maybe<Scalars['Int']>;
+  physicianAddressLine1?: Maybe<Scalars['String']>;
+  physicianAddressLine2?: Maybe<Scalars['String']>;
+  physicianCity?: Maybe<Scalars['String']>;
+  physicianPostalCode?: Maybe<Scalars['String']>;
+  physicianPhone?: Maybe<Scalars['String']>;
+};
+
+export type CreateRenewalApplicationResult = {
+  __typename?: 'CreateRenewalApplicationResult';
   ok: Scalars['Boolean'];
 };
 

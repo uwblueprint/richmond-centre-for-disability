@@ -16,6 +16,7 @@ type Mutation {
   createPhysician(input: CreatePhysicianInput!): CreatePhysicianResult!
   upsertPhysician(input: UpsertPhysicianInput!): UpsertPhysicianResult!
   createApplication(input: CreateApplicationInput!): CreateApplicationResult!
+  createRenewalApplication(input: CreateRenewalApplicationInput!): CreateRenewalApplicationResult!
   updateApplication(input: UpdateApplicationInput!): UpdateApplicationResult!
   createPermit(input: CreatePermitInput!): CreatePermitResult!
   updateMedicalInformation(input: UpdateMedicalInformationInput!): UpdateMedicalInformationResult!
@@ -24,6 +25,7 @@ type Mutation {
     input: UpdateApplicationProcessingInput!
   ): UpdateApplicationProcessingResult!
   completeApplication(applicationId: ID!): CompleteApplicationResult!
+  verifyIdentity(input: VerifyIdentityInput!): VerifyIdentityResult!
 }
 
 scalar Date

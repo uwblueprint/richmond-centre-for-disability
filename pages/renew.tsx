@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'; // React
 import Link from 'next/link'; // Next Link
+import { useMutation } from '@apollo/client'; // Apollo Client
 import {
   Flex,
   Box,
@@ -17,20 +18,33 @@ import {
   NumberInput,
   NumberInputField,
   Divider,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { Step, Steps } from 'chakra-ui-steps'; // Chakra UI Steps
 import Layout from '@components/applicant/Layout'; // Layout component
 import ReviewRequestField from '@components/applicant/renewals/ReviewRequestField'; // Field in Review Request section
-import useSteps from '@tools/hooks/useSteps'; // Custom hook for managing steps state
 import IncompleteSectionAlert from '@components/applicant/renewals/IncompleteSectionAlert'; // Alert box for incomplete form section
+import {
+  CREATE_RENEWAL_APPLICATION_MUTATION,
+  CreateRenewalApplicationRequest,
+  CreateRenewalApplicationResponse,
+} from '@tools/pages/applicant/renew'; // Page tools
+import useSteps from '@tools/hooks/useSteps'; // Custom hook for managing steps state
+import Request from '@containers/Request'; // Request state
 
 export default function Renew() {
+  // Request state
+  const { applicantId } = Request.useContainer();
+
   // Steps state
   const { nextStep, prevStep, activeStep, goToStep } = useSteps({ initialStep: 0 });
 
+  // Toast message
+  const toast = useToast();
+
   // Whether each section was updated
   const [updatedAddress, setUpdatedAddress] = useState(false); // Whether address was updated
-  const [updatedContact, setUpdatedContact] = useState(false); // Whether contact info was updated
+  const [updatedContactInfo, setUpdatedContactInfo] = useState(false); // Whether contact info was updated
   const [updatedDoctor, setUpdatedDoctor] = useState(false); // Whether doctor info was updated
 
   // Personal address information state
@@ -62,7 +76,7 @@ export default function Renew() {
   // Whether each section has invalid inputs
   const invalidPersonalAddress =
     updatedAddress && (!personalAddressLine1 || !personalCity || !personalPostalCode);
-  const invalidContact = updatedContact && !contactPhoneNumber && !contactEmailAddress;
+  const invalidContact = updatedContactInfo && !contactPhoneNumber && !contactEmailAddress;
   const invalidDoctor =
     updatedDoctor &&
     (!doctorFirstName ||
@@ -72,6 +86,64 @@ export default function Renew() {
       !doctorCity ||
       !doctorPostalCode ||
       !doctorPhoneNumber);
+
+  // Input for submitting application form
+  // TODO: Add applicantId from Request state
+  // let submitApplicationInput = {
+  //   updatedAddress,
+  //   updatedContactInfo,
+  //   updatedPhysician: updatedDoctor,
+  // };
+  // if (updatedAddress) {
+  //   submitApplicationInput = {
+  //     ...submitApplicationInput,
+  //     addressLine1: personalAddressLine1,
+  //     addressLine2: personalAddressLine2,
+  //     city: personalCity,
+  //     postalCode: personalPostalCode,
+  //   };
+  // }
+  // if (updatedContactInfo) {
+  //   submitApplicationInput = {
+  //     ...submitApplicationInput,
+  //     phone: contactPhoneNumber,
+  //     email: contactEmailAddress,
+  //   };
+  // }
+  // if (updatedDoctor) {
+  //   submitApplicationInput = {
+  //     ...submitApplicationInput,
+  //     physicianFirstName: doctorFirstName,
+  //     physicianLastName: doctorLastName,
+  //     physicianMspNumber: doctorMspNumber,
+  //     physicianAddressLine1: doctorAddressLine1,
+  //     physicianAddressLine2: doctorAddressLine2,
+  //     physicianCity: doctorCity,
+  //     physicianPostalCode: doctorPostalCode,
+  //     physicianPhone: doctorPhoneNumber,
+  //   };
+  // }
+
+  // Submit application mutation
+  const [submitApplication, { loading }] = useMutation<
+    CreateRenewalApplicationResponse,
+    CreateRenewalApplicationRequest
+  >(CREATE_RENEWAL_APPLICATION_MUTATION, {
+    onCompleted: data => {
+      if (data?.createRenewalApplication.ok) {
+        toast({
+          status: 'success',
+          description: 'Your application has been submitted!',
+        });
+      }
+    },
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
 
   /**
    * Go to the review step (last step)
@@ -87,6 +159,52 @@ export default function Renew() {
       setIsReviewing(true);
     }
   }, [activeStep, isReviewing]);
+
+  /**
+   * Handle application submission
+   */
+  const handleSubmit = async () => {
+    if (applicantId === null) {
+      toast({
+        status: 'error',
+        title: 'Identity verification failed',
+        description: `You have not completed the identity verification step.
+          Please complete the identity verification before filling out the renewal application form.`,
+      });
+      return;
+    }
+
+    await submitApplication({
+      variables: {
+        input: {
+          applicantId,
+          updatedAddress,
+          updatedContactInfo,
+          updatedPhysician: updatedDoctor,
+          ...(updatedAddress && {
+            addressLine1: personalAddressLine1,
+            addressLine2: personalAddressLine2,
+            city: personalCity,
+            postalCode: personalPostalCode,
+          }),
+          ...(updatedContactInfo && {
+            phone: contactPhoneNumber,
+            email: contactEmailAddress,
+          }),
+          ...(updatedDoctor && {
+            physicianFirstName: doctorFirstName,
+            physicianLastName: doctorLastName,
+            physicianMspNumber: parseInt(doctorMspNumber),
+            physicianAddressLine1: doctorAddressLine1,
+            physicianAddressLine2: doctorAddressLine2,
+            physicianCity: doctorCity,
+            physicianPostalCode: doctorPostalCode,
+            physicianPhone: doctorPhoneNumber,
+          }),
+        },
+      },
+    });
+  };
 
   return (
     <Layout>
@@ -181,8 +299,8 @@ export default function Renew() {
                   parking pass?`}
                 </FormLabel>
                 <RadioGroup
-                  value={updatedContact ? '0' : '1'}
-                  onChange={value => setUpdatedContact(value === '0' ? true : false)}
+                  value={updatedContactInfo ? '0' : '1'}
+                  onChange={value => setUpdatedContactInfo(value === '0' ? true : false)}
                 >
                   <Stack direction="row">
                     <Radio value="0">{`Yes, I have`}</Radio>
@@ -191,7 +309,7 @@ export default function Renew() {
                 </RadioGroup>
               </FormControl>
               {/* Conditionally render form based on whether contact info was updated */}
-              {updatedContact && (
+              {updatedContactInfo && (
                 <Box marginY="16px">
                   <Text
                     as="p"
@@ -385,7 +503,7 @@ export default function Renew() {
                 <Text as="h3" textStyle="heading">{`Contact Information`}</Text>
                 <Button variant="outline" onClick={() => goToStep(1)}>{`Edit`}</Button>
               </Flex>
-              {updatedContact ? (
+              {updatedContactInfo ? (
                 <>
                   <ReviewRequestField name={`Phone Number`} value={contactPhoneNumber} />
                   <ReviewRequestField name={`Email Address`} value={contactEmailAddress} />
@@ -444,11 +562,24 @@ export default function Renew() {
             </Box>
             <Flex width="100%" justifyContent="flex-end">
               <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
+              {/* TODO: Replace with `Proceed to payment` button */}
               <Button
+                variant="solid"
+                onClick={handleSubmit}
+                loading={loading}
+                disabled={
+                  !applicantId ||
+                  !certified ||
+                  invalidPersonalAddress ||
+                  invalidContact ||
+                  invalidDoctor
+                }
+              >{`Submit`}</Button>
+              {/* <Button
                 variant="solid"
                 onClick={nextStep}
                 disabled={!certified || invalidPersonalAddress || invalidContact || invalidDoctor}
-              >{`Proceed to payment`}</Button>
+              >{`Proceed to payment`}</Button> */}
             </Flex>
           </Step>
         </Steps>

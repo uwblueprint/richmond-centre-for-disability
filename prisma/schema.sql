@@ -175,7 +175,8 @@ CREATE TABLE applications (
   cannot_walk_100m         BOOLEAN NOT NULL DEFAULT false,
   aid                      Aid ARRAY,
   -- Physician information
-  physician_name            VARCHAR(255) NOT NULL,
+  physician_first_name      VARCHAR(255) NOT NULL,
+  physician_last_name       VARCHAR(255) NOT NULL,
   physician_msp_number      INTEGER NOT NULL,
   physician_address_line_1  VARCHAR(255) NOT NULL,
   physician_address_line_2  VARCHAR(255),

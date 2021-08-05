@@ -43,3 +43,14 @@ export class ApplicationNotFoundError extends ApolloError {
     Object.defineProperty(this, 'name', { value: 'ApplicationNotFoundError' });
   }
 }
+
+/**
+ * Missing updated fields error
+ */
+export class UpdatedFieldsMissingError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'UPDATED_FIELDS_MISSING_ERROR');
+
+    Object.defineProperty(this, 'name', { value: 'UpdatedFieldsMissingError' });
+  }
+}

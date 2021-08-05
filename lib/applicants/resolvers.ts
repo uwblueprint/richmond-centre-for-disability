@@ -4,11 +4,13 @@ import {
   ApplicantAlreadyExistsError,
   ApplicantNotFoundError,
   RcdUserIdAlreadyExistsError,
+  InvalidPhoneNumberSuffixLengthError,
 } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { MspNumberDoesNotExistError } from '@lib/physicians/errors'; // Physician errors
+import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
-import { PermitStatus } from '@lib/types'; // Permit Status Type
+import { PermitStatus, VerifyIdentityFailureReason } from '@lib/types'; // GraphQL types
 import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
 
@@ -257,5 +259,94 @@ export const updateApplicant: Resolver = async (_, args, { prisma }) => {
 
   return {
     ok: true,
+  };
+};
+
+/**
+ * Verify applicant identity when applying for an APP, given the RCD user ID, last 4 digits of phone number, and date of birth
+ * @returns ID of applicant, if applicant is found and current APP is expiring soon
+ */
+export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
+  const {
+    input: { userId, phoneNumberSuffix, dateOfBirth, acceptedTos },
+  } = args;
+
+  // Phone number suffix must be of length 4
+  if (phoneNumberSuffix.length != 4) {
+    throw new InvalidPhoneNumberSuffixLengthError('Phone number suffix must have length 4');
+  }
+
+  // Retrieve applicant with matching info
+  const applicant = await prisma.applicant.findUnique({
+    where: {
+      rcdUserId: userId,
+    },
+    select: {
+      id: true,
+      rcdUserId: true,
+      phone: true,
+      dateOfBirth: true,
+    },
+  });
+
+  // Applicant not found
+  if (!applicant) {
+    return {
+      ok: false,
+      failureReason: VerifyIdentityFailureReason.IdentityVerificationFailed,
+      applicantId: null,
+    };
+  }
+
+  // Verify that phone number suffix and date of birth match
+  if (
+    !applicant.phone.endsWith(phoneNumberSuffix) ||
+    applicant.dateOfBirth.getTime() !== dateOfBirth.getTime()
+  ) {
+    return {
+      ok: false,
+      failureReason: VerifyIdentityFailureReason.IdentityVerificationFailed,
+      applicantId: null,
+    };
+  }
+
+  // Verify that active permit exists and is expiring within 30 days
+  const activePermit = await getActivePermit(applicant.id);
+
+  if (activePermit === null) {
+    return {
+      ok: false,
+      failureReason: VerifyIdentityFailureReason.AppDoesNotExpireWithin_30Days,
+      applicantId: null,
+    };
+  }
+
+  // Note: 30 days = 30 * 24 * 60 * 60 * 1000 milliseconds
+  if (activePermit.expiryDate.getTime() - new Date().getTime() > 30 * 24 * 60 * 60 * 1000) {
+    return {
+      ok: false,
+      failureReason: VerifyIdentityFailureReason.AppDoesNotExpireWithin_30Days,
+      applicantId: null,
+    };
+  }
+
+  // Update applicant's accepted TOS timestamp
+  try {
+    prisma.applicant.update({
+      where: {
+        id: applicant.id,
+      },
+      data: {
+        acceptedTos,
+      },
+    });
+  } catch (err) {
+    throw new ApolloError("Failed to update applicant's accepted TOS timestamp");
+  }
+
+  return {
+    ok: true,
+    failureReason: null,
+    applicantId: applicant.id,
   };
 };

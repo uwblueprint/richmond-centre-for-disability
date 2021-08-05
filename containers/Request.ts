@@ -1,4 +1,4 @@
-import useSessionStorage from '@tools/hooks/useSessionStorage'; // Use session storage hook
+import useSessionStorage from '@tools/hooks/useSessionStorage'; // useSessionStorage hook
 import { createContainer } from 'unstated-next'; // Unstated Next
 
 /**
@@ -12,9 +12,14 @@ const useRequest = () => {
     null
   );
 
+  // ID of applicant after successful identity verification
+  const [applicantId, setApplicantId] = useSessionStorage<number | null>('applicantId', null);
+
   return {
     acceptedTOSTimestamp,
     setAcceptedTOSTimestamp,
+    applicantId,
+    setApplicantId,
   };
 };
 

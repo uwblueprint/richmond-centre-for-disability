@@ -1,5 +1,7 @@
 import { useState } from 'react'; // React
 import Link from 'next/link'; // Link
+import { useRouter } from 'next/router'; // Router
+import { useMutation } from '@apollo/client'; // Apollo Client
 import {
   GridItem,
   Flex,
@@ -11,15 +13,61 @@ import {
   FormHelperText,
   NumberInput,
   NumberInputField,
+  Alert,
+  AlertIcon,
+  AlertTitle,
 } from '@chakra-ui/react'; // Chakra UI
 import { InfoOutlineIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/applicant/Layout'; // Layout component
 import TOSModal from '@components/applicant/renewals/TOSModal'; // TOS Modal
+import {
+  VERIFY_IDENTITY_MUTATION,
+  VerifyIdentityRequest,
+  VerifyIdentityResponse,
+} from '@tools/pages/applicant/verify-identity'; // Tools
+import Request from '@containers/Request'; // Request state
 
 export default function IdentityVerificationForm() {
+  // Router
+  const router = useRouter();
+
+  // Request state
+  const { acceptedTOSTimestamp, setApplicantId } = Request.useContainer();
+
   const [userId, setUserId] = useState('');
   const [phoneNumberSuffix, setPhoneNumberSuffix] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString().substring(0, 10));
+
+  // Verify identity query
+  const [verifyIdentity, { data, loading }] = useMutation<
+    VerifyIdentityResponse,
+    VerifyIdentityRequest
+  >(VERIFY_IDENTITY_MUTATION, {
+    onCompleted: data => {
+      if (data.verifyIdentity.ok && data.verifyIdentity.applicantId) {
+        setApplicantId(data.verifyIdentity.applicantId);
+        router.push('/renew');
+      }
+    },
+  });
+
+  /**
+   * Handle identity verification submit
+   */
+  const handleSubmit = () => {
+    verifyIdentity({
+      variables: {
+        input: {
+          userId: parseInt(userId),
+          phoneNumberSuffix,
+          dateOfBirth,
+          acceptedTos: acceptedTOSTimestamp,
+        },
+      },
+    });
+
+    return;
+  };
 
   return (
     <Layout footer={false}>
@@ -67,16 +115,22 @@ export default function IdentityVerificationForm() {
             20th August 1950, you would enter 20-08-1950`}
               </FormHelperText>
             </FormControl>
+            {data?.verifyIdentity.failureReason && (
+              <Alert status="error" marginBottom="20px">
+                <AlertIcon />
+                <AlertTitle>{data.verifyIdentity.failureReason}</AlertTitle>
+              </Alert>
+            )}
             <Flex width="100%" justifyContent="flex-end">
               <Link href="/">
                 <Button variant="outline" marginRight="12px">{`Go back to home page`}</Button>
               </Link>
-              <Link href="/renew">
-                <Button
-                  variant="solid"
-                  disabled={!userId || !phoneNumberSuffix || !dateOfBirth}
-                >{`Continue`}</Button>
-              </Link>
+              <Button
+                variant="solid"
+                disabled={loading || !userId || !phoneNumberSuffix || !dateOfBirth}
+                loading={loading}
+                onClick={handleSubmit}
+              >{`Continue`}</Button>
             </Flex>
           </Flex>
         </Flex>
