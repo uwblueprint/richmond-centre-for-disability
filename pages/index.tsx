@@ -62,7 +62,7 @@ export default function Landing() {
             width="320px"
             height="48px"
             radius="6px"
-            mt="50px"
+            mt="48px"
             p="12px 25px 12px 25px"
           >
             <Text as="span">Renew your permit online</Text>
@@ -108,7 +108,7 @@ export default function Landing() {
             width="320px"
             height="48px"
             radius="6px"
-            mt="37px"
+            mt="36px"
             p="12px 25px 12px 25px"
           >
             <Text as="span">Download new form</Text>
