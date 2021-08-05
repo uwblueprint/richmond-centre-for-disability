@@ -1,4 +1,14 @@
-import { Box, HStack, VStack, Text, Divider, Link, Button } from '@chakra-ui/react'; // Chakra UI
+import {
+  Box,
+  HStack,
+  VStack,
+  Text,
+  Divider,
+  Link,
+  Button,
+  Tooltip,
+  useClipboard,
+} from '@chakra-ui/react'; // Chakra UI
 import EditUserInformationModal from '@components/permit-holders/modals/EditUserInformationModal'; // Edit User Information Modal
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
 import { Applicant } from '@lib/graphql/types'; // Applicant type
@@ -9,6 +19,7 @@ type PersonalInformationProps = {
 
 export default function PersonalInformationCard(props: PersonalInformationProps) {
   const { applicant } = props;
+  const { hasCopied, onCopy } = useClipboard(applicant.email ? applicant.email : '');
 
   return (
     <PermitHolderInfoCard
@@ -50,10 +61,23 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
           </Box>
         </HStack>
         <Box>
-          {/* TODO: Make it copy-able */}
-          <Link textStyle="body-regular" color="primary" textDecoration="underline">
-            {applicant.email}
-          </Link>
+          <Tooltip
+            hasArrow
+            closeOnClick={false}
+            label={hasCopied ? 'Copied to clipboard' : 'Click to copy address'}
+            placement="top"
+            bg="background.grayHover"
+            color="black"
+          >
+            <Link
+              textStyle="body-regular"
+              color="primary"
+              textDecoration="underline"
+              onClick={onCopy}
+            >
+              {applicant.email}
+            </Link>
+          </Tooltip>
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">

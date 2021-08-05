@@ -1,7 +1,7 @@
 import { Box, Link, Text, Wrap, Divider } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
-import RequestStatusBadge from '@components/internal/RequestStatusBadge';
-import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
+import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge component
+import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 
 // Placeholder data
 

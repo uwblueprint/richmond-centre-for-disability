@@ -1,7 +1,7 @@
 import { Box, Text, Divider, VStack, Button, Flex } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import { Physician } from '@lib/graphql/types'; // Physician type
-import EditDoctorInformationModal from '@components/requests/modals/EditDoctorInformationModal'; // Edit modal
+import EditDoctorInformationModal from '@components/requests/modals/EditDoctorInformationModal'; // Edit doctor information modal component
 import PreviousDoctorsInformationModal from '@components/permit-holders/modals/PreviousDoctorsInformationModal'; // Previous Doctors' Information Modal
 
 type DoctorInformationProps = {
