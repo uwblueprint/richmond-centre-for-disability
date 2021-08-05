@@ -11,17 +11,22 @@ import { DBErrorCode } from '@lib/db/errors'; // Database errors
  * Query all the RCD applications in the internal-facing app
  * @returns All RCD applications
  */
-// export const applications: Resolver = async (_parent, _args, { prisma }) => {
-//   const {
-//     input: { order, status, permitType, requestType, search, limit=20, offset=0 },
-//   } = args;
-//   const applications = await prisma.application.findMany({
-//     where: {
+export const applications: Resolver = async (_parent, _args, { prisma }) => {
+  const {
+    input: { order, limit = 20, offset = 0 },
+  } = _args;
 
-//     }
-//   });
-//   return applications;
-// };
+  const sortingOrder: Record<string, string> = order
+    ? order.foreach((col: string, order: string) => (sortingOrder[col] = order))
+    : { dateReceived: 'desc' };
+
+  const applications = await prisma.application.findMany({
+    skip: offset,
+    take: limit,
+    orderBy: [sortingOrder],
+  });
+  return applications;
+};
 
 /**
  * Create an RCD application
