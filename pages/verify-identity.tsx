@@ -54,7 +54,7 @@ export default function IdentityVerificationForm() {
                 <NumberInputField />
               </NumberInput>
             </FormControl>
-            <FormControl isRequired textAlign="left" marginBottom="56px">
+            <FormControl isRequired textAlign="left" marginBottom="20px">
               <FormLabel>{`Date of Birth`}</FormLabel>
               <Input
                 type="date"

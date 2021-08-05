@@ -14,8 +14,12 @@ import {
   ModalFooter,
   useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
+import Request from '@containers/Request'; // Request container
 
 export default function TOSModal() {
+  // TOS acceptance timestamp
+  const { setAcceptedTOSTimestamp } = Request.useContainer();
+
   // Modal state and close callback
   const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true });
 
@@ -24,6 +28,16 @@ export default function TOSModal() {
     threshold: 1, // Last paragraph needs to be fully scrolled over
     triggerOnce: true, // Only trigger once
   });
+
+  /**
+   * Handle agreement to TOS
+   */
+  const handleTOSAgree = () => {
+    // Set timestamp of TOS agreement
+    setAcceptedTOSTimestamp(new Date());
+
+    onClose();
+  };
 
   return (
     <Modal
@@ -105,7 +119,11 @@ export default function TOSModal() {
               <Link href="/">
                 <Button variant="outline" marginRight="12px">{`Go back to home page`}</Button>
               </Link>
-              <Button variant="solid" disabled={!finishedTOS} onClick={onClose}>{`I agree`}</Button>
+              <Button
+                variant="solid"
+                disabled={!finishedTOS}
+                onClick={handleTOSAgree}
+              >{`I agree`}</Button>
             </Flex>
           </Box>
         </ModalFooter>
