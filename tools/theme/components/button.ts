@@ -35,7 +35,6 @@ const Button: ComponentSingleStyleConfig = {
       color: colorScheme === 'primary' ? 'primary' : `texticon.${colorScheme}`,
       _hover: {
         bg: `background.${colorScheme === 'primary' ? 'interactive' : colorScheme}`,
-        textDecoration: 'underline',
       },
     }),
     link: ({ colorScheme }) => ({
