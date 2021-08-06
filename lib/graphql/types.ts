@@ -45,8 +45,10 @@ export type Applicant = {
   acceptedTOC?: Maybe<Scalars['Date']>;
   status?: Maybe<ApplicantStatus>;
   applications?: Maybe<Array<Application>>;
-  guardian?: Maybe<Guardian>;
-  medicalInformation?: Maybe<MedicalInformation>;
+  guardianId: Scalars['Int'];
+  guardian: Guardian;
+  medicalInformationId: Scalars['Int'];
+  medicalInformation: MedicalInformation;
   permits?: Maybe<Array<Permit>>;
   medicalHistory?: Maybe<Array<MedicalHistory>>;
 };
