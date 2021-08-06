@@ -139,6 +139,8 @@ export type CreateApplicantInput = {
   postalCode: Scalars['String'];
   rcdUserId?: Maybe<Scalars['Int']>;
   acceptedTOC?: Maybe<Scalars['Date']>;
+  medicalInformation: CreateMedicalInformationInput;
+  guardian: CreateGuardianInput;
 };
 
 export type CreateApplicantResult = {
@@ -216,6 +218,33 @@ export type CreateEmployeeInput = {
 export type CreateEmployeeResult = {
   __typename?: 'CreateEmployeeResult';
   ok: Scalars['Boolean'];
+};
+
+/** Fields to specify when creating a guardian record for an applicant */
+export type CreateGuardianInput = {
+  firstName: Scalars['String'];
+  middleName?: Maybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2?: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  province: Province;
+  postalCode: Scalars['String'];
+  phone: Scalars['String'];
+  relationship: Scalars['String'];
+  notes?: Maybe<Scalars['String']>;
+};
+
+/** Fields to specify when creating a medical information record for an applicant */
+export type CreateMedicalInformationInput = {
+  disability: Scalars['String'];
+  affectsMobility: Scalars['Boolean'];
+  mobilityAidRequired: Scalars['Boolean'];
+  cannotWalk100m: Scalars['Boolean'];
+  notes?: Maybe<Scalars['String']>;
+  certificationDate?: Maybe<Scalars['Date']>;
+  aid?: Maybe<Array<Aid>>;
+  physicianMspNumber: Scalars['Int'];
 };
 
 export type CreatePermitInput = {
@@ -313,16 +342,24 @@ export type Meta = {
 export type Mutation = {
   __typename?: 'Mutation';
   createApplicant: CreateApplicantResult;
+  updateApplicant: UpdateApplicantResult;
   createEmployee: CreateEmployeeResult;
   createPhysician: CreatePhysicianResult;
   upsertPhysician: UpsertPhysicianResult;
   createApplication: CreateApplicationResult;
   createPermit: CreatePermitResult;
+  updateMedicalInformation: UpdateMedicalInformationResult;
+  updateGuardian: UpdateGuardianResult;
 };
 
 
 export type MutationCreateApplicantArgs = {
   input: CreateApplicantInput;
+};
+
+
+export type MutationUpdateApplicantArgs = {
+  input: UpdateApplicantInput;
 };
 
 
@@ -348,6 +385,16 @@ export type MutationCreateApplicationArgs = {
 
 export type MutationCreatePermitArgs = {
   input: CreatePermitInput;
+};
+
+
+export type MutationUpdateMedicalInformationArgs = {
+  input: UpdateMedicalInformationInput;
+};
+
+
+export type MutationUpdateGuardianArgs = {
+  input: UpdateGuardianInput;
 };
 
 export enum PaymentType {
@@ -440,6 +487,65 @@ export enum Role {
   Accounting = 'ACCOUNTING',
   Secretary = 'SECRETARY'
 }
+
+export type UpdateApplicantInput = {
+  id: Scalars['ID'];
+  firstName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  dateOfBirth?: Maybe<Scalars['Date']>;
+  gender?: Maybe<Gender>;
+  customGender?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  province?: Maybe<Province>;
+  city?: Maybe<Scalars['String']>;
+  addressLine1?: Maybe<Scalars['String']>;
+  addressLine2?: Maybe<Scalars['String']>;
+  postalCode?: Maybe<Scalars['String']>;
+  rcdUserId?: Maybe<Scalars['Int']>;
+};
+
+export type UpdateApplicantResult = {
+  __typename?: 'UpdateApplicantResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateGuardianInput = {
+  applicantId: Scalars['Int'];
+  firstName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  addressLine1?: Maybe<Scalars['String']>;
+  addressLine2?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  province?: Maybe<Province>;
+  postalCode?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  relationship?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
+};
+
+export type UpdateGuardianResult = {
+  __typename?: 'UpdateGuardianResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateMedicalInformationInput = {
+  applicantId: Scalars['Int'];
+  disability?: Maybe<Scalars['String']>;
+  affectsMobility?: Maybe<Scalars['Boolean']>;
+  mobilityAidRequired?: Maybe<Scalars['Boolean']>;
+  cannotWalk100m?: Maybe<Scalars['Boolean']>;
+  notes?: Maybe<Scalars['String']>;
+  certificationDate?: Maybe<Scalars['Date']>;
+  aid?: Maybe<Array<Aid>>;
+};
+
+export type UpdateMedicalInformationResult = {
+  __typename?: 'UpdateMedicalInformationResult';
+  ok: Scalars['Boolean'];
+};
 
 export type UpsertPhysicianInput = {
   mspNumber: Scalars['Int'];
