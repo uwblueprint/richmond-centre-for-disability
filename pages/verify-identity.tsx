@@ -1,5 +1,6 @@
 import { useState } from 'react'; // React
 import Link from 'next/link'; // Link
+import Image from 'next/image'; // Next Image
 import { useRouter } from 'next/router'; // Router
 import { useMutation } from '@apollo/client'; // Apollo Client
 import {
@@ -15,7 +16,13 @@ import {
   NumberInputField,
   Alert,
   AlertIcon,
-  AlertTitle,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
+  PopoverFooter,
+  AlertDescription,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { InfoOutlineIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/applicant/Layout'; // Layout component
@@ -24,12 +31,16 @@ import {
   VERIFY_IDENTITY_MUTATION,
   VerifyIdentityRequest,
   VerifyIdentityResponse,
+  getErrorMessage,
 } from '@tools/pages/applicant/verify-identity'; // Tools
 import Request from '@containers/Request'; // Request state
 
 export default function IdentityVerificationForm() {
   // Router
   const router = useRouter();
+
+  // Toast
+  const toast = useToast();
 
   // Request state
   const { acceptedTOSTimestamp, setApplicantId } = Request.useContainer();
@@ -48,6 +59,12 @@ export default function IdentityVerificationForm() {
         setApplicantId(data.verifyIdentity.applicantId);
         router.push('/renew');
       }
+    },
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+      });
     },
   });
 
@@ -89,7 +106,21 @@ export default function IdentityVerificationForm() {
                 <NumberInputField />
               </NumberInput>
               <Flex alignItems="center">
-                <InfoOutlineIcon marginRight="8px" />
+                <Popover placement="left" trigger="hover" gutter={24}>
+                  <PopoverTrigger>
+                    <InfoOutlineIcon marginRight="8px" cursor="pointer" />
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverBody>
+                      <Image src="/assets/wallet-card-example.png" height={200} width={320} />
+                    </PopoverBody>
+                    <PopoverFooter backgroundColor="background.grayHover">
+                      <Text textStyle="caption">
+                        {`Locate your User ID on the Wallet Card that came with your Permit.`}
+                      </Text>
+                    </PopoverFooter>
+                  </PopoverContent>
+                </Popover>
                 <FormHelperText>
                   {`You can find your user ID on the back of your wallet card. If you cannot find your
               wallet card, please call RCD at 604-232-2404.`}
@@ -118,7 +149,9 @@ export default function IdentityVerificationForm() {
             {data?.verifyIdentity.failureReason && (
               <Alert status="error" marginBottom="20px">
                 <AlertIcon />
-                <AlertTitle>{data.verifyIdentity.failureReason}</AlertTitle>
+                <AlertDescription>
+                  {getErrorMessage(data.verifyIdentity.failureReason)}
+                </AlertDescription>
               </Alert>
             )}
             <Flex width="100%" justifyContent="flex-end">

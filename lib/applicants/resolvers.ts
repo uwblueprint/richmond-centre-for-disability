@@ -276,7 +276,9 @@ export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
 
   // Phone number suffix must be of length 4
   if (phoneNumberSuffix.length != 4) {
-    throw new InvalidPhoneNumberSuffixLengthError('Phone number suffix must have length 4');
+    throw new InvalidPhoneNumberSuffixLengthError(
+      'Last 4 digits of phone number must be 4 digits long'
+    );
   }
 
   // Retrieve applicant with matching info
