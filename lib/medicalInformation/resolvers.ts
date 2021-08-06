@@ -11,13 +11,17 @@ export const updateMedicalInformation: Resolver = async (_, args, { prisma }) =>
   const { input } = args;
   const { applicantId, ...rest } = input;
 
-  let updatedMedicalInformation;
+  let updatedApplicant;
   try {
-    updatedMedicalInformation = await prisma.medicalInformation.update({
+    updatedApplicant = await prisma.applicant.update({
       where: {
-        applicantId,
+        id: applicantId,
       },
-      data: rest,
+      data: {
+        medicalInformation: {
+          update: rest,
+        },
+      },
     });
   } catch (err) {
     if (err.code === DBErrorCode.RecordNotFound) {
@@ -25,7 +29,7 @@ export const updateMedicalInformation: Resolver = async (_, args, { prisma }) =>
     }
   }
 
-  if (!updatedMedicalInformation) {
+  if (!updatedApplicant) {
     throw new ApolloError('Medical information was unable to be updated');
   }
 

@@ -26,7 +26,7 @@ export const applicantPermitsResolver: Resolver<Applicant> = async (parent, _arg
  * @returns Guardian object
  */
 export const applicantGuardianResolver: Resolver<Applicant> = async (parent, _args, { prisma }) => {
-  return await prisma.guardian.findUnique({ where: { applicantId: parent?.id } });
+  return await prisma.guardian.findUnique({ where: { id: parent?.guardianId } });
 };
 
 /**
@@ -39,7 +39,7 @@ export const applicantMedicalInformationResolver: Resolver<Applicant> = async (
   { prisma }
 ) => {
   return await prisma.medicalInformation.findUnique({
-    where: { applicantId: parent?.id },
+    where: { id: parent?.medicalInformationId },
   });
 };
 

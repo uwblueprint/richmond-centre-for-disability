@@ -11,13 +11,17 @@ export const updateGuardian: Resolver = async (_, args, { prisma }) => {
   const { input } = args;
   const { applicantId, ...rest } = input;
 
-  let updatedGuardian;
+  let updatedApplicant;
   try {
-    updatedGuardian = await prisma.guardian.update({
+    updatedApplicant = await prisma.applicant.update({
       where: {
-        applicantId,
+        id: applicantId,
       },
-      data: rest,
+      data: {
+        guardian: {
+          update: rest,
+        },
+      },
     });
   } catch (err) {
     if (err.code === DBErrorCode.RecordNotFound) {
@@ -25,7 +29,7 @@ export const updateGuardian: Resolver = async (_, args, { prisma }) => {
     }
   }
 
-  if (!updatedGuardian) {
+  if (!updatedApplicant) {
     throw new ApolloError('Guardian was unable to be updated');
   }
 
