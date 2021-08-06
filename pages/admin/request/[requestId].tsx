@@ -150,7 +150,6 @@ export default function Request() {
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
         <PersonalInformationCard
-          // TODO: Temporary fix - will be addressed in API hookup
           applicant={applicant}
           expirationDate={expirationDate}
           mostRecentAPP={applicant.mostRecentAPP}
