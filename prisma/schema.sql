@@ -80,6 +80,41 @@ CREATE TABLE physicians (
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create guardians table
+CREATE TABLE guardians (
+  id              SERIAL PRIMARY KEY NOT NULL,
+  first_name      VARCHAR(255) NOT NULL,
+  middle_name     VARCHAR(255),
+  last_name       VARCHAR(255) NOT NULL,
+  address_line_1  VARCHAR(255) NOT NULL,
+  address_line_2  VARCHAR(255),
+  city            VARCHAR(255) NOT NULL,
+  province        Province NOT NULL,
+  postal_code     CHAR(6) NOT NULL,
+  phone           VARCHAR(50) NOT NULL,
+  relationship    VARCHAR(255) NOT NULL,
+  notes           TEXT,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create medical information table
+CREATE TABLE medical_information (
+  id                       SERIAL PRIMARY KEY NOT NULL,
+  disability               VARCHAR(255) NOT NULL,
+  affects_mobility         BOOLEAN NOT NULL DEFAULT false,
+  mobility_aid_required    BOOLEAN NOT NULL DEFAULT false,
+  cannot_walk_100m         BOOLEAN NOT NULL DEFAULT false,
+  notes                    TEXT,
+  certification_date       DATE,
+  aid                      Aid ARRAY,
+  physician_id             INTEGER NOT NULL,
+  created_at               TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at               TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY(physician_id) REFERENCES physicians(id)
+);
+
 -- Create applicants table
 CREATE TABLE applicants (
   id                        SERIAL PRIMARY KEY NOT NULL,
@@ -99,47 +134,13 @@ CREATE TABLE applicants (
   rcd_user_id               INTEGER UNIQUE,
   status                    ApplicantStatus,
   accepted_TOC              TIMESTAMPTZ,
+  guardian_id               INTEGER UNIQUE NOT NULL,
+  medical_information_id    INTEGER UNIQUE NOT NULL,
   created_at                TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at                TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+  updated_at                TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
--- Create guardians table
-CREATE TABLE guardians (
-  id              SERIAL PRIMARY KEY NOT NULL,
-  first_name      VARCHAR(255) NOT NULL, 
-  middle_name     VARCHAR(255),
-  last_name       VARCHAR(255) NOT NULL,
-  address_line_1  VARCHAR(255) NOT NULL,
-  address_line_2  VARCHAR(255),
-  city            VARCHAR(255) NOT NULL,
-  province        Province NOT NULL,
-  postal_code     CHAR(6) NOT NULL,
-  phone           VARCHAR(50) NOT NULL,
-  relationship    VARCHAR(255) NOT NULL,
-  notes           TEXT,
-  applicant_id    INTEGER UNIQUE NOT NULL,
-  created_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(applicant_id) REFERENCES applicants(id)
-);
-
--- Create medical information table
-CREATE TABLE medical_information (
-  id                       SERIAL PRIMARY KEY NOT NULL,
-  disability               VARCHAR(255) NOT NULL,
-  affects_mobility         BOOLEAN NOT NULL DEFAULT false,
-  mobility_aid_required    BOOLEAN NOT NULL DEFAULT false,
-  cannot_walk_100m         BOOLEAN NOT NULL DEFAULT false,
-  notes                    TEXT,
-  certification_date       DATE,
-  aid                      Aid ARRAY,
-  physician_id             INTEGER NOT NULL,
-  applicant_id             INTEGER UNIQUE NOT NULL,
-  created_at               TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at               TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-  FOREIGN KEY(physician_id) REFERENCES physicians(id),
-  FOREIGN KEY(applicant_id) REFERENCES applicants(id)
+  FOREIGN KEY(guardian_id) REFERENCES guardians(id),
+  FOREIGN KEY(medical_information_id) REFERENCES medical_information(id)
 );
 
 -- Create applications table
@@ -211,6 +212,7 @@ CREATE TABLE applications (
   billing_postal_code                      CHAR(6),
   created_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
   FOREIGN KEY(applicant_id) REFERENCES applicants(id)
 );
 

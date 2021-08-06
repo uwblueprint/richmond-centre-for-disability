@@ -1,10 +1,12 @@
 import { Box, HStack, VStack, Text, Divider, Badge, Link } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
-import { Applicant } from '@lib/graphql/types'; // Applicant type
+// TODO: Temporary fix - add back in API hookup
+// import { Applicant } from '@lib/graphql/types'; // Applicant type
 import { MouseEventHandler } from 'react'; // React
 
 type PersonalInformationProps = {
-  readonly applicant: Applicant;
+  // TODO: Temporary fix - will be addressed in API hookup
+  readonly applicant: any;
   readonly expirationDate: string;
   readonly mostRecentAPP: number;
   readonly contactInfoUpdated?: boolean;

@@ -17,8 +17,10 @@ type Applicant {
   acceptedTOC: Date
   status: ApplicantStatus
   applications: [Application!]
-  guardian: Guardian
-  medicalInformation: MedicalInformation
+  guardianId: Int!
+  guardian: Guardian!
+  medicalInformationId: Int!
+  medicalInformation: MedicalInformation!
   permits: [Permit!]
   medicalHistory: [MedicalHistory!]
 }
