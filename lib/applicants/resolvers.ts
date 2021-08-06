@@ -1,5 +1,6 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Resolver } from '@lib/resolvers'; // Resolver type
+import { Scalars } from '@lib/types'; // GraphQL types
 import {
   ApplicantAlreadyExistsError,
   ApplicantNotFoundError,
@@ -8,6 +9,7 @@ import {
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { MspNumberDoesNotExistError } from '@lib/physicians/errors'; // Physician errors
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
+import { MutationCreateApplicantArgs } from '@lib/graphql/types';
 
 /**
  * Query all the RCD applicants in the internal-facing app
@@ -22,7 +24,7 @@ export const applicants: Resolver = async (_parent, _args, { prisma }) => {
  * Query an applicant based on ID
  * @returns Applicant with given ID
  */
-export const applicant: Resolver = async (_parent, args, { prisma }) => {
+export const applicant: Resolver<{ id: Scalars['ID'] }> = async (_parent, args, { prisma }) => {
   const applicant = await prisma.applicant.findUnique({
     where: {
       id: parseInt(args.id),
@@ -35,7 +37,11 @@ export const applicant: Resolver = async (_parent, args, { prisma }) => {
  * Create an applicant
  * @returns Status of operation (ok)
  */
-export const createApplicant: Resolver = async (_, args, { prisma }) => {
+export const createApplicant: Resolver<MutationCreateApplicantArgs> = async (
+  _,
+  args,
+  { prisma }
+) => {
   const { input } = args;
   const {
     medicalInformation: { physicianMspNumber, ...medicalInformation },
@@ -65,7 +71,15 @@ export const createApplicant: Resolver = async (_, args, { prisma }) => {
         postalCode: formatPostalCode(input.postalCode),
         phone: formatPhoneNumber(input.phone),
         medicalInformation: {
-          create: { ...medicalInformation, physicianId: physician.id },
+          create: {
+            ...medicalInformation,
+            aid: medicalInformation.aid === null ? [] : medicalInformation.aid,
+            physician: {
+              connect: {
+                mspNumber: physicianMspNumber,
+              },
+            },
+          },
         },
         guardian: {
           create: guardian,
@@ -97,8 +111,8 @@ export const updateApplicant: Resolver = async (_, args, { prisma }) => {
   const { id, ...rest } = input;
   const formattedApplicantData = {
     ...rest,
-    phone: formatPhoneNumber(input.phone),
-    postalCode: formatPostalCode(input.postalCode),
+    phone: input.phone && formatPhoneNumber(input.phone),
+    postalCode: input.postalCode && formatPostalCode(input.postalCode),
   };
 
   let updatedApplicant;

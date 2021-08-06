@@ -64,10 +64,9 @@ CREATE TABLE verification_requests (
 
 -- Create physicians table
 CREATE TABLE physicians (
-  id              SERIAL PRIMARY KEY NOT NULL,
+  msp_number      INTEGER PRIMARY KEY NOT NULL,
   first_name      VARCHAR(255) NOT NULL,
   last_name       VARCHAR(255) NOT NULL,
-  msp_number      INTEGER UNIQUE NOT NULL,
   address_line_1  VARCHAR(255) NOT NULL,
   address_line_2  VARCHAR(255),
   city            VARCHAR(255) NOT NULL,
@@ -106,7 +105,7 @@ CREATE TABLE applicants (
 -- Create guardians table
 CREATE TABLE guardians (
   id              SERIAL PRIMARY KEY NOT NULL,
-  first_name      VARCHAR(255) NOT NULL, 
+  first_name      VARCHAR(255) NOT NULL,
   middle_name     VARCHAR(255),
   last_name       VARCHAR(255) NOT NULL,
   address_line_1  VARCHAR(255) NOT NULL,
@@ -133,12 +132,12 @@ CREATE TABLE medical_information (
   notes                    TEXT,
   certification_date       DATE,
   aid                      Aid ARRAY,
-  physician_id             INTEGER NOT NULL,
+  physician_msp_number     INTEGER NOT NULL,
   applicant_id             INTEGER UNIQUE NOT NULL,
   created_at               TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at               TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  FOREIGN KEY(physician_id) REFERENCES physicians(id),
+  FOREIGN KEY(physician_msp_number) REFERENCES physicians(msp_number),
   FOREIGN KEY(applicant_id) REFERENCES applicants(id)
 );
 
