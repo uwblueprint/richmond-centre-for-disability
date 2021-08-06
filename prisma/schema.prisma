@@ -148,12 +148,12 @@ model MedicalInformation {
   notes               String?
   certificationDate   DateTime? @map("certification_date") @db.Date
   aid                 Aid[]
-  physicianMspNumber  Int       @map("physician_msp_number")
+  physicianId         Int       @map("physician_id")
   applicantId         Int       @unique @map("applicant_id")
   createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt           DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
   applicant           Applicant @relation(fields: [applicantId], references: [id])
-  physician           Physician @relation("medical_informationTophysicians", fields: [physicianMspNumber], references: [mspNumber])
+  physician           Physician @relation(fields: [physicianId], references: [id])
 
   @@map("medical_information")
 }
@@ -175,9 +175,10 @@ model Permit {
 }
 
 model Physician {
-  mspNumber          Int                  @id @map("msp_number")
+  id                 Int                  @id @default(autoincrement())
   firstName          String               @map("first_name") @db.VarChar(255)
   lastName           String               @map("last_name") @db.VarChar(255)
+  mspNumber          Int                  @unique @map("msp_number")
   addressLine1       String               @map("address_line_1") @db.VarChar(255)
   addressLine2       String?              @map("address_line_2") @db.VarChar(255)
   city               String               @db.VarChar(255)
@@ -188,7 +189,7 @@ model Physician {
   notes              String?
   createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  medicalInformation MedicalInformation[] @relation("medical_informationTophysicians")
+  medicalInformation MedicalInformation[]
 
   @@map("physicians")
 }

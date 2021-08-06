@@ -1,11 +1,10 @@
-import { GraphQLResolveInfo } from 'graphql'; // GraphQL resolve info type
-import { MergeInfo } from 'apollo-server-micro'; // Apollo server merge info type
 import { meta } from '@lib/meta/resolvers'; // Metadata resolvers
 import { employees, createEmployee } from '@lib/employees/resolvers'; // Employee resolvers
 import { applicant, applicants, createApplicant, updateApplicant } from '@lib/applicants/resolvers'; // Applicant resolvers
 import { physicians, createPhysician, upsertPhysician } from '@lib/physicians/resolvers'; // Physician resolvers
 import { applications, createApplication } from '@lib/applications/resolvers';
 import { permits, createPermit } from '@lib/permits/resolvers';
+import { IFieldResolver } from 'graphql-tools'; // GraphQL field resolver
 import { Context } from '@lib/context'; // Context type
 import { dateScalar } from '@lib/scalars'; // Custom date scalar implementation
 import { authorize } from '@lib/authorization';
@@ -26,20 +25,8 @@ import { updateMedicalInformation } from '@lib/medicalInformation/resolvers'; //
 import { medicalInformationPhysicianResolver } from '@lib/medicalInformation/field-resolvers'; // Medical information field resolvers
 import { updateGuardian } from '@lib/guardian/resolvers'; // Guardian resolvers
 
-/**
- * Resolver type used in GraphQL resolvers. Based on the IFieldResolver type from graphql-tools.
- * R - Return type (required)
- * A - Args type (required)
- * P - Parent type, which should be specified for field resolvers (default `undefined`)
- */
-export type Resolver<A = Record<string, any>, P = undefined> = (
-  parent: P,
-  args: A,
-  context: Context,
-  info: GraphQLResolveInfo & {
-    mergeInfo: MergeInfo;
-  }
-) => any;
+// Resolver type
+export type Resolver<P = undefined> = IFieldResolver<P, Context>;
 
 // authorize is a wrapper around graphQL resolvers that protects and restricts routes based on RCD employee roles.
 const resolvers = {
