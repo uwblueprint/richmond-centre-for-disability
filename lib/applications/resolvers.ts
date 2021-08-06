@@ -206,6 +206,7 @@ export const updateApplication: Resolver = async (_, args, { prisma }) => {
 
 /**
  * Create a renewal application
+ * Requires updated field values to be provided if any of personal address, contact, or doctor info are updated.
  * @returns Status of operation (ok)
  */
 export const createRenewalApplication: Resolver = async (_, args, { prisma }) => {
@@ -270,6 +271,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
   const physician = applicant.medicalInformation?.physician;
 
   // Temporary Shopify confirmation number placeholder
+  // TODO: Integrate with Shopify payments
   const currentDateTime = new Date().getTime().toString();
   const shopifyConfirmationNumber = currentDateTime.substr(currentDateTime.length - 7);
 

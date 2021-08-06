@@ -263,8 +263,11 @@ export const updateApplicant: Resolver = async (_, args, { prisma }) => {
 };
 
 /**
- * Verify applicant identity when applying for an APP, given the RCD user ID, last 4 digits of phone number, and date of birth
- * @returns ID of applicant, if applicant is found and current APP is expiring soon
+ * Verify applicant identity when applying for an APP, given the RCD user ID,
+ * last 4 digits of phone number, and date of birth.
+ * Requires that the above information matches a record in the DB, and that the
+ * applicant has an active permit that is expiring within the next 30 days.
+ * @returns Whether identity could be verified (ok), failure reason if ok=false, applicant ID if ok=true
  */
 export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
   const {

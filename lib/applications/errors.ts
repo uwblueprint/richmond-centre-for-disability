@@ -45,7 +45,7 @@ export class ApplicationNotFoundError extends ApolloError {
 }
 
 /**
- * Missing updated fields error
+ * Missing updated fields error (when submitting renewal application)
  */
 export class UpdatedFieldsMissingError extends ApolloError {
   constructor(message: string) {

@@ -87,43 +87,6 @@ export default function Renew() {
       !doctorPostalCode ||
       !doctorPhoneNumber);
 
-  // Input for submitting application form
-  // TODO: Add applicantId from Request state
-  // let submitApplicationInput = {
-  //   updatedAddress,
-  //   updatedContactInfo,
-  //   updatedPhysician: updatedDoctor,
-  // };
-  // if (updatedAddress) {
-  //   submitApplicationInput = {
-  //     ...submitApplicationInput,
-  //     addressLine1: personalAddressLine1,
-  //     addressLine2: personalAddressLine2,
-  //     city: personalCity,
-  //     postalCode: personalPostalCode,
-  //   };
-  // }
-  // if (updatedContactInfo) {
-  //   submitApplicationInput = {
-  //     ...submitApplicationInput,
-  //     phone: contactPhoneNumber,
-  //     email: contactEmailAddress,
-  //   };
-  // }
-  // if (updatedDoctor) {
-  //   submitApplicationInput = {
-  //     ...submitApplicationInput,
-  //     physicianFirstName: doctorFirstName,
-  //     physicianLastName: doctorLastName,
-  //     physicianMspNumber: doctorMspNumber,
-  //     physicianAddressLine1: doctorAddressLine1,
-  //     physicianAddressLine2: doctorAddressLine2,
-  //     physicianCity: doctorCity,
-  //     physicianPostalCode: doctorPostalCode,
-  //     physicianPhone: doctorPhoneNumber,
-  //   };
-  // }
-
   // Submit application mutation
   const [submitApplication, { loading }] = useMutation<
     CreateRenewalApplicationResponse,
