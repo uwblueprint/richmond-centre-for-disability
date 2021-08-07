@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
-import { Role } from '@lib/types'; // Role enum
+import { Applicant, Role } from '@lib/types'; // Role enum and Applicant Type
 import { authorize } from '@tools/authorization'; // Page authorization
 import PermitHolderHeader from '@components/permit-holders/PermitHolderHeader'; // Permit Holder header
 import DoctorInformationCard from '@components/permit-holders/DoctorInformationCard'; // Doctor information card
@@ -38,7 +38,7 @@ const mockApplication = {
     city: 'Richmond',
     addressLine1: '123 Richmond St.',
     postalCode: 'X0X0X0',
-  },
+  } as Applicant,
   physician: {
     id: 1,
     mspNumber: 123456789,
