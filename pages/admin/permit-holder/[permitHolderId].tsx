@@ -38,7 +38,7 @@ const mockApplication = {
     city: 'Richmond',
     addressLine1: '123 Richmond St.',
     postalCode: 'X0X0X0',
-  } as Applicant,
+  },
   physician: {
     id: 1,
     mspNumber: 123456789,
@@ -78,7 +78,10 @@ export default function PermitHolder() {
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3}>
-        <PermitHolderHeader applicant={applicant} applicationStatus={applicationStatus} />
+        <PermitHolderHeader
+          applicant={applicant as Applicant}
+          applicationStatus={applicationStatus}
+        />
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
         <Stack spacing={5}>
