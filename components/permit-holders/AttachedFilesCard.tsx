@@ -67,7 +67,7 @@ function _renderFileLink({ value }: downloadFileProps) {
 
 export default function AttachedFilesCard() {
   return (
-    <PermitHolderInfoCard colSpan={12} header={`Attached Files`}>
+    <PermitHolderInfoCard alignGridItems="normal" header={`Attached Files`}>
       <Divider pt="24px" />
       <Box padding="20px 24px">
         <Table columns={COLUMNS} data={DATA} />

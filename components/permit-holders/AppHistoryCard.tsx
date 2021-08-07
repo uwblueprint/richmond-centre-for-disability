@@ -101,7 +101,7 @@ function _renderAppLink({ value }: appProps) {
 
 export default function AppHistoryCard() {
   return (
-    <PermitHolderInfoCard colSpan={12} header={`APP History`}>
+    <PermitHolderInfoCard header={`APP History`} alignGridItems="normal">
       <Divider pt="24px" />
       <Box padding="20px 24px">
         <Table columns={COLUMNS} data={DATA} />

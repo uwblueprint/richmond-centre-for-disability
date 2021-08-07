@@ -59,7 +59,7 @@ function _renderConditionDetailsLink() {
 
 export default function MedicalHistoryCard() {
   return (
-    <PermitHolderInfoCard colSpan={12} header={`Medical History`}>
+    <PermitHolderInfoCard alignGridItems="normal" header={`Medical History`}>
       <Divider pt="24px" />
       <Box padding="20px 24px">
         <Table columns={COLUMNS} data={DATA} />
