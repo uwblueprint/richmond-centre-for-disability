@@ -1,10 +1,10 @@
 import { Box, Text, Divider, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
-import { Physician } from '@lib/graphql/types'; // Physician type
 import EditDoctorInformationModal from '@components/requests/modals/EditDoctorInformationModal'; // Edit modal
+import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
 
 type DoctorInformationProps = {
-  physician: Physician;
+  physician: DoctorInformationCardPhysician;
   readonly isUpdated?: boolean;
 };
 
@@ -16,7 +16,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       header={`Doctor's Information`}
       updated={isUpdated}
       editModal={
-        <EditDoctorInformationModal>
+        <EditDoctorInformationModal physician={physician}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>

@@ -71,6 +71,18 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
       mobilityAidRequired,
       cannotWalk100m,
 
+      guardianFirstName,
+      guardianMiddleName,
+      guardianLastName,
+      guardianPhone,
+      guardianProvince,
+      guardianCity,
+      guardianAddressLine1,
+      guardianAddressLine2,
+      guardianPostalCode,
+      guardianRelationship,
+      guardianNotes,
+
       physicianName,
       physicianMspNumber,
       physicianAddressLine1,
@@ -106,6 +118,20 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
       cannotWalk100m,
     };
 
+    const guardianData = {
+      guardianFirstName,
+      guardianMiddleName,
+      guardianLastName,
+      guardianPhone,
+      guardianProvince,
+      guardianCity,
+      guardianAddressLine1,
+      guardianAddressLine2,
+      guardianPostalCode,
+      guardianRelationship,
+      guardianNotes,
+    };
+
     const physicianData = {
       firstName: physicianName,
       mspNumber: physicianMspNumber,
@@ -123,12 +149,24 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
       data: {
         status: 'COMPLETED',
         application: {
-          /* applicant: {
-            ...applicantData,
-            medicalInformation,
+          update: {
+            applicant: {
+              update: {
+                ...applicantData,
+                medicalInformation: {
+                  update: {
+                    ...medicalInformationData,
+                    physician: {
+                      update: physicianData,
+                    },
+                  },
+                },
+                guardian: {
+                  update: guardianData,
+                },
+              },
+            },
           },
-          guardian: {},
-          physician: {}, */
         },
       },
     });

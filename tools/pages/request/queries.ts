@@ -36,6 +36,20 @@ export const GET_APPLICATION = gql`
       physicianPhone
       physicianNotes
 
+      billingAddressSameAsShippingAddress
+      shippingAddressLine1
+      shippingAddressLine2
+      shippingCity
+      shippingProvince
+      shippingCountry
+      shippingPostalCode
+      billingAddressLine1
+      billingAddressLine2
+      billingCity
+      billingProvince
+      billingCountry
+      billingPostalCode
+
       processingFee
       donationAmount
       paymentMethod

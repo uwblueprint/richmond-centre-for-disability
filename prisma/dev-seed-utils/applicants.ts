@@ -7,6 +7,7 @@ import { Gender, Province, ApplicantStatus } from '../../lib/graphql/types'; // 
 const applicants = [
   {
     id: 1,
+    rcdUserId: 12345,
     firstName: 'Applicant',
     middleName: 'Middle-One',
     lastName: 'One',
@@ -25,6 +26,7 @@ const applicants = [
   },
   {
     id: 2,
+    rcdUserId: 23456,
     firstName: 'Applicant',
     lastName: 'Two',
     email: 'applicanttwo@email.com',

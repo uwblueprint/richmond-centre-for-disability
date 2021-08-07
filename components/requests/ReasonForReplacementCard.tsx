@@ -1,25 +1,22 @@
 import { Box, Text, Divider, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import EditReasonForReplacementModal from '@components/requests/modals/EditReasonForReplacementModal'; // Edit modal
-import { ReasonForReplacement } from '@lib/types'; // Types
+import { ReplacementData } from '@tools/components/internal/requests/reason-for-replacement-card'; // Applicant type
 
 type ReplacementProps = {
-  readonly cause: ReasonForReplacement;
-  readonly timestamp: string;
-  readonly locationLost: string;
-  readonly description: string;
+  readonly replacement: ReplacementData;
   readonly isUpdated?: boolean;
 };
 
 export default function ReasonForReplacementCard(props: ReplacementProps) {
-  const { isUpdated } = props;
+  const { replacement, isUpdated } = props;
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Reason For Replacement`}
       updated={isUpdated}
       editModal={
-        <EditReasonForReplacementModal>
+        <EditReasonForReplacementModal replacement={replacement}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
@@ -28,10 +25,14 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
     >
       <Divider pt="24px" />
       <SimpleGrid columns={2} spacingY="12px" spacingX="20px" pt="20px">
-        <InfoSection title={`Cause`}>{props.cause}</InfoSection>
-        <InfoSection title={`Event Timestamp`}>{props.timestamp}</InfoSection>
-        <InfoSection title={`Location Lost`}>{props.locationLost}</InfoSection>
-        <InfoSection title={`Event Description`}>{props.description}</InfoSection>
+        <InfoSection title={`Cause`}>{replacement.reason}</InfoSection>
+        <InfoSection title={`Event Timestamp`}>{replacement.lostTimestamp}</InfoSection>
+        {replacement.lostLocation && (
+          <InfoSection title={`Location Lost`}>{replacement.lostLocation}</InfoSection>
+        )}
+        {replacement.description && (
+          <InfoSection title={`Event Description`}>{replacement.description}</InfoSection>
+        )}
       </SimpleGrid>
     </PermitHolderInfoCard>
   );

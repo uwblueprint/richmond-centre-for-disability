@@ -7,6 +7,7 @@ import { Gender, Province, PaymentType, Aid } from '../../lib/graphql/types'; //
 const applications = [
   {
     id: 1,
+    rcdUserId: 12345,
     firstName: 'Applicant',
     lastName: 'One',
     gender: Gender.Male,
@@ -32,6 +33,7 @@ const applications = [
   },
   {
     id: 2,
+    rcdUserId: 23456,
     firstName: 'Applicant',
     lastName: 'Two',
     gender: Gender.Female,

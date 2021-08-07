@@ -111,6 +111,19 @@ export type Application = {
   physicianPhone: Scalars['String'];
   physicianNotes?: Maybe<Scalars['String']>;
   /** Payment Information */
+  shippingAddressLine1?: Maybe<Scalars['String']>;
+  shippingAddressLine2?: Maybe<Scalars['String']>;
+  shippingCity?: Maybe<Scalars['String']>;
+  shippingProvince?: Maybe<Scalars['String']>;
+  shippingCountry?: Maybe<Scalars['String']>;
+  shippingPostalCode?: Maybe<Scalars['String']>;
+  billingAddressLine1?: Maybe<Scalars['String']>;
+  billingAddressLine2?: Maybe<Scalars['String']>;
+  billingCity?: Maybe<Scalars['String']>;
+  billingProvince?: Maybe<Scalars['String']>;
+  billingCountry?: Maybe<Scalars['String']>;
+  billingPostalCode?: Maybe<Scalars['String']>;
+  billingAddressSameAsShippingAddress?: Maybe<Scalars['Boolean']>;
   processingFee: Scalars['Float'];
   donationAmount?: Maybe<Scalars['Float']>;
   paymentMethod: PaymentType;

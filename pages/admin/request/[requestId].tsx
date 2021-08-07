@@ -118,6 +118,20 @@ export default function Request({ requestId }: RequestProps) {
     physicianPhone,
     physicianNotes,
 
+    billingAddressSameAsShippingAddress,
+    shippingAddressLine1,
+    shippingAddressLine2,
+    shippingCity,
+    shippingProvince,
+    shippingCountry,
+    shippingPostalCode,
+    billingAddressLine1,
+    billingAddressLine2,
+    billingCity,
+    billingProvince,
+    billingCountry,
+    billingPostalCode,
+
     processingFee,
     donationAmount,
     paymentMethod,
@@ -160,6 +174,25 @@ export default function Request({ requestId }: RequestProps) {
     addressLine1,
     addressLine2,
     postalCode,
+  };
+
+  const paymentInformationData = {
+    billingAddressSameAsShippingAddress,
+    shippingAddressLine1,
+    shippingAddressLine2,
+    shippingCity,
+    shippingProvince,
+    shippingCountry,
+    shippingPostalCode,
+    billingAddressLine1,
+    billingAddressLine2,
+    billingCity,
+    billingProvince,
+    billingCountry,
+    billingPostalCode,
+    permitFee: processingFee,
+    donation: donationAmount,
+    paymentType: paymentMethod,
   };
 
   const physicianData = {
@@ -278,28 +311,11 @@ export default function Request({ requestId }: RequestProps) {
                 <DoctorInformationCard physician={physicianData} />
               ) : (
                 <ReasonForReplacementCard
-                  cause={replacement?.reason}
-                  timestamp={replacement?.lostTimestamp}
-                  locationLost={replacement?.locationLost}
-                  description={replacement?.description}
+                  replacement={replacement}
                   isUpdated={replacement?.isUpdated}
                 />
               )}
-              <PaymentInformationCard
-                permitFee={processingFee}
-                donation={donationAmount}
-                paymentType={paymentMethod}
-                shippingCountry="Canada"
-                shippingAddress={addressLine1}
-                shippingCity={city}
-                shippingProvince={province}
-                shippingPostalCode={postalCode}
-                billingCountry="Canada"
-                billingAddress={addressLine1}
-                billingCity={city}
-                billingProvince={province}
-                billingPostalCode={postalCode}
-              />
+              <PaymentInformationCard paymentInformation={paymentInformationData} />
             </Stack>
           </GridItem>
         </>

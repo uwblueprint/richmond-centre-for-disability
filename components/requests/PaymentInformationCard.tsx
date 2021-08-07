@@ -1,37 +1,40 @@
 import { Box, Text, Divider, SimpleGrid, VStack, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
-import { PaymentType } from '@lib/graphql/types'; // PaymentType Enum
 import EditPaymentDetailsModal from '@components/requests/modals/EditPaymentDetailsModal'; // Edit modal
+import { PaymentInformation } from '@tools/components/internal/requests/payment-information-card'; // Applicant type
 
 type PaymentInformationProps = {
-  readonly permitFee: number;
-  readonly donation: number;
-  readonly paymentType: PaymentType;
-
-  readonly shippingAddress: string;
-  readonly shippingCity: string;
-  readonly shippingProvince: string;
-  readonly shippingCountry: string;
-  readonly shippingPostalCode: string;
-
-  readonly billingAddress: string;
-  readonly billingCity: string;
-  readonly billingProvince: string;
-  readonly billingCountry: string;
-  readonly billingPostalCode: string;
-
+  readonly paymentInformation: PaymentInformation;
   readonly isUpdated?: boolean;
 };
 
 export default function PaymentInformationCard(props: PaymentInformationProps) {
-  const { isUpdated } = props;
+  const { paymentInformation, isUpdated } = props;
+  const {
+    permitFee,
+    donation,
+    paymentType,
+    shippingAddressLine1,
+    shippingAddressLine2,
+    shippingCity,
+    shippingProvince,
+    shippingCountry,
+    shippingPostalCode,
+    billingAddressLine1,
+    billingAddressLine2,
+    billingCity,
+    billingProvince,
+    billingCountry,
+    billingPostalCode,
+  } = paymentInformation;
+
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Payment, Shipping, and Billing Information`}
       updated={isUpdated}
       editModal={
-        <EditPaymentDetailsModal>
+        <EditPaymentDetailsModal paymentInformation={paymentInformation}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
@@ -53,7 +56,7 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
           </Box>
           <Box>
             <Text as="p" textStyle="body-regular">
-              ${props.permitFee}
+              ${permitFee}
             </Text>
           </Box>
           <Box>
@@ -63,12 +66,12 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
           </Box>
           <Box>
             <Text as="p" textStyle="body-regular">
-              ${props.donation || 0}
+              ${donation || 0}
             </Text>
           </Box>
           <Box>
             <Text as="p" textStyle="caption">
-              Paid with {props.paymentType}
+              Paid with {paymentType}
             </Text>
           </Box>
         </SimpleGrid>
@@ -83,16 +86,16 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
           </Box>
           <Box>
             <Text as="p" textStyle="body-regular">
-              {props.shippingAddress}
+              {shippingAddressLine1} {shippingAddressLine2}
             </Text>
             <Text as="p" textStyle="body-regular">
-              {props.shippingCity} {props.shippingProvince}
+              {shippingCity} {shippingProvince}
             </Text>
             <Text as="p" textStyle="body-regular">
-              {props.shippingCountry}
+              {shippingCountry}
             </Text>
             <Text as="p" textStyle="body-regular">
-              {props.shippingPostalCode}
+              {shippingPostalCode}
             </Text>
           </Box>
         </VStack>
@@ -104,16 +107,16 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
           </Box>
           <Box>
             <Text as="p" textStyle="body-regular">
-              {props.billingAddress}
+              {billingAddressLine1} {billingAddressLine2}
             </Text>
             <Text as="p" textStyle="body-regular">
-              {props.billingCity} {props.billingProvince}
+              {billingCity} {billingProvince}
             </Text>
             <Text as="p" textStyle="body-regular">
-              {props.billingCountry}
+              {billingCountry}
             </Text>
             <Text as="p" textStyle="body-regular">
-              {props.billingPostalCode}
+              {billingPostalCode}
             </Text>
           </Box>
         </VStack>

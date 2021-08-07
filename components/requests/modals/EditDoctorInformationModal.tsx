@@ -17,19 +17,23 @@ import {
   Divider,
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import SuccessFulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
+import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
+import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
+import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
 
 type EditDoctorInformationModalProps = {
+  physician: DoctorInformationCardPhysician;
   children: ReactNode;
 };
 
-export default function EditDoctorInformationModal({ children }: EditDoctorInformationModalProps) {
+export default function EditDoctorInformationModal({
+  physician,
+  children,
+}: EditDoctorInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [mspNumber, setMspNumber] = useState('');
+  const [mspNumber, setMspNumber] = useState<number | undefined>();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [addressLine1, setAddressLine1] = useState('');
   const [addressLine2, setAddressLine2] = useState('');
@@ -37,6 +41,15 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
   const [postalCode, setPostalCode] = useState('');
 
   const successfulEditToast = useToast();
+  useEffect(() => {
+    setFirstName(physician.firstName);
+    setMspNumber(physician.mspNumber);
+    setPhoneNumber(physician.phone);
+    setAddressLine1(physician.addressLine1);
+    if (physician.addressLine2) setAddressLine2(physician.addressLine2);
+    setCity(physician.city);
+    setPostalCode(physician.postalCode);
+  }, [physician]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -45,7 +58,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
 
     successfulEditToast({
       render: () => (
-        <SuccessFulEditAlert>{'Doctor’s information has been edited.'}</SuccessFulEditAlert>
+        <SuccessfulEditAlert>{'Doctor’s information has been edited.'}</SuccessfulEditAlert>
       ),
     });
   };
@@ -74,10 +87,6 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
                   <FormControl isRequired>
                     <FormLabel>{'First name'}</FormLabel>
                     <Input value={firstName} onChange={event => setFirstName(event.target.value)} />
-                  </FormControl>
-                  <FormControl isRequired>
-                    <FormLabel>{'Last name'}</FormLabel>
-                    <Input value={lastName} onChange={event => setLastName(event.target.value)} />
                   </FormControl>
                 </Stack>
 

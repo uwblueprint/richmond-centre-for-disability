@@ -81,7 +81,7 @@ export default function ProcessingTasksCard({
   const steps = [
     // Task 1: Assign new APP number: Assign number (MODAL)
     {
-      label: 'Assign new APP number' + (APPNumber === undefined ? '' : `: ${APPNumber}`),
+      label: 'Assign new APP number' + (!isNaN(Number(APPNumber)) ? '' : `: ${APPNumber}`),
     },
     // Task 2: Hole punch parking permit: Mark as complete (CHECK)
     {
@@ -95,7 +95,7 @@ export default function ProcessingTasksCard({
     },
     // Task 4: Assign invoice number: Assign number (MODAL)
     {
-      label: 'Assign invoice number' + (invoiceNumber === undefined ? '' : `: ${invoiceNumber}`),
+      label: 'Assign invoice number' + (!isNaN(Number(invoiceNumber)) ? '' : `: ${invoiceNumber}`),
     },
     // Task 5: Upload document: Choose document (UPLOAD FILE)
     {

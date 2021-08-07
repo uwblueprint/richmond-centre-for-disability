@@ -42,6 +42,19 @@ type Application {
   physicianNotes: String
 
   #Payment Information
+  shippingAddressLine1: String
+  shippingAddressLine2: String
+  shippingCity: String
+  shippingProvince: String
+  shippingCountry: String
+  shippingPostalCode: String
+  billingAddressLine1: String
+  billingAddressLine2: String
+  billingCity: String
+  billingProvince: String
+  billingCountry: String
+  billingPostalCode: String
+  billingAddressSameAsShippingAddress: Boolean
   processingFee: Float!
   donationAmount: Float
   paymentMethod: PaymentType!

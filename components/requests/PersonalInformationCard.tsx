@@ -1,12 +1,11 @@
-import { Box, HStack, VStack, Text, Divider, Badge, Link } from '@chakra-ui/react'; // Chakra UI
+import { Box, HStack, VStack, Text, Divider, Badge, Link, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
-// TODO: Temporary fix - add back in API hookup
-// import { Applicant } from '@lib/graphql/types'; // Applicant type
+import EditPermitHolderInformationModal from '@components/internal/modals/EditPermitHolderInformationModal'; // Edit modal
 import { MouseEventHandler } from 'react'; // React
+import { PersonalInformationCardApplicant } from '@tools/components/internal/requests/personal-information-card'; // Applicant type
 
 type PersonalInformationProps = {
-  // TODO: Temporary fix - will be addressed in API hookup
-  readonly applicant: any;
+  readonly applicant: PersonalInformationCardApplicant;
   readonly expirationDate: string;
   readonly mostRecentAPP: number;
   readonly contactInfoUpdated?: boolean;
@@ -27,7 +26,17 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
     </Link>
   );
   return (
-    <PermitHolderInfoCard colSpan={5} header={header}>
+    <PermitHolderInfoCard
+      colSpan={5}
+      header={header}
+      editModal={
+        <EditPermitHolderInformationModal applicant={applicant}>
+          <Button color="primary" variant="ghost" textDecoration="underline">
+            <Text textStyle="body-bold">Edit</Text>
+          </Button>
+        </EditPermitHolderInformationModal>
+      }
+    >
       <VStack spacing="12px" pt="12px" align="left">
         <Box>
           <Text as="p" textStyle="body-regular">

@@ -18,13 +18,16 @@ import {
   Radio,
   Textarea,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
+import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
+import { ReplacementData } from '@tools/components/internal/requests/reason-for-replacement-card'; // Applicant type
 
 type EditReasonForReplacementModalProps = {
+  replacement: ReplacementData;
   children: ReactNode;
 };
 
 export default function EditReasonForReplacementModal({
+  replacement,
   children,
 }: EditReasonForReplacementModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -45,6 +48,13 @@ export default function EditReasonForReplacementModal({
 
   //   Other information state
   const [otherEventDescription, setOtherEventDescription] = useState('');
+
+  useEffect(() => {
+    setReason(replacement.reason);
+    setTimestamp(replacement.lostTimestamp);
+    if (replacement.lostLocation) setLocation(replacement.lostLocation);
+    if (replacement.description) setEventDescription(replacement.description);
+  }, [replacement]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();

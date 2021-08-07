@@ -16,13 +16,16 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
+import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
+import { PersonalInformationCardApplicant } from '@tools/components/internal/requests/personal-information-card'; // Applicant type
 
 type EditPermitHolderInformationModalProps = {
+  readonly applicant: PersonalInformationCardApplicant;
   children: ReactNode;
 };
 
 export default function EditPermitHolderInformationModal({
+  applicant,
   children,
 }: EditPermitHolderInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -40,6 +43,17 @@ export default function EditPermitHolderInformationModal({
   const [addressLine2, setAddressLine2] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
+
+  useEffect(() => {
+    setFirstName(applicant.firstName);
+    setLastName(applicant.lastName);
+    if (applicant.email) setEmail(applicant.email);
+    setPhoneNumber(applicant.phone);
+    setAddressLine1(applicant.addressLine1);
+    if (applicant.addressLine2) setAddressLine2(applicant.addressLine2);
+    setCity(applicant.city);
+    setPostalCode(applicant.postalCode);
+  }, [applicant]);
 
   //   TODO: Add error states for each field (post-mvp)
 

@@ -24,18 +24,23 @@ import {
   GridItem,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
+import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
 import { PaymentType } from '@lib/graphql/types'; // PaymentType Enum
+import { PaymentInformation } from '@tools/components/internal/requests/payment-information-card'; // Applicant type
 
 type EditPaymentDetailsModalProps = {
+  paymentInformation: PaymentInformation;
   children: ReactNode;
 };
 
-export default function EditPaymentDetailsModal({ children }: EditPaymentDetailsModalProps) {
+export default function EditPaymentDetailsModal({
+  paymentInformation,
+  children,
+}: EditPaymentDetailsModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentType | string>('');
-  const [donation, setDonation] = useState('');
+  const [donation, setDonation] = useState<number | undefined>();
 
   //   Shipping address information state
   const [sameShippingAndHomeAddresses, setSameShippingAndHomeAddresses] = useState(false); // Whether shipping information is visible
@@ -59,6 +64,25 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
   const [billingProvince, setBillingProvince] = useState('');
   const [billingCountry, setBillingCountry] = useState('');
   const [billingPostalCode, setBillingPostalCode] = useState('');
+
+  useEffect(() => {
+    setPaymentMethod(paymentInformation.paymentType);
+    setDonation(paymentInformation.donation);
+
+    setShippingAddressLine1(paymentInformation.shippingAddressLine1);
+    setShippingAddressLine2(paymentInformation.shippingAddressLine2);
+    setShippingCity(paymentInformation.shippingCity);
+    setShippingProvince(paymentInformation.shippingProvince);
+    setShippingCountry(paymentInformation.shippingCountry);
+    setShippingPostalCode(paymentInformation.shippingPostalCode);
+
+    setBillingAddressLine1(paymentInformation.billingAddressLine1);
+    setBillingAddressLine2(paymentInformation.billingAddressLine2);
+    setBillingCity(paymentInformation.billingCity);
+    setBillingProvince(paymentInformation.billingProvince);
+    setBillingCountry(paymentInformation.billingCountry);
+    setBillingPostalCode(paymentInformation.billingPostalCode);
+  }, [paymentInformation]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
