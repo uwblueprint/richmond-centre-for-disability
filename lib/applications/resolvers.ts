@@ -11,10 +11,18 @@ import { DBErrorCode } from '@lib/db/errors'; // Database errors
  * Query all the RCD applications in the internal-facing app
  * @returns All RCD applications
  */
-export const applications: Resolver = async (_parent, _args, { prisma }) => {
+export const applications: Resolver = async (_parent, args, { prisma }) => {
   const {
-    input: { order, limit = 20, offset = 0 },
-  } = _args;
+    input: { order, status, search, limit = 20, offset = 0 }, // TODO: permitType, requestType,
+  } = args;
+
+  let userIDSearch, nameSearch;
+
+  if (parseInt(search)) {
+    userIDSearch = parseInt(search);
+  } else {
+    nameSearch = search.split(' ');
+  }
 
   const sortingOrder: Record<string, string> = order
     ? order.foreach((col: string, order: string) => (sortingOrder[col] = order))
@@ -24,7 +32,28 @@ export const applications: Resolver = async (_parent, _args, { prisma }) => {
     skip: offset,
     take: limit,
     orderBy: [sortingOrder],
+    where: {
+      applicant: {
+        id: userIDSearch,
+      },
+      applicationProcessing: {
+        status: status || undefined,
+      },
+      OR: [{ firstName: { in: nameSearch } }, { lastName: { in: nameSearch } }],
+    },
+    select: {
+      firstName: true,
+      lastName: true,
+      id: true,
+      createdAt: true,
+      applicationProcessing: {
+        select: {
+          status: true,
+        },
+      },
+    },
   });
+
   return applications;
 };
 
