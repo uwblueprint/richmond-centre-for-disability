@@ -79,7 +79,7 @@ export default function PermitHolder() {
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3}>
         <PermitHolderHeader
-          applicant={applicant as Applicant}
+          applicant={applicant as unknown as Applicant}
           applicationStatus={applicationStatus}
         />
       </GridItem>
