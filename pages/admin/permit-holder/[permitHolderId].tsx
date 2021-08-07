@@ -85,7 +85,7 @@ export default function PermitHolder() {
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
         <Stack spacing={5}>
-          <PersonalInformationCard applicant={applicant} />
+          <PersonalInformationCard applicant={applicant as unknown as Applicant} />
           <DoctorInformationCard physician={physician} />
           <GuardianInformationCard guardian={guardian} />
         </Stack>
