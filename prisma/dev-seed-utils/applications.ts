@@ -28,6 +28,7 @@ const applications = [
     paymentMethod: PaymentType.Cash,
     shopifyConfirmationNumber: '1234567',
     applicantId: 1,
+    email: 'applicantone@gmail.com',
   },
   {
     id: 2,
@@ -52,6 +53,7 @@ const applications = [
     paymentMethod: PaymentType.Cheque,
     shopifyConfirmationNumber: '0145829',
     applicantId: 2,
+    email: 'applicanttwo@gmail.com',
   },
   {
     id: 3,

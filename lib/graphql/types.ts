@@ -398,6 +398,8 @@ export type Mutation = {
   createPermit: CreatePermitResult;
   updateMedicalInformation: UpdateMedicalInformationResult;
   updateGuardian: UpdateGuardianResult;
+  updateApplicationProcessing: UpdateApplicationProcessingResult;
+  completeApplication: Scalars['Boolean'];
 };
 
 
@@ -448,6 +450,17 @@ export type MutationUpdateMedicalInformationArgs = {
 
 export type MutationUpdateGuardianArgs = {
   input: UpdateGuardianInput;
+};
+
+
+export type MutationUpdateApplicationProcessingArgs = {
+  input: UpdateApplicationProcessingInput;
+};
+
+
+export type MutationCompleteApplicationArgs = {
+  applicationId: Scalars['ID'];
+  applicationProcessingId: Scalars['ID'];
 };
 
 export enum PaymentType {
@@ -615,6 +628,84 @@ export type UpdateApplicantResult = {
   ok: Scalars['Boolean'];
 };
 
+export type UpdateApplicationInput = {
+  id: Scalars['ID'];
+  /** Applicant information */
+  firstName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  dateOfBirth?: Maybe<Scalars['Date']>;
+  gender?: Maybe<Gender>;
+  customGender?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  province?: Maybe<Province>;
+  city?: Maybe<Scalars['String']>;
+  addressLine1?: Maybe<Scalars['String']>;
+  addressLine2?: Maybe<Scalars['String']>;
+  postalCode?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
+  rcdUserId?: Maybe<Scalars['Int']>;
+  isRenewal?: Maybe<Scalars['Boolean']>;
+  poaFormUrl?: Maybe<Scalars['String']>;
+  applicantId?: Maybe<Scalars['Int']>;
+  /** Medical information */
+  disability?: Maybe<Scalars['String']>;
+  affectsMobility?: Maybe<Scalars['Boolean']>;
+  mobilityAidRequired?: Maybe<Scalars['Boolean']>;
+  cannotWalk100m?: Maybe<Scalars['Boolean']>;
+  /** NOTE: Might need to change this to accept a single Aid object, and push to the aid array */
+  aid?: Maybe<Array<Aid>>;
+  /** Physician Information */
+  physicianName?: Maybe<Scalars['String']>;
+  physicianMspNumber?: Maybe<Scalars['Int']>;
+  physicianAddressLine1?: Maybe<Scalars['String']>;
+  physicianAddressLine2?: Maybe<Scalars['String']>;
+  physicianCity?: Maybe<Scalars['String']>;
+  physicianProvince?: Maybe<Province>;
+  physicianPostalCode?: Maybe<Scalars['String']>;
+  physicianPhone?: Maybe<Scalars['String']>;
+  physicianNotes?: Maybe<Scalars['String']>;
+  /** Payment Information */
+  processingFee?: Maybe<Scalars['Float']>;
+  donationAmount?: Maybe<Scalars['Float']>;
+  paymentMethod?: Maybe<PaymentType>;
+  shopifyConfirmationNumber?: Maybe<Scalars['String']>;
+  /** Guardian */
+  guardianFirstName?: Maybe<Scalars['String']>;
+  guardianMiddleName?: Maybe<Scalars['String']>;
+  guardianLastName?: Maybe<Scalars['String']>;
+  guardianPhone?: Maybe<Scalars['String']>;
+  guardianProvince?: Maybe<Province>;
+  guardianCity?: Maybe<Scalars['String']>;
+  guardianAddressLine1?: Maybe<Scalars['String']>;
+  guardianAddressLine2?: Maybe<Scalars['String']>;
+  guardianPostalCode?: Maybe<Scalars['String']>;
+  guardianRelationship?: Maybe<Scalars['String']>;
+  guardianNotes?: Maybe<Scalars['String']>;
+};
+
+export type UpdateApplicationProcessingInput = {
+  id: Scalars['ID'];
+  status?: Maybe<ApplicationStatus>;
+  appNumber?: Maybe<Scalars['Int']>;
+  appHolepunched?: Maybe<Scalars['Boolean']>;
+  walletCardCreated?: Maybe<Scalars['Boolean']>;
+  invoiceNumber?: Maybe<Scalars['Int']>;
+  documentUrl?: Maybe<Scalars['String']>;
+  appMailed?: Maybe<Scalars['Boolean']>;
+};
+
+export type UpdateApplicationProcessingResult = {
+  __typename?: 'UpdateApplicationProcessingResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicationResult = {
+  __typename?: 'UpdateApplicationResult';
+  ok: Scalars['Boolean'];
+};
+
 export type UpdateGuardianInput = {
   applicantId: Scalars['Int'];
   firstName?: Maybe<Scalars['String']>;
@@ -648,11 +739,6 @@ export type UpdateMedicalInformationInput = {
 
 export type UpdateMedicalInformationResult = {
   __typename?: 'UpdateMedicalInformationResult';
-  ok: Scalars['Boolean'];
-};
-
-export type UpdateApplicationResult = {
-  __typename?: 'UpdateApplicationResult';
   ok: Scalars['Boolean'];
 };
 
