@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertIcon, CloseButton } from '@chakra-ui/react'; // Chakra UI
+import { Alert, AlertDescription, AlertIcon } from '@chakra-ui/react'; // Chakra UI
 import { ReactNode } from 'react'; // React
 
 type SuccessfulEditAlertProps = {
@@ -13,7 +13,8 @@ export default function SuccessfulEditAlert({ children }: SuccessfulEditAlertPro
     <Alert variant="solid" status="success">
       <AlertIcon color="alerticon.success" />
       <AlertDescription textStyle="caption">{children}</AlertDescription>
-      <CloseButton />
+      {/* TODO: Make alert closeable */}
+      {/* <CloseButton /> */}
     </Alert>
   );
 }
