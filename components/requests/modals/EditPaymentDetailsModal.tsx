@@ -69,6 +69,7 @@ export default function EditPaymentDetailsModal({
     setPaymentMethod(paymentInformation.paymentType);
     setDonation(paymentInformation.donation);
 
+    setShippingFullName(paymentInformation.shippingFullName);
     setShippingAddressLine1(paymentInformation.shippingAddressLine1);
     setShippingAddressLine2(paymentInformation.shippingAddressLine2);
     setShippingCity(paymentInformation.shippingCity);
@@ -76,6 +77,7 @@ export default function EditPaymentDetailsModal({
     setShippingCountry(paymentInformation.shippingCountry);
     setShippingPostalCode(paymentInformation.shippingPostalCode);
 
+    setBillingFullName(paymentInformation.billingFullName);
     setBillingAddressLine1(paymentInformation.billingAddressLine1);
     setBillingAddressLine2(paymentInformation.billingAddressLine2);
     setBillingCity(paymentInformation.billingCity);

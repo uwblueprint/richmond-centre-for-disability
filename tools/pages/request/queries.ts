@@ -37,12 +37,14 @@ export const GET_APPLICATION = gql`
       physicianNotes
 
       billingAddressSameAsShippingAddress
+      shippingFullName
       shippingAddressLine1
       shippingAddressLine2
       shippingCity
       shippingProvince
       shippingCountry
       shippingPostalCode
+      billingFullName
       billingAddressLine1
       billingAddressLine2
       billingCity

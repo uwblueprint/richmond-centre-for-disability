@@ -119,12 +119,14 @@ export default function Request({ requestId }: RequestProps) {
     physicianNotes,
 
     billingAddressSameAsShippingAddress,
+    shippingFullName,
     shippingAddressLine1,
     shippingAddressLine2,
     shippingCity,
     shippingProvince,
     shippingCountry,
     shippingPostalCode,
+    billingFullName,
     billingAddressLine1,
     billingAddressLine2,
     billingCity,
@@ -178,12 +180,14 @@ export default function Request({ requestId }: RequestProps) {
 
   const paymentInformationData = {
     billingAddressSameAsShippingAddress,
+    shippingFullName,
     shippingAddressLine1,
     shippingAddressLine2,
     shippingCity,
     shippingProvince,
     shippingCountry,
     shippingPostalCode,
+    billingFullName,
     billingAddressLine1,
     billingAddressLine2,
     billingCity,
@@ -268,10 +272,10 @@ export default function Request({ requestId }: RequestProps) {
   };
 
   const allStepsCompleted =
-    !isNaN(appNumber) &&
+    appNumber !== null &&
     appHolepunched &&
     walletCardCreated &&
-    !isNaN(invoiceNumber) &&
+    invoiceNumber !== null &&
     documentUrls?.length &&
     appMailed;
 
@@ -304,8 +308,6 @@ export default function Request({ requestId }: RequestProps) {
                 <ProcessingTasksCard
                   applicationProcessingData={applicationProcessing}
                   onTaskComplete={onTaskComplete}
-                  APPNumber={appNumber}
-                  invoiceNumber={invoiceNumber}
                 />
               ) : isRenewal ? (
                 <DoctorInformationCard physician={physicianData} />

@@ -42,12 +42,14 @@ type Application {
   physicianNotes: String
 
   #Payment Information
+  shippingFullName: String
   shippingAddressLine1: String
   shippingAddressLine2: String
   shippingCity: String
   shippingProvince: String
   shippingCountry: String
   shippingPostalCode: String
+  billingFullName: String
   billingAddressLine1: String
   billingAddressLine2: String
   billingCity: String

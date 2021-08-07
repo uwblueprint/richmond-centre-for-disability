@@ -111,12 +111,14 @@ export type Application = {
   physicianPhone: Scalars['String'];
   physicianNotes?: Maybe<Scalars['String']>;
   /** Payment Information */
+  shippingFullName?: Maybe<Scalars['String']>;
   shippingAddressLine1?: Maybe<Scalars['String']>;
   shippingAddressLine2?: Maybe<Scalars['String']>;
   shippingCity?: Maybe<Scalars['String']>;
   shippingProvince?: Maybe<Scalars['String']>;
   shippingCountry?: Maybe<Scalars['String']>;
   shippingPostalCode?: Maybe<Scalars['String']>;
+  billingFullName?: Maybe<Scalars['String']>;
   billingAddressLine1?: Maybe<Scalars['String']>;
   billingAddressLine2?: Maybe<Scalars['String']>;
   billingCity?: Maybe<Scalars['String']>;

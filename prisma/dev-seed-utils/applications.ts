@@ -30,6 +30,13 @@ const applications = [
     shopifyConfirmationNumber: '1234567',
     applicantId: 1,
     email: 'applicantone@gmail.com',
+    shippingFullName: 'Applicant One',
+    shippingAddressLine1: '456 Vancouver Rd.',
+    shippingCity: 'Vancouver',
+    shippingProvince: Province.Bc,
+    shippingPostalCode: 'A1B2C3',
+    billingAddressSameAsShippingAddress: true,
+    billingFullName: 'Applicant One',
   },
   {
     id: 2,

@@ -19,15 +19,11 @@ interface ApplicationProcessingData {
 type ProcessingTasksCardProps = {
   readonly applicationProcessingData: ApplicationProcessingData;
   readonly onTaskComplete: (taskId: number, taskArgs?: number | string) => void;
-  readonly APPNumber?: number;
-  readonly invoiceNumber?: number;
 };
 
 export default function ProcessingTasksCard({
   applicationProcessingData,
   onTaskComplete,
-  APPNumber,
-  invoiceNumber,
 }: ProcessingTasksCardProps) {
   const assignAPPNumber = (APPNumber: number) => {
     onTaskComplete(1, APPNumber);
@@ -45,7 +41,7 @@ export default function ProcessingTasksCard({
   const isTaskCompleted = (taskId: number) => {
     switch (taskId) {
       case 1:
-        if (!isNaN(applicationProcessingData.appNumber)) {
+        if (applicationProcessingData.appNumber !== null) {
           return true;
         }
         break;
@@ -60,7 +56,7 @@ export default function ProcessingTasksCard({
         }
         break;
       case 4:
-        if (!isNaN(applicationProcessingData.invoiceNumber)) {
+        if (applicationProcessingData.invoiceNumber !== null) {
           return true;
         }
         break;
@@ -81,7 +77,11 @@ export default function ProcessingTasksCard({
   const steps = [
     // Task 1: Assign new APP number: Assign number (MODAL)
     {
-      label: 'Assign new APP number' + (!isNaN(Number(APPNumber)) ? '' : `: ${APPNumber}`),
+      label:
+        'Assign new APP number' +
+        (applicationProcessingData.appNumber === null
+          ? ''
+          : `: ${applicationProcessingData.appNumber}`),
     },
     // Task 2: Hole punch parking permit: Mark as complete (CHECK)
     {
@@ -95,7 +95,11 @@ export default function ProcessingTasksCard({
     },
     // Task 4: Assign invoice number: Assign number (MODAL)
     {
-      label: 'Assign invoice number' + (!isNaN(Number(invoiceNumber)) ? '' : `: ${invoiceNumber}`),
+      label:
+        'Assign invoice number' +
+        (applicationProcessingData.invoiceNumber === null
+          ? ''
+          : `: ${applicationProcessingData.invoiceNumber}`),
     },
     // Task 5: Upload document: Choose document (UPLOAD FILE)
     {
@@ -143,7 +147,7 @@ export default function ProcessingTasksCard({
             fieldName="New APP number"
             onAssign={assignAPPNumber}
           >
-            {APPNumber === undefined ? (
+            {applicationProcessingData.appNumber === null ? (
               <Button
                 marginLeft="auto"
                 height="35px"
@@ -169,7 +173,7 @@ export default function ProcessingTasksCard({
             fieldName="Invoice number"
             onAssign={assignInvoiceNumber}
           >
-            {invoiceNumber === undefined ? (
+            {applicationProcessingData.invoiceNumber === null ? (
               <Button
                 marginLeft="auto"
                 height="35px"
