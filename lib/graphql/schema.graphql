@@ -1,15 +1,6 @@
 type Query {
   meta: Meta!
-  applicants(
-    order: [[String]],
-    permitStatus: PermitStatus,
-    userStatus: UserStatus,
-    expiryDateRangeFrom: Date,
-    expiryDateRangeTo: Date,
-    search: String,
-    limit: Int,
-    offset: Int
-  ): [Applicant!]
+  applicants(filter: ApplicantsFilter): [Applicant!]
   applicant(id: ID!): Applicant
   employees: [Employee!]
   physicians: [Physician!]

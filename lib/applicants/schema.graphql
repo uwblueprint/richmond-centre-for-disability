@@ -76,3 +76,14 @@ input UpdateApplicantInput {
 type UpdateApplicantResult {
   ok: Boolean!
 }
+
+input ApplicantsFilter {
+  order: [[String]]
+  permitStatus: PermitStatus
+  userStatus: UserStatus
+  expiryDateRangeFrom: Date
+  expiryDateRangeTo: Date
+  search: String
+  limit: Int
+  offset: Int
+}

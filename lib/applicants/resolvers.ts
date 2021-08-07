@@ -8,80 +8,100 @@ import {
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { MspNumberDoesNotExistError } from '@lib/physicians/errors'; // Physician errors
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
-import { PermitStatus } from '@tools/pages/permit-holders';
+import { PermitStatus } from '@lib/types';
 import { DateUtils } from 'react-day-picker';
 import { SortOrder } from '@tools/types';
 
 /**
- * TODO: update comments
- * Query all the RCD applicants in the internal-facing app
- * @returns All RCD applicants
+ * Query and filter RCD applicants from the internal facing app.
+ *
+ * Optional Filters:
+ * - permitStatus: VALID, EXPIRED, EXPIRING_THIRTY
+ * - userStatus: ACTIVE, INACTIVE
+ * - expiryDateRangeFrom: Permit Expiry Date start
+ * - expiryDateRangeTo: Permit Expiry Date end
+ * - search: Search by first, middle, last name or by RCD user ID
+ *
+ * Pagination:
+ * - offset: Number of results to skip, default 0
+ * - limit: Number of result to return, default 20
+ * @returns All RCD applicants that match the filter(s).
  */
-export const applicants: Resolver = async (_parent, args, { prisma }) => {
-  const {
-    order,
-    permitStatus,
-    userStatus,
-    expiryDateRangeFrom,
-    expiryDateRangeTo,
-    search,
-    limit,
-    offset,
-  } = args;
+export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
+  let where = {};
 
-  let expiryDateUpperBound, expiryDateLowerBound, nameSearch, userIDSearch;
+  if (filter) {
+    const {
+      permitStatus = undefined,
+      userStatus = undefined,
+      expiryDateRangeFrom = undefined,
+      expiryDateRangeTo = undefined,
+      search = undefined,
+    } = filter;
 
-  const TODAY = new Date();
+    let expiryDateUpperBound, expiryDateLowerBound, nameSearch, userIDSearch;
 
-  if (permitStatus === PermitStatus.VALID) {
-    expiryDateLowerBound = TODAY;
-  }
-  if (permitStatus === PermitStatus.EXPIRED) {
-    expiryDateUpperBound = TODAY;
-  }
-  if (permitStatus === PermitStatus.EXPIRING_THIRTY) {
-    expiryDateLowerBound = TODAY;
-    expiryDateUpperBound = DateUtils.addMonths(TODAY, 1);
-  }
+    if (parseInt(search)) {
+      userIDSearch = parseInt(search);
+    } else {
+      nameSearch = search?.split(' ');
+    }
 
-  if (parseInt(search)) {
-    userIDSearch = parseInt(search);
-  } else {
-    nameSearch = search.split(' ');
-  }
+    const TODAY = new Date();
 
-  const sortingOrder: Record<string, SortOrder> = order
-    ? order.foreach((col: string, order: SortOrder) => (sortingOrder[col] = order))
-    : { name: SortOrder.ASC };
+    switch (permitStatus) {
+      case PermitStatus.Valid:
+        expiryDateLowerBound = TODAY;
+        break;
+      case PermitStatus.Expired:
+        expiryDateUpperBound = TODAY;
+        break;
+      case PermitStatus.ExpiringThirty:
+        expiryDateLowerBound = TODAY;
+        expiryDateUpperBound = DateUtils.addMonths(TODAY, 1);
+        break;
+    }
 
-  // TODO: add try catch
-  const applicants = await prisma.applicant.findMany({
-    skip: offset || undefined,
-    take: limit || 20,
-    where: {
-      id: userIDSearch,
-      status: userStatus || undefined,
+    const containsPermitFilter = !!(permitStatus || expiryDateRangeFrom || expiryDateRangeTo);
+    const permitFilter = containsPermitFilter
+      ? {
+          some: {
+            expiryDate: { gte: expiryDateUpperBound, lte: expiryDateLowerBound },
+            AND: [
+              {
+                expiryDate: { gte: expiryDateRangeFrom, lte: expiryDateRangeTo },
+              },
+            ],
+          },
+        }
+      : {};
+
+    where = {
+      rcdUserId: userIDSearch,
+      status: userStatus,
       OR: [
         { firstName: { in: nameSearch } },
         { middleName: { in: nameSearch } },
         { lastName: { in: nameSearch } },
       ],
-      permits: {
-        some: {
-          expiryDate: { gte: expiryDateUpperBound, lte: expiryDateLowerBound },
-          AND: [
-            {
-              expiryDate: {
-                gte: expiryDateRangeFrom || undefined,
-                lte: expiryDateRangeTo || undefined,
-              },
-            },
-          ],
-        },
-      },
-    },
-    orderBy: [{ firstName: sortingOrder['name'] }, { lastName: sortingOrder['name'] }],
+      permits: permitFilter,
+    };
+  }
+
+  const sortingOrder: Record<string, SortOrder> = filter?.order
+    ? filter.order.foreach((col: string, order: SortOrder) => (sortingOrder[col] = order))
+    : { name: SortOrder.ASC }; // default sorting order
+
+  const take = filter?.limit || 20; // default skip
+  const skip = filter?.offset || 0; // default take
+
+  const applicants = await prisma.applicant.findMany({
+    where: where,
+    skip: skip,
+    take: take,
+    orderBy: [{ firstName: sortingOrder.name }, { lastName: sortingOrder.name }],
   });
+
   return applicants;
 };
 

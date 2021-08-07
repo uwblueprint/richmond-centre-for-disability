@@ -92,8 +92,14 @@ export const applicantRecentPermitResolver: Resolver<Applicant> = async (
   _args,
   { prisma }
 ) => {
-  return await prisma.permit.findFirst({
-    where: { applicantId: parent?.id },
-    orderBy: { createdAt: SortOrder.DESC },
-  });
+  const permit = await prisma.applicant
+    .findUnique({
+      where: { id: parent.id },
+    })
+    .permits({
+      orderBy: { createdAt: SortOrder.DESC },
+      take: 1,
+    });
+
+  return permit[0];
 };

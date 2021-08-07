@@ -1,3 +1,4 @@
+// not needed, remove
 export enum PermitStatus {
   VALID = 'valid',
   EXPIRED = 'expired',

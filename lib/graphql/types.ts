@@ -59,6 +59,17 @@ export enum ApplicantStatus {
   Inactive = 'INACTIVE'
 }
 
+export type ApplicantsFilter = {
+  order?: Maybe<Array<Maybe<Array<Maybe<Scalars['String']>>>>>;
+  permitStatus?: Maybe<PermitStatus>;
+  userStatus?: Maybe<UserStatus>;
+  expiryDateRangeFrom?: Maybe<Scalars['Date']>;
+  expiryDateRangeTo?: Maybe<Scalars['Date']>;
+  search?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
 export type Application = {
   __typename?: 'Application';
   /** Applicant information */
@@ -478,14 +489,7 @@ export type Query = {
 
 
 export type QueryApplicantsArgs = {
-  order?: Maybe<Array<Maybe<Array<Maybe<Scalars['String']>>>>>;
-  permitStatus?: Maybe<PermitStatus>;
-  userStatus?: Maybe<UserStatus>;
-  expiryDateRangeFrom?: Maybe<Scalars['Date']>;
-  expiryDateRangeTo?: Maybe<Scalars['Date']>;
-  search?: Maybe<Scalars['String']>;
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  filter?: Maybe<ApplicantsFilter>;
 };
 
 
