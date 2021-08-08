@@ -12,6 +12,7 @@ import '@fontsource/noto-sans/700.css'; // Noto sans bold
 const apolloClient = new ApolloClient({
   uri: '/api/graphql',
   cache: new InMemoryCache(),
+  connectToDevTools: true,
 });
 
 function App({ Component, pageProps }: AppProps) {

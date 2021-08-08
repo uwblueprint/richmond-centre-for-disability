@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
-import { useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import {
   Box,
   Flex,
@@ -19,12 +19,16 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
-import { Applicant, ApplicantsFilter, Role } from '@lib/types'; // Role enum
+import { Applicant, PermitStatus, Role, UserStatus } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
-import { useState, SetStateAction, Dispatch } from 'react'; // React
-import { FILTER_PERMIT_HOLDERS_QUERY } from '@tools/pages/permit-holders/filter-permit-holders';
+import { useState, useEffect } from 'react'; // React
+import {
+  FILTER_PERMIT_HOLDERS_QUERY,
+  FilterPermitHoldersRequest,
+  FilterPermitHoldersResponse,
+} from '@tools/pages/permit-holders/filter-permit-holders';
 import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker'; // Date picker
 import 'react-day-picker/lib/style.css'; // Date picker styling
 import Helmet from 'react-helmet'; // Date picker inline styling for select range functionality
@@ -189,27 +193,18 @@ function renderRecentAPP({ value }: RecentAPPProps) {
   );
 }
 
-type DropDownItemsProps = {
-  readonly items: Array<string>;
-  readonly setStateCallback: Dispatch<SetStateAction<string>>;
+// map PermitStatus enum to drop down value
+const permitStatusText: Record<PermitStatus, string> = {
+  [PermitStatus.Valid]: 'Valid',
+  [PermitStatus.Expired]: 'Expired',
+  [PermitStatus.ExpiringThirty]: 'Expiring Soon',
 };
 
-function DropDownItems({ items, setStateCallback }: DropDownItemsProps) {
-  return (
-    <>
-      {items.map((value, i) => (
-        <MenuItem
-          key={`dropDownItem-${i}`}
-          onClick={() => {
-            setStateCallback(value);
-          }}
-        >
-          {value}
-        </MenuItem>
-      ))}
-    </>
-  );
-}
+// map UserStatus enum to drop down value
+const userStatusText: Record<UserStatus, string> = {
+  [UserStatus.Active]: 'Active',
+  [UserStatus.Inactive]: 'Inactive',
+};
 
 type MenuTextProps = {
   readonly name: string;
@@ -223,7 +218,7 @@ function MenuText({ name, value }: MenuTextProps) {
         {`${name}: `}
       </Text>
       <Text as="span" textStyle="button-regular">
-        {value}
+        {value || 'All'}
       </Text>
     </>
   );
@@ -253,52 +248,84 @@ function DayPickerStyling() {
   );
 }
 
-type FilterResponse = {
-  applicants: [Applicant];
+type PermitTableInputData = Applicant & {
+  name: {
+    firstName: string;
+    lastName: string;
+    middleName: string | null | undefined;
+    rcdUserId: number;
+  };
+  homeAddress: {
+    address: string;
+    city: string;
+    postalCode: string;
+  };
 };
 
 // Internal home page
 export default function PermitHolders() {
-  const [permitStatusFilter, setPermitStatusFilter] = useState('All');
-  const [userStatusFilter, setUserStatusFilter] = useState('All');
+  const [permitStatusFilter, setPermitStatusFilter] = useState<PermitStatus>();
+  const [userStatusFilter, setUserStatusFilter] = useState<UserStatus>();
+  const [searchFilter, setSearchFilter] = useState<string>();
   const [range, setRange] = useState<RangeModifier>({ from: undefined, to: undefined });
+  const [permitHolderData, setPermitHolderData] = useState<PermitTableInputData[]>();
 
-  const { loading, data } = useQuery<FilterResponse, ApplicantsFilter>(FILTER_PERMIT_HOLDERS_QUERY);
+  const [queryPermitHolders, { loading }] = useLazyQuery<
+    FilterPermitHoldersResponse,
+    FilterPermitHoldersRequest
+  >(FILTER_PERMIT_HOLDERS_QUERY, {
+    onCompleted: data => {
+      setPermitHolderData(
+        data.applicants.map(record => ({
+          name: {
+            firstName: record.firstName,
+            lastName: record.lastName,
+            middleName: record.middleName || undefined,
+            rcdUserId: record.id,
+          },
+          homeAddress: {
+            address: record.addressLine1,
+            city: record.city,
+            postalCode: record.postalCode,
+          },
+          ...record,
+        }))
+      );
+    },
+  });
 
-  let DATA;
-  if (!loading) {
-    DATA = data?.applicants.map(record => ({
-      name: {
-        firstName: record.firstName,
-        middleName: record.middleName,
-        lastName: record.lastName,
-        rcdUserId: record.id,
-      },
-      homeAddress: {
-        address: record.addressLine1,
-        city: record.city,
-        postalCode: record.postalCode,
-      },
-      recentPermit: {
-        rcdPermitId: 1,
-        expiryDate: new Date(),
-      },
-      ...record,
-    }));
-  }
+  const handleEnterKey = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      queryPermitHolders({
+        variables: {
+          filter: {
+            userStatus: userStatusFilter,
+            permitStatus: permitStatusFilter,
+            expiryDateRangeFrom: range.from,
+            expiryDateRangeTo: range.to,
+            search: searchFilter,
+          },
+        },
+      });
+    }
+  };
 
-  // console.log(DATA)
+  useEffect(() => queryPermitHolders(), []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleEnterKey);
+
+    return () => {
+      document.removeEventListener('keydown', handleEnterKey);
+    };
+  }, [userStatusFilter, permitStatusFilter, searchFilter, range]);
 
   const permitStatusOptions = [
-    'All',
-    'In Progress',
-    'Completed',
-    'Pending',
-    'Expiring Soon',
-    'Expired',
-    'Rejected',
+    PermitStatus.Valid,
+    PermitStatus.Expired,
+    PermitStatus.ExpiringThirty,
   ];
-  const userStatusOptions = ['All', 'Active', 'Inactive'];
+  const userStatusOptions = [UserStatus.Active, UserStatus.Inactive];
 
   const handleDayClick: DayPickerProps['onDayClick'] = day => {
     setRange(DateUtils.addDayToRange(day, range));
@@ -335,13 +362,24 @@ export default function PermitHolders() {
                   textAlign="left"
                   width="320px"
                 >
-                  <MenuText name={`Permit Status`} value={permitStatusFilter} />
+                  <MenuText
+                    name={`Permit Status`}
+                    value={permitStatusFilter && permitStatusText[permitStatusFilter]}
+                  />
                 </MenuButton>
                 <MenuList>
-                  <DropDownItems
-                    items={permitStatusOptions}
-                    setStateCallback={setPermitStatusFilter}
-                  />
+                  <MenuItem onClick={() => setPermitStatusFilter(undefined)}>All</MenuItem>
+                  {permitStatusOptions.map((value, i) => (
+                    <MenuItem
+                      key={`dropDownItem-${i}`}
+                      onClick={event => {
+                        event.preventDefault();
+                        setPermitStatusFilter(value);
+                      }}
+                    >
+                      {permitStatusText[value]}
+                    </MenuItem>
+                  ))}
                 </MenuList>
               </Menu>
               <Menu>
@@ -355,10 +393,23 @@ export default function PermitHolders() {
                   textAlign="left"
                   width="260px"
                 >
-                  <MenuText name={`User Status`} value={userStatusFilter} />
+                  <MenuText
+                    name={`User Status`}
+                    value={userStatusFilter && userStatusText[userStatusFilter]}
+                  />
                 </MenuButton>
                 <MenuList>
-                  <DropDownItems items={userStatusOptions} setStateCallback={setUserStatusFilter} />
+                  <MenuItem onClick={() => setUserStatusFilter(undefined)}>All</MenuItem>
+                  {userStatusOptions.map((value, i) => (
+                    <MenuItem
+                      key={`dropDownItem-${i}`}
+                      onClick={() => {
+                        setUserStatusFilter(value);
+                      }}
+                    >
+                      {userStatusText[value]}
+                    </MenuItem>
+                  ))}
                 </MenuList>
               </Menu>
               <Menu>
@@ -390,11 +441,16 @@ export default function PermitHolders() {
                   <InputLeftElement pointerEvents="none">
                     <SearchIcon color="text.filler" />
                   </InputLeftElement>
-                  <Input placeholder="Search by first name, last name or user ID" />
+                  <Input
+                    placeholder="Search by first name, last name or user ID"
+                    onChange={event => {
+                      setSearchFilter(event.target.value);
+                    }}
+                  />
                 </InputGroup>
               </Box>
             </Flex>
-            {!loading && <Table columns={COLUMNS} data={DATA || []} />}
+            {!loading && <Table columns={COLUMNS} data={permitHolderData || []} />}
             <Flex justifyContent="flex-end">
               <Pagination pageSize={20} totalCount={150} />
             </Flex>

@@ -82,13 +82,13 @@ export default function Table(props: Props) {
             prepareRow(row);
             return (
               <Tr {...row.getRowProps()} key={row.id}>
-                {row.cells.map(cell => (
+                {row.cells.map((cell, i) => (
                   <Td
                     height="80px"
                     paddingX="0"
                     color="text.secondary"
                     {...cell.getCellProps()}
-                    key={row.id}
+                    key={`cell-${i}`}
                   >
                     {cell.render('Cell')}
                   </Td>

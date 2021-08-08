@@ -39,12 +39,19 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
       search = undefined,
     } = filter;
 
-    let expiryDateUpperBound, expiryDateLowerBound, nameSearch, userIDSearch;
+    let expiryDateUpperBound,
+      expiryDateLowerBound,
+      userIDSearch,
+      firstSearch,
+      lastSearch,
+      middleSearch;
 
     if (parseInt(search)) {
       userIDSearch = parseInt(search);
-    } else {
-      nameSearch = search?.split(' ');
+    } else if (search) {
+      [firstSearch, middleSearch, lastSearch] = search?.split(' ');
+      middleSearch = middleSearch || firstSearch;
+      lastSearch = lastSearch || middleSearch || firstSearch;
     }
 
     const TODAY = new Date();
@@ -74,15 +81,15 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
             ],
           },
         }
-      : {};
+      : undefined;
 
     where = {
       rcdUserId: userIDSearch,
       status: userStatus,
       OR: [
-        { firstName: { in: nameSearch } },
-        { middleName: { in: nameSearch } },
-        { lastName: { in: nameSearch } },
+        { firstName: { contains: firstSearch, mode: 'insensitive' } },
+        { middleName: { contains: middleSearch, mode: 'insensitive' } },
+        { lastName: { contains: lastSearch, mode: 'insensitive' } },
       ],
       permits: permitFilter,
     };

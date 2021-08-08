@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'; // gql tag
+import { ApplicantsFilter, Applicant } from '@lib/graphql/types';
 
 export const FILTER_PERMIT_HOLDERS_QUERY = gql`
   query FilterPermitHoldersQuery($filter: ApplicantsFilter) {
@@ -21,3 +22,11 @@ export const FILTER_PERMIT_HOLDERS_QUERY = gql`
     }
   }
 `;
+
+export type FilterPermitHoldersRequest = {
+  filter: ApplicantsFilter;
+};
+
+export type FilterPermitHoldersResponse = {
+  applicants: [Applicant];
+};
