@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
+import { useQuery } from '@apollo/client';
 import {
   Box,
   Flex,
@@ -18,36 +19,37 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
-import { Role } from '@lib/types'; // Role enum
+import { Applicant, ApplicantsFilter, Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import { useState, SetStateAction, Dispatch } from 'react'; // React
+import { FILTER_PERMIT_HOLDERS_QUERY } from '@tools/pages/permit-holders/filter-permit-holders';
 import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker'; // Date picker
 import 'react-day-picker/lib/style.css'; // Date picker styling
 import Helmet from 'react-helmet'; // Date picker inline styling for select range functionality
 
 // Placeholder data
 
-const DATA = Array(10).fill({
-  name: {
-    name: 'Charmaine Wang',
-    id: 36565,
-  },
-  dateOfBirth: '2021/01/01',
-  homeAddress: {
-    address: '5300, No.3 Rd Lansdowne Centre',
-    city: 'Richmond',
-    postalCode: 'V2X 1E4',
-  },
-  email: 'charmainewang@rcd.org',
-  phone: '000-000-0000',
-  recentAPP: {
-    appNumber: '#XXXXXX',
-    expiryDate: new Date(),
-  },
-  userStatus: 'active',
-});
+// const PLACEHOLDER = Array(10).fill({
+//   name: {
+//     name: 'Charmaine Wang',
+//     id: 36565,
+//   },
+//   dateOfBirth: '2021/01/01',
+//   homeAddress: {
+//     address: '5300, No.3 Rd Lansdowne Centre',
+//     city: 'Richmond',
+//     postalCode: 'V2X 1E4',
+//   },
+//   email: 'charmainewang@rcd.org',
+//   phone: '000-000-0000',
+//   recentAPP: {
+//     appNumber: '#XXXXXX',
+//     expiryDate: new Date(),
+//   },
+//   userStatus: 'active',
+// });
 
 const COLUMNS = [
   {
@@ -63,6 +65,9 @@ const COLUMNS = [
     disableSortBy: true,
     width: 140,
     maxWidth: 140,
+    Cell: ({ value }: any) => {
+      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+    },
   },
   {
     Header: 'Home Address',
@@ -88,7 +93,7 @@ const COLUMNS = [
   },
   {
     Header: 'Recent APP',
-    accessor: 'recentAPP',
+    accessor: 'recentPermitTest',
     disableSortBy: true,
     width: 140,
     maxWidth: 140,
@@ -96,7 +101,7 @@ const COLUMNS = [
   },
   {
     Header: 'User Status',
-    accessor: 'userStatus',
+    accessor: 'status',
     disableSortBy: true,
     width: 120,
     maxWidth: 120,
@@ -106,17 +111,21 @@ const COLUMNS = [
 
 type NameProps = {
   value: {
-    name: string;
-    id: number;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    rcdUserId: number;
   };
 };
 
 function renderName({ value }: NameProps) {
   return (
     <>
-      <Text>{value.name}</Text>
+      <Text>
+        {value.firstName} {value.middleName} {value.lastName}
+      </Text>
       <Text textStyle="caption" textColor="secondary">
-        ID: {value.id}
+        ID: {value.rcdUserId}
       </Text>
     </>
   );
@@ -141,11 +150,12 @@ function renderAddress({ value }: AddressProps) {
   );
 }
 
-type UserStatusProps = {
+type UserStatusBadgeProps = {
   value: 'active' | 'inactive';
 };
 
-function renderUserStatusBadge({ value }: UserStatusProps) {
+function renderUserStatusBadge({ value }: UserStatusBadgeProps) {
+  value = value || 'active'; // temp
   return (
     <Wrap>
       <Badge variant={value}>{value.toUpperCase()}</Badge>
@@ -155,12 +165,13 @@ function renderUserStatusBadge({ value }: UserStatusProps) {
 
 type RecentAPPProps = {
   value: {
-    appNumber: 'string';
+    rcdPermitId: number;
     expiryDate: Date;
   };
 };
 
 function renderRecentAPP({ value }: RecentAPPProps) {
+  value = value || { rcdPermitId: 1, expiryDate: new Date() }; // temp
   const today = new Date();
   const expired = DateUtils.isPastDay(value.expiryDate);
   const expiresSoon = DateUtils.isDayInRange(today, {
@@ -170,7 +181,7 @@ function renderRecentAPP({ value }: RecentAPPProps) {
   return (
     <Flex>
       <Text as="span" mr="9px">
-        {value.appNumber}
+        # {value.rcdPermitId}
       </Text>
       {expired && <WarningTwoIcon color="secondary.critical" />}
       {expiresSoon && <WarningIcon color="secondary.caution" />}
@@ -242,11 +253,41 @@ function DayPickerStyling() {
   );
 }
 
+type FilterResponse = {
+  applicants: [Applicant];
+};
+
 // Internal home page
 export default function PermitHolders() {
   const [permitStatusFilter, setPermitStatusFilter] = useState('All');
   const [userStatusFilter, setUserStatusFilter] = useState('All');
   const [range, setRange] = useState<RangeModifier>({ from: undefined, to: undefined });
+
+  const { loading, data } = useQuery<FilterResponse, ApplicantsFilter>(FILTER_PERMIT_HOLDERS_QUERY);
+
+  let DATA;
+  if (!loading) {
+    DATA = data?.applicants.map(record => ({
+      name: {
+        firstName: record.firstName,
+        middleName: record.middleName,
+        lastName: record.lastName,
+        rcdUserId: record.id,
+      },
+      homeAddress: {
+        address: record.addressLine1,
+        city: record.city,
+        postalCode: record.postalCode,
+      },
+      recentPermit: {
+        rcdPermitId: 1,
+        expiryDate: new Date(),
+      },
+      ...record,
+    }));
+  }
+
+  // console.log(DATA)
 
   const permitStatusOptions = [
     'All',
@@ -353,7 +394,7 @@ export default function PermitHolders() {
                 </InputGroup>
               </Box>
             </Flex>
-            <Table columns={COLUMNS} data={DATA} />
+            {!loading && <Table columns={COLUMNS} data={DATA || []} />}
             <Flex justifyContent="flex-end">
               <Pagination pageSize={20} totalCount={150} />
             </Flex>
