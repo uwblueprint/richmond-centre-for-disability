@@ -20,7 +20,7 @@ export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
     <GridItem
       display="flex"
       flexDirection="column"
-      alignItems={alignGridItems ? alignGridItems : 'flex-start'}
+      alignItems={alignGridItems || 'flex-start'}
       padding="20px 24px 24px"
       background="white"
       border="1px solid"

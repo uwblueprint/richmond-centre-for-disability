@@ -15,110 +15,118 @@ export default function RequestStatusBadge({ variant }: Props) {
     switch (variant) {
       case 'COMPLETED':
         return (
-          <>
-            <Image
-              src="/assets/completed-icon.svg"
-              alt="Completed Application Icon"
-              height={12}
-              width={12}
-            />
-            <Box as="span" ml="2">
-              Completed
+          <Badge variant={variant} width="127px" height="32px" paddingX="12px" paddingY="4px">
+            <Box mx="0px" px="0px">
+              <Image
+                src="/assets/completed-icon.svg"
+                alt="Completed Application Icon"
+                height={12}
+                width={12}
+              />
+              <Box as="span" pl="8px">
+                Completed
+              </Box>
             </Box>
-          </>
+          </Badge>
         );
       case 'EXPIRING':
         return (
-          <>
-            <Image
-              src="/assets/expiring-icon.svg"
-              alt="Expiring Application Icon"
-              height={14}
-              width={14}
-            />
-            <Box as="span" ml="2">
-              Expiring &lt; 30 days
+          <Badge variant={variant} width="180px" height="32px" paddingX="12px" paddingY="4px">
+            <Box mx="0px" px="0px">
+              <Image
+                src="/assets/expiring-icon.svg"
+                alt="Expiring Application Icon"
+                height={14}
+                width={14}
+              />
+              <Box as="span" pl="8px">
+                Expiring &lt; 30 days
+              </Box>
             </Box>
-          </>
+          </Badge>
         );
       case 'EXPIRED':
         return (
-          <>
-            <Image
-              src="/assets/expired-icon.svg"
-              alt="Expired Application Icon"
-              height={15}
-              width={16}
-            />
-            <Box as="span" ml="2">
-              Expired
+          <Badge variant={variant} width="105px" height="32px" paddingX="12px" paddingY="4px">
+            <Box mx="0px" px="0px">
+              <Image
+                src="/assets/expired-icon.svg"
+                alt="Expired Application Icon"
+                height={15}
+                width={16}
+              />
+              <Box as="span" pl="8px">
+                Expired
+              </Box>
             </Box>
-          </>
+          </Badge>
         );
       case 'PENDING':
         return (
-          <>
-            <Image
-              src="/assets/pending-icon.svg"
-              alt="Pending Application Icon"
-              height={12}
-              width={12}
-            />
-            <Box as="span" ml="2">
-              Pending
+          <Badge variant={variant} width="107px" height="32px" paddingX="12px" paddingY="4px">
+            <Box mx="0px" px="0px">
+              <Image
+                src="/assets/pending-icon.svg"
+                alt="Pending Application Icon"
+                height={12}
+                width={12}
+              />
+              <Box as="span" pl="8px">
+                Pending
+              </Box>
             </Box>
-          </>
+          </Badge>
         );
       case 'REJECTED':
         return (
-          <>
-            <Image
-              src="/assets/rejected-icon.svg"
-              alt="Rejected Application Icon"
-              height={12}
-              width={12}
-            />
-            <Box as="span" ml="2">
-              Rejected
+          <Badge variant={variant} width="109px" height="32px" paddingX="12px" paddingY="4px">
+            <Box mx="0px" px="0px">
+              <Image
+                src="/assets/rejected-icon.svg"
+                alt="Rejected Application Icon"
+                height={12}
+                width={12}
+              />
+              <Box as="span" pl="8px">
+                Rejected
+              </Box>
             </Box>
-          </>
+          </Badge>
         );
       case 'INPROGRESS':
         return (
-          <>
-            <Image
-              src="/assets/in-progress-icon.svg"
-              alt="In Progress Application Icon"
-              height={12}
-              width={12}
-            />
-            <Box as="span" ml="2">
-              In progress
+          <Badge variant={variant} width="130px" height="32px" paddingX="12px" paddingY="4px">
+            <Box mx="0px" px="0px">
+              <Image
+                src="/assets/in-progress-icon.svg"
+                alt="In Progress Application Icon"
+                height={12}
+                width={12}
+              />
+              <Box as="span" pl="8px">
+                In progress
+              </Box>
             </Box>
-          </>
+          </Badge>
         );
       case 'ACTIVE':
         return (
-          <>
-            <Image
-              src="/assets/active-icon.svg"
-              alt="Active Application Icon"
-              height={12}
-              width={12}
-            />
-            <Box as="span" ml="2">
-              Active
+          <Badge variant={variant} width="89px" height="32px" paddingX="12px" paddingY="4px">
+            <Box mx="0px" px="0px">
+              <Image
+                src="/assets/active-icon.svg"
+                alt="Active Application Icon"
+                height={12}
+                width={12}
+              />
+              <Box as="span" pl="8px">
+                Active
+              </Box>
             </Box>
-          </>
+          </Badge>
         );
     }
   };
 
-  return (
-    <Badge variant={variant}>
-      <Box ml="-4px" mr="8px">
-        {_renderBadgeContent(variant)}
-      </Box>
-    </Badge>
-  );
+  return _renderBadgeContent(variant);
 }

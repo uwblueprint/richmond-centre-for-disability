@@ -1,4 +1,4 @@
-import { Box, Text, Divider, VStack, Button } from '@chakra-ui/react'; // Chakra UI
+import { Box, Text, Divider, VStack } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import { Guardian } from '@lib/graphql/types'; // Guardian type
 
@@ -9,16 +9,7 @@ type GuardianInformationProps = {
 export default function GuardianInformationCard(props: GuardianInformationProps) {
   const { guardian } = props;
   return (
-    <PermitHolderInfoCard
-      colSpan={7}
-      header={`Guardian's Information`}
-      editModal={
-        //   TODO: Create edit guardian modal post-mvp
-        <Button color="primary" variant="ghost" textDecoration="underline">
-          <Text textStyle="body-bold">Edit</Text>
-        </Button>
-      }
-    >
+    <PermitHolderInfoCard colSpan={7} header={`Guardian's Information`}>
       <Divider pt="24px" />
 
       <VStack spacing="12px" align="left" paddingTop="24px">

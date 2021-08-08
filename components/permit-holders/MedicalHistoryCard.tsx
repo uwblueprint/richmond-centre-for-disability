@@ -34,8 +34,7 @@ const COLUMNS = [
     Header: 'Certification Date',
     accessor: 'dateUploaded',
     disableSortBy: true,
-    // NOTE: Check value
-    minWidth: 200,
+    maxWidth: 200,
   },
   {
     accessor: 'associatedApplicationId',

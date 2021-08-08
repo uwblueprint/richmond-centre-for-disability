@@ -1,4 +1,4 @@
-import { Box, Link, Text, Wrap, Divider } from '@chakra-ui/react'; // Chakra UI
+import { Box, Link, Text, Divider } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
@@ -32,7 +32,7 @@ const COLUMNS = [
     Header: 'Status',
     accessor: 'requestStatus',
     disableSortBy: true,
-    maxWidth: 190,
+    maxWidth: 195,
     Cell: _renderStatusBadge,
   },
   {
@@ -79,9 +79,9 @@ type StatusProps = {
 
 function _renderStatusBadge({ value }: StatusProps) {
   return (
-    <Wrap>
+    <Box pr="10px">
       <RequestStatusBadge variant={value} />
-    </Wrap>
+    </Box>
   );
 }
 
