@@ -20,13 +20,15 @@ import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
 import { PersonalInformationCardApplicant } from '@tools/components/internal/requests/personal-information-card'; // Applicant type
 
 type EditPermitHolderInformationModalProps = {
-  readonly applicant: PersonalInformationCardApplicant;
   children: ReactNode;
+  readonly applicant: PersonalInformationCardApplicant;
+  readonly handleSave: (applicationData: PersonalInformationCardApplicant) => void;
 };
 
 export default function EditPermitHolderInformationModal({
-  applicant,
   children,
+  applicant,
+  handleSave,
 }: EditPermitHolderInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -59,7 +61,18 @@ export default function EditPermitHolderInformationModal({
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    // TODO: Will be addressed in API hookup
+    handleSave({
+      ...applicant,
+      firstName,
+      lastName,
+      email,
+      phone: phoneNumber,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+    });
+    onClose();
   };
 
   return (

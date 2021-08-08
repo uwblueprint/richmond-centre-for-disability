@@ -22,13 +22,15 @@ import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
 import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
 
 type EditDoctorInformationModalProps = {
-  physician: DoctorInformationCardPhysician;
   children: ReactNode;
+  physician: DoctorInformationCardPhysician;
+  readonly handleSave: (applicationData: any) => void;
 };
 
 export default function EditDoctorInformationModal({
-  physician,
   children,
+  physician,
+  handleSave,
 }: EditDoctorInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -53,7 +55,15 @@ export default function EditDoctorInformationModal({
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    //  TODO: Will be addressed in API hookup
+    handleSave({
+      physicianName: firstName,
+      physicianMspNumber: mspNumber,
+      physicianPhone: phoneNumber,
+      physicianAddressLine1: addressLine1,
+      physicianAddressLine2: addressLine2,
+      physicianCity: city,
+      physicianPostalCode: postalCode,
+    });
     onClose();
 
     successfulEditToast({
@@ -93,7 +103,10 @@ export default function EditDoctorInformationModal({
                 <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
                     <FormLabel>{'Medical Services Plan number'}</FormLabel>
-                    <Input value={mspNumber} onChange={event => setMspNumber(event.target.value)} />
+                    <Input
+                      value={mspNumber}
+                      onChange={event => setMspNumber(Number(event.target.value))}
+                    />
                   </FormControl>
                   <FormControl isRequired>
                     <FormLabel>{'Phone number'}</FormLabel>

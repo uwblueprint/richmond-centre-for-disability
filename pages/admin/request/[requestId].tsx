@@ -1,4 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */ // Keeping this to make future development easier
+// Keeping this to make future development easier
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
@@ -20,10 +23,6 @@ import PaymentInformationCard from '@components/requests/PaymentInformationCard'
 import PersonalInformationCard from '@components/requests/PersonalInformationCard'; // Personal information card
 import ReasonForReplacementCard from '@components/requests/ReasonForReplacementCard'; // Reason for replacement card
 import ProcessingTasksCard from '@components/requests/ProcessingTasksCard'; // Processing tasks card
-
-// TODO: REMOVE THIS LATER. Need this to pass pipeline b/c mock applicant needs to satisfy the real Applicant type.
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { PhysicianStatus } from '@lib/types';
 
 type RequestProps = {
   requestId: number;
@@ -201,7 +200,6 @@ export default function Request({ requestId }: RequestProps) {
 
   const physicianData = {
     firstName: physicianName,
-    lastName: physicianName, // NOTE: This is here to satisfy Physician type requirements
     mspNumber: physicianMspNumber,
     addressLine1: physicianAddressLine1,
     addressLine2: physicianAddressLine2,
@@ -209,7 +207,6 @@ export default function Request({ requestId }: RequestProps) {
     province: physicianProvince,
     postalCode: physicianPostalCode,
     phone: physicianPhone,
-    status: PhysicianStatus.Active, // NOTE: This is here to satisfy Physician type requirements
     notes: physicianNotes,
   };
 
@@ -227,6 +224,11 @@ export default function Request({ requestId }: RequestProps) {
   const onComplete = () => {
     // TODO: Make mutation call to modify Application's status to ApplicationStatus.Completed
     // setApplication({ ...application, applicationStatus: ApplicationStatus.Completed });
+  };
+
+  // Wrapper function for updateApplication mutation
+  const onUpdateApplication = (applicationData: any) => {
+    updateApplication({ variables: { input: { id: applicationId, ...applicationData } } });
   };
 
   // Edit doctor information/reason for replacement modal
@@ -300,6 +302,7 @@ export default function Request({ requestId }: RequestProps) {
               expirationDate={new Date(expiryDate).toDateString()}
               mostRecentAPP={rcdPermitId}
               handleName={() => {}}
+              handleSave={onUpdateApplication}
             />
           </GridItem>
           <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
@@ -310,7 +313,7 @@ export default function Request({ requestId }: RequestProps) {
                   onTaskComplete={onTaskComplete}
                 />
               ) : isRenewal ? (
-                <DoctorInformationCard physician={physicianData} />
+                <DoctorInformationCard physician={physicianData} handleSave={onUpdateApplication} />
               ) : (
                 <ReasonForReplacementCard
                   replacement={replacement}

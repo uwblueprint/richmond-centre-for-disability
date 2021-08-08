@@ -4,19 +4,20 @@ import EditDoctorInformationModal from '@components/requests/modals/EditDoctorIn
 import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
 
 type DoctorInformationProps = {
-  physician: DoctorInformationCardPhysician;
+  readonly physician: DoctorInformationCardPhysician;
   readonly isUpdated?: boolean;
+  readonly handleSave: (applicationData: any) => void;
 };
 
 export default function DoctorInformationCard(props: DoctorInformationProps) {
-  const { physician, isUpdated } = props;
+  const { physician, isUpdated, handleSave } = props;
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Doctor's Information`}
       updated={isUpdated}
       editModal={
-        <EditDoctorInformationModal physician={physician}>
+        <EditDoctorInformationModal physician={physician} handleSave={handleSave}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
