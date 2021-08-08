@@ -137,6 +137,23 @@ export enum ApplicationStatus {
   Completed = 'COMPLETED'
 }
 
+export type ApplicationsFilter = {
+  order?: Maybe<Array<Maybe<Array<Maybe<Scalars['String']>>>>>;
+  status?: Maybe<ApplicationStatus>;
+  search?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
+export type ApplicationsFilterResult = {
+  __typename?: 'ApplicationsFilterResult';
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  createdAt?: Maybe<Scalars['Date']>;
+  status?: Maybe<ApplicationStatus>;
+};
+
 export type CreateApplicantInput = {
   firstName: Scalars['String'];
   middleName?: Maybe<Scalars['String']>;
@@ -501,6 +518,10 @@ export type QueryApplicantsResult = {
   __typename?: 'QueryApplicantsResult';
   result: Array<Applicant>;
   totalCount: Scalars['Int'];
+};
+
+export type QueryApplicationsArgs = {
+  filter?: Maybe<ApplicationsFilter>;
 };
 
 export type QueryEmployeeInput = {

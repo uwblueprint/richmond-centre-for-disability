@@ -11,10 +11,10 @@ import { DBErrorCode } from '@lib/db/errors'; // Database errors
  * Query all the RCD applications in the internal-facing app
  * @returns All RCD applications
  */
-export const applications: Resolver = async (_parent, args, { prisma }) => {
+export const applications: Resolver = async (_parent, { filter }, { prisma }) => {
   const {
     input: { order, status, search, limit = 20, offset = 0 }, // TODO: permitType, requestType,
-  } = args;
+  } = filter;
 
   let userIDSearch, nameSearch;
 

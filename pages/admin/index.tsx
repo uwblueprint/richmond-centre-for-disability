@@ -21,11 +21,16 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
-import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
+//import { applications } from '@lib/applications/resolvers';
+//import { useQuery } from '@apollo/client';
+//import { Application } from '@prisma/client';
+//import applicationProcessing from '@prisma/dev-seed-utils/application-processings';
+//import { FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin';
+//import { ApplicationsFilter, ApplicationsFilterResult, Role } from '@lib/graphql/types';
 
 type StatusProps = {
   readonly value:
@@ -105,43 +110,82 @@ const COLUMNS = [
 ];
 
 // Placeholder data
-const DATA = [
-  {
-    name: {
-      name: 'Steve Rogers',
-      id: '36565',
-    },
-    dateReceived: 'Dec 21 2021, 8:30 pm',
-    permitType: 'Permanent',
-    requestType: 'Replacement',
-    status: 'PENDING',
-  },
-  {
-    name: {
-      name: 'Steve Rogers',
-      id: '36565',
-    },
-    dateReceived: 'Dec 21 2021, 8:30 pm',
-    permitType: 'Permanent',
-    requestType: 'Replacement',
-    status: 'INPROGRESS',
-  },
-  {
-    name: {
-      name: 'Steve Rogers',
-      id: '36565',
-    },
-    dateReceived: 'Dec 21 2021, 8:30 pm',
-    permitType: 'Permanent',
-    requestType: 'Replacement',
-    status: 'COMPLETED',
-  },
-];
+// const DATA = [
+//   {
+//     name: {
+//       name: 'Steve Rogers',
+//       id: '36565',
+//     },
+//     dateReceived: 'Dec 21 2021, 8:30 pm',
+//     permitType: 'Permanent',
+//     requestType: 'Replacement',
+//     status: 'PENDING',
+//   },
+//   {
+//     name: {
+//       name: 'Steve Rogers',
+//       id: '36565',
+//     },
+//     dateReceived: 'Dec 21 2021, 8:30 pm',
+//     permitType: 'Permanent',
+//     requestType: 'Replacement',
+//     status: 'INPROGRESS',
+//   },
+//   {
+//     name: {
+//       name: 'Steve Rogers',
+//       id: '36565',
+//     },
+//     dateReceived: 'Dec 21 2021, 8:30 pm',
+//     permitType: 'Permanent',
+//     requestType: 'Replacement',
+//     status: 'COMPLETED',
+//   },
+// ];
+
+// const data = () => {
+//   applications({
+//     variables: {
+//       args: {
+//         order: null,
+//         status: null,
+//         search: null,
+//         limit: null,
+//       },
+//     }
+//   })
+// };
+
+// type FilterResponse = {
+//   applications: [ApplicationsFilterResult];
+// };
 
 // Internal home page - view APP requests
 export default function Requests() {
   const [permitTypeFilter, setPermitTypeFilter] = useControllableState({ defaultValue: 'All' });
   const [requestTypeFilter, setRequestTypeFilter] = useControllableState({ defaultValue: 'All' });
+  //const { loading, data } = useQuery<FilterResponse, ApplicationsFilter>(FILTER_APPLICATIONS_QUERY);
+
+  //let DATA;
+  // while(loading){
+  //   console.log("loading");
+  // }
+
+  // if (!loading) {
+  // DATA = data?.applications.map(record => ({
+  //   name: {
+  //     name: record.firstName + ' ' + record.lastName,
+  //     rcdUserId: record.id,
+  //   },
+  //   dateReceived: record.createdAt,
+  //   permitType: 'Permanent',
+  //   requestType:'Replacement',
+  //   status: record.status,
+  //   ...record,
+  // }));
+  // }
+
+  //console.log(DATA);
 
   return (
     <Layout>
@@ -270,7 +314,7 @@ export default function Requests() {
                 </InputGroup>
               </Box>
             </Flex>
-            <Table columns={COLUMNS} data={DATA} />
+            <Table columns={COLUMNS} data={DATA || []} />
             <Flex justifyContent="flex-end">
               <Pagination /* eslint-disable @typescript-eslint/no-empty-function */
                 pageNumber={0}
