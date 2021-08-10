@@ -11,7 +11,7 @@ const Badge: ComponentSingleStyleConfig = {
     fontWeight: 'normal',
     fontSize: '16px',
     height: '32px',
-    paddingX: '1rem',
+    paddingX: '12px',
     paddingY: '4px',
   },
 

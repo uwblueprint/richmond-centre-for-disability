@@ -25,7 +25,7 @@ const DATA = Array(4).fill({
 
 const COLUMNS = [
   {
-    Header: 'Disabling Condition(s)',
+    Header: 'Disabling Condition',
     accessor: 'disablingCondition',
     disableSortBy: true,
     minWidth: 250,
