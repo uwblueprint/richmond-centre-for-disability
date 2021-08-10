@@ -1,4 +1,4 @@
-import { Badge, Box } from '@chakra-ui/react'; // Chakra UI
+import { Badge, Box, Wrap } from '@chakra-ui/react'; // Chakra UI
 import Image from 'next/image'; // Optimized images
 
 type Props = {
@@ -22,7 +22,7 @@ export default function RequestStatusBadge({ variant }: Props) {
               height={12}
               width={12}
             />
-            <Box as="span" ml="2">
+            <Box as="span" pl="8px">
               Completed
             </Box>
           </>
@@ -36,8 +36,8 @@ export default function RequestStatusBadge({ variant }: Props) {
               height={14}
               width={14}
             />
-            <Box as="span" ml="2">
-              Expiring &lt; 30 days
+            <Box as="span" pl="8px" pr="13px">
+              {'Expiring < 30 days'}
             </Box>
           </>
         );
@@ -50,7 +50,7 @@ export default function RequestStatusBadge({ variant }: Props) {
               height={15}
               width={16}
             />
-            <Box as="span" ml="2">
+            <Box as="span" pl="8px">
               Expired
             </Box>
           </>
@@ -64,7 +64,7 @@ export default function RequestStatusBadge({ variant }: Props) {
               height={12}
               width={12}
             />
-            <Box as="span" ml="2">
+            <Box as="span" pl="8px">
               Pending
             </Box>
           </>
@@ -78,7 +78,7 @@ export default function RequestStatusBadge({ variant }: Props) {
               height={12}
               width={12}
             />
-            <Box as="span" ml="2">
+            <Box as="span" pl="8px">
               Rejected
             </Box>
           </>
@@ -92,7 +92,7 @@ export default function RequestStatusBadge({ variant }: Props) {
               height={12}
               width={12}
             />
-            <Box as="span" ml="2">
+            <Box as="span" pl="8px">
               In progress
             </Box>
           </>
@@ -106,7 +106,7 @@ export default function RequestStatusBadge({ variant }: Props) {
               height={12}
               width={12}
             />
-            <Box as="span" ml="2">
+            <Box as="span" pl="8px">
               Active
             </Box>
           </>
@@ -115,10 +115,12 @@ export default function RequestStatusBadge({ variant }: Props) {
   };
 
   return (
-    <Badge variant={variant}>
-      <Box ml="-4px" mr="8px">
-        {_renderBadgeContent(variant)}
-      </Box>
-    </Badge>
+    <Wrap>
+      <Badge variant={variant}>
+        <Box ml="0px" mr="0px">
+          {_renderBadgeContent(variant)}
+        </Box>
+      </Badge>
+    </Wrap>
   );
 }

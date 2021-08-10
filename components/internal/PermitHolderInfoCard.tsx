@@ -6,6 +6,7 @@ type PermitHolderInfoCardProps = GridItemProps & {
   header: ReactNode;
   updated?: boolean;
   editModal?: ReactNode;
+  alignGridItems?: string;
 };
 
 /**
@@ -14,12 +15,12 @@ type PermitHolderInfoCardProps = GridItemProps & {
  * @returns custom Card.
  */
 export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
-  const { children, header, updated, editModal } = props;
+  const { children, header, updated, editModal, alignGridItems } = props;
   return (
     <GridItem
       display="flex"
       flexDirection="column"
-      alignItems="flex-start"
+      alignItems={alignGridItems || 'flex-start'}
       padding="20px 24px 24px"
       background="white"
       border="1px solid"

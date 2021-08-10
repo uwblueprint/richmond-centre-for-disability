@@ -16,9 +16,15 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent } from 'react'; // React
+import { useState, SyntheticEvent, ReactNode } from 'react'; // React
 
-export default function EditPermitHolderInformationModal() {
+type EditPermitHolderInformationModalProps = {
+  children: ReactNode;
+};
+
+export default function EditPermitHolderInformationModal({
+  children,
+}: EditPermitHolderInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   // Personal information state
@@ -44,10 +50,7 @@ export default function EditPermitHolderInformationModal() {
 
   return (
     <>
-      {/* Button will be removed before merging */}
-      <Button mt={3} onClick={onOpen}>
-        Open
-      </Button>
+      <Box onClick={onOpen}>{children}</Box>
 
       <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />

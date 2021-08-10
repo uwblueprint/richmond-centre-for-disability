@@ -77,6 +77,9 @@ const colors = {
     active: '#F1F8F5',
     inactive: '#FFF4F4',
   },
+  alerticon: {
+    success: '#009444',
+  },
 };
 
 export default colors;
