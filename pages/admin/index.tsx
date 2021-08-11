@@ -26,11 +26,11 @@ import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
 //import { applications } from '@lib/applications/resolvers';
-//import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 //import { Application } from '@prisma/client';
-//import applicationProcessing from '@prisma/dev-seed-utils/application-processings';
-//import { FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin';
-//import { ApplicationsFilter, ApplicationsFilterResult, Role } from '@lib/graphql/types';
+// import applicationProcessing from '@prisma/dev-seed-utils/application-processings';
+import { FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin';
+import { ApplicationsFilter, ApplicationsFilterResult, Role } from '@lib/graphql/types';
 
 type StatusProps = {
   readonly value:
@@ -156,34 +156,34 @@ const COLUMNS = [
 //   })
 // };
 
-// type FilterResponse = {
-//   applications: [ApplicationsFilterResult];
-// };
+type FilterResponse = {
+  applications: [ApplicationsFilterResult];
+};
 
 // Internal home page - view APP requests
 export default function Requests() {
   const [permitTypeFilter, setPermitTypeFilter] = useControllableState({ defaultValue: 'All' });
   const [requestTypeFilter, setRequestTypeFilter] = useControllableState({ defaultValue: 'All' });
-  //const { loading, data } = useQuery<FilterResponse, ApplicationsFilter>(FILTER_APPLICATIONS_QUERY);
+  const { loading, data } = useQuery<FilterResponse, ApplicationsFilter>(FILTER_APPLICATIONS_QUERY);
 
-  //let DATA;
+  let DATA;
   // while(loading){
   //   console.log("loading");
   // }
 
-  // if (!loading) {
-  // DATA = data?.applications.map(record => ({
-  //   name: {
-  //     name: record.firstName + ' ' + record.lastName,
-  //     rcdUserId: record.id,
-  //   },
-  //   dateReceived: record.createdAt,
-  //   permitType: 'Permanent',
-  //   requestType:'Replacement',
-  //   status: record.status,
-  //   ...record,
-  // }));
-  // }
+  if (!loading) {
+    DATA = data?.applications.map(record => ({
+      name: {
+        name: record.firstName + ' ' + record.lastName,
+        rcdUserId: record.id,
+      },
+      dateReceived: record.createdAt,
+      permitType: 'Permanent',
+      requestType: 'Replacement',
+      status: record.status,
+      ...record,
+    }));
+  }
 
   //console.log(DATA);
 

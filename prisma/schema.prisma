@@ -55,6 +55,7 @@ model Application {
   notes                               String?
   rcdUserId                           Int?                   @map("rcd_user_id")
   isRenewal                           Boolean                @default(true) @map("is_renewal")
+  permitType                          PermitType             @default(PERMANENT) @map("permit_type")
   poaFormUrl                          String?                @map("poa_form_url") @db.VarChar(255)
   applicantId                         Int?                   @map("applicant_id")
   disability                          String                 @db.VarChar(255)
@@ -166,6 +167,7 @@ model Permit {
   active        Boolean     @default(true)
   applicationId Int         @unique @map("application_id")
   applicantId   Int         @map("applicant_id")
+  permitType    PermitType  @default(PERMANENT) @map("permit_type")
   createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
   applicant     Applicant   @relation(fields: [applicantId], references: [id])
@@ -324,4 +326,11 @@ enum ReasonForReplacement {
   OTHER
 
    @@map("reasonforreplacement")
+}
+
+enum PermitType {
+  PERMANENT
+  TEMPORARY
+
+   @@map("permittype")
 }

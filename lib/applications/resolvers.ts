@@ -13,7 +13,7 @@ import { DBErrorCode } from '@lib/db/errors'; // Database errors
  */
 export const applications: Resolver = async (_parent, { filter }, { prisma }) => {
   const {
-    input: { order, status, search, limit = 20, offset = 0 }, // TODO: permitType, requestType,
+    input: { order, permitType, requestType, status, search, limit = 20, offset = 0 },
   } = filter;
 
   let userIDSearch, nameSearch;
@@ -39,6 +39,8 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
       applicationProcessing: {
         status: status || undefined,
       },
+      isRenewal: requestType ? requestType === 'RENEWAL' : undefined,
+      permitType: permitType || undefined,
       OR: [{ firstName: { in: nameSearch } }, { lastName: { in: nameSearch } }],
     },
     select: {

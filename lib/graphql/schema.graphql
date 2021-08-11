@@ -101,3 +101,8 @@ enum UserStatus {
   ACTIVE
   INACTIVE
 }
+
+enum  PermitType {
+  PERMANENT
+  TEMPORARY
+}

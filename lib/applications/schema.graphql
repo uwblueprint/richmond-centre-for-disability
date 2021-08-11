@@ -17,6 +17,7 @@ type Application {
   notes: String
   rcdUserId: Int
   isRenewal: Boolean!
+  permitType: PermitType!
   poaFormUrl: String
   applicantId: Int
   applicant: Applicant
@@ -80,6 +81,7 @@ input CreateApplicationInput {
   notes: String
   rcdUserId: Int
   isRenewal: Boolean!
+  permitType: PermitType!
   poaFormUrl: String
   applicantId: Int
 
@@ -127,6 +129,8 @@ type CreateApplicationResult {
 
 input ApplicationsFilter {
   order: [[String]]
+  permitType: PermitType
+  requestType: String
   status: ApplicationStatus
   search: String
   limit: Int

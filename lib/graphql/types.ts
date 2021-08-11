@@ -90,6 +90,7 @@ export type Application = {
   notes?: Maybe<Scalars['String']>;
   rcdUserId?: Maybe<Scalars['Int']>;
   isRenewal: Scalars['Boolean'];
+  permitType: PermitType;
   poaFormUrl?: Maybe<Scalars['String']>;
   applicantId?: Maybe<Scalars['Int']>;
   applicant?: Maybe<Applicant>;
@@ -139,6 +140,8 @@ export enum ApplicationStatus {
 
 export type ApplicationsFilter = {
   order?: Maybe<Array<Maybe<Array<Maybe<Scalars['String']>>>>>;
+  permitType?: Maybe<PermitType>;
+  requestType?: Maybe<Scalars['String']>;
   status?: Maybe<ApplicationStatus>;
   search?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
@@ -197,6 +200,7 @@ export type CreateApplicationInput = {
   notes?: Maybe<Scalars['String']>;
   rcdUserId?: Maybe<Scalars['Int']>;
   isRenewal: Scalars['Boolean'];
+  permitType: PermitType;
   poaFormUrl?: Maybe<Scalars['String']>;
   applicantId?: Maybe<Scalars['Int']>;
   /** Medical information */
@@ -285,6 +289,7 @@ export type CreatePermitInput = {
   active: Scalars['Boolean'];
   applicationId: Scalars['Int'];
   applicantId: Scalars['Int'];
+  permitType: PermitType;
 };
 
 export type CreatePermitResult = {
@@ -449,12 +454,18 @@ export type Permit = {
   applicationId: Scalars['Int'];
   applicant: Applicant;
   applicantId: Scalars['Int'];
+  permitType: PermitType;
 };
 
 export enum PermitStatus {
   Valid = 'VALID',
   Expired = 'EXPIRED',
   ExpiringInThirtyDays = 'EXPIRING_IN_THIRTY_DAYS'
+}
+
+export enum PermitType {
+  Permanent = 'PERMANENT',
+  Temporary = 'TEMPORARY'
 }
 
 export type Physician = {

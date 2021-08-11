@@ -40,6 +40,9 @@ CREATE TYPE ApplicationStatus as ENUM('PENDING', 'APPROVED', 'REJECTED', 'COMPLE
 -- Create reason for replacement enum
 CREATE TYPE ReasonForReplacement as ENUM('LOST', 'STOLEN', 'OTHER');
 
+-- Create permit type enum
+CREATE TYPE PermitType as ENUM('PERMANENT', 'TEMPORARY');
+
 -- Create employees table
 CREATE TABLE employees (
   id                SERIAL PRIMARY KEY NOT NULL,
@@ -163,6 +166,7 @@ CREATE TABLE applications (
   notes          TEXT,
   rcd_user_id    INTEGER,
   is_renewal     BOOLEAN NOT NULL DEFAULT true,
+  permit_type    PermitType NOT NULL DEFAULT 'PERMANENT',
   poa_form_url   VARCHAR(255),
   applicant_id   INTEGER,
   -- Medical information
@@ -225,6 +229,7 @@ CREATE TABLE permits (
   active            BOOLEAN NOT NULL DEFAULT true,
   application_id    INTEGER NOT NULL UNIQUE,
   applicant_id      INTEGER NOT NULL,
+  permit_type       PermitType NOT NULL DEFAULT 'PERMANENT',
   created_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
