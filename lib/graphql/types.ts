@@ -155,6 +155,8 @@ export type ApplicationsFilterResult = {
   id?: Maybe<Scalars['ID']>;
   createdAt?: Maybe<Scalars['Date']>;
   status?: Maybe<ApplicationStatus>;
+  is_renewal?: Maybe<Scalars['Boolean']>;
+  permitType?: Maybe<PermitType>;
 };
 
 export type CreateApplicantInput = {

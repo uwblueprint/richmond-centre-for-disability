@@ -143,4 +143,6 @@ type ApplicationsFilterResult{
   id: ID
   createdAt: Date
   status: ApplicationStatus
+  is_renewal: Boolean
+  permitType: PermitType
 }

@@ -27,6 +27,7 @@ import Pagination from '@components/internal/Pagination'; // Pagination componen
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
 //import { applications } from '@lib/applications/resolvers';
 import { useQuery } from '@apollo/client';
+import { useState } from 'react'; // React
 //import { Application } from '@prisma/client';
 // import applicationProcessing from '@prisma/dev-seed-utils/application-processings';
 import { FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin';
@@ -160,30 +161,76 @@ type FilterResponse = {
   applications: [ApplicationsFilterResult];
 };
 
+type FilterRequest = {
+  filter: ApplicationsFilter;
+};
+
 // Internal home page - view APP requests
 export default function Requests() {
   const [permitTypeFilter, setPermitTypeFilter] = useControllableState({ defaultValue: 'All' });
   const [requestTypeFilter, setRequestTypeFilter] = useControllableState({ defaultValue: 'All' });
-  const { loading, data } = useQuery<FilterResponse, ApplicationsFilter>(FILTER_APPLICATIONS_QUERY);
+  const [requestsData, setRequestsData] = useState<ApplicationsFilterResult[]>();
 
-  let DATA;
-  // while(loading){
-  //   console.log("loading");
-  // }
+  //const { loading, data } = useQuery<FilterResponse, ApplicationsFilter>(FILTER_APPLICATIONS_QUERY);
 
-  if (!loading) {
-    DATA = data?.applications.map(record => ({
-      name: {
-        name: record.firstName + ' ' + record.lastName,
-        rcdUserId: record.id,
+  const { data } = useQuery<FilterResponse, FilterRequest>(FILTER_APPLICATIONS_QUERY, {
+    variables: {
+      filter: {
+        order: undefined,
+        permitType: undefined,
+        requestType: undefined,
+        status: undefined,
+        search: undefined,
+        limit: undefined,
+        offset: undefined,
       },
-      dateReceived: record.createdAt,
-      permitType: 'Permanent',
-      requestType: 'Replacement',
-      status: record.status,
-      ...record,
-    }));
+    },
+    onCompleted: data => {
+      setRequestsData(
+        data.applications.map(record => ({
+          name: {
+            name: record.firstName + ' ' + record.lastName,
+            rcdUserId: record.id,
+          },
+          dateReceived: record.createdAt,
+          permitType: record.permitType,
+          requestType: record.is_renewal ? 'Renewal' : 'Replacement',
+          status: record.status,
+          ...record,
+        }))
+      );
+      // console.log("in data")
+      // console.log(data);
+    },
+  });
+
+  if (data) {
+    // console.log(data);
   }
+
+  // if (error) {
+  //   console.log("error!!");
+  //   console.log(error);
+  // } else {
+  //   console.log("no error");
+  // }
+  // console.log('hello');
+  // console.log(requestsData);
+  // let DATA;
+
+  // if (!loading) {
+  //   DATA = data?.applications.map(record => ({
+  //     name: {
+  //       name: record.firstName + ' ' + record.lastName,
+  //       rcdUserId: record.id,
+  //     },
+  //     dateReceived: record.createdAt,
+  //     permitType: 'Permanent',
+  //     requestType: 'Replacement',
+  //     status: record.status,
+  //     ...record,
+  //   }));
+  // }
 
   //console.log(DATA);
 
@@ -314,7 +361,7 @@ export default function Requests() {
                 </InputGroup>
               </Box>
             </Flex>
-            <Table columns={COLUMNS} data={DATA || []} />
+            <Table columns={COLUMNS} data={requestsData || []} />
             <Flex justifyContent="flex-end">
               <Pagination /* eslint-disable @typescript-eslint/no-empty-function */
                 pageNumber={0}

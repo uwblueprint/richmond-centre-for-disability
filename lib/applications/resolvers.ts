@@ -16,6 +16,8 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     input: { order, permitType, requestType, status, search, limit = 20, offset = 0 },
   } = filter;
 
+  // console.log('in applications resolver');
+
   let userIDSearch, nameSearch;
 
   if (parseInt(search)) {
@@ -48,6 +50,8 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
       lastName: true,
       id: true,
       createdAt: true,
+      permitType: true,
+      is_renewal: true,
       applicationProcessing: {
         select: {
           status: true,
