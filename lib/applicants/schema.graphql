@@ -87,3 +87,8 @@ input ApplicantsFilter {
   limit: Int
   offset: Int
 }
+
+type QueryApplicantsResult {
+  node: [Applicant!]
+  totalCount: Int
+}

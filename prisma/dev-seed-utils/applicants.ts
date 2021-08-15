@@ -1,13 +1,14 @@
 /* eslint-disable no-console */
 // Relative paths required, path aliases throw error with seed command
 import prisma from '../index'; // Prisma client
-import { Gender, Province } from '../../lib/graphql/types'; // GraphQL types
+import { Gender, Province, ApplicantStatus } from '../../lib/graphql/types'; // GraphQL types
 
 // Seed data
 const applicants = [
   {
     id: 1,
     firstName: 'Applicant',
+    middleName: 'Middle-One',
     lastName: 'One',
     email: 'applicantone@email.com',
     gender: Gender.Male,
@@ -16,6 +17,8 @@ const applicants = [
     city: 'Richmond',
     addressLine1: '123 Richmond St.',
     postalCode: 'X0X0X0',
+    rcdUserId: 1,
+    status: ApplicantStatus.Active,
     guardianId: 1,
     medicalInformationId: 1,
   },
@@ -30,8 +33,26 @@ const applicants = [
     city: 'Surrey',
     addressLine1: '321 Surrey St.',
     postalCode: 'A1B2C3',
+    rcdUserId: 2,
+    status: ApplicantStatus.Active,
     guardianId: 2,
     medicalInformationId: 2,
+  },
+  {
+    id: 3,
+    firstName: 'Applicant',
+    lastName: 'Three',
+    email: 'applicantthree@email.com',
+    gender: Gender.Male,
+    phone: '4567891234',
+    province: Province.Bc,
+    city: 'Vancouver',
+    addressLine1: '456 BC Way',
+    postalCode: 'B1C2D3',
+    rcdUserId: 3,
+    status: ApplicantStatus.Inactive,
+    guardianId: 3,
+    medicalInformationId: 3,
   },
 ];
 

@@ -27,6 +27,17 @@ const guardians = [
     postalCode: 'A1B2C3',
     relationship: 'Mother',
   },
+  {
+    id: 3,
+    firstName: 'Guardian',
+    lastName: 'Three',
+    phone: '0987654321',
+    province: Province.Bc,
+    city: 'Vancouver',
+    addressLine1: '456 BC Way',
+    postalCode: 'B1C2D3',
+    relationship: 'Brother',
+  },
 ];
 
 /**

@@ -1,6 +1,6 @@
 type Query {
   meta: Meta!
-  applicants(filter: ApplicantsFilter): [Applicant!]
+  applicants(filter: ApplicantsFilter): QueryApplicantsResult!
   applicant(id: ID!): Applicant
   employees: [Employee!]
   physicians: [Physician!]

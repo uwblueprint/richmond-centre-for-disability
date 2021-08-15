@@ -479,7 +479,7 @@ export enum Province {
 export type Query = {
   __typename?: 'Query';
   meta: Meta;
-  applicants?: Maybe<Array<Applicant>>;
+  applicants: QueryApplicantsResult;
   applicant?: Maybe<Applicant>;
   employees?: Maybe<Array<Employee>>;
   physicians?: Maybe<Array<Physician>>;
@@ -495,6 +495,12 @@ export type QueryApplicantsArgs = {
 
 export type QueryApplicantArgs = {
   id: Scalars['ID'];
+};
+
+export type QueryApplicantsResult = {
+  __typename?: 'QueryApplicantsResult';
+  node?: Maybe<Array<Applicant>>;
+  totalCount?: Maybe<Scalars['Int']>;
 };
 
 export type QueryEmployeeInput = {

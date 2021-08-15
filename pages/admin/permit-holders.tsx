@@ -23,7 +23,7 @@ import { Applicant, PermitStatus, Role, UserStatus } from '@lib/types'; // Role 
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
-import { useState, useEffect } from 'react'; // React
+import { useState, useEffect, useRef } from 'react'; // React
 import {
   FILTER_PERMIT_HOLDERS_QUERY,
   FilterPermitHoldersRequest,
@@ -32,28 +32,6 @@ import {
 import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker'; // Date picker
 import 'react-day-picker/lib/style.css'; // Date picker styling
 import Helmet from 'react-helmet'; // Date picker inline styling for select range functionality
-
-// Placeholder data
-
-// const PLACEHOLDER = Array(10).fill({
-//   name: {
-//     name: 'Charmaine Wang',
-//     id: 36565,
-//   },
-//   dateOfBirth: '2021/01/01',
-//   homeAddress: {
-//     address: '5300, No.3 Rd Lansdowne Centre',
-//     city: 'Richmond',
-//     postalCode: 'V2X 1E4',
-//   },
-//   email: 'charmainewang@rcd.org',
-//   phone: '000-000-0000',
-//   recentAPP: {
-//     appNumber: '#XXXXXX',
-//     expiryDate: new Date(),
-//   },
-//   userStatus: 'active',
-// });
 
 const COLUMNS = [
   {
@@ -112,6 +90,8 @@ const COLUMNS = [
     Cell: renderUserStatusBadge,
   },
 ];
+
+const PAGE_SIZE = 1;
 
 type NameProps = {
   value: {
@@ -267,8 +247,14 @@ export default function PermitHolders() {
   const [permitStatusFilter, setPermitStatusFilter] = useState<PermitStatus>();
   const [userStatusFilter, setUserStatusFilter] = useState<UserStatus>();
   const [searchFilter, setSearchFilter] = useState<string>();
+  const [searchInput, setSearchInput] = useState<string>();
   const [range, setRange] = useState<RangeModifier>({ from: undefined, to: undefined });
+
   const [permitHolderData, setPermitHolderData] = useState<PermitTableInputData[]>();
+  const [pageNumber, setPageNumber] = useState(0);
+  const recordsCount = useRef<number>();
+
+  // const dataSize
 
   const [queryPermitHolders, { loading }] = useLazyQuery<
     FilterPermitHoldersResponse,
@@ -276,7 +262,7 @@ export default function PermitHolders() {
   >(FILTER_PERMIT_HOLDERS_QUERY, {
     onCompleted: data => {
       setPermitHolderData(
-        data.applicants.map(record => ({
+        data.applicants.node.map(record => ({
           name: {
             firstName: record.firstName,
             lastName: record.lastName,
@@ -291,34 +277,29 @@ export default function PermitHolders() {
           ...record,
         }))
       );
+      recordsCount.current = recordsCount.current || data.applicants.totalCount;
     },
   });
 
-  const handleEnterKey = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      queryPermitHolders({
-        variables: {
-          filter: {
-            userStatus: userStatusFilter,
-            permitStatus: permitStatusFilter,
-            expiryDateRangeFrom: range.from,
-            expiryDateRangeTo: range.to,
-            search: searchFilter,
-          },
-        },
-      });
-    }
-  };
-
-  useEffect(() => queryPermitHolders(), []);
+  useEffect(() => {
+    queryPermitHolders();
+  }, []);
 
   useEffect(() => {
-    document.addEventListener('keydown', handleEnterKey);
-
-    return () => {
-      document.removeEventListener('keydown', handleEnterKey);
-    };
-  }, [userStatusFilter, permitStatusFilter, searchFilter, range]);
+    queryPermitHolders({
+      variables: {
+        filter: {
+          userStatus: userStatusFilter,
+          permitStatus: permitStatusFilter,
+          expiryDateRangeFrom: range.from,
+          expiryDateRangeTo: range.to,
+          search: searchFilter,
+          offset: pageNumber * PAGE_SIZE,
+          limit: PAGE_SIZE,
+        },
+      },
+    });
+  }, [permitStatusFilter, userStatusFilter, searchFilter, range, pageNumber]);
 
   const permitStatusOptions = [
     PermitStatus.Valid,
@@ -372,10 +353,7 @@ export default function PermitHolders() {
                   {permitStatusOptions.map((value, i) => (
                     <MenuItem
                       key={`dropDownItem-${i}`}
-                      onClick={event => {
-                        event.preventDefault();
-                        setPermitStatusFilter(value);
-                      }}
+                      onClick={() => setPermitStatusFilter(value)}
                     >
                       {permitStatusText[value]}
                     </MenuItem>
@@ -401,12 +379,7 @@ export default function PermitHolders() {
                 <MenuList>
                   <MenuItem onClick={() => setUserStatusFilter(undefined)}>All</MenuItem>
                   {userStatusOptions.map((value, i) => (
-                    <MenuItem
-                      key={`dropDownItem-${i}`}
-                      onClick={() => {
-                        setUserStatusFilter(value);
-                      }}
-                    >
+                    <MenuItem key={`dropDownItem-${i}`} onClick={() => setUserStatusFilter(value)}>
                       {userStatusText[value]}
                     </MenuItem>
                   ))}
@@ -443,16 +416,27 @@ export default function PermitHolders() {
                   </InputLeftElement>
                   <Input
                     placeholder="Search by first name, last name or user ID"
-                    onChange={event => {
-                      setSearchFilter(event.target.value);
+                    onKeyDown={event => {
+                      if (event.key === 'Enter') {
+                        setSearchFilter(searchInput);
+                      }
                     }}
+                    onChange={event => setSearchInput(event.target.value)}
                   />
                 </InputGroup>
               </Box>
             </Flex>
-            {!loading && <Table columns={COLUMNS} data={permitHolderData || []} />}
+            {!loading && (
+              <>
+                <Table columns={COLUMNS} data={permitHolderData || []} />
+              </>
+            )}
             <Flex justifyContent="flex-end">
-              <Pagination pageSize={20} totalCount={150} />
+              <Pagination
+                pageSize={PAGE_SIZE}
+                totalCount={3}
+                onPageChange={n => setPageNumber(n)}
+              />
             </Flex>
           </Box>
         </Box>

@@ -4,21 +4,24 @@ import { ApplicantsFilter, Applicant } from '@lib/graphql/types';
 export const FILTER_PERMIT_HOLDERS_QUERY = gql`
   query FilterPermitHoldersQuery($filter: ApplicantsFilter) {
     applicants(filter: $filter) {
-      firstName
-      middleName
-      lastName
-      dateOfBirth
-      addressLine1
-      city
-      postalCode
-      email
-      phone
-      recentPermit {
-        expiryDate
-        rcdPermitId
+      node {
+        firstName
+        middleName
+        lastName
+        dateOfBirth
+        addressLine1
+        city
+        postalCode
+        email
+        phone
+        recentPermit {
+          expiryDate
+          rcdPermitId
+        }
+        status
+        id
       }
-      status
-      id
+      totalCount
     }
   }
 `;
@@ -28,5 +31,8 @@ export type FilterPermitHoldersRequest = {
 };
 
 export type FilterPermitHoldersResponse = {
-  applicants: [Applicant];
+  applicants: {
+    node: [Applicant];
+    totalCount: number;
+  };
 };

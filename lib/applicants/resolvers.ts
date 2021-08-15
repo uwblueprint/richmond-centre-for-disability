@@ -42,16 +42,23 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
     let expiryDateUpperBound,
       expiryDateLowerBound,
       userIDSearch,
+      nameFilters,
       firstSearch,
-      lastSearch,
-      middleSearch;
+      middleSearch,
+      lastSearch;
 
     if (parseInt(search)) {
       userIDSearch = parseInt(search);
     } else if (search) {
       [firstSearch, middleSearch, lastSearch] = search?.split(' ');
       middleSearch = middleSearch || firstSearch;
-      lastSearch = lastSearch || middleSearch || firstSearch;
+      lastSearch = lastSearch || middleSearch;
+
+      nameFilters = [
+        { firstName: { contains: firstSearch, mode: 'insensitive' } },
+        { middleName: { contains: middleSearch, mode: 'insensitive' } },
+        { lastName: { contains: lastSearch, mode: 'insensitive' } },
+      ];
     }
 
     const TODAY = new Date();
@@ -86,11 +93,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
     where = {
       rcdUserId: userIDSearch,
       status: userStatus,
-      OR: [
-        { firstName: { contains: firstSearch, mode: 'insensitive' } },
-        { middleName: { contains: middleSearch, mode: 'insensitive' } },
-        { lastName: { contains: lastSearch, mode: 'insensitive' } },
-      ],
+      OR: nameFilters,
       permits: permitFilter,
     };
   }
@@ -102,6 +105,8 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
   const take = filter?.limit || 20; // default skip
   const skip = filter?.offset || 0; // default take
 
+  const totalCount = await prisma.applicant.count();
+
   const applicants = await prisma.applicant.findMany({
     where: where,
     skip: skip,
@@ -109,7 +114,10 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
     orderBy: [{ firstName: sortingOrder.name }, { lastName: sortingOrder.name }],
   });
 
-  return applicants;
+  return {
+    node: applicants,
+    totalCount: totalCount,
+  };
 };
 
 /**
