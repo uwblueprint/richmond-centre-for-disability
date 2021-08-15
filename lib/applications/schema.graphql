@@ -131,7 +131,7 @@ input ApplicationsFilter {
   order: [[String]]
   permitType: PermitType
   requestType: String
-  status: ApplicationStatus
+  status: String
   search: String
   limit: Int
   offset: Int
@@ -142,7 +142,7 @@ type ApplicationsFilterResult{
   lastName: String
   id: ID
   createdAt: Date
-  status: ApplicationStatus
-  is_renewal: Boolean
+  status: String
+  isRenewal: Boolean
   permitType: PermitType
 }

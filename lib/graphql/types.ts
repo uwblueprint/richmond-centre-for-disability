@@ -142,7 +142,7 @@ export type ApplicationsFilter = {
   order?: Maybe<Array<Maybe<Array<Maybe<Scalars['String']>>>>>;
   permitType?: Maybe<PermitType>;
   requestType?: Maybe<Scalars['String']>;
-  status?: Maybe<ApplicationStatus>;
+  status?: Maybe<Scalars['String']>;
   search?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
@@ -154,8 +154,8 @@ export type ApplicationsFilterResult = {
   lastName?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   createdAt?: Maybe<Scalars['Date']>;
-  status?: Maybe<ApplicationStatus>;
-  is_renewal?: Maybe<Scalars['Boolean']>;
+  status?: Maybe<Scalars['String']>;
+  isRenewal?: Maybe<Scalars['Boolean']>;
   permitType?: Maybe<PermitType>;
 };
 
@@ -513,7 +513,7 @@ export type Query = {
   applicant?: Maybe<Applicant>;
   employees?: Maybe<Array<Employee>>;
   physicians?: Maybe<Array<Physician>>;
-  applications?: Maybe<Array<Application>>;
+  applications?: Maybe<Array<ApplicationsFilterResult>>;
   permits?: Maybe<Array<Permit>>;
 };
 

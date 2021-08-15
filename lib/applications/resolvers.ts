@@ -51,7 +51,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
       id: true,
       createdAt: true,
       permitType: true,
-      is_renewal: true,
+      isRenewal: true,
       applicationProcessing: {
         select: {
           status: true,

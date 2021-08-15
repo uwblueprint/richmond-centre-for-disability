@@ -16,7 +16,6 @@ import {
   InputGroup,
   Input,
   InputLeftElement,
-  useControllableState,
   Wrap,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
@@ -26,12 +25,12 @@ import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
 //import { applications } from '@lib/applications/resolvers';
-import { useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { useState } from 'react'; // React
 //import { Application } from '@prisma/client';
 // import applicationProcessing from '@prisma/dev-seed-utils/application-processings';
 import { FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin';
-import { ApplicationsFilter, ApplicationsFilterResult, Role } from '@lib/graphql/types';
+import { ApplicationsFilter, ApplicationsFilterResult, PermitType, Role } from '@lib/graphql/types';
 
 type StatusProps = {
   readonly value:
@@ -167,42 +166,44 @@ type FilterRequest = {
 
 // Internal home page - view APP requests
 export default function Requests() {
-  const [permitTypeFilter, setPermitTypeFilter] = useControllableState({ defaultValue: 'All' });
-  const [requestTypeFilter, setRequestTypeFilter] = useControllableState({ defaultValue: 'All' });
+  const [statusFilter, setStatusFilter] = useState<string>();
+  const [permitTypeFilter, setPermitTypeFilter] = useState<PermitType>();
+  const [requestTypeFilter, setRequestTypeFilter] = useState<string>();
   const [requestsData, setRequestsData] = useState<ApplicationsFilterResult[]>();
 
-  //const { loading, data } = useQuery<FilterResponse, ApplicationsFilter>(FILTER_APPLICATIONS_QUERY);
-
-  const { data } = useQuery<FilterResponse, FilterRequest>(FILTER_APPLICATIONS_QUERY, {
-    variables: {
-      filter: {
-        order: undefined,
-        permitType: undefined,
-        requestType: undefined,
-        status: undefined,
-        search: undefined,
-        limit: undefined,
-        offset: undefined,
+  const [queryApplications, { data }] = useLazyQuery<FilterResponse, FilterRequest>(
+    FILTER_APPLICATIONS_QUERY,
+    {
+      variables: {
+        filter: {
+          order: undefined,
+          permitType: permitTypeFilter,
+          requestType: requestTypeFilter,
+          status: statusFilter,
+          search: undefined,
+          limit: undefined,
+          offset: undefined,
+        },
       },
-    },
-    onCompleted: data => {
-      setRequestsData(
-        data.applications.map(record => ({
-          name: {
-            name: record.firstName + ' ' + record.lastName,
-            rcdUserId: record.id,
-          },
-          dateReceived: record.createdAt,
-          permitType: record.permitType,
-          requestType: record.is_renewal ? 'Renewal' : 'Replacement',
-          status: record.status,
-          ...record,
-        }))
-      );
-      // console.log("in data")
-      // console.log(data);
-    },
-  });
+      onCompleted: data => {
+        setRequestsData(
+          data.applications.map(record => ({
+            name: {
+              name: record.firstName + ' ' + record.lastName,
+              rcdUserId: record.id,
+            },
+            dateReceived: record.createdAt,
+            permitType: record.permitType,
+            requestType: record.isRenewal ? 'Renewal' : 'Replacement',
+            status: record.status,
+            ...record,
+          }))
+        );
+        // console.log("in data")
+        // console.log(data);
+      },
+    }
+  );
 
   if (data) {
     // console.log(data);
@@ -234,6 +235,11 @@ export default function Requests() {
 
   //console.log(DATA);
 
+  const refreshData = () => {
+    queryApplications();
+    return;
+  };
+
   return (
     <Layout>
       <GridItem colSpan={12}>
@@ -259,11 +265,51 @@ export default function Requests() {
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
           <Tabs marginBottom="20px">
             <TabList paddingX="24px">
-              <Tab height="64px">All</Tab>
-              <Tab height="64px">Pending</Tab>
-              <Tab height="64px">In Progress</Tab>
-              <Tab height="64px">Completed</Tab>
-              <Tab height="64px">Rejected</Tab>
+              <Tab
+                height="64px"
+                onClick={() => {
+                  setStatusFilter(undefined);
+                  refreshData();
+                }}
+              >
+                All
+              </Tab>
+              <Tab
+                height="64px"
+                onClick={() => {
+                  setStatusFilter('PENDING');
+                  refreshData();
+                }}
+              >
+                Pending
+              </Tab>
+              <Tab
+                height="64px"
+                onClick={() => {
+                  setStatusFilter('INPROGRESS');
+                  refreshData();
+                }}
+              >
+                In Progress
+              </Tab>
+              <Tab
+                height="64px"
+                onClick={() => {
+                  setStatusFilter('COMPLETED');
+                  refreshData();
+                }}
+              >
+                Completed
+              </Tab>
+              <Tab
+                height="64px"
+                onClick={() => {
+                  setStatusFilter('REJECTED');
+                  refreshData();
+                }}
+              >
+                Rejected
+              </Tab>
             </TabList>
           </Tabs>
           <Box padding="0 24px">
@@ -283,27 +329,27 @@ export default function Requests() {
                     Permit type:{' '}
                   </Text>
                   <Text as="span" textStyle="button-regular">
-                    {permitTypeFilter}
+                    {permitTypeFilter || 'All'}
                   </Text>
                 </MenuButton>
                 <MenuList>
                   <MenuItem
                     onClick={() => {
-                      setPermitTypeFilter('All');
+                      setPermitTypeFilter(undefined);
                     }}
                   >
                     All
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      setPermitTypeFilter('Permanent');
+                      setPermitTypeFilter(PermitType.Permanent);
                     }}
                   >
                     Permanent
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      setPermitTypeFilter('Temporary');
+                      setPermitTypeFilter(PermitType.Temporary);
                     }}
                   >
                     Temporary
@@ -325,13 +371,14 @@ export default function Requests() {
                     Request type:{' '}
                   </Text>
                   <Text as="span" textStyle="button-regular">
-                    {requestTypeFilter}
+                    {requestTypeFilter || 'All'}
                   </Text>
                 </MenuButton>
                 <MenuList>
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter('All');
+                      refreshData();
                     }}
                   >
                     All
@@ -339,6 +386,7 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter('Replacement');
+                      refreshData();
                     }}
                   >
                     Replacement
@@ -346,6 +394,7 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter('Renewal');
+                      refreshData();
                     }}
                   >
                     Renewal
