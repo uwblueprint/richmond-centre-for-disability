@@ -12,23 +12,41 @@ import { DBErrorCode } from '@lib/db/errors'; // Database errors
  * @returns All RCD applications
  */
 export const applications: Resolver = async (_parent, { filter }, { prisma }) => {
-  const {
-    input: { order, permitType, requestType, status, search, limit = 20, offset = 0 },
-  } = filter;
+  const { order, permitType, requestType, status, search, limit = 20, offset = 0 } = filter;
 
-  // console.log('in applications resolver');
-
-  let userIDSearch, nameSearch;
+  let userIDSearch, nameFilters, firstSearch, middleSearch, lastSearch;
 
   if (parseInt(search)) {
     userIDSearch = parseInt(search);
-  } else {
-    nameSearch = search.split(' ');
+  } else if (search) {
+    [firstSearch, middleSearch, lastSearch] = search.split(' ');
+    middleSearch = middleSearch || firstSearch; //what does this do?
+    lastSearch = lastSearch || middleSearch;
+
+    nameFilters = [
+      { firstName: { contains: firstSearch, mode: 'insensitive' } },
+      { middleName: { contains: middleSearch, mode: 'insensitive' } },
+      { lastName: { contains: lastSearch, mode: 'insensitive' } },
+    ];
   }
 
   const sortingOrder: Record<string, string> = order
     ? order.foreach((col: string, order: string) => (sortingOrder[col] = order))
-    : { dateReceived: 'desc' };
+    : { createdAt: 'desc' };
+
+  const applicationsCount = await prisma.application.count({
+    where: {
+      applicant: {
+        id: userIDSearch,
+      },
+      applicationProcessing: {
+        status: status || undefined,
+      },
+      isRenewal: requestType ? requestType === 'RENEWAL' : undefined,
+      permitType: permitType || undefined,
+      OR: nameFilters,
+    },
+  });
 
   const applications = await prisma.application.findMany({
     skip: offset,
@@ -43,7 +61,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
       },
       isRenewal: requestType ? requestType === 'RENEWAL' : undefined,
       permitType: permitType || undefined,
-      OR: [{ firstName: { in: nameSearch } }, { lastName: { in: nameSearch } }],
+      OR: nameFilters,
     },
     select: {
       firstName: true,
@@ -60,7 +78,10 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     },
   });
 
-  return applications;
+  return {
+    result: applications,
+    totalCount: applicationsCount,
+  };
 };
 
 /**

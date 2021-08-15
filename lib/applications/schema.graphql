@@ -146,3 +146,8 @@ type ApplicationsFilterResult{
   isRenewal: Boolean
   permitType: PermitType
 }
+
+type QueryApplicationsResult {
+  result: [ApplicationsFilterResult]
+  totalCount: Int
+}

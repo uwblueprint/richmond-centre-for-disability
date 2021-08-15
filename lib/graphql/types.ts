@@ -513,7 +513,7 @@ export type Query = {
   applicant?: Maybe<Applicant>;
   employees?: Maybe<Array<Employee>>;
   physicians?: Maybe<Array<Physician>>;
-  applications?: Maybe<Array<ApplicationsFilterResult>>;
+  applications?: Maybe<QueryApplicationsResult>;
   permits?: Maybe<Array<Permit>>;
 };
 
@@ -535,6 +535,12 @@ export type QueryApplicantsResult = {
 
 export type QueryApplicationsArgs = {
   filter?: Maybe<ApplicationsFilter>;
+};
+
+export type QueryApplicationsResult = {
+  __typename?: 'QueryApplicationsResult';
+  result?: Maybe<Array<Maybe<ApplicationsFilterResult>>>;
+  totalCount?: Maybe<Scalars['Int']>;
 };
 
 export type QueryEmployeeInput = {

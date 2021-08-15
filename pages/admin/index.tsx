@@ -143,26 +143,18 @@ const COLUMNS = [
 //   },
 // ];
 
-// const data = () => {
-//   applications({
-//     variables: {
-//       args: {
-//         order: null,
-//         status: null,
-//         search: null,
-//         limit: null,
-//       },
-//     }
-//   })
-// };
-
 type FilterResponse = {
-  applications: [ApplicationsFilterResult];
+  applications: {
+    result: ApplicationsFilterResult;
+    totalCount: number;
+  };
 };
 
 type FilterRequest = {
   filter: ApplicationsFilter;
 };
+
+const PAGE_SIZE = 2;
 
 // Internal home page - view APP requests
 export default function Requests() {
@@ -170,8 +162,14 @@ export default function Requests() {
   const [permitTypeFilter, setPermitTypeFilter] = useState<PermitType>();
   const [requestTypeFilter, setRequestTypeFilter] = useState<string>();
   const [requestsData, setRequestsData] = useState<ApplicationsFilterResult[]>();
+  const [searchFilter, setSearchFilter] = useState<string>();
+  const [searchInput, setSearchInput] = useState<string>();
 
-  const [queryApplications, { data }] = useLazyQuery<FilterResponse, FilterRequest>(
+  const [pageNumber, setPageNumber] = useState(0);
+  const [recordsCount, setRecordsCount] = useState(0);
+  // const recordsCount = useRef<number>(); TODO: figure out if we should do this instead
+
+  const [queryApplications, { loading }] = useLazyQuery<FilterResponse, FilterRequest>(
     FILTER_APPLICATIONS_QUERY,
     {
       variables: {
@@ -180,14 +178,14 @@ export default function Requests() {
           permitType: permitTypeFilter,
           requestType: requestTypeFilter,
           status: statusFilter,
-          search: undefined,
-          limit: undefined,
-          offset: undefined,
+          search: searchFilter,
+          offset: pageNumber * PAGE_SIZE,
+          limit: PAGE_SIZE,
         },
       },
       onCompleted: data => {
         setRequestsData(
-          data.applications.map(record => ({
+          data.applications.result.map(record => ({
             name: {
               name: record.firstName + ' ' + record.lastName,
               rcdUserId: record.id,
@@ -199,45 +197,19 @@ export default function Requests() {
             ...record,
           }))
         );
-        // console.log("in data")
-        // console.log(data);
+        setRecordsCount(data.applications.totalCount);
       },
     }
   );
 
-  if (data) {
-    // console.log(data);
-  }
-
-  // if (error) {
-  //   console.log("error!!");
-  //   console.log(error);
-  // } else {
-  //   console.log("no error");
-  // }
-  // console.log('hello');
-  // console.log(requestsData);
-  // let DATA;
-
-  // if (!loading) {
-  //   DATA = data?.applications.map(record => ({
-  //     name: {
-  //       name: record.firstName + ' ' + record.lastName,
-  //       rcdUserId: record.id,
-  //     },
-  //     dateReceived: record.createdAt,
-  //     permitType: 'Permanent',
-  //     requestType: 'Replacement',
-  //     status: record.status,
-  //     ...record,
-  //   }));
-  // }
-
-  //console.log(DATA);
-
   const refreshData = () => {
     queryApplications();
     return;
+  };
+
+  const permitTypeString: Record<PermitType, string> = {
+    [PermitType.Permanent]: 'Permanent',
+    [PermitType.Temporary]: 'Temporary',
   };
 
   return (
@@ -329,13 +301,14 @@ export default function Requests() {
                     Permit type:{' '}
                   </Text>
                   <Text as="span" textStyle="button-regular">
-                    {permitTypeFilter || 'All'}
+                    {permitTypeFilter ? permitTypeString[permitTypeFilter] : 'All'}
                   </Text>
                 </MenuButton>
                 <MenuList>
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(undefined);
+                      refreshData();
                     }}
                   >
                     All
@@ -343,6 +316,7 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(PermitType.Permanent);
+                      refreshData();
                     }}
                   >
                     Permanent
@@ -350,6 +324,7 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(PermitType.Temporary);
+                      refreshData();
                     }}
                   >
                     Temporary
@@ -377,7 +352,7 @@ export default function Requests() {
                 <MenuList>
                   <MenuItem
                     onClick={() => {
-                      setRequestTypeFilter('All');
+                      setRequestTypeFilter(undefined);
                       refreshData();
                     }}
                   >
@@ -406,17 +381,24 @@ export default function Requests() {
                   <InputLeftElement pointerEvents="none">
                     <SearchIcon color="text.filler" />
                   </InputLeftElement>
-                  <Input placeholder="Search by first name, last name or user ID" />
+                  <Input
+                    placeholder="Search by name or user ID"
+                    onKeyDown={event => {
+                      if (event.key === 'Enter') {
+                        setSearchFilter(searchInput);
+                      }
+                    }}
+                    onChange={event => setSearchInput(event.target.value)}
+                  />
                 </InputGroup>
               </Box>
             </Flex>
-            <Table columns={COLUMNS} data={requestsData || []} />
+            {!loading && <Table columns={COLUMNS} data={requestsData || []} />}
             <Flex justifyContent="flex-end">
-              <Pagination /* eslint-disable @typescript-eslint/no-empty-function */
-                pageNumber={0}
-                onPageChange={() => {}}
-                pageSize={20}
-                totalCount={150}
+              <Pagination
+                pageSize={PAGE_SIZE}
+                totalCount={recordsCount}
+                onPageChange={n => setPageNumber(n)}
               />
             </Flex>
           </Box>
