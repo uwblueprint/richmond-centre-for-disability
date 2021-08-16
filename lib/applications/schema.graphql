@@ -137,14 +137,29 @@ input ApplicationsFilter {
   offset: Int
 }
 
-type ApplicationsFilterResult{
-  firstName: String
-  lastName: String
-  id: ID
+type ApplicationProcessing {
+  id: Int
+  status: ApplicationStatus
+  appNumber: Int
+  appHolepunched: Boolean
+  walletCardCreated: Boolean
+  invoiceNumber: Int
+  documentUrls: [String]
+  appMailed: Boolean
+  applicationId: Int
   createdAt: Date
-  status: String
-  isRenewal: Boolean
-  permitType: PermitType
+  updatedAt: Date
+  application: Application
+}
+
+type ApplicationsFilterResult{
+  firstName: String!
+  lastName: String!
+  id: ID!
+  createdAt: Date!
+  applicationProcessing: ApplicationProcessing
+  isRenewal: Boolean!
+  permitType: PermitType!
 }
 
 type QueryApplicationsResult {

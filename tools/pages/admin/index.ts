@@ -10,7 +10,9 @@ export const FILTER_APPLICATIONS_QUERY = gql`
         createdAt
         permitType
         isRenewal
-        status
+        applicationProcessing {
+          status
+        }
       }
       totalCount
     }

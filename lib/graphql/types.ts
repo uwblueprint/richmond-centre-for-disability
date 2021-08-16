@@ -131,6 +131,22 @@ export type Application = {
   permit?: Maybe<Permit>;
 };
 
+export type ApplicationProcessing = {
+  __typename?: 'ApplicationProcessing';
+  id?: Maybe<Scalars['Int']>;
+  status?: Maybe<ApplicationStatus>;
+  appNumber?: Maybe<Scalars['Int']>;
+  appHolepunched?: Maybe<Scalars['Boolean']>;
+  walletCardCreated?: Maybe<Scalars['Boolean']>;
+  invoiceNumber?: Maybe<Scalars['Int']>;
+  documentUrls?: Maybe<Array<Maybe<Scalars['String']>>>;
+  appMailed?: Maybe<Scalars['Boolean']>;
+  applicationId?: Maybe<Scalars['Int']>;
+  createdAt?: Maybe<Scalars['Date']>;
+  updatedAt?: Maybe<Scalars['Date']>;
+  application?: Maybe<Application>;
+};
+
 export enum ApplicationStatus {
   Pending = 'PENDING',
   Approved = 'APPROVED',
@@ -150,13 +166,13 @@ export type ApplicationsFilter = {
 
 export type ApplicationsFilterResult = {
   __typename?: 'ApplicationsFilterResult';
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['ID']>;
-  createdAt?: Maybe<Scalars['Date']>;
-  status?: Maybe<Scalars['String']>;
-  isRenewal?: Maybe<Scalars['Boolean']>;
-  permitType?: Maybe<PermitType>;
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  id: Scalars['ID'];
+  createdAt: Scalars['Date'];
+  applicationProcessing?: Maybe<ApplicationProcessing>;
+  isRenewal: Scalars['Boolean'];
+  permitType: PermitType;
 };
 
 export type CreateApplicantInput = {

@@ -30,7 +30,13 @@ import { useState } from 'react'; // React
 //import { Application } from '@prisma/client';
 // import applicationProcessing from '@prisma/dev-seed-utils/application-processings';
 import { FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin';
-import { ApplicationsFilter, ApplicationsFilterResult, PermitType, Role } from '@lib/graphql/types';
+import {
+  ApplicationsFilter,
+  ApplicationsFilterResult,
+  ApplicationStatus,
+  PermitType,
+  Role,
+} from '@lib/graphql/types';
 
 type StatusProps = {
   readonly value:
@@ -147,13 +153,24 @@ const COLUMNS = [
 
 type FilterResponse = {
   applications: {
-    result: ApplicationsFilterResult;
+    result: [ApplicationsFilterResult];
     totalCount: number;
   };
 };
 
 type FilterRequest = {
   filter: ApplicationsFilter;
+};
+
+type ApplicationData = {
+  name: {
+    name: string;
+    rcdUserId: number;
+  };
+  dateReceived: Date;
+  permitType: string;
+  requestType: string;
+  status: ApplicationStatus | undefined;
 };
 
 const PAGE_SIZE = 2;
@@ -163,7 +180,7 @@ export default function Requests() {
   const [statusFilter, setStatusFilter] = useState<string>();
   const [permitTypeFilter, setPermitTypeFilter] = useState<PermitType>();
   const [requestTypeFilter, setRequestTypeFilter] = useState<string>();
-  const [requestsData, setRequestsData] = useState<ApplicationsFilterResult[]>();
+  const [requestsData, setRequestsData] = useState<ApplicationData[]>();
   const [searchFilter, setSearchFilter] = useState<string>();
   const [searchInput, setSearchInput] = useState<string>();
 
@@ -188,7 +205,7 @@ export default function Requests() {
       notifyOnNetworkStatusChange: true,
       onCompleted: data => {
         setRequestsData(
-          data.applications.result.map((record: ApplicationsFilterResult) => ({
+          data.applications.result.map(record => ({
             name: {
               name: record.firstName + ' ' + record.lastName,
               rcdUserId: record.id,
@@ -196,7 +213,7 @@ export default function Requests() {
             dateReceived: record.createdAt,
             permitType: permitTypeString[record.permitType],
             requestType: record.isRenewal ? 'Renewal' : 'Replacement',
-            status: record.status,
+            status: record.applicationProcessing?.status || undefined,
           }))
         );
         setRecordsCount(data.applications.totalCount);
