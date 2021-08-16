@@ -14,8 +14,9 @@ import { SortOrder } from '@tools/types';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
+ * All fields are optional.
  *
- * Optional Filters:
+ * Filters:
  * - permitStatus: VALID, EXPIRED, EXPIRING_THIRTY
  * - userStatus: ACTIVE, INACTIVE
  * - expiryDateRangeFrom: Permit Expiry Date start
@@ -23,8 +24,11 @@ import { SortOrder } from '@tools/types';
  * - search: Search by first, middle, last name or by RCD user ID
  *
  * Pagination:
- * - offset: Number of results to skip, default 0
- * - limit: Number of result to return, default 20
+ * - offset: Number of results to skip.
+ * - limit: Number of result to return
+ *
+ * Sorting:
+ * - order: array of tuples of the field being sorted and the order. Default [['firstName', 'asc'], ['lastName', 'asc']]
  * @returns All RCD applicants that match the filter(s).
  */
 export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
@@ -80,10 +84,18 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
     const permitFilter = containsPermitFilter
       ? {
           some: {
-            expiryDate: { gte: expiryDateUpperBound, lte: expiryDateLowerBound },
             AND: [
               {
-                expiryDate: { gte: expiryDateRangeFrom, lte: expiryDateRangeTo },
+                expiryDate: {
+                  gt: expiryDateLowerBound?.toISOString(),
+                  lte: expiryDateUpperBound?.toISOString(),
+                },
+              },
+              {
+                expiryDate: {
+                  gte: expiryDateRangeFrom?.toISOString(),
+                  lte: expiryDateRangeTo?.toISOString(),
+                },
               },
             ],
           },
@@ -97,21 +109,27 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
       permits: permitFilter,
     };
   }
+  const sortingOrder: Record<string, SortOrder> = {};
 
-  const sortingOrder: Record<string, SortOrder> = filter?.order
-    ? filter.order.foreach((col: string, order: SortOrder) => (sortingOrder[col] = order))
-    : { name: SortOrder.ASC }; // default sorting order
+  if (filter.order) {
+    filter.order.forEach(([field, order]: [string, SortOrder]) => (sortingOrder[field] = order));
+  }
 
-  const take = filter?.limit || 20; // default skip
-  const skip = filter?.offset || 0; // default take
+  const take = filter?.limit;
+  const skip = filter?.offset;
 
-  const totalCount = await prisma.applicant.count();
+  const totalCount = await prisma.applicant.count({
+    where: where,
+  });
 
   const applicants = await prisma.applicant.findMany({
     where: where,
     skip: skip,
     take: take,
-    orderBy: [{ firstName: sortingOrder.name }, { lastName: sortingOrder.name }],
+    orderBy: [
+      { firstName: sortingOrder.name || SortOrder.ASC },
+      { lastName: sortingOrder.name || SortOrder.ASC },
+    ],
   });
 
   return {

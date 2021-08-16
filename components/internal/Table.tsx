@@ -37,7 +37,7 @@ export default function Table(props: Props) {
     if (onChangeSortOrder !== undefined) {
       onChangeSortOrder(getSortOptions(sortBy));
     }
-  }, [onChangeSortOrder, sortBy]);
+  }, [sortBy]);
 
   return (
     <Box>

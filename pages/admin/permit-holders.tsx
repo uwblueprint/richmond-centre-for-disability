@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
-import { useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
   Box,
   Flex,
@@ -19,11 +19,11 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
-import { Applicant, PermitStatus, Role, UserStatus } from '@lib/types'; // Role enum
+import { Applicant, Permit, PermitStatus, Role, UserStatus } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
-import { useState, useEffect, useRef } from 'react'; // React
+import { useState } from 'react'; // React
 import {
   FILTER_PERMIT_HOLDERS_QUERY,
   FilterPermitHoldersRequest,
@@ -32,13 +32,16 @@ import {
 import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker'; // Date picker
 import 'react-day-picker/lib/style.css'; // Date picker styling
 import Helmet from 'react-helmet'; // Date picker inline styling for select range functionality
+import { SortOptions, SortOrder } from '@tools/types';
+import { Column } from 'react-table';
 
-const COLUMNS = [
+const COLUMNS: Column<any>[] = [
   {
     Header: 'Name',
     accessor: 'name',
     width: 180,
     minWidth: 180,
+    sortDescFirst: true,
     Cell: renderName,
   },
   {
@@ -75,11 +78,11 @@ const COLUMNS = [
   },
   {
     Header: 'Recent APP',
-    accessor: 'recentPermitTest',
+    accessor: 'recentPermit',
     disableSortBy: true,
     width: 140,
     maxWidth: 140,
-    Cell: renderRecentAPP,
+    Cell: renderRecentPermit,
   },
   {
     Header: 'User Status',
@@ -139,7 +142,6 @@ type UserStatusBadgeProps = {
 };
 
 function renderUserStatusBadge({ value }: UserStatusBadgeProps) {
-  value = value || 'active'; // temp
   return (
     <Wrap>
       <Badge variant={value}>{value.toUpperCase()}</Badge>
@@ -147,18 +149,15 @@ function renderUserStatusBadge({ value }: UserStatusBadgeProps) {
   );
 }
 
-type RecentAPPProps = {
-  value: {
-    rcdPermitId: number;
-    expiryDate: Date;
-  };
+type RecentPermitProps = {
+  value: Permit;
 };
 
-function renderRecentAPP({ value }: RecentAPPProps) {
-  value = value || { rcdPermitId: 1, expiryDate: new Date() }; // temp
+function renderRecentPermit({ value }: RecentPermitProps) {
   const today = new Date();
-  const expired = DateUtils.isPastDay(value.expiryDate);
-  const expiresSoon = DateUtils.isDayInRange(today, {
+  const expiryDate = new Date(value.expiryDate);
+  const expired = DateUtils.isPastDay(expiryDate);
+  const expiresSoon = DateUtils.isDayInRange(expiryDate, {
     from: today,
     to: DateUtils.addMonths(today, 1),
   });
@@ -173,14 +172,14 @@ function renderRecentAPP({ value }: RecentAPPProps) {
   );
 }
 
-// map PermitStatus enum to drop down value
+// map PermitStatus enum to drop down text
 const permitStatusText: Record<PermitStatus, string> = {
   [PermitStatus.Valid]: 'Valid',
   [PermitStatus.Expired]: 'Expired',
   [PermitStatus.ExpiringThirty]: 'Expiring Soon',
 };
 
-// map UserStatus enum to drop down value
+// map UserStatus enum to drop down text
 const userStatusText: Record<UserStatus, string> = {
   [UserStatus.Active]: 'Active',
   [UserStatus.Inactive]: 'Inactive',
@@ -249,57 +248,48 @@ export default function PermitHolders() {
   const [searchFilter, setSearchFilter] = useState<string>();
   const [searchInput, setSearchInput] = useState<string>();
   const [range, setRange] = useState<RangeModifier>({ from: undefined, to: undefined });
+  const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
 
   const [permitHolderData, setPermitHolderData] = useState<PermitTableInputData[]>();
   const [pageNumber, setPageNumber] = useState(0);
-  const recordsCount = useRef<number>();
+  const [recordsCount, setRecordsCount] = useState<number>(0);
 
-  // const dataSize
-
-  const [queryPermitHolders, { loading }] = useLazyQuery<
-    FilterPermitHoldersResponse,
-    FilterPermitHoldersRequest
-  >(FILTER_PERMIT_HOLDERS_QUERY, {
-    onCompleted: data => {
-      setPermitHolderData(
-        data.applicants.node.map(record => ({
-          name: {
-            firstName: record.firstName,
-            lastName: record.lastName,
-            middleName: record.middleName || undefined,
-            rcdUserId: record.id,
-          },
-          homeAddress: {
-            address: record.addressLine1,
-            city: record.city,
-            postalCode: record.postalCode,
-          },
-          ...record,
-        }))
-      );
-      recordsCount.current = recordsCount.current || data.applicants.totalCount;
-    },
-  });
-
-  useEffect(() => {
-    queryPermitHolders();
-  }, []);
-
-  useEffect(() => {
-    queryPermitHolders({
+  const { loading } = useQuery<FilterPermitHoldersResponse, FilterPermitHoldersRequest>(
+    FILTER_PERMIT_HOLDERS_QUERY,
+    {
       variables: {
         filter: {
           userStatus: userStatusFilter,
           permitStatus: permitStatusFilter,
-          expiryDateRangeFrom: range.from,
-          expiryDateRangeTo: range.to,
+          expiryDateRangeFrom: range.from?.getTime(),
+          expiryDateRangeTo: range.to?.getTime(),
           search: searchFilter,
           offset: pageNumber * PAGE_SIZE,
           limit: PAGE_SIZE,
+          order: sortOrder,
         },
       },
-    });
-  }, [permitStatusFilter, userStatusFilter, searchFilter, range, pageNumber]);
+      onCompleted: data => {
+        setPermitHolderData(
+          data.applicants.node.map(record => ({
+            name: {
+              firstName: record.firstName,
+              lastName: record.lastName,
+              middleName: record.middleName || undefined,
+              rcdUserId: record.id,
+            },
+            homeAddress: {
+              address: record.addressLine1,
+              city: record.city,
+              postalCode: record.postalCode,
+            },
+            ...record,
+          }))
+        );
+        setRecordsCount(data.applicants.totalCount);
+      },
+    }
+  );
 
   const permitStatusOptions = [
     PermitStatus.Valid,
@@ -314,9 +304,12 @@ export default function PermitHolders() {
 
   const modifier = { start: range.from || undefined, end: range.to || undefined };
 
-  const dateRangeString = () => {
-    if (!range.to) {
+  const dateRangeText = () => {
+    if (!range.from && !range.to) {
       return 'YYYY-MM-DD - YYYY-MM-DD';
+    }
+    if (range.from && !range.to) {
+      return `${range.from.toLocaleDateString('en-CA')} - YYYY-MM-DD`;
     }
     if (range.from && range.to) {
       return `${range.from.toLocaleDateString('en-CA')} - ${range.to.toLocaleDateString('en-CA')}`;
@@ -396,7 +389,7 @@ export default function PermitHolders() {
                   textAlign="left"
                   width="420px"
                 >
-                  <MenuText name={`Expiry date`} value={dateRangeString()} />
+                  <MenuText name={`Expiry date`} value={dateRangeText()} />
                 </MenuButton>
                 <MenuList>
                   <DayPicker
@@ -427,14 +420,16 @@ export default function PermitHolders() {
               </Box>
             </Flex>
             {!loading && (
-              <>
-                <Table columns={COLUMNS} data={permitHolderData || []} />
-              </>
+              <Table
+                columns={COLUMNS}
+                data={permitHolderData || []}
+                onChangeSortOrder={sortOrder => setSortOrder(sortOrder)}
+              />
             )}
             <Flex justifyContent="flex-end">
               <Pagination
                 pageSize={PAGE_SIZE}
-                totalCount={3}
+                totalCount={recordsCount}
                 onPageChange={n => setPageNumber(n)}
               />
             </Flex>

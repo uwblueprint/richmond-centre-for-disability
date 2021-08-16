@@ -3,7 +3,7 @@ import { SortOrder } from '@tools/types'; // Sort order enum
 
 // Function type of getSortOptions - Disable eslint preventing `object` from being used
 // eslint-disable-next-line
-type GetSortOptions = (sortBy: SortingRule<object>[]) => ReadonlyArray<[string, SortOrder]>;
+type GetSortOptions = (sortBy: SortingRule<object>[]) => Array<[string, SortOrder]>;
 
 /**
  * Convert the sortBy sort options to an array of tuples to be used by GQL APIs
