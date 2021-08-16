@@ -8,6 +8,8 @@ export const FILTER_APPLICATIONS_QUERY = gql`
         lastName
         id
         createdAt
+        permitType
+        isRenewal
         status
       }
       totalCount

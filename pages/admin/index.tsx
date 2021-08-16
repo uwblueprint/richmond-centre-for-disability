@@ -25,7 +25,7 @@ import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
 //import { applications } from '@lib/applications/resolvers';
-import { useLazyQuery } from '@apollo/client';
+import { NetworkStatus, useQuery } from '@apollo/client';
 import { useState } from 'react'; // React
 //import { Application } from '@prisma/client';
 // import applicationProcessing from '@prisma/dev-seed-utils/application-processings';
@@ -62,9 +62,11 @@ function renderName({ value }: NameProps) {
   return (
     <div>
       <Text>{value.name}</Text>
-      <Text textStyle="caption" textColor="secondary">
-        ID: {value.id}
-      </Text>
+      {value.id && (
+        <Text textStyle="caption" textColor="secondary">
+          ID: {value.id}
+        </Text>
+      )}
     </div>
   );
 }
@@ -169,7 +171,7 @@ export default function Requests() {
   const [recordsCount, setRecordsCount] = useState(0);
   // const recordsCount = useRef<number>(); TODO: figure out if we should do this instead
 
-  const [queryApplications, { loading }] = useLazyQuery<FilterResponse, FilterRequest>(
+  const { loading, networkStatus } = useQuery<FilterResponse, FilterRequest>(
     FILTER_APPLICATIONS_QUERY,
     {
       variables: {
@@ -183,29 +185,24 @@ export default function Requests() {
           limit: PAGE_SIZE,
         },
       },
+      notifyOnNetworkStatusChange: true,
       onCompleted: data => {
         setRequestsData(
-          data.applications.result.map(record => ({
+          data.applications.result.map((record: ApplicationsFilterResult) => ({
             name: {
               name: record.firstName + ' ' + record.lastName,
               rcdUserId: record.id,
             },
             dateReceived: record.createdAt,
-            permitType: record.permitType,
+            permitType: permitTypeString[record.permitType],
             requestType: record.isRenewal ? 'Renewal' : 'Replacement',
             status: record.status,
-            ...record,
           }))
         );
         setRecordsCount(data.applications.totalCount);
       },
     }
   );
-
-  const refreshData = () => {
-    queryApplications();
-    return;
-  };
 
   const permitTypeString: Record<PermitType, string> = {
     [PermitType.Permanent]: 'Permanent',
@@ -241,7 +238,6 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter(undefined);
-                  refreshData();
                 }}
               >
                 All
@@ -250,7 +246,6 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter('PENDING');
-                  refreshData();
                 }}
               >
                 Pending
@@ -259,7 +254,6 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter('INPROGRESS');
-                  refreshData();
                 }}
               >
                 In Progress
@@ -268,7 +262,6 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter('COMPLETED');
-                  refreshData();
                 }}
               >
                 Completed
@@ -277,7 +270,6 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter('REJECTED');
-                  refreshData();
                 }}
               >
                 Rejected
@@ -308,7 +300,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(undefined);
-                      refreshData();
                     }}
                   >
                     All
@@ -316,7 +307,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(PermitType.Permanent);
-                      refreshData();
                     }}
                   >
                     Permanent
@@ -324,7 +314,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(PermitType.Temporary);
-                      refreshData();
                     }}
                   >
                     Temporary
@@ -353,7 +342,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter(undefined);
-                      refreshData();
                     }}
                   >
                     All
@@ -361,7 +349,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter('Replacement');
-                      refreshData();
                     }}
                   >
                     Replacement
@@ -369,7 +356,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter('Renewal');
-                      refreshData();
                     }}
                   >
                     Renewal
@@ -393,7 +379,9 @@ export default function Requests() {
                 </InputGroup>
               </Box>
             </Flex>
-            {!loading && <Table columns={COLUMNS} data={requestsData || []} />}
+            {!loading && networkStatus !== NetworkStatus.refetch && (
+              <Table columns={COLUMNS} data={requestsData || []} />
+            )}
             <Flex justifyContent="flex-end">
               <Pagination
                 pageSize={PAGE_SIZE}

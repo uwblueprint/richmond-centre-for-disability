@@ -14,7 +14,7 @@ import { DBErrorCode } from '@lib/db/errors'; // Database errors
 export const applications: Resolver = async (_parent, { filter }, { prisma }) => {
   const { order, permitType, requestType, status, search, limit = 20, offset = 0 } = filter;
 
-  let userIDSearch, nameFilters, firstSearch, middleSearch, lastSearch;
+  let userIDSearch, firstSearch, middleSearch, lastSearch;
 
   if (parseInt(search)) {
     userIDSearch = parseInt(search);
@@ -22,12 +22,6 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     [firstSearch, middleSearch, lastSearch] = search.split(' ');
     middleSearch = middleSearch || firstSearch; //what does this do?
     lastSearch = lastSearch || middleSearch;
-
-    nameFilters = [
-      { firstName: { contains: firstSearch, mode: 'insensitive' } },
-      { middleName: { contains: middleSearch, mode: 'insensitive' } },
-      { lastName: { contains: lastSearch, mode: 'insensitive' } },
-    ];
   }
 
   const sortingOrder: Record<string, string> = order
@@ -42,9 +36,17 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
       applicationProcessing: {
         status: status || undefined,
       },
-      isRenewal: requestType ? requestType === 'RENEWAL' : undefined,
+      isRenewal: requestType ? requestType === 'Renewal' : undefined,
       permitType: permitType || undefined,
-      OR: nameFilters,
+      AND: [
+        {
+          OR: [
+            { firstName: { contains: firstSearch, mode: 'insensitive' } },
+            { middleName: { contains: middleSearch, mode: 'insensitive' } },
+            { lastName: { contains: lastSearch, mode: 'insensitive' } },
+          ],
+        },
+      ],
     },
   });
 
@@ -59,9 +61,17 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
       applicationProcessing: {
         status: status || undefined,
       },
-      isRenewal: requestType ? requestType === 'RENEWAL' : undefined,
+      isRenewal: requestType ? requestType === 'Renewal' : undefined,
       permitType: permitType || undefined,
-      OR: nameFilters,
+      AND: [
+        {
+          OR: [
+            { firstName: { contains: firstSearch, mode: 'insensitive' } },
+            { middleName: { contains: middleSearch, mode: 'insensitive' } },
+            { lastName: { contains: lastSearch, mode: 'insensitive' } },
+          ],
+        },
+      ],
     },
     select: {
       firstName: true,
