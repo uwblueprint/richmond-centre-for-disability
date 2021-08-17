@@ -556,10 +556,10 @@ export type UpsertPhysicianInput = {
   addressLine1: Scalars['String'];
   addressLine2?: Maybe<Scalars['String']>;
   city: Scalars['String'];
-  province: Province;
+  province?: Maybe<Province>;
   postalCode: Scalars['String'];
   phone: Scalars['String'];
-  status: PhysicianStatus;
+  status?: Maybe<PhysicianStatus>;
   notes?: Maybe<Scalars['String']>;
 };
 

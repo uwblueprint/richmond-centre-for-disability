@@ -55,7 +55,7 @@ export default function EditUserInformationModal({ children }: EditUserInformati
 
   const toast = useToast();
 
-  // Submit edited doctor information mutation
+  // Submit edited user information mutation
   const [submitEditedUserInformation, { loading }] = useMutation<
     UpdateApplicantResponse,
     UpdateApplicantRequest
