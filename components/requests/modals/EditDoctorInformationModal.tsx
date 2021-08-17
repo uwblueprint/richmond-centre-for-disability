@@ -20,6 +20,13 @@ import {
 import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
 import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
+import { useMutation } from '@apollo/client'; // Apollo Client
+import {
+  UPSERT_PHYSICIAN_MUTATION,
+  UpsertPhysicianRequest,
+  UpsertPhysicianResponse,
+} from '@tools/pages/admin/permit-holders/upsert-physician'; // Page tools
+import { useState, ReactNode } from 'react'; // React
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;
@@ -42,6 +49,7 @@ export default function EditDoctorInformationModal({
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
+<<<<<<< HEAD
   const successfulEditToast = useToast();
   useEffect(() => {
     setName(physician.name);
@@ -70,6 +78,51 @@ export default function EditDoctorInformationModal({
       render: () => (
         <SuccessfulEditAlert>{'Doctor’s information has been edited.'}</SuccessfulEditAlert>
       ),
+=======
+  const toast = useToast();
+
+  // Submit edited doctor information mutation
+  const [submitEditedDoctorInformation, { loading }] = useMutation<
+    UpsertPhysicianResponse,
+    UpsertPhysicianRequest
+  >(UPSERT_PHYSICIAN_MUTATION, {
+    onCompleted: data => {
+      if (data?.upsertPhysician.ok) {
+        onClose();
+        toast({
+          render: () => (
+            <SuccessfulEditAlert>{'Doctor’s information has been edited.'}</SuccessfulEditAlert>
+          ),
+        });
+      }
+    },
+    onError: error => {
+      onClose();
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
+
+  /**
+   * Handle edit submission
+   */
+  const handleSubmit = async () => {
+    await submitEditedDoctorInformation({
+      variables: {
+        input: {
+          mspNumber: parseInt(mspNumber),
+          firstName: firstName,
+          lastName: lastName,
+          phone: phoneNumber,
+          addressLine1: addressLine1,
+          addressLine2: addressLine2,
+          city: city,
+          postalCode: postalCode,
+        },
+      },
+>>>>>>> 6caeb66 (Partial hookup of edit modals)
     });
   };
 
@@ -174,7 +227,7 @@ export default function EditDoctorInformationModal({
               <Button colorScheme="gray" variant="solid" onClick={onClose}>
                 {'Cancel'}
               </Button>
-              <Button variant="solid" type="submit" ml={'12px'}>
+              <Button variant="solid" type="submit" ml={'12px'} isLoading={loading}>
                 {'Save'}
               </Button>
             </ModalFooter>
