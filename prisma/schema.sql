@@ -229,7 +229,6 @@ CREATE TABLE permits (
   active            BOOLEAN NOT NULL DEFAULT true,
   application_id    INTEGER NOT NULL UNIQUE,
   applicant_id      INTEGER NOT NULL,
-  permit_type       PermitType NOT NULL DEFAULT 'PERMANENT',
   created_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

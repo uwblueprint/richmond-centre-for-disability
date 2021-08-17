@@ -8,7 +8,6 @@ type Permit {
   applicationId: Int!
   applicant: Applicant!
   applicantId: Int!
-  permitType: PermitType!
 }
 
 input CreatePermitInput {
@@ -18,7 +17,6 @@ input CreatePermitInput {
   active: Boolean!
   applicationId: Int!
   applicantId: Int!
-  permitType: PermitType!
 }
 
 type CreatePermitResult {

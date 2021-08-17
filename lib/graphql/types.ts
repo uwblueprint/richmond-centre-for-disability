@@ -307,7 +307,6 @@ export type CreatePermitInput = {
   active: Scalars['Boolean'];
   applicationId: Scalars['Int'];
   applicantId: Scalars['Int'];
-  permitType: PermitType;
 };
 
 export type CreatePermitResult = {
@@ -472,7 +471,6 @@ export type Permit = {
   applicationId: Scalars['Int'];
   applicant: Applicant;
   applicantId: Scalars['Int'];
-  permitType: PermitType;
 };
 
 export enum PermitStatus {
