@@ -18,7 +18,7 @@ import {
   Divider,
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, ReactNode } from 'react'; // React
+import { useState, ReactNode, SyntheticEvent } from 'react'; // React
 import { Gender } from '@lib/graphql/types'; // Gender Enum
 import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
 import { useMutation } from '@apollo/client'; // Apollo Client
@@ -62,6 +62,7 @@ export default function EditUserInformationModal({ children }: EditUserInformati
   >(UPDATE_APPLICANT_MUTATION, {
     onCompleted: data => {
       if (data?.updateApplicant.ok) {
+        onClose();
         toast({
           render: () => (
             <SuccessfulEditAlert>{"User's information has been edited."}</SuccessfulEditAlert>
@@ -70,6 +71,7 @@ export default function EditUserInformationModal({ children }: EditUserInformati
       }
     },
     onError: error => {
+      onClose();
       toast({
         status: 'error',
         description: error.message,
@@ -80,7 +82,8 @@ export default function EditUserInformationModal({ children }: EditUserInformati
   /**
    * Handle edit submission
    */
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: SyntheticEvent) => {
+    event.preventDefault();
     await submitEditedUserInformation({
       variables: {
         input: {
