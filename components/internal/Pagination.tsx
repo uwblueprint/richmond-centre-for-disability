@@ -19,10 +19,10 @@ export default function Pagination(props: Props) {
 
   const [pageNumber, setPageNumber] = useState(initialPageNumber); // Current page number
 
-  const totalPages = Math.ceil(totalCount / pageSize); // Total number of pages
+  const totalPages = totalCount === 0 ? 1 : Math.ceil(totalCount / pageSize); // Total number of pages
   const isFirstPage = pageNumber === 0; // Whether current page is first page
   const isLastPage = pageNumber === totalPages - 1; // Whether current page is last page
-  const lowerBound = pageNumber * pageSize + 1; // Lower bound of current page (item #)
+  const lowerBound = totalCount === 0 ? 0 : pageNumber * pageSize + 1; // Lower bound of current page (item #)
   const upperBound = isLastPage ? totalCount : (pageNumber + 1) * pageSize; // Upper bound of current page (item #)
 
   /**
