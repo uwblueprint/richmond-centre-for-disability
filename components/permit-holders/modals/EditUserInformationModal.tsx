@@ -18,9 +18,15 @@ import {
   Divider,
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
+import { useState, ReactNode } from 'react'; // React
 import { Gender } from '@lib/graphql/types'; // Gender Enum
 import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
+import { useMutation } from '@apollo/client'; // Apollo Client
+import {
+  UpdateApplicantRequest,
+  UpdateApplicantResponse,
+  UPDATE_APPLICANT_MUTATION,
+} from '@tools/pages/admin/permit-holders/update-applicant'; // Page tools
 
 type EditUserInformationModalProps = {
   children: ReactNode;
@@ -47,17 +53,49 @@ export default function EditUserInformationModal({ children }: EditUserInformati
 
   //   TODO: Add error states for each field (post-mvp)
 
-  const successfulEditToast = useToast();
+  const toast = useToast();
 
-  const handleSubmit = (event: SyntheticEvent) => {
-    event.preventDefault();
-    // TODO: Will be addressed in API hookup
-    onClose();
+  // Submit edited doctor information mutation
+  const [submitEditedUserInformation, { loading }] = useMutation<
+    UpdateApplicantResponse,
+    UpdateApplicantRequest
+  >(UPDATE_APPLICANT_MUTATION, {
+    onCompleted: data => {
+      if (data?.updateApplicant.ok) {
+        toast({
+          render: () => (
+            <SuccessfulEditAlert>{"User's information has been edited."}</SuccessfulEditAlert>
+          ),
+        });
+      }
+    },
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
 
-    successfulEditToast({
-      render: () => (
-        <SuccessfulEditAlert>{"User's information has been edited."}</SuccessfulEditAlert>
-      ),
+  /**
+   * Handle edit submission
+   */
+  const handleSubmit = async () => {
+    await submitEditedUserInformation({
+      variables: {
+        input: {
+          firstName: firstName,
+          lastName: lastName,
+          dateOfBirth: dateOfBirth,
+          gender: gender,
+          email: email,
+          phone: phoneNumber,
+          addressLine1: addressLine1,
+          addressLine2: addressLine2,
+          city: city,
+          postalCode: postalCode,
+        },
+      },
     });
   };
 
@@ -206,7 +244,7 @@ export default function EditUserInformationModal({ children }: EditUserInformati
               <Button colorScheme="gray" variant="solid" onClick={onClose}>
                 {'Cancel'}
               </Button>
-              <Button variant="solid" type="submit" ml={'12px'}>
+              <Button variant="solid" type="submit" ml={'12px'} isLoading={loading}>
                 {'Save'}
               </Button>
             </ModalFooter>

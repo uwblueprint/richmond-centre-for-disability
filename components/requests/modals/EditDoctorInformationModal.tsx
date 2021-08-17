@@ -17,8 +17,14 @@ import {
   Divider,
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import SuccessFulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
+import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
+import { useMutation } from '@apollo/client'; // Apollo Client
+import {
+  UPSERT_PHYSICIAN_MUTATION,
+  UpsertPhysicianRequest,
+  UpsertPhysicianResponse,
+} from '@tools/pages/admin/permit-holders/upsert-physician'; // Page tools
+import { useState, ReactNode } from 'react'; // React
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;
@@ -36,17 +42,49 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
-  const successfulEditToast = useToast();
+  const toast = useToast();
 
-  const handleSubmit = (event: SyntheticEvent) => {
-    event.preventDefault();
-    //  TODO: Will be addressed in API hookup
-    onClose();
+  // Submit edited doctor information mutation
+  const [submitEditedDoctorInformation, { loading }] = useMutation<
+    UpsertPhysicianResponse,
+    UpsertPhysicianRequest
+  >(UPSERT_PHYSICIAN_MUTATION, {
+    onCompleted: data => {
+      if (data?.upsertPhysician.ok) {
+        onClose();
+        toast({
+          render: () => (
+            <SuccessfulEditAlert>{'Doctor’s information has been edited.'}</SuccessfulEditAlert>
+          ),
+        });
+      }
+    },
+    onError: error => {
+      onClose();
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
 
-    successfulEditToast({
-      render: () => (
-        <SuccessFulEditAlert>{'Doctor’s information has been edited.'}</SuccessFulEditAlert>
-      ),
+  /**
+   * Handle edit submission
+   */
+  const handleSubmit = async () => {
+    await submitEditedDoctorInformation({
+      variables: {
+        input: {
+          mspNumber: parseInt(mspNumber),
+          firstName: firstName,
+          lastName: lastName,
+          phone: phoneNumber,
+          addressLine1: addressLine1,
+          addressLine2: addressLine2,
+          city: city,
+          postalCode: postalCode,
+        },
+      },
     });
   };
 
@@ -152,7 +190,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
               <Button colorScheme="gray" variant="solid" onClick={onClose}>
                 {'Cancel'}
               </Button>
-              <Button variant="solid" type="submit" ml={'12px'}>
+              <Button variant="solid" type="submit" ml={'12px'} isLoading={loading}>
                 {'Save'}
               </Button>
             </ModalFooter>

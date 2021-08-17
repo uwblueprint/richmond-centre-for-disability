@@ -37,10 +37,10 @@ input UpsertPhysicianInput {
   addressLine1: String!
   addressLine2: String
   city: String!
-  province: Province!
+  province: Province
   postalCode: String!
   phone: String!
-  status: PhysicianStatus!
+  status: PhysicianStatus
   notes: String
 }
 
