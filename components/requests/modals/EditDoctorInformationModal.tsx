@@ -24,7 +24,7 @@ import {
   UpsertPhysicianRequest,
   UpsertPhysicianResponse,
 } from '@tools/pages/admin/permit-holders/upsert-physician'; // Page tools
-import { useState, ReactNode } from 'react'; // React
+import { useState, ReactNode, SyntheticEvent } from 'react'; // React
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;
@@ -71,7 +71,8 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
   /**
    * Handle edit submission
    */
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: SyntheticEvent) => {
+    event.preventDefault();
     await submitEditedDoctorInformation({
       variables: {
         input: {

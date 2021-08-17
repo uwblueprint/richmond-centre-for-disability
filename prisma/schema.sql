@@ -71,10 +71,10 @@ CREATE TABLE physicians (
   address_line_1  VARCHAR(255) NOT NULL,
   address_line_2  VARCHAR(255),
   city            VARCHAR(255) NOT NULL,
-  province        Province NOT NULL,
+  province        Province NOT NULL DEFAULT 'BC',
   postal_code     CHAR(6) NOT NULL,
   phone           VARCHAR(50) NOT NULL,
-  status          PhysicianStatus NOT NULL,
+  status          PhysicianStatus NOT NULL DEFAULT 'ACTIVE',
   notes           TEXT,
   created_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
