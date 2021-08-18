@@ -1,7 +1,7 @@
 import { Box, Text, Divider, Link } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
-import { Aid, MedicalInformation } from '@lib/graphql/types'; // Aid enum & MedicalInformation type
+import { Aid, Application } from '@lib/graphql/types'; // Aid enum & Application type
 import MedicalHistoryModal from '@components/permit-holders/modals/MedicalHistoryModal'; // Medical History Modal
 
 // Placeholder data
@@ -12,7 +12,7 @@ const mockMedicalHistory = {
   cannotWalk100m: true,
   aid: [Aid.Cane, Aid.ElectricChair],
   notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  certificationDate: '2021/01/01',
+  createdAt: '2021/01/01',
 };
 
 const DATA = Array(4).fill({
@@ -46,7 +46,7 @@ const COLUMNS = [
 
 function _renderConditionDetailsLink() {
   return (
-    <MedicalHistoryModal medicalInformation={mockMedicalHistory as MedicalInformation}>
+    <MedicalHistoryModal application={mockMedicalHistory as unknown as Application}>
       <Link>
         <Text as="a" color="primary" textStyle="body-regular">
           View details
