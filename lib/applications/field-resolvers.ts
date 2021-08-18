@@ -1,5 +1,5 @@
 import { Resolver } from '@lib/resolvers'; // Resolver type
-import { Application } from '@lib/types'; // Application type
+import { Application } from '@lib/graphql/types'; // Application type
 
 /**
  * Field resolver to fetch the applicant that the application belongs to

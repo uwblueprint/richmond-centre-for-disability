@@ -30,6 +30,7 @@ import { useState } from 'react'; // React
 //import { Application } from '@prisma/client';
 // import applicationProcessing from '@prisma/dev-seed-utils/application-processings';
 import { FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin';
+import { SortOptions, SortOrder } from '@tools/types';
 import {
   ApplicationsFilter,
   ApplicationsFilterResult,
@@ -92,6 +93,10 @@ const COLUMNS = [
     accessor: 'dateReceived',
     maxWidth: 240,
     width: 240,
+    sortDescFirst: true,
+    // Cell: ({ value }: any) => {
+    //   return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+    // },
   },
   {
     Header: 'Permit Type',
@@ -183,6 +188,7 @@ export default function Requests() {
   const [requestsData, setRequestsData] = useState<ApplicationData[]>();
   const [searchFilter, setSearchFilter] = useState<string>();
   const [searchInput, setSearchInput] = useState<string>();
+  const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
 
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState(0);
@@ -193,7 +199,7 @@ export default function Requests() {
     {
       variables: {
         filter: {
-          order: undefined,
+          order: sortOrder,
           permitType: permitTypeFilter,
           requestType: requestTypeFilter,
           status: statusFilter,
@@ -397,7 +403,11 @@ export default function Requests() {
               </Box>
             </Flex>
             {!loading && networkStatus !== NetworkStatus.refetch && (
-              <Table columns={COLUMNS} data={requestsData || []} />
+              <Table
+                columns={COLUMNS}
+                data={requestsData || []}
+                onChangeSortOrder={sortOrder => setSortOrder(sortOrder)}
+              />
             )}
             <Flex justifyContent="flex-end">
               <Pagination
