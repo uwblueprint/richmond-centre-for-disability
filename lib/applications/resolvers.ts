@@ -25,20 +25,19 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     lastSearch = lastSearch || middleSearch;
   }
 
-  const tableColumnToDBFieldMap: Record<string, string> = {
-    name: 'firstName',
-    dateReceived: 'createdAt',
-  };
-
   let orderBy = undefined;
 
   if (order && order.length > 0) {
-    const sortingOrder: Record<string, SortOrder> = {};
-    order.forEach(
-      ([field, order]: [string, SortOrder]) =>
-        (sortingOrder[tableColumnToDBFieldMap[field]] = order)
-    );
-    orderBy = [sortingOrder];
+    const sortingOrder: Array<Record<string, SortOrder>> = [];
+    order.forEach(([field, order]: [string, SortOrder]) => {
+      if (field === 'name') {
+        sortingOrder.push({ firstName: order });
+        sortingOrder.push({ lastName: order });
+      } else if (field === 'dateReceived') {
+        sortingOrder.push({ createdAt: order });
+      }
+    });
+    orderBy = sortingOrder;
   }
 
   const applicationsCount = await prisma.application.count({
