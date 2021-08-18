@@ -29,17 +29,21 @@ import {
 } from '@tools/pages/admin/permit-holders/update-applicant'; // Page tools
 
 type EditUserInformationModalProps = {
+  applicantId: number;
   children: ReactNode;
 };
 
-export default function EditUserInformationModal({ children }: EditUserInformationModalProps) {
+export default function EditUserInformationModal({
+  applicantId,
+  children,
+}: EditUserInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   // Personal information state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString().substring(0, 10));
-  const [gender, setGender] = useState<Gender | string>('');
+  const [gender, setGender] = useState<Gender | undefined>();
 
   // Contact information state
   const [email, setEmail] = useState('');
@@ -87,6 +91,7 @@ export default function EditUserInformationModal({ children }: EditUserInformati
     await submitEditedUserInformation({
       variables: {
         input: {
+          id: applicantId,
           firstName: firstName,
           lastName: lastName,
           dateOfBirth: dateOfBirth,
@@ -153,7 +158,7 @@ export default function EditUserInformationModal({ children }: EditUserInformati
                     <Select
                       placeholder="None Selected"
                       value={gender}
-                      onChange={event => setGender(event.target.value)}
+                      onChange={event => setGender(event.target.value as Gender)}
                     >
                       <option value={Gender.Male}>{'Male'}</option>
                       <option value={Gender.Female}>{'Female'}</option>
