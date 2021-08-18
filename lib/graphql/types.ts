@@ -149,16 +149,20 @@ export type ApplicationProcessing = {
 
 export enum ApplicationStatus {
   Pending = 'PENDING',
+  Inprogress = 'INPROGRESS',
   Approved = 'APPROVED',
   Rejected = 'REJECTED',
-  Completed = 'COMPLETED'
+  Completed = 'COMPLETED',
+  Expiring = 'EXPIRING',
+  Expired = 'EXPIRED',
+  Active = 'ACTIVE'
 }
 
 export type ApplicationsFilter = {
-  order?: Maybe<Array<Maybe<Array<Maybe<Scalars['String']>>>>>;
+  order?: Maybe<Array<Maybe<Array<Scalars['String']>>>>;
   permitType?: Maybe<PermitType>;
   requestType?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
+  status?: Maybe<ApplicationStatus>;
   search?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;

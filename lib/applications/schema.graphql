@@ -128,10 +128,10 @@ type CreateApplicationResult {
 }
 
 input ApplicationsFilter {
-  order: [[String]]
+  order: [[String!]]
   permitType: PermitType
   requestType: String
-  status: String
+  status: ApplicationStatus
   search: String
   limit: Int
   offset: Int

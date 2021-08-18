@@ -80,9 +80,13 @@ enum Gender {
 
 enum ApplicationStatus {
   PENDING
+  INPROGRESS
   APPROVED
   REJECTED
   COMPLETED
+  EXPIRING
+  EXPIRED
+  ACTIVE
 }
 
 enum ReasonForReplacement {

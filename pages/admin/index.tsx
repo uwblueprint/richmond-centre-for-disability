@@ -39,18 +39,18 @@ import {
   Role,
 } from '@lib/graphql/types';
 
-type StatusProps = {
-  readonly value:
-    | 'COMPLETED'
-    | 'INPROGRESS'
-    | 'PENDING'
-    | 'REJECTED'
-    | 'EXPIRING'
-    | 'EXPIRED'
-    | 'ACTIVE';
-};
+// type StatusProps = {
+//   readonly value:
+//     | 'COMPLETED'
+//     | 'INPROGRESS'
+//     | 'PENDING'
+//     | 'REJECTED'
+//     | 'EXPIRING'
+//     | 'EXPIRED'
+//     | 'ACTIVE';
+// };
 
-function renderStatusBadge({ value }: StatusProps) {
+function renderStatusBadge({ value }: ApplicationStatus) {
   return (
     <Wrap>
       <RequestStatusBadge variant={value}></RequestStatusBadge>
@@ -94,9 +94,6 @@ const COLUMNS = [
     maxWidth: 240,
     width: 240,
     sortDescFirst: true,
-    // Cell: ({ value }: any) => {
-    //   return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
-    // },
   },
   {
     Header: 'Permit Type',
@@ -148,7 +145,7 @@ const PAGE_SIZE = 2;
 
 // Internal home page - view APP requests
 export default function Requests() {
-  const [statusFilter, setStatusFilter] = useState<string>();
+  const [statusFilter, setStatusFilter] = useState<ApplicationStatus>();
   const [permitTypeFilter, setPermitTypeFilter] = useState<PermitType>();
   const [requestTypeFilter, setRequestTypeFilter] = useState<string>();
   const [requestsData, setRequestsData] = useState<ApplicationData[]>();
@@ -158,7 +155,6 @@ export default function Requests() {
 
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState(0);
-  // const recordsCount = useRef<number>(); TODO: figure out if we should do this instead
 
   const { loading, networkStatus } = useQuery<FilterResponse, FilterRequest>(
     FILTER_APPLICATIONS_QUERY,
@@ -234,7 +230,7 @@ export default function Requests() {
               <Tab
                 height="64px"
                 onClick={() => {
-                  setStatusFilter('PENDING');
+                  setStatusFilter(ApplicationStatus.Pending);
                 }}
               >
                 Pending
@@ -242,7 +238,7 @@ export default function Requests() {
               <Tab
                 height="64px"
                 onClick={() => {
-                  setStatusFilter('INPROGRESS');
+                  setStatusFilter(ApplicationStatus.Inprogress);
                 }}
               >
                 In Progress
@@ -250,7 +246,7 @@ export default function Requests() {
               <Tab
                 height="64px"
                 onClick={() => {
-                  setStatusFilter('COMPLETED');
+                  setStatusFilter(ApplicationStatus.Completed);
                 }}
               >
                 Completed
@@ -258,7 +254,7 @@ export default function Requests() {
               <Tab
                 height="64px"
                 onClick={() => {
-                  setStatusFilter('REJECTED');
+                  setStatusFilter(ApplicationStatus.Rejected);
                 }}
               >
                 Rejected
