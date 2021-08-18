@@ -24,11 +24,8 @@ import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
-//import { applications } from '@lib/applications/resolvers';
 import { NetworkStatus, useQuery } from '@apollo/client';
 import { useState } from 'react'; // React
-//import { Application } from '@prisma/client';
-// import applicationProcessing from '@prisma/dev-seed-utils/application-processings';
 import { FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin';
 import { SortOptions, SortOrder } from '@tools/types';
 import {
