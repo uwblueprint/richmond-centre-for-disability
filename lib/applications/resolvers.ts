@@ -6,6 +6,7 @@ import {
   ApplicationFieldTooLongError,
 } from '@lib/applications/errors'; // Application errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
+import { SortOrder } from '@tools/types';
 
 /**
  * Query all the RCD applications in the internal-facing app
@@ -20,13 +21,25 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     userIDSearch = parseInt(search);
   } else if (search) {
     [firstSearch, middleSearch, lastSearch] = search.split(' ');
-    middleSearch = middleSearch || firstSearch; //what does this do?
+    middleSearch = middleSearch || firstSearch;
     lastSearch = lastSearch || middleSearch;
   }
 
-  const sortingOrder: Record<string, string> = order
-    ? order.foreach((col: string, order: string) => (sortingOrder[col] = order))
-    : { createdAt: 'desc' };
+  const tableColumnToDBFieldMap: Record<string, string> = {
+    name: 'firstName',
+    dateReceived: 'createdAt',
+  };
+
+  let orderBy = undefined;
+
+  if (order && order.length > 0) {
+    const sortingOrder: Record<string, SortOrder> = {};
+    order.forEach(
+      ([field, order]: [string, SortOrder]) =>
+        (sortingOrder[tableColumnToDBFieldMap[field]] = order)
+    );
+    orderBy = [sortingOrder];
+  }
 
   const applicationsCount = await prisma.application.count({
     where: {
@@ -53,7 +66,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
   const applications = await prisma.application.findMany({
     skip: offset,
     take: limit,
-    orderBy: [sortingOrder],
+    orderBy: orderBy,
     where: {
       applicant: {
         id: userIDSearch,

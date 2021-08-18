@@ -122,40 +122,6 @@ const COLUMNS = [
   },
 ];
 
-// Placeholder data
-// const DATA = [
-//   {
-//     name: {
-//       name: 'Steve Rogers',
-//       id: '36565',
-//     },
-//     dateReceived: 'Dec 21 2021, 8:30 pm',
-//     permitType: 'Permanent',
-//     requestType: 'Replacement',
-//     status: 'PENDING',
-//   },
-//   {
-//     name: {
-//       name: 'Steve Rogers',
-//       id: '36565',
-//     },
-//     dateReceived: 'Dec 21 2021, 8:30 pm',
-//     permitType: 'Permanent',
-//     requestType: 'Replacement',
-//     status: 'INPROGRESS',
-//   },
-//   {
-//     name: {
-//       name: 'Steve Rogers',
-//       id: '36565',
-//     },
-//     dateReceived: 'Dec 21 2021, 8:30 pm',
-//     permitType: 'Permanent',
-//     requestType: 'Replacement',
-//     status: 'COMPLETED',
-//   },
-// ];
-
 type FilterResponse = {
   applications: {
     result: [ApplicationsFilterResult];
@@ -188,7 +154,7 @@ export default function Requests() {
   const [requestsData, setRequestsData] = useState<ApplicationData[]>();
   const [searchFilter, setSearchFilter] = useState<string>();
   const [searchInput, setSearchInput] = useState<string>();
-  const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
+  const [sortOrder, setSortOrder] = useState<SortOptions>([['dateReceived', SortOrder.DESC]]);
 
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState(0);
