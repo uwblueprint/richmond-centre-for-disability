@@ -25,22 +25,24 @@ import {
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
-import { PaymentType } from '@lib/graphql/types'; // PaymentType Enum
+import { PaymentType, Province } from '@lib/graphql/types'; // PaymentType Enum
 import { PaymentInformation } from '@tools/components/internal/requests/payment-information-card'; // Applicant type
 
 type EditPaymentDetailsModalProps = {
-  paymentInformation: PaymentInformation;
-  children: ReactNode;
+  readonly children: ReactNode;
+  readonly paymentInformation: PaymentInformation;
+  readonly handleSave: (applicationData: any) => void;
 };
 
 export default function EditPaymentDetailsModal({
-  paymentInformation,
   children,
+  paymentInformation,
+  handleSave,
 }: EditPaymentDetailsModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentType | string>('');
-  const [donation, setDonation] = useState<number | undefined>();
+  const [paymentMethod, setPaymentMethod] = useState<PaymentType>();
+  const [donationAmount, setDonationAmount] = useState<number | undefined>();
 
   //   Shipping address information state
   const [sameShippingAndHomeAddresses, setSameShippingAndHomeAddresses] = useState(false); // Whether shipping information is visible
@@ -66,8 +68,8 @@ export default function EditPaymentDetailsModal({
   const [billingPostalCode, setBillingPostalCode] = useState('');
 
   useEffect(() => {
-    setPaymentMethod(paymentInformation.paymentType);
-    setDonation(paymentInformation.donation);
+    setPaymentMethod(paymentInformation.paymentMethod);
+    setDonationAmount(paymentInformation.donationAmount);
 
     setShippingFullName(paymentInformation.shippingFullName);
     setShippingAddressLine1(paymentInformation.shippingAddressLine1);
@@ -88,13 +90,30 @@ export default function EditPaymentDetailsModal({
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    // TODO: Will be addressed in API hookup
     // TODO: Add error handling to each field as follows (post-mvp)
     // if (!hideShippingInfo) {
     //   if (!shippingFullName.length) {
     //     setShippingFullNameInputError("Please enter the recipient's full name.");
     //   }
     // }
+    handleSave({
+      ...(paymentMethod && { paymentMethod }),
+      ...(donationAmount !== undefined && { donationAmount }),
+      shippingFullName,
+      shippingAddressLine1,
+      shippingAddressLine2,
+      shippingCity,
+      shippingProvince,
+      shippingCountry,
+      shippingPostalCode,
+      billingFullName,
+      billingAddressLine1,
+      billingAddressLine2,
+      billingCity,
+      billingProvince,
+      billingCountry,
+      billingPostalCode,
+    });
     onClose();
   };
 
@@ -178,8 +197,8 @@ export default function EditPaymentDetailsModal({
                           {'$'}
                         </InputLeftElement>
                         <Input
-                          value={donation}
-                          onChange={event => setDonation(event.target.value)}
+                          value={donationAmount}
+                          onChange={event => setDonationAmount(Number(event.target.value))}
                         />
                       </InputGroup>
                     </FormControl>
@@ -256,8 +275,8 @@ export default function EditPaymentDetailsModal({
                           value={shippingProvince}
                           onChange={event => setShippingProvince(event.target.value)}
                         >
-                          <option value="Ontario">{'Ontario'}</option>
-                          <option value="British Columbia">{'British Columbia'}</option>
+                          <option value="Ontario">{Province.On}</option>
+                          <option value="British Columbia">{Province.Bc}</option>
                           {/* TODO: when we add the rest of the provinces, use the Province enum in lib/graphql/types.ts */}
                         </Select>
                       </FormControl>
@@ -358,8 +377,8 @@ export default function EditPaymentDetailsModal({
                           value={billingProvince}
                           onChange={event => setBillingProvince(event.target.value)}
                         >
-                          <option value="Ontario">{'Ontario'}</option>
-                          <option value="British Columbia">{'British Columbia'}</option>
+                          <option value="Ontario">{Province.On}</option>
+                          <option value="British Columbia">{Province.Bc}</option>
                           {/* TODO: when we add the rest of the provinces, use the Province enum in lib/graphql/types.ts */}
                         </Select>
                       </FormControl>

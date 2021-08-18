@@ -193,9 +193,9 @@ export default function Request({ requestId }: RequestProps) {
     billingProvince,
     billingCountry,
     billingPostalCode,
-    permitFee: processingFee,
-    donation: donationAmount,
-    paymentType: paymentMethod,
+    processingFee,
+    donationAmount,
+    paymentMethod,
   };
 
   const physicianData = {
@@ -320,7 +320,10 @@ export default function Request({ requestId }: RequestProps) {
                   isUpdated={replacement?.isUpdated}
                 />
               )}
-              <PaymentInformationCard paymentInformation={paymentInformationData} />
+              <PaymentInformationCard
+                paymentInformation={paymentInformationData}
+                handleSave={onUpdateApplication}
+              />
             </Stack>
           </GridItem>
         </>

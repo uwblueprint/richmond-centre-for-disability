@@ -1,9 +1,9 @@
 import { PaymentType } from '@lib/graphql/types'; // Applicant type
 
 export interface PaymentInformation {
-  permitFee: number;
-  donation: number;
-  paymentType: PaymentType;
+  processingFee: number;
+  donationAmount: number;
+  paymentMethod: PaymentType;
   shippingFullName: string;
   shippingAddressLine1: string;
   shippingAddressLine2: string;

@@ -6,14 +6,15 @@ import { PaymentInformation } from '@tools/components/internal/requests/payment-
 type PaymentInformationProps = {
   readonly paymentInformation: PaymentInformation;
   readonly isUpdated?: boolean;
+  readonly handleSave: (applicationData: any) => void;
 };
 
 export default function PaymentInformationCard(props: PaymentInformationProps) {
-  const { paymentInformation, isUpdated } = props;
+  const { paymentInformation, isUpdated, handleSave } = props;
   const {
-    permitFee,
-    donation,
-    paymentType,
+    processingFee,
+    donationAmount,
+    paymentMethod,
     shippingAddressLine1,
     shippingAddressLine2,
     shippingCity,
@@ -34,7 +35,7 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
       header={`Payment, Shipping, and Billing Information`}
       updated={isUpdated}
       editModal={
-        <EditPaymentDetailsModal paymentInformation={paymentInformation}>
+        <EditPaymentDetailsModal paymentInformation={paymentInformation} handleSave={handleSave}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
@@ -56,7 +57,7 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
           </Box>
           <Box>
             <Text as="p" textStyle="body-regular">
-              ${permitFee}
+              ${processingFee}
             </Text>
           </Box>
           <Box>
@@ -66,12 +67,12 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
           </Box>
           <Box>
             <Text as="p" textStyle="body-regular">
-              ${donation || 0}
+              ${donationAmount || 0}
             </Text>
           </Box>
           <Box>
             <Text as="p" textStyle="caption">
-              Paid with {paymentType}
+              Paid with {paymentMethod}
             </Text>
           </Box>
         </SimpleGrid>
