@@ -223,6 +223,7 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter(undefined);
+                  setPageNumber(0);
                 }}
               >
                 All
@@ -231,6 +232,7 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter(ApplicationStatus.Pending);
+                  setPageNumber(0);
                 }}
               >
                 Pending
@@ -239,6 +241,7 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter(ApplicationStatus.Inprogress);
+                  setPageNumber(0);
                 }}
               >
                 In Progress
@@ -247,6 +250,7 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter(ApplicationStatus.Completed);
+                  setPageNumber(0);
                 }}
               >
                 Completed
@@ -255,6 +259,7 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter(ApplicationStatus.Rejected);
+                  setPageNumber(0);
                 }}
               >
                 Rejected
@@ -285,6 +290,7 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(undefined);
+                      setPageNumber(0);
                     }}
                   >
                     All
@@ -292,6 +298,7 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(PermitType.Permanent);
+                      setPageNumber(0);
                     }}
                   >
                     Permanent
@@ -299,6 +306,7 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(PermitType.Temporary);
+                      setPageNumber(0);
                     }}
                   >
                     Temporary
@@ -327,6 +335,7 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter(undefined);
+                      setPageNumber(0);
                     }}
                   >
                     All
@@ -334,6 +343,7 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter('Replacement');
+                      setPageNumber(0);
                     }}
                   >
                     Replacement
@@ -341,6 +351,7 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter('Renewal');
+                      setPageNumber(0);
                     }}
                   >
                     Renewal
@@ -357,6 +368,7 @@ export default function Requests() {
                     onKeyDown={event => {
                       if (event.key === 'Enter') {
                         setSearchFilter(searchInput);
+                        setPageNumber(0);
                       }
                     }}
                     onChange={event => setSearchInput(event.target.value)}
