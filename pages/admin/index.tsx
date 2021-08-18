@@ -39,18 +39,18 @@ import {
   Role,
 } from '@lib/graphql/types';
 
-// type StatusProps = {
-//   readonly value:
-//     | 'COMPLETED'
-//     | 'INPROGRESS'
-//     | 'PENDING'
-//     | 'REJECTED'
-//     | 'EXPIRING'
-//     | 'EXPIRED'
-//     | 'ACTIVE';
-// };
+type StatusProps = {
+  readonly value:
+    | 'COMPLETED'
+    | 'INPROGRESS'
+    | 'PENDING'
+    | 'REJECTED'
+    | 'EXPIRING'
+    | 'EXPIRED'
+    | 'ACTIVE';
+};
 
-function renderStatusBadge({ value }: ApplicationStatus) {
+function renderStatusBadge({ value }: StatusProps) {
   return (
     <Wrap>
       <RequestStatusBadge variant={value}></RequestStatusBadge>
