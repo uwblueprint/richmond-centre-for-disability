@@ -16,15 +16,15 @@ import {
   HStack,
 } from '@chakra-ui/react'; // Chakra UI
 import { ReactNode } from 'react'; // React
-import { Aid, MedicalInformation } from '@lib/graphql/types'; // MedicalInformation type & Aid enum
+import { Aid, Application } from '@lib/graphql/types'; // Application type & Aid enum
 
 type MedicalHistoryModalProps = {
-  medicalInformation: MedicalInformation;
+  application: Application;
   children: ReactNode;
 };
 
 export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
-  const { medicalInformation, children } = props;
+  const { application, children } = props;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -57,21 +57,21 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
             paddingX="4px"
           >
             <Text as="h2" textStyle="display-medium-bold">
-              {`${medicalInformation.disability} (${medicalInformation.certificationDate})`}
+              {`${application.disability} (${application.createdAt})`}
             </Text>
           </ModalHeader>
           <ModalBody paddingTop="0px" paddingBottom="36px" paddingX="4px">
-            {(medicalInformation.affectsMobility ||
-              medicalInformation.mobilityAidRequired ||
-              medicalInformation.cannotWalk100m) && (
+            {(application.affectsMobility ||
+              application.mobilityAidRequired ||
+              application.cannotWalk100m) && (
               <HStack paddingBottom="22px" spacing="16px">
-                {medicalInformation.affectsMobility && (
+                {application.affectsMobility && (
                   <Badge backgroundColor="background.informative">{'Affects Mobility'}</Badge>
                 )}
-                {medicalInformation.mobilityAidRequired && (
+                {application.mobilityAidRequired && (
                   <Badge backgroundColor="background.informative">{'Aid Required'}</Badge>
                 )}
-                {medicalInformation.cannotWalk100m && (
+                {application.cannotWalk100m && (
                   <Badge backgroundColor="background.informative">{'Cannot walk > 100m'}</Badge>
                 )}
               </HStack>
@@ -79,22 +79,22 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
 
             <Divider borderColor="border.secondary" />
 
-            {medicalInformation.aid && (
+            {application.aid && (
               <Box paddingTop="24px">
                 <Text as="h3" textStyle="heading" paddingBottom="20px">
                   {'Mobility Aids:'}
                 </Text>
-                {_renderAidsList(medicalInformation.aid)}
+                {_renderAidsList(application.aid)}
               </Box>
             )}
 
-            {medicalInformation.notes && (
+            {application.notes && (
               <Box paddingTop="32px">
                 <Text as="h3" textStyle="heading" paddingBottom="20px">
                   {'Notes: '}
                 </Text>
                 <Text as="p" textStyle="body-regular">
-                  {medicalInformation.notes}
+                  {application.notes}
                 </Text>
               </Box>
             )}

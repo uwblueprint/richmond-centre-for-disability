@@ -116,6 +116,8 @@ export type Application = {
   guardianNotes?: Maybe<Scalars['String']>;
   /** Permit */
   permit?: Maybe<Permit>;
+  /** Misc */
+  createdAt: Scalars['Date'];
 };
 
 export enum ApplicationStatus {

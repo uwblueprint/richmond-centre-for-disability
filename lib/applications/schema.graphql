@@ -60,6 +60,9 @@ type Application {
 
   # Permit
   permit: Permit
+
+  # Misc
+  createdAt: Date!
 }
 
 input CreateApplicationInput {
