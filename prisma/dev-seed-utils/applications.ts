@@ -35,7 +35,6 @@ const applications = [
     shippingCity: 'Vancouver',
     shippingProvince: Province.Bc,
     shippingPostalCode: 'A1B2C3',
-    billingAddressSameAsShippingAddress: true,
     billingFullName: 'Applicant One',
   },
   {

@@ -93,6 +93,7 @@ model Application {
   shippingCity                        String?                @map("shipping_city") @db.VarChar(255)
   shippingProvince                    Province?              @map("shipping_province")
   shippingPostalCode                  String?                @map("shipping_postal_code") @db.Char(6)
+  shippingAddressSameAsHomeAddress    Boolean                @default(false) @map("shipping_address_same_as_home_address")
   billingAddressSameAsShippingAddress Boolean                @default(false) @map("billing_address_same_as_shipping_address")
   billingFullName                     String?                @map("billing_full_name") @db.VarChar(255)
   billingAddressLine1                 String?                @map("billing_address_line_1") @db.VarChar(255)
@@ -179,8 +180,7 @@ model Permit {
 
 model Physician {
   id                 Int                  @id @default(autoincrement())
-  firstName          String               @map("first_name") @db.VarChar(255)
-  lastName           String               @map("last_name") @db.VarChar(255)
+  name               String               @db.VarChar(255)
   mspNumber          Int                  @unique @map("msp_number")
   addressLine1       String               @map("address_line_1") @db.VarChar(255)
   addressLine2       String?              @map("address_line_2") @db.VarChar(255)
@@ -188,7 +188,7 @@ model Physician {
   province           Province
   postalCode         String               @map("postal_code") @db.Char(6)
   phone              String               @db.VarChar(50)
-  status             PhysicianStatus
+  status             PhysicianStatus      @default(ACTIVE)
   notes              String?
   createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)

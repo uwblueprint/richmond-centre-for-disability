@@ -68,8 +68,7 @@ CREATE TABLE verification_requests (
 -- Create physicians table
 CREATE TABLE physicians (
   id              SERIAL PRIMARY KEY NOT NULL,
-  first_name      VARCHAR(255) NOT NULL,
-  last_name       VARCHAR(255) NOT NULL,
+  name            VARCHAR(255) NOT NULL,
   msp_number      INTEGER UNIQUE NOT NULL,
   address_line_1  VARCHAR(255) NOT NULL,
   address_line_2  VARCHAR(255),
@@ -77,7 +76,7 @@ CREATE TABLE physicians (
   province        Province NOT NULL,
   postal_code     CHAR(6) NOT NULL,
   phone           VARCHAR(50) NOT NULL,
-  status          PhysicianStatus NOT NULL,
+  status          PhysicianStatus NOT NULL DEFAULT 'ACTIVE',
   notes           TEXT,
   created_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -209,7 +208,8 @@ CREATE TABLE applications (
   shipping_city                            VARCHAR(255),
   shipping_province                        Province,
   shipping_postal_code                     CHAR(6),
-  billing_address_same_as_shipping_address BOOLEAN NOT NULL DEFAULT false,
+  shipping_address_same_as_home_address    BOOLEAN NOT NULL DEFAULT false,
+  billing_address_same_as_home_address     BOOLEAN NOT NULL DEFAULT false,
   billing_full_name                        VARCHAR(255),
   billing_address_line_1                   VARCHAR(255),
   billing_address_line_2                   VARCHAR(255),

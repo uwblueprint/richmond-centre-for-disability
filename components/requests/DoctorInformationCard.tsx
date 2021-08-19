@@ -26,7 +26,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
     >
       <Divider pt="20px" />
       <SimpleGrid columns={2} spacingX="20px" spacingY="12px" pt="20px">
-        <InfoSection title={`Name`}>{physician.firstName}</InfoSection>
+        <InfoSection title={`Name`}>{physician.name}</InfoSection>
         <InfoSection title={`MSP #`}>{String(physician.mspNumber)}</InfoSection>
         <InfoSection title={`Phone`}>{physician.phone}</InfoSection>
         <InfoSection title={`Address`}>

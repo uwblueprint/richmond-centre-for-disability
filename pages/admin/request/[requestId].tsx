@@ -1,4 +1,5 @@
 // Keeping this to make future development easier
+// TODO: Resolve unused variables post-MVP
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -14,6 +15,7 @@ import {
   UPDATE_APPLICATION,
   APPROVE_APPLICATION,
   REJECT_APPLICATION,
+  COMPLETE_APPLICATION,
   UPDATE_APPLICATION_PROCESSING,
 } from '@tools/pages/request/mutations'; // Request page GraphQL queries
 
@@ -74,6 +76,17 @@ export default function Request({ requestId }: RequestProps) {
   });
 
   const [
+    completeApplication,
+    {
+      data: completeApplicationData,
+      loading: completeApplicationLoading,
+      error: completeApplicationError,
+    },
+  ] = useMutation(COMPLETE_APPLICATION, {
+    refetchQueries: ['GetApplication'],
+  });
+
+  const [
     updateApplicationProcessing,
     {
       data: updateApplicationProcessingData,
@@ -117,7 +130,8 @@ export default function Request({ requestId }: RequestProps) {
     physicianPhone,
     physicianNotes,
 
-    billingAddressSameAsShippingAddress,
+    shippingAddressSameAsHomeAddress,
+    billingAddressSameAsHomeAddress,
     shippingFullName,
     shippingAddressLine1,
     shippingAddressLine2,
@@ -178,7 +192,8 @@ export default function Request({ requestId }: RequestProps) {
   };
 
   const paymentInformationData = {
-    billingAddressSameAsShippingAddress,
+    shippingAddressSameAsHomeAddress,
+    billingAddressSameAsHomeAddress,
     shippingFullName,
     shippingAddressLine1,
     shippingAddressLine2,
@@ -199,7 +214,7 @@ export default function Request({ requestId }: RequestProps) {
   };
 
   const physicianData = {
-    firstName: physicianName,
+    name: physicianName,
     mspNumber: physicianMspNumber,
     addressLine1: physicianAddressLine1,
     addressLine2: physicianAddressLine2,
@@ -222,8 +237,7 @@ export default function Request({ requestId }: RequestProps) {
 
   // Edit personal information modal
   const onComplete = () => {
-    // TODO: Make mutation call to modify Application's status to ApplicationStatus.Completed
-    // setApplication({ ...application, applicationStatus: ApplicationStatus.Completed });
+    completeApplication({ variables: { id: applicationId } });
   };
 
   // Wrapper function for updateApplication mutation
@@ -261,8 +275,11 @@ export default function Request({ requestId }: RequestProps) {
         });
         break;
       case 5:
+        // TODO: Make this actually upload a file
         updateApplicationProcessing({
-          variables: { input: { id: applicationProcessingId, documentUrl: taskArgs } },
+          variables: {
+            input: { id: applicationProcessingId, documentUrl: 'documentUrl' /* taskArgs */ },
+          },
         });
         break;
       case 6:

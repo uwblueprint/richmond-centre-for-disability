@@ -2,7 +2,7 @@ import { Physician } from '@lib/graphql/types'; // Physician type
 
 export type DoctorInformationCardPhysician = Pick<
   Physician,
-  | 'firstName'
+  | 'name'
   | 'mspNumber'
   | 'phone'
   | 'addressLine1'

@@ -45,46 +45,48 @@ export default function EditPaymentDetailsModal({
   const [donationAmount, setDonationAmount] = useState<number | undefined>();
 
   //   Shipping address information state
-  const [sameShippingAndHomeAddresses, setSameShippingAndHomeAddresses] = useState(false); // Whether shipping information is visible
+  const [shippingAddressSameAsHomeAddress, setShippingAddressSameAsHomeAddress] = useState(false);
   const [shippingFullName, setShippingFullName] = useState('');
   const [shippingAddressLine1, setShippingAddressLine1] = useState('');
   const [shippingAddressLine2, setShippingAddressLine2] = useState('');
   const [shippingCity, setShippingCity] = useState('');
-  const [shippingProvince, setShippingProvince] = useState('');
-  const [shippingCountry, setShippingCountry] = useState('');
+  const [shippingProvince, setShippingProvince] = useState();
+  // const [shippingCountry, setShippingCountry] = useState('');
   const [shippingPostalCode, setShippingPostalCode] = useState('');
 
   //   TODO: Add error states for each field as follows (post-mvp)
   // const [shippingFullNameInputError, setShippingFullNameInputError] = useState(''); // Error message displayed under input
 
   //   Billing address information state
-  const [sameBillingAndHomeAddresses, setSameBillingAndHomeAddresses] = useState(false); // Whether billing information is visible
+  const [billingAddressSameAsHomeAddress, setBillingAddressSameAsHomeAddress] = useState(false);
   const [billingFullName, setBillingFullName] = useState('');
   const [billingAddressLine1, setBillingAddressLine1] = useState('');
   const [billingAddressLine2, setBillingAddressLine2] = useState('');
   const [billingCity, setBillingCity] = useState('');
-  const [billingProvince, setBillingProvince] = useState('');
-  const [billingCountry, setBillingCountry] = useState('');
+  const [billingProvince, setBillingProvince] = useState();
+  // const [billingCountry, setBillingCountry] = useState('');
   const [billingPostalCode, setBillingPostalCode] = useState('');
 
   useEffect(() => {
     setPaymentMethod(paymentInformation.paymentMethod);
     setDonationAmount(paymentInformation.donationAmount);
 
+    setShippingAddressSameAsHomeAddress(paymentInformation.shippingAddressSameAsHomeAddress);
     setShippingFullName(paymentInformation.shippingFullName);
     setShippingAddressLine1(paymentInformation.shippingAddressLine1);
     setShippingAddressLine2(paymentInformation.shippingAddressLine2);
     setShippingCity(paymentInformation.shippingCity);
     setShippingProvince(paymentInformation.shippingProvince);
-    setShippingCountry(paymentInformation.shippingCountry);
+    // setShippingCountry(paymentInformation.shippingCountry);
     setShippingPostalCode(paymentInformation.shippingPostalCode);
 
+    setBillingAddressSameAsHomeAddress(paymentInformation.billingAddressSameAsHomeAddress);
     setBillingFullName(paymentInformation.billingFullName);
     setBillingAddressLine1(paymentInformation.billingAddressLine1);
     setBillingAddressLine2(paymentInformation.billingAddressLine2);
     setBillingCity(paymentInformation.billingCity);
     setBillingProvince(paymentInformation.billingProvince);
-    setBillingCountry(paymentInformation.billingCountry);
+    // setBillingCountry(paymentInformation.billingCountry);
     setBillingPostalCode(paymentInformation.billingPostalCode);
   }, [paymentInformation]);
 
@@ -99,19 +101,21 @@ export default function EditPaymentDetailsModal({
     handleSave({
       ...(paymentMethod && { paymentMethod }),
       ...(donationAmount !== undefined && { donationAmount }),
+      shippingAddressSameAsHomeAddress,
       shippingFullName,
       shippingAddressLine1,
       shippingAddressLine2,
       shippingCity,
       shippingProvince,
-      shippingCountry,
+      // shippingCountry,
       shippingPostalCode,
+      billingAddressSameAsHomeAddress,
       billingFullName,
       billingAddressLine1,
       billingAddressLine2,
       billingCity,
       billingProvince,
-      billingCountry,
+      // billingCountry,
       billingPostalCode,
     });
     onClose();
@@ -215,14 +219,14 @@ export default function EditPaymentDetailsModal({
 
                 <Checkbox
                   paddingBottom="24px"
-                  isChecked={sameShippingAndHomeAddresses}
-                  onChange={event => setSameShippingAndHomeAddresses(event.target.checked)}
+                  isChecked={shippingAddressSameAsHomeAddress}
+                  onChange={event => setShippingAddressSameAsHomeAddress(event.target.checked)}
                 >
                   {'Same as home address'}
                 </Checkbox>
 
                 {/* Section is hidden if same as home address checkbox is checked */}
-                {!sameShippingAndHomeAddresses && (
+                {!shippingAddressSameAsHomeAddress && (
                   <>
                     <FormControl isRequired paddingBottom="24px">
                       <FormLabel>{'Full name'}</FormLabel>
@@ -275,26 +279,13 @@ export default function EditPaymentDetailsModal({
                           value={shippingProvince}
                           onChange={event => setShippingProvince(event.target.value)}
                         >
-                          <option value="Ontario">{Province.On}</option>
-                          <option value="British Columbia">{Province.Bc}</option>
-                          {/* TODO: when we add the rest of the provinces, use the Province enum in lib/graphql/types.ts */}
+                          <option value={Province.On}>Ontario</option>
+                          <option value={Province.Bc}>British Columbia</option>
                         </Select>
                       </FormControl>
                     </Stack>
 
                     <Stack direction="row" spacing="20px">
-                      <FormControl isRequired>
-                        <FormLabel>{'Country / region'}</FormLabel>
-                        <Select
-                          value={shippingCountry}
-                          onChange={event => setShippingCountry(event.target.value)}
-                        >
-                          <option value="Canada">{'Canada'}</option>
-                          <option value="United States">{'United States'}</option>
-                          {/* TODO: Add rest of countries */}
-                        </Select>
-                      </FormControl>
-
                       <FormControl isRequired>
                         <FormLabel>{'Postal code'}</FormLabel>
                         <Input
@@ -317,14 +308,14 @@ export default function EditPaymentDetailsModal({
 
                 <Checkbox
                   paddingBottom="24px"
-                  isChecked={sameBillingAndHomeAddresses}
-                  onChange={event => setSameBillingAndHomeAddresses(event.target.checked)}
+                  isChecked={billingAddressSameAsHomeAddress}
+                  onChange={event => setBillingAddressSameAsHomeAddress(event.target.checked)}
                 >
                   {'Same as home address'}
                 </Checkbox>
 
                 {/* Section is hidden if same as home address checkbox is checked */}
-                {!sameBillingAndHomeAddresses && (
+                {!billingAddressSameAsHomeAddress && (
                   <>
                     <FormControl isRequired paddingBottom="24px">
                       <FormLabel>{'Full name'}</FormLabel>
@@ -377,25 +368,13 @@ export default function EditPaymentDetailsModal({
                           value={billingProvince}
                           onChange={event => setBillingProvince(event.target.value)}
                         >
-                          <option value="Ontario">{Province.On}</option>
-                          <option value="British Columbia">{Province.Bc}</option>
-                          {/* TODO: when we add the rest of the provinces, use the Province enum in lib/graphql/types.ts */}
+                          <option value={Province.On}>Ontario</option>
+                          <option value={Province.Bc}>British Columbia</option>
                         </Select>
                       </FormControl>
                     </Stack>
 
                     <Stack direction="row" spacing="20px">
-                      <FormControl isRequired>
-                        <FormLabel>{'Country / region'}</FormLabel>
-                        <Select
-                          value={billingCountry}
-                          onChange={event => setBillingCountry(event.target.value)}
-                        >
-                          <option value="Canada">{'Canada'}</option>
-                          <option value="United States">{'United States'}</option>
-                        </Select>
-                      </FormControl>
-
                       <FormControl isRequired>
                         <FormLabel>{'Postal code'}</FormLabel>
                         <Input

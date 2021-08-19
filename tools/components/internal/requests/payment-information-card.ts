@@ -1,22 +1,24 @@
-import { PaymentType } from '@lib/graphql/types'; // Applicant type
+import { Application } from '@lib/graphql/types'; // Applicant type
 
-export interface PaymentInformation {
-  processingFee: number;
-  donationAmount: number;
-  paymentMethod: PaymentType;
-  shippingFullName: string;
-  shippingAddressLine1: string;
-  shippingAddressLine2: string;
-  shippingCity: string;
-  shippingProvince: string;
-  shippingCountry: string;
-  shippingPostalCode: string;
-  billingFullName: string;
-  billingAddressLine1: string;
-  billingAddressLine2: string;
-  billingCity: string;
-  billingProvince: string;
-  billingCountry: string;
-  billingPostalCode: string;
-  billingAddressSameAsShippingAddress: boolean;
-}
+export type PersonalInformationCardApplicant = Pick<
+  Application,
+  | 'processingFee'
+  | 'donationAmount'
+  | 'paymentMethod'
+  | 'shippingFullName'
+  | 'shippingAddressLine1'
+  | 'shippingAddressLine2'
+  | 'shippingCity'
+  | 'shippingProvince'
+  | 'shippingCountry'
+  | 'shippingPostalCode'
+  | 'billingFullName'
+  | 'billingAddressLine1'
+  | 'billingAddressLine2'
+  | 'billingCity'
+  | 'billingProvince'
+  | 'billingCountry'
+  | 'billingPostalCode'
+  | 'shippingAddressSameAsHomeAddress'
+  | 'billingAddressSameAsHomeAddress'
+>;

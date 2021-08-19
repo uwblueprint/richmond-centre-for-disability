@@ -44,14 +44,21 @@ export const updateApplicationProcessing: Resolver = async (_, args, { prisma })
  * @returns Status of operation (ok, error)
  */
 export const completeApplication: Resolver = async (_, args, { prisma }) => {
-  const { applicationId, applicationProcessingId } = args;
+  const { applicationId } = args;
 
-  let applicationProccessing;
   try {
     const application = await prisma.application.findUnique({
       where: { id: parseInt(applicationId) },
+      include: { applicationProcessing: true },
     });
+
+    if (!application) {
+      throw 'Application not found.';
+    }
+
     const {
+      isRenewal,
+
       rcdUserId,
       firstName,
       lastName,
@@ -92,7 +99,10 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
       physicianPostalCode,
       physicianPhone,
       physicianNotes,
-    } = application || {};
+
+      applicantId,
+      applicationProcessing,
+    } = application;
 
     /* eslint-disable @typescript-eslint/no-unused-vars */
     const applicantData = {
@@ -118,22 +128,8 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
       cannotWalk100m,
     };
 
-    const guardianData = {
-      guardianFirstName,
-      guardianMiddleName,
-      guardianLastName,
-      guardianPhone,
-      guardianProvince,
-      guardianCity,
-      guardianAddressLine1,
-      guardianAddressLine2,
-      guardianPostalCode,
-      guardianRelationship,
-      guardianNotes,
-    };
-
     const physicianData = {
-      firstName: physicianName,
+      name: physicianName,
       mspNumber: physicianMspNumber,
       addressLine1: physicianAddressLine1,
       addressLine2: physicianAddressLine2,
@@ -144,39 +140,95 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
       notes: physicianNotes,
     };
 
-    applicationProccessing = await prisma.applicationProcessing.update({
-      where: { id: parseInt(applicationProcessingId) },
+    const promises = [];
+    const applicationProcessingResult = prisma.applicationProcessing.update({
+      where: { id: applicationProcessing?.id },
       data: {
         status: 'COMPLETED',
-        application: {
-          update: {
-            applicant: {
-              update: {
-                ...applicantData,
-                medicalInformation: {
-                  update: {
-                    ...medicalInformationData,
-                    physician: {
-                      update: physicianData,
-                    },
-                  },
-                },
-                guardian: {
-                  update: guardianData,
-                },
+      },
+    });
+    promises.push(applicationProcessingResult);
+
+    let applicantPromise;
+    if (isRenewal) {
+      applicantPromise = prisma.applicant.update({
+        where: { id: applicantId || undefined },
+        data: {
+          ...applicantData,
+          medicalInformation: {
+            update: {
+              ...medicalInformationData,
+              physician: {
+                update: physicianData,
               },
             },
           },
+          guardian: {
+            update: {
+              firstName: guardianFirstName || undefined,
+              middleName: guardianMiddleName,
+              lastName: guardianLastName || undefined,
+              phone: guardianPhone || undefined,
+              province: guardianProvince || undefined,
+              city: guardianCity || undefined,
+              addressLine1: guardianAddressLine1 || undefined,
+              addressLine2: guardianAddressLine2,
+              postalCode: guardianPostalCode || undefined,
+              relationship: guardianRelationship || undefined,
+              notes: guardianNotes,
+            },
+          },
         },
-      },
-    });
-  } catch (err) {
-    throw 'Error completing application.';
-  }
+      });
+    } else {
+      // Enforce that guardian fields exist if there isn't an applicantId (new application)
+      if (
+        !guardianFirstName ||
+        !guardianLastName ||
+        !guardianPhone ||
+        !guardianProvince ||
+        !guardianCity ||
+        !guardianAddressLine1 ||
+        !guardianPostalCode ||
+        !guardianRelationship
+      ) {
+        return 'Missing required guardian fields.';
+      }
 
-  // Throw internal server error if application processing object was not updated
-  if (!applicationProccessing) {
-    throw new ApolloError('Application was not able to be completed.');
+      applicantPromise = prisma.applicant.create({
+        data: {
+          ...applicantData,
+          medicalInformation: {
+            create: {
+              ...medicalInformationData,
+              physician: {
+                create: physicianData,
+              },
+            },
+          },
+          guardian: {
+            create: {
+              firstName: guardianFirstName,
+              middleName: guardianMiddleName,
+              lastName: guardianLastName,
+              phone: guardianPhone,
+              province: guardianProvince,
+              city: guardianCity,
+              addressLine1: guardianAddressLine1,
+              addressLine2: guardianAddressLine2,
+              postalCode: guardianPostalCode,
+              relationship: guardianRelationship,
+              notes: guardianNotes,
+            },
+          },
+        },
+      });
+    }
+    promises.push(applicantPromise);
+
+    await prisma.$transaction(promises);
+  } catch (err) {
+    throw 'Error completing application: ' + err;
   }
 
   return {

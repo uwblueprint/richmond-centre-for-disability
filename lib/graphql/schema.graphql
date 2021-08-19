@@ -23,7 +23,7 @@ type Mutation {
   updateApplicationProcessing(
     input: UpdateApplicationProcessingInput!
   ): UpdateApplicationProcessingResult!
-  completeApplication(applicationId: ID!, applicationProcessingId: ID!): Boolean!
+  completeApplication(applicationId: ID!): CompleteApplicationResult!
 }
 
 scalar Date

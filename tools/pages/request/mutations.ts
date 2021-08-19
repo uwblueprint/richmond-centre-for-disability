@@ -12,7 +12,7 @@ export const UPDATE_APPLICATION = gql`
 
 // Approve Application Processing object with provided ID
 export const APPROVE_APPLICATION = gql`
-  mutation ApproveApplication($id: ID!) {
+  mutation approveApplication($id: ID!) {
     updateApplicationProcessing(input: {id: $id, status: ${ApplicationStatus.Approved}}) {
       ok
     }
@@ -21,8 +21,17 @@ export const APPROVE_APPLICATION = gql`
 
 // Reject Application Processing object with provided ID
 export const REJECT_APPLICATION = gql`
-  mutation RejectApplication($id: ID!) {
+  mutation rejectApplication($id: ID!) {
     updateApplicationProcessing(input: {id: $id, status: ${ApplicationStatus.Rejected}}) {
+      ok
+    }
+  }
+`;
+
+// Complete Application with provided ID
+export const COMPLETE_APPLICATION = gql`
+  mutation completeApplication($id: ID!) {
+    completeApplication(applicationId: $id) {
       ok
     }
   }

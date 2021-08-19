@@ -34,7 +34,7 @@ export default function EditDoctorInformationModal({
 }: EditDoctorInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [firstName, setFirstName] = useState('');
+  const [name, setName] = useState('');
   const [mspNumber, setMspNumber] = useState<number | undefined>();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [addressLine1, setAddressLine1] = useState('');
@@ -44,7 +44,7 @@ export default function EditDoctorInformationModal({
 
   const successfulEditToast = useToast();
   useEffect(() => {
-    setFirstName(physician.firstName);
+    setName(physician.name);
     setMspNumber(physician.mspNumber);
     setPhoneNumber(physician.phone);
     setAddressLine1(physician.addressLine1);
@@ -56,7 +56,7 @@ export default function EditDoctorInformationModal({
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     handleSave({
-      physicianName: firstName,
+      physicianName: name,
       physicianMspNumber: mspNumber,
       physicianPhone: phoneNumber,
       physicianAddressLine1: addressLine1,
@@ -96,7 +96,7 @@ export default function EditDoctorInformationModal({
                 <Stack direction="row" spacing="20px" marginBottom="24px">
                   <FormControl isRequired>
                     <FormLabel>{'First name'}</FormLabel>
-                    <Input value={firstName} onChange={event => setFirstName(event.target.value)} />
+                    <Input value={name} onChange={event => setName(event.target.value)} />
                   </FormControl>
                 </Stack>
 

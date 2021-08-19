@@ -184,7 +184,7 @@ export const updateApplication: Resolver = async (_, args, { prisma }) => {
       },
     });
   } catch (err) {
-    throw 'Error updating application.';
+    throw 'Error updating application: ' + err;
   }
 
   // Throw internal server error if application processing object was not updated

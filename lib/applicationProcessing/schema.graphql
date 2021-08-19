@@ -24,3 +24,7 @@ input UpdateApplicationProcessingInput {
 type UpdateApplicationProcessingResult {
   ok: Boolean!
 }
+
+type CompleteApplicationResult {
+  ok: Boolean!
+}
