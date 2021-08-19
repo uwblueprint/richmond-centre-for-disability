@@ -31,7 +31,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       <VStack spacing="12px" align="left" paddingTop="24px">
         <Box>
           <Text as="p" textStyle="body-regular">
-            {`${physician.firstName} ${physician.lastName}`}
+            {physician.name}
           </Text>
         </Box>
         <Box>
