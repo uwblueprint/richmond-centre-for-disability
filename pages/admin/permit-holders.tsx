@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
-import { useQuery } from '@apollo/client';
+import { NetworkStatus, useQuery } from '@apollo/client';
 import {
   Box,
   Flex,
@@ -105,6 +105,7 @@ type NameProps = {
   };
 };
 
+// Name cell in table
 function renderName({ value }: NameProps) {
   return (
     <>
@@ -126,6 +127,7 @@ type AddressProps = {
   };
 };
 
+// Address cell in table
 function renderAddress({ value }: AddressProps) {
   return (
     <>
@@ -141,6 +143,7 @@ type UserStatusBadgeProps = {
   value: 'active' | 'inactive';
 };
 
+// User status cell in table
 function renderUserStatusBadge({ value }: UserStatusBadgeProps) {
   return (
     <Wrap>
@@ -153,6 +156,7 @@ type RecentPermitProps = {
   value: Permit;
 };
 
+// Most Recent Permit cell in table
 function renderRecentPermit({ value }: RecentPermitProps) {
   const today = new Date();
   const expiryDate = new Date(value.expiryDate);
@@ -172,14 +176,14 @@ function renderRecentPermit({ value }: RecentPermitProps) {
   );
 }
 
-// map PermitStatus enum to drop down text
+// Map uppercase enum to lowercase
 const permitStatusText: Record<PermitStatus, string> = {
   [PermitStatus.Valid]: 'Valid',
   [PermitStatus.Expired]: 'Expired',
   [PermitStatus.ExpiringThirty]: 'Expiring Soon',
 };
 
-// map UserStatus enum to drop down text
+// Map uppercase enum to lowercase
 const userStatusText: Record<UserStatus, string> = {
   [UserStatus.Active]: 'Active',
   [UserStatus.Inactive]: 'Inactive',
@@ -227,6 +231,7 @@ function DayPickerStyling() {
   );
 }
 
+// Table data input will be of Applicant type as well as two combined fields
 type PermitTableInputData = Applicant & {
   name: {
     firstName: string;
@@ -241,7 +246,7 @@ type PermitTableInputData = Applicant & {
   };
 };
 
-// Internal home page
+// Internal permit holders page
 export default function PermitHolders() {
   const [permitStatusFilter, setPermitStatusFilter] = useState<PermitStatus>();
   const [userStatusFilter, setUserStatusFilter] = useState<UserStatus>();
@@ -254,43 +259,44 @@ export default function PermitHolders() {
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState<number>(0);
 
-  const { loading } = useQuery<FilterPermitHoldersResponse, FilterPermitHoldersRequest>(
-    FILTER_PERMIT_HOLDERS_QUERY,
-    {
-      variables: {
-        filter: {
-          userStatus: userStatusFilter,
-          permitStatus: permitStatusFilter,
-          expiryDateRangeFrom: range.from?.getTime(),
-          expiryDateRangeTo: range.to?.getTime(),
-          search: searchFilter,
-          offset: pageNumber * PAGE_SIZE,
-          limit: PAGE_SIZE,
-          order: sortOrder,
-        },
+  const { loading, networkStatus } = useQuery<
+    FilterPermitHoldersResponse,
+    FilterPermitHoldersRequest
+  >(FILTER_PERMIT_HOLDERS_QUERY, {
+    variables: {
+      filter: {
+        userStatus: userStatusFilter,
+        permitStatus: permitStatusFilter,
+        expiryDateRangeFrom: range.from?.getTime(),
+        expiryDateRangeTo: range.to?.getTime(),
+        search: searchFilter,
+        offset: pageNumber * PAGE_SIZE,
+        limit: PAGE_SIZE,
+        order: sortOrder,
       },
-      onCompleted: data => {
-        setPermitHolderData(
-          data.applicants.node.map(record => ({
-            name: {
-              firstName: record.firstName,
-              lastName: record.lastName,
-              middleName: record.middleName || undefined,
-              rcdUserId: record.id,
-            },
-            homeAddress: {
-              address: record.addressLine1,
-              city: record.city,
-              postalCode: record.postalCode,
-            },
-            ...record,
-          }))
-        );
-        setRecordsCount(data.applicants.totalCount);
-      },
-    }
-  );
+    },
+    onCompleted: data => {
+      setPermitHolderData(
+        data.applicants.node.map(record => ({
+          name: {
+            firstName: record.firstName,
+            lastName: record.lastName,
+            middleName: record.middleName || undefined,
+            rcdUserId: record.id,
+          },
+          homeAddress: {
+            address: record.addressLine1,
+            city: record.city,
+            postalCode: record.postalCode,
+          },
+          ...record,
+        }))
+      );
+      setRecordsCount(data.applicants.totalCount);
+    },
+  });
 
+  // Drop down filter options
   const permitStatusOptions = [
     PermitStatus.Valid,
     PermitStatus.Expired,
@@ -304,6 +310,7 @@ export default function PermitHolders() {
 
   const modifier = { start: range.from || undefined, end: range.to || undefined };
 
+  // Logic for displaying date picker text
   const dateRangeText = () => {
     if (!range.from && !range.to) {
       return 'YYYY-MM-DD - YYYY-MM-DD';
@@ -346,7 +353,9 @@ export default function PermitHolders() {
                   {permitStatusOptions.map((value, i) => (
                     <MenuItem
                       key={`dropDownItem-${i}`}
-                      onClick={() => setPermitStatusFilter(value)}
+                      onClick={() => {
+                        setPermitStatusFilter(value);
+                      }}
                     >
                       {permitStatusText[value]}
                     </MenuItem>
@@ -370,9 +379,20 @@ export default function PermitHolders() {
                   />
                 </MenuButton>
                 <MenuList>
-                  <MenuItem onClick={() => setUserStatusFilter(undefined)}>All</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setUserStatusFilter(undefined);
+                    }}
+                  >
+                    All
+                  </MenuItem>
                   {userStatusOptions.map((value, i) => (
-                    <MenuItem key={`dropDownItem-${i}`} onClick={() => setUserStatusFilter(value)}>
+                    <MenuItem
+                      key={`dropDownItem-${i}`}
+                      onClick={() => {
+                        setUserStatusFilter(value);
+                      }}
+                    >
                       {userStatusText[value]}
                     </MenuItem>
                   ))}
@@ -419,11 +439,13 @@ export default function PermitHolders() {
                 </InputGroup>
               </Box>
             </Flex>
-            {!loading && (
+            {!loading && networkStatus !== NetworkStatus.refetch && (
               <Table
                 columns={COLUMNS}
                 data={permitHolderData || []}
-                onChangeSortOrder={sortOrder => setSortOrder(sortOrder)}
+                onChangeSortOrder={sortOrder => {
+                  setSortOrder(sortOrder);
+                }}
               />
             )}
             <Flex justifyContent="flex-end">

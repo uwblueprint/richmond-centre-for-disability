@@ -32,6 +32,7 @@ import { SortOrder } from '@tools/types';
  * @returns All RCD applicants that match the filter(s).
  */
 export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
+  // Create default filter
   let where = {};
 
   if (filter) {
@@ -51,9 +52,12 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
       middleSearch,
       lastSearch;
 
+    // Parse search input for id or name
     if (parseInt(search)) {
       userIDSearch = parseInt(search);
     } else if (search) {
+      // Split search assign to first, middle or last name
+      // If one doesn't exist assign to the previous input to allow for global search across names
       [firstSearch, middleSearch, lastSearch] = search?.split(' ');
       middleSearch = middleSearch || firstSearch;
       lastSearch = lastSearch || middleSearch;
@@ -67,6 +71,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
 
     const TODAY = new Date();
 
+    // Permit status filter depends on expiry date
     switch (permitStatus) {
       case PermitStatus.Valid:
         expiryDateLowerBound = TODAY;
@@ -81,13 +86,16 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
     }
 
     const containsPermitFilter = !!(permitStatus || expiryDateRangeFrom || expiryDateRangeTo);
+
+    // Permit status filter and expiry date range both use the permit expiry date.
+    // For this reason we need to filter on expiry date twice to return an accurate result.
     const permitFilter = containsPermitFilter
       ? {
           some: {
             AND: [
               {
                 expiryDate: {
-                  gt: expiryDateLowerBound?.toISOString(),
+                  gte: expiryDateLowerBound?.toISOString(),
                   lte: expiryDateUpperBound?.toISOString(),
                 },
               },
@@ -102,6 +110,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
         }
       : undefined;
 
+    // Update default filter since there were filter arguments
     where = {
       rcdUserId: userIDSearch,
       status: userStatus,
@@ -109,6 +118,9 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
       permits: permitFilter,
     };
   }
+
+  // Map the input sorting format into key value pairs that can be used by Prisma
+  // This currently only filters by name but can be extended to more filters by adding them in the orderBy statement
   const sortingOrder: Record<string, SortOrder> = {};
 
   if (filter.order) {
