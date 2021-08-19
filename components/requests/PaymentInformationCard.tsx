@@ -19,13 +19,11 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
     shippingAddressLine2,
     shippingCity,
     shippingProvince,
-    shippingCountry,
     shippingPostalCode,
     billingAddressLine1,
     billingAddressLine2,
     billingCity,
     billingProvince,
-    billingCountry,
     billingPostalCode,
   } = paymentInformation;
 
@@ -93,9 +91,6 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
               {shippingCity} {shippingProvince}
             </Text>
             <Text as="p" textStyle="body-regular">
-              {shippingCountry}
-            </Text>
-            <Text as="p" textStyle="body-regular">
               {shippingPostalCode}
             </Text>
           </Box>
@@ -112,9 +107,6 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
             </Text>
             <Text as="p" textStyle="body-regular">
               {billingCity} {billingProvince}
-            </Text>
-            <Text as="p" textStyle="body-regular">
-              {billingCountry}
             </Text>
             <Text as="p" textStyle="body-regular">
               {billingPostalCode}

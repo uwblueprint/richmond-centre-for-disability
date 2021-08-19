@@ -1,6 +1,6 @@
 import { Application } from '@lib/graphql/types'; // Applicant type
 
-export type PersonalInformationCardApplicant = Pick<
+export type PaymentInformation = Pick<
   Application,
   | 'processingFee'
   | 'donationAmount'
@@ -10,14 +10,12 @@ export type PersonalInformationCardApplicant = Pick<
   | 'shippingAddressLine2'
   | 'shippingCity'
   | 'shippingProvince'
-  | 'shippingCountry'
   | 'shippingPostalCode'
   | 'billingFullName'
   | 'billingAddressLine1'
   | 'billingAddressLine2'
   | 'billingCity'
   | 'billingProvince'
-  | 'billingCountry'
   | 'billingPostalCode'
   | 'shippingAddressSameAsHomeAddress'
   | 'billingAddressSameAsHomeAddress'
