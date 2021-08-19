@@ -161,7 +161,7 @@ export default function Requests() {
           data.applications.result.map(record => ({
             name: {
               name: record.firstName + ' ' + record.lastName,
-              rcdUserId: record.applicantId,
+              rcdUserId: record.applicantId || undefined,
             },
             dateReceived: record.createdAt,
             permitType: permitTypeString[record.permitType],
