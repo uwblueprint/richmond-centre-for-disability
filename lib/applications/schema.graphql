@@ -21,6 +21,7 @@ type Application {
   poaFormUrl: String
   applicantId: Int
   applicant: Applicant
+  applicationProcessing: ApplicationProcessing
 
   # Medical information
   disability: String!
@@ -61,6 +62,8 @@ type Application {
 
   # Permit
   permit: Permit
+
+  createdAt: Date
 }
 
 input CreateApplicationInput {
@@ -152,17 +155,7 @@ type ApplicationProcessing {
   application: Application
 }
 
-type ApplicationsFilterResult{
-  firstName: String!
-  lastName: String!
-  id: ID!
-  createdAt: Date!
-  applicationProcessing: ApplicationProcessing
-  isRenewal: Boolean!
-  permitType: PermitType!
-}
-
 type QueryApplicationsResult {
-  result: [ApplicationsFilterResult]
+  result: [Application]
   totalCount: Int
 }

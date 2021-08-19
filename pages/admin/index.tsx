@@ -52,7 +52,7 @@ function renderStatusBadge({ value }: StatusProps) {
 type NameProps = {
   readonly value: {
     name: string;
-    id: string;
+    rcdUserId: string;
   };
 };
 
@@ -60,9 +60,9 @@ function renderName({ value }: NameProps) {
   return (
     <div>
       <Text>{value.name}</Text>
-      {value.id && (
+      {value.rcdUserId && (
         <Text textStyle="caption" textColor="secondary">
-          ID: {value.id}
+          ID: {value.rcdUserId}
         </Text>
       )}
     </div>
@@ -125,7 +125,7 @@ type ApplicationData = {
 };
 
 // Max number of entries in a page
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 20;
 
 // Internal home page - view APP requests
 export default function Requests() {
@@ -161,7 +161,7 @@ export default function Requests() {
           data.applications.result.map(record => ({
             name: {
               name: record.firstName + ' ' + record.lastName,
-              rcdUserId: record.id,
+              rcdUserId: record.applicantId,
             },
             dateReceived: record.createdAt,
             permitType: permitTypeString[record.permitType],

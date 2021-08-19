@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client'; // gql tag
-import { ApplicationsFilter, ApplicationsFilterResult } from '@lib/graphql/types'; //GraphQL types
+import { Application, ApplicationsFilter } from '@lib/graphql/types'; //GraphQL types
 
 export const FILTER_APPLICATIONS_QUERY = gql`
   query FilterApplicationsQuery($filter: ApplicationsFilter) {
@@ -11,6 +11,7 @@ export const FILTER_APPLICATIONS_QUERY = gql`
         createdAt
         permitType
         isRenewal
+        applicantId
         applicationProcessing {
           status
         }
@@ -26,7 +27,7 @@ export type FilterRequest = {
 
 export type FilterResponse = {
   applications: {
-    result: [ApplicationsFilterResult];
+    result: [Application];
     totalCount: number;
   };
 };

@@ -9,99 +9,97 @@ import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
 
 /**
- * Query all the RCD applications in the internal-facing app
- * @returns All RCD applications
+ * Query and filter RCD applications from the internal facing app.
+ * All fields are optional.
+ *
+ * Sorting:
+ * - order: array of tuples of the field being sorted and the order. Default [['dateReceived', 'desc']]
+ *
+ * Filters:
+ * - permitType: PermitType (PERMANENT, TEMPORARY)
+ * - requestType: Replacement, Renewal
+ * - status: ApplicationStatus(PENDING, INPROGRESS, APPROVED, REJECTED, COMPLETED, EXPIRING, EXPIRED, ACTIVE)
+ * - search: Search by first, middle, last name or by RCD user ID
+ *
+ * Pagination:
+ * - limit: Number of result to return
+ * - offset: Number of results to skip
+ *
+ * @returns All RCD applications that match the filter(s).
  */
 export const applications: Resolver = async (_parent, { filter }, { prisma }) => {
-  const { order, permitType, requestType, status, search, limit = 20, offset = 0 } = filter;
-
-  // Parse search string
-  let userIDSearch, firstSearch, middleSearch, lastSearch;
-
-  if (parseInt(search)) {
-    userIDSearch = parseInt(search);
-  } else if (search) {
-    [firstSearch, middleSearch, lastSearch] = search.split(' ');
-    middleSearch = middleSearch || firstSearch;
-    lastSearch = lastSearch || middleSearch;
-  }
-
-  // Parse sorting order
+  let where = {};
   let orderBy = undefined;
 
-  if (order && order.length > 0) {
-    const sortingOrder: Array<Record<string, SortOrder>> = [];
-    order.forEach(([field, order]: [string, SortOrder]) => {
-      if (field === 'name') {
-        // Primary sort is by first name and secondary sort is by last name
-        sortingOrder.push({ firstName: order });
-        sortingOrder.push({ lastName: order });
-      } else if (field === 'dateReceived') {
-        sortingOrder.push({ createdAt: order });
-      }
-    });
-    orderBy = sortingOrder;
+  if (filter) {
+    const {
+      order = undefined,
+      permitType = undefined,
+      requestType = undefined,
+      status = undefined,
+      search = undefined,
+    } = filter;
+
+    // Parse search string
+    let userIDSearch, firstSearch, middleSearch, lastSearch;
+
+    if (parseInt(search)) {
+      userIDSearch = parseInt(search);
+    } else if (search) {
+      [firstSearch, middleSearch, lastSearch] = search.split(' ');
+      middleSearch = middleSearch || firstSearch;
+      lastSearch = lastSearch || middleSearch;
+    }
+
+    // Parse sorting order
+    if (order && order.length > 0) {
+      const sortingOrder: Array<Record<string, SortOrder>> = [];
+      order.forEach(([field, order]: [string, SortOrder]) => {
+        if (field === 'name') {
+          // Primary sort is by first name and secondary sort is by last name
+          sortingOrder.push({ firstName: order });
+          sortingOrder.push({ lastName: order });
+        } else if (field === 'dateReceived') {
+          sortingOrder.push({ createdAt: order });
+        }
+      });
+      orderBy = sortingOrder;
+    }
+
+    where = {
+      applicant: {
+        id: userIDSearch,
+      },
+      applicationProcessing: {
+        status: status || undefined,
+      },
+      isRenewal: requestType ? requestType === 'Renewal' : undefined,
+      permitType: permitType || undefined,
+      AND: [
+        {
+          OR: [
+            { firstName: { contains: firstSearch, mode: 'insensitive' } },
+            { middleName: { contains: middleSearch, mode: 'insensitive' } },
+            { lastName: { contains: lastSearch, mode: 'insensitive' } },
+          ],
+        },
+      ],
+    };
   }
 
   // Get number of applications with desired filters
   const applicationsCount = await prisma.application.count({
-    where: {
-      applicant: {
-        id: userIDSearch,
-      },
-      applicationProcessing: {
-        status: status || undefined,
-      },
-      isRenewal: requestType ? requestType === 'Renewal' : undefined,
-      permitType: permitType || undefined,
-      AND: [
-        {
-          OR: [
-            { firstName: { contains: firstSearch, mode: 'insensitive' } },
-            { middleName: { contains: middleSearch, mode: 'insensitive' } },
-            { lastName: { contains: lastSearch, mode: 'insensitive' } },
-          ],
-        },
-      ],
-    },
+    where: where,
   });
 
   // Get applications with filter, sorting, pagination
   const applications = await prisma.application.findMany({
-    skip: offset,
-    take: limit,
+    skip: filter?.offset || 0,
+    take: filter?.limit || 20,
     orderBy: orderBy,
-    where: {
-      applicant: {
-        id: userIDSearch,
-      },
-      applicationProcessing: {
-        status: status || undefined,
-      },
-      isRenewal: requestType ? requestType === 'Renewal' : undefined,
-      permitType: permitType || undefined,
-      AND: [
-        {
-          OR: [
-            { firstName: { contains: firstSearch, mode: 'insensitive' } },
-            { middleName: { contains: middleSearch, mode: 'insensitive' } },
-            { lastName: { contains: lastSearch, mode: 'insensitive' } },
-          ],
-        },
-      ],
-    },
-    select: {
-      firstName: true,
-      lastName: true,
-      id: true,
-      createdAt: true,
-      permitType: true,
-      isRenewal: true,
-      applicationProcessing: {
-        select: {
-          status: true,
-        },
-      },
+    where: where,
+    include: {
+      applicationProcessing: true,
     },
   });
 

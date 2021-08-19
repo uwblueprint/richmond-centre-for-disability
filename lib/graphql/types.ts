@@ -94,6 +94,7 @@ export type Application = {
   poaFormUrl?: Maybe<Scalars['String']>;
   applicantId?: Maybe<Scalars['Int']>;
   applicant?: Maybe<Applicant>;
+  applicationProcessing?: Maybe<ApplicationProcessing>;
   /** Medical information */
   disability: Scalars['String'];
   affectsMobility: Scalars['Boolean'];
@@ -129,6 +130,7 @@ export type Application = {
   guardianNotes?: Maybe<Scalars['String']>;
   /** Permit */
   permit?: Maybe<Permit>;
+  createdAt?: Maybe<Scalars['Date']>;
 };
 
 export type ApplicationProcessing = {
@@ -166,17 +168,6 @@ export type ApplicationsFilter = {
   search?: Maybe<Scalars['String']>;
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-};
-
-export type ApplicationsFilterResult = {
-  __typename?: 'ApplicationsFilterResult';
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  id: Scalars['ID'];
-  createdAt: Scalars['Date'];
-  applicationProcessing?: Maybe<ApplicationProcessing>;
-  isRenewal: Scalars['Boolean'];
-  permitType: PermitType;
 };
 
 export type CreateApplicantInput = {
@@ -557,7 +548,7 @@ export type QueryApplicationsArgs = {
 
 export type QueryApplicationsResult = {
   __typename?: 'QueryApplicationsResult';
-  result?: Maybe<Array<Maybe<ApplicationsFilterResult>>>;
+  result?: Maybe<Array<Maybe<Application>>>;
   totalCount?: Maybe<Scalars['Int']>;
 };
 
