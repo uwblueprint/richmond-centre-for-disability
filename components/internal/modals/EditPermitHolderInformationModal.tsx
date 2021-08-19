@@ -22,13 +22,13 @@ import { PersonalInformationCardApplicant } from '@tools/components/internal/req
 type EditPermitHolderInformationModalProps = {
   children: ReactNode;
   readonly applicant: PersonalInformationCardApplicant;
-  readonly handleSave: (applicationData: PersonalInformationCardApplicant) => void;
+  readonly onSave: (applicationData: PersonalInformationCardApplicant) => void;
 };
 
 export default function EditPermitHolderInformationModal({
   children,
   applicant,
-  handleSave,
+  onSave,
 }: EditPermitHolderInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -61,7 +61,7 @@ export default function EditPermitHolderInformationModal({
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    handleSave({
+    onSave({
       ...applicant,
       firstName,
       lastName,

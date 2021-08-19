@@ -6,18 +6,18 @@ import { DoctorInformationCardPhysician } from '@tools/components/internal/reque
 type DoctorInformationProps = {
   readonly physician: DoctorInformationCardPhysician;
   readonly isUpdated?: boolean;
-  readonly handleSave: (applicationData: any) => void;
+  readonly onSave: (applicationData: any) => void;
 };
 
 export default function DoctorInformationCard(props: DoctorInformationProps) {
-  const { physician, isUpdated, handleSave } = props;
+  const { physician, isUpdated, onSave } = props;
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Doctor's Information`}
       updated={isUpdated}
       editModal={
-        <EditDoctorInformationModal physician={physician} handleSave={handleSave}>
+        <EditDoctorInformationModal physician={physician} onSave={onSave}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>

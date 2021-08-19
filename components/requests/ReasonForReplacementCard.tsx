@@ -1,7 +1,7 @@
 import { Box, Text, Divider, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import EditReasonForReplacementModal from '@components/requests/modals/EditReasonForReplacementModal'; // Edit modal
-import { ReplacementData } from '@tools/components/internal/requests/reason-for-replacement-card'; // Applicant type
+import { ReplacementData } from '@tools/components/internal/requests/reason-for-replacement-card'; // ReplacementData type
 
 type ReplacementProps = {
   readonly replacement: ReplacementData;

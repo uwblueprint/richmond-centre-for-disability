@@ -2,19 +2,7 @@ import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import AssignNumberModal from '@components/requests/modals/AssignNumberModal'; // AssignNumber Modal component
 import ProcessingTaskStep from '@components/requests/ProcessingTaskStep'; // Processing Task Step
-import { ApplicationStatus } from '@lib/types'; // Types
-
-interface ApplicationProcessingData {
-  id: number;
-  status: ApplicationStatus;
-  appNumber: number;
-  appHolepunched: boolean;
-  walletCardCreated: boolean;
-  invoiceNumber: number;
-  documentUrls: string[];
-  appMailed: boolean;
-  updatedAt: Date;
-}
+import { ApplicationProcessingData } from '@lib/types'; // Types
 
 type ProcessingTasksCardProps = {
   readonly applicationProcessingData: ApplicationProcessingData;
@@ -41,35 +29,17 @@ export default function ProcessingTasksCard({
   const isTaskCompleted = (taskId: number) => {
     switch (taskId) {
       case 1:
-        if (applicationProcessingData.appNumber !== null) {
-          return true;
-        }
-        break;
+        return applicationProcessingData.appNumber !== null;
       case 2:
-        if (applicationProcessingData.appHolepunched) {
-          return true;
-        }
-        break;
+        return applicationProcessingData.appHolepunched;
       case 3:
-        if (applicationProcessingData.walletCardCreated) {
-          return true;
-        }
-        break;
+        return applicationProcessingData.walletCardCreated;
       case 4:
-        if (applicationProcessingData.invoiceNumber !== null) {
-          return true;
-        }
-        break;
+        return applicationProcessingData.invoiceNumber !== null;
       case 5:
-        if (applicationProcessingData.documentUrls?.length) {
-          return true;
-        }
-        break;
+        return applicationProcessingData.documentUrls?.length;
       case 6:
-        if (applicationProcessingData.appMailed) {
-          return true;
-        }
-        break;
+        return applicationProcessingData.appMailed;
     }
     return false;
   };
@@ -77,11 +47,11 @@ export default function ProcessingTasksCard({
   const steps = [
     // Task 1: Assign new APP number: Assign number (MODAL)
     {
-      label:
-        'Assign new APP number' +
-        (applicationProcessingData.appNumber === null
+      label: `Assign new APP number${
+        applicationProcessingData.appNumber === null
           ? ''
-          : `: ${applicationProcessingData.appNumber}`),
+          : `: ${applicationProcessingData.appNumber}`
+      }`,
     },
     // Task 2: Hole punch parking permit: Mark as complete (CHECK)
     {
@@ -95,11 +65,11 @@ export default function ProcessingTasksCard({
     },
     // Task 4: Assign invoice number: Assign number (MODAL)
     {
-      label:
-        'Assign invoice number' +
-        (applicationProcessingData.invoiceNumber === null
+      label: `Assign invoice number${
+        applicationProcessingData.invoiceNumber === null
           ? ''
-          : `: ${applicationProcessingData.invoiceNumber}`),
+          : `: ${applicationProcessingData.invoiceNumber}`
+      }`,
     },
     // Task 5: Upload document: Choose document (UPLOAD FILE)
     {

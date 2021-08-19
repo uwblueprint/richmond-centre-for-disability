@@ -28,3 +28,15 @@ type UpdateApplicationProcessingResult {
 type CompleteApplicationResult {
   ok: Boolean!
 }
+
+type ApplicationProcessingData {
+  id: Int!
+  status: ApplicationStatus!
+  appNumber: Int!
+  appHolepunched: Boolean!
+  walletCardCreated: Boolean!
+  invoiceNumber: Int!
+  documentUrls: [String]!
+  appMailed: Boolean!
+  updatedAt: Date!
+}

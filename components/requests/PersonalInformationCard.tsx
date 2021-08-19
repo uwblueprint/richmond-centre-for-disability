@@ -11,7 +11,7 @@ type PersonalInformationProps = {
   readonly contactInfoUpdated?: boolean;
   readonly addressInfoUpdated?: boolean;
   readonly handleName: MouseEventHandler;
-  readonly handleSave: (applicationData: PersonalInformationCardApplicant) => void;
+  readonly onSave: (applicationData: PersonalInformationCardApplicant) => void;
 };
 
 export default function PersonalInformationCard(props: PersonalInformationProps) {
@@ -31,7 +31,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
       colSpan={5}
       header={header}
       editModal={
-        <EditPermitHolderInformationModal applicant={applicant} handleSave={props.handleSave}>
+        <EditPermitHolderInformationModal applicant={applicant} onSave={props.onSave}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>

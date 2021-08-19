@@ -25,19 +25,19 @@ import {
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
-import { PaymentType, Province } from '@lib/graphql/types'; // PaymentType Enum
-import { PaymentInformation } from '@tools/components/internal/requests/payment-information-card'; // Applicant type
+import { PaymentType, Province } from '@lib/graphql/types'; // Types
+import { PaymentInformation } from '@tools/components/internal/requests/payment-information-card'; // PaymentInformation type
 
 type EditPaymentDetailsModalProps = {
   readonly children: ReactNode;
   readonly paymentInformation: PaymentInformation;
-  readonly handleSave: (applicationData: any) => void;
+  readonly onSave: (applicationData: any) => void;
 };
 
 export default function EditPaymentDetailsModal({
   children,
   paymentInformation,
-  handleSave,
+  onSave,
 }: EditPaymentDetailsModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -51,7 +51,6 @@ export default function EditPaymentDetailsModal({
   const [shippingAddressLine2, setShippingAddressLine2] = useState('');
   const [shippingCity, setShippingCity] = useState('');
   const [shippingProvince, setShippingProvince] = useState<Province | undefined>();
-  // const [shippingCountry, setShippingCountry] = useState('');
   const [shippingPostalCode, setShippingPostalCode] = useState('');
 
   //   TODO: Add error states for each field as follows (post-mvp)
@@ -64,7 +63,6 @@ export default function EditPaymentDetailsModal({
   const [billingAddressLine2, setBillingAddressLine2] = useState('');
   const [billingCity, setBillingCity] = useState('');
   const [billingProvince, setBillingProvince] = useState<Province | undefined>();
-  // const [billingCountry, setBillingCountry] = useState('');
   const [billingPostalCode, setBillingPostalCode] = useState('');
 
   useEffect(() => {
@@ -96,7 +94,7 @@ export default function EditPaymentDetailsModal({
     //     setShippingFullNameInputError("Please enter the recipient's full name.");
     //   }
     // }
-    handleSave({
+    onSave({
       ...(paymentMethod && { paymentMethod }),
       ...(donationAmount !== undefined && { donationAmount }),
       shippingAddressSameAsHomeAddress,
@@ -105,7 +103,6 @@ export default function EditPaymentDetailsModal({
       shippingAddressLine2,
       shippingCity,
       shippingProvince,
-      // shippingCountry,
       shippingPostalCode,
       billingAddressSameAsHomeAddress,
       billingFullName,
@@ -113,7 +110,6 @@ export default function EditPaymentDetailsModal({
       billingAddressLine2,
       billingCity,
       billingProvince,
-      // billingCountry,
       billingPostalCode,
     });
     onClose();

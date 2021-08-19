@@ -7,7 +7,13 @@ import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
-import { Role, ApplicationStatus } from '@lib/types'; // Enum types
+import {
+  Role,
+  ApplicationStatus,
+  MutationUpdateApplicationArgs,
+  MutationUpdateApplicationProcessingArgs,
+  QueryApplicationArgs,
+} from '@lib/types'; // Enum types
 import { authorize } from '@tools/authorization'; // Page authorization
 import { useQuery, useMutation } from '@apollo/client'; // Apollo Client hooks
 import { GET_APPLICATION } from '@tools/pages/request/queries'; // Request page GraphQL queries
@@ -19,6 +25,16 @@ import {
   UPDATE_APPLICATION_PROCESSING,
 } from '@tools/pages/request/mutations'; // Request page GraphQL queries
 
+import {
+  GetApplicationResponse,
+  UpdateApplicationResponse,
+  UpdateApplicationProcessingResponse,
+  CompleteApplicationResponse,
+  ApproveApplicationArgs,
+  RejectApplicationArgs,
+  CompleteApplicationArgs,
+} from '@tools/pages/request/types'; // Request query/mutation types
+
 import RequestHeader from '@components/requests/RequestHeader'; // Request header
 import DoctorInformationCard from '@components/requests/DoctorInformationCard'; // Doctor information card
 import PaymentInformationCard from '@components/requests/PaymentInformationCard'; // Payment information card
@@ -27,34 +43,52 @@ import ReasonForReplacementCard from '@components/requests/ReasonForReplacementC
 import ProcessingTasksCard from '@components/requests/ProcessingTasksCard'; // Processing tasks card
 
 type RequestProps = {
-  requestId: number;
+  readonly requestId: number;
 };
 
 // Individual request page
 export default function Request({ requestId }: RequestProps) {
   // QUERIES
-  const { data: applicationData } = useQuery(GET_APPLICATION, {
-    variables: { id: requestId },
-  });
+  const { data: applicationData } = useQuery<GetApplicationResponse, QueryApplicationArgs>(
+    GET_APPLICATION,
+    {
+      variables: { id: requestId },
+    }
+  );
 
   // MUTATIONS
-  const [updateApplication] = useMutation(UPDATE_APPLICATION, {
+  const [updateApplication] = useMutation<UpdateApplicationResponse, MutationUpdateApplicationArgs>(
+    UPDATE_APPLICATION,
+    {
+      refetchQueries: ['GetApplication'],
+    }
+  );
+
+  const [approveApplication] = useMutation<
+    UpdateApplicationProcessingResponse,
+    ApproveApplicationArgs
+  >(APPROVE_APPLICATION, {
     refetchQueries: ['GetApplication'],
   });
 
-  const [approveApplication] = useMutation(APPROVE_APPLICATION, {
+  const [rejectApplication] = useMutation<
+    UpdateApplicationProcessingResponse,
+    RejectApplicationArgs
+  >(REJECT_APPLICATION, {
     refetchQueries: ['GetApplication'],
   });
 
-  const [rejectApplication] = useMutation(REJECT_APPLICATION, {
-    refetchQueries: ['GetApplication'],
-  });
+  const [completeApplication] = useMutation<CompleteApplicationResponse, CompleteApplicationArgs>(
+    COMPLETE_APPLICATION,
+    {
+      refetchQueries: ['GetApplication'],
+    }
+  );
 
-  const [completeApplication] = useMutation(COMPLETE_APPLICATION, {
-    refetchQueries: ['GetApplication'],
-  });
-
-  const [updateApplicationProcessing] = useMutation(UPDATE_APPLICATION_PROCESSING, {
+  const [updateApplicationProcessing] = useMutation<
+    UpdateApplicationProcessingResponse,
+    MutationUpdateApplicationProcessingArgs
+  >(UPDATE_APPLICATION_PROCESSING, {
     refetchQueries: ['GetApplication'],
   });
 
@@ -92,14 +126,12 @@ export default function Request({ requestId }: RequestProps) {
     shippingAddressLine2,
     shippingCity,
     shippingProvince,
-    shippingCountry,
     shippingPostalCode,
     billingFullName,
     billingAddressLine1,
     billingAddressLine2,
     billingCity,
     billingProvince,
-    billingCountry,
     billingPostalCode,
 
     processingFee,
@@ -130,7 +162,7 @@ export default function Request({ requestId }: RequestProps) {
   const applicantData = {
     id: applicant?.id,
     rcdUserId,
-    firstName,
+    firstName: firstName,
     lastName,
     dateOfBirth,
     gender,
@@ -152,14 +184,12 @@ export default function Request({ requestId }: RequestProps) {
     shippingAddressLine2,
     shippingCity,
     shippingProvince,
-    shippingCountry,
     shippingPostalCode,
     billingFullName,
     billingAddressLine1,
     billingAddressLine2,
     billingCity,
     billingProvince,
-    billingCountry,
     billingPostalCode,
     processingFee,
     donationAmount,
@@ -180,17 +210,17 @@ export default function Request({ requestId }: RequestProps) {
 
   // Approve modal
   const onApprove = () => {
-    approveApplication({ variables: { id: applicationProcessingId } });
+    if (applicationProcessingId) approveApplication({ variables: { id: applicationProcessingId } });
   };
 
   // Reject modal
   const onReject = () => {
-    rejectApplication({ variables: { id: applicationProcessingId } });
+    if (applicationProcessingId) rejectApplication({ variables: { id: applicationProcessingId } });
   };
 
   // Edit personal information modal
   const onComplete = () => {
-    completeApplication({ variables: { id: applicationId } });
+    if (applicationId) completeApplication({ variables: { id: applicationId } });
   };
 
   // Wrapper function for updateApplication mutation
@@ -204,100 +234,109 @@ export default function Request({ requestId }: RequestProps) {
 
   // Processing tasks completion handler
   const onTaskComplete = (taskNum: number, taskArgs?: number | string) => {
-    switch (taskNum) {
-      case 1:
-        updateApplicationProcessing({
-          variables: { input: { id: applicationProcessingId, appNumber: taskArgs } },
-        });
-        break;
-      case 2:
-        updateApplicationProcessing({
-          variables: { input: { id: applicationProcessingId, appHolepunched: !appHolepunched } },
-        });
-        break;
-      case 3:
-        updateApplicationProcessing({
-          variables: {
-            input: { id: applicationProcessingId, walletCardCreated: !walletCardCreated },
-          },
-        });
-        break;
-      case 4:
-        updateApplicationProcessing({
-          variables: { input: { id: applicationProcessingId, invoiceNumber: taskArgs } },
-        });
-        break;
-      case 5:
-        // TODO: Make this actually upload a file
-        updateApplicationProcessing({
-          variables: {
-            input: { id: applicationProcessingId, documentUrl: 'documentUrl' /* taskArgs */ },
-          },
-        });
-        break;
-      case 6:
-        updateApplicationProcessing({
-          variables: { input: { id: applicationProcessingId, appMailed: !appMailed } },
-        });
-        break;
-    }
+    if (applicationProcessingId)
+      switch (taskNum) {
+        case 1:
+          updateApplicationProcessing({
+            variables: { input: { id: applicationProcessingId, appNumber: taskArgs } },
+          });
+          break;
+        case 2:
+          updateApplicationProcessing({
+            variables: { input: { id: applicationProcessingId, appHolepunched: !appHolepunched } },
+          });
+          break;
+        case 3:
+          updateApplicationProcessing({
+            variables: {
+              input: { id: applicationProcessingId, walletCardCreated: !walletCardCreated },
+            },
+          });
+          break;
+        case 4:
+          updateApplicationProcessing({
+            variables: { input: { id: applicationProcessingId, invoiceNumber: taskArgs } },
+          });
+          break;
+        case 5:
+          // TODO: Make this actually upload a file
+          updateApplicationProcessing({
+            variables: {
+              input: { id: applicationProcessingId, documentUrl: 'documentUrl' },
+            },
+          });
+          break;
+        case 6:
+          updateApplicationProcessing({
+            variables: { input: { id: applicationProcessingId, appMailed: !appMailed } },
+          });
+          break;
+      }
   };
 
-  const allStepsCompleted =
+  const allStepsCompleted = !!(
     appNumber !== null &&
     appHolepunched &&
     walletCardCreated &&
     invoiceNumber !== null &&
     documentUrls?.length &&
-    appMailed;
+    appMailed
+  );
 
   return (
     <Layout>
-      {applicationData?.application && (
-        <>
-          <GridItem rowSpan={1} colSpan={12} marginTop={3}>
-            <RequestHeader
-              isRenewal={isRenewal}
-              applicationStatus={applicationProcessingStatus}
-              createdAt={new Date(createdAt).toDateString()}
-              onApprove={onApprove}
-              onReject={onReject}
-              onComplete={onComplete}
-              allStepsCompleted={allStepsCompleted}
-            />
-          </GridItem>
-          <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
-            <PersonalInformationCard
-              applicant={applicantData}
-              expirationDate={new Date(expiryDate).toDateString()}
-              mostRecentAPP={rcdPermitId}
-              handleName={() => {}}
-              handleSave={onUpdateApplication}
-            />
-          </GridItem>
-          <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
-            <Stack spacing={5}>
-              {applicationProcessingStatus === ApplicationStatus.Approved ? (
-                <ProcessingTasksCard
-                  applicationProcessingData={applicationProcessing}
-                  onTaskComplete={onTaskComplete}
-                />
-              ) : isRenewal ? (
-                <DoctorInformationCard physician={physicianData} handleSave={onUpdateApplication} />
-              ) : (
-                <ReasonForReplacementCard
-                  replacement={replacement}
-                  isUpdated={replacement?.isUpdated}
-                />
-              )}
-              <PaymentInformationCard
-                paymentInformation={paymentInformationData}
-                handleSave={onUpdateApplication}
+      {applicationData?.application !== undefined &&
+        isRenewal !== undefined &&
+        applicationProcessingStatus !== undefined &&
+        applicantData !== undefined &&
+        rcdPermitId !== undefined &&
+        applicationProcessing !== undefined &&
+        physicianData !== undefined &&
+        paymentInformationData !== undefined && (
+          <>
+            <GridItem rowSpan={1} colSpan={12} marginTop={3}>
+              <RequestHeader
+                isRenewal={isRenewal}
+                applicationStatus={applicationProcessingStatus}
+                createdAt={new Date(createdAt).toDateString()}
+                onApprove={onApprove}
+                onReject={onReject}
+                onComplete={onComplete}
+                allStepsCompleted={allStepsCompleted}
               />
-            </Stack>
-          </GridItem>
-        </>
-      )}
+            </GridItem>
+            <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
+              <PersonalInformationCard
+                applicant={applicantData}
+                expirationDate={new Date(expiryDate).toDateString()}
+                mostRecentAPP={rcdPermitId}
+                handleName={() => {}}
+                onSave={onUpdateApplication}
+              />
+            </GridItem>
+            <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
+              <Stack spacing={5}>
+                {applicationProcessingStatus === ApplicationStatus.Approved ? (
+                  <ProcessingTasksCard
+                    applicationProcessingData={applicationProcessing}
+                    onTaskComplete={onTaskComplete}
+                  />
+                ) : isRenewal ? (
+                  <DoctorInformationCard physician={physicianData} onSave={onUpdateApplication} />
+                ) : (
+                  <ReasonForReplacementCard
+                    replacement={replacement}
+                    isUpdated={replacement?.isUpdated}
+                  />
+                )}
+                <PaymentInformationCard
+                  paymentInformation={paymentInformationData}
+                  onSave={onUpdateApplication}
+                />
+              </Stack>
+            </GridItem>
+          </>
+        )}
     </Layout>
   );
 }

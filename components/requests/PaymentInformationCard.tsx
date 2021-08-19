@@ -6,11 +6,11 @@ import { PaymentInformation } from '@tools/components/internal/requests/payment-
 type PaymentInformationProps = {
   readonly paymentInformation: PaymentInformation;
   readonly isUpdated?: boolean;
-  readonly handleSave: (applicationData: any) => void;
+  readonly onSave: (applicationData: any) => void;
 };
 
 export default function PaymentInformationCard(props: PaymentInformationProps) {
-  const { paymentInformation, isUpdated, handleSave } = props;
+  const { paymentInformation, isUpdated, onSave } = props;
   const {
     processingFee,
     donationAmount,
@@ -33,7 +33,7 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
       header={`Payment, Shipping, and Billing Information`}
       updated={isUpdated}
       editModal={
-        <EditPaymentDetailsModal paymentInformation={paymentInformation} handleSave={handleSave}>
+        <EditPaymentDetailsModal paymentInformation={paymentInformation} onSave={onSave}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>

@@ -12,7 +12,7 @@ import { permits, createPermit } from '@lib/permits/resolvers';
 import {
   updateApplicationProcessing,
   completeApplication,
-} from '@lib/applicationProcessing/resolvers';
+} from '@lib/application-processing/resolvers';
 import { IFieldResolver } from 'graphql-tools'; // GraphQL field resolver
 import { Context } from '@lib/context'; // Context type
 import { dateScalar } from '@lib/scalars'; // Custom date scalar implementation

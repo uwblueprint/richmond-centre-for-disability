@@ -23,14 +23,14 @@ import { DoctorInformationCardPhysician } from '@tools/components/internal/reque
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;
-  physician: DoctorInformationCardPhysician;
-  readonly handleSave: (applicationData: any) => void;
+  readonly physician: DoctorInformationCardPhysician;
+  readonly onSave: (applicationData: any) => void;
 };
 
 export default function EditDoctorInformationModal({
   children,
   physician,
-  handleSave,
+  onSave,
 }: EditDoctorInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -38,7 +38,7 @@ export default function EditDoctorInformationModal({
   const [mspNumber, setMspNumber] = useState<number | undefined>();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [addressLine1, setAddressLine1] = useState('');
-  const [addressLine2, setAddressLine2] = useState('');
+  const [addressLine2, setAddressLine2] = useState<string | undefined>('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
@@ -48,14 +48,14 @@ export default function EditDoctorInformationModal({
     setMspNumber(physician.mspNumber);
     setPhoneNumber(physician.phone);
     setAddressLine1(physician.addressLine1);
-    if (physician.addressLine2) setAddressLine2(physician.addressLine2);
+    setAddressLine2(physician.addressLine2 || undefined);
     setCity(physician.city);
     setPostalCode(physician.postalCode);
   }, [physician]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    handleSave({
+    onSave({
       physicianName: name,
       physicianMspNumber: mspNumber,
       physicianPhone: phoneNumber,
@@ -105,7 +105,7 @@ export default function EditDoctorInformationModal({
                     <FormLabel>{'Medical Services Plan number'}</FormLabel>
                     <Input
                       value={mspNumber}
-                      onChange={event => setMspNumber(Number(event.target.value))}
+                      onChange={event => setMspNumber(parseInt(event.target.value))}
                     />
                   </FormControl>
                   <FormControl isRequired>

@@ -168,6 +168,19 @@ export type ApplicationProcessing = {
   application: Application;
 };
 
+export type ApplicationProcessingData = {
+  __typename?: 'ApplicationProcessingData';
+  id: Scalars['Int'];
+  status: ApplicationStatus;
+  appNumber: Scalars['Int'];
+  appHolepunched: Scalars['Boolean'];
+  walletCardCreated: Scalars['Boolean'];
+  invoiceNumber: Scalars['Int'];
+  documentUrls: Array<Maybe<Scalars['String']>>;
+  appMailed: Scalars['Boolean'];
+  updatedAt: Scalars['Date'];
+};
+
 export enum ApplicationStatus {
   Pending = 'PENDING',
   Approved = 'APPROVED',

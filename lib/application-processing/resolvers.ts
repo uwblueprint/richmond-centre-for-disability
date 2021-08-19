@@ -2,20 +2,21 @@ import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Resolver } from '@lib/resolvers'; // Resolver type
 
 /**
- * Updates the ApplicationProccessing object with the optional values provided
+ * Updates the ApplicationProcessing object with the optional values provided
  * @returns Status of operation (ok, error)
  */
 export const updateApplicationProcessing: Resolver = async (_, args, { prisma }) => {
   const { input } = args;
   const { id, documentUrl, ...rest } = input;
 
-  let applicationProccessing;
+  let applicationProcessing;
   try {
-    applicationProccessing = await prisma.applicationProcessing.update({
+    applicationProcessing = await prisma.applicationProcessing.update({
       where: { id: parseInt(id) },
       data: {
         ...rest,
         ...(documentUrl && {
+          // TODO: Figure out way to make this work when deleting files post-MVP
           documentUrls: {
             push: documentUrl,
           },
@@ -27,7 +28,7 @@ export const updateApplicationProcessing: Resolver = async (_, args, { prisma })
   }
 
   // Throw internal server error if application processing object was not updated
-  if (!applicationProccessing) {
+  if (!applicationProcessing) {
     throw new ApolloError('Application Processing object was unable to be updated');
   }
 
@@ -40,7 +41,6 @@ export const updateApplicationProcessing: Resolver = async (_, args, { prisma })
  * Completes an application by setting the ApplicationStatus to COMPLETED, querying the application data,
  * and calling updateApplicant, updateGuardian, updateMedicalInformation, and upsertPhysician with the queried data.
  * @param {ID!} args.applicationId - The id of the Application to complete
- * @param {ID!} args.applicationProcessingId - The id of the ApplicationProcessing object
  * @returns Status of operation (ok, error)
  */
 export const completeApplication: Resolver = async (_, args, { prisma }) => {
@@ -104,7 +104,6 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
       applicationProcessing,
     } = application;
 
-    /* eslint-disable @typescript-eslint/no-unused-vars */
     const applicantData = {
       rcdUserId,
       firstName,
@@ -140,14 +139,14 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
       notes: physicianNotes,
     };
 
-    const promises = [];
+    const operations = [];
     const applicationProcessingResult = prisma.applicationProcessing.update({
       where: { id: applicationProcessing?.id },
       data: {
         status: 'COMPLETED',
       },
     });
-    promises.push(applicationProcessingResult);
+    operations.push(applicationProcessingResult);
 
     let applicantPromise;
     if (isRenewal) {
@@ -224,9 +223,9 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
         },
       });
     }
-    promises.push(applicantPromise);
+    operations.push(applicantPromise);
 
-    await prisma.$transaction(promises);
+    await prisma.$transaction(operations);
   } catch (err) {
     throw 'Error completing application: ' + err;
   }

@@ -19,11 +19,11 @@ import {
   Textarea,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
-import { ReplacementData } from '@tools/components/internal/requests/reason-for-replacement-card'; // Applicant type
+import { ReplacementData } from '@tools/components/internal/requests/reason-for-replacement-card'; // ReplacementData type
 
 type EditReasonForReplacementModalProps = {
-  replacement: ReplacementData;
-  children: ReactNode;
+  readonly replacement: ReplacementData;
+  readonly children: ReactNode;
 };
 
 export default function EditReasonForReplacementModal({
@@ -38,8 +38,8 @@ export default function EditReasonForReplacementModal({
   //   Lost Information state
   const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
   const [timestamp, setTimestamp] = useState('');
-  const [location, setLocation] = useState('');
-  const [eventDescription, setEventDescription] = useState('');
+  const [location, setLocation] = useState<string | undefined>('');
+  const [eventDescription, setEventDescription] = useState<string | undefined>('');
 
   //   Stolen Information state
   const [policeFileNumber, setPoliceFileNumber] = useState('');
@@ -52,8 +52,8 @@ export default function EditReasonForReplacementModal({
   useEffect(() => {
     setReason(replacement.reason);
     setTimestamp(replacement.lostTimestamp);
-    if (replacement.lostLocation) setLocation(replacement.lostLocation);
-    if (replacement.description) setEventDescription(replacement.description);
+    setLocation(replacement.lostLocation || undefined);
+    setEventDescription(replacement.description || undefined);
   }, [replacement]);
 
   const handleSubmit = (event: SyntheticEvent) => {
