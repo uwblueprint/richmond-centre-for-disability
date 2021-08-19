@@ -24,17 +24,11 @@ import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
-import { NetworkStatus, useQuery } from '@apollo/client';
+import { NetworkStatus, useQuery } from '@apollo/client'; //Apollo client
 import { useState } from 'react'; // React
-import { FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin';
-import { SortOptions, SortOrder } from '@tools/types';
-import {
-  ApplicationsFilter,
-  ApplicationsFilterResult,
-  ApplicationStatus,
-  PermitType,
-  Role,
-} from '@lib/graphql/types';
+import { FilterRequest, FilterResponse, FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin'; //Applications queries
+import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
+import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //GraphQL types
 
 type StatusProps = {
   readonly value:
@@ -76,7 +70,6 @@ function renderName({ value }: NameProps) {
 }
 
 // Placeholder columns
-// TODO: accessors should be the accessors for these fields in the DB
 const COLUMNS = [
   {
     Header: 'Name',
@@ -119,17 +112,7 @@ const COLUMNS = [
   },
 ];
 
-type FilterResponse = {
-  applications: {
-    result: [ApplicationsFilterResult];
-    totalCount: number;
-  };
-};
-
-type FilterRequest = {
-  filter: ApplicationsFilter;
-};
-
+// Application data for table
 type ApplicationData = {
   name: {
     name: string;
@@ -141,7 +124,8 @@ type ApplicationData = {
   status: ApplicationStatus | undefined;
 };
 
-const PAGE_SIZE = 2;
+// Max number of entries in a page
+const PAGE_SIZE = 1;
 
 // Internal home page - view APP requests
 export default function Requests() {
@@ -156,6 +140,7 @@ export default function Requests() {
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState(0);
 
+  // Make query to applications resolver
   const { loading, networkStatus } = useQuery<FilterResponse, FilterRequest>(
     FILTER_APPLICATIONS_QUERY,
     {
@@ -189,6 +174,7 @@ export default function Requests() {
     }
   );
 
+  // Map uppercase enum strings to lowercase
   const permitTypeString: Record<PermitType, string> = {
     [PermitType.Permanent]: 'Permanent',
     [PermitType.Temporary]: 'Temporary',

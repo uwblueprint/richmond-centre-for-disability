@@ -6,7 +6,7 @@ import {
   ApplicationFieldTooLongError,
 } from '@lib/applications/errors'; // Application errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
-import { SortOrder } from '@tools/types';
+import { SortOrder } from '@tools/types'; // Sorting type
 
 /**
  * Query all the RCD applications in the internal-facing app
@@ -15,6 +15,7 @@ import { SortOrder } from '@tools/types';
 export const applications: Resolver = async (_parent, { filter }, { prisma }) => {
   const { order, permitType, requestType, status, search, limit = 20, offset = 0 } = filter;
 
+  // Parse search string
   let userIDSearch, firstSearch, middleSearch, lastSearch;
 
   if (parseInt(search)) {
@@ -25,12 +26,14 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     lastSearch = lastSearch || middleSearch;
   }
 
+  // Parse sorting order
   let orderBy = undefined;
 
   if (order && order.length > 0) {
     const sortingOrder: Array<Record<string, SortOrder>> = [];
     order.forEach(([field, order]: [string, SortOrder]) => {
       if (field === 'name') {
+        // Primary sort is by first name and secondary sort is by last name
         sortingOrder.push({ firstName: order });
         sortingOrder.push({ lastName: order });
       } else if (field === 'dateReceived') {
@@ -40,6 +43,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     orderBy = sortingOrder;
   }
 
+  // Get number of applications with desired filters
   const applicationsCount = await prisma.application.count({
     where: {
       applicant: {
@@ -62,6 +66,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     },
   });
 
+  // Get applications with filter, sorting, pagination
   const applications = await prisma.application.findMany({
     skip: offset,
     take: limit,
