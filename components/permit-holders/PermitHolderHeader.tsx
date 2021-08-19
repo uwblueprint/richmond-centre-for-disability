@@ -2,12 +2,11 @@ import { Box, Flex, HStack, Text } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import Link from 'next/link'; // Link
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge
-import { Applicant } from '@lib/graphql/types'; // Applicant type
+import { Applicant, ApplicationStatus } from '@lib/graphql/types'; // Applicant type
 
 type PermitHolderHeaderProps = {
   readonly applicant: Applicant;
-  readonly applicationStatus: // TODO: Change this to the enum that we add
-  'COMPLETED' | 'INPROGRESS' | 'PENDING' | 'REJECTED' | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
+  readonly applicationStatus: ApplicationStatus | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
 };
 
 export default function PermitHolderHeader({
