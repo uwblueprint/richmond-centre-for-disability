@@ -17,7 +17,9 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       header={`Doctor's Information`}
       updated={isUpdated}
       editModal={
-        <EditDoctorInformationModal>
+        // TODO: Pass down a real handleSave function from props
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        <EditDoctorInformationModal physician={physician} handleSave={() => {}}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
