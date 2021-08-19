@@ -116,7 +116,7 @@ const COLUMNS = [
 type ApplicationData = {
   name: {
     name: string;
-    rcdUserId: number;
+    rcdUserId: number | undefined;
   };
   dateReceived: Date;
   permitType: string;
