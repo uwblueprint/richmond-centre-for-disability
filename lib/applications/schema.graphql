@@ -46,14 +46,14 @@ type Application {
   shippingAddressLine1: String
   shippingAddressLine2: String
   shippingCity: String
-  shippingProvince: String
+  shippingProvince: Province
   # shippingCountry: String
   shippingPostalCode: String
   billingFullName: String
   billingAddressLine1: String
   billingAddressLine2: String
   billingCity: String
-  billingProvince: String
+  billingProvince: Province
   # billingCountry: String
   billingPostalCode: String
   shippingAddressSameAsHomeAddress: Boolean!
@@ -229,14 +229,14 @@ input UpdateApplicationInput {
   shippingAddressLine1: String
   shippingAddressLine2: String
   shippingCity: String
-  shippingProvince: String
+  shippingProvince: Province
   # shippingCountry: String
   shippingPostalCode: String
   billingFullName: String
   billingAddressLine1: String
   billingAddressLine2: String
   billingCity: String
-  billingProvince: String
+  billingProvince: Province
   # billingCountry: String
   billingPostalCode: String
   shippingAddressSameAsHomeAddress: Boolean

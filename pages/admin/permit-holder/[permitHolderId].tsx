@@ -7,22 +7,13 @@ import { authorize } from '@tools/authorization'; // Page authorization
 import PermitHolderHeader from '@components/permit-holders/PermitHolderHeader'; // Permit Holder header
 import DoctorInformationCard from '@components/permit-holders/DoctorInformationCard'; // Doctor information card
 import PersonalInformationCard from '@components/permit-holders/PersonalInformationCard'; // Personal information card
-import { Gender, Province, PhysicianStatus, PaymentType } from '@lib/types'; // Gender, Province, PhysicianStatus, PaymentType Enums
+import { Gender, Province, PhysicianStatus, PaymentType, ApplicationStatus } from '@lib/types'; // Gender, Province, PhysicianStatus, PaymentType Enums
 import GuardianInformationCard from '@components/permit-holders/GuardianInformationCard'; // Guardian Information card
 import AppHistoryCard from '@components/permit-holders/AppHistoryCard'; // APP History card
 import AttachedFilesCard from '@components/permit-holders/AttachedFilesCard'; // Attached Files card
 import MedicalHistoryCard from '@components/permit-holders/MedicalHistoryCard'; // Medical History card
 
 // TEMPORARY MOCK DATA
-
-type ApplicationStatus =
-  | 'COMPLETED'
-  | 'INPROGRESS'
-  | 'PENDING'
-  | 'REJECTED'
-  | 'EXPIRING'
-  | 'EXPIRED'
-  | 'ACTIVE';
 const mockApplication = {
   applicant: {
     id: 1,
@@ -42,8 +33,7 @@ const mockApplication = {
   physician: {
     id: 1,
     mspNumber: 123456789,
-    firstName: 'Physician',
-    lastName: 'One',
+    name: 'Physician One',
     phone: '1234567890',
     addressLine1: '123 Richmond St.',
     postalCode: 'X0X0X0',
@@ -65,7 +55,7 @@ const mockApplication = {
   createdAt: new Date().toDateString(),
   expirationDate: new Date().toDateString(),
   isRenewal: true,
-  applicationStatus: 'PENDING' as ApplicationStatus, // Will be updated in the future as we'll be able to reference ApplicationStatus enum in types.ts
+  applicationStatus: ApplicationStatus.Pending, // Will be updated in the future as we'll be able to reference ApplicationStatus enum in types.ts
   permitFee: 5,
   donation: 10,
   paymentType: PaymentType.Visa,

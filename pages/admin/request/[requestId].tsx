@@ -33,67 +33,28 @@ type RequestProps = {
 // Individual request page
 export default function Request({ requestId }: RequestProps) {
   // QUERIES
-  const {
-    data: applicationData,
-    loading: applicationLoading,
-    error: applicationError,
-  } = useQuery(GET_APPLICATION, {
+  const { data: applicationData } = useQuery(GET_APPLICATION, {
     variables: { id: requestId },
   });
 
   // MUTATIONS
-  const [
-    updateApplication,
-    {
-      data: updateApplicationData,
-      loading: updateApplicationLoading,
-      error: updateApplicationError,
-    },
-  ] = useMutation(UPDATE_APPLICATION, {
+  const [updateApplication] = useMutation(UPDATE_APPLICATION, {
     refetchQueries: ['GetApplication'],
   });
 
-  const [
-    approveApplication,
-    {
-      data: approveApplicationData,
-      loading: approveApplicationLoading,
-      error: approveApplicationError,
-    },
-  ] = useMutation(APPROVE_APPLICATION, {
+  const [approveApplication] = useMutation(APPROVE_APPLICATION, {
     refetchQueries: ['GetApplication'],
   });
 
-  const [
-    rejectApplication,
-    {
-      data: rejectApplicationData,
-      loading: rejectApplicationLoading,
-      error: rejectApplicationError,
-    },
-  ] = useMutation(REJECT_APPLICATION, {
+  const [rejectApplication] = useMutation(REJECT_APPLICATION, {
     refetchQueries: ['GetApplication'],
   });
 
-  const [
-    completeApplication,
-    {
-      data: completeApplicationData,
-      loading: completeApplicationLoading,
-      error: completeApplicationError,
-    },
-  ] = useMutation(COMPLETE_APPLICATION, {
+  const [completeApplication] = useMutation(COMPLETE_APPLICATION, {
     refetchQueries: ['GetApplication'],
   });
 
-  const [
-    updateApplicationProcessing,
-    {
-      data: updateApplicationProcessingData,
-      loading: updateApplicationProcessingLoading,
-      error: updateApplicationProcessingError,
-    },
-  ] = useMutation(UPDATE_APPLICATION_PROCESSING, {
+  const [updateApplicationProcessing] = useMutation(UPDATE_APPLICATION_PROCESSING, {
     refetchQueries: ['GetApplication'],
   });
 
@@ -112,13 +73,7 @@ export default function Request({ requestId }: RequestProps) {
     addressLine1,
     addressLine2,
     postalCode,
-    notes,
     isRenewal,
-
-    disability,
-    affectsMobility,
-    mobilityAidRequired,
-    cannotWalk100m,
 
     physicianName,
     physicianMspNumber,
@@ -150,7 +105,6 @@ export default function Request({ requestId }: RequestProps) {
     processingFee,
     donationAmount,
     paymentMethod,
-    shopifyConfirmationNumber,
 
     createdAt,
 
@@ -160,7 +114,7 @@ export default function Request({ requestId }: RequestProps) {
     applicant,
   } = applicationData?.application || {};
 
-  const { id: permitId, rcdPermitId, expiryDate, receiptId, active: isPermitActive } = permit || {};
+  const { rcdPermitId, expiryDate } = permit || {};
 
   const {
     id: applicationProcessingId,
@@ -171,7 +125,6 @@ export default function Request({ requestId }: RequestProps) {
     invoiceNumber,
     documentUrls,
     appMailed,
-    updatedAt: applicationProcessingUpdatedAt,
   } = applicationProcessing || {};
 
   const applicantData = {

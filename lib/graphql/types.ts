@@ -115,14 +115,14 @@ export type Application = {
   shippingAddressLine1?: Maybe<Scalars['String']>;
   shippingAddressLine2?: Maybe<Scalars['String']>;
   shippingCity?: Maybe<Scalars['String']>;
-  shippingProvince?: Maybe<Scalars['String']>;
+  shippingProvince?: Maybe<Province>;
   /** shippingCountry: String */
   shippingPostalCode?: Maybe<Scalars['String']>;
   billingFullName?: Maybe<Scalars['String']>;
   billingAddressLine1?: Maybe<Scalars['String']>;
   billingAddressLine2?: Maybe<Scalars['String']>;
   billingCity?: Maybe<Scalars['String']>;
-  billingProvince?: Maybe<Scalars['String']>;
+  billingProvince?: Maybe<Province>;
   /** billingCountry: String */
   billingPostalCode?: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
@@ -689,14 +689,14 @@ export type UpdateApplicationInput = {
   shippingAddressLine1?: Maybe<Scalars['String']>;
   shippingAddressLine2?: Maybe<Scalars['String']>;
   shippingCity?: Maybe<Scalars['String']>;
-  shippingProvince?: Maybe<Scalars['String']>;
+  shippingProvince?: Maybe<Province>;
   /** shippingCountry: String */
   shippingPostalCode?: Maybe<Scalars['String']>;
   billingFullName?: Maybe<Scalars['String']>;
   billingAddressLine1?: Maybe<Scalars['String']>;
   billingAddressLine2?: Maybe<Scalars['String']>;
   billingCity?: Maybe<Scalars['String']>;
-  billingProvince?: Maybe<Scalars['String']>;
+  billingProvince?: Maybe<Province>;
   /** billingCountry: String */
   billingPostalCode?: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;

@@ -50,7 +50,7 @@ export default function EditPaymentDetailsModal({
   const [shippingAddressLine1, setShippingAddressLine1] = useState('');
   const [shippingAddressLine2, setShippingAddressLine2] = useState('');
   const [shippingCity, setShippingCity] = useState('');
-  const [shippingProvince, setShippingProvince] = useState();
+  const [shippingProvince, setShippingProvince] = useState<Province | undefined>();
   // const [shippingCountry, setShippingCountry] = useState('');
   const [shippingPostalCode, setShippingPostalCode] = useState('');
 
@@ -63,31 +63,29 @@ export default function EditPaymentDetailsModal({
   const [billingAddressLine1, setBillingAddressLine1] = useState('');
   const [billingAddressLine2, setBillingAddressLine2] = useState('');
   const [billingCity, setBillingCity] = useState('');
-  const [billingProvince, setBillingProvince] = useState();
+  const [billingProvince, setBillingProvince] = useState<Province | undefined>();
   // const [billingCountry, setBillingCountry] = useState('');
   const [billingPostalCode, setBillingPostalCode] = useState('');
 
   useEffect(() => {
     setPaymentMethod(paymentInformation.paymentMethod);
-    setDonationAmount(paymentInformation.donationAmount);
+    setDonationAmount(paymentInformation.donationAmount || 0);
 
     setShippingAddressSameAsHomeAddress(paymentInformation.shippingAddressSameAsHomeAddress);
-    setShippingFullName(paymentInformation.shippingFullName);
-    setShippingAddressLine1(paymentInformation.shippingAddressLine1);
-    setShippingAddressLine2(paymentInformation.shippingAddressLine2);
-    setShippingCity(paymentInformation.shippingCity);
-    setShippingProvince(paymentInformation.shippingProvince);
-    // setShippingCountry(paymentInformation.shippingCountry);
-    setShippingPostalCode(paymentInformation.shippingPostalCode);
+    setShippingFullName(paymentInformation.shippingFullName || '');
+    setShippingAddressLine1(paymentInformation.shippingAddressLine1 || '');
+    setShippingAddressLine2(paymentInformation.shippingAddressLine2 || '');
+    setShippingCity(paymentInformation.shippingCity || '');
+    setShippingProvince(paymentInformation.shippingProvince || undefined);
+    setShippingPostalCode(paymentInformation.shippingPostalCode || '');
 
     setBillingAddressSameAsHomeAddress(paymentInformation.billingAddressSameAsHomeAddress);
-    setBillingFullName(paymentInformation.billingFullName);
-    setBillingAddressLine1(paymentInformation.billingAddressLine1);
-    setBillingAddressLine2(paymentInformation.billingAddressLine2);
-    setBillingCity(paymentInformation.billingCity);
-    setBillingProvince(paymentInformation.billingProvince);
-    // setBillingCountry(paymentInformation.billingCountry);
-    setBillingPostalCode(paymentInformation.billingPostalCode);
+    setBillingFullName(paymentInformation.billingFullName || '');
+    setBillingAddressLine1(paymentInformation.billingAddressLine1 || '');
+    setBillingAddressLine2(paymentInformation.billingAddressLine2 || '');
+    setBillingCity(paymentInformation.billingCity || '');
+    setBillingProvince(paymentInformation.billingProvince || undefined);
+    setBillingPostalCode(paymentInformation.billingPostalCode || '');
   }, [paymentInformation]);
 
   const handleSubmit = (event: SyntheticEvent) => {
@@ -150,7 +148,10 @@ export default function EditPaymentDetailsModal({
                   <GridItem rowSpan={2} colSpan={1}>
                     <FormControl as="fieldset" isRequired>
                       <FormLabel as="legend">{'Payment method'}</FormLabel>
-                      <RadioGroup onChange={setPaymentMethod} value={paymentMethod}>
+                      <RadioGroup
+                        onChange={value => setPaymentMethod(value as PaymentType)}
+                        value={paymentMethod}
+                      >
                         <Stack>
                           <Radio value={PaymentType.Mastercard}>{'Mastercard'}</Radio>
                           <Radio value={PaymentType.Visa}>{'Visa'}</Radio>
@@ -277,7 +278,7 @@ export default function EditPaymentDetailsModal({
                         <Select
                           placeholder="Select province / territory"
                           value={shippingProvince}
-                          onChange={event => setShippingProvince(event.target.value)}
+                          onChange={event => setShippingProvince(event.target.value as Province)}
                         >
                           <option value={Province.On}>Ontario</option>
                           <option value={Province.Bc}>British Columbia</option>
@@ -366,7 +367,7 @@ export default function EditPaymentDetailsModal({
                         <Select
                           placeholder="Select province / territory"
                           value={billingProvince}
-                          onChange={event => setBillingProvince(event.target.value)}
+                          onChange={event => setBillingProvince(event.target.value as Province)}
                         >
                           <option value={Province.On}>Ontario</option>
                           <option value={Province.Bc}>British Columbia</option>
