@@ -91,6 +91,9 @@ const COLUMNS = [
     maxWidth: 240,
     width: 240,
     sortDescFirst: true,
+    Cell: ({ value }: any) => {
+      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+    },
   },
   {
     Header: 'Permit Type',
