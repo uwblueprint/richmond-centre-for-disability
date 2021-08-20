@@ -4,7 +4,7 @@ import { ApplicantsFilter, Applicant } from '@lib/graphql/types';
 export const FILTER_PERMIT_HOLDERS_QUERY = gql`
   query FilterPermitHoldersQuery($filter: ApplicantsFilter) {
     applicants(filter: $filter) {
-      node {
+      result {
         firstName
         middleName
         lastName
@@ -32,7 +32,7 @@ export type FilterPermitHoldersRequest = {
 
 export type FilterPermitHoldersResponse = {
   applicants: {
-    node: [Applicant];
+    result: [Applicant];
     totalCount: number;
   };
 };

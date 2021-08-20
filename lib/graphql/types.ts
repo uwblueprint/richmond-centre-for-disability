@@ -49,9 +49,9 @@ export type Applicant = {
   guardian: Guardian;
   medicalInformationId: Scalars['Int'];
   medicalInformation: MedicalInformation;
-  permits?: Maybe<Array<Permit>>;
+  permits: Array<Permit>;
   medicalHistory?: Maybe<Array<MedicalHistory>>;
-  recentPermit?: Maybe<Permit>;
+  recentPermit: Permit;
 };
 
 export enum ApplicantStatus {
@@ -499,8 +499,8 @@ export type QueryApplicantArgs = {
 
 export type QueryApplicantsResult = {
   __typename?: 'QueryApplicantsResult';
-  node?: Maybe<Array<Applicant>>;
-  totalCount?: Maybe<Scalars['Int']>;
+  result: Array<Maybe<Applicant>>;
+  totalCount: Scalars['Int'];
 };
 
 export type QueryEmployeeInput = {

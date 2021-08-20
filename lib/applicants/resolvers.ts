@@ -8,9 +8,9 @@ import {
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { MspNumberDoesNotExistError } from '@lib/physicians/errors'; // Physician errors
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
-import { PermitStatus } from '@lib/types';
-import { DateUtils } from 'react-day-picker';
-import { SortOrder } from '@tools/types';
+import { PermitStatus } from '@lib/types'; // Permit Status Type
+import { DateUtils } from 'react-day-picker'; // Date utils
+import { SortOrder } from '@tools/types'; // Sorting Type
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -85,30 +85,26 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
         break;
     }
 
-    const containsPermitFilter = !!(permitStatus || expiryDateRangeFrom || expiryDateRangeTo);
-
-    // Permit status filter and expiry date range both use the permit expiry date.
-    // For this reason we need to filter on expiry date twice to return an accurate result.
-    const permitFilter = containsPermitFilter
-      ? {
-          some: {
-            AND: [
-              {
-                expiryDate: {
-                  gte: expiryDateLowerBound?.toISOString(),
-                  lte: expiryDateUpperBound?.toISOString(),
-                },
-              },
-              {
-                expiryDate: {
-                  gte: expiryDateRangeFrom?.toISOString(),
-                  lte: expiryDateRangeTo?.toISOString(),
-                },
-              },
-            ],
+    // Permit status and expiry date range filters both look at the permit expiryDate.
+    // For this reason we need to filter on expiryDate twice to take both filters in account.
+    const permitFilter = {
+      some: {
+        AND: [
+          {
+            expiryDate: {
+              gte: expiryDateLowerBound?.toISOString(),
+              lte: expiryDateUpperBound?.toISOString(),
+            },
           },
-        }
-      : undefined;
+          {
+            expiryDate: {
+              gte: expiryDateRangeFrom?.toISOString(),
+              lte: expiryDateRangeTo?.toISOString(),
+            },
+          },
+        ],
+      },
+    };
 
     // Update default filter since there were filter arguments
     where = {
@@ -123,7 +119,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
   // This currently only filters by name but can be extended to more filters by adding them in the orderBy statement
   const sortingOrder: Record<string, SortOrder> = {};
 
-  if (filter.order) {
+  if (filter?.order) {
     filter.order.forEach(([field, order]: [string, SortOrder]) => (sortingOrder[field] = order));
   }
 
@@ -145,7 +141,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
   });
 
   return {
-    node: applicants,
+    result: applicants,
     totalCount: totalCount,
   };
 };

@@ -32,8 +32,8 @@ import {
 import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker'; // Date picker
 import 'react-day-picker/lib/style.css'; // Date picker styling
 import Helmet from 'react-helmet'; // Date picker inline styling for select range functionality
-import { SortOptions, SortOrder } from '@tools/types';
-import { Column } from 'react-table';
+import { SortOptions, SortOrder } from '@tools/types'; // Sorting types
+import { Column } from 'react-table'; // Column type for table
 
 const COLUMNS: Column<any>[] = [
   {
@@ -94,7 +94,7 @@ const COLUMNS: Column<any>[] = [
   },
 ];
 
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 20;
 
 type NameProps = {
   value: {
@@ -147,7 +147,7 @@ type UserStatusBadgeProps = {
 function renderUserStatusBadge({ value }: UserStatusBadgeProps) {
   return (
     <Wrap>
-      <Badge variant={value}>{value.toUpperCase()}</Badge>
+      <Badge variant={value}>{value?.toUpperCase()}</Badge>
     </Wrap>
   );
 }
@@ -168,7 +168,7 @@ function renderRecentPermit({ value }: RecentPermitProps) {
   return (
     <Flex>
       <Text as="span" mr="9px">
-        # {value.rcdPermitId}
+        #{value.rcdPermitId}
       </Text>
       {expired && <WarningTwoIcon color="secondary.critical" />}
       {expiresSoon && <WarningIcon color="secondary.caution" />}
@@ -277,7 +277,7 @@ export default function PermitHolders() {
     },
     onCompleted: data => {
       setPermitHolderData(
-        data.applicants.node.map(record => ({
+        data.applicants.result.map(record => ({
           name: {
             firstName: record.firstName,
             lastName: record.lastName,

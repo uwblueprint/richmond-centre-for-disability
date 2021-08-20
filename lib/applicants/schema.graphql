@@ -21,9 +21,9 @@ type Applicant {
   guardian: Guardian!
   medicalInformationId: Int!
   medicalInformation: MedicalInformation!
-  permits: [Permit!]
+  permits: [Permit!]!
   medicalHistory: [MedicalHistory!]
-  recentPermit: Permit
+  recentPermit: Permit!
 }
 
 input CreateApplicantInput {
@@ -89,6 +89,6 @@ input ApplicantsFilter {
 }
 
 type QueryApplicantsResult {
-  node: [Applicant!]
-  totalCount: Int
+  result: [Applicant]!
+  totalCount: Int!
 }
