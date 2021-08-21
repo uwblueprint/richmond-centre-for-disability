@@ -272,7 +272,12 @@ export default function Requests() {
             </Flex>
             <Table columns={COLUMNS} data={DATA} />
             <Flex justifyContent="flex-end">
-              <Pagination pageSize={20} totalCount={150} />
+              <Pagination /* eslint-disable @typescript-eslint/no-empty-function */
+                pageNumber={0}
+                onPageChange={() => {}}
+                pageSize={20}
+                totalCount={150}
+              />
             </Flex>
           </Box>
         </Box>

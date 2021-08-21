@@ -96,7 +96,7 @@ const COLUMNS: Column<any>[] = [
   },
 ];
 
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 20;
 
 type NameProps = {
   value: {
