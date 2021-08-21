@@ -25,10 +25,11 @@ import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
 import { NetworkStatus, useQuery } from '@apollo/client'; //Apollo client
-import { useState } from 'react'; // React
+import { useEffect, useState } from 'react'; // React
 import { FilterRequest, FilterResponse, FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin'; //Applications queries
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
 import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //GraphQL types
+import useDebounce from '@tools/hooks/useDebounce';
 
 type StatusProps = {
   readonly value:
@@ -129,14 +130,21 @@ const PAGE_SIZE = 20;
 
 // Internal home page - view APP requests
 export default function Requests() {
+  //Filters
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus>();
   const [permitTypeFilter, setPermitTypeFilter] = useState<PermitType>();
   const [requestTypeFilter, setRequestTypeFilter] = useState<string>();
-  const [requestsData, setRequestsData] = useState<ApplicationData[]>();
-  const [searchFilter, setSearchFilter] = useState<string>();
-  const [searchInput, setSearchInput] = useState<string>();
+  const [searchFilter, setSearchFilter] = useState<string>('');
+
+  // Sorting
   const [sortOrder, setSortOrder] = useState<SortOptions>([['dateReceived', SortOrder.DESC]]);
 
+  // Debounce search filter so that it only gives us latest value if searchFilter has not been updated within last 500ms.
+  // This will avoid firing a query for each key the user presses
+  const debouncedSearchFilter = useDebounce<string>(searchFilter, 500);
+
+  // Data & pagination
+  const [requestsData, setRequestsData] = useState<ApplicationData[]>();
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState(0);
 
@@ -150,7 +158,7 @@ export default function Requests() {
           permitType: permitTypeFilter,
           requestType: requestTypeFilter,
           status: statusFilter,
-          search: searchFilter,
+          search: debouncedSearchFilter,
           offset: pageNumber * PAGE_SIZE,
           limit: PAGE_SIZE,
         },
@@ -179,6 +187,11 @@ export default function Requests() {
     [PermitType.Permanent]: 'Permanent',
     [PermitType.Temporary]: 'Temporary',
   };
+
+  // Set page number to 0 after every filter or sort change
+  useEffect(() => {
+    setPageNumber(0);
+  }, [statusFilter, permitTypeFilter, requestTypeFilter, debouncedSearchFilter, sortOrder]);
 
   return (
     <Layout>
@@ -209,7 +222,6 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter(undefined);
-                  setPageNumber(0);
                 }}
               >
                 All
@@ -218,7 +230,6 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter(ApplicationStatus.Pending);
-                  setPageNumber(0);
                 }}
               >
                 Pending
@@ -227,7 +238,6 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter(ApplicationStatus.Inprogress);
-                  setPageNumber(0);
                 }}
               >
                 In Progress
@@ -236,7 +246,6 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter(ApplicationStatus.Completed);
-                  setPageNumber(0);
                 }}
               >
                 Completed
@@ -245,7 +254,6 @@ export default function Requests() {
                 height="64px"
                 onClick={() => {
                   setStatusFilter(ApplicationStatus.Rejected);
-                  setPageNumber(0);
                 }}
               >
                 Rejected
@@ -276,7 +284,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(undefined);
-                      setPageNumber(0);
                     }}
                   >
                     All
@@ -284,7 +291,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(PermitType.Permanent);
-                      setPageNumber(0);
                     }}
                   >
                     Permanent
@@ -292,7 +298,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setPermitTypeFilter(PermitType.Temporary);
-                      setPageNumber(0);
                     }}
                   >
                     Temporary
@@ -321,7 +326,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter(undefined);
-                      setPageNumber(0);
                     }}
                   >
                     All
@@ -329,7 +333,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter('Replacement');
-                      setPageNumber(0);
                     }}
                   >
                     Replacement
@@ -337,7 +340,6 @@ export default function Requests() {
                   <MenuItem
                     onClick={() => {
                       setRequestTypeFilter('Renewal');
-                      setPageNumber(0);
                     }}
                   >
                     Renewal
@@ -351,13 +353,7 @@ export default function Requests() {
                   </InputLeftElement>
                   <Input
                     placeholder="Search by name or user ID"
-                    onKeyDown={event => {
-                      if (event.key === 'Enter') {
-                        setSearchFilter(searchInput);
-                        setPageNumber(0);
-                      }
-                    }}
-                    onChange={event => setSearchInput(event.target.value)}
+                    onChange={event => setSearchFilter(event.target.value)}
                   />
                 </InputGroup>
               </Box>
@@ -371,9 +367,10 @@ export default function Requests() {
             )}
             <Flex justifyContent="flex-end">
               <Pagination
+                pageNumber={pageNumber}
                 pageSize={PAGE_SIZE}
                 totalCount={recordsCount}
-                onPageChange={n => setPageNumber(n)}
+                onPageChange={setPageNumber}
               />
             </Flex>
           </Box>

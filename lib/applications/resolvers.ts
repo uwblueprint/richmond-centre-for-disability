@@ -71,10 +71,10 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
         id: userIDSearch,
       },
       applicationProcessing: {
-        status: status || undefined,
+        status: status,
       },
       isRenewal: requestType ? requestType === 'Renewal' : undefined,
-      permitType: permitType || undefined,
+      permitType: permitType,
       AND: [
         {
           OR: [
