@@ -1,12 +1,11 @@
-import { useState } from 'react'; // useState
 import { HStack, Text, IconButton } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 
 type Props = {
-  readonly initialPageNumber?: number; // 0-indexed initial page number, default 0
   readonly pageSize: number; // Number of items per page
   readonly totalCount: number; // Total number of items
-  readonly onPageChange?: (pageNumber: number) => void; // Page change callback
+  readonly pageNumber: number; // Current page number
+  readonly onPageChange: (pageNumber: number) => void; // Page change callback
 };
 
 /**
@@ -15,9 +14,7 @@ type Props = {
  * @returns Pagination component that can be used with any table (server-side pagination)
  */
 export default function Pagination(props: Props) {
-  const { initialPageNumber = 0, pageSize, totalCount, onPageChange } = props;
-
-  const [pageNumber, setPageNumber] = useState(initialPageNumber); // Current page number
+  const { pageSize, totalCount, pageNumber, onPageChange } = props;
 
   const totalPages = totalCount === 0 ? 1 : Math.ceil(totalCount / pageSize); // Total number of pages
   const isFirstPage = pageNumber === 0; // Whether current page is first page
@@ -30,10 +27,7 @@ export default function Pagination(props: Props) {
    */
   const goToNextPage = () => {
     if (!isLastPage) {
-      if (onPageChange !== undefined) {
-        onPageChange(pageNumber + 1);
-      }
-      setPageNumber(pageNumber + 1);
+      onPageChange(pageNumber + 1);
     }
   };
 
@@ -42,10 +36,7 @@ export default function Pagination(props: Props) {
    */
   const goToPreviousPage = () => {
     if (!isFirstPage) {
-      if (onPageChange !== undefined) {
-        onPageChange(pageNumber - 1);
-      }
-      setPageNumber(pageNumber - 1);
+      onPageChange(pageNumber - 1);
     }
   };
 

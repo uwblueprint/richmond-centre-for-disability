@@ -34,6 +34,8 @@ import 'react-day-picker/lib/style.css'; // Date picker styling
 import Helmet from 'react-helmet'; // Date picker inline styling for select range functionality
 import { SortOptions, SortOrder } from '@tools/types'; // Sorting types
 import { Column } from 'react-table'; // Column type for table
+import useDebounce from '@tools/hooks/useDebounce';
+import { useEffect } from 'react';
 
 const COLUMNS: Column<any>[] = [
   {
@@ -94,7 +96,7 @@ const COLUMNS: Column<any>[] = [
   },
 ];
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 1;
 
 type NameProps = {
   value: {
@@ -248,17 +250,30 @@ type PermitTableInputData = Applicant & {
 
 // Internal permit holders page
 export default function PermitHolders() {
+  // Filters
   const [permitStatusFilter, setPermitStatusFilter] = useState<PermitStatus>();
   const [userStatusFilter, setUserStatusFilter] = useState<UserStatus>();
-  const [searchFilter, setSearchFilter] = useState<string>();
-  const [searchInput, setSearchInput] = useState<string>();
+  const [searchFilter, setSearchFilter] = useState<string>('');
   const [range, setRange] = useState<RangeModifier>({ from: undefined, to: undefined });
+
+  // Pagination
   const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
 
+  // Data
   const [permitHolderData, setPermitHolderData] = useState<PermitTableInputData[]>();
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState<number>(0);
 
+  // Debounce search filter so that it only gives us latest value if searchFilter has not been updated within last 500ms.
+  // This will avoid firing a query for each key the user presses
+  const debouncedSearchFilter = useDebounce<string>(searchFilter, 500);
+
+  // Set page number to 0 after every filter or sort change
+  useEffect(() => {
+    setPageNumber(0);
+  }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, range]);
+
+  // GQL Query
   const { loading, networkStatus } = useQuery<
     FilterPermitHoldersResponse,
     FilterPermitHoldersRequest
@@ -269,7 +284,7 @@ export default function PermitHolders() {
         permitStatus: permitStatusFilter,
         expiryDateRangeFrom: range.from?.getTime(),
         expiryDateRangeTo: range.to?.getTime(),
-        search: searchFilter,
+        search: debouncedSearchFilter,
         offset: pageNumber * PAGE_SIZE,
         limit: PAGE_SIZE,
         order: sortOrder,
@@ -304,6 +319,7 @@ export default function PermitHolders() {
   ];
   const userStatusOptions = [UserStatus.Active, UserStatus.Inactive];
 
+  // Day Picker handler
   const handleDayClick: DayPickerProps['onDayClick'] = day => {
     setRange(DateUtils.addDayToRange(day, range));
   };
@@ -349,7 +365,13 @@ export default function PermitHolders() {
                   />
                 </MenuButton>
                 <MenuList>
-                  <MenuItem onClick={() => setPermitStatusFilter(undefined)}>All</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setPermitStatusFilter(undefined);
+                    }}
+                  >
+                    All
+                  </MenuItem>
                   {permitStatusOptions.map((value, i) => (
                     <MenuItem
                       key={`dropDownItem-${i}`}
@@ -429,12 +451,9 @@ export default function PermitHolders() {
                   </InputLeftElement>
                   <Input
                     placeholder="Search by first name, last name or user ID"
-                    onKeyDown={event => {
-                      if (event.key === 'Enter') {
-                        setSearchFilter(searchInput);
-                      }
+                    onChange={event => {
+                      setSearchFilter(event.target.value);
                     }}
-                    onChange={event => setSearchInput(event.target.value)}
                   />
                 </InputGroup>
               </Box>
@@ -450,9 +469,10 @@ export default function PermitHolders() {
             )}
             <Flex justifyContent="flex-end">
               <Pagination
+                pageNumber={pageNumber}
                 pageSize={PAGE_SIZE}
                 totalCount={recordsCount}
-                onPageChange={n => setPageNumber(n)}
+                onPageChange={setPageNumber}
               />
             </Flex>
           </Box>
