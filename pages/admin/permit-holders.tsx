@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
+import { useQuery } from '@apollo/client';
 import {
   Box,
   Flex,
@@ -18,44 +19,44 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
-import { Role } from '@lib/types'; // Role enum
+import { Permit, PermitStatus, Role, UserStatus } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
-import { useState, SetStateAction, Dispatch } from 'react'; // React
+import { useState } from 'react'; // React
+import {
+  GET_PERMIT_HOLDERS_QUERY,
+  GetPermitHoldersRequest,
+  GetPermitHoldersResponse,
+  PermitHolder,
+} from '@tools/pages/permit-holders/permit-holders-table';
 import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker'; // Date picker
 import 'react-day-picker/lib/style.css'; // Date picker styling
 import Helmet from 'react-helmet'; // Date picker inline styling for select range functionality
+import { SortOptions, SortOrder } from '@tools/types'; // Sorting types
+import { Column } from 'react-table'; // Column type for table
+import useDebounce from '@tools/hooks/useDebounce';
+import { useEffect } from 'react';
 
-// Placeholder data
-
-const DATA = Array(10).fill({
-  name: {
-    name: 'Charmaine Wang',
-    id: 36565,
-  },
-  dateOfBirth: '2021/01/01',
-  homeAddress: {
-    address: '5300, No.3 Rd Lansdowne Centre',
-    city: 'Richmond',
-    postalCode: 'V2X 1E4',
-  },
-  email: 'charmainewang@rcd.org',
-  phone: '000-000-0000',
-  recentAPP: {
-    appNumber: '#XXXXXX',
-    expiryDate: new Date(),
-  },
-  userStatus: 'active',
-});
-
-const COLUMNS = [
+const COLUMNS: Column<any>[] = [
   {
     Header: 'Name',
     accessor: 'name',
     width: 180,
     minWidth: 180,
-    Cell: renderName,
+    sortDescFirst: true,
+    Cell: ({ value }) => {
+      return (
+        <>
+          <Text>
+            {value.firstName} {value.middleName || ''} {value.lastName}
+          </Text>
+          <Text textStyle="caption" textColor="secondary">
+            ID: {value.rcdUserId}
+          </Text>
+        </>
+      );
+    },
   },
   {
     Header: 'Date of Birth',
@@ -63,6 +64,9 @@ const COLUMNS = [
     disableSortBy: true,
     width: 140,
     maxWidth: 140,
+    Cell: ({ value }) => {
+      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+    },
   },
   {
     Header: 'Home Address',
@@ -70,7 +74,16 @@ const COLUMNS = [
     disableSortBy: true,
     width: 240,
     minWidth: 240,
-    Cell: renderAddress,
+    Cell: ({ value }) => {
+      return (
+        <>
+          <Text>{value.address}</Text>
+          <Text textStyle="caption" textColor="secondary">
+            {value.city}, {value.postalCode}
+          </Text>
+        </>
+      );
+    },
   },
   {
     Header: 'Email',
@@ -88,89 +101,49 @@ const COLUMNS = [
   },
   {
     Header: 'Recent APP',
-    accessor: 'recentAPP',
+    accessor: 'mostRecentPermit',
     disableSortBy: true,
     width: 140,
     maxWidth: 140,
-    Cell: renderRecentAPP,
+    Cell: renderMostRecentPermit,
   },
   {
     Header: 'User Status',
-    accessor: 'userStatus',
+    accessor: 'status',
     disableSortBy: true,
     width: 120,
     maxWidth: 120,
-    Cell: renderUserStatusBadge,
+    Cell: ({ value }) => {
+      return (
+        value && (
+          <Wrap>
+            <Badge variant={value}>{value.toUpperCase()}</Badge>
+          </Wrap>
+        )
+      );
+    },
   },
 ];
 
-type NameProps = {
-  value: {
-    name: string;
-    id: number;
-  };
+const PAGE_SIZE = 20;
+
+type RecentPermitProps = {
+  value: Permit;
 };
 
-function renderName({ value }: NameProps) {
-  return (
-    <>
-      <Text>{value.name}</Text>
-      <Text textStyle="caption" textColor="secondary">
-        ID: {value.id}
-      </Text>
-    </>
-  );
-}
-
-type AddressProps = {
-  value: {
-    address: string;
-    city: string;
-    postalCode: string;
-  };
-};
-
-function renderAddress({ value }: AddressProps) {
-  return (
-    <>
-      <Text>{value.address}</Text>
-      <Text textStyle="caption" textColor="secondary">
-        {value.city}, {value.postalCode}
-      </Text>
-    </>
-  );
-}
-
-type UserStatusProps = {
-  value: 'active' | 'inactive';
-};
-
-function renderUserStatusBadge({ value }: UserStatusProps) {
-  return (
-    <Wrap>
-      <Badge variant={value}>{value.toUpperCase()}</Badge>
-    </Wrap>
-  );
-}
-
-type RecentAPPProps = {
-  value: {
-    appNumber: 'string';
-    expiryDate: Date;
-  };
-};
-
-function renderRecentAPP({ value }: RecentAPPProps) {
+// Most Recent Permit cell in table
+function renderMostRecentPermit({ value }: RecentPermitProps) {
   const today = new Date();
-  const expired = DateUtils.isPastDay(value.expiryDate);
-  const expiresSoon = DateUtils.isDayInRange(today, {
+  const expiryDate = new Date(value.expiryDate);
+  const expired = DateUtils.isPastDay(expiryDate);
+  const expiresSoon = DateUtils.isDayInRange(expiryDate, {
     from: today,
     to: DateUtils.addMonths(today, 1),
   });
   return (
     <Flex>
       <Text as="span" mr="9px">
-        {value.appNumber}
+        #{value.rcdPermitId}
       </Text>
       {expired && <WarningTwoIcon color="secondary.critical" />}
       {expiresSoon && <WarningIcon color="secondary.caution" />}
@@ -178,27 +151,18 @@ function renderRecentAPP({ value }: RecentAPPProps) {
   );
 }
 
-type DropDownItemsProps = {
-  readonly items: Array<string>;
-  readonly setStateCallback: Dispatch<SetStateAction<string>>;
+// Map uppercase enum to lowercase
+const permitStatusText: Record<PermitStatus, string> = {
+  [PermitStatus.Valid]: 'Valid',
+  [PermitStatus.Expired]: 'Expired',
+  [PermitStatus.ExpiringInThirtyDays]: 'Expiring Soon',
 };
 
-function DropDownItems({ items, setStateCallback }: DropDownItemsProps) {
-  return (
-    <>
-      {items.map((value, i) => (
-        <MenuItem
-          key={`dropDownItem-${i}`}
-          onClick={() => {
-            setStateCallback(value);
-          }}
-        >
-          {value}
-        </MenuItem>
-      ))}
-    </>
-  );
-}
+// Map uppercase enum to lowercase
+const userStatusText: Record<UserStatus, string> = {
+  [UserStatus.Active]: 'Active',
+  [UserStatus.Inactive]: 'Inactive',
+};
 
 type MenuTextProps = {
   readonly name: string;
@@ -212,7 +176,7 @@ function MenuText({ name, value }: MenuTextProps) {
         {`${name}: `}
       </Text>
       <Text as="span" textStyle="button-regular">
-        {value}
+        {value || 'All'}
       </Text>
     </>
   );
@@ -242,32 +206,102 @@ function DayPickerStyling() {
   );
 }
 
-// Internal home page
+// Table data input will be of Applicant type as well as two combined fields
+type PermitTableInputData = PermitHolder & {
+  name: {
+    firstName: string;
+    lastName: string;
+    middleName: string | null | undefined;
+    rcdUserId: number;
+  };
+  homeAddress: {
+    address: string;
+    city: string;
+    postalCode: string;
+  };
+};
+
+// Internal permit holders page
 export default function PermitHolders() {
-  const [permitStatusFilter, setPermitStatusFilter] = useState('All');
-  const [userStatusFilter, setUserStatusFilter] = useState('All');
+  // Filters
+  const [permitStatusFilter, setPermitStatusFilter] = useState<PermitStatus>();
+  const [userStatusFilter, setUserStatusFilter] = useState<UserStatus>();
+  const [searchFilter, setSearchFilter] = useState<string>('');
   const [range, setRange] = useState<RangeModifier>({ from: undefined, to: undefined });
 
-  const permitStatusOptions = [
-    'All',
-    'In Progress',
-    'Completed',
-    'Pending',
-    'Expiring Soon',
-    'Expired',
-    'Rejected',
-  ];
-  const userStatusOptions = ['All', 'Active', 'Inactive'];
+  // Pagination
+  const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
 
+  // Data
+  const [permitHolderData, setPermitHolderData] = useState<PermitTableInputData[]>();
+  const [pageNumber, setPageNumber] = useState(0);
+  const [recordsCount, setRecordsCount] = useState<number>(0);
+
+  // Debounce search filter so that it only gives us latest value if searchFilter has not been updated within last 500ms.
+  // This will avoid firing a query for each key the user presses
+  const debouncedSearchFilter = useDebounce<string>(searchFilter, 500);
+
+  // Set page number to 0 after every filter or sort change
+  useEffect(() => {
+    setPageNumber(0);
+  }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, range]);
+
+  // GQL Query
+  useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(GET_PERMIT_HOLDERS_QUERY, {
+    variables: {
+      filter: {
+        userStatus: userStatusFilter,
+        permitStatus: permitStatusFilter,
+        expiryDateRangeFrom: range.from?.getTime(),
+        expiryDateRangeTo: range.to?.getTime(),
+        search: debouncedSearchFilter,
+        offset: pageNumber * PAGE_SIZE,
+        limit: PAGE_SIZE,
+        order: sortOrder,
+      },
+    },
+    onCompleted: ({ applicants: { result, totalCount } }) => {
+      const tableData: PermitTableInputData[] = result.map(record => ({
+        name: {
+          firstName: record.firstName,
+          lastName: record.lastName,
+          middleName: record.middleName || undefined,
+          rcdUserId: record.id,
+        },
+        homeAddress: {
+          address: record.addressLine1,
+          city: record.city,
+          postalCode: record.postalCode,
+        },
+        ...record,
+      }));
+      setPermitHolderData(tableData);
+      setRecordsCount(totalCount);
+    },
+  });
+
+  // Drop down filter options
+  const permitStatusOptions = [
+    PermitStatus.Valid,
+    PermitStatus.Expired,
+    PermitStatus.ExpiringInThirtyDays,
+  ];
+  const userStatusOptions = [UserStatus.Active, UserStatus.Inactive];
+
+  // Day Picker handler
   const handleDayClick: DayPickerProps['onDayClick'] = day => {
     setRange(DateUtils.addDayToRange(day, range));
   };
 
   const modifier = { start: range.from || undefined, end: range.to || undefined };
 
-  const dateRangeString = () => {
-    if (!range.to) {
+  // Logic for displaying date picker text
+  const dateRangeText = () => {
+    if (!range.from && !range.to) {
       return 'YYYY-MM-DD - YYYY-MM-DD';
+    }
+    if (range.from && !range.to) {
+      return `${range.from.toLocaleDateString('en-CA')} - YYYY-MM-DD`;
     }
     if (range.from && range.to) {
       return `${range.from.toLocaleDateString('en-CA')} - ${range.to.toLocaleDateString('en-CA')}`;
@@ -294,13 +328,29 @@ export default function PermitHolders() {
                   textAlign="left"
                   width="320px"
                 >
-                  <MenuText name={`Permit Status`} value={permitStatusFilter} />
+                  <MenuText
+                    name={`Permit Status`}
+                    value={permitStatusFilter && permitStatusText[permitStatusFilter]}
+                  />
                 </MenuButton>
                 <MenuList>
-                  <DropDownItems
-                    items={permitStatusOptions}
-                    setStateCallback={setPermitStatusFilter}
-                  />
+                  <MenuItem
+                    onClick={() => {
+                      setPermitStatusFilter(undefined);
+                    }}
+                  >
+                    All
+                  </MenuItem>
+                  {permitStatusOptions.map((value, i) => (
+                    <MenuItem
+                      key={`dropDownItem-${i}`}
+                      onClick={() => {
+                        setPermitStatusFilter(value);
+                      }}
+                    >
+                      {permitStatusText[value]}
+                    </MenuItem>
+                  ))}
                 </MenuList>
               </Menu>
               <Menu>
@@ -314,10 +364,29 @@ export default function PermitHolders() {
                   textAlign="left"
                   width="260px"
                 >
-                  <MenuText name={`User Status`} value={userStatusFilter} />
+                  <MenuText
+                    name={`User Status`}
+                    value={userStatusFilter && userStatusText[userStatusFilter]}
+                  />
                 </MenuButton>
                 <MenuList>
-                  <DropDownItems items={userStatusOptions} setStateCallback={setUserStatusFilter} />
+                  <MenuItem
+                    onClick={() => {
+                      setUserStatusFilter(undefined);
+                    }}
+                  >
+                    All
+                  </MenuItem>
+                  {userStatusOptions.map((value, i) => (
+                    <MenuItem
+                      key={`dropDownItem-${i}`}
+                      onClick={() => {
+                        setUserStatusFilter(value);
+                      }}
+                    >
+                      {userStatusText[value]}
+                    </MenuItem>
+                  ))}
                 </MenuList>
               </Menu>
               <Menu>
@@ -331,7 +400,7 @@ export default function PermitHolders() {
                   textAlign="left"
                   width="420px"
                 >
-                  <MenuText name={`Expiry date`} value={dateRangeString()} />
+                  <MenuText name={`Expiry date`} value={dateRangeText()} />
                 </MenuButton>
                 <MenuList>
                   <DayPicker
@@ -349,13 +418,29 @@ export default function PermitHolders() {
                   <InputLeftElement pointerEvents="none">
                     <SearchIcon color="text.filler" />
                   </InputLeftElement>
-                  <Input placeholder="Search by first name, last name or user ID" />
+                  <Input
+                    placeholder="Search by first name, last name or user ID"
+                    onChange={event => {
+                      setSearchFilter(event.target.value);
+                    }}
+                  />
                 </InputGroup>
               </Box>
             </Flex>
-            <Table columns={COLUMNS} data={DATA} />
+            <Table
+              columns={COLUMNS}
+              data={permitHolderData || []}
+              onChangeSortOrder={sortOrder => {
+                setSortOrder(sortOrder);
+              }}
+            />
             <Flex justifyContent="flex-end">
-              <Pagination pageSize={20} totalCount={150} />
+              <Pagination
+                pageNumber={pageNumber}
+                pageSize={PAGE_SIZE}
+                totalCount={recordsCount}
+                onPageChange={setPageNumber}
+              />
             </Flex>
           </Box>
         </Box>

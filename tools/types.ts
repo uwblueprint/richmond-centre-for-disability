@@ -8,4 +8,4 @@ export enum SortOrder {
 }
 
 // Sort options type that contains an array of tuples of the field being sorted and the order
-export type SortOptions = ReadonlyArray<[string, SortOrder]>;
+export type SortOptions = Array<[string, SortOrder]>;

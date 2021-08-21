@@ -49,14 +49,26 @@ export type Applicant = {
   guardian: Guardian;
   medicalInformationId: Scalars['Int'];
   medicalInformation: MedicalInformation;
-  permits?: Maybe<Array<Permit>>;
+  permits: Array<Permit>;
   medicalHistory?: Maybe<Array<MedicalHistory>>;
+  mostRecentPermit: Permit;
 };
 
 export enum ApplicantStatus {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE'
 }
+
+export type ApplicantsFilter = {
+  order?: Maybe<Array<Array<Scalars['String']>>>;
+  permitStatus?: Maybe<PermitStatus>;
+  userStatus?: Maybe<UserStatus>;
+  expiryDateRangeFrom?: Maybe<Scalars['Date']>;
+  expiryDateRangeTo?: Maybe<Scalars['Date']>;
+  search?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
 
 export type Application = {
   __typename?: 'Application';
@@ -422,6 +434,12 @@ export type Permit = {
   applicantId: Scalars['Int'];
 };
 
+export enum PermitStatus {
+  Valid = 'VALID',
+  Expired = 'EXPIRED',
+  ExpiringInThirtyDays = 'EXPIRING_IN_THIRTY_DAYS'
+}
+
 export type Physician = {
   __typename?: 'Physician';
   firstName: Scalars['String'];
@@ -461,7 +479,7 @@ export enum Province {
 export type Query = {
   __typename?: 'Query';
   meta: Meta;
-  applicants?: Maybe<Array<Applicant>>;
+  applicants?: Maybe<QueryApplicantsResult>;
   applicant?: Maybe<Applicant>;
   employees?: Maybe<Array<Employee>>;
   physicians?: Maybe<Array<Physician>>;
@@ -470,8 +488,19 @@ export type Query = {
 };
 
 
+export type QueryApplicantsArgs = {
+  filter?: Maybe<ApplicantsFilter>;
+};
+
+
 export type QueryApplicantArgs = {
   id: Scalars['ID'];
+};
+
+export type QueryApplicantsResult = {
+  __typename?: 'QueryApplicantsResult';
+  result: Array<Applicant>;
+  totalCount: Scalars['Int'];
 };
 
 export type QueryEmployeeInput = {
@@ -567,3 +596,8 @@ export type UpsertPhysicianResult = {
   __typename?: 'UpsertPhysicianResult';
   ok: Scalars['Boolean'];
 };
+
+export enum UserStatus {
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE'
+}

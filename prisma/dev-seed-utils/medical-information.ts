@@ -20,6 +20,14 @@ const medicalInformationRecords = [
     cannotWalk100m: false,
     physicianId: 2,
   },
+  {
+    id: 3,
+    disability: 'Sprained ankle',
+    affectsMobility: true,
+    mobilityAidRequired: false,
+    cannotWalk100m: false,
+    physicianId: 2,
+  },
 ];
 
 /**

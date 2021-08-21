@@ -7,7 +7,7 @@ import { permits, createPermit } from '@lib/permits/resolvers';
 import { IFieldResolver } from 'graphql-tools'; // GraphQL field resolver
 import { Context } from '@lib/context'; // Context type
 import { dateScalar } from '@lib/scalars'; // Custom date scalar implementation
-import { authorize } from '@lib/authorization';
+import { authorize } from '@lib/authorization'; // Authorization wrapper
 import { Role } from '@lib/types'; // Role type
 import {
   applicantApplicationsResolver,
@@ -15,6 +15,7 @@ import {
   applicantGuardianResolver,
   applicantMedicalInformationResolver,
   applicantMedicalHistoryResolver,
+  applicantMostRecentPermitResolver,
 } from '@lib/applicants/field-resolvers'; // Applicant field resolvers
 import {
   applicationApplicantResolver,
@@ -57,6 +58,7 @@ const resolvers = {
     guardian: applicantGuardianResolver,
     medicalInformation: applicantMedicalInformationResolver,
     medicalHistory: applicantMedicalHistoryResolver,
+    mostRecentPermit: applicantMostRecentPermitResolver,
   },
   Application: {
     applicant: applicationApplicantResolver,

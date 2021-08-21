@@ -1,6 +1,6 @@
 type Query {
   meta: Meta!
-  applicants: [Applicant!]
+  applicants(filter: ApplicantsFilter): QueryApplicantsResult
   applicant(id: ID!): Applicant
   employees: [Employee!]
   physicians: [Physician!]
@@ -89,4 +89,15 @@ enum ReasonForReplacement {
   LOST
   STOLEN
   OTHER
+}
+
+enum PermitStatus {
+  VALID
+  EXPIRED
+  EXPIRING_IN_THIRTY_DAYS
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
 }

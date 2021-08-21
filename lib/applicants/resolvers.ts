@@ -8,14 +8,142 @@ import {
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { MspNumberDoesNotExistError } from '@lib/physicians/errors'; // Physician errors
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
+import { PermitStatus } from '@lib/types'; // Permit Status Type
+import { DateUtils } from 'react-day-picker'; // Date utils
+import { SortOrder } from '@tools/types'; // Sorting Type
 
 /**
- * Query all the RCD applicants in the internal-facing app
- * @returns All RCD applicants
+ * Query and filter RCD applicants from the internal facing app.
+ * All fields are optional.
+ *
+ * Filters:
+ * - permitStatus: VALID, EXPIRED, EXPIRING_THIRTY
+ * - userStatus: ACTIVE, INACTIVE
+ * - expiryDateRangeFrom: Permit Expiry Date start
+ * - expiryDateRangeTo: Permit Expiry Date end
+ * - search: Search by first, middle, last name or by RCD user ID
+ *
+ * Pagination:
+ * - offset: Number of results to skip.
+ * - limit: Number of result to return
+ *
+ * Sorting:
+ * - order: array of tuples of the field being sorted and the order. Default [['firstName', 'asc'], ['lastName', 'asc']]
+ * @returns All RCD applicants that match the filter(s).
  */
-export const applicants: Resolver = async (_parent, _args, { prisma }) => {
-  const applicants = await prisma.applicant.findMany();
-  return applicants;
+export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
+  // Create default filter
+  let where = {};
+
+  if (filter) {
+    const {
+      permitStatus = undefined,
+      userStatus = undefined,
+      expiryDateRangeFrom = undefined,
+      expiryDateRangeTo = undefined,
+      search = undefined,
+    } = filter;
+
+    let expiryDateUpperBound,
+      expiryDateLowerBound,
+      userIDSearch,
+      nameFilters,
+      firstSearch,
+      middleSearch,
+      lastSearch;
+
+    // Parse search input for id or name
+    if (parseInt(search)) {
+      userIDSearch = parseInt(search);
+    } else if (search) {
+      // Split search assign to first, middle or last name
+      // If one doesn't exist assign to the previous input to allow for global search across names
+      [firstSearch, middleSearch, lastSearch] = search?.split(' ');
+      middleSearch = middleSearch || firstSearch;
+      lastSearch = lastSearch || middleSearch;
+
+      nameFilters = [
+        { firstName: { contains: firstSearch, mode: 'insensitive' } },
+        { middleName: { contains: middleSearch, mode: 'insensitive' } },
+        { lastName: { contains: lastSearch, mode: 'insensitive' } },
+      ];
+    }
+
+    const TODAY = new Date();
+
+    // Permit status filter depends on expiry date
+    switch (permitStatus) {
+      case PermitStatus.Valid:
+        expiryDateLowerBound = TODAY;
+        break;
+      case PermitStatus.Expired:
+        expiryDateUpperBound = TODAY;
+        break;
+      case PermitStatus.ExpiringInThirtyDays:
+        expiryDateLowerBound = TODAY;
+        expiryDateUpperBound = DateUtils.addMonths(TODAY, 1);
+        break;
+    }
+
+    // Permit status and expiry date range filters both look at the permit expiryDate.
+    // For this reason we need to filter on expiryDate twice to take both filters in account.
+    const permitFilter = {
+      some: {
+        AND: [
+          {
+            expiryDate: {
+              gte: expiryDateLowerBound?.toISOString(),
+              lte: expiryDateUpperBound?.toISOString(),
+            },
+          },
+          {
+            expiryDate: {
+              gte: expiryDateRangeFrom?.toISOString(),
+              lte: expiryDateRangeTo?.toISOString(),
+            },
+          },
+        ],
+      },
+    };
+
+    // Update default filter since there were filter arguments
+    where = {
+      rcdUserId: userIDSearch,
+      status: userStatus,
+      OR: nameFilters,
+      permits: permitFilter,
+    };
+  }
+
+  // Map the input sorting format into key value pairs that can be used by Prisma
+  // This currently only filters by name but can be extended to more filters by adding them in the orderBy statement
+  const sortingOrder: Record<string, SortOrder> = {};
+
+  if (filter?.order) {
+    filter.order.forEach(([field, order]: [string, SortOrder]) => (sortingOrder[field] = order));
+  }
+
+  const take = filter?.limit;
+  const skip = filter?.offset;
+
+  const totalCount = await prisma.applicant.count({
+    where,
+  });
+
+  const applicants = await prisma.applicant.findMany({
+    where,
+    skip,
+    take,
+    orderBy: [
+      { firstName: sortingOrder.name || SortOrder.ASC },
+      { lastName: sortingOrder.name || SortOrder.ASC },
+    ],
+  });
+
+  return {
+    result: applicants,
+    totalCount: totalCount,
+  };
 };
 
 /**

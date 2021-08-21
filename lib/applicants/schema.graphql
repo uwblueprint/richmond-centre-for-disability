@@ -21,8 +21,9 @@ type Applicant {
   guardian: Guardian!
   medicalInformationId: Int!
   medicalInformation: MedicalInformation!
-  permits: [Permit!]
+  permits: [Permit!]!
   medicalHistory: [MedicalHistory!]
+  mostRecentPermit: Permit!
 }
 
 input CreateApplicantInput {
@@ -74,4 +75,20 @@ input UpdateApplicantInput {
 
 type UpdateApplicantResult {
   ok: Boolean!
+}
+
+input ApplicantsFilter {
+  order: [[String!]!]
+  permitStatus: PermitStatus
+  userStatus: UserStatus
+  expiryDateRangeFrom: Date
+  expiryDateRangeTo: Date
+  search: String
+  limit: Int
+  offset: Int
+}
+
+type QueryApplicantsResult {
+  result: [Applicant!]!
+  totalCount: Int!
 }
