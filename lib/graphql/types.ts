@@ -536,14 +536,15 @@ export type QueryApplicantArgs = {
   id: Scalars['ID'];
 };
 
+
+export type QueryApplicationsArgs = {
+  filter?: Maybe<ApplicationsFilter>;
+};
+
 export type QueryApplicantsResult = {
   __typename?: 'QueryApplicantsResult';
   result: Array<Applicant>;
   totalCount: Scalars['Int'];
-};
-
-export type QueryApplicationsArgs = {
-  filter?: Maybe<ApplicationsFilter>;
 };
 
 export type QueryApplicationsResult = {
