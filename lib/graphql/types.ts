@@ -548,8 +548,8 @@ export type QueryApplicationsArgs = {
 
 export type QueryApplicationsResult = {
   __typename?: 'QueryApplicationsResult';
-  result?: Maybe<Array<Maybe<Application>>>;
-  totalCount?: Maybe<Scalars['Int']>;
+  result: Array<Application>;
+  totalCount: Scalars['Int'];
 };
 
 export type QueryEmployeeInput = {

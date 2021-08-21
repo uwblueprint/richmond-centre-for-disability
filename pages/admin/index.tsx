@@ -24,12 +24,16 @@ import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
-import { NetworkStatus, useQuery } from '@apollo/client'; //Apollo client
+import { useQuery } from '@apollo/client'; //Apollo client
 import { useEffect, useState } from 'react'; // React
-import { FilterRequest, FilterResponse, FILTER_APPLICATIONS_QUERY } from '@tools/pages/admin'; //Applications queries
+import {
+  GetApplicationsRequest,
+  GetApplicationsResponse,
+  GET_APPLICATIONS_QUERY,
+} from '@tools/pages/admin'; //Applications queries
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
 import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //GraphQL types
-import useDebounce from '@tools/hooks/useDebounce';
+import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 
 type StatusProps = {
   readonly value:
@@ -149,38 +153,35 @@ export default function Requests() {
   const [recordsCount, setRecordsCount] = useState(0);
 
   // Make query to applications resolver
-  const { loading, networkStatus } = useQuery<FilterResponse, FilterRequest>(
-    FILTER_APPLICATIONS_QUERY,
-    {
-      variables: {
-        filter: {
-          order: sortOrder,
-          permitType: permitTypeFilter,
-          requestType: requestTypeFilter,
-          status: statusFilter,
-          search: debouncedSearchFilter,
-          offset: pageNumber * PAGE_SIZE,
-          limit: PAGE_SIZE,
-        },
+  useQuery<GetApplicationsResponse, GetApplicationsRequest>(GET_APPLICATIONS_QUERY, {
+    variables: {
+      filter: {
+        order: sortOrder,
+        permitType: permitTypeFilter,
+        requestType: requestTypeFilter,
+        status: statusFilter,
+        search: debouncedSearchFilter,
+        offset: pageNumber * PAGE_SIZE,
+        limit: PAGE_SIZE,
       },
-      notifyOnNetworkStatusChange: true,
-      onCompleted: data => {
-        setRequestsData(
-          data.applications.result.map(record => ({
-            name: {
-              name: record.firstName + ' ' + record.lastName,
-              rcdUserId: record.applicantId || undefined,
-            },
-            dateReceived: record.createdAt,
-            permitType: permitTypeString[record.permitType],
-            requestType: record.isRenewal ? 'Renewal' : 'Replacement',
-            status: record.applicationProcessing?.status || undefined,
-          }))
-        );
-        setRecordsCount(data.applications.totalCount);
-      },
-    }
-  );
+    },
+    notifyOnNetworkStatusChange: true,
+    onCompleted: data => {
+      setRequestsData(
+        data.applications.result.map(record => ({
+          name: {
+            name: record.firstName + ' ' + record.lastName,
+            rcdUserId: record.applicantId || undefined,
+          },
+          dateReceived: record.createdAt,
+          permitType: permitTypeString[record.permitType],
+          requestType: record.isRenewal ? 'Renewal' : 'Replacement',
+          status: record.applicationProcessing?.status || undefined,
+        }))
+      );
+      setRecordsCount(data.applications.totalCount);
+    },
+  });
 
   // Map uppercase enum strings to lowercase
   const permitTypeString: Record<PermitType, string> = {
@@ -358,13 +359,11 @@ export default function Requests() {
                 </InputGroup>
               </Box>
             </Flex>
-            {!loading && networkStatus !== NetworkStatus.refetch && (
-              <Table
-                columns={COLUMNS}
-                data={requestsData || []}
-                onChangeSortOrder={sortOrder => setSortOrder(sortOrder)}
-              />
-            )}
+            <Table
+              columns={COLUMNS}
+              data={requestsData || []}
+              onChangeSortOrder={sortOrder => setSortOrder(sortOrder)}
+            />
             <Flex justifyContent="flex-end">
               <Pagination
                 pageNumber={pageNumber}

@@ -156,6 +156,6 @@ type ApplicationProcessing {
 }
 
 type QueryApplicationsResult {
-  result: [Application]
-  totalCount: Int
+  result: [Application!]!
+  totalCount: Int!
 }

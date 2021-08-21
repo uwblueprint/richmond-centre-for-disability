@@ -89,7 +89,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
 
   // Get number of applications with desired filters
   const applicationsCount = await prisma.application.count({
-    where: where,
+    where,
   });
 
   // Get applications with filter, sorting, pagination
@@ -97,7 +97,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     skip: filter?.offset || 0,
     take: filter?.limit || 20,
     orderBy: orderBy,
-    where: where,
+    where,
     include: {
       applicationProcessing: true,
     },
