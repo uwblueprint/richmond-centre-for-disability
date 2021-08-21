@@ -132,8 +132,8 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
 
   const applicants = await prisma.applicant.findMany({
     where,
-    skip: skip,
-    take: take,
+    skip,
+    take,
     orderBy: [
       { firstName: sortingOrder.name || SortOrder.ASC },
       { lastName: sortingOrder.name || SortOrder.ASC },

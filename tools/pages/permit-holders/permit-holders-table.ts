@@ -26,7 +26,7 @@ export const GET_PERMIT_HOLDERS_QUERY = gql`
   }
 `;
 
-export type FilterPermitHoldersRequest = {
+export type GetPermitHoldersRequest = {
   filter: ApplicantsFilter;
 };
 
@@ -46,7 +46,7 @@ export type PermitHolder = Pick<
   | 'id'
 >;
 
-export type FilterPermitHoldersResponse = {
+export type GetPermitHoldersResponse = {
   applicants: {
     result: ReadonlyArray<PermitHolder>;
     totalCount: number;

@@ -26,10 +26,10 @@ import Pagination from '@components/internal/Pagination'; // Pagination componen
 import { useState } from 'react'; // React
 import {
   GET_PERMIT_HOLDERS_QUERY,
-  FilterPermitHoldersRequest,
-  FilterPermitHoldersResponse,
+  GetPermitHoldersRequest,
+  GetPermitHoldersResponse,
   PermitHolder,
-} from '@tools/pages/permit-holders/filter-permit-holders';
+} from '@tools/pages/permit-holders/permit-holders-table';
 import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker'; // Date picker
 import 'react-day-picker/lib/style.css'; // Date picker styling
 import Helmet from 'react-helmet'; // Date picker inline styling for select range functionality
@@ -247,7 +247,7 @@ export default function PermitHolders() {
   }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, range]);
 
   // GQL Query
-  useQuery<FilterPermitHoldersResponse, FilterPermitHoldersRequest>(GET_PERMIT_HOLDERS_QUERY, {
+  useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(GET_PERMIT_HOLDERS_QUERY, {
     variables: {
       filter: {
         userStatus: userStatusFilter,
