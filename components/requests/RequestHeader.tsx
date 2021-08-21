@@ -126,7 +126,7 @@ export default function RequestHeader({
             <Text textStyle="display-large" as="h1" marginRight={3}>
               Replacement Request
             </Text>
-            <RequestStatusBadge variant={applicationStatus} />
+            {applicationStatus && <RequestStatusBadge variant={applicationStatus} />}
           </Flex>
           <HStack spacing={3} marginTop={3}>
             <Text textStyle="caption" as="p">

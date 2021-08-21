@@ -256,7 +256,9 @@ export default function Request({ id }: Props) {
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3}>
         <RequestHeader
-          applicationStatus={applicationProcessing?.status}
+          applicationStatus={
+            applicationProcessing === null ? undefined : applicationProcessing.status
+          }
           createdAt={new Date(createdAt)}
           allStepsCompleted={allStepsCompleted}
           onApprove={handleApproveApplication}
