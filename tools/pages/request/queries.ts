@@ -1,10 +1,11 @@
 import { gql } from '@apollo/client'; // GraphQL queries
 
 // Queries an Application by ID along with the associated permit, replacement, applicationProcessing, and applicant
-export const GET_APPLICATION = gql`
+export const GET_APPLICATION_QUERY = gql`
   query GetApplication($id: ID!) {
     application(id: $id) {
       id
+      applicantId
       rcdUserId
       firstName
       lastName
@@ -19,7 +20,6 @@ export const GET_APPLICATION = gql`
       addressLine2
       postalCode
       notes
-      isRenewal
 
       disability
       affectsMobility
@@ -57,27 +57,7 @@ export const GET_APPLICATION = gql`
       shopifyConfirmationNumber
       createdAt
 
-      permit {
-        id
-        rcdPermitId
-        expiryDate
-        receiptId
-        active
-      }
-
-      replacement {
-        id
-        reason
-        lostTimestamp
-        lostLocation
-        stolenPoliceFileNumber
-        stolenJurisdiction
-        stolenPoliceOfficerName
-        description
-      }
-
       applicationProcessing {
-        id
         status
         appNumber
         appHolepunched
@@ -85,12 +65,6 @@ export const GET_APPLICATION = gql`
         invoiceNumber
         documentUrls
         appMailed
-        updatedAt
-      }
-
-      applicant {
-        id
-        status
       }
     }
   }

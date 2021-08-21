@@ -17,12 +17,13 @@ import {
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
+import { UpdateApplicationInput } from '@lib/graphql/types'; // GraphQL Types
 import { PersonalInformationCardApplicant } from '@tools/components/internal/requests/personal-information-card'; // Applicant type
 
 type EditPermitHolderInformationModalProps = {
   children: ReactNode;
   readonly applicant: PersonalInformationCardApplicant;
-  readonly onSave: (applicationData: PersonalInformationCardApplicant) => void;
+  readonly onSave: (applicationData: Omit<UpdateApplicationInput, 'id'>) => void;
 };
 
 export default function EditPermitHolderInformationModal({
@@ -62,7 +63,6 @@ export default function EditPermitHolderInformationModal({
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     onSave({
-      ...applicant,
       firstName,
       lastName,
       email,

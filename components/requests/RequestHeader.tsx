@@ -18,17 +18,25 @@ import CompleteRequestModal from '@components/requests/modals/CompleteRequestMod
 import { ApplicationStatus } from '@lib/types'; // Types
 
 type RequestHeaderProps = {
-  readonly isRenewal: boolean;
-  readonly applicationStatus: ApplicationStatus;
-  readonly createdAt: string;
+  readonly applicationStatus?: ApplicationStatus;
+  readonly createdAt: Date;
   readonly allStepsCompleted: boolean;
   readonly onApprove: () => void;
   readonly onReject: () => void;
   readonly onComplete: () => void;
 };
 
+/**
+ * Header of View Request page
+ * @param applicationStatus Status of application
+ * @param createdAt Date of application creation
+ * @param allStepsCompleted Whether all processing tasks are complete
+ * @param onApprove Callback for handling application approval
+ * @param onReject Callback for handling application rejection
+ * @param onComplete Callback for handling application completion
+ * @returns
+ */
 export default function RequestHeader({
-  isRenewal,
   applicationStatus,
   createdAt,
   allStepsCompleted,
@@ -42,7 +50,7 @@ export default function RequestHeader({
    */
   const _renderActionButtons = () => {
     switch (applicationStatus) {
-      case 'PENDING':
+      case ApplicationStatus.Pending:
         return (
           <HStack spacing={3}>
             <RejectRequestModal onReject={onReject}>
@@ -55,7 +63,7 @@ export default function RequestHeader({
             </ApproveRequestModal>
           </HStack>
         );
-      case 'APPROVED':
+      case ApplicationStatus.Approved:
         return (
           <CompleteRequestModal onComplete={onComplete}>
             <Button disabled={!allStepsCompleted}>Mark as complete</Button>
@@ -71,7 +79,10 @@ export default function RequestHeader({
 ]   * @returns Rendered 'More Actions' dropdown component or null
    */
   const _renderMoreActionsDropdown = () => {
-    if (applicationStatus === 'APPROVED' || applicationStatus === 'REJECTED') {
+    if (
+      applicationStatus === ApplicationStatus.Approved ||
+      applicationStatus === ApplicationStatus.Rejected
+    ) {
       return (
         <Menu>
           <MenuButton
@@ -85,7 +96,7 @@ export default function RequestHeader({
             <Text textStyle="caption">More Actions</Text>
           </MenuButton>
           <MenuList>
-            {applicationStatus === 'APPROVED' ? (
+            {applicationStatus === ApplicationStatus.Approved ? (
               <RejectRequestModal onReject={onReject}>
                 <MenuItem>Reject request</MenuItem>
               </RejectRequestModal>
@@ -113,13 +124,13 @@ export default function RequestHeader({
         <Box>
           <Flex alignItems="center">
             <Text textStyle="display-large" as="h1" marginRight={3}>
-              {isRenewal ? 'Renewal' : 'Replacement'} Request
+              Replacement Request
             </Text>
             <RequestStatusBadge variant={applicationStatus} />
           </Flex>
           <HStack spacing={3} marginTop={3}>
             <Text textStyle="caption" as="p">
-              Received date: {createdAt}
+              Received date: {createdAt.toDateString()}
             </Text>
             {_renderMoreActionsDropdown()}
           </HStack>

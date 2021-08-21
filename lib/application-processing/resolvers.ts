@@ -7,12 +7,12 @@ import { Resolver } from '@lib/resolvers'; // Resolver type
  */
 export const updateApplicationProcessing: Resolver = async (_, args, { prisma }) => {
   const { input } = args;
-  const { id, documentUrl, ...rest } = input;
+  const { applicationId, documentUrl, ...rest } = input;
 
   let applicationProcessing;
   try {
     applicationProcessing = await prisma.applicationProcessing.update({
-      where: { id: parseInt(id) },
+      where: { applicationId: parseInt(applicationId) },
       data: {
         ...rest,
         ...(documentUrl && {

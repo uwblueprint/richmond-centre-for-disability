@@ -3,11 +3,11 @@ import { CheckIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import { ReactNode } from 'react'; // React
 
 type ProcessingTaskStepProps = {
-  id: number;
-  label: string;
-  description?: string;
-  isCompleted: boolean;
-  children: ReactNode;
+  readonly id: number;
+  readonly label: string;
+  readonly description?: string;
+  readonly isCompleted: boolean;
+  readonly children: ReactNode;
 };
 
 export default function ProcessingTaskStep({

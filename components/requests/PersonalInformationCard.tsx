@@ -1,43 +1,55 @@
-import { Box, HStack, VStack, Text, Divider, Badge, Link, Button } from '@chakra-ui/react'; // Chakra UI
+import Link from 'next/link'; // Next Link
+import { Box, HStack, VStack, Text, Divider, Badge, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
 import EditPermitHolderInformationModal from '@components/internal/modals/EditPermitHolderInformationModal'; // Edit modal
-import { MouseEventHandler } from 'react'; // React
+import { UpdateApplicationInput } from '@lib/graphql/types'; // GraphQL Types
 import { PersonalInformationCardApplicant } from '@tools/components/internal/requests/personal-information-card'; // Applicant type
 
-type PersonalInformationProps = {
-  readonly applicant: PersonalInformationCardApplicant;
-  readonly expirationDate: string;
-  readonly mostRecentAPP: number;
+type Props = {
+  readonly applicant?: PersonalInformationCardApplicant;
   readonly contactInfoUpdated?: boolean;
   readonly addressInfoUpdated?: boolean;
-  readonly handleName: MouseEventHandler;
-  readonly onSave: (applicationData: PersonalInformationCardApplicant) => void;
+  readonly onSave: (applicationData: Omit<UpdateApplicationInput, 'id'>) => void;
 };
 
-export default function PersonalInformationCard(props: PersonalInformationProps) {
-  const { applicant } = props;
-  const header = (
-    <Link
-      textStyle="display-small-semibold"
-      color="primary"
-      textDecoration="underline"
-      onClick={props.handleName}
-    >
-      {`${applicant.firstName} ${applicant.lastName}`}
+/**
+ * Personal information card for View Request page
+ * @param applicant Applicant data
+ * @param contactInfoUpdated Whether contact information was updated
+ * @param addressInfoUpdated Whether address information was updated
+ * @param onSave Callback function on save
+ */
+export default function PersonalInformationCard(props: Props) {
+  const { applicant, contactInfoUpdated, addressInfoUpdated, onSave } = props;
+
+  if (applicant === undefined) {
+    return null;
+  }
+
+  // Personal information card header
+  const Header = (
+    <Link href={`/permit-holder/${applicant.id}`}>
+      <Text
+        variant="link"
+        textStyle="display-small-semibold"
+        color="primary"
+        textDecoration="underline"
+        cursor="pointer"
+      >{`${applicant.firstName} ${applicant.middleName || ''} ${applicant.lastName}`}</Text>
     </Link>
   );
+
+  // Personal information card editing modal
+  const EditModal = (
+    <EditPermitHolderInformationModal applicant={applicant} onSave={onSave}>
+      <Button variant="ghost" textDecoration="underline">
+        <Text textStyle="body-bold">Edit</Text>
+      </Button>
+    </EditPermitHolderInformationModal>
+  );
+
   return (
-    <PermitHolderInfoCard
-      colSpan={5}
-      header={header}
-      editModal={
-        <EditPermitHolderInformationModal applicant={applicant} onSave={props.onSave}>
-          <Button color="primary" variant="ghost" textDecoration="underline">
-            <Text textStyle="body-bold">Edit</Text>
-          </Button>
-        </EditPermitHolderInformationModal>
-      }
-    >
+    <PermitHolderInfoCard colSpan={5} header={Header} editModal={EditModal}>
       <VStack spacing="12px" pt="12px" align="left">
         <Box>
           <Text as="p" textStyle="body-regular">
@@ -52,12 +64,12 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         <Box>
           <HStack spacing="4px">
             <Text as="p" textStyle="body-regular" marginRight={2}>
-              Most recent APP: #{props.mostRecentAPP}
+              Most recent APP: #{applicant.mostRecentAppNumber}
             </Text>
             <Badge variant="ACTIVE">Active</Badge>
           </HStack>
           <Text as="p" textStyle="xsmall" color="secondary">
-            Expiring {props.expirationDate}
+            Expiring {applicant.mostRecentAppExpiryDate.toDateString()}
           </Text>
         </Box>
       </VStack>
@@ -69,16 +81,18 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
               Contact Information
             </Text>
           </Box>
-          {props.contactInfoUpdated && (
+          {contactInfoUpdated && (
             <Text as="p" textStyle="caption" opacity="0.5">
               updated
             </Text>
           )}
         </HStack>
         <Box>
-          <Link textStyle="body-regular" color="primary" textDecoration="underline">
-            {applicant.email}
-          </Link>
+          <a href={`mailto:${applicant.email}`}>
+            <Text textStyle="body-regular" color="primary">
+              {applicant.email}
+            </Text>
+          </a>
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
@@ -94,7 +108,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
               Home Address
             </Text>
           </Box>
-          {props.contactInfoUpdated && (
+          {addressInfoUpdated && (
             <Text as="p" textStyle="caption" opacity="0.5">
               updated
             </Text>
