@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'; // gql tag
 import { ApplicantsFilter, Applicant } from '@lib/graphql/types';
 
-export const FILTER_PERMIT_HOLDERS_QUERY = gql`
+export const GET_PERMIT_HOLDERS_QUERY = gql`
   query FilterPermitHoldersQuery($filter: ApplicantsFilter) {
     applicants(filter: $filter) {
       result {
@@ -14,7 +14,7 @@ export const FILTER_PERMIT_HOLDERS_QUERY = gql`
         postalCode
         email
         phone
-        recentPermit {
+        mostRecentPermit {
           expiryDate
           rcdPermitId
         }
@@ -30,9 +30,25 @@ export type FilterPermitHoldersRequest = {
   filter: ApplicantsFilter;
 };
 
+export type PermitHolder = Pick<
+  Applicant,
+  | 'firstName'
+  | 'middleName'
+  | 'lastName'
+  | 'dateOfBirth'
+  | 'addressLine1'
+  | 'city'
+  | 'postalCode'
+  | 'email'
+  | 'phone'
+  | 'mostRecentPermit'
+  | 'status'
+  | 'id'
+>;
+
 export type FilterPermitHoldersResponse = {
   applicants: {
-    result: [Applicant];
+    result: ReadonlyArray<PermitHolder>;
     totalCount: number;
   };
 };

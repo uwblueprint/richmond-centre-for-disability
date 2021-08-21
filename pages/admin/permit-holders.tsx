@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
-import { NetworkStatus, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
   Box,
   Flex,
@@ -19,15 +19,16 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
-import { Applicant, Permit, PermitStatus, Role, UserStatus } from '@lib/types'; // Role enum
+import { Permit, PermitStatus, Role, UserStatus } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import { useState } from 'react'; // React
 import {
-  FILTER_PERMIT_HOLDERS_QUERY,
+  GET_PERMIT_HOLDERS_QUERY,
   FilterPermitHoldersRequest,
   FilterPermitHoldersResponse,
+  PermitHolder,
 } from '@tools/pages/permit-holders/filter-permit-holders';
 import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker'; // Date picker
 import 'react-day-picker/lib/style.css'; // Date picker styling
@@ -44,7 +45,18 @@ const COLUMNS: Column<any>[] = [
     width: 180,
     minWidth: 180,
     sortDescFirst: true,
-    Cell: renderName,
+    Cell: ({ value }) => {
+      return (
+        <>
+          <Text>
+            {value.firstName} {value.middleName || ''} {value.lastName}
+          </Text>
+          <Text textStyle="caption" textColor="secondary">
+            ID: {value.rcdUserId}
+          </Text>
+        </>
+      );
+    },
   },
   {
     Header: 'Date of Birth',
@@ -52,7 +64,7 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     width: 140,
     maxWidth: 140,
-    Cell: ({ value }: any) => {
+    Cell: ({ value }) => {
       return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
     },
   },
@@ -62,7 +74,16 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     width: 240,
     minWidth: 240,
-    Cell: renderAddress,
+    Cell: ({ value }) => {
+      return (
+        <>
+          <Text>{value.address}</Text>
+          <Text textStyle="caption" textColor="secondary">
+            {value.city}, {value.postalCode}
+          </Text>
+        </>
+      );
+    },
   },
   {
     Header: 'Email',
@@ -80,11 +101,11 @@ const COLUMNS: Column<any>[] = [
   },
   {
     Header: 'Recent APP',
-    accessor: 'recentPermit',
+    accessor: 'mostRecentPermit',
     disableSortBy: true,
     width: 140,
     maxWidth: 140,
-    Cell: renderRecentPermit,
+    Cell: renderMostRecentPermit,
   },
   {
     Header: 'User Status',
@@ -92,74 +113,26 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     width: 120,
     maxWidth: 120,
-    Cell: renderUserStatusBadge,
+    Cell: ({ value }) => {
+      return (
+        value && (
+          <Wrap>
+            <Badge variant={value}>{value.toUpperCase()}</Badge>
+          </Wrap>
+        )
+      );
+    },
   },
 ];
 
 const PAGE_SIZE = 20;
-
-type NameProps = {
-  value: {
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    rcdUserId: number;
-  };
-};
-
-// Name cell in table
-function renderName({ value }: NameProps) {
-  return (
-    <>
-      <Text>
-        {value.firstName} {value.middleName} {value.lastName}
-      </Text>
-      <Text textStyle="caption" textColor="secondary">
-        ID: {value.rcdUserId}
-      </Text>
-    </>
-  );
-}
-
-type AddressProps = {
-  value: {
-    address: string;
-    city: string;
-    postalCode: string;
-  };
-};
-
-// Address cell in table
-function renderAddress({ value }: AddressProps) {
-  return (
-    <>
-      <Text>{value.address}</Text>
-      <Text textStyle="caption" textColor="secondary">
-        {value.city}, {value.postalCode}
-      </Text>
-    </>
-  );
-}
-
-type UserStatusBadgeProps = {
-  value: 'active' | 'inactive';
-};
-
-// User status cell in table
-function renderUserStatusBadge({ value }: UserStatusBadgeProps) {
-  return (
-    <Wrap>
-      <Badge variant={value}>{value?.toUpperCase()}</Badge>
-    </Wrap>
-  );
-}
 
 type RecentPermitProps = {
   value: Permit;
 };
 
 // Most Recent Permit cell in table
-function renderRecentPermit({ value }: RecentPermitProps) {
+function renderMostRecentPermit({ value }: RecentPermitProps) {
   const today = new Date();
   const expiryDate = new Date(value.expiryDate);
   const expired = DateUtils.isPastDay(expiryDate);
@@ -182,7 +155,7 @@ function renderRecentPermit({ value }: RecentPermitProps) {
 const permitStatusText: Record<PermitStatus, string> = {
   [PermitStatus.Valid]: 'Valid',
   [PermitStatus.Expired]: 'Expired',
-  [PermitStatus.ExpiringThirty]: 'Expiring Soon',
+  [PermitStatus.ExpiringInThirtyDays]: 'Expiring Soon',
 };
 
 // Map uppercase enum to lowercase
@@ -234,7 +207,7 @@ function DayPickerStyling() {
 }
 
 // Table data input will be of Applicant type as well as two combined fields
-type PermitTableInputData = Applicant & {
+type PermitTableInputData = PermitHolder & {
   name: {
     firstName: string;
     lastName: string;
@@ -274,10 +247,7 @@ export default function PermitHolders() {
   }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, range]);
 
   // GQL Query
-  const { loading, networkStatus } = useQuery<
-    FilterPermitHoldersResponse,
-    FilterPermitHoldersRequest
-  >(FILTER_PERMIT_HOLDERS_QUERY, {
+  useQuery<FilterPermitHoldersResponse, FilterPermitHoldersRequest>(GET_PERMIT_HOLDERS_QUERY, {
     variables: {
       filter: {
         userStatus: userStatusFilter,
@@ -290,24 +260,23 @@ export default function PermitHolders() {
         order: sortOrder,
       },
     },
-    onCompleted: data => {
-      setPermitHolderData(
-        data.applicants.result.map(record => ({
-          name: {
-            firstName: record.firstName,
-            lastName: record.lastName,
-            middleName: record.middleName || undefined,
-            rcdUserId: record.id,
-          },
-          homeAddress: {
-            address: record.addressLine1,
-            city: record.city,
-            postalCode: record.postalCode,
-          },
-          ...record,
-        }))
-      );
-      setRecordsCount(data.applicants.totalCount);
+    onCompleted: ({ applicants: { result, totalCount } }) => {
+      const tableData: PermitTableInputData[] = result.map(record => ({
+        name: {
+          firstName: record.firstName,
+          lastName: record.lastName,
+          middleName: record.middleName || undefined,
+          rcdUserId: record.id,
+        },
+        homeAddress: {
+          address: record.addressLine1,
+          city: record.city,
+          postalCode: record.postalCode,
+        },
+        ...record,
+      }));
+      setPermitHolderData(tableData);
+      setRecordsCount(totalCount);
     },
   });
 
@@ -315,7 +284,7 @@ export default function PermitHolders() {
   const permitStatusOptions = [
     PermitStatus.Valid,
     PermitStatus.Expired,
-    PermitStatus.ExpiringThirty,
+    PermitStatus.ExpiringInThirtyDays,
   ];
   const userStatusOptions = [UserStatus.Active, UserStatus.Inactive];
 
@@ -458,15 +427,13 @@ export default function PermitHolders() {
                 </InputGroup>
               </Box>
             </Flex>
-            {!loading && networkStatus !== NetworkStatus.refetch && (
-              <Table
-                columns={COLUMNS}
-                data={permitHolderData || []}
-                onChangeSortOrder={sortOrder => {
-                  setSortOrder(sortOrder);
-                }}
-              />
-            )}
+            <Table
+              columns={COLUMNS}
+              data={permitHolderData || []}
+              onChangeSortOrder={sortOrder => {
+                setSortOrder(sortOrder);
+              }}
+            />
             <Flex justifyContent="flex-end">
               <Pagination
                 pageNumber={pageNumber}

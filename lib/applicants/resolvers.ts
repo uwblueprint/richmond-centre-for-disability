@@ -79,7 +79,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
       case PermitStatus.Expired:
         expiryDateUpperBound = TODAY;
         break;
-      case PermitStatus.ExpiringThirty:
+      case PermitStatus.ExpiringInThirtyDays:
         expiryDateLowerBound = TODAY;
         expiryDateUpperBound = DateUtils.addMonths(TODAY, 1);
         break;
@@ -127,11 +127,11 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
   const skip = filter?.offset;
 
   const totalCount = await prisma.applicant.count({
-    where: where,
+    where,
   });
 
   const applicants = await prisma.applicant.findMany({
-    where: where,
+    where,
     skip: skip,
     take: take,
     orderBy: [

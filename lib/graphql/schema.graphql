@@ -1,6 +1,6 @@
 type Query {
   meta: Meta!
-  applicants(filter: ApplicantsFilter): QueryApplicantsResult!
+  applicants(filter: ApplicantsFilter): QueryApplicantsResult
   applicant(id: ID!): Applicant
   employees: [Employee!]
   physicians: [Physician!]
@@ -94,7 +94,7 @@ enum ReasonForReplacement {
 enum PermitStatus {
   VALID
   EXPIRED
-  EXPIRING_THIRTY
+  EXPIRING_IN_THIRTY_DAYS
 }
 
 enum UserStatus {

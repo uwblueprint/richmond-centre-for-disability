@@ -91,7 +91,7 @@ export const applicantMedicalHistoryResolver: Resolver<Applicant> = async (
  * Field resolver to fetch the most recent permit of an applicant
  * @returns Permit object
  */
-export const applicantRecentPermitResolver: Resolver<Applicant> = async (
+export const applicantMostRecentPermitResolver: Resolver<Applicant> = async (
   parent,
   _args,
   { prisma }

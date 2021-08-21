@@ -51,7 +51,7 @@ export type Applicant = {
   medicalInformation: MedicalInformation;
   permits: Array<Permit>;
   medicalHistory?: Maybe<Array<MedicalHistory>>;
-  recentPermit: Permit;
+  mostRecentPermit: Permit;
 };
 
 export enum ApplicantStatus {
@@ -60,7 +60,7 @@ export enum ApplicantStatus {
 }
 
 export type ApplicantsFilter = {
-  order?: Maybe<Array<Maybe<Array<Maybe<Scalars['String']>>>>>;
+  order?: Maybe<Array<Array<Scalars['String']>>>;
   permitStatus?: Maybe<PermitStatus>;
   userStatus?: Maybe<UserStatus>;
   expiryDateRangeFrom?: Maybe<Scalars['Date']>;
@@ -437,7 +437,7 @@ export type Permit = {
 export enum PermitStatus {
   Valid = 'VALID',
   Expired = 'EXPIRED',
-  ExpiringThirty = 'EXPIRING_THIRTY'
+  ExpiringInThirtyDays = 'EXPIRING_IN_THIRTY_DAYS'
 }
 
 export type Physician = {
@@ -479,7 +479,7 @@ export enum Province {
 export type Query = {
   __typename?: 'Query';
   meta: Meta;
-  applicants: QueryApplicantsResult;
+  applicants?: Maybe<QueryApplicantsResult>;
   applicant?: Maybe<Applicant>;
   employees?: Maybe<Array<Employee>>;
   physicians?: Maybe<Array<Physician>>;
@@ -499,7 +499,7 @@ export type QueryApplicantArgs = {
 
 export type QueryApplicantsResult = {
   __typename?: 'QueryApplicantsResult';
-  result: Array<Maybe<Applicant>>;
+  result: Array<Applicant>;
   totalCount: Scalars['Int'];
 };
 

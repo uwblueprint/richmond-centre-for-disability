@@ -23,7 +23,7 @@ type Applicant {
   medicalInformation: MedicalInformation!
   permits: [Permit!]!
   medicalHistory: [MedicalHistory!]
-  recentPermit: Permit!
+  mostRecentPermit: Permit!
 }
 
 input CreateApplicantInput {
@@ -78,7 +78,7 @@ type UpdateApplicantResult {
 }
 
 input ApplicantsFilter {
-  order: [[String]]
+  order: [[String!]!]
   permitStatus: PermitStatus
   userStatus: UserStatus
   expiryDateRangeFrom: Date
@@ -89,6 +89,6 @@ input ApplicantsFilter {
 }
 
 type QueryApplicantsResult {
-  result: [Applicant]!
+  result: [Applicant!]!
   totalCount: Int!
 }
