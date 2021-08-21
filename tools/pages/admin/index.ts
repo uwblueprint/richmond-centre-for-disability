@@ -27,7 +27,6 @@ export type GetApplicationsRequest = {
 
 export type GetApplicationsResponse = {
   applications: {
-    // result: [Application];
     result: ReadonlyArray<
       Pick<
         Application,
