@@ -42,6 +42,10 @@ const permitTypeString: Record<PermitType, string> = {
   [PermitType.Temporary]: 'Temporary',
 };
 
+type PermitTypeProps = {
+  value: PermitType;
+};
+
 // Placeholder columns
 const COLUMNS: Column<any>[] = [
   {
@@ -78,7 +82,7 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
-    Cell: ({ value }) => {
+    Cell: ({ value }: PermitTypeProps) => {
       return <Text>{permitTypeString[value]}</Text>;
     },
   },
