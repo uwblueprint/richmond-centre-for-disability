@@ -5,6 +5,7 @@ type Query {
   employees: [Employee!]
   physicians: [Physician!]
   applications(filter: ApplicationsFilter): QueryApplicationsResult
+  application(id: ID!): Application
   permits: [Permit!]
 }
 
@@ -15,9 +16,14 @@ type Mutation {
   createPhysician(input: CreatePhysicianInput!): CreatePhysicianResult!
   upsertPhysician(input: UpsertPhysicianInput!): UpsertPhysicianResult!
   createApplication(input: CreateApplicationInput!): CreateApplicationResult!
+  updateApplication(input: UpdateApplicationInput!): UpdateApplicationResult!
   createPermit(input: CreatePermitInput!): CreatePermitResult!
   updateMedicalInformation(input: UpdateMedicalInformationInput!): UpdateMedicalInformationResult!
   updateGuardian(input: UpdateGuardianInput!): UpdateGuardianResult!
+  updateApplicationProcessing(
+    input: UpdateApplicationProcessingInput!
+  ): UpdateApplicationProcessingResult!
+  completeApplication(applicationId: ID!): CompleteApplicationResult!
 }
 
 scalar Date

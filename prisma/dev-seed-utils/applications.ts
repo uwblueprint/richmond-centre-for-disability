@@ -7,6 +7,7 @@ import { Gender, Province, PaymentType, Aid } from '../../lib/graphql/types'; //
 const applications = [
   {
     id: 1,
+    rcdUserId: 12345,
     firstName: 'Applicant',
     lastName: 'One',
     gender: Gender.Male,
@@ -28,9 +29,17 @@ const applications = [
     paymentMethod: PaymentType.Cash,
     shopifyConfirmationNumber: '1234567',
     applicantId: 1,
+    email: 'applicantone@gmail.com',
+    shippingFullName: 'Applicant One',
+    shippingAddressLine1: '456 Vancouver Rd.',
+    shippingCity: 'Vancouver',
+    shippingProvince: Province.Bc,
+    shippingPostalCode: 'A1B2C3',
+    billingFullName: 'Applicant One',
   },
   {
     id: 2,
+    rcdUserId: 23456,
     firstName: 'Applicant',
     lastName: 'Two',
     gender: Gender.Female,
@@ -52,6 +61,7 @@ const applications = [
     paymentMethod: PaymentType.Cheque,
     shopifyConfirmationNumber: '0145829',
     applicantId: 2,
+    email: 'applicanttwo@gmail.com',
   },
   {
     id: 3,

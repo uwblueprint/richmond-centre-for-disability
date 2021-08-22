@@ -4,9 +4,19 @@ import {
   ShopifyConfirmationNumberAlreadyExistsError,
   ApplicantIdDoesNotExistError,
   ApplicationFieldTooLongError,
+  ApplicationNotFoundError,
 } from '@lib/applications/errors'; // Application errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
+
+/**
+ * Query an application by ID
+ * @returns Application with given ID
+ */
+export const application: Resolver = async (_parent, args, { prisma }) => {
+  const application = await prisma.application.findUnique({ where: { id: parseInt(args.id) } });
+  return application;
+};
 
 /**
  * Query and filter RCD applications from the internal facing app.
@@ -151,6 +161,38 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
   // Throw internal server error if application was not created
   if (!application) {
     throw new ApolloError('Application was unable to be created');
+  }
+
+  return {
+    ok: true,
+  };
+};
+
+/**
+ * Updates the Application object with the optional values provided
+ * @returns Status of operation (ok, error)
+ */
+export const updateApplication: Resolver = async (_, args, { prisma }) => {
+  const { input } = args;
+  const { id, ...rest } = input;
+
+  let application;
+  try {
+    application = await prisma.application.update({
+      where: { id: parseInt(id) },
+      data: {
+        ...rest,
+      },
+    });
+  } catch (err) {
+    if (err.code === DBErrorCode.RecordNotFound) {
+      throw new ApplicationNotFoundError(`Application with ID ${id} not found`);
+    }
+  }
+
+  // Throw internal server error if application processing object was not updated
+  if (!application) {
+    throw new ApolloError('Application was unable to be updated');
   }
 
   return {

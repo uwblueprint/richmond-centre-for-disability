@@ -12,6 +12,10 @@ const applicationProcessings = [
     id: 2,
     applicationId: 2,
   },
+  {
+    id: 3,
+    applicationId: 3,
+  },
 ];
 
 /**

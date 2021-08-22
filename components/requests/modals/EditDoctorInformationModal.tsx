@@ -17,35 +17,58 @@ import {
   Divider,
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import SuccessFulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
+import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
+import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
+import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;
+  readonly physician: DoctorInformationCardPhysician;
+  readonly onSave: (applicationData: any) => void;
 };
 
-export default function EditDoctorInformationModal({ children }: EditDoctorInformationModalProps) {
+export default function EditDoctorInformationModal({
+  children,
+  physician,
+  onSave,
+}: EditDoctorInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [mspNumber, setMspNumber] = useState('');
+  const [name, setName] = useState('');
+  const [mspNumber, setMspNumber] = useState<number | undefined>();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [addressLine1, setAddressLine1] = useState('');
-  const [addressLine2, setAddressLine2] = useState('');
+  const [addressLine2, setAddressLine2] = useState<string | undefined>('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
   const successfulEditToast = useToast();
+  useEffect(() => {
+    setName(physician.name);
+    setMspNumber(physician.mspNumber);
+    setPhoneNumber(physician.phone);
+    setAddressLine1(physician.addressLine1);
+    setAddressLine2(physician.addressLine2 || undefined);
+    setCity(physician.city);
+    setPostalCode(physician.postalCode);
+  }, [physician]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    //  TODO: Will be addressed in API hookup
+    onSave({
+      physicianName: name,
+      physicianMspNumber: mspNumber,
+      physicianPhone: phoneNumber,
+      physicianAddressLine1: addressLine1,
+      physicianAddressLine2: addressLine2,
+      physicianCity: city,
+      physicianPostalCode: postalCode,
+    });
     onClose();
 
     successfulEditToast({
       render: () => (
-        <SuccessFulEditAlert>{'Doctor’s information has been edited.'}</SuccessFulEditAlert>
+        <SuccessfulEditAlert>{'Doctor’s information has been edited.'}</SuccessfulEditAlert>
       ),
     });
   };
@@ -72,19 +95,18 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
               <Box paddingBottom="32px">
                 <Stack direction="row" spacing="20px" marginBottom="24px">
                   <FormControl isRequired>
-                    <FormLabel>{'First name'}</FormLabel>
-                    <Input value={firstName} onChange={event => setFirstName(event.target.value)} />
-                  </FormControl>
-                  <FormControl isRequired>
-                    <FormLabel>{'Last name'}</FormLabel>
-                    <Input value={lastName} onChange={event => setLastName(event.target.value)} />
+                    <FormLabel>{'Name'}</FormLabel>
+                    <Input value={name} onChange={event => setName(event.target.value)} />
                   </FormControl>
                 </Stack>
 
                 <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
                     <FormLabel>{'Medical Services Plan number'}</FormLabel>
-                    <Input value={mspNumber} onChange={event => setMspNumber(event.target.value)} />
+                    <Input
+                      value={mspNumber}
+                      onChange={event => setMspNumber(parseInt(event.target.value))}
+                    />
                   </FormControl>
                   <FormControl isRequired>
                     <FormLabel>{'Phone number'}</FormLabel>

@@ -10,10 +10,11 @@ type Props = {
   readonly columns: Array<Column<any>>; // Depends on shape of data
   readonly data: Array<any>; // Depends on shape of data
   readonly onChangeSortOrder?: (sort: SortOptions) => unknown; // Callback after changing sorting
+  readonly onRowClick?: (row: any) => unknown;
 };
 
 export default function Table(props: Props) {
-  const { columns, data, onChangeSortOrder } = props;
+  const { columns, data, onChangeSortOrder, onRowClick } = props;
 
   // Table rendering functions
   const {
@@ -81,7 +82,12 @@ export default function Table(props: Props) {
           {rows.map(row => {
             prepareRow(row);
             return (
-              <Tr {...row.getRowProps()} key={row.id}>
+              <Tr
+                {...row.getRowProps()}
+                key={row.id}
+                onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+                cursor={onRowClick ? 'pointer' : undefined}
+              >
                 {row.cells.map((cell, i) => (
                   <Td
                     height="80px"

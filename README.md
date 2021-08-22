@@ -57,6 +57,9 @@ Duplicate `.env.sample` to `.env` and configure environment variables.
 To deploy your database schema, run the following:
 
 ```bash
+# Drop all tables from current Heroku Postgres database
+heroku pg:reset -a YOUR_APP_NAME
+
 # Deploy schema.sql to Heroku Postgres
 heroku pg:psql -a YOUR_APP_NAME -f prisma/schema.sql
 

@@ -45,7 +45,7 @@ export default function AssignNumberModal({
 
   const validateSave = () => {
     setFormError('');
-    const value = Number(formValue);
+    const value = parseInt(formValue);
     if (isNaN(value)) {
       setFormError('Please enter a valid number');
     } else {

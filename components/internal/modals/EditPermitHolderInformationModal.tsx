@@ -16,14 +16,20 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
+import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
+import { UpdateApplicationInput } from '@lib/graphql/types'; // GraphQL Types
+import { PersonalInformationCardApplicant } from '@tools/components/internal/requests/personal-information-card'; // Applicant type
 
 type EditPermitHolderInformationModalProps = {
   children: ReactNode;
+  readonly applicant: PersonalInformationCardApplicant;
+  readonly onSave: (applicationData: Omit<UpdateApplicationInput, 'id'>) => void;
 };
 
 export default function EditPermitHolderInformationModal({
   children,
+  applicant,
+  onSave,
 }: EditPermitHolderInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -41,11 +47,32 @@ export default function EditPermitHolderInformationModal({
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
+  useEffect(() => {
+    setFirstName(applicant.firstName);
+    setLastName(applicant.lastName);
+    if (applicant.email) setEmail(applicant.email);
+    setPhoneNumber(applicant.phone);
+    setAddressLine1(applicant.addressLine1);
+    if (applicant.addressLine2) setAddressLine2(applicant.addressLine2);
+    setCity(applicant.city);
+    setPostalCode(applicant.postalCode);
+  }, [applicant]);
+
   //   TODO: Add error states for each field (post-mvp)
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    // TODO: Will be addressed in API hookup
+    onSave({
+      firstName,
+      lastName,
+      email,
+      phone: phoneNumber,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+    });
+    onClose();
   };
 
   return (
