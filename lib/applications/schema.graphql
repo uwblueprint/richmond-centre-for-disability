@@ -17,9 +17,11 @@ type Application {
   notes: String
   rcdUserId: Int
   isRenewal: Boolean!
+  permitType: PermitType!
   poaFormUrl: String
   applicantId: Int
   applicant: Applicant
+  applicationProcessing: ApplicationProcessing
 
   # Medical information
   disability: String!
@@ -60,6 +62,8 @@ type Application {
 
   # Permit
   permit: Permit
+
+  createdAt: Date!
 }
 
 input CreateApplicationInput {
@@ -80,6 +84,7 @@ input CreateApplicationInput {
   notes: String
   rcdUserId: Int
   isRenewal: Boolean!
+  permitType: PermitType!
   poaFormUrl: String
   applicantId: Int
 
@@ -123,4 +128,34 @@ input CreateApplicationInput {
 
 type CreateApplicationResult {
   ok: Boolean!
+}
+
+input ApplicationsFilter {
+  order: [[String!]]
+  permitType: PermitType
+  requestType: String
+  status: ApplicationStatus
+  search: String
+  limit: Int
+  offset: Int
+}
+
+type ApplicationProcessing {
+  id: Int!
+  status: ApplicationStatus!
+  appNumber: Int
+  appHolepunched: Boolean!
+  walletCardCreated: Boolean!
+  invoiceNumber: Int
+  documentUrls: [String!]
+  appMailed: Boolean!
+  applicationId: Int!
+  createdAt: Date!
+  updatedAt: Date!
+  application: Application!
+}
+
+type QueryApplicationsResult {
+  result: [Application!]!
+  totalCount: Int!
 }

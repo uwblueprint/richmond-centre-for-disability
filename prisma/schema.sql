@@ -35,10 +35,13 @@ CREATE TYPE PhysicianStatus as ENUM('ACTIVE', 'INACTIVE');
 CREATE TYPE Gender as ENUM('MALE', 'FEMALE', 'OTHER');
 
 -- Create application status enum
-CREATE TYPE ApplicationStatus as ENUM('PENDING', 'APPROVED', 'REJECTED', 'COMPLETED');
+CREATE TYPE ApplicationStatus as ENUM('PENDING', 'INPROGRESS', 'APPROVED', 'REJECTED', 'COMPLETED', 'EXPIRING', 'EXPIRED', 'ACTIVE');
 
 -- Create reason for replacement enum
 CREATE TYPE ReasonForReplacement as ENUM('LOST', 'STOLEN', 'OTHER');
+
+-- Create permit type enum
+CREATE TYPE PermitType as ENUM('PERMANENT', 'TEMPORARY');
 
 -- Create employees table
 CREATE TABLE employees (
@@ -163,6 +166,7 @@ CREATE TABLE applications (
   notes          TEXT,
   rcd_user_id    INTEGER,
   is_renewal     BOOLEAN NOT NULL DEFAULT true,
+  permit_type    PermitType NOT NULL DEFAULT 'PERMANENT',
   poa_form_url   VARCHAR(255),
   applicant_id   INTEGER,
   -- Medical information

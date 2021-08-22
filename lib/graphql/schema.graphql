@@ -4,7 +4,7 @@ type Query {
   applicant(id: ID!): Applicant
   employees: [Employee!]
   physicians: [Physician!]
-  applications: [Application!]
+  applications(filter: ApplicationsFilter): QueryApplicationsResult
   permits: [Permit!]
 }
 
@@ -100,4 +100,9 @@ enum PermitStatus {
 enum UserStatus {
   ACTIVE
   INACTIVE
+}
+
+enum PermitType {
+  PERMANENT
+  TEMPORARY
 }

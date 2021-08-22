@@ -49,7 +49,9 @@ export default function Pagination(props: Props) {
       verticalAlign="center"
     >
       <HStack spacing="4px">
-        <Text as="p" textStyle="xsmall" display="inline">{`${lowerBound}-${upperBound}`}</Text>
+        <Text as="p" textStyle="xsmall" display="inline">
+          {totalCount !== 0 ? `${lowerBound}-${upperBound}` : 0}
+        </Text>
         <Text
           as="p"
           textStyle="xsmall"

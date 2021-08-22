@@ -16,61 +16,49 @@ import {
   InputGroup,
   Input,
   InputLeftElement,
-  useControllableState,
   Wrap,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
-import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
+import { useQuery } from '@apollo/client'; //Apollo client
+import { useEffect, useState } from 'react'; // React
+import {
+  GetApplicationsRequest,
+  GetApplicationsResponse,
+  GET_APPLICATIONS_QUERY,
+} from '@tools/pages/admin'; //Applications queries
+import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
+import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //GraphQL types
+import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
+import { Column } from 'react-table';
 
-type StatusProps = {
-  readonly value:
-    | 'COMPLETED'
-    | 'INPROGRESS'
-    | 'PENDING'
-    | 'REJECTED'
-    | 'EXPIRING'
-    | 'EXPIRED'
-    | 'ACTIVE';
+// Map uppercase enum strings to lowercase
+const permitTypeString: Record<string, string> = {
+  [PermitType.Permanent]: 'Permanent',
+  [PermitType.Temporary]: 'Temporary',
 };
-
-function renderStatusBadge({ value }: StatusProps) {
-  return (
-    <Wrap>
-      <RequestStatusBadge variant={value}></RequestStatusBadge>
-    </Wrap>
-  );
-}
-
-type NameProps = {
-  readonly value: {
-    name: string;
-    id: string;
-  };
-};
-
-function renderName({ value }: NameProps) {
-  return (
-    <div>
-      <Text>{value.name}</Text>
-      <Text textStyle="caption" textColor="secondary">
-        ID: {value.id}
-      </Text>
-    </div>
-  );
-}
 
 // Placeholder columns
-// TODO: accessors should be the accessors for these fields in the DB
-const COLUMNS = [
+const COLUMNS: Column<any>[] = [
   {
     Header: 'Name',
     accessor: 'name',
-    Cell: renderName,
+    Cell: ({ value }) => {
+      return (
+        <div>
+          <Text>{`${value.firstName} ${value.lastName}`}</Text>
+          {value.rcdUserId && (
+            <Text textStyle="caption" textColor="secondary">
+              ID: {value.rcdUserId}
+            </Text>
+          )}
+        </div>
+      );
+    },
     minWidth: 240,
     width: 280,
   },
@@ -79,6 +67,10 @@ const COLUMNS = [
     accessor: 'dateReceived',
     maxWidth: 240,
     width: 240,
+    sortDescFirst: true,
+    Cell: ({ value }) => {
+      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+    },
   },
   {
     Header: 'Permit Type',
@@ -86,62 +78,108 @@ const COLUMNS = [
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
+    Cell: ({ value }) => {
+      return <Text>{permitTypeString[value]}</Text>;
+    },
   },
   {
     Header: 'Request Type',
-    accessor: 'requestType',
+    accessor: 'isRenewal',
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
+    Cell: ({ value }) => {
+      return <Text>{value ? 'Renewal' : 'Replacement'}</Text>;
+    },
   },
   {
     Header: 'Status',
     accessor: 'status',
     disableSortBy: true,
-    Cell: renderStatusBadge,
+    Cell: ({ value }) => {
+      return (
+        <Wrap>
+          <RequestStatusBadge variant={value}></RequestStatusBadge>
+        </Wrap>
+      );
+    },
     maxWidth: 180,
     width: 100,
   },
 ];
 
-// Placeholder data
-const DATA = [
-  {
-    name: {
-      name: 'Steve Rogers',
-      id: '36565',
-    },
-    dateReceived: 'Dec 21 2021, 8:30 pm',
-    permitType: 'Permanent',
-    requestType: 'Replacement',
-    status: 'PENDING',
-  },
-  {
-    name: {
-      name: 'Steve Rogers',
-      id: '36565',
-    },
-    dateReceived: 'Dec 21 2021, 8:30 pm',
-    permitType: 'Permanent',
-    requestType: 'Replacement',
-    status: 'INPROGRESS',
-  },
-  {
-    name: {
-      name: 'Steve Rogers',
-      id: '36565',
-    },
-    dateReceived: 'Dec 21 2021, 8:30 pm',
-    permitType: 'Permanent',
-    requestType: 'Replacement',
-    status: 'COMPLETED',
-  },
-];
+// Application data for table
+type ApplicationData = {
+  name: {
+    firstName: string;
+    lastName: string;
+    rcdUserId?: number;
+  };
+  dateReceived: Date;
+  permitType: PermitType;
+  isRenewal: boolean;
+  status?: ApplicationStatus;
+};
+
+// Max number of entries in a page
+const PAGE_SIZE = 20;
 
 // Internal home page - view APP requests
 export default function Requests() {
-  const [permitTypeFilter, setPermitTypeFilter] = useControllableState({ defaultValue: 'All' });
-  const [requestTypeFilter, setRequestTypeFilter] = useControllableState({ defaultValue: 'All' });
+  //Filters
+  const [statusFilter, setStatusFilter] = useState<ApplicationStatus>();
+  const [permitTypeFilter, setPermitTypeFilter] = useState<PermitType>();
+  const [requestTypeFilter, setRequestTypeFilter] = useState<string>();
+  const [searchFilter, setSearchFilter] = useState<string>('');
+
+  // Sorting
+  const [sortOrder, setSortOrder] = useState<SortOptions>([['dateReceived', SortOrder.DESC]]);
+
+  // Debounce search filter so that it only gives us latest value if searchFilter has not been updated within last 500ms.
+  // This will avoid firing a query for each key the user presses
+  const debouncedSearchFilter = useDebounce<string>(searchFilter, 500);
+
+  // Data & pagination
+  const [requestsData, setRequestsData] = useState<ApplicationData[]>();
+  const [pageNumber, setPageNumber] = useState(0);
+  const [recordsCount, setRecordsCount] = useState(0);
+
+  // Make query to applications resolver
+  useQuery<GetApplicationsResponse, GetApplicationsRequest>(GET_APPLICATIONS_QUERY, {
+    variables: {
+      filter: {
+        order: sortOrder,
+        permitType: permitTypeFilter,
+        requestType: requestTypeFilter,
+        status: statusFilter,
+        search: debouncedSearchFilter,
+        offset: pageNumber * PAGE_SIZE,
+        limit: PAGE_SIZE,
+      },
+    },
+    notifyOnNetworkStatusChange: true,
+    onCompleted: data => {
+      setRequestsData(
+        data.applications.result.map(record => ({
+          name: {
+            firstName: record.firstName,
+            lastName: record.lastName,
+            rcdUserId: record.applicantId || undefined,
+          },
+          dateReceived: record.createdAt,
+          permitType: record.permitType,
+          isRenewal: record.isRenewal,
+          status: record.applicationProcessing?.status,
+        }))
+      );
+      setRecordsCount(data.applications.totalCount);
+    },
+  });
+
+  // Set page number to 0 after every filter or sort change
+  useEffect(() => {
+    setPageNumber(0);
+  }, [statusFilter, permitTypeFilter, requestTypeFilter, debouncedSearchFilter, sortOrder]);
 
   return (
     <Layout>
@@ -168,11 +206,46 @@ export default function Requests() {
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
           <Tabs marginBottom="20px">
             <TabList paddingX="24px">
-              <Tab height="64px">All</Tab>
-              <Tab height="64px">Pending</Tab>
-              <Tab height="64px">In Progress</Tab>
-              <Tab height="64px">Completed</Tab>
-              <Tab height="64px">Rejected</Tab>
+              <Tab
+                height="64px"
+                onClick={() => {
+                  setStatusFilter(undefined);
+                }}
+              >
+                All
+              </Tab>
+              <Tab
+                height="64px"
+                onClick={() => {
+                  setStatusFilter(ApplicationStatus.Pending);
+                }}
+              >
+                Pending
+              </Tab>
+              <Tab
+                height="64px"
+                onClick={() => {
+                  setStatusFilter(ApplicationStatus.Approved);
+                }}
+              >
+                In Progress
+              </Tab>
+              <Tab
+                height="64px"
+                onClick={() => {
+                  setStatusFilter(ApplicationStatus.Completed);
+                }}
+              >
+                Completed
+              </Tab>
+              <Tab
+                height="64px"
+                onClick={() => {
+                  setStatusFilter(ApplicationStatus.Rejected);
+                }}
+              >
+                Rejected
+              </Tab>
             </TabList>
           </Tabs>
           <Box padding="0 24px">
@@ -192,27 +265,27 @@ export default function Requests() {
                     Permit type:{' '}
                   </Text>
                   <Text as="span" textStyle="button-regular">
-                    {permitTypeFilter}
+                    {permitTypeFilter ? permitTypeString[permitTypeFilter] : 'All'}
                   </Text>
                 </MenuButton>
                 <MenuList>
                   <MenuItem
                     onClick={() => {
-                      setPermitTypeFilter('All');
+                      setPermitTypeFilter(undefined);
                     }}
                   >
                     All
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      setPermitTypeFilter('Permanent');
+                      setPermitTypeFilter(PermitType.Permanent);
                     }}
                   >
                     Permanent
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      setPermitTypeFilter('Temporary');
+                      setPermitTypeFilter(PermitType.Temporary);
                     }}
                   >
                     Temporary
@@ -234,13 +307,13 @@ export default function Requests() {
                     Request type:{' '}
                   </Text>
                   <Text as="span" textStyle="button-regular">
-                    {requestTypeFilter}
+                    {requestTypeFilter || 'All'}
                   </Text>
                 </MenuButton>
                 <MenuList>
                   <MenuItem
                     onClick={() => {
-                      setRequestTypeFilter('All');
+                      setRequestTypeFilter(undefined);
                     }}
                   >
                     All
@@ -266,17 +339,24 @@ export default function Requests() {
                   <InputLeftElement pointerEvents="none">
                     <SearchIcon color="text.filler" />
                   </InputLeftElement>
-                  <Input placeholder="Search by first name, last name or user ID" />
+                  <Input
+                    placeholder="Search by name or user ID"
+                    onChange={event => setSearchFilter(event.target.value)}
+                  />
                 </InputGroup>
               </Box>
             </Flex>
-            <Table columns={COLUMNS} data={DATA} />
+            <Table
+              columns={COLUMNS}
+              data={requestsData || []}
+              onChangeSortOrder={sortOrder => setSortOrder(sortOrder)}
+            />
             <Flex justifyContent="flex-end">
-              <Pagination /* eslint-disable @typescript-eslint/no-empty-function */
-                pageNumber={0}
-                onPageChange={() => {}}
-                pageSize={20}
-                totalCount={150}
+              <Pagination
+                pageNumber={pageNumber}
+                pageSize={PAGE_SIZE}
+                totalCount={recordsCount}
+                onPageChange={setPageNumber}
               />
             </Flex>
           </Box>
