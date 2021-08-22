@@ -121,7 +121,7 @@ type ApplicationData = {
   };
   dateReceived: Date;
   permitType: PermitType;
-  isRenewal: string;
+  isRenewal: boolean;
   status: ApplicationStatus | undefined;
 };
 
