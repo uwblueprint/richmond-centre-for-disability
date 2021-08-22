@@ -42,10 +42,6 @@ const permitTypeString: Record<PermitType, string> = {
   [PermitType.Temporary]: 'Temporary',
 };
 
-type PermitTypeProps = {
-  value: PermitType;
-};
-
 // Placeholder columns
 const COLUMNS: Column<any>[] = [
   {
@@ -82,7 +78,7 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
-    Cell: ({ value }: PermitTypeProps) => {
+    Cell: ({ value }: PermitType) => {
       return <Text>{permitTypeString[value]}</Text>;
     },
   },
@@ -117,12 +113,12 @@ type ApplicationData = {
   name: {
     firstName: string;
     lastName: string;
-    rcdUserId: number | undefined;
+    rcdUserId?: number;
   };
   dateReceived: Date;
   permitType: PermitType;
   isRenewal: boolean;
-  status: ApplicationStatus | undefined;
+  status?: ApplicationStatus;
 };
 
 // Max number of entries in a page
@@ -173,7 +169,7 @@ export default function Requests() {
           dateReceived: record.createdAt,
           permitType: record.permitType,
           isRenewal: record.isRenewal,
-          status: record.applicationProcessing?.status || undefined,
+          status: record.applicationProcessing?.status,
         }))
       );
       setRecordsCount(data.applications.totalCount);
