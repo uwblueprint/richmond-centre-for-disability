@@ -34,7 +34,6 @@ type RequestHeaderProps = {
  * @param onApprove Callback for handling application approval
  * @param onReject Callback for handling application rejection
  * @param onComplete Callback for handling application completion
- * @returns
  */
 export default function RequestHeader({
   applicationStatus,

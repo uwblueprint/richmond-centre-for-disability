@@ -1,5 +1,7 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Resolver } from '@lib/resolvers'; // Resolver type
+import { DBErrorCode } from '@lib/db/errors';
+import { ApplicationNotFoundError } from '@lib/application-processing/errors'; // Application processing errors
 
 /**
  * Updates the ApplicationProcessing object with the optional values provided
@@ -24,12 +26,14 @@ export const updateApplicationProcessing: Resolver = async (_, args, { prisma })
       },
     });
   } catch (err) {
-    throw 'Error updating application processing.';
+    if (err.code === DBErrorCode.RecordNotFound) {
+      throw new ApplicationNotFoundError(`Application with ID ${applicationId} not found`);
+    }
   }
 
   // Throw internal server error if application processing object was not updated
   if (!applicationProcessing) {
-    throw new ApolloError('Application Processing object was unable to be updated');
+    throw new ApolloError('Application processing record was unable to be updated');
   }
 
   return {
@@ -53,7 +57,7 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
     });
 
     if (!application) {
-      throw 'Application not found.';
+      throw new ApplicationNotFoundError(`Application with ID ${applicationId} not found`);
     }
 
     const {
@@ -227,7 +231,7 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
 
     await prisma.$transaction(operations);
   } catch (err) {
-    throw 'Error completing application: ' + err;
+    throw new ApolloError(`Error completing application`);
   }
 
   return {

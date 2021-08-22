@@ -4,6 +4,7 @@ import {
   ShopifyConfirmationNumberAlreadyExistsError,
   ApplicantIdDoesNotExistError,
   ApplicationFieldTooLongError,
+  ApplicationNotFoundError,
 } from '@lib/applications/errors'; // Application errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
@@ -184,7 +185,9 @@ export const updateApplication: Resolver = async (_, args, { prisma }) => {
       },
     });
   } catch (err) {
-    throw 'Error updating application: ' + err;
+    if (err.code === DBErrorCode.RecordNotFound) {
+      throw new ApplicationNotFoundError(`Application with ID ${id} not found`);
+    }
   }
 
   // Throw internal server error if application processing object was not updated

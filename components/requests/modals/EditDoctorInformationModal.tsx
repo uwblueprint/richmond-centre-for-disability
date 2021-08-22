@@ -95,7 +95,7 @@ export default function EditDoctorInformationModal({
               <Box paddingBottom="32px">
                 <Stack direction="row" spacing="20px" marginBottom="24px">
                   <FormControl isRequired>
-                    <FormLabel>{'First name'}</FormLabel>
+                    <FormLabel>{'Name'}</FormLabel>
                     <Input value={name} onChange={event => setName(event.target.value)} />
                   </FormControl>
                 </Stack>

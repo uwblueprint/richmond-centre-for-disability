@@ -199,7 +199,7 @@ export default function EditPaymentDetailsModal({
                         </InputLeftElement>
                         <Input
                           value={donationAmount}
-                          onChange={event => setDonationAmount(Number(event.target.value))}
+                          onChange={event => setDonationAmount(parseInt(event.target.value))}
                         />
                       </InputGroup>
                     </FormControl>

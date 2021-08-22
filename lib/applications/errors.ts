@@ -32,3 +32,14 @@ export class ApplicationFieldTooLongError extends ApolloError {
     Object.defineProperty(this, 'name', { value: 'ApplicationFieldTooLongError' });
   }
 }
+
+/**
+ * Application not found error
+ */
+export class ApplicationNotFoundError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'APPLICATION_NOT_FOUND');
+
+    Object.defineProperty(this, 'name', { value: 'ApplicationNotFoundError' });
+  }
+}

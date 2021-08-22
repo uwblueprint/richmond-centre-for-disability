@@ -8,7 +8,7 @@ import {
   MutationUpdateApplicationArgs,
   MutationUpdateApplicationProcessingArgs,
   ApplicationProcessing,
-} from '@lib/graphql/types';
+} from '@lib/graphql/types'; // GraphQL types
 
 // Get application request type
 export type GetApplicationRequest = QueryApplicationArgs;
