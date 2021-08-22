@@ -21,7 +21,6 @@ type Application {
   poaFormUrl: String
   applicantId: Int
   applicant: Applicant
-  applicationProcessing: ApplicationProcessing
 
   # Medical information
   disability: String!
@@ -160,21 +159,6 @@ input ApplicationsFilter {
   search: String
   limit: Int
   offset: Int
-}
-
-type ApplicationProcessing {
-  id: Int!
-  status: ApplicationStatus!
-  appNumber: Int
-  appHolepunched: Boolean!
-  walletCardCreated: Boolean!
-  invoiceNumber: Int
-  documentUrls: [String!]
-  appMailed: Boolean!
-  applicationId: Int!
-  createdAt: Date!
-  updatedAt: Date!
-  application: Application!
 }
 
 type QueryApplicationsResult {

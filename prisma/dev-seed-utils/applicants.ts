@@ -18,8 +18,6 @@ const applicants = [
     city: 'Richmond',
     addressLine1: '123 Richmond St.',
     postalCode: 'X0X0X0',
-    rcdUserId: 1,
-    status: ApplicantStatus.Active,
     guardianId: 1,
     medicalInformationId: 1,
     status: ApplicantStatus.Active,
@@ -36,8 +34,6 @@ const applicants = [
     city: 'Surrey',
     addressLine1: '321 Surrey St.',
     postalCode: 'A1B2C3',
-    rcdUserId: 2,
-    status: ApplicantStatus.Active,
     guardianId: 2,
     medicalInformationId: 2,
     status: ApplicantStatus.Active,
@@ -54,9 +50,9 @@ const applicants = [
     addressLine1: '456 BC Way',
     postalCode: 'B1C2D3',
     rcdUserId: 3,
-    status: ApplicantStatus.Inactive,
     guardianId: 3,
     medicalInformationId: 3,
+    status: ApplicantStatus.Inactive,
   },
 ];
 

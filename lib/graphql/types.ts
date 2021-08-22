@@ -49,14 +49,9 @@ export type Applicant = {
   guardian: Guardian;
   medicalInformationId: Scalars['Int'];
   medicalInformation: MedicalInformation;
-<<<<<<< HEAD
   permits: Array<Permit>;
-  medicalHistory?: Maybe<Array<MedicalHistory>>;
-  mostRecentPermit: Permit;
-=======
-  permits: Maybe<Array<Permit>>;
   medicalHistory: Maybe<Array<MedicalHistory>>;
->>>>>>> Fixed issues
+  mostRecentPermit: Permit;
 };
 
 export enum ApplicantStatus {
@@ -95,16 +90,10 @@ export type Application = {
   notes: Maybe<Scalars['String']>;
   rcdUserId: Maybe<Scalars['Int']>;
   isRenewal: Scalars['Boolean'];
-<<<<<<< HEAD
   permitType: PermitType;
-  poaFormUrl?: Maybe<Scalars['String']>;
-  applicantId?: Maybe<Scalars['Int']>;
-  applicant?: Maybe<Applicant>;
-=======
   poaFormUrl: Maybe<Scalars['String']>;
   applicantId: Maybe<Scalars['Int']>;
   applicant: Maybe<Applicant>;
->>>>>>> Fixed issues
   /** Medical information */
   disability: Scalars['String'];
   affectsMobility: Scalars['Boolean'];
@@ -165,6 +154,7 @@ export type Application = {
 
 export type ApplicationProcessing = {
   __typename?: 'ApplicationProcessing';
+  id: Scalars['ID'];
   applicationId: Scalars['ID'];
   status: ApplicationStatus;
   appNumber: Maybe<Scalars['Int']>;
@@ -173,7 +163,9 @@ export type ApplicationProcessing = {
   invoiceNumber: Maybe<Scalars['Int']>;
   documentUrls: Maybe<Array<Scalars['String']>>;
   appMailed: Scalars['Boolean'];
+  createdAt: Scalars['Date'];
   updatedAt: Scalars['Date'];
+  application: Application;
 };
 
 export enum ApplicationStatus {
@@ -562,28 +554,18 @@ export enum Province {
 export type Query = {
   __typename?: 'Query';
   meta: Meta;
-<<<<<<< HEAD
-  applicants?: Maybe<QueryApplicantsResult>;
-  applicant?: Maybe<Applicant>;
-  employees?: Maybe<Array<Employee>>;
-  physicians?: Maybe<Array<Physician>>;
-  applications?: Maybe<QueryApplicationsResult>;
-  application?: Maybe<Application>;
-  permits?: Maybe<Array<Permit>>;
-=======
-  applicants: Maybe<Array<Applicant>>;
+  applicants: Maybe<QueryApplicantsResult>;
   applicant: Maybe<Applicant>;
   employees: Maybe<Array<Employee>>;
   physicians: Maybe<Array<Physician>>;
-  applications: Maybe<Array<Application>>;
+  applications: Maybe<QueryApplicationsResult>;
   application: Maybe<Application>;
   permits: Maybe<Array<Permit>>;
->>>>>>> Fixed issues
 };
 
 
 export type QueryApplicantsArgs = {
-  filter?: Maybe<ApplicantsFilter>;
+  filter: Maybe<ApplicantsFilter>;
 };
 
 
@@ -593,7 +575,12 @@ export type QueryApplicantArgs = {
 
 
 export type QueryApplicationsArgs = {
-  filter?: Maybe<ApplicationsFilter>;
+  filter: Maybe<ApplicationsFilter>;
+};
+
+
+export type QueryApplicationArgs = {
+  id: Scalars['ID'];
 };
 
 export type QueryApplicantsResult = {
@@ -606,10 +593,6 @@ export type QueryApplicationsResult = {
   __typename?: 'QueryApplicationsResult';
   result: Array<Application>;
   totalCount: Scalars['Int'];
-};
-
-export type QueryApplicationArgs = {
-  id: Scalars['ID'];
 };
 
 export type QueryEmployeeInput = {

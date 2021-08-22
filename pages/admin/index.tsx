@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
+import { useRouter } from 'next/router'; // Next Router
 import {
   Box,
   Flex,
@@ -126,6 +127,9 @@ const PAGE_SIZE = 20;
 
 // Internal home page - view APP requests
 export default function Requests() {
+  // Router
+  const router = useRouter();
+
   //Filters
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus>();
   const [permitTypeFilter, setPermitTypeFilter] = useState<PermitType>();
@@ -161,6 +165,7 @@ export default function Requests() {
     onCompleted: data => {
       setRequestsData(
         data.applications.result.map(record => ({
+          id: record.id,
           name: {
             firstName: record.firstName,
             lastName: record.lastName,
@@ -350,6 +355,7 @@ export default function Requests() {
               columns={COLUMNS}
               data={requestsData || []}
               onChangeSortOrder={sortOrder => setSortOrder(sortOrder)}
+              onRowClick={({ id }) => router.push(`/admin/request/${id}`)}
             />
             <Flex justifyContent="flex-end">
               <Pagination
