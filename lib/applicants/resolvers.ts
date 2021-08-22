@@ -59,14 +59,32 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
       // Split search assign to first, middle or last name
       // If one doesn't exist assign to the previous input to allow for global search across names
       [firstSearch, middleSearch, lastSearch] = search?.split(' ');
-      middleSearch = middleSearch || firstSearch;
-      lastSearch = lastSearch || middleSearch;
 
-      nameFilters = [
-        { firstName: { contains: firstSearch, mode: 'insensitive' } },
-        { middleName: { contains: middleSearch, mode: 'insensitive' } },
-        { lastName: { contains: lastSearch, mode: 'insensitive' } },
-      ];
+      if (firstSearch & middleSearch & lastSearch) {
+        nameFilters = {
+          AND: [
+            { firstName: { equals: firstSearch, mode: 'insensitive' } },
+            { middleName: { equals: middleSearch, mode: 'insensitive' } },
+            { lastName: { equals: lastSearch, mode: 'insensitive' } },
+          ],
+        };
+      } else if (firstSearch & middleSearch) {
+        nameFilters = {
+          firstName: { equals: firstSearch, mode: 'insensitive' },
+          OR: [
+            { middleName: { equals: middleSearch, mode: 'insensitive' } },
+            { lastName: { equals: middleSearch, mode: 'insensitive' } },
+          ],
+        };
+      } else {
+        nameFilters = {
+          OR: [
+            { firstName: { equals: firstSearch, mode: 'insensitive' } },
+            { middleName: { equals: firstSearch, mode: 'insensitive' } },
+            { lastName: { equals: firstSearch, mode: 'insensitive' } },
+          ],
+        };
+      }
     }
 
     const TODAY = new Date();
@@ -110,8 +128,8 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
     where = {
       rcdUserId: userIDSearch,
       status: userStatus,
-      OR: nameFilters,
       permits: permitFilter,
+      ...nameFilters,
     };
   }
 
