@@ -141,18 +141,18 @@ input ApplicationsFilter {
 }
 
 type ApplicationProcessing {
-  id: Int
-  status: ApplicationStatus
+  id: Int!
+  status: ApplicationStatus!
   appNumber: Int
-  appHolepunched: Boolean
-  walletCardCreated: Boolean
+  appHolepunched: Boolean!
+  walletCardCreated: Boolean!
   invoiceNumber: Int
-  documentUrls: [String]
-  appMailed: Boolean
-  applicationId: Int
-  createdAt: Date
-  updatedAt: Date
-  application: Application
+  documentUrls: [String!]
+  appMailed: Boolean!
+  applicationId: Int!
+  createdAt: Date!
+  updatedAt: Date!
+  application: Application!
 }
 
 type QueryApplicationsResult {

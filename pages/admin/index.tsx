@@ -56,7 +56,8 @@ function renderStatusBadge({ value }: StatusProps) {
 
 type NameProps = {
   readonly value: {
-    name: string;
+    firstName: string;
+    lastName: string;
     rcdUserId: string;
   };
 };
@@ -64,7 +65,7 @@ type NameProps = {
 function renderName({ value }: NameProps) {
   return (
     <div>
-      <Text>{value.name}</Text>
+      <Text>{value.firstName + ' ' + value.lastName}</Text>
       {value.rcdUserId && (
         <Text textStyle="caption" textColor="secondary">
           ID: {value.rcdUserId}
@@ -73,6 +74,16 @@ function renderName({ value }: NameProps) {
     </div>
   );
 }
+
+type PermitTypeProps = {
+  readonly value: PermitType;
+};
+
+// Map uppercase enum strings to lowercase
+const permitTypeString: Record<PermitType, string> = {
+  [PermitType.Permanent]: 'Permanent',
+  [PermitType.Temporary]: 'Temporary',
+};
 
 // Placeholder columns
 const COLUMNS = [
@@ -99,13 +110,19 @@ const COLUMNS = [
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
+    Cell: ({ value }: PermitTypeProps) => {
+      return <Text>{permitTypeString[value]}</Text>;
+    },
   },
   {
     Header: 'Request Type',
-    accessor: 'requestType',
+    accessor: 'isRenewal',
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
+    Cell: (isRenewal: boolean) => {
+      return <Text>{isRenewal ? 'Renewal' : 'Replacement'}</Text>;
+    },
   },
   {
     Header: 'Status',
@@ -120,12 +137,13 @@ const COLUMNS = [
 // Application data for table
 type ApplicationData = {
   name: {
-    name: string;
+    firstName: string;
+    lastName: string;
     rcdUserId: number | undefined;
   };
   dateReceived: Date;
-  permitType: string;
-  requestType: string;
+  permitType: PermitType;
+  isRenewal: string;
   status: ApplicationStatus | undefined;
 };
 
@@ -170,24 +188,19 @@ export default function Requests() {
       setRequestsData(
         data.applications.result.map(record => ({
           name: {
-            name: record.firstName + ' ' + record.lastName,
+            firstName: record.firstName,
+            lastName: record.lastName,
             rcdUserId: record.applicantId || undefined,
           },
           dateReceived: record.createdAt,
-          permitType: permitTypeString[record.permitType],
-          requestType: record.isRenewal ? 'Renewal' : 'Replacement',
+          permitType: record.permitType,
+          isRenewal: record.isRenewal,
           status: record.applicationProcessing?.status || undefined,
         }))
       );
       setRecordsCount(data.applications.totalCount);
     },
   });
-
-  // Map uppercase enum strings to lowercase
-  const permitTypeString: Record<PermitType, string> = {
-    [PermitType.Permanent]: 'Permanent',
-    [PermitType.Temporary]: 'Temporary',
-  };
 
   // Set page number to 0 after every filter or sort change
   useEffect(() => {
@@ -238,7 +251,7 @@ export default function Requests() {
               <Tab
                 height="64px"
                 onClick={() => {
-                  setStatusFilter(ApplicationStatus.Inprogress);
+                  setStatusFilter(ApplicationStatus.Approved);
                 }}
               >
                 In Progress

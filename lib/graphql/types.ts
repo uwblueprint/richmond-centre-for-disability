@@ -130,34 +130,30 @@ export type Application = {
   guardianNotes?: Maybe<Scalars['String']>;
   /** Permit */
   permit?: Maybe<Permit>;
-  createdAt?: Maybe<Scalars['Date']>;
+  createdAt: Scalars['Date'];
 };
 
 export type ApplicationProcessing = {
   __typename?: 'ApplicationProcessing';
-  id?: Maybe<Scalars['Int']>;
-  status?: Maybe<ApplicationStatus>;
+  id: Scalars['Int'];
+  status: ApplicationStatus;
   appNumber?: Maybe<Scalars['Int']>;
-  appHolepunched?: Maybe<Scalars['Boolean']>;
-  walletCardCreated?: Maybe<Scalars['Boolean']>;
+  appHolepunched: Scalars['Boolean'];
+  walletCardCreated: Scalars['Boolean'];
   invoiceNumber?: Maybe<Scalars['Int']>;
-  documentUrls?: Maybe<Array<Maybe<Scalars['String']>>>;
-  appMailed?: Maybe<Scalars['Boolean']>;
-  applicationId?: Maybe<Scalars['Int']>;
-  createdAt?: Maybe<Scalars['Date']>;
-  updatedAt?: Maybe<Scalars['Date']>;
-  application?: Maybe<Application>;
+  documentUrls?: Maybe<Array<Scalars['String']>>;
+  appMailed: Scalars['Boolean'];
+  applicationId: Scalars['Int'];
+  createdAt: Scalars['Date'];
+  updatedAt: Scalars['Date'];
+  application: Application;
 };
 
 export enum ApplicationStatus {
   Pending = 'PENDING',
-  Inprogress = 'INPROGRESS',
   Approved = 'APPROVED',
   Rejected = 'REJECTED',
-  Completed = 'COMPLETED',
-  Expiring = 'EXPIRING',
-  Expired = 'EXPIRED',
-  Active = 'ACTIVE'
+  Completed = 'COMPLETED'
 }
 
 export type ApplicationsFilter = {

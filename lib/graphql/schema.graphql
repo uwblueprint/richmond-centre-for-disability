@@ -80,13 +80,9 @@ enum Gender {
 
 enum ApplicationStatus {
   PENDING
-  INPROGRESS
   APPROVED
   REJECTED
   COMPLETED
-  EXPIRING
-  EXPIRED
-  ACTIVE
 }
 
 enum ReasonForReplacement {
@@ -106,7 +102,7 @@ enum UserStatus {
   INACTIVE
 }
 
-enum  PermitType {
+enum PermitType {
   PERMANENT
   TEMPORARY
 }
