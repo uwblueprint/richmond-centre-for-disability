@@ -54,7 +54,7 @@ const COLUMNS: Column<any>[] = [
     Cell: ({ value }) => {
       return (
         <div>
-          <Text>{value.firstName + ' ' + value.lastName}</Text>
+          <Text>{`${value.firstName} ${value.lastName}`}</Text>
           {value.rcdUserId && (
             <Text textStyle="caption" textColor="secondary">
               ID: {value.rcdUserId}
