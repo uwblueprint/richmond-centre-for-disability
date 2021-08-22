@@ -37,8 +37,9 @@ export type GetApplicationsResponse = {
         | 'permitType'
         | 'isRenewal'
         | 'applicantId'
-        | 'applicationProcessing'
-      >
+      > & {
+        applicationProcessing: Pick<ApplicationProcessing, 'status'>
+      }
     >;
     totalCount: number;
   };
