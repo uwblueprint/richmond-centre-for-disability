@@ -34,50 +34,7 @@ import {
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
 import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //GraphQL types
 import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
-
-type StatusProps = {
-  readonly value:
-    | 'COMPLETED'
-    | 'INPROGRESS'
-    | 'PENDING'
-    | 'REJECTED'
-    | 'EXPIRING'
-    | 'EXPIRED'
-    | 'ACTIVE';
-};
-
-function renderStatusBadge({ value }: StatusProps) {
-  return (
-    <Wrap>
-      <RequestStatusBadge variant={value}></RequestStatusBadge>
-    </Wrap>
-  );
-}
-
-type NameProps = {
-  readonly value: {
-    firstName: string;
-    lastName: string;
-    rcdUserId: string;
-  };
-};
-
-function renderName({ value }: NameProps) {
-  return (
-    <div>
-      <Text>{value.firstName + ' ' + value.lastName}</Text>
-      {value.rcdUserId && (
-        <Text textStyle="caption" textColor="secondary">
-          ID: {value.rcdUserId}
-        </Text>
-      )}
-    </div>
-  );
-}
-
-type PermitTypeProps = {
-  readonly value: PermitType;
-};
+import { Column } from 'react-table';
 
 // Map uppercase enum strings to lowercase
 const permitTypeString: Record<PermitType, string> = {
@@ -86,11 +43,22 @@ const permitTypeString: Record<PermitType, string> = {
 };
 
 // Placeholder columns
-const COLUMNS = [
+const COLUMNS: Column<any>[] = [
   {
     Header: 'Name',
     accessor: 'name',
-    Cell: renderName,
+    Cell: ({ value }) => {
+      return (
+        <div>
+          <Text>{value.firstName + ' ' + value.lastName}</Text>
+          {value.rcdUserId && (
+            <Text textStyle="caption" textColor="secondary">
+              ID: {value.rcdUserId}
+            </Text>
+          )}
+        </div>
+      );
+    },
     minWidth: 240,
     width: 280,
   },
@@ -100,7 +68,7 @@ const COLUMNS = [
     maxWidth: 240,
     width: 240,
     sortDescFirst: true,
-    Cell: ({ value }: any) => {
+    Cell: ({ value }) => {
       return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
     },
   },
@@ -110,7 +78,7 @@ const COLUMNS = [
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
-    Cell: ({ value }: PermitTypeProps) => {
+    Cell: ({ value }) => {
       return <Text>{permitTypeString[value]}</Text>;
     },
   },
@@ -120,15 +88,21 @@ const COLUMNS = [
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
-    Cell: (isRenewal: boolean) => {
-      return <Text>{isRenewal ? 'Renewal' : 'Replacement'}</Text>;
+    Cell: ({ value }) => {
+      return <Text>{value ? 'Renewal' : 'Replacement'}</Text>;
     },
   },
   {
     Header: 'Status',
     accessor: 'status',
     disableSortBy: true,
-    Cell: renderStatusBadge,
+    Cell: ({ value }) => {
+      return (
+        <Wrap>
+          <RequestStatusBadge variant={value}></RequestStatusBadge>
+        </Wrap>
+      );
+    },
     maxWidth: 180,
     width: 100,
   },
