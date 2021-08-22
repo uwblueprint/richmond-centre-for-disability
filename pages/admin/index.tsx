@@ -37,7 +37,7 @@ import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 
 // Map uppercase enum strings to lowercase
-const permitTypeString: Record<PermitType, string> = {
+const permitTypeString: Record<string, string> = {
   [PermitType.Permanent]: 'Permanent',
   [PermitType.Temporary]: 'Temporary',
 };
@@ -78,8 +78,8 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
-    Cell: (value: PermitType) => {
-      return <Text>{permitTypeString[value.value]}</Text>;
+    Cell: ({ value }) => {
+      return <Text>{permitTypeString[value]}</Text>;
     },
   },
   {
