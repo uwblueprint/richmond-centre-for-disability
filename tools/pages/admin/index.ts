@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client'; // gql tag
-import { Application, ApplicationsFilter } from '@lib/graphql/types'; //GraphQL types
+import { Application, ApplicationsFilter, ApplicationProcessing } from '@lib/graphql/types'; //GraphQL types
 
 export const GET_APPLICATIONS_QUERY = gql`
   query GetApplicationsQuery($filter: ApplicationsFilter) {
@@ -30,15 +30,9 @@ export type GetApplicationsResponse = {
     result: ReadonlyArray<
       Pick<
         Application,
-        | 'firstName'
-        | 'lastName'
-        | 'id'
-        | 'createdAt'
-        | 'permitType'
-        | 'isRenewal'
-        | 'applicantId'
+        'firstName' | 'lastName' | 'id' | 'createdAt' | 'permitType' | 'isRenewal' | 'applicantId'
       > & {
-        applicationProcessing: Pick<ApplicationProcessing, 'status'>
+        applicationProcessing: Pick<ApplicationProcessing, 'status'>;
       }
     >;
     totalCount: number;
