@@ -78,8 +78,8 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
-    Cell: ({ value }: PermitType) => {
-      return <Text>{permitTypeString[value]}</Text>;
+    Cell: (value: PermitType) => {
+      return <Text>{permitTypeString[value.value]}</Text>;
     },
   },
   {
