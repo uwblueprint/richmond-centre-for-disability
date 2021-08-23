@@ -14,7 +14,7 @@ type Applicant {
   addressLine2: String
   postalCode: String!
   rcdUserId: Int
-  acceptedTOS: Date
+  acceptedTos: Date
   status: ApplicantStatus
   activePermit: Permit
   applications: [Application!]
@@ -42,7 +42,7 @@ input CreateApplicantInput {
   addressLine2: String
   postalCode: String!
   rcdUserId: Int
-  acceptedTOS: Date
+  acceptedTos: Date
   medicalInformation: CreateMedicalInformationInput!
   guardian: CreateGuardianInput!
 }

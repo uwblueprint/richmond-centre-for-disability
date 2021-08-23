@@ -58,8 +58,7 @@ export default function Renew() {
   const [contactEmailAddress, setContactEmailAddress] = useState('');
 
   // Doctor information state
-  const [doctorFirstName, setDoctorFirstName] = useState('');
-  const [doctorLastName, setDoctorLastName] = useState('');
+  const [doctorName, setDoctorName] = useState('');
   const [doctorMspNumber, setDoctorMspNumber] = useState('');
   const [doctorAddressLine1, setDoctorAddressLine1] = useState('');
   const [doctorAddressLine2, setDoctorAddressLine2] = useState('');
@@ -79,8 +78,7 @@ export default function Renew() {
   const invalidContact = updatedContactInfo && !contactPhoneNumber && !contactEmailAddress;
   const invalidDoctor =
     updatedDoctor &&
-    (!doctorFirstName ||
-      !doctorLastName ||
+    (!doctorName ||
       !doctorMspNumber ||
       !doctorAddressLine1 ||
       !doctorCity ||
@@ -155,8 +153,7 @@ export default function Renew() {
             email: contactEmailAddress,
           }),
           ...(updatedDoctor && {
-            physicianFirstName: doctorFirstName,
-            physicianLastName: doctorLastName,
+            physicianName: doctorName,
             physicianMspNumber: parseInt(doctorMspNumber),
             physicianAddressLine1: doctorAddressLine1,
             physicianAddressLine2: doctorAddressLine2,
@@ -349,18 +346,11 @@ export default function Renew() {
                     marginBottom="24px"
                   >{`Please fill out your doctor's information:`}</Text>
                   <Flex marginBottom="24px">
-                    <FormControl isRequired marginRight="48px">
-                      <FormLabel>{`First Name`}</FormLabel>
-                      <Input
-                        value={doctorFirstName}
-                        onChange={event => setDoctorFirstName(event.target.value)}
-                      />
-                    </FormControl>
                     <FormControl isRequired>
-                      <FormLabel>{`Last Name`}</FormLabel>
+                      <FormLabel>{`Name`}</FormLabel>
                       <Input
-                        value={doctorLastName}
-                        onChange={event => setDoctorLastName(event.target.value)}
+                        value={doctorName}
+                        onChange={event => setDoctorName(event.target.value)}
                       />
                     </FormControl>
                   </Flex>
@@ -487,8 +477,7 @@ export default function Renew() {
               </Flex>
               {updatedDoctor ? (
                 <>
-                  <ReviewRequestField name={`First Name`} value={doctorFirstName} />
-                  <ReviewRequestField name={`Last Name`} value={doctorLastName} />
+                  <ReviewRequestField name={`Name`} value={doctorName} />
                   <ReviewRequestField name={`MSP Number`} value={doctorMspNumber} />
                   <ReviewRequestField
                     name={`Address`}

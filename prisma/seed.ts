@@ -49,14 +49,14 @@ const devSeed = async () => {
   // Upsert applicants
   await devApplicantUpsert();
 
+  // Upsert application processings
+  await devApplicationProcessingUpsert();
+
   // Upsert applications
   await devApplicationUpsert();
 
   // Upsert replacements
   await devReplacementUpsert();
-
-  // Upsert application processings
-  await devApplicationProcessingUpsert();
 
   // Upsert permits
   await devPermitUpsert();

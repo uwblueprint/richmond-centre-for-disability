@@ -265,8 +265,7 @@ input CreateRenewalApplicationInput {
   email: String
 
   # Doctor info (must be provided if updatedDoctor === true)
-  physicianFirstName: String
-  physicianLastName: String
+  physicianName: String
   physicianMspNumber: Int
   physicianAddressLine1: String
   physicianAddressLine2: String

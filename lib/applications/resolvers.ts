@@ -10,7 +10,7 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { Province, PaymentType } from '@lib/graphql/types'; // GraphQL types
+import { PaymentType } from '@lib/graphql/types'; // GraphQL types
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 
 /**
@@ -222,8 +222,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
       phone,
       email,
       updatedPhysician,
-      physicianFirstName,
-      physicianLastName,
+      physicianName,
       physicianMspNumber,
       physicianAddressLine1,
       physicianAddressLine2,
@@ -247,8 +246,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
   // Validate updated doctor info fields
   if (
     updatedPhysician &&
-    (!physicianFirstName ||
-      !physicianLastName ||
+    (!physicianName ||
       !physicianMspNumber ||
       !physicianAddressLine1 ||
       !physicianCity ||
@@ -268,7 +266,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
     throw new ApplicantNotFoundError(`No applicant with ID ${applicantId} was found`);
   }
 
-  const physician = applicant.medicalInformation?.physician;
+  const physician = applicant.medicalInformation.physician;
 
   // Temporary Shopify confirmation number placeholder
   // TODO: Integrate with Shopify payments
@@ -299,37 +297,22 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         paymentMethod: PaymentType.Cash,
         // TODO: Modify logic when DB schema gets changed (medicalInfo is not undefined)
         disability: applicant.medicalInformation?.disability || 'Placeholder disability',
-        physicianFirstName:
-          updatedPhysician && physicianFirstName
-            ? physicianFirstName
-            : physician?.firstName || 'Placeholder physician first name',
-        physicianLastName:
-          updatedPhysician && physicianLastName
-            ? physicianLastName
-            : physician?.lastName || 'Placeholder physician last name',
-        physicianMspNumber:
-          updatedPhysician && physicianMspNumber
-            ? physicianMspNumber
-            : physician?.mspNumber || 12345,
-        physicianAddressLine1:
-          updatedPhysician && physicianAddressLine1
-            ? physicianAddressLine1
-            : physician?.addressLine1 || 'Placeholder physician address line 1',
-        physicianAddressLine2:
-          updatedPhysician && physicianAddressLine2
-            ? physicianAddressLine2
-            : physician?.addressLine2 || 'Placeholder physician address line 2',
-        physicianCity:
-          updatedPhysician && physicianCity
-            ? physicianCity
-            : physician?.city || 'Placeholder physician city',
-        physicianPostalCode:
-          updatedPhysician && physicianPostalCode
-            ? physicianPostalCode
-            : physician?.postalCode || 'X0X0X0',
-        physicianPhone:
-          updatedPhysician && physicianPhone ? physicianPhone : physician?.phone || '1234567890',
-        physicianProvince: physician?.province || Province.Bc,
+        physicianName: updatedPhysician ? physicianName : physician.name,
+        physicianMspNumber: updatedPhysician ? physicianMspNumber : physician.mspNumber,
+        physicianAddressLine1: updatedPhysician ? physicianAddressLine1 : physician.addressLine1,
+        physicianAddressLine2: updatedPhysician ? physicianAddressLine2 : physician.addressLine2,
+        physicianCity: updatedPhysician ? physicianCity : physician.city,
+        physicianPostalCode: updatedPhysician ? physicianPostalCode : physician.postalCode,
+        physicianPhone: updatedPhysician ? physicianPhone : physician.phone,
+        physicianProvince: physician.province,
+        applicant: {
+          connect: {
+            id: applicantId,
+          },
+        },
+        applicationProcessing: {
+          create: {},
+        },
       },
     });
   } catch (err) {

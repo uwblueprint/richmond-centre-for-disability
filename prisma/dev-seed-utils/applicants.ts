@@ -62,11 +62,11 @@ const applicants = [
 export default async function applicantUpsert(): Promise<void> {
   const applicantUpserts = [];
   for (const applicant of applicants) {
-    const { email, ...rest } = applicant;
+    const { id, ...rest } = applicant;
     const applicantUpsert = await prisma.applicant.upsert({
-      where: { email },
-      update: { ...rest },
-      create: { email, dateOfBirth: new Date().toISOString(), ...rest },
+      where: { id },
+      update: rest,
+      create: { dateOfBirth: new Date().toISOString(), ...rest },
     });
     applicantUpserts.push(applicantUpsert);
     console.log({ applicantUpsert });
