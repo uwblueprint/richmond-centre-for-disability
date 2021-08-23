@@ -8,6 +8,7 @@ import {
   MutationUpdateApplicationArgs,
   MutationUpdateApplicationProcessingArgs,
   ApplicationProcessing,
+  Permit,
 } from '@lib/graphql/types'; // GraphQL types
 
 // Get application request type
@@ -25,7 +26,6 @@ export type GetApplicationResponse = {
     | 'lastName'
     | 'gender'
     | 'customGender'
-    | 'dateOfBirth'
     | 'email'
     | 'phone'
     | 'province'
@@ -77,6 +77,9 @@ export type GetApplicationResponse = {
       | 'documentUrls'
       | 'appMailed'
     > | null;
+    readonly applicant: {
+      readonly mostRecentPermit: Pick<Permit, 'rcdPermitId' | 'expiryDate'>;
+    };
   };
 };
 

@@ -1,9 +1,11 @@
 import Link from 'next/link'; // Next Link
-import { Box, HStack, VStack, Text, Divider, Badge, Button } from '@chakra-ui/react'; // Chakra UI
+import { Box, HStack, VStack, Text, Divider, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
 import EditPermitHolderInformationModal from '@components/internal/modals/EditPermitHolderInformationModal'; // Edit modal
+import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge
 import { UpdateApplicationInput } from '@lib/graphql/types'; // GraphQL Types
 import { PersonalInformationCardApplicant } from '@tools/components/internal/requests/personal-information-card'; // Applicant type
+import { getPermitExpiryStatus } from '@tools/components/internal/request-status-badge'; // Get variant of RequestStatusBadge
 
 type Props = {
   readonly applicant?: PersonalInformationCardApplicant;
@@ -66,7 +68,9 @@ export default function PersonalInformationCard(props: Props) {
             <Text as="p" textStyle="body-regular" marginRight={2}>
               Most recent APP: #{applicant.mostRecentAppNumber}
             </Text>
-            <Badge variant="ACTIVE">Active</Badge>
+            <RequestStatusBadge
+              variant={getPermitExpiryStatus(applicant.mostRecentAppExpiryDate)}
+            />
           </HStack>
           <Text as="p" textStyle="xsmall" color="secondary">
             Expiring {applicant.mostRecentAppExpiryDate.toDateString()}

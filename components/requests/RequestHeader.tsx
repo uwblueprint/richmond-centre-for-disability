@@ -123,7 +123,7 @@ export default function RequestHeader({
         <Box>
           <Flex alignItems="center">
             <Text textStyle="display-large" as="h1" marginRight={3}>
-              Replacement Request
+              Renewal Request
             </Text>
             {applicationStatus && <RequestStatusBadge variant={applicationStatus} />}
           </Flex>
