@@ -4,6 +4,7 @@ import { ApolloClient, InMemoryCache } from '@apollo/client'; // Apollo client
 import { ApolloProvider } from '@apollo/client/react'; // Apollo provider
 import { appWithTranslation } from 'next-i18next'; // HOC for adding translation to _app
 import { Provider } from 'next-auth/client'; // Next Auth provider
+import Request from '@containers/Request'; // Request state
 
 import theme from '@tools/theme'; // Design system theme config
 import '@fontsource/noto-sans/400.css'; // Noto sans normal
@@ -17,11 +18,13 @@ const apolloClient = new ApolloClient({
 function App({ Component, pageProps }: AppProps) {
   return (
     <Provider session={pageProps.session}>
-      <ChakraProvider theme={theme}>
-        <ApolloProvider client={apolloClient}>
-          <Component {...pageProps} />
-        </ApolloProvider>
-      </ChakraProvider>
+      <Request.Provider>
+        <ChakraProvider theme={theme}>
+          <ApolloProvider client={apolloClient}>
+            <Component {...pageProps} />
+          </ApolloProvider>
+        </ChakraProvider>
+      </Request.Provider>
     </Provider>
   );
 }

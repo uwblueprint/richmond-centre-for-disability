@@ -1,6 +1,8 @@
 import { Resolver } from '@lib/resolvers'; // Resolver type
 import { Applicant } from '@lib/types'; // Applicant type
 import { SortOrder } from '@tools/types';
+import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
+import { ApolloError } from 'apollo-server-micro'; // Apollo errors
 
 /**
  * Field resolver to fetch all applications belonging to an applicant
@@ -106,4 +108,16 @@ export const applicantMostRecentPermitResolver: Resolver<Applicant> = async (
     });
 
   return permit[0];
+};
+
+/**
+ * Field resolver to fetch the active permit object associated with an applicant
+ * @returns Permit object if active permit exists, `null` otherwise
+ */
+export const applicantActivePermitResolver: Resolver<Applicant> = async parent => {
+  try {
+    return await getActivePermit(parent.id);
+  } catch (err) {
+    throw new ApolloError(err.message);
+  }
 };

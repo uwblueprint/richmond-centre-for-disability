@@ -11,7 +11,6 @@ export const GET_APPLICATION_QUERY = gql`
       lastName
       gender
       customGender
-      dateOfBirth
       email
       phone
       province
@@ -65,6 +64,13 @@ export const GET_APPLICATION_QUERY = gql`
         invoiceNumber
         documentUrls
         appMailed
+      }
+
+      applicant {
+        mostRecentPermit {
+          rcdPermitId
+          expiryDate
+        }
       }
     }
   }

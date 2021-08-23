@@ -1,6 +1,5 @@
 type ApplicationProcessing {
   id: ID!
-  applicationId: ID!
   status: ApplicationStatus!
   appNumber: Int
   appHolepunched: Boolean!

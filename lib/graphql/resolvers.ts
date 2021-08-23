@@ -1,12 +1,19 @@
 import { meta } from '@lib/meta/resolvers'; // Metadata resolvers
 import { employees, createEmployee } from '@lib/employees/resolvers'; // Employee resolvers
-import { applicant, applicants, createApplicant, updateApplicant } from '@lib/applicants/resolvers'; // Applicant resolvers
+import {
+  applicant,
+  applicants,
+  createApplicant,
+  updateApplicant,
+  verifyIdentity,
+} from '@lib/applicants/resolvers'; // Applicant resolvers
 import { physicians, createPhysician, upsertPhysician } from '@lib/physicians/resolvers'; // Physician resolvers
 import {
   application,
   applications,
   createApplication,
   updateApplication,
+  createRenewalApplication,
 } from '@lib/applications/resolvers'; // Application resolvers
 import { permits, createPermit } from '@lib/permits/resolvers'; // Permit resolvers
 import {
@@ -25,6 +32,7 @@ import {
   applicantMedicalInformationResolver,
   applicantMedicalHistoryResolver,
   applicantMostRecentPermitResolver,
+  applicantActivePermitResolver,
 } from '@lib/applicants/field-resolvers'; // Applicant field resolvers
 import {
   applicationApplicantResolver,
@@ -32,8 +40,8 @@ import {
   applicationApplicationProcessingResolver,
 } from '@lib/applications/field-resolvers'; // Application field resolvers
 import { permitApplicantResolver, permitApplicationResolver } from '@lib/permits/field-resolvers'; // Permit field resolvers
-import { updateMedicalInformation } from '@lib/medicalInformation/resolvers'; // Medical information resolvers
-import { medicalInformationPhysicianResolver } from '@lib/medicalInformation/field-resolvers'; // Medical information field resolvers
+import { updateMedicalInformation } from '@lib/medical-information/resolvers'; // Medical information resolvers
+import { medicalInformationPhysicianResolver } from '@lib/medical-information/field-resolvers'; // Medical information field resolvers
 import { updateGuardian } from '@lib/guardian/resolvers'; // Guardian resolvers
 import { applicationReplacementResolver } from '@lib/applications/field-resolvers'; // Application replacement resolver
 
@@ -59,12 +67,14 @@ const resolvers = {
     createPhysician: authorize(createPhysician, [Role.Secretary]),
     upsertPhysician: authorize(upsertPhysician, [Role.Secretary]),
     createApplication: authorize(createApplication, [Role.Secretary]),
+    createRenewalApplication,
     updateApplication: authorize(updateApplication, [Role.Secretary]),
     createPermit: authorize(createPermit, [Role.Secretary]),
     updateMedicalInformation: authorize(updateMedicalInformation, [Role.Secretary]),
     updateGuardian: authorize(updateGuardian, [Role.Secretary]),
     updateApplicationProcessing: authorize(updateApplicationProcessing, [Role.Secretary]),
     completeApplication: authorize(completeApplication, [Role.Secretary]),
+    verifyIdentity,
   },
   Date: dateScalar,
   Applicant: {
@@ -74,6 +84,7 @@ const resolvers = {
     medicalInformation: applicantMedicalInformationResolver,
     medicalHistory: applicantMedicalHistoryResolver,
     mostRecentPermit: applicantMostRecentPermitResolver,
+    activePermit: applicantActivePermitResolver,
   },
   Application: {
     applicant: applicationApplicantResolver,

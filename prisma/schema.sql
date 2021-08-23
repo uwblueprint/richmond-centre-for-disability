@@ -135,7 +135,7 @@ CREATE TABLE applicants (
   postal_code               CHAR(6) NOT NULL,
   rcd_user_id               INTEGER UNIQUE,
   status                    ApplicantStatus,
-  accepted_TOC              TIMESTAMPTZ,
+  accepted_tos              TIMESTAMPTZ,
   guardian_id               INTEGER UNIQUE NOT NULL,
   medical_information_id    INTEGER UNIQUE NOT NULL,
   created_at                TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -143,6 +143,20 @@ CREATE TABLE applicants (
 
   FOREIGN KEY(guardian_id) REFERENCES guardians(id),
   FOREIGN KEY(medical_information_id) REFERENCES medical_information(id)
+);
+
+-- Create application processing table
+CREATE TABLE application_processing (
+  id                  SERIAL PRIMARY KEY NOT NULL,
+  status              ApplicationStatus NOT NULL DEFAULT 'PENDING',
+  app_number          INTEGER UNIQUE,
+  app_holepunched     BOOLEAN NOT NULL DEFAULT false,
+  wallet_card_created BOOLEAN NOT NULL DEFAULT false,
+  invoice_number      INTEGER UNIQUE,
+  document_urls       VARCHAR(255) ARRAY,
+  app_mailed          BOOLEAN NOT NULL DEFAULT false,
+  created_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create applications table
@@ -216,10 +230,14 @@ CREATE TABLE applications (
   billing_city                             VARCHAR(255),
   billing_province                         Province,
   billing_postal_code                      CHAR(6),
+  -- Application processing information
+  application_processing_id INTEGER UNIQUE NOT NULL,
+
   created_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  FOREIGN KEY(applicant_id) REFERENCES applicants(id)
+  FOREIGN KEY(applicant_id) REFERENCES applicants(id),
+  FOREIGN KEY(application_processing_id) REFERENCES application_processing(id)
 );
 
 -- Create permits table
@@ -251,23 +269,6 @@ CREATE TABLE replacements (
   application_id             INTEGER UNIQUE NOT NULL,
   created_at                 TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at                 TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-  FOREIGN KEY(application_id) REFERENCES applications(id)
-);
-
--- Create application processing table
-CREATE TABLE application_processing (
-  id                  SERIAL PRIMARY KEY NOT NULL,
-  status              ApplicationStatus NOT NULL DEFAULT 'PENDING',
-  app_number          INTEGER UNIQUE,
-  app_holepunched     BOOLEAN NOT NULL DEFAULT false,
-  wallet_card_created BOOLEAN NOT NULL DEFAULT false,
-  invoice_number      INTEGER UNIQUE,
-  document_urls       VARCHAR(255) ARRAY,
-  app_mailed          BOOLEAN NOT NULL DEFAULT false,
-  application_id      INTEGER UNIQUE NOT NULL,
-  created_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   FOREIGN KEY(application_id) REFERENCES applications(id)
 );

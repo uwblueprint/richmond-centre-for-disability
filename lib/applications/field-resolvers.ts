@@ -10,7 +10,11 @@ export const applicationApplicantResolver: Resolver<Application> = async (
   _args,
   { prisma }
 ) => {
-  return await prisma.applicant.findUnique({ where: { id: parent?.applicantId || undefined } });
+  if (!parent.applicantId) {
+    return null;
+  }
+
+  return await prisma.applicant.findUnique({ where: { id: parent.applicantId } });
 };
 
 /**
@@ -35,7 +39,12 @@ export const applicationApplicationProcessingResolver: Resolver<Application> = a
   _args,
   { prisma }
 ) => {
-  return await prisma.applicationProcessing.findUnique({ where: { applicationId: parent?.id } });
+  return await prisma.application
+    .findUnique({
+      where: { id: parent.id },
+      select: { applicationProcessing: true },
+    })
+    .applicationProcessing();
 };
 
 /**

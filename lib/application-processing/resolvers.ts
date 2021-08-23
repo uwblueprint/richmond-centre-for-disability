@@ -11,18 +11,22 @@ export const updateApplicationProcessing: Resolver = async (_, args, { prisma })
   const { input } = args;
   const { applicationId, documentUrl, ...rest } = input;
 
-  let applicationProcessing;
+  let updatedApplication;
   try {
-    applicationProcessing = await prisma.applicationProcessing.update({
-      where: { applicationId: parseInt(applicationId) },
+    updatedApplication = await prisma.application.update({
+      where: { id: parseInt(applicationId) },
       data: {
-        ...rest,
-        ...(documentUrl && {
-          // TODO: Figure out way to make this work when deleting files post-MVP
-          documentUrls: {
-            push: documentUrl,
+        applicationProcessing: {
+          update: {
+            ...rest,
+            ...(documentUrl && {
+              // TODO: Figure out way to make this work when deleting files post-MVP
+              documentUrls: {
+                push: documentUrl,
+              },
+            }),
           },
-        }),
+        },
       },
     });
   } catch (err) {
@@ -32,7 +36,7 @@ export const updateApplicationProcessing: Resolver = async (_, args, { prisma })
   }
 
   // Throw internal server error if application processing object was not updated
-  if (!applicationProcessing) {
+  if (!updatedApplication) {
     throw new ApolloError('Application processing record was unable to be updated');
   }
 

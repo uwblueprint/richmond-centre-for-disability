@@ -14,8 +14,9 @@ type Applicant {
   addressLine2: String
   postalCode: String!
   rcdUserId: Int
-  acceptedTOC: Date
+  acceptedTos: Date
   status: ApplicantStatus
+  activePermit: Permit
   applications: [Application!]
   guardianId: Int!
   guardian: Guardian!
@@ -41,7 +42,7 @@ input CreateApplicantInput {
   addressLine2: String
   postalCode: String!
   rcdUserId: Int
-  acceptedTOC: Date
+  acceptedTos: Date
   medicalInformation: CreateMedicalInformationInput!
   guardian: CreateGuardianInput!
 }
@@ -91,4 +92,22 @@ input ApplicantsFilter {
 type QueryApplicantsResult {
   result: [Applicant!]!
   totalCount: Int!
+}
+
+input VerifyIdentityInput {
+  userId: Int!
+  phoneNumberSuffix: String!
+  dateOfBirth: Date!
+  acceptedTos: Date!
+}
+
+type VerifyIdentityResult {
+  ok: Boolean!
+  failureReason: VerifyIdentityFailureReason
+  applicantId: Int
+}
+
+enum VerifyIdentityFailureReason {
+  IDENTITY_VERIFICATION_FAILED
+  APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS
 }

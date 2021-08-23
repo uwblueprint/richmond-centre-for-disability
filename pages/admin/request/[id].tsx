@@ -141,6 +141,9 @@ export default function Request({ id }: Props) {
     createdAt,
 
     applicationProcessing,
+    applicant: {
+      mostRecentPermit: { rcdPermitId, expiryDate },
+    },
   } = data.application;
 
   // Applicant data for Personal Information Card
@@ -158,8 +161,8 @@ export default function Request({ id }: Props) {
     province,
     postalCode,
     // TODO: Integrate with most recent APP API
-    mostRecentAppNumber: 0,
-    mostRecentAppExpiryDate: new Date(),
+    mostRecentAppNumber: rcdPermitId,
+    mostRecentAppExpiryDate: new Date(expiryDate),
   };
 
   // Payment data for Payment Information Card

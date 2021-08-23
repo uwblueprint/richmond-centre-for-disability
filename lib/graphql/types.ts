@@ -42,8 +42,9 @@ export type Applicant = {
   addressLine2: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
   rcdUserId: Maybe<Scalars['Int']>;
-  acceptedTOC: Maybe<Scalars['Date']>;
+  acceptedTos: Maybe<Scalars['Date']>;
   status: Maybe<ApplicantStatus>;
+  activePermit: Maybe<Permit>;
   applications: Maybe<Array<Application>>;
   guardianId: Scalars['Int'];
   guardian: Guardian;
@@ -80,7 +81,7 @@ export type Application = {
   dateOfBirth: Scalars['Date'];
   gender: Gender;
   customGender: Maybe<Scalars['String']>;
-  email: Scalars['String'];
+  email: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   province: Province;
   city: Scalars['String'];
@@ -155,7 +156,6 @@ export type Application = {
 export type ApplicationProcessing = {
   __typename?: 'ApplicationProcessing';
   id: Scalars['ID'];
-  applicationId: Scalars['ID'];
   status: ApplicationStatus;
   appNumber: Maybe<Scalars['Int']>;
   appHolepunched: Scalars['Boolean'];
@@ -205,7 +205,7 @@ export type CreateApplicantInput = {
   addressLine2?: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
   rcdUserId?: Maybe<Scalars['Int']>;
-  acceptedTOC?: Maybe<Scalars['Date']>;
+  acceptedTos?: Maybe<Scalars['Date']>;
   medicalInformation: CreateMedicalInformationInput;
   guardian: CreateGuardianInput;
 };
@@ -223,7 +223,7 @@ export type CreateApplicationInput = {
   dateOfBirth: Scalars['Date'];
   gender: Gender;
   customGender?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
+  email?: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   province: Province;
   city: Scalars['String'];
@@ -347,6 +347,34 @@ export type CreatePhysicianResult = {
   ok: Scalars['Boolean'];
 };
 
+export type CreateRenewalApplicationInput = {
+  applicantId: Scalars['Int'];
+  updatedAddress: Scalars['Boolean'];
+  updatedContactInfo: Scalars['Boolean'];
+  updatedPhysician: Scalars['Boolean'];
+  /** Personal address info (must be provided if updatedAddress === true) */
+  addressLine1?: Maybe<Scalars['String']>;
+  addressLine2?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  postalCode?: Maybe<Scalars['String']>;
+  /** Contact info (at least one must be provided if updatedContactInfo === true) */
+  phone?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  /** Doctor info (must be provided if updatedDoctor === true) */
+  physicianName?: Maybe<Scalars['String']>;
+  physicianMspNumber?: Maybe<Scalars['Int']>;
+  physicianAddressLine1?: Maybe<Scalars['String']>;
+  physicianAddressLine2?: Maybe<Scalars['String']>;
+  physicianCity?: Maybe<Scalars['String']>;
+  physicianPostalCode?: Maybe<Scalars['String']>;
+  physicianPhone?: Maybe<Scalars['String']>;
+};
+
+export type CreateRenewalApplicationResult = {
+  __typename?: 'CreateRenewalApplicationResult';
+  ok: Scalars['Boolean'];
+};
+
 
 export type Employee = {
   __typename?: 'Employee';
@@ -414,12 +442,14 @@ export type Mutation = {
   createPhysician: CreatePhysicianResult;
   upsertPhysician: UpsertPhysicianResult;
   createApplication: CreateApplicationResult;
+  createRenewalApplication: CreateRenewalApplicationResult;
   updateApplication: UpdateApplicationResult;
   createPermit: CreatePermitResult;
   updateMedicalInformation: UpdateMedicalInformationResult;
   updateGuardian: UpdateGuardianResult;
   updateApplicationProcessing: UpdateApplicationProcessingResult;
   completeApplication: CompleteApplicationResult;
+  verifyIdentity: VerifyIdentityResult;
 };
 
 
@@ -453,6 +483,11 @@ export type MutationCreateApplicationArgs = {
 };
 
 
+export type MutationCreateRenewalApplicationArgs = {
+  input: CreateRenewalApplicationInput;
+};
+
+
 export type MutationUpdateApplicationArgs = {
   input: UpdateApplicationInput;
 };
@@ -480,6 +515,11 @@ export type MutationUpdateApplicationProcessingArgs = {
 
 export type MutationCompleteApplicationArgs = {
   applicationId: Scalars['ID'];
+};
+
+
+export type MutationVerifyIdentityArgs = {
+  input: VerifyIdentityInput;
 };
 
 export enum PaymentType {
@@ -799,3 +839,22 @@ export enum UserStatus {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE'
 }
+
+export enum VerifyIdentityFailureReason {
+  IdentityVerificationFailed = 'IDENTITY_VERIFICATION_FAILED',
+  AppDoesNotExpireWithin_30Days = 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS'
+}
+
+export type VerifyIdentityInput = {
+  userId: Scalars['Int'];
+  phoneNumberSuffix: Scalars['String'];
+  dateOfBirth: Scalars['Date'];
+  acceptedTos: Scalars['Date'];
+};
+
+export type VerifyIdentityResult = {
+  __typename?: 'VerifyIdentityResult';
+  ok: Scalars['Boolean'];
+  failureReason: Maybe<VerifyIdentityFailureReason>;
+  applicantId: Maybe<Scalars['Int']>;
+};

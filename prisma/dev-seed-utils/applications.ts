@@ -36,6 +36,7 @@ const applications = [
     shippingProvince: Province.Bc,
     shippingPostalCode: 'A1B2C3',
     billingFullName: 'Applicant One',
+    applicationProcessingId: 1,
   },
   {
     id: 2,
@@ -62,6 +63,7 @@ const applications = [
     shopifyConfirmationNumber: '0145829',
     applicantId: 2,
     email: 'applicanttwo@gmail.com',
+    applicationProcessingId: 2,
   },
   {
     id: 3,
@@ -86,6 +88,7 @@ const applications = [
     paymentMethod: PaymentType.Cheque,
     shopifyConfirmationNumber: '0245675',
     applicantId: 3,
+    applicationProcessingId: 3,
   },
 ];
 
@@ -99,7 +102,10 @@ export default async function applicationUpsert(): Promise<void> {
     const applicationUpsert = await prisma.application.upsert({
       where: { id },
       update: { ...rest },
-      create: { id, dateOfBirth: new Date().toISOString(), ...rest },
+      create: {
+        dateOfBirth: new Date().toISOString(),
+        ...rest,
+      },
     });
     applicationUpserts.push(applicationUpsert);
     console.log({ applicationUpsert });

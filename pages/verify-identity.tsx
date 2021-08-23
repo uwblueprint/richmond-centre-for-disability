@@ -1,5 +1,8 @@
 import { useState } from 'react'; // React
 import Link from 'next/link'; // Link
+import Image from 'next/image'; // Next Image
+import { useRouter } from 'next/router'; // Router
+import { useMutation } from '@apollo/client'; // Apollo Client
 import {
   GridItem,
   Flex,
@@ -11,15 +14,77 @@ import {
   FormHelperText,
   NumberInput,
   NumberInputField,
+  Alert,
+  AlertIcon,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
+  PopoverFooter,
+  AlertDescription,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { InfoOutlineIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/applicant/Layout'; // Layout component
 import TOSModal from '@components/applicant/renewals/TOSModal'; // TOS Modal
+import {
+  VERIFY_IDENTITY_MUTATION,
+  VerifyIdentityRequest,
+  VerifyIdentityResponse,
+  getErrorMessage,
+} from '@tools/pages/applicant/verify-identity'; // Tools
+import Request from '@containers/Request'; // Request state
 
 export default function IdentityVerificationForm() {
+  // Router
+  const router = useRouter();
+
+  // Toast
+  const toast = useToast();
+
+  // Request state
+  const { acceptedTOSTimestamp, setApplicantId } = Request.useContainer();
+
   const [userId, setUserId] = useState('');
   const [phoneNumberSuffix, setPhoneNumberSuffix] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString().substring(0, 10));
+
+  // Verify identity query
+  const [verifyIdentity, { data, loading }] = useMutation<
+    VerifyIdentityResponse,
+    VerifyIdentityRequest
+  >(VERIFY_IDENTITY_MUTATION, {
+    onCompleted: data => {
+      if (data.verifyIdentity.ok && data.verifyIdentity.applicantId) {
+        setApplicantId(data.verifyIdentity.applicantId);
+        router.push('/renew');
+      }
+    },
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
+
+  /**
+   * Handle identity verification submit
+   */
+  const handleSubmit = () => {
+    verifyIdentity({
+      variables: {
+        input: {
+          userId: parseInt(userId),
+          phoneNumberSuffix,
+          dateOfBirth,
+          acceptedTos: acceptedTOSTimestamp,
+        },
+      },
+    });
+
+    return;
+  };
 
   return (
     <Layout footer={false}>
@@ -41,7 +106,21 @@ export default function IdentityVerificationForm() {
                 <NumberInputField />
               </NumberInput>
               <Flex alignItems="center">
-                <InfoOutlineIcon marginRight="8px" />
+                <Popover placement="left" trigger="hover" gutter={24}>
+                  <PopoverTrigger>
+                    <InfoOutlineIcon marginRight="8px" cursor="pointer" />
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverBody>
+                      <Image src="/assets/wallet-card-example.png" height={200} width={320} />
+                    </PopoverBody>
+                    <PopoverFooter backgroundColor="background.grayHover">
+                      <Text textStyle="caption">
+                        {`Locate your User ID on the Wallet Card that came with your Permit.`}
+                      </Text>
+                    </PopoverFooter>
+                  </PopoverContent>
+                </Popover>
                 <FormHelperText>
                   {`You can find your user ID on the back of your wallet card. If you cannot find your
               wallet card, please call RCD at 604-232-2404.`}
@@ -54,7 +133,7 @@ export default function IdentityVerificationForm() {
                 <NumberInputField />
               </NumberInput>
             </FormControl>
-            <FormControl isRequired textAlign="left" marginBottom="56px">
+            <FormControl isRequired textAlign="left" marginBottom="20px">
               <FormLabel>{`Date of Birth`}</FormLabel>
               <Input
                 type="date"
@@ -67,16 +146,24 @@ export default function IdentityVerificationForm() {
             20th August 1950, you would enter 20-08-1950`}
               </FormHelperText>
             </FormControl>
+            {data?.verifyIdentity.failureReason && (
+              <Alert status="error" marginBottom="20px">
+                <AlertIcon />
+                <AlertDescription>
+                  {getErrorMessage(data.verifyIdentity.failureReason)}
+                </AlertDescription>
+              </Alert>
+            )}
             <Flex width="100%" justifyContent="flex-end">
               <Link href="/">
                 <Button variant="outline" marginRight="12px">{`Go back to home page`}</Button>
               </Link>
-              <Link href="/renew">
-                <Button
-                  variant="solid"
-                  disabled={!userId || !phoneNumberSuffix || !dateOfBirth}
-                >{`Continue`}</Button>
-              </Link>
+              <Button
+                variant="solid"
+                disabled={loading || !userId || !phoneNumberSuffix || !dateOfBirth}
+                loading={loading}
+                onClick={handleSubmit}
+              >{`Continue`}</Button>
             </Flex>
           </Flex>
         </Flex>
