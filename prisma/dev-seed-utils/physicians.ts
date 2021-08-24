@@ -7,8 +7,7 @@ import { Province, PhysicianStatus } from '../../lib/graphql/types'; // GraphQL 
 const physicians = [
   {
     id: 1,
-    firstName: 'Dr. ',
-    lastName: 'Doctor',
+    name: 'Dr. Doctor',
     mspNumber: 12345,
     addressLine1: '162 University Ave.',
     city: 'Waterloo',
@@ -19,8 +18,7 @@ const physicians = [
   },
   {
     id: 2,
-    firstName: 'Dr. ',
-    lastName: 'Doctor 2',
+    name: 'Dr. Doctor 2',
     mspNumber: 12346,
     addressLine1: '163 University Ave.',
     city: 'Burnaby',

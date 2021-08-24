@@ -2,6 +2,7 @@ import { Box, Link, Text, Divider } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
+import { ApplicationStatus } from '@lib/types'; // Types
 
 // Placeholder data
 
@@ -74,7 +75,7 @@ function _renderRequestType({ value }: RequestTypeProps) {
 }
 
 type StatusProps = {
-  value: 'COMPLETED' | 'INPROGRESS' | 'PENDING' | 'REJECTED' | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
+  value: ApplicationStatus | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
 };
 
 function _renderStatusBadge({ value }: StatusProps) {

@@ -1,22 +1,23 @@
 import { Box, Text, Divider, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
-import { Physician } from '@lib/graphql/types'; // Physician type
 import EditDoctorInformationModal from '@components/requests/modals/EditDoctorInformationModal'; // Edit modal
+import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
 
 type DoctorInformationProps = {
-  physician: Physician;
+  readonly physician: DoctorInformationCardPhysician;
   readonly isUpdated?: boolean;
+  readonly onSave: (applicationData: any) => void;
 };
 
 export default function DoctorInformationCard(props: DoctorInformationProps) {
-  const { physician, isUpdated } = props;
+  const { physician, isUpdated, onSave } = props;
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Doctor's Information`}
       updated={isUpdated}
       editModal={
-        <EditDoctorInformationModal>
+        <EditDoctorInformationModal physician={physician} onSave={onSave}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
@@ -25,7 +26,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
     >
       <Divider pt="20px" />
       <SimpleGrid columns={2} spacingX="20px" spacingY="12px" pt="20px">
-        <InfoSection title={`Name`}>{`${physician.firstName} ${physician.lastName}`}</InfoSection>
+        <InfoSection title={`Name`}>{physician.name}</InfoSection>
         <InfoSection title={`MSP #`}>{String(physician.mspNumber)}</InfoSection>
         <InfoSection title={`Phone`}>{physician.phone}</InfoSection>
         <InfoSection title={`Address`}>

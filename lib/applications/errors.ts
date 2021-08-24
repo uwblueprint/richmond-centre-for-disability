@@ -32,3 +32,25 @@ export class ApplicationFieldTooLongError extends ApolloError {
     Object.defineProperty(this, 'name', { value: 'ApplicationFieldTooLongError' });
   }
 }
+
+/**
+ * Application not found error
+ */
+export class ApplicationNotFoundError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'APPLICATION_NOT_FOUND');
+
+    Object.defineProperty(this, 'name', { value: 'ApplicationNotFoundError' });
+  }
+}
+
+/**
+ * Missing updated fields error (when submitting renewal application)
+ */
+export class UpdatedFieldsMissingError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'UPDATED_FIELDS_MISSING_ERROR');
+
+    Object.defineProperty(this, 'name', { value: 'UpdatedFieldsMissingError' });
+  }
+}

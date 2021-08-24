@@ -1,13 +1,15 @@
 /* eslint-disable no-console */
 // Relative paths required, path aliases throw error with seed command
 import prisma from '../index'; // Prisma client
-import { Gender, Province } from '../../lib/graphql/types'; // GraphQL types
+import { Gender, Province, ApplicantStatus } from '../../lib/graphql/types'; // GraphQL types
 
 // Seed data
 const applicants = [
   {
     id: 1,
+    rcdUserId: 12345,
     firstName: 'Applicant',
+    middleName: 'Middle-One',
     lastName: 'One',
     email: 'applicantone@email.com',
     gender: Gender.Male,
@@ -18,9 +20,11 @@ const applicants = [
     postalCode: 'X0X0X0',
     guardianId: 1,
     medicalInformationId: 1,
+    status: ApplicantStatus.Active,
   },
   {
     id: 2,
+    rcdUserId: 23456,
     firstName: 'Applicant',
     lastName: 'Two',
     email: 'applicanttwo@email.com',
@@ -32,6 +36,23 @@ const applicants = [
     postalCode: 'A1B2C3',
     guardianId: 2,
     medicalInformationId: 2,
+    status: ApplicantStatus.Active,
+  },
+  {
+    id: 3,
+    firstName: 'Applicant',
+    lastName: 'Three',
+    email: 'applicantthree@email.com',
+    gender: Gender.Male,
+    phone: '4567891234',
+    province: Province.Bc,
+    city: 'Vancouver',
+    addressLine1: '456 BC Way',
+    postalCode: 'B1C2D3',
+    rcdUserId: 3,
+    guardianId: 3,
+    medicalInformationId: 3,
+    status: ApplicantStatus.Inactive,
   },
 ];
 
@@ -41,11 +62,11 @@ const applicants = [
 export default async function applicantUpsert(): Promise<void> {
   const applicantUpserts = [];
   for (const applicant of applicants) {
-    const { email, ...rest } = applicant;
+    const { id, ...rest } = applicant;
     const applicantUpsert = await prisma.applicant.upsert({
-      where: { email },
-      update: { ...rest },
-      create: { email, dateOfBirth: new Date().toISOString(), ...rest },
+      where: { id },
+      update: rest,
+      create: { dateOfBirth: new Date().toISOString(), ...rest },
     });
     applicantUpserts.push(applicantUpsert);
     console.log({ applicantUpsert });

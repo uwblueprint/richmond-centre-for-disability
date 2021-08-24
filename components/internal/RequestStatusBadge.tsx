@@ -1,8 +1,9 @@
 import { Badge, Box, Wrap } from '@chakra-ui/react'; // Chakra UI
 import Image from 'next/image'; // Optimized images
+import { ApplicationStatus } from '@lib/types'; // Types
 
 type Props = {
-  variant: 'COMPLETED' | 'INPROGRESS' | 'PENDING' | 'REJECTED' | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
+  variant: ApplicationStatus | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
 };
 
 export default function RequestStatusBadge({ variant }: Props) {
@@ -83,7 +84,7 @@ export default function RequestStatusBadge({ variant }: Props) {
             </Box>
           </>
         );
-      case 'INPROGRESS':
+      case 'APPROVED':
         return (
           <>
             <Image
@@ -112,6 +113,7 @@ export default function RequestStatusBadge({ variant }: Props) {
           </>
         );
     }
+    return <></>;
   };
 
   return (

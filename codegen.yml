@@ -11,5 +11,10 @@ generates:
             - ' **********************************************************************/'
       - typescript
     config:
+      avoidOptionals:
+        field: true
+        inputValue: false
+        object: true
+        defaultValue: true
       scalars:
         ID: number

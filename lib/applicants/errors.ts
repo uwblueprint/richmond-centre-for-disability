@@ -32,3 +32,14 @@ export class ApplicantNotFoundError extends ApolloError {
     Object.defineProperty(this, 'name', { value: 'ApplicantNotFoundError' });
   }
 }
+
+/**
+ * Phone number suffix is of invalid length error
+ */
+export class InvalidPhoneNumberSuffixLengthError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'INVALID_PHONE_NUMBER_SUFFIX');
+
+    Object.defineProperty(this, 'name', { value: 'InvalidPhoneNumberSuffixLengthError' });
+  }
+}

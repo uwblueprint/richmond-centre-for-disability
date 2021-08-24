@@ -24,51 +24,94 @@ import {
   GridItem,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
-import { PaymentType } from '@lib/graphql/types'; // PaymentType Enum
+import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
+import { PaymentType, Province } from '@lib/graphql/types'; // Types
+import { PaymentInformation } from '@tools/components/internal/requests/payment-information-card'; // PaymentInformation type
 
 type EditPaymentDetailsModalProps = {
-  children: ReactNode;
+  readonly children: ReactNode;
+  readonly paymentInformation: PaymentInformation;
+  readonly onSave: (applicationData: any) => void;
 };
 
-export default function EditPaymentDetailsModal({ children }: EditPaymentDetailsModalProps) {
+export default function EditPaymentDetailsModal({
+  children,
+  paymentInformation,
+  onSave,
+}: EditPaymentDetailsModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentType | string>('');
-  const [donation, setDonation] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentType>();
+  const [donationAmount, setDonationAmount] = useState<number | undefined>();
 
   //   Shipping address information state
-  const [sameShippingAndHomeAddresses, setSameShippingAndHomeAddresses] = useState(false); // Whether shipping information is visible
+  const [shippingAddressSameAsHomeAddress, setShippingAddressSameAsHomeAddress] = useState(false);
   const [shippingFullName, setShippingFullName] = useState('');
   const [shippingAddressLine1, setShippingAddressLine1] = useState('');
   const [shippingAddressLine2, setShippingAddressLine2] = useState('');
   const [shippingCity, setShippingCity] = useState('');
-  const [shippingProvince, setShippingProvince] = useState('');
-  const [shippingCountry, setShippingCountry] = useState('');
+  const [shippingProvince, setShippingProvince] = useState<Province | undefined>();
   const [shippingPostalCode, setShippingPostalCode] = useState('');
 
   //   TODO: Add error states for each field as follows (post-mvp)
   // const [shippingFullNameInputError, setShippingFullNameInputError] = useState(''); // Error message displayed under input
 
   //   Billing address information state
-  const [sameBillingAndHomeAddresses, setSameBillingAndHomeAddresses] = useState(false); // Whether billing information is visible
+  const [billingAddressSameAsHomeAddress, setBillingAddressSameAsHomeAddress] = useState(false);
   const [billingFullName, setBillingFullName] = useState('');
   const [billingAddressLine1, setBillingAddressLine1] = useState('');
   const [billingAddressLine2, setBillingAddressLine2] = useState('');
   const [billingCity, setBillingCity] = useState('');
-  const [billingProvince, setBillingProvince] = useState('');
-  const [billingCountry, setBillingCountry] = useState('');
+  const [billingProvince, setBillingProvince] = useState<Province | undefined>();
   const [billingPostalCode, setBillingPostalCode] = useState('');
+
+  useEffect(() => {
+    setPaymentMethod(paymentInformation.paymentMethod);
+    setDonationAmount(paymentInformation.donationAmount || 0);
+
+    setShippingAddressSameAsHomeAddress(paymentInformation.shippingAddressSameAsHomeAddress);
+    setShippingFullName(paymentInformation.shippingFullName || '');
+    setShippingAddressLine1(paymentInformation.shippingAddressLine1 || '');
+    setShippingAddressLine2(paymentInformation.shippingAddressLine2 || '');
+    setShippingCity(paymentInformation.shippingCity || '');
+    setShippingProvince(paymentInformation.shippingProvince || undefined);
+    setShippingPostalCode(paymentInformation.shippingPostalCode || '');
+
+    setBillingAddressSameAsHomeAddress(paymentInformation.billingAddressSameAsHomeAddress);
+    setBillingFullName(paymentInformation.billingFullName || '');
+    setBillingAddressLine1(paymentInformation.billingAddressLine1 || '');
+    setBillingAddressLine2(paymentInformation.billingAddressLine2 || '');
+    setBillingCity(paymentInformation.billingCity || '');
+    setBillingProvince(paymentInformation.billingProvince || undefined);
+    setBillingPostalCode(paymentInformation.billingPostalCode || '');
+  }, [paymentInformation]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    // TODO: Will be addressed in API hookup
     // TODO: Add error handling to each field as follows (post-mvp)
     // if (!hideShippingInfo) {
     //   if (!shippingFullName.length) {
     //     setShippingFullNameInputError("Please enter the recipient's full name.");
     //   }
     // }
+    onSave({
+      ...(paymentMethod && { paymentMethod }),
+      ...(donationAmount !== undefined && { donationAmount }),
+      shippingAddressSameAsHomeAddress,
+      shippingFullName,
+      shippingAddressLine1,
+      shippingAddressLine2,
+      shippingCity,
+      shippingProvince,
+      shippingPostalCode,
+      billingAddressSameAsHomeAddress,
+      billingFullName,
+      billingAddressLine1,
+      billingAddressLine2,
+      billingCity,
+      billingProvince,
+      billingPostalCode,
+    });
     onClose();
   };
 
@@ -101,7 +144,10 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
                   <GridItem rowSpan={2} colSpan={1}>
                     <FormControl as="fieldset" isRequired>
                       <FormLabel as="legend">{'Payment method'}</FormLabel>
-                      <RadioGroup onChange={setPaymentMethod} value={paymentMethod}>
+                      <RadioGroup
+                        onChange={value => setPaymentMethod(value as PaymentType)}
+                        value={paymentMethod}
+                      >
                         <Stack>
                           <Radio value={PaymentType.Mastercard}>{'Mastercard'}</Radio>
                           <Radio value={PaymentType.Visa}>{'Visa'}</Radio>
@@ -152,8 +198,8 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
                           {'$'}
                         </InputLeftElement>
                         <Input
-                          value={donation}
-                          onChange={event => setDonation(event.target.value)}
+                          value={donationAmount}
+                          onChange={event => setDonationAmount(parseInt(event.target.value))}
                         />
                       </InputGroup>
                     </FormControl>
@@ -170,14 +216,14 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
 
                 <Checkbox
                   paddingBottom="24px"
-                  isChecked={sameShippingAndHomeAddresses}
-                  onChange={event => setSameShippingAndHomeAddresses(event.target.checked)}
+                  isChecked={shippingAddressSameAsHomeAddress}
+                  onChange={event => setShippingAddressSameAsHomeAddress(event.target.checked)}
                 >
                   {'Same as home address'}
                 </Checkbox>
 
                 {/* Section is hidden if same as home address checkbox is checked */}
-                {!sameShippingAndHomeAddresses && (
+                {!shippingAddressSameAsHomeAddress && (
                   <>
                     <FormControl isRequired paddingBottom="24px">
                       <FormLabel>{'Full name'}</FormLabel>
@@ -228,28 +274,15 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
                         <Select
                           placeholder="Select province / territory"
                           value={shippingProvince}
-                          onChange={event => setShippingProvince(event.target.value)}
+                          onChange={event => setShippingProvince(event.target.value as Province)}
                         >
-                          <option value="Ontario">{'Ontario'}</option>
-                          <option value="British Columbia">{'British Columbia'}</option>
-                          {/* TODO: when we add the rest of the provinces, use the Province enum in lib/graphql/types.ts */}
+                          <option value={Province.On}>Ontario</option>
+                          <option value={Province.Bc}>British Columbia</option>
                         </Select>
                       </FormControl>
                     </Stack>
 
                     <Stack direction="row" spacing="20px">
-                      <FormControl isRequired>
-                        <FormLabel>{'Country / region'}</FormLabel>
-                        <Select
-                          value={shippingCountry}
-                          onChange={event => setShippingCountry(event.target.value)}
-                        >
-                          <option value="Canada">{'Canada'}</option>
-                          <option value="United States">{'United States'}</option>
-                          {/* TODO: Add rest of countries */}
-                        </Select>
-                      </FormControl>
-
                       <FormControl isRequired>
                         <FormLabel>{'Postal code'}</FormLabel>
                         <Input
@@ -272,14 +305,14 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
 
                 <Checkbox
                   paddingBottom="24px"
-                  isChecked={sameBillingAndHomeAddresses}
-                  onChange={event => setSameBillingAndHomeAddresses(event.target.checked)}
+                  isChecked={billingAddressSameAsHomeAddress}
+                  onChange={event => setBillingAddressSameAsHomeAddress(event.target.checked)}
                 >
                   {'Same as home address'}
                 </Checkbox>
 
                 {/* Section is hidden if same as home address checkbox is checked */}
-                {!sameBillingAndHomeAddresses && (
+                {!billingAddressSameAsHomeAddress && (
                   <>
                     <FormControl isRequired paddingBottom="24px">
                       <FormLabel>{'Full name'}</FormLabel>
@@ -330,27 +363,15 @@ export default function EditPaymentDetailsModal({ children }: EditPaymentDetails
                         <Select
                           placeholder="Select province / territory"
                           value={billingProvince}
-                          onChange={event => setBillingProvince(event.target.value)}
+                          onChange={event => setBillingProvince(event.target.value as Province)}
                         >
-                          <option value="Ontario">{'Ontario'}</option>
-                          <option value="British Columbia">{'British Columbia'}</option>
-                          {/* TODO: when we add the rest of the provinces, use the Province enum in lib/graphql/types.ts */}
+                          <option value={Province.On}>Ontario</option>
+                          <option value={Province.Bc}>British Columbia</option>
                         </Select>
                       </FormControl>
                     </Stack>
 
                     <Stack direction="row" spacing="20px">
-                      <FormControl isRequired>
-                        <FormLabel>{'Country / region'}</FormLabel>
-                        <Select
-                          value={billingCountry}
-                          onChange={event => setBillingCountry(event.target.value)}
-                        >
-                          <option value="Canada">{'Canada'}</option>
-                          <option value="United States">{'United States'}</option>
-                        </Select>
-                      </FormControl>
-
                       <FormControl isRequired>
                         <FormLabel>{'Postal code'}</FormLabel>
                         <Input

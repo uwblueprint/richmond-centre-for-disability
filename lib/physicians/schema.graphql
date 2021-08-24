@@ -1,6 +1,5 @@
 type Physician {
-  firstName: String!
-  lastName: String!
+  name: String!
   mspNumber: Int!
   addressLine1: String!
   addressLine2: String
@@ -13,8 +12,7 @@ type Physician {
 }
 
 input CreatePhysicianInput {
-  firstName: String!
-  lastName: String!
+  name: String!
   mspNumber: Int!
   addressLine1: String!
   addressLine2: String
@@ -32,8 +30,7 @@ type CreatePhysicianResult {
 
 input UpsertPhysicianInput {
   mspNumber: Int!
-  firstName: String!
-  lastName: String!
+  name: String!
   addressLine1: String!
   addressLine2: String
   city: String!

@@ -22,7 +22,11 @@ export const applicantApplicationsResolver: Resolver<Applicant> = async (
  * @returns Array of permit objects
  */
 export const applicantPermitsResolver: Resolver<Applicant> = async (parent, _args, { prisma }) => {
-  return await prisma.permit.findMany({ where: { applicantId: parent?.id } });
+  return await prisma.applicant
+    .findUnique({
+      where: { id: parent.id },
+    })
+    .permits();
 };
 
 /**

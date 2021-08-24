@@ -1,10 +1,11 @@
 type Query {
   meta: Meta!
-  applicants: [Applicant!]
+  applicants(filter: ApplicantsFilter): QueryApplicantsResult
   applicant(id: ID!): Applicant
   employees: [Employee!]
   physicians: [Physician!]
-  applications: [Application!]
+  applications(filter: ApplicationsFilter): QueryApplicationsResult
+  application(id: ID!): Application
   permits: [Permit!]
 }
 
@@ -15,9 +16,16 @@ type Mutation {
   createPhysician(input: CreatePhysicianInput!): CreatePhysicianResult!
   upsertPhysician(input: UpsertPhysicianInput!): UpsertPhysicianResult!
   createApplication(input: CreateApplicationInput!): CreateApplicationResult!
+  createRenewalApplication(input: CreateRenewalApplicationInput!): CreateRenewalApplicationResult!
+  updateApplication(input: UpdateApplicationInput!): UpdateApplicationResult!
   createPermit(input: CreatePermitInput!): CreatePermitResult!
   updateMedicalInformation(input: UpdateMedicalInformationInput!): UpdateMedicalInformationResult!
   updateGuardian(input: UpdateGuardianInput!): UpdateGuardianResult!
+  updateApplicationProcessing(
+    input: UpdateApplicationProcessingInput!
+  ): UpdateApplicationProcessingResult!
+  completeApplication(applicationId: ID!): CompleteApplicationResult!
+  verifyIdentity(input: VerifyIdentityInput!): VerifyIdentityResult!
 }
 
 scalar Date
@@ -89,4 +97,20 @@ enum ReasonForReplacement {
   LOST
   STOLEN
   OTHER
+}
+
+enum PermitStatus {
+  VALID
+  EXPIRED
+  EXPIRING_IN_THIRTY_DAYS
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PermitType {
+  PERMANENT
+  TEMPORARY
 }

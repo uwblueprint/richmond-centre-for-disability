@@ -35,10 +35,13 @@ CREATE TYPE PhysicianStatus as ENUM('ACTIVE', 'INACTIVE');
 CREATE TYPE Gender as ENUM('MALE', 'FEMALE', 'OTHER');
 
 -- Create application status enum
-CREATE TYPE ApplicationStatus as ENUM('PENDING', 'APPROVED', 'REJECTED', 'COMPLETED');
+CREATE TYPE ApplicationStatus as ENUM('PENDING', 'INPROGRESS', 'APPROVED', 'REJECTED', 'COMPLETED', 'EXPIRING', 'EXPIRED', 'ACTIVE');
 
 -- Create reason for replacement enum
 CREATE TYPE ReasonForReplacement as ENUM('LOST', 'STOLEN', 'OTHER');
+
+-- Create permit type enum
+CREATE TYPE PermitType as ENUM('PERMANENT', 'TEMPORARY');
 
 -- Create employees table
 CREATE TABLE employees (
@@ -65,8 +68,7 @@ CREATE TABLE verification_requests (
 -- Create physicians table
 CREATE TABLE physicians (
   id              SERIAL PRIMARY KEY NOT NULL,
-  first_name      VARCHAR(255) NOT NULL,
-  last_name       VARCHAR(255) NOT NULL,
+  name            VARCHAR(255) NOT NULL,
   msp_number      INTEGER UNIQUE NOT NULL,
   address_line_1  VARCHAR(255) NOT NULL,
   address_line_2  VARCHAR(255),
@@ -133,7 +135,7 @@ CREATE TABLE applicants (
   postal_code               CHAR(6) NOT NULL,
   rcd_user_id               INTEGER UNIQUE,
   status                    ApplicantStatus,
-  accepted_TOC              TIMESTAMPTZ,
+  accepted_tos              TIMESTAMPTZ,
   guardian_id               INTEGER UNIQUE NOT NULL,
   medical_information_id    INTEGER UNIQUE NOT NULL,
   created_at                TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -141,6 +143,20 @@ CREATE TABLE applicants (
 
   FOREIGN KEY(guardian_id) REFERENCES guardians(id),
   FOREIGN KEY(medical_information_id) REFERENCES medical_information(id)
+);
+
+-- Create application processing table
+CREATE TABLE application_processing (
+  id                  SERIAL PRIMARY KEY NOT NULL,
+  status              ApplicationStatus NOT NULL DEFAULT 'PENDING',
+  app_number          INTEGER UNIQUE,
+  app_holepunched     BOOLEAN NOT NULL DEFAULT false,
+  wallet_card_created BOOLEAN NOT NULL DEFAULT false,
+  invoice_number      INTEGER UNIQUE,
+  document_urls       VARCHAR(255) ARRAY,
+  app_mailed          BOOLEAN NOT NULL DEFAULT false,
+  created_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create applications table
@@ -163,6 +179,7 @@ CREATE TABLE applications (
   notes          TEXT,
   rcd_user_id    INTEGER,
   is_renewal     BOOLEAN NOT NULL DEFAULT true,
+  permit_type    PermitType NOT NULL DEFAULT 'PERMANENT',
   poa_form_url   VARCHAR(255),
   applicant_id   INTEGER,
   -- Medical information
@@ -199,21 +216,28 @@ CREATE TABLE applications (
   guardian_relationship   VARCHAR(50),
   guardian_notes          TEXT,
   -- Billing and shipping information
+  shipping_full_name                       VARCHAR(255),
   shipping_address_line_1                  VARCHAR(255),
   shipping_address_line_2                  VARCHAR(255),
   shipping_city                            VARCHAR(255),
   shipping_province                        Province,
   shipping_postal_code                     CHAR(6),
-  billing_address_same_as_shipping_address BOOLEAN NOT NULL DEFAULT false,
+  shipping_address_same_as_home_address    BOOLEAN NOT NULL DEFAULT false,
+  billing_address_same_as_home_address     BOOLEAN NOT NULL DEFAULT false,
+  billing_full_name                        VARCHAR(255),
   billing_address_line_1                   VARCHAR(255),
   billing_address_line_2                   VARCHAR(255),
   billing_city                             VARCHAR(255),
   billing_province                         Province,
   billing_postal_code                      CHAR(6),
+  -- Application processing information
+  application_processing_id INTEGER UNIQUE NOT NULL,
+
   created_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  FOREIGN KEY(applicant_id) REFERENCES applicants(id)
+  FOREIGN KEY(applicant_id) REFERENCES applicants(id),
+  FOREIGN KEY(application_processing_id) REFERENCES application_processing(id)
 );
 
 -- Create permits table
@@ -245,23 +269,6 @@ CREATE TABLE replacements (
   application_id             INTEGER UNIQUE NOT NULL,
   created_at                 TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at                 TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-  FOREIGN KEY(application_id) REFERENCES applications(id)
-);
-
--- Create application processing table
-CREATE TABLE application_processing (
-  id                  SERIAL PRIMARY KEY NOT NULL,
-  status              ApplicationStatus NOT NULL DEFAULT 'PENDING',
-  app_number          INTEGER UNIQUE,
-  app_holepunched     BOOLEAN NOT NULL DEFAULT false,
-  wallet_card_created BOOLEAN NOT NULL DEFAULT false,
-  invoice_number      INTEGER UNIQUE,
-  document_urls       VARCHAR(255) ARRAY,
-  app_mailed          BOOLEAN NOT NULL DEFAULT false,
-  application_id      INTEGER UNIQUE NOT NULL,
-  created_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   FOREIGN KEY(application_id) REFERENCES applications(id)
 );

@@ -7,6 +7,7 @@ import { Gender, Province, PaymentType, Aid } from '../../lib/graphql/types'; //
 const applications = [
   {
     id: 1,
+    rcdUserId: 12345,
     firstName: 'Applicant',
     lastName: 'One',
     gender: Gender.Male,
@@ -28,9 +29,18 @@ const applications = [
     paymentMethod: PaymentType.Cash,
     shopifyConfirmationNumber: '1234567',
     applicantId: 1,
+    email: 'applicantone@gmail.com',
+    shippingFullName: 'Applicant One',
+    shippingAddressLine1: '456 Vancouver Rd.',
+    shippingCity: 'Vancouver',
+    shippingProvince: Province.Bc,
+    shippingPostalCode: 'A1B2C3',
+    billingFullName: 'Applicant One',
+    applicationProcessingId: 1,
   },
   {
     id: 2,
+    rcdUserId: 23456,
     firstName: 'Applicant',
     lastName: 'Two',
     gender: Gender.Female,
@@ -52,6 +62,33 @@ const applications = [
     paymentMethod: PaymentType.Cheque,
     shopifyConfirmationNumber: '0145829',
     applicantId: 2,
+    email: 'applicanttwo@gmail.com',
+    applicationProcessingId: 2,
+  },
+  {
+    id: 3,
+    firstName: 'Applicant',
+    lastName: 'Three',
+    gender: Gender.Male,
+    phone: '4567891234',
+    province: Province.Bc,
+    city: 'Vancouver',
+    addressLine1: '789 Vancouver Rd.',
+    postalCode: 'B1C2D3',
+    disability: 'Requires walker',
+    aid: [Aid.Walker],
+    physicianName: 'Dr. Physician2',
+    physicianMspNumber: 67890,
+    physicianAddressLine1: '789 Alberta Rd.',
+    physicianCity: 'Calgary',
+    physicianProvince: Province.Ab,
+    physicianPostalCode: 'H4K3S0',
+    physicianPhone: '8264029163',
+    processingFee: 26,
+    paymentMethod: PaymentType.Cheque,
+    shopifyConfirmationNumber: '0245675',
+    applicantId: 3,
+    applicationProcessingId: 3,
   },
 ];
 
@@ -65,7 +102,10 @@ export default async function applicationUpsert(): Promise<void> {
     const applicationUpsert = await prisma.application.upsert({
       where: { id },
       update: { ...rest },
-      create: { id, dateOfBirth: new Date().toISOString(), ...rest },
+      create: {
+        dateOfBirth: new Date().toISOString(),
+        ...rest,
+      },
     });
     applicationUpserts.push(applicationUpsert);
     console.log({ applicationUpsert });

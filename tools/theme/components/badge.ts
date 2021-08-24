@@ -15,13 +15,13 @@ const Badge: ComponentSingleStyleConfig = {
     paddingY: '4px',
   },
 
-  // Variants (COMPLETED, INPROGRESS, PENDING, REJECTED, EXPIRING, EXPIRED, ACTIVE, INACTIVE)
+  // Variants (COMPLETED, APPROVED, PENDING, REJECTED, EXPIRING, EXPIRED, ACTIVE, INACTIVE)
   variants: {
     COMPLETED: {
       bg: 'badge.completed',
     },
-    INPROGRESS: {
-      bg: 'badge.inProgress',
+    APPROVED: {
+      bg: 'badge.approved',
     },
     PENDING: {
       bg: 'badge.pending',

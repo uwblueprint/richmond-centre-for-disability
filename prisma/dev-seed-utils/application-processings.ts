@@ -6,11 +6,12 @@ import prisma from '../index'; // Prisma client
 const applicationProcessings = [
   {
     id: 1,
-    applicationId: 1,
   },
   {
     id: 2,
-    applicationId: 2,
+  },
+  {
+    id: 3,
   },
 ];
 
@@ -24,7 +25,7 @@ export default async function applicationProcessingUpsert(): Promise<void> {
     const applicationProcessingUpsert = await prisma.applicationProcessing.upsert({
       where: { id },
       update: { ...rest },
-      create: applicationProcessing,
+      create: rest,
     });
     applicationProcessingUpserts.push(applicationProcessingUpsert);
     console.log({ applicationProcessingUpsert });

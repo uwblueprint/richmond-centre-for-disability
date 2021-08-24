@@ -77,13 +77,10 @@ export default function PreviousDoctorsInformationModal({
 
   // useQuery<GetApplicationResponse, GetApplicationRequest>(GET_PERMIT_HOLDER, {
   //   variables: {
-  //     id: 1
+  //     id: 1,
   //   },
-  //   onCompleted: data => {
-
-  //   }
-  // },
-  // )
+  //   onCompleted: data => {},
+  // });
 
   return (
     <>

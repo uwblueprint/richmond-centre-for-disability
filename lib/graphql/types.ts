@@ -29,22 +29,23 @@ export type Applicant = {
   __typename?: 'Applicant';
   id: Scalars['ID'];
   firstName: Scalars['String'];
-  middleName?: Maybe<Scalars['String']>;
+  middleName: Maybe<Scalars['String']>;
   lastName: Scalars['String'];
   dateOfBirth: Scalars['Date'];
   gender: Gender;
-  customGender?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
+  customGender: Maybe<Scalars['String']>;
+  email: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   province: Province;
   city: Scalars['String'];
   addressLine1: Scalars['String'];
-  addressLine2?: Maybe<Scalars['String']>;
+  addressLine2: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
-  rcdUserId?: Maybe<Scalars['Int']>;
-  acceptedTOC?: Maybe<Scalars['Date']>;
-  status?: Maybe<ApplicantStatus>;
-  applications?: Maybe<Array<Application>>;
+  rcdUserId: Maybe<Scalars['Int']>;
+  acceptedTos: Maybe<Scalars['Date']>;
+  status: Maybe<ApplicantStatus>;
+  activePermit: Maybe<Permit>;
+  applications: Maybe<Array<Application>>;
   guardianId: Scalars['Int'];
   guardian: Guardian;
   medicalInformationId: Scalars['Int'];
@@ -60,6 +61,17 @@ export enum ApplicantStatus {
   Inactive = 'INACTIVE'
 }
 
+export type ApplicantsFilter = {
+  order?: Maybe<Array<Array<Scalars['String']>>>;
+  permitStatus?: Maybe<PermitStatus>;
+  userStatus?: Maybe<UserStatus>;
+  expiryDateRangeFrom?: Maybe<Scalars['Date']>;
+  expiryDateRangeTo?: Maybe<Scalars['Date']>;
+  search?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
 export type Application = {
   __typename?: 'Application';
   /** Applicant information */
@@ -69,20 +81,21 @@ export type Application = {
   lastName: Scalars['String'];
   dateOfBirth: Scalars['Date'];
   gender: Gender;
-  customGender?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
+  customGender: Maybe<Scalars['String']>;
+  email: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   province: Province;
   city: Scalars['String'];
   addressLine1: Scalars['String'];
-  addressLine2?: Maybe<Scalars['String']>;
+  addressLine2: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
-  notes?: Maybe<Scalars['String']>;
-  rcdUserId?: Maybe<Scalars['Int']>;
+  notes: Maybe<Scalars['String']>;
+  rcdUserId: Maybe<Scalars['Int']>;
   isRenewal: Scalars['Boolean'];
-  poaFormUrl?: Maybe<Scalars['String']>;
-  applicantId?: Maybe<Scalars['Int']>;
-  applicant?: Maybe<Applicant>;
+  permitType: PermitType;
+  poaFormUrl: Maybe<Scalars['String']>;
+  applicantId: Maybe<Scalars['Int']>;
+  applicant: Maybe<Applicant>;
   /** Medical information */
   disability: Scalars['String'];
   affectsMobility: Scalars['Boolean'];
@@ -93,32 +106,51 @@ export type Application = {
   physicianName: Scalars['String'];
   physicianMspNumber: Scalars['Int'];
   physicianAddressLine1: Scalars['String'];
-  physicianAddressLine2?: Maybe<Scalars['String']>;
+  physicianAddressLine2: Maybe<Scalars['String']>;
   physicianCity: Scalars['String'];
   physicianProvince: Province;
   physicianPostalCode: Scalars['String'];
   physicianPhone: Scalars['String'];
-  physicianNotes?: Maybe<Scalars['String']>;
+  physicianNotes: Maybe<Scalars['String']>;
   /** Payment Information */
+  shippingFullName: Maybe<Scalars['String']>;
+  shippingAddressLine1: Maybe<Scalars['String']>;
+  shippingAddressLine2: Maybe<Scalars['String']>;
+  shippingCity: Maybe<Scalars['String']>;
+  shippingProvince: Maybe<Province>;
+  /** shippingCountry: String */
+  shippingPostalCode: Maybe<Scalars['String']>;
+  billingFullName: Maybe<Scalars['String']>;
+  billingAddressLine1: Maybe<Scalars['String']>;
+  billingAddressLine2: Maybe<Scalars['String']>;
+  billingCity: Maybe<Scalars['String']>;
+  billingProvince: Maybe<Province>;
+  /** billingCountry: String */
+  billingPostalCode: Maybe<Scalars['String']>;
+  shippingAddressSameAsHomeAddress: Scalars['Boolean'];
+  billingAddressSameAsHomeAddress: Scalars['Boolean'];
   processingFee: Scalars['Float'];
-  donationAmount?: Maybe<Scalars['Float']>;
+  donationAmount: Maybe<Scalars['Float']>;
   paymentMethod: PaymentType;
   shopifyConfirmationNumber: Scalars['String'];
   /** Guardian */
-  guardianFirstName?: Maybe<Scalars['String']>;
-  guardianMiddleName?: Maybe<Scalars['String']>;
-  guardianLastName?: Maybe<Scalars['String']>;
-  guardianPhone?: Maybe<Scalars['String']>;
-  guardianProvince?: Maybe<Province>;
-  guardianCity?: Maybe<Scalars['String']>;
-  guardianAddressLine1?: Maybe<Scalars['String']>;
-  guardianAddressLine2?: Maybe<Scalars['String']>;
-  guardianPostalCode?: Maybe<Scalars['String']>;
-  guardianRelationship?: Maybe<Scalars['String']>;
-  guardianNotes?: Maybe<Scalars['String']>;
+  guardianFirstName: Maybe<Scalars['String']>;
+  guardianMiddleName: Maybe<Scalars['String']>;
+  guardianLastName: Maybe<Scalars['String']>;
+  guardianPhone: Maybe<Scalars['String']>;
+  guardianProvince: Maybe<Province>;
+  guardianCity: Maybe<Scalars['String']>;
+  guardianAddressLine1: Maybe<Scalars['String']>;
+  guardianAddressLine2: Maybe<Scalars['String']>;
+  guardianPostalCode: Maybe<Scalars['String']>;
+  guardianRelationship: Maybe<Scalars['String']>;
+  guardianNotes: Maybe<Scalars['String']>;
   /** Permit */
-  permit?: Maybe<Permit>;
-  /** Misc */
+  permit: Maybe<Permit>;
+  /** Application Processing */
+  applicationProcessing: Maybe<ApplicationProcessing>;
+  /** Replacement */
+  replacement: Maybe<Replacement>;
   createdAt: Scalars['Date'];
 };
 
@@ -151,6 +183,21 @@ export enum ApplicationStatus {
   Completed = 'COMPLETED'
 }
 
+export type ApplicationsFilter = {
+  order?: Maybe<Array<Maybe<Array<Scalars['String']>>>>;
+  permitType?: Maybe<PermitType>;
+  requestType?: Maybe<Scalars['String']>;
+  status?: Maybe<ApplicationStatus>;
+  search?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
+export type CompleteApplicationResult = {
+  __typename?: 'CompleteApplicationResult';
+  ok: Scalars['Boolean'];
+};
+
 export type CreateApplicantInput = {
   firstName: Scalars['String'];
   middleName?: Maybe<Scalars['String']>;
@@ -166,7 +213,7 @@ export type CreateApplicantInput = {
   addressLine2?: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
   rcdUserId?: Maybe<Scalars['Int']>;
-  acceptedTOC?: Maybe<Scalars['Date']>;
+  acceptedTos?: Maybe<Scalars['Date']>;
   medicalInformation: CreateMedicalInformationInput;
   guardian: CreateGuardianInput;
 };
@@ -184,7 +231,7 @@ export type CreateApplicationInput = {
   dateOfBirth: Scalars['Date'];
   gender: Gender;
   customGender?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
+  email?: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   province: Province;
   city: Scalars['String'];
@@ -194,6 +241,7 @@ export type CreateApplicationInput = {
   notes?: Maybe<Scalars['String']>;
   rcdUserId?: Maybe<Scalars['Int']>;
   isRenewal: Scalars['Boolean'];
+  permitType: PermitType;
   poaFormUrl?: Maybe<Scalars['String']>;
   applicantId?: Maybe<Scalars['Int']>;
   /** Medical information */
@@ -290,8 +338,7 @@ export type CreatePermitResult = {
 };
 
 export type CreatePhysicianInput = {
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
+  name: Scalars['String'];
   mspNumber: Scalars['Int'];
   addressLine1: Scalars['String'];
   addressLine2?: Maybe<Scalars['String']>;
@@ -305,6 +352,34 @@ export type CreatePhysicianInput = {
 
 export type CreatePhysicianResult = {
   __typename?: 'CreatePhysicianResult';
+  ok: Scalars['Boolean'];
+};
+
+export type CreateRenewalApplicationInput = {
+  applicantId: Scalars['Int'];
+  updatedAddress: Scalars['Boolean'];
+  updatedContactInfo: Scalars['Boolean'];
+  updatedPhysician: Scalars['Boolean'];
+  /** Personal address info (must be provided if updatedAddress === true) */
+  addressLine1?: Maybe<Scalars['String']>;
+  addressLine2?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  postalCode?: Maybe<Scalars['String']>;
+  /** Contact info (at least one must be provided if updatedContactInfo === true) */
+  phone?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  /** Doctor info (must be provided if updatedDoctor === true) */
+  physicianName?: Maybe<Scalars['String']>;
+  physicianMspNumber?: Maybe<Scalars['Int']>;
+  physicianAddressLine1?: Maybe<Scalars['String']>;
+  physicianAddressLine2?: Maybe<Scalars['String']>;
+  physicianCity?: Maybe<Scalars['String']>;
+  physicianPostalCode?: Maybe<Scalars['String']>;
+  physicianPhone?: Maybe<Scalars['String']>;
+};
+
+export type CreateRenewalApplicationResult = {
+  __typename?: 'CreateRenewalApplicationResult';
   ok: Scalars['Boolean'];
 };
 
@@ -328,16 +403,16 @@ export type Guardian = {
   __typename?: 'Guardian';
   id: Scalars['ID'];
   firstName: Scalars['String'];
-  middleName?: Maybe<Scalars['String']>;
+  middleName: Maybe<Scalars['String']>;
   lastName: Scalars['String'];
   addressLine1: Scalars['String'];
-  addressLine2?: Maybe<Scalars['String']>;
+  addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
   province: Province;
   postalCode: Scalars['String'];
   phone: Scalars['String'];
   relationship: Scalars['String'];
-  notes?: Maybe<Scalars['String']>;
+  notes: Maybe<Scalars['String']>;
 };
 
 export type MedicalHistory = {
@@ -353,9 +428,9 @@ export type MedicalInformation = {
   affectsMobility: Scalars['Boolean'];
   mobilityAidRequired: Scalars['Boolean'];
   cannotWalk100m: Scalars['Boolean'];
-  notes?: Maybe<Scalars['String']>;
-  certificationDate?: Maybe<Scalars['Date']>;
-  aid?: Maybe<Array<Aid>>;
+  notes: Maybe<Scalars['String']>;
+  certificationDate: Maybe<Scalars['Date']>;
+  aid: Maybe<Array<Aid>>;
   applicant: Applicant;
   applicantId: Scalars['Int'];
   physician: Physician;
@@ -375,9 +450,14 @@ export type Mutation = {
   createPhysician: CreatePhysicianResult;
   upsertPhysician: UpsertPhysicianResult;
   createApplication: CreateApplicationResult;
+  createRenewalApplication: CreateRenewalApplicationResult;
+  updateApplication: UpdateApplicationResult;
   createPermit: CreatePermitResult;
   updateMedicalInformation: UpdateMedicalInformationResult;
   updateGuardian: UpdateGuardianResult;
+  updateApplicationProcessing: UpdateApplicationProcessingResult;
+  completeApplication: CompleteApplicationResult;
+  verifyIdentity: VerifyIdentityResult;
 };
 
 
@@ -411,6 +491,16 @@ export type MutationCreateApplicationArgs = {
 };
 
 
+export type MutationCreateRenewalApplicationArgs = {
+  input: CreateRenewalApplicationInput;
+};
+
+
+export type MutationUpdateApplicationArgs = {
+  input: UpdateApplicationInput;
+};
+
+
 export type MutationCreatePermitArgs = {
   input: CreatePermitInput;
 };
@@ -423,6 +513,21 @@ export type MutationUpdateMedicalInformationArgs = {
 
 export type MutationUpdateGuardianArgs = {
   input: UpdateGuardianInput;
+};
+
+
+export type MutationUpdateApplicationProcessingArgs = {
+  input: UpdateApplicationProcessingInput;
+};
+
+
+export type MutationCompleteApplicationArgs = {
+  applicationId: Scalars['ID'];
+};
+
+
+export type MutationVerifyIdentityArgs = {
+  input: VerifyIdentityInput;
 };
 
 export enum PaymentType {
@@ -440,7 +545,7 @@ export type Permit = {
   id: Scalars['ID'];
   rcdPermitId: Scalars['Int'];
   expiryDate: Scalars['Date'];
-  receiptId?: Maybe<Scalars['Int']>;
+  receiptId: Maybe<Scalars['Int']>;
   active: Scalars['Boolean'];
   application: Application;
   applicationId: Scalars['Int'];
@@ -448,19 +553,29 @@ export type Permit = {
   applicantId: Scalars['Int'];
 };
 
+export enum PermitStatus {
+  Valid = 'VALID',
+  Expired = 'EXPIRED',
+  ExpiringInThirtyDays = 'EXPIRING_IN_THIRTY_DAYS'
+}
+
+export enum PermitType {
+  Permanent = 'PERMANENT',
+  Temporary = 'TEMPORARY'
+}
+
 export type Physician = {
   __typename?: 'Physician';
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
+  name: Scalars['String'];
   mspNumber: Scalars['Int'];
   addressLine1: Scalars['String'];
-  addressLine2?: Maybe<Scalars['String']>;
+  addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
   province: Province;
   postalCode: Scalars['String'];
   phone: Scalars['String'];
   status: PhysicianStatus;
-  notes?: Maybe<Scalars['String']>;
+  notes: Maybe<Scalars['String']>;
 };
 
 export enum PhysicianStatus {
@@ -487,17 +602,45 @@ export enum Province {
 export type Query = {
   __typename?: 'Query';
   meta: Meta;
-  applicants?: Maybe<Array<Applicant>>;
-  applicant?: Maybe<Applicant>;
-  employees?: Maybe<Array<Employee>>;
-  physicians?: Maybe<Array<Physician>>;
-  applications?: Maybe<Array<Application>>;
-  permits?: Maybe<Array<Permit>>;
+  applicants: Maybe<QueryApplicantsResult>;
+  applicant: Maybe<Applicant>;
+  employees: Maybe<Array<Employee>>;
+  physicians: Maybe<Array<Physician>>;
+  applications: Maybe<QueryApplicationsResult>;
+  application: Maybe<Application>;
+  permits: Maybe<Array<Permit>>;
+};
+
+
+export type QueryApplicantsArgs = {
+  filter: Maybe<ApplicantsFilter>;
 };
 
 
 export type QueryApplicantArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryApplicationsArgs = {
+  filter: Maybe<ApplicationsFilter>;
+};
+
+
+export type QueryApplicationArgs = {
+  id: Scalars['ID'];
+};
+
+export type QueryApplicantsResult = {
+  __typename?: 'QueryApplicantsResult';
+  result: Array<Applicant>;
+  totalCount: Scalars['Int'];
+};
+
+export type QueryApplicationsResult = {
+  __typename?: 'QueryApplicationsResult';
+  result: Array<Application>;
+  totalCount: Scalars['Int'];
 };
 
 export type QueryEmployeeInput = {
@@ -509,6 +652,19 @@ export enum ReasonForReplacement {
   Stolen = 'STOLEN',
   Other = 'OTHER'
 }
+
+export type Replacement = {
+  __typename?: 'Replacement';
+  id: Scalars['ID'];
+  reason: ReasonForReplacement;
+  lostTimestamp: Maybe<Scalars['Date']>;
+  lostLocation: Maybe<Scalars['String']>;
+  stolenPoliceFileNumber: Maybe<Scalars['Int']>;
+  stolenJurisdiction: Maybe<Scalars['String']>;
+  stolenPoliceOfficerName: Maybe<Scalars['String']>;
+  description: Maybe<Scalars['String']>;
+  applicationId: Scalars['ID'];
+};
 
 export enum Role {
   Admin = 'ADMIN',
@@ -536,6 +692,100 @@ export type UpdateApplicantInput = {
 
 export type UpdateApplicantResult = {
   __typename?: 'UpdateApplicantResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicationInput = {
+  id: Scalars['ID'];
+  /** Applicant information */
+  firstName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  dateOfBirth?: Maybe<Scalars['Date']>;
+  gender?: Maybe<Gender>;
+  customGender?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  province?: Maybe<Province>;
+  city?: Maybe<Scalars['String']>;
+  addressLine1?: Maybe<Scalars['String']>;
+  addressLine2?: Maybe<Scalars['String']>;
+  postalCode?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
+  rcdUserId?: Maybe<Scalars['Int']>;
+  isRenewal?: Maybe<Scalars['Boolean']>;
+  poaFormUrl?: Maybe<Scalars['String']>;
+  applicantId?: Maybe<Scalars['Int']>;
+  /** Medical information */
+  disability?: Maybe<Scalars['String']>;
+  affectsMobility?: Maybe<Scalars['Boolean']>;
+  mobilityAidRequired?: Maybe<Scalars['Boolean']>;
+  cannotWalk100m?: Maybe<Scalars['Boolean']>;
+  /** NOTE: Might need to change this to accept a single Aid object, and push to the aid array */
+  aid?: Maybe<Array<Aid>>;
+  /** Physician Information */
+  physicianName?: Maybe<Scalars['String']>;
+  physicianMspNumber?: Maybe<Scalars['Int']>;
+  physicianAddressLine1?: Maybe<Scalars['String']>;
+  physicianAddressLine2?: Maybe<Scalars['String']>;
+  physicianCity?: Maybe<Scalars['String']>;
+  physicianProvince?: Maybe<Province>;
+  physicianPostalCode?: Maybe<Scalars['String']>;
+  physicianPhone?: Maybe<Scalars['String']>;
+  physicianNotes?: Maybe<Scalars['String']>;
+  /** Payment Information */
+  shippingFullName?: Maybe<Scalars['String']>;
+  shippingAddressLine1?: Maybe<Scalars['String']>;
+  shippingAddressLine2?: Maybe<Scalars['String']>;
+  shippingCity?: Maybe<Scalars['String']>;
+  shippingProvince?: Maybe<Province>;
+  /** shippingCountry: String */
+  shippingPostalCode?: Maybe<Scalars['String']>;
+  billingFullName?: Maybe<Scalars['String']>;
+  billingAddressLine1?: Maybe<Scalars['String']>;
+  billingAddressLine2?: Maybe<Scalars['String']>;
+  billingCity?: Maybe<Scalars['String']>;
+  billingProvince?: Maybe<Province>;
+  /** billingCountry: String */
+  billingPostalCode?: Maybe<Scalars['String']>;
+  shippingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
+  billingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
+  processingFee?: Maybe<Scalars['Float']>;
+  donationAmount?: Maybe<Scalars['Float']>;
+  paymentMethod?: Maybe<PaymentType>;
+  shopifyConfirmationNumber?: Maybe<Scalars['String']>;
+  /** Guardian */
+  guardianFirstName?: Maybe<Scalars['String']>;
+  guardianMiddleName?: Maybe<Scalars['String']>;
+  guardianLastName?: Maybe<Scalars['String']>;
+  guardianPhone?: Maybe<Scalars['String']>;
+  guardianProvince?: Maybe<Province>;
+  guardianCity?: Maybe<Scalars['String']>;
+  guardianAddressLine1?: Maybe<Scalars['String']>;
+  guardianAddressLine2?: Maybe<Scalars['String']>;
+  guardianPostalCode?: Maybe<Scalars['String']>;
+  guardianRelationship?: Maybe<Scalars['String']>;
+  guardianNotes?: Maybe<Scalars['String']>;
+};
+
+export type UpdateApplicationProcessingInput = {
+  applicationId: Scalars['ID'];
+  status?: Maybe<ApplicationStatus>;
+  appNumber?: Maybe<Scalars['Int']>;
+  appHolepunched?: Maybe<Scalars['Boolean']>;
+  walletCardCreated?: Maybe<Scalars['Boolean']>;
+  invoiceNumber?: Maybe<Scalars['Int']>;
+  documentUrl?: Maybe<Scalars['String']>;
+  appMailed?: Maybe<Scalars['Boolean']>;
+};
+
+export type UpdateApplicationProcessingResult = {
+  __typename?: 'UpdateApplicationProcessingResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicationResult = {
+  __typename?: 'UpdateApplicationResult';
   ok: Scalars['Boolean'];
 };
 
@@ -577,8 +827,7 @@ export type UpdateMedicalInformationResult = {
 
 export type UpsertPhysicianInput = {
   mspNumber: Scalars['Int'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
+  name: Scalars['String'];
   addressLine1: Scalars['String'];
   addressLine2?: Maybe<Scalars['String']>;
   city: Scalars['String'];
@@ -592,4 +841,28 @@ export type UpsertPhysicianInput = {
 export type UpsertPhysicianResult = {
   __typename?: 'UpsertPhysicianResult';
   ok: Scalars['Boolean'];
+};
+
+export enum UserStatus {
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE'
+}
+
+export enum VerifyIdentityFailureReason {
+  IdentityVerificationFailed = 'IDENTITY_VERIFICATION_FAILED',
+  AppDoesNotExpireWithin_30Days = 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS'
+}
+
+export type VerifyIdentityInput = {
+  userId: Scalars['Int'];
+  phoneNumberSuffix: Scalars['String'];
+  dateOfBirth: Scalars['Date'];
+  acceptedTos: Scalars['Date'];
+};
+
+export type VerifyIdentityResult = {
+  __typename?: 'VerifyIdentityResult';
+  ok: Scalars['Boolean'];
+  failureReason: Maybe<VerifyIdentityFailureReason>;
+  applicantId: Maybe<Scalars['Int']>;
 };
