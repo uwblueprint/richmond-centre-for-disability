@@ -3,6 +3,7 @@ import { Applicant } from '@lib/types'; // Applicant type
 import { SortOrder } from '@tools/types';
 import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
 import { ApolloError } from 'apollo-server-micro'; // Apollo errors
+import { ApplicationStatus } from '@prisma/client';
 
 /**
  * Field resolver to fetch all applications belonging to an applicant
@@ -62,6 +63,9 @@ export const applicantMedicalHistoryResolver: Resolver<Applicant> = async (
   const applications = await prisma.application.findMany({
     where: {
       applicantId: parent?.id,
+      applicationProcessing: {
+        status: ApplicationStatus.COMPLETED,
+      },
     },
     select: {
       physicianMspNumber: true,
@@ -120,4 +124,27 @@ export const applicantActivePermitResolver: Resolver<Applicant> = async parent =
   } catch (err) {
     throw new ApolloError(err.message);
   }
+};
+
+export const applicantFileHistoryResolver: Resolver<Applicant> = async (
+  parent,
+  _args,
+  { prisma }
+) => {
+  const applicationProcessings = await prisma.application.findMany({
+    where: {
+      applicantId: parent?.id,
+    },
+    include: {
+      applicationProcessing: {
+        select: {
+          documentUrls: true,
+          appNumber: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
+
+  return applicationProcessings;
 };

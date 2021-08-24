@@ -66,7 +66,7 @@ const mockApplication = {
 // Individual permit holder page
 export default function PermitHolder() {
   // TODO: Destructure physician, guardian from application
-  const { applicant, applicationStatus } = mockApplication;
+  const { applicant, /*physician, guardian,*/ applicationStatus } = mockApplication;
 
   return (
     <Layout>

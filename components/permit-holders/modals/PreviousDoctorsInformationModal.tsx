@@ -10,8 +10,10 @@ import {
   ModalBody,
   Button,
   useDisclosure,
+  // useQuery,
 } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
+// import { GET_PERMIT_HOLDER } from '@tools/pages/request';
 import { ReactNode } from 'react'; // React
 
 // Placeholder data
@@ -72,6 +74,16 @@ export default function PreviousDoctorsInformationModal({
   children,
 }: PreviousDoctorsInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  // useQuery<GetApplicationResponse, GetApplicationRequest>(GET_PERMIT_HOLDER, {
+  //   variables: {
+  //     id: 1
+  //   },
+  //   onCompleted: data => {
+
+  //   }
+  // },
+  // )
 
   return (
     <>

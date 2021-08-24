@@ -25,6 +25,7 @@ type Applicant {
   permits: [Permit!]!
   medicalHistory: [MedicalHistory!]
   mostRecentPermit: Permit!
+  fileHistory: [ApplicationFileAttachments!]
 }
 
 input CreateApplicantInput {

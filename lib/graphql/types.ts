@@ -53,6 +53,7 @@ export type Applicant = {
   permits: Array<Permit>;
   medicalHistory: Maybe<Array<MedicalHistory>>;
   mostRecentPermit: Permit;
+  fileHistory: Maybe<Array<ApplicationFileAttachments>>;
 };
 
 export enum ApplicantStatus {
@@ -150,6 +151,13 @@ export type Application = {
   applicationProcessing: Maybe<ApplicationProcessing>;
   /** Replacement */
   replacement: Maybe<Replacement>;
+  createdAt: Scalars['Date'];
+};
+
+export type ApplicationFileAttachments = {
+  __typename?: 'ApplicationFileAttachments';
+  documentUrls: Maybe<Array<Scalars['String']>>;
+  appNumber: Maybe<Scalars['Int']>;
   createdAt: Scalars['Date'];
 };
 
