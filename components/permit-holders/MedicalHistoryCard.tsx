@@ -3,6 +3,13 @@ import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
 import { Aid, Application } from '@lib/graphql/types'; // Aid enum & Application type
 import MedicalHistoryModal from '@components/permit-holders/modals/MedicalHistoryModal'; // Medical History Modal
+import { useQuery } from '@apollo/client';
+import {
+  GetApplicantApplicationsRequest,
+  GetApplicantApplicationsResponse,
+  GET_APPLICANT_APPLICATIONS_QUERY,
+} from '@tools/pages/admin/permit-holders/[permitHolderId]';
+import { useState } from 'react';
 
 // Placeholder data
 const mockMedicalHistory = {
@@ -15,13 +22,13 @@ const mockMedicalHistory = {
   createdAt: '2021/01/01',
 };
 
-const DATA = Array(4).fill({
-  disablingCondition: 'Condition 1',
-  associatedApp: { associatedApp: 12345 },
-  dateUploaded: '2021/01/01',
-  fileUrl: { fileUrl: '/' },
-  application: { application: mockMedicalHistory },
-});
+// const DATA = Array(4).fill({
+//   disablingCondition: 'Condition 1',
+//   associatedApp: { associatedApp: 12345 },
+//   dateUploaded: '2021/01/01',
+//   fileUrl: { fileUrl: '/' },
+//   application: { application: mockMedicalHistory },
+// });
 
 const COLUMNS = [
   {
@@ -56,12 +63,41 @@ function _renderConditionDetailsLink() {
   );
 }
 
+type MedicalHistoryEntry = {
+  disablingCondition: string;
+  dateUploaded: Date;
+  associatedApplicationId: number;
+};
+
 export default function MedicalHistoryCard() {
+  const applicantId = 1;
+
+  const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
+
+  //get data here from api
+  useQuery<GetApplicantApplicationsResponse, GetApplicantApplicationsRequest>(
+    GET_APPLICANT_APPLICATIONS_QUERY,
+    {
+      variables: {
+        id: applicantId,
+      },
+      onCompleted: data => {
+        setMedicalHistoryData(
+          data.applications.map(record => ({
+            disablingCondition: record.disability,
+            dateUploaded: record.createdAt,
+            associatedApplicationId: record.id,
+          }))
+        );
+      },
+    }
+  );
+
   return (
     <PermitHolderInfoCard alignGridItems="normal" header={`Medical History`}>
       <Divider pt="24px" />
       <Box padding="20px 24px">
-        <Table columns={COLUMNS} data={DATA} />
+        <Table columns={COLUMNS} data={medicalHistoryData || []} />
       </Box>
     </PermitHolderInfoCard>
   );
