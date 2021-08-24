@@ -15,6 +15,9 @@ import {
   applicantGuardianResolver,
   applicantMedicalInformationResolver,
   applicantMedicalHistoryResolver,
+  applicantMostRecentPermitResolver,
+  applicantActivePermitResolver,
+  applicantFileHistoryResolver,
 } from '@lib/applicants/field-resolvers'; // Applicant field resolvers
 import {
   applicationApplicantResolver,
@@ -57,6 +60,9 @@ const resolvers = {
     guardian: applicantGuardianResolver,
     medicalInformation: applicantMedicalInformationResolver,
     medicalHistory: applicantMedicalHistoryResolver,
+    mostRecentPermit: applicantMostRecentPermitResolver,
+    activePermit: applicantActivePermitResolver,
+    fileHistory: applicantFileHistoryResolver,
   },
   Application: {
     applicant: applicationApplicantResolver,

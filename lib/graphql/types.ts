@@ -49,8 +49,10 @@ export type Applicant = {
   guardian: Guardian;
   medicalInformationId: Scalars['Int'];
   medicalInformation: MedicalInformation;
-  permits?: Maybe<Array<Permit>>;
-  medicalHistory?: Maybe<Array<MedicalHistory>>;
+  permits: Array<Permit>;
+  medicalHistory: Maybe<Array<MedicalHistory>>;
+  mostRecentPermit: Permit;
+  fileHistory: Maybe<Array<ApplicationFileAttachments>>;
 };
 
 export enum ApplicantStatus {
@@ -118,6 +120,28 @@ export type Application = {
   permit?: Maybe<Permit>;
   /** Misc */
   createdAt: Scalars['Date'];
+};
+
+export type ApplicationFileAttachments = {
+  __typename?: 'ApplicationFileAttachments';
+  documentUrls: Maybe<Array<Scalars['String']>>;
+  appNumber: Maybe<Scalars['Int']>;
+  createdAt: Scalars['Date'];
+};
+
+export type ApplicationProcessing = {
+  __typename?: 'ApplicationProcessing';
+  id: Scalars['ID'];
+  status: ApplicationStatus;
+  appNumber: Maybe<Scalars['Int']>;
+  appHolepunched: Scalars['Boolean'];
+  walletCardCreated: Scalars['Boolean'];
+  invoiceNumber: Maybe<Scalars['Int']>;
+  documentUrls: Maybe<Array<Scalars['String']>>;
+  appMailed: Scalars['Boolean'];
+  createdAt: Scalars['Date'];
+  updatedAt: Scalars['Date'];
+  application: Application;
 };
 
 export enum ApplicationStatus {

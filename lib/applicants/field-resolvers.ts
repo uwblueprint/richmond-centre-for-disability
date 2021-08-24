@@ -1,5 +1,9 @@
 import { Resolver } from '@lib/resolvers'; // Resolver type
 import { Applicant } from '@lib/types'; // Applicant type
+import { SortOrder } from '@tools/types';
+import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
+import { ApolloError } from 'apollo-server-micro'; // Apollo errors
+import { ApplicationStatus } from '@prisma/client';
 
 /**
  * Field resolver to fetch all applications belonging to an applicant
@@ -55,6 +59,9 @@ export const applicantMedicalHistoryResolver: Resolver<Applicant> = async (
   const applications = await prisma.application.findMany({
     where: {
       applicantId: parent?.id,
+      applicationProcessing: {
+        status: ApplicationStatus.COMPLETED,
+      },
     },
     select: {
       physicianMspNumber: true,
@@ -80,4 +87,60 @@ export const applicantMedicalHistoryResolver: Resolver<Applicant> = async (
   });
 
   return result;
+};
+
+/**
+ * Field resolver to fetch the most recent permit of an applicant
+ * @returns Permit object
+ */
+export const applicantMostRecentPermitResolver: Resolver<Applicant> = async (
+  parent,
+  _args,
+  { prisma }
+) => {
+  const permit = await prisma.applicant
+    .findUnique({
+      where: { id: parent.id },
+    })
+    .permits({
+      orderBy: { createdAt: SortOrder.DESC },
+      take: 1,
+    });
+
+  return permit[0];
+};
+
+/**
+ * Field resolver to fetch the active permit object associated with an applicant
+ * @returns Permit object if active permit exists, `null` otherwise
+ */
+export const applicantActivePermitResolver: Resolver<Applicant> = async parent => {
+  try {
+    return await getActivePermit(parent.id);
+  } catch (err) {
+    throw new ApolloError(err.message);
+  }
+};
+
+export const applicantFileHistoryResolver: Resolver<Applicant> = async (
+  parent,
+  _args,
+  { prisma }
+) => {
+  const applicationProcessings = await prisma.application.findMany({
+    where: {
+      applicantId: parent?.id,
+    },
+    include: {
+      applicationProcessing: {
+        select: {
+          documentUrls: true,
+          appNumber: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
+
+  return applicationProcessings;
 };
