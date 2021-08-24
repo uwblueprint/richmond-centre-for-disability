@@ -203,7 +203,7 @@ export default function PermitHolders() {
   const [permitStatusFilter, setPermitStatusFilter] = useState<PermitStatus>();
   const [userStatusFilter, setUserStatusFilter] = useState<UserStatus>();
   const [searchFilter, setSearchFilter] = useState<string>('');
-  const { range, addDayToRange, dateRangeString } = useDayPicker({
+  const { dateRange, addDayToDateRange, dateRangeString } = useDayPicker({
     from: undefined,
     to: undefined,
   });
@@ -223,7 +223,7 @@ export default function PermitHolders() {
   // Set page number to 0 after every filter or sort change
   useEffect(() => {
     setPageNumber(0);
-  }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, range]);
+  }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, dateRange]);
 
   // GQL Query
   useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(GET_PERMIT_HOLDERS_QUERY, {
@@ -231,8 +231,8 @@ export default function PermitHolders() {
       filter: {
         userStatus: userStatusFilter,
         permitStatus: permitStatusFilter,
-        expiryDateRangeFrom: range.from?.getTime(),
-        expiryDateRangeTo: range.to?.getTime(),
+        expiryDateRangeFrom: dateRange.from?.getTime(),
+        expiryDateRangeTo: dateRange.to?.getTime(),
         search: debouncedSearchFilter,
         offset: pageNumber * PAGE_SIZE,
         limit: PAGE_SIZE,
@@ -363,9 +363,9 @@ export default function PermitHolders() {
                 </MenuButton>
                 <MenuList>
                   <DayPicker
-                    range={range}
+                    dateRange={dateRange}
                     onDateChange={day => {
-                      addDayToRange(day);
+                      addDayToDateRange(day);
                     }}
                     numberOfMonths={2}
                   />

@@ -1,28 +1,42 @@
 import { useState } from 'react'; // React
-import { DateUtils, RangeModifier } from 'react-day-picker'; // React Date Picker
+import { DateUtils, RangeModifier } from 'react-day-picker'; // React DayPicker
 
+// useDayPicker inital parameters
+type useDayPicker = {
+  from: Date | undefined;
+  to: Date | undefined;
+};
+
+// useDayPicker return type
 type useDayPickerReturnType = {
-  range: RangeModifier;
-  addDayToRange: (day: Date) => void;
+  dateRange: RangeModifier;
+  addDayToDateRange: (day: Date) => void;
   dateRangeString: () => string;
 };
 
-export default function useDayPicker(initialDateRange: RangeModifier): useDayPickerReturnType {
-  const [range, setRange] = useState<RangeModifier>(initialDateRange);
+/**
+ * Custom hook for managing DayPicker state
+ * @param {useDayPicker} initialDateRange - Initial date range object with from and to properties
+ * @returns dateRange state, addDayToDateRange function, dateRangeString function to display dates (YYYY-MM-DD - YYYY-MM-DD)
+ */
+export default function useDayPicker(initalDateRange: useDayPicker): useDayPickerReturnType {
+  const [dateRange, setDateRange] = useState<RangeModifier>(initalDateRange);
 
-  function addDayToRange(day: Date) {
-    setRange(DateUtils.addDayToRange(day, range));
+  function addDayToDateRange(day: Date) {
+    setDateRange(DateUtils.addDayToRange(day, dateRange));
   }
 
   const dateRangeString = () => {
-    if (range.from && range.to) {
-      return `${range.from.toLocaleDateString('en-CA')} - ${range.to.toLocaleDateString('en-CA')}`;
-    } else if (range.from && !range.to) {
-      return `${range.from.toLocaleDateString('en-CA')} - YYYY-MM-DD`;
+    if (dateRange.from && dateRange.to) {
+      return `${dateRange.from.toLocaleDateString('en-CA')} - ${dateRange.to.toLocaleDateString(
+        'en-CA'
+      )}`;
+    } else if (dateRange.from && !dateRange.to) {
+      return `${dateRange.from.toLocaleDateString('en-CA')} - YYYY-MM-DD`;
     } else {
       return 'YYYY-MM-DD - YYYY-MM-DD';
     }
   };
 
-  return { range, addDayToRange, dateRangeString };
+  return { dateRange, addDayToDateRange, dateRangeString };
 }
