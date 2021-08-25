@@ -73,9 +73,11 @@ type MedicalHistoryEntry = {
   associatedApplicationId: number;
 };
 
-export default function MedicalHistoryCard() {
-  const applicantId = 1;
+type Props = {
+  readonly permitHolderId: number;
+};
 
+export default function MedicalHistoryCard({ permitHolderId }: Props) {
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
 
   //get data here from api
@@ -83,7 +85,7 @@ export default function MedicalHistoryCard() {
     GET_APPLICANT_APPLICATIONS_QUERY,
     {
       variables: {
-        id: applicantId,
+        id: permitHolderId,
       },
       onCompleted: data => {
         setMedicalHistoryData(
