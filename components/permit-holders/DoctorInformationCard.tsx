@@ -7,6 +7,7 @@ import PreviousDoctorsInformationModal from '@components/permit-holders/modals/P
 type DoctorInformationProps = {
   physician: Physician;
   readonly isUpdated?: boolean;
+  readonly permitHolderId: number;
 };
 
 export default function DoctorInformationCard(props: DoctorInformationProps) {
@@ -74,7 +75,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       </VStack>
 
       <Flex w="100%" justifyContent="flex-end" paddingTop="8px">
-        <PreviousDoctorsInformationModal>
+        <PreviousDoctorsInformationModal permitHolderId={props.permitHolderId}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">{'View previous doctors'}</Text>
           </Button>

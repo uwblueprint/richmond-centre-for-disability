@@ -6,11 +6,11 @@ import { Applicant, Role } from '@lib/types'; // Role enum and Applicant Type
 import { authorize } from '@tools/authorization'; // Page authorization
 import PermitHolderHeader from '@components/permit-holders/PermitHolderHeader'; // Permit Holder header
 // TODO: Reimplement DoctorInformationCard
-// import DoctorInformationCard from '@components/permit-holders/DoctorInformationCard'; // Doctor information card
+import DoctorInformationCard from '@components/permit-holders/DoctorInformationCard'; // Doctor information card
 import PersonalInformationCard from '@components/permit-holders/PersonalInformationCard'; // Personal information card
 import { Gender, Province, PhysicianStatus, PaymentType, ApplicationStatus } from '@lib/types'; // Gender, Province, PhysicianStatus, PaymentType Enums
 // TODO: Reimplement GuardianInformationCard
-// import GuardianInformationCard from '@components/permit-holders/GuardianInformationCard'; // Guardian Information card
+import GuardianInformationCard from '@components/permit-holders/GuardianInformationCard'; // Guardian Information card
 import AppHistoryCard from '@components/permit-holders/AppHistoryCard'; // APP History card
 import AttachedFilesCard from '@components/permit-holders/AttachedFilesCard'; // Attached Files card
 import MedicalHistoryCard from '@components/permit-holders/MedicalHistoryCard'; // Medical History card
@@ -38,21 +38,26 @@ const mockApplication = {
     name: 'Physician One',
     phone: '1234567890',
     addressLine1: '123 Richmond St.',
+    addressLine2: '',
     postalCode: 'X0X0X0',
     city: 'Richmond',
     province: Province.Bc,
     status: PhysicianStatus.Active,
+    notes: '',
   },
   guardian: {
     id: 1,
     firstName: 'Guardian',
+    middleName: '',
     lastName: 'One',
     phone: '1234567890',
     addressLine1: '123 Richmond St.',
+    addressLine2: '',
     postalCode: 'X0X0X0',
     city: 'Richmond',
     province: Province.Bc,
     relationship: 'Parent',
+    notes: '',
   },
   createdAt: new Date().toDateString(),
   expirationDate: new Date().toDateString(),
@@ -83,9 +88,12 @@ export default function PermitHolder({ permitHolderId }: Props) {
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
         <Stack spacing={5}>
           <PersonalInformationCard applicant={applicant as unknown as Applicant} />
-          {/* Temporarily commented to pass CI checks for View Request page */}
-          {/* <DoctorInformationCard physician={physician} />
-          <GuardianInformationCard guardian={guardian} /> */}
+          Temporarily commented to pass CI checks for View Request page
+          <DoctorInformationCard
+            physician={mockApplication.physician}
+            permitHolderId={permitHolderId}
+          />
+          <GuardianInformationCard guardian={mockApplication.guardian} />
         </Stack>
       </GridItem>
 

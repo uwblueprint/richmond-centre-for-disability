@@ -13,17 +13,23 @@ import {
   // useQuery,
 } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
-// import { GET_PERMIT_HOLDER } from '@tools/pages/request';
+import {
+  GET_APPLICANT_PHYSICIANS_QUERY,
+  GetApplicantPhysiciansRequest,
+  GetApplicantPhysiciansResponse,
+} from '@tools/pages/admin/permit-holders/past-physicians-modal';
 import { ReactNode } from 'react'; // React
+import { useState } from 'react'; // React
+import { useQuery } from '@apollo/client';
 
 // Placeholder data
 
-const DATA = Array(4).fill({
-  name: 'Charmaine Wang',
-  phoneNumber: '000-000-000',
-  mspNumber: 'XXXXX',
-  applicationId: { applicationId: 1 },
-});
+// const DATA = Array(4).fill({
+//   name: 'Charmaine Wang',
+//   phoneNumber: '000-000-000',
+//   mspNumber: 'XXXXX',
+//   applicationId: { applicationId: 1 },
+// });
 
 const COLUMNS = [
   {
@@ -68,19 +74,39 @@ function _renderAppLink({ value }: appProps) {
 
 type PreviousDoctorsInformationModalProps = {
   children: ReactNode;
+  readonly permitHolderId: number;
+};
+
+type PreviousPhysicianData = {
+  name: string;
+  mspNumber: number;
+  phone: string;
 };
 
 export default function PreviousDoctorsInformationModal({
   children,
+  permitHolderId,
 }: PreviousDoctorsInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const [physicianData, setPhysicianData] = useState<PreviousPhysicianData[]>();
 
-  // useQuery<GetApplicationResponse, GetApplicationRequest>(GET_PERMIT_HOLDER, {
-  //   variables: {
-  //     id: 1,
-  //   },
-  //   onCompleted: data => {},
-  // });
+  useQuery<GetApplicantPhysiciansResponse, GetApplicantPhysiciansRequest>(
+    GET_APPLICANT_PHYSICIANS_QUERY,
+    {
+      variables: {
+        id: permitHolderId,
+      },
+      onCompleted: data => {
+        setPhysicianData(
+          data.applicant.medicalHistory.physician.map(record => ({
+            name: record.name,
+            mspNumber: record.mspNumber,
+            phone: record.phone,
+          }))
+        );
+      },
+    }
+  );
 
   return (
     <>
@@ -101,7 +127,7 @@ export default function PreviousDoctorsInformationModal({
           </ModalHeader>
           <ModalBody paddingY="0px" paddingX="4px">
             <Box>
-              <Table columns={COLUMNS} data={DATA} />
+              <Table columns={COLUMNS} data={physicianData || []} />
             </Box>
           </ModalBody>
           <ModalFooter paddingTop="36px" paddingBottom="40px" paddingX="4px">

@@ -1,0 +1,28 @@
+import { gql } from '@apollo/client';
+import { Physician } from '@lib/graphql/types';
+
+export const GET_APPLICANT_PHYSICIANS_QUERY = gql`
+  query GetApplicantPhysiciansQuery($id: ID!) {
+    applicant(id: $id) {
+      medicalHistory {
+        physician {
+          name
+          mspNumber
+          phone
+        }
+      }
+    }
+  }
+`;
+
+export type GetApplicantPhysiciansRequest = {
+  id: number;
+};
+
+export type GetApplicantPhysiciansResponse = {
+  applicant: {
+    medicalHistory: {
+      physician: ReadonlyArray<Pick<Physician, 'name' | 'mspNumber' | 'phone'>>;
+    };
+  };
+};

@@ -66,7 +66,11 @@ export const GET_PERMIT_HOLDER = gql`
 
       medicalHistory {
         applicationId
-        physician
+        physician {
+          name
+          mspNumber
+          phone
+        }
       }
 
       medicalInformation {
