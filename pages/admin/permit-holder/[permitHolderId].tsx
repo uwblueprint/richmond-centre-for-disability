@@ -63,8 +63,12 @@ const mockApplication = {
   paymentType: PaymentType.Visa,
 };
 
+type Props = {
+  readonly permitHolderId: number;
+};
+
 // Individual permit holder page
-export default function PermitHolder() {
+export default function PermitHolder({ permitHolderId }: Props) {
   // TODO: Destructure physician, guardian from application
   const { applicant, /*physician, guardian,*/ applicationStatus } = mockApplication;
 
@@ -89,7 +93,7 @@ export default function PermitHolder() {
         <Stack spacing={5}>
           <AppHistoryCard />
           <AttachedFilesCard />
-          <MedicalHistoryCard />
+          <MedicalHistoryCard permitHolderId={permitHolderId} />
         </Stack>
       </GridItem>
     </Layout>
@@ -101,8 +105,10 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
   // Only secretaries and admins can access permit holder information
   if (authorize(session, [Role.Secretary])) {
+    const permitHolderId = context?.params?.permitHolderId;
+
     return {
-      props: {},
+      props: { permitHolderId },
     };
   }
 

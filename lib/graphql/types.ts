@@ -151,6 +151,7 @@ export type Application = {
   applicationProcessing: Maybe<ApplicationProcessing>;
   /** Replacement */
   replacement: Maybe<Replacement>;
+  /** Misc */
   createdAt: Scalars['Date'];
 };
 

@@ -3,6 +3,14 @@ import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
 import { Aid, Application } from '@lib/graphql/types'; // Aid enum & Application type
 import MedicalHistoryModal from '@components/permit-holders/modals/MedicalHistoryModal'; // Medical History Modal
+import { useQuery } from '@apollo/client';
+import {
+  GetApplicantApplicationsRequest,
+  GetApplicantApplicationsResponse,
+  GET_APPLICANT_APPLICATIONS_QUERY,
+} from '@tools/pages/admin/permit-holders/[permitHolderId]';
+import { useState } from 'react';
+import { Column } from 'react-table';
 
 // Placeholder data
 const mockMedicalHistory = {
@@ -15,15 +23,15 @@ const mockMedicalHistory = {
   createdAt: '2021/01/01',
 };
 
-const DATA = Array(4).fill({
-  disablingCondition: 'Condition 1',
-  associatedApp: { associatedApp: 12345 },
-  dateUploaded: '2021/01/01',
-  fileUrl: { fileUrl: '/' },
-  application: { application: mockMedicalHistory },
-});
+// const DATA = Array(4).fill({
+//   disablingCondition: 'Condition 1',
+//   associatedApp: { associatedApp: 12345 },
+//   dateUploaded: '2021/01/01',
+//   fileUrl: { fileUrl: '/' },
+//   application: { application: mockMedicalHistory },
+// });
 
-const COLUMNS = [
+const COLUMNS: Column<any>[] = [
   {
     Header: 'Disabling Condition',
     accessor: 'disablingCondition',
@@ -35,6 +43,9 @@ const COLUMNS = [
     accessor: 'dateUploaded',
     disableSortBy: true,
     maxWidth: 200,
+    Cell: ({ value }) => {
+      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+    },
   },
   {
     accessor: 'associatedApplicationId',
@@ -56,12 +67,43 @@ function _renderConditionDetailsLink() {
   );
 }
 
-export default function MedicalHistoryCard() {
+type MedicalHistoryEntry = {
+  disablingCondition: string;
+  dateUploaded: Date;
+  associatedApplicationId: number;
+};
+
+type Props = {
+  readonly permitHolderId: number;
+};
+
+export default function MedicalHistoryCard({ permitHolderId }: Props) {
+  const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
+
+  //get data here from api
+  useQuery<GetApplicantApplicationsResponse, GetApplicantApplicationsRequest>(
+    GET_APPLICANT_APPLICATIONS_QUERY,
+    {
+      variables: {
+        id: permitHolderId,
+      },
+      onCompleted: data => {
+        setMedicalHistoryData(
+          data.applicant.applications.map(record => ({
+            disablingCondition: record.disability,
+            dateUploaded: record.createdAt,
+            associatedApplicationId: record.id,
+          }))
+        );
+      },
+    }
+  );
+
   return (
     <PermitHolderInfoCard alignGridItems="normal" header={`Medical History`}>
       <Divider pt="24px" />
       <Box padding="20px 24px">
-        <Table columns={COLUMNS} data={DATA} />
+        <Table columns={COLUMNS} data={medicalHistoryData || []} />
       </Box>
     </PermitHolderInfoCard>
   );
