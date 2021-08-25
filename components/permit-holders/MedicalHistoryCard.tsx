@@ -10,6 +10,7 @@ import {
   GET_APPLICANT_APPLICATIONS_QUERY,
 } from '@tools/pages/admin/permit-holders/[permitHolderId]';
 import { useState } from 'react';
+import { Column } from 'react-table';
 
 // Placeholder data
 const mockMedicalHistory = {
@@ -30,7 +31,7 @@ const mockMedicalHistory = {
 //   application: { application: mockMedicalHistory },
 // });
 
-const COLUMNS = [
+const COLUMNS: Column<any>[] = [
   {
     Header: 'Disabling Condition',
     accessor: 'disablingCondition',
@@ -42,6 +43,9 @@ const COLUMNS = [
     accessor: 'dateUploaded',
     disableSortBy: true,
     maxWidth: 200,
+    Cell: ({ value }) => {
+      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+    },
   },
   {
     accessor: 'associatedApplicationId',
@@ -83,7 +87,7 @@ export default function MedicalHistoryCard() {
       },
       onCompleted: data => {
         setMedicalHistoryData(
-          data.applications.map(record => ({
+          data.applicant.applications.map(record => ({
             disablingCondition: record.disability,
             dateUploaded: record.createdAt,
             associatedApplicationId: record.id,

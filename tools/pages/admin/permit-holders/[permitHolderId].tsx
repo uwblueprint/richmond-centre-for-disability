@@ -22,16 +22,18 @@ export type GetApplicantApplicationsRequest = {
 };
 
 export type GetApplicantApplicationsResponse = {
-  applications: ReadonlyArray<
-    Pick<
-      Application,
-      | 'id'
-      | 'disability'
-      | 'affectsMobility'
-      | 'mobilityAidRequired'
-      | 'cannotWalk100m'
-      | 'aid'
-      | 'createdAt'
-    >
-  >;
+  applicant: {
+    applications: ReadonlyArray<
+      Pick<
+        Application,
+        | 'id'
+        | 'disability'
+        | 'affectsMobility'
+        | 'mobilityAidRequired'
+        | 'cannotWalk100m'
+        | 'aid'
+        | 'createdAt'
+      >
+    >;
+  };
 };
