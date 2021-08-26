@@ -1,17 +1,16 @@
 import { Box, Link, Text, Divider } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
+import { useState } from 'react'; //React
+import { Column } from 'react-table'; // React table
+import {
+  GetApplicantAttachedFilesRequest,
+  GetApplicantAttachedFilesResponse,
+  GET_APPLICANT_ATTACHED_FILES_QUERY,
+} from '@tools/pages/admin/permit-holders/[permitHolderId]'; // Applicant attached files query
+import { useQuery } from '@apollo/client'; // Apollo client
 
-// Placeholder data
-
-const DATA = Array(4).fill({
-  fileName: 'test.pdf',
-  associatedApp: { associatedApp: 12345 },
-  dateUploaded: '2021/01/01',
-  fileUrl: { fileUrl: '/' },
-});
-
-const COLUMNS = [
+const COLUMNS: Column<any>[] = [
   {
     Header: 'File Name',
     accessor: 'fileName',
@@ -23,54 +22,82 @@ const COLUMNS = [
     accessor: 'associatedApp',
     disableSortBy: true,
     maxWidth: 220,
-    Cell: _renderAssociatedApp,
+    Cell: ({ value }) => {
+      return (
+        <>
+          <Text as="p">{`#${value.associatedApp}`}</Text>
+        </>
+      );
+    },
   },
   {
     Header: 'Date Uploaded',
     accessor: 'dateUploaded',
     disableSortBy: true,
     maxWidth: 160,
+    Cell: ({ value }) => {
+      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+    },
   },
   {
     accessor: 'fileUrl',
     disableSortBy: true,
     maxWidth: 140,
-    Cell: _renderFileLink,
+    Cell: ({ value }) => {
+      return (
+        <Link href={`/${value}`} passHref>
+          <Text textStyle="body-regular" textColor="primary" as="a">
+            Download file
+          </Text>
+        </Link>
+      );
+    },
   },
 ];
 
-type AssociatedAppProps = {
-  value: { associatedApp: number };
+type AttachedFile = {
+  fileName: string;
+  associatedApp: number;
+  dateUploaded: Date;
+  fileUrl: string;
 };
 
-function _renderAssociatedApp({ value }: AssociatedAppProps) {
-  return (
-    <>
-      <Text as="p">{`#${value.associatedApp}`}</Text>
-    </>
-  );
-}
-
-type downloadFileProps = {
-  value: { fileUrl: number };
+type Props = {
+  readonly permitHolderId: number;
 };
 
-function _renderFileLink({ value }: downloadFileProps) {
-  return (
-    <Link href={`/${value.fileUrl}`} passHref>
-      <Text textStyle="body-regular" textColor="primary" as="a">
-        Download file
-      </Text>
-    </Link>
-  );
-}
+export default function AttachedFilesCard({ permitHolderId }: Props) {
+  const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>();
+  const path = require('path');
 
-export default function AttachedFilesCard() {
+  useQuery<GetApplicantAttachedFilesResponse, GetApplicantAttachedFilesRequest>(
+    GET_APPLICANT_ATTACHED_FILES_QUERY,
+    {
+      variables: {
+        id: permitHolderId,
+      },
+      onCompleted: data => {
+        const files: AttachedFile[] = [];
+        data.applicant.applications.forEach(application => {
+          application.applicationProcessing.documentUrls?.forEach(documentUrl => {
+            files.push({
+              fileName: path.parse(documentUrl).base,
+              associatedApp: application.id,
+              dateUploaded: application.applicationProcessing.createdAt,
+              fileUrl: documentUrl,
+            });
+          });
+        });
+        setAttachedFiles(files);
+      },
+    }
+  );
+
   return (
     <PermitHolderInfoCard alignGridItems="normal" header={`Attached Files`}>
       <Divider pt="24px" />
       <Box padding="20px 24px">
-        <Table columns={COLUMNS} data={DATA} />
+        <Table columns={COLUMNS} data={attachedFiles || []} />
       </Box>
     </PermitHolderInfoCard>
   );
