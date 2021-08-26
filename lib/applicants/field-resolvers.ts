@@ -118,6 +118,6 @@ export const applicantActivePermitResolver: Resolver<Applicant> = async parent =
   try {
     return await getActivePermit(parent.id);
   } catch (err) {
-    throw new ApolloError(err.message);
+    throw new ApolloError(`Could not retrieve applicant's active permit`);
   }
 };
