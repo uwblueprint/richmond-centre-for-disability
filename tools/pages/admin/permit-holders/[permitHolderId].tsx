@@ -11,6 +11,7 @@ export const GET_APPLICANT_APPLICATIONS_QUERY = gql`
         mobilityAidRequired
         cannotWalk100m
         aid
+        notes
         createdAt
       }
     }
@@ -33,6 +34,7 @@ export type GetApplicantApplicationsResponse = {
         | 'cannotWalk100m'
         | 'aid'
         | 'createdAt'
+        | 'notes'
       >
     >;
   };

@@ -27,7 +27,6 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
   const { application, children } = props;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
-
   const _renderAidsList = (aids: Aid[]): JSX.Element => {
     return (
       <UnorderedList paddingLeft="15px">

@@ -89,7 +89,6 @@ export default function PreviousDoctorsInformationModal({
 }: PreviousDoctorsInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [physicianData, setPhysicianData] = useState<PreviousPhysicianData[]>();
-
   useQuery<GetApplicantPhysiciansResponse, GetApplicantPhysiciansRequest>(
     GET_APPLICANT_PHYSICIANS_QUERY,
     {
