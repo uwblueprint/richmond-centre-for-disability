@@ -100,7 +100,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
       <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>
           <AppHistoryCard />
-          <AttachedFilesCard />
+          <AttachedFilesCard permitHolderId={permitHolderId} />
           <MedicalHistoryCard permitHolderId={permitHolderId} />
         </Stack>
       </GridItem>

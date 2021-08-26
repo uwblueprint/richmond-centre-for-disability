@@ -66,7 +66,6 @@ type Props = {
 export default function MedicalHistoryCard({ permitHolderId }: Props) {
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
 
-  //get data here from api
   useQuery<GetApplicantApplicationsResponse, GetApplicantApplicationsRequest>(
     GET_APPLICANT_APPLICATIONS_QUERY,
     {

@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { Application } from '@lib/graphql/types';
+import { Application, ApplicationProcessing } from '@lib/graphql/types';
 
 export const GET_APPLICANT_APPLICATIONS_QUERY = gql`
   query GetApplicantApplicationsQuery($id: ID!) {
@@ -34,6 +34,34 @@ export type GetApplicantApplicationsResponse = {
         | 'aid'
         | 'createdAt'
       >
+    >;
+  };
+};
+
+export const GET_APPLICANT_ATTACHED_FILES_QUERY = gql`
+  query GetApplicantAttachedFilesQuery($id: ID!) {
+    applicant(id: $id) {
+      applications {
+        id
+        applicationProcessing {
+          documentUrls
+          createdAt
+        }
+      }
+    }
+  }
+`;
+
+export type GetApplicantAttachedFilesRequest = {
+  id: number;
+};
+
+export type GetApplicantAttachedFilesResponse = {
+  applicant: {
+    applications: ReadonlyArray<
+      Pick<Application, 'id'> & {
+        applicationProcessing: Pick<ApplicationProcessing, 'documentUrls' | 'createdAt'>;
+      }
     >;
   };
 };
