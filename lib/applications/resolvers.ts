@@ -41,14 +41,45 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     } = filter;
 
     // Parse search string
-    let userIDSearch, firstSearch, middleSearch, lastSearch;
+    let userIDSearch, firstSearch, middleSearch, lastSearch, nameFilters;
 
     if (parseInt(search)) {
       userIDSearch = parseInt(search);
     } else if (search) {
-      [firstSearch, middleSearch, lastSearch] = search.split(' ');
-      middleSearch = middleSearch || firstSearch;
-      lastSearch = lastSearch || middleSearch;
+      // Split search to first, middle and last name elements
+      [firstSearch, middleSearch, lastSearch] = search?.split(' ');
+
+      // If all search elements are present, search by each respectively
+      // search by first AND middle AND last
+      if (firstSearch && middleSearch && lastSearch) {
+        nameFilters = {
+          AND: [
+            { firstName: { equals: firstSearch, mode: 'insensitive' } },
+            { middleName: { equals: middleSearch, mode: 'insensitive' } },
+            { lastName: { equals: lastSearch, mode: 'insensitive' } },
+          ],
+        };
+        // If there are only two search elements, second element can correspond to either the middle or last name
+        // search by first AND (middle OR last)
+      } else if (firstSearch && middleSearch) {
+        nameFilters = {
+          firstName: { equals: firstSearch, mode: 'insensitive' },
+          OR: [
+            { middleName: { equals: middleSearch, mode: 'insensitive' } },
+            { lastName: { equals: middleSearch, mode: 'insensitive' } },
+          ],
+        };
+        // If there is only one search element, it can correspond to the first, middle or last name
+        // search by first OR middle OR last
+      } else {
+        nameFilters = {
+          OR: [
+            { firstName: { equals: firstSearch, mode: 'insensitive' } },
+            { middleName: { equals: firstSearch, mode: 'insensitive' } },
+            { lastName: { equals: firstSearch, mode: 'insensitive' } },
+          ],
+        };
+      }
     }
 
     // Parse sorting order
@@ -75,15 +106,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
       },
       isRenewal: requestType ? requestType === 'Renewal' : undefined,
       permitType: permitType,
-      AND: [
-        {
-          OR: [
-            { firstName: { contains: firstSearch, mode: 'insensitive' } },
-            { middleName: { contains: middleSearch, mode: 'insensitive' } },
-            { lastName: { contains: lastSearch, mode: 'insensitive' } },
-          ],
-        },
-      ],
+      ...nameFilters,
     };
   }
 

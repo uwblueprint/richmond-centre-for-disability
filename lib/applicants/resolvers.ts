@@ -56,11 +56,12 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
     if (parseInt(search)) {
       userIDSearch = parseInt(search);
     } else if (search) {
-      // Split search assign to first, middle or last name
-      // If one doesn't exist assign to the previous input to allow for global search across names
+      // Split search to first, middle and last name elements
       [firstSearch, middleSearch, lastSearch] = search?.split(' ');
 
-      if (firstSearch & middleSearch & lastSearch) {
+      // If all search elements are present, search by each respectively
+      // search by first AND middle AND last
+      if (firstSearch && middleSearch && lastSearch) {
         nameFilters = {
           AND: [
             { firstName: { equals: firstSearch, mode: 'insensitive' } },
@@ -68,7 +69,9 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
             { lastName: { equals: lastSearch, mode: 'insensitive' } },
           ],
         };
-      } else if (firstSearch & middleSearch) {
+        // If there are only two search elements, second element can correspond to either the middle or last name
+        // search by first AND (middle OR last)
+      } else if (firstSearch && middleSearch) {
         nameFilters = {
           firstName: { equals: firstSearch, mode: 'insensitive' },
           OR: [
@@ -76,6 +79,8 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
             { lastName: { equals: middleSearch, mode: 'insensitive' } },
           ],
         };
+        // If there is only one search element, it can correspond to the first, middle or last name
+        // search by first OR middle OR last
       } else {
         nameFilters = {
           OR: [
