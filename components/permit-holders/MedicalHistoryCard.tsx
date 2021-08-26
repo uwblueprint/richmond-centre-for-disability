@@ -1,7 +1,7 @@
 import { Box, Text, Divider, Link } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
-import { Aid, Application } from '@lib/graphql/types'; // Aid enum & Application type
+import { Aid } from '@lib/graphql/types'; // Aid enum
 import MedicalHistoryModal from '@components/permit-holders/modals/MedicalHistoryModal'; // Medical History Modal
 import { useQuery } from '@apollo/client';
 import {
@@ -11,25 +11,6 @@ import {
 } from '@tools/pages/admin/permit-holders/[permitHolderId]';
 import { useState } from 'react';
 import { Column } from 'react-table';
-
-// Placeholder data
-const mockMedicalHistory = {
-  disability: 'Condition 1',
-  affectsMobility: true,
-  mobilityAidRequired: true,
-  cannotWalk100m: true,
-  aid: [Aid.Cane, Aid.ElectricChair],
-  notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  createdAt: '2021/01/01',
-};
-
-// const DATA = Array(4).fill({
-//   disablingCondition: 'Condition 1',
-//   associatedApp: { associatedApp: 12345 },
-//   dateUploaded: '2021/01/01',
-//   fileUrl: { fileUrl: '/' },
-//   application: { application: mockMedicalHistory },
-// });
 
 const COLUMNS: Column<any>[] = [
   {
@@ -48,29 +29,34 @@ const COLUMNS: Column<any>[] = [
     },
   },
   {
-    accessor: 'associatedApplicationId',
+    accessor: 'associatedApplication',
     disableSortBy: true,
     minWidth: 180,
-    Cell: _renderConditionDetailsLink,
+    Cell: ({ value }) => {
+      return (
+        <MedicalHistoryModal application={value}>
+          <Link>
+            <Text as="a" color="primary" textStyle="body-regular">
+              View details
+            </Text>
+          </Link>
+        </MedicalHistoryModal>
+      );
+    },
   },
 ];
-
-function _renderConditionDetailsLink() {
-  return (
-    <MedicalHistoryModal application={mockMedicalHistory as unknown as Application}>
-      <Link>
-        <Text as="a" color="primary" textStyle="body-regular">
-          View details
-        </Text>
-      </Link>
-    </MedicalHistoryModal>
-  );
-}
 
 type MedicalHistoryEntry = {
   disablingCondition: string;
   dateUploaded: Date;
-  associatedApplicationId: number;
+  associatedApplication: {
+    disability: string;
+    affectsMobility: boolean;
+    mobilityAidRequired: boolean;
+    cannotWalk100m: boolean;
+    aid: Aid[];
+    createdAt: Date;
+  };
 };
 
 type Props = {
@@ -92,7 +78,7 @@ export default function MedicalHistoryCard({ permitHolderId }: Props) {
           data.applicant.applications.map(record => ({
             disablingCondition: record.disability,
             dateUploaded: record.createdAt,
-            associatedApplicationId: record.id,
+            associatedApplication: record,
           }))
         );
       },

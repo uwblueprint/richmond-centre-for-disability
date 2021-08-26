@@ -21,8 +21,8 @@ export type GetApplicantPhysiciansRequest = {
 
 export type GetApplicantPhysiciansResponse = {
   applicant: {
-    medicalHistory: {
-      physician: ReadonlyArray<Pick<Physician, 'name' | 'mspNumber' | 'phone'>>;
-    };
+    medicalHistory: ReadonlyArray<{
+      physician: Pick<Physician, 'name' | 'mspNumber' | 'phone'>;
+    }>;
   };
 };

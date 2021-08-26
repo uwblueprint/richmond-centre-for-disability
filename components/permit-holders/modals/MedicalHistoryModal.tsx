@@ -57,7 +57,9 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
             paddingX="4px"
           >
             <Text as="h2" textStyle="display-medium-bold">
-              {`${application.disability} (${application.createdAt})`}
+              {`${application.disability} (${new Date(application.createdAt).toLocaleDateString(
+                'en-ZA'
+              )})`}
             </Text>
           </ModalHeader>
           <ModalBody paddingTop="0px" paddingBottom="36px" paddingX="4px">

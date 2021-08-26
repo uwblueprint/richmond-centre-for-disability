@@ -436,6 +436,7 @@ export type MedicalInformation = {
   applicantId: Scalars['Int'];
   physician: Physician;
   physicianId: Scalars['Int'];
+  createdAt: Scalars['Date'];
 };
 
 export type Meta = {

@@ -98,10 +98,10 @@ export default function PreviousDoctorsInformationModal({
       },
       onCompleted: data => {
         setPhysicianData(
-          data.applicant.medicalHistory.physician.map(record => ({
-            name: record.name,
-            mspNumber: record.mspNumber,
-            phone: record.phone,
+          data.applicant.medicalHistory.map(record => ({
+            name: record.physician.name,
+            mspNumber: record.physician.mspNumber,
+            phone: record.physician.phone,
           }))
         );
       },
