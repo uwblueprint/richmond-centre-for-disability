@@ -31,8 +31,8 @@ import {
   PermitHolder,
 } from '@tools/pages/permit-holders/permit-holders-table'; // Permit Holders GQL Query
 import { DateUtils } from 'react-day-picker'; // Date Utils
-import DayPicker from '@components/DayPicker'; // Day Picker component
-import useDayPicker from '@tools/hooks/useDayPicker'; // Day Picker hook
+import DateRangePicker from '@components/DateRangePicker'; // Day Picker component
+import useDateRangePicker from '@tools/hooks/useDateRangePicker'; // Day Picker hook
 import { SortOptions, SortOrder } from '@tools/types'; // Sorting types
 import { Column } from 'react-table'; // Column type for table
 import useDebounce from '@tools/hooks/useDebounce'; // Debouncer
@@ -203,10 +203,7 @@ export default function PermitHolders() {
   const [permitStatusFilter, setPermitStatusFilter] = useState<PermitStatus>();
   const [userStatusFilter, setUserStatusFilter] = useState<UserStatus>();
   const [searchFilter, setSearchFilter] = useState<string>('');
-  const { dateRange, addDayToDateRange, dateRangeString } = useDayPicker({
-    from: undefined,
-    to: undefined,
-  });
+  const { dateRange, addDayToDateRange, dateRangeString } = useDateRangePicker();
 
   // Pagination
   const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
@@ -359,16 +356,10 @@ export default function PermitHolders() {
                   textAlign="left"
                   width="420px"
                 >
-                  <MenuText name={`Expiry date`} value={dateRangeString()} />
+                  <MenuText name={`Expiry date`} value={dateRangeString} />
                 </MenuButton>
                 <MenuList>
-                  <DayPicker
-                    dateRange={dateRange}
-                    onDateChange={day => {
-                      addDayToDateRange(day);
-                    }}
-                    numberOfMonths={2}
-                  />
+                  <DateRangePicker dateRange={dateRange} onDateChange={addDayToDateRange} />
                 </MenuList>
               </Menu>
               <Box flexGrow={1}>

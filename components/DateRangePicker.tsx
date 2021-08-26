@@ -2,23 +2,22 @@ import ReactDayPicker, { RangeModifier } from 'react-day-picker'; // React Day P
 import 'react-day-picker/lib/style.css'; // Date picker base styling
 import Helmet from 'react-helmet'; // Inline styling for select date range functionality
 
-type DayPickerProps = {
-  readonly numberOfMonths?: number; // # of months, default to 1
-  readonly dateRange: RangeModifier; // object with 'from' and 'to' properties indicating the selected date range
-  readonly onDateChange: (day: Date) => void; // Handle date change
+type DateRangePicker = {
+  readonly dateRange: RangeModifier; // Object with 'from' and 'to' properties indicating the selected date range
+  readonly onDateChange: (day: Date) => void; // Callback on date change
 };
 
 /**
- * Custom DayPicker component from {@link http://react-day-picker.js.org/| react-day-picker}
+ * Custom date picker component extending {@link http://react-day-picker.js.org/| react-day-picker}
  * that allows selecting a range of dates
- * @param {DayPickerProps} props - Props
+ * @param {DateRangePicker} props - Props
  */
-export default function DayPicker(props: DayPickerProps) {
+export default function DayPicker(props: DateRangePicker) {
   return (
     <>
       <ReactDayPicker
         className="Selectable"
-        numberOfMonths={props.numberOfMonths || 1}
+        numberOfMonths={2}
         onDayClick={props.onDateChange}
         selectedDays={[props.dateRange.from || undefined, props.dateRange]}
         modifiers={{
