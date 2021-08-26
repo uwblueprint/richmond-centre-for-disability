@@ -29,14 +29,14 @@ import {
   GetPermitHoldersRequest,
   GetPermitHoldersResponse,
   PermitHolder,
-} from '@tools/pages/permit-holders/permit-holders-table';
-import DayPicker, { DateUtils, DayPickerProps, RangeModifier } from 'react-day-picker'; // Date picker
-import 'react-day-picker/lib/style.css'; // Date picker styling
-import Helmet from 'react-helmet'; // Date picker inline styling for select range functionality
+} from '@tools/pages/permit-holders/permit-holders-table'; // Permit Holders GQL Query
+import { DateUtils } from 'react-day-picker'; // Date Utils
+import DateRangePicker from '@components/DateRangePicker'; // Day Picker component
+import useDateRangePicker from '@tools/hooks/useDateRangePicker'; // Day Picker hook
 import { SortOptions, SortOrder } from '@tools/types'; // Sorting types
 import { Column } from 'react-table'; // Column type for table
-import useDebounce from '@tools/hooks/useDebounce';
-import { useEffect } from 'react';
+import useDebounce from '@tools/hooks/useDebounce'; // Debouncer
+import { useEffect } from 'react'; // React
 
 const COLUMNS: Column<any>[] = [
   {
@@ -182,31 +182,7 @@ function MenuText({ name, value }: MenuTextProps) {
   );
 }
 
-function DayPickerStyling() {
-  return (
-    <Helmet>
-      <style>{`
-        .Selectable .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
-          background-color: #f0f8ff !important;
-          color: #4a90e2;
-        }
-        .Selectable .DayPicker-Day {
-          border-radius: 0 !important;
-        }
-        .Selectable .DayPicker-Day--start {
-          border-top-left-radius: 50% !important;
-          border-bottom-left-radius: 50% !important;
-        }
-        .Selectable .DayPicker-Day--end {
-          border-top-right-radius: 50% !important;
-          border-bottom-right-radius: 50% !important;
-        }
-      `}</style>
-    </Helmet>
-  );
-}
-
-// Table data input will be of Applicant type as well as two combined fields
+// Union name and homeAddress column types to PermitHolder type
 type PermitTableInputData = PermitHolder & {
   name: {
     firstName: string;
@@ -227,7 +203,7 @@ export default function PermitHolders() {
   const [permitStatusFilter, setPermitStatusFilter] = useState<PermitStatus>();
   const [userStatusFilter, setUserStatusFilter] = useState<UserStatus>();
   const [searchFilter, setSearchFilter] = useState<string>('');
-  const [range, setRange] = useState<RangeModifier>({ from: undefined, to: undefined });
+  const { dateRange, addDayToDateRange, dateRangeString } = useDateRangePicker();
 
   // Pagination
   const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
@@ -244,7 +220,7 @@ export default function PermitHolders() {
   // Set page number to 0 after every filter or sort change
   useEffect(() => {
     setPageNumber(0);
-  }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, range]);
+  }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, dateRange]);
 
   // GQL Query
   useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(GET_PERMIT_HOLDERS_QUERY, {
@@ -252,8 +228,8 @@ export default function PermitHolders() {
       filter: {
         userStatus: userStatusFilter,
         permitStatus: permitStatusFilter,
-        expiryDateRangeFrom: range.from?.getTime(),
-        expiryDateRangeTo: range.to?.getTime(),
+        expiryDateRangeFrom: dateRange.from?.getTime(),
+        expiryDateRangeTo: dateRange.to?.getTime(),
         search: debouncedSearchFilter,
         offset: pageNumber * PAGE_SIZE,
         limit: PAGE_SIZE,
@@ -287,26 +263,6 @@ export default function PermitHolders() {
     PermitStatus.ExpiringInThirtyDays,
   ];
   const userStatusOptions = [UserStatus.Active, UserStatus.Inactive];
-
-  // Day Picker handler
-  const handleDayClick: DayPickerProps['onDayClick'] = day => {
-    setRange(DateUtils.addDayToRange(day, range));
-  };
-
-  const modifier = { start: range.from || undefined, end: range.to || undefined };
-
-  // Logic for displaying date picker text
-  const dateRangeText = () => {
-    if (!range.from && !range.to) {
-      return 'YYYY-MM-DD - YYYY-MM-DD';
-    }
-    if (range.from && !range.to) {
-      return `${range.from.toLocaleDateString('en-CA')} - YYYY-MM-DD`;
-    }
-    if (range.from && range.to) {
-      return `${range.from.toLocaleDateString('en-CA')} - ${range.to.toLocaleDateString('en-CA')}`;
-    }
-  };
 
   return (
     <Layout>
@@ -400,18 +356,11 @@ export default function PermitHolders() {
                   textAlign="left"
                   width="420px"
                 >
-                  <MenuText name={`Expiry date`} value={dateRangeText()} />
+                  <MenuText name={`Expiry date`} value={dateRangeString} />
                 </MenuButton>
                 <MenuList>
-                  <DayPicker
-                    className="Selectable"
-                    numberOfMonths={2}
-                    selectedDays={[range.from || undefined, range]}
-                    modifiers={modifier}
-                    onDayClick={handleDayClick}
-                  />
+                  <DateRangePicker dateRange={dateRange} onDateChange={addDayToDateRange} />
                 </MenuList>
-                <DayPickerStyling />
               </Menu>
               <Box flexGrow={1}>
                 <InputGroup>
