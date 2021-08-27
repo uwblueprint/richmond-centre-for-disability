@@ -41,7 +41,6 @@ type Props = {
 
 // Individual permit holder page
 export default function PermitHolder({ permitHolderId }: Props) {
-  // TODO: Destructure physician, guardian from application
   const [applicantData, setApplicantData] = useState<ApplicantData>();
 
   const { data } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(GET_PERMIT_HOLDER, {
