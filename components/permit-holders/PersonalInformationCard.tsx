@@ -19,7 +19,7 @@ type PersonalInformationProps = {
 
 export default function PersonalInformationCard(props: PersonalInformationProps) {
   const { applicant } = props;
-  const { hasCopied, onCopy } = useClipboard(applicant.email ? applicant.email : '');
+  const { hasCopied, onCopy } = useClipboard(applicant?.email ? applicant.email : '');
 
   return (
     <PermitHolderInfoCard
@@ -30,7 +30,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         </Text>
       }
       editModal={
-        <EditUserInformationModal applicantId={applicant.id}>
+        <EditUserInformationModal applicantId={applicant?.id}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
@@ -40,12 +40,12 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
       <VStack spacing="12px" align="left">
         <Box>
           <Text as="p" textStyle="body-regular">
-            Date of Birth: {applicant.dateOfBirth}
+            Date of Birth: {applicant?.dateOfBirth}
           </Text>
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            Gender: {applicant.gender.toLowerCase().replace(/^\w/, c => c.toUpperCase())}
+            Gender: {applicant?.gender.toLowerCase().replace(/^\w/, c => c.toUpperCase())}
           </Text>
         </Box>
       </VStack>
@@ -75,13 +75,13 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
               textDecoration="underline"
               onClick={onCopy}
             >
-              {applicant.email}
+              {applicant?.email}
             </Link>
           </Tooltip>
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {applicant.phone}
+            {applicant?.phone}
           </Text>
         </Box>
       </VStack>
@@ -98,19 +98,19 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         </HStack>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {applicant.addressLine1}
+            {applicant?.addressLine1}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {applicant.addressLine2}
+            {applicant?.addressLine2}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {applicant.city} {applicant.province}
+            {applicant?.city} {applicant?.province}
           </Text>
           <Text as="p" textStyle="body-regular">
             Canada
           </Text>
           <Text as="p" textStyle="body-regular">
-            {applicant.postalCode}
+            {applicant?.postalCode}
           </Text>
         </Box>
       </VStack>

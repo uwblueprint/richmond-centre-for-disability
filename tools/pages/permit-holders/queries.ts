@@ -18,6 +18,7 @@ export const GET_PERMIT_HOLDER = gql`
       addressLine1
       addressLine2
       postalCode
+      status
 
       activePermit {
         expiryDate

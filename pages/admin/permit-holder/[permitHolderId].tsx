@@ -8,7 +8,7 @@ import PermitHolderHeader from '@components/permit-holders/PermitHolderHeader'; 
 // TODO: Reimplement DoctorInformationCard
 import DoctorInformationCard from '@components/permit-holders/DoctorInformationCard'; // Doctor information card
 import PersonalInformationCard from '@components/permit-holders/PersonalInformationCard'; // Personal information card
-import { Gender, Province, PhysicianStatus, PaymentType, ApplicationStatus } from '@lib/types'; // Gender, Province, PhysicianStatus, PaymentType Enums
+import { Gender, Province, UserStatus } from '@lib/types'; // Gender, Province, PhysicianStatus, PaymentType Enums
 // TODO: Reimplement GuardianInformationCard
 import GuardianInformationCard from '@components/permit-holders/GuardianInformationCard'; // Guardian Information card
 import AppHistoryCard from '@components/permit-holders/AppHistoryCard'; // APP History card
@@ -17,58 +17,22 @@ import MedicalHistoryCard from '@components/permit-holders/MedicalHistoryCard'; 
 import { GetPermitHolderRequest, GetPermitHolderResponse } from '@tools/pages/permit-holders/types';
 import { GET_PERMIT_HOLDER } from '@tools/pages/permit-holders/queries';
 import { useQuery } from '@apollo/client';
+import { useState } from 'react';
 
-// TEMPORARY MOCK DATA
-const mockApplication = {
-  applicant: {
-    id: 1,
-    rcdUserId: 1,
-    mostRecentAPP: 12345,
-    firstName: 'Permit Holder',
-    lastName: 'One',
-    gender: Gender.Female,
-    dateOfBirth: 1,
-    email: 'applicantone@email.com',
-    phone: '1234567890',
-    province: Province.Bc,
-    city: 'Richmond',
-    addressLine1: '123 Richmond St.',
-    postalCode: 'X0X0X0',
-  },
-  physician: {
-    id: 1,
-    mspNumber: 123456789,
-    name: 'Physician One',
-    phone: '1234567890',
-    addressLine1: '123 Richmond St.',
-    addressLine2: '',
-    postalCode: 'X0X0X0',
-    city: 'Richmond',
-    province: Province.Bc,
-    status: PhysicianStatus.Active,
-    notes: '',
-  },
-  guardian: {
-    id: 1,
-    firstName: 'Guardian',
-    middleName: '',
-    lastName: 'One',
-    phone: '1234567890',
-    addressLine1: '123 Richmond St.',
-    addressLine2: '',
-    postalCode: 'X0X0X0',
-    city: 'Richmond',
-    province: Province.Bc,
-    relationship: 'Parent',
-    notes: '',
-  },
-  createdAt: new Date().toDateString(),
-  expirationDate: new Date().toDateString(),
-  isRenewal: true,
-  applicationStatus: ApplicationStatus.Pending, // Will be updated in the future as we'll be able to reference ApplicationStatus enum in types.ts
-  permitFee: 5,
-  donation: 10,
-  paymentType: PaymentType.Visa,
+type ApplicantData = {
+  id: number;
+  rcdUserId: number;
+  firstName: string;
+  lastName: string;
+  gender: Gender;
+  dateOfBirth: Date;
+  email: string;
+  phone: string;
+  province: Province;
+  city: string;
+  addressLine1: string;
+  postalCode: string;
+  status: UserStatus;
 };
 
 type Props = {
@@ -78,11 +42,29 @@ type Props = {
 // Individual permit holder page
 export default function PermitHolder({ permitHolderId }: Props) {
   // TODO: Destructure physician, guardian from application
-  const { applicant, /*physician, guardian,*/ applicationStatus } = mockApplication;
+  const [applicantData, setApplicantData] = useState<ApplicantData>();
 
   const { data } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(GET_PERMIT_HOLDER, {
     variables: {
       id: permitHolderId,
+    },
+    onCompleted: data => {
+      const info = {
+        id: data.applicant.id,
+        rcdUserId: data.applicant.rcdUserId,
+        firstName: data.applicant.firstName,
+        lastName: data.applicant.lastName,
+        gender: data.applicant.gender,
+        dateOfBirth: data.applicant.dateOfBirth,
+        email: data.applicant.email,
+        phone: data.applicant.phone,
+        province: data.applicant.province,
+        city: data.applicant.city,
+        addressLine1: data.applicant.addressLine1,
+        postalCode: data.applicant.postalCode,
+        status: data.applicant.status,
+      };
+      setApplicantData(info);
     },
   });
 
@@ -90,13 +72,13 @@ export default function PermitHolder({ permitHolderId }: Props) {
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3}>
         <PermitHolderHeader
-          applicant={applicant as unknown as Applicant}
-          applicationStatus={applicationStatus}
+          applicant={applicantData as unknown as Applicant}
+          applicationStatus={applicantData?.status}
         />
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
         <Stack spacing={5}>
-          <PersonalInformationCard applicant={applicant as unknown as Applicant} />
+          <PersonalInformationCard applicant={applicantData as unknown as Applicant} />
           <DoctorInformationCard
             physician={data?.applicant.medicalInformation.physician}
             permitHolderId={permitHolderId}

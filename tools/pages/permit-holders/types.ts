@@ -29,6 +29,7 @@ export type GetPermitHolderResponse = {
     | 'addressLine1'
     | 'addressLine2'
     | 'postalCode'
+    | 'status'
   > & {
     readonly activePermit: Pick<Permit, 'expiryDate'> & {
       readonly application: Pick<

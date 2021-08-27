@@ -25,13 +25,13 @@ export default function PermitHolderHeader({
         <Box>
           <Flex alignItems="center">
             <Text textStyle="display-large" as="h1" marginRight={3}>
-              {`${applicant.firstName} ${applicant.lastName}`}
+              {`${applicant?.firstName} ${applicant?.lastName}`}
             </Text>
             <RequestStatusBadge variant={applicationStatus} />
           </Flex>
           <HStack spacing={3} marginTop={3}>
             <Text textStyle="caption" as="p">
-              ID: #{applicant.rcdUserId}
+              ID: #{applicant?.rcdUserId}
             </Text>
           </HStack>
         </Box>
