@@ -14,6 +14,9 @@ import GuardianInformationCard from '@components/permit-holders/GuardianInformat
 import AppHistoryCard from '@components/permit-holders/AppHistoryCard'; // APP History card
 import AttachedFilesCard from '@components/permit-holders/AttachedFilesCard'; // Attached Files card
 import MedicalHistoryCard from '@components/permit-holders/MedicalHistoryCard'; // Medical History card
+import { GetPermitHolderRequest, GetPermitHolderResponse } from '@tools/pages/permit-holders/types';
+import { GET_PERMIT_HOLDER } from '@tools/pages/permit-holders/queries';
+import { useQuery } from '@apollo/client';
 
 // TEMPORARY MOCK DATA
 const mockApplication = {
@@ -77,6 +80,12 @@ export default function PermitHolder({ permitHolderId }: Props) {
   // TODO: Destructure physician, guardian from application
   const { applicant, /*physician, guardian,*/ applicationStatus } = mockApplication;
 
+  const { data } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(GET_PERMIT_HOLDER, {
+    variables: {
+      id: permitHolderId,
+    },
+  });
+
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3}>
@@ -88,18 +97,17 @@ export default function PermitHolder({ permitHolderId }: Props) {
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
         <Stack spacing={5}>
           <PersonalInformationCard applicant={applicant as unknown as Applicant} />
-          Temporarily commented to pass CI checks for View Request page
           <DoctorInformationCard
-            physician={mockApplication.physician}
+            physician={data?.applicant.medicalInformation.physician}
             permitHolderId={permitHolderId}
           />
-          <GuardianInformationCard guardian={mockApplication.guardian} />
+          <GuardianInformationCard guardian={data?.applicant.guardian} />
         </Stack>
       </GridItem>
 
       <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>
-          <AppHistoryCard />
+          <AppHistoryCard permits={data?.applicant.permits} />
           <AttachedFilesCard permitHolderId={permitHolderId} />
           <MedicalHistoryCard permitHolderId={permitHolderId} />
         </Stack>

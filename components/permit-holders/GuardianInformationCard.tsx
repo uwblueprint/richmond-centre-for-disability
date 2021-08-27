@@ -46,13 +46,13 @@ export default function GuardianInformationCard(props: GuardianInformationProps)
             {guardian?.addressLine2}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {`${guardian?.city} ${guardian.province}`}
+            {`${guardian?.city} ${guardian?.province}`}
           </Text>
           <Text as="p" textStyle="body-regular">
             {`Canada`}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {guardian.postalCode}
+            {guardian?.postalCode}
           </Text>
         </Box>
       </VStack>

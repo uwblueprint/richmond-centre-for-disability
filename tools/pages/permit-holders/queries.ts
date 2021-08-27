@@ -6,6 +6,7 @@ export const GET_PERMIT_HOLDER = gql`
       id
       rcdUserId
       firstName
+      middleName
       lastName
       gender
       customGender
@@ -17,44 +18,60 @@ export const GET_PERMIT_HOLDER = gql`
       addressLine1
       addressLine2
       postalCode
-      notes
-      isRenewal
 
-      disability
-      affectsMobility
-      mobilityAidRequired
-      cannotWalk100m
+      activePermit {
+        expiryDate
+        application {
+          isRenewal
+          physicianName
+          physicianMspNumber
+          physicianAddressLine1
+          physicianAddressLine2
+          physicianCity
+          physicianProvince
+          physicianPostalCode
+          physicianPhone
+          physicianNotes
 
-      physicianName
-      physicianMspNumber
-      physicianAddressLine1
-      physicianAddressLine2
-      physicianCity
-      physicianProvince
-      physicianPostalCode
-      physicianPhone
-      physicianNotes
+          processingFee
+          donationAmount
+          paymentMethod
+          shopifyConfirmationNumber
 
-      shippingAddressSameAsHomeAddress
-      billingAddressSameAsHomeAddress
-      shippingFullName
-      shippingAddressLine1
-      shippingAddressLine2
-      shippingCity
-      shippingProvince
-      shippingPostalCode
-      billingFullName
-      billingAddressLine1
-      billingAddressLine2
-      billingCity
-      billingProvince
-      billingPostalCode
+          shippingAddressSameAsHomeAddress
+          billingAddressSameAsHomeAddress
+          shippingFullName
+          shippingAddressLine1
+          shippingAddressLine2
+          shippingCity
+          shippingProvince
+          shippingPostalCode
+          billingFullName
+          billingAddressLine1
+          billingAddressLine2
+          billingCity
+          billingProvince
+          billingPostalCode
 
-      processingFee
-      donationAmount
-      paymentMethod
-      shopifyConfirmationNumber
-      createdAt
+          guardianFirstName
+          guardianMiddleName
+          guardianLastName
+          guardianPhone
+          guardianProvince
+          guardianCity
+          guardianAddressLine1
+          guardianAddressLine2
+          guardianPostalCode
+          guardianRelationship
+          guardianNotes
+
+          createdAt
+
+          applicationProcessing {
+            status
+          }
+        }
+      }
 
       permits {
         id
@@ -62,6 +79,13 @@ export const GET_PERMIT_HOLDER = gql`
         expiryDate
         receiptId
         active
+        applicationId
+        application {
+          isRenewal
+          applicationProcessing {
+            status
+          }
+        }
       }
 
       medicalHistory {
@@ -74,17 +98,32 @@ export const GET_PERMIT_HOLDER = gql`
       }
 
       medicalInformation {
-        id
-        disability
-        affectsMobility
-        mobilityAidRequired
-        cannotWalk100m
+        physician {
+          name
+          mspNumber
+          addressLine1
+          addressLine2
+          city
+          province
+          postalCode
+          phone
+          status
+          notes
+        }
+      }
+
+      guardian {
+        firstName
+        middleName
+        lastName
+        addressLine1
+        addressLine2
+        city
+        province
+        postalCode
+        phone
+        relationship
         notes
-        certificationDate
-        aid
-        physicianId
-        createdAt
-        updatedAt
       }
     }
   }

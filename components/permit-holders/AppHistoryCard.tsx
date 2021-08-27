@@ -3,16 +3,17 @@ import Table from '@components/internal/Table'; // Table component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import { ApplicationStatus } from '@lib/types'; // Types
+import { Permit } from '@lib/graphql/types';
 
 // Placeholder data
 
-const DATA = Array(4).fill({
-  rcdPermitId: { rcdPermitId: 354 },
-  isRenewal: 'false',
-  requestStatus: 'EXPIRING',
-  expiryDate: '2021/01/01',
-  applicationId: { applicationId: 1 },
-});
+// const DATA = Array(4).fill({
+//   rcdPermitId: { rcdPermitId: 354 },
+//   isRenewal: 'false',
+//   requestStatus: 'EXPIRING',
+//   expiryDate: '2021/01/01',
+//   applicationId: { applicationId: 1 },
+// });
 
 const COLUMNS = [
   {
@@ -100,12 +101,25 @@ function _renderAppLink({ value }: appProps) {
   );
 }
 
-export default function AppHistoryCard() {
+type AppHistoryProps = {
+  readonly permits: Permit[];
+};
+
+export default function AppHistoryCard({ permits }: AppHistoryProps) {
+  const appHistoryData =
+    permits?.map(permit => ({
+      rcdPermitId: permit.rcdPermitId,
+      isRenewal: permit.application.isRenewal,
+      requestStatus: permit.application.applicationProcessing?.status,
+      expiryDate: permit.expiryDate,
+      applicationId: permit.applicationId,
+    })) || [];
+
   return (
     <PermitHolderInfoCard header={`APP History`} alignGridItems="normal">
       <Divider pt="24px" />
       <Box padding="20px 24px">
-        <Table columns={COLUMNS} data={DATA} />
+        <Table columns={COLUMNS} data={appHistoryData} />
       </Box>
     </PermitHolderInfoCard>
   );
