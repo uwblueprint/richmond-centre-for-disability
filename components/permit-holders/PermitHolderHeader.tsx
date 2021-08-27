@@ -1,17 +1,17 @@
-import { Box, Flex, HStack, Text } from '@chakra-ui/react'; // Chakra UI
+import { Badge, Box, Flex, HStack, Text, Wrap } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import Link from 'next/link'; // Link
-import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge
-import { Applicant, ApplicationStatus } from '@lib/graphql/types'; // Applicant type
+import { Applicant, ApplicantStatus } from '@lib/graphql/types'; // Applicant type
+import React from 'react'; // React
 
 type PermitHolderHeaderProps = {
   readonly applicant: Applicant;
-  readonly applicationStatus: ApplicationStatus | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
+  readonly applicantStatus: ApplicantStatus;
 };
 
 export default function PermitHolderHeader({
   applicant,
-  applicationStatus,
+  applicantStatus,
 }: PermitHolderHeaderProps) {
   return (
     <Box textAlign="left">
@@ -27,7 +27,9 @@ export default function PermitHolderHeader({
             <Text textStyle="display-large" as="h1" marginRight={3}>
               {`${applicant?.firstName} ${applicant?.lastName}`}
             </Text>
-            <RequestStatusBadge variant={applicationStatus} />
+            <Wrap>
+              <Badge variant={applicantStatus}>{applicantStatus}</Badge>
+            </Wrap>
           </Flex>
           <HStack spacing={3} marginTop={3}>
             <Text textStyle="caption" as="p">

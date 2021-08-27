@@ -5,7 +5,7 @@ import EditDoctorInformationModal from '@components/requests/modals/EditDoctorIn
 import PreviousDoctorsInformationModal from '@components/permit-holders/modals/PreviousDoctorsInformationModal'; // Previous Doctors' Information Modal
 
 type DoctorInformationProps = {
-  physician: Physician;
+  physician?: Physician;
   readonly isUpdated?: boolean;
   readonly permitHolderId: number;
 };

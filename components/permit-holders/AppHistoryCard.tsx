@@ -2,104 +2,73 @@ import { Box, Link, Text, Divider } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
-import { ApplicationStatus } from '@lib/types'; // Types
-import { Permit } from '@lib/graphql/types';
+import { Permit } from '@lib/graphql/types'; // Types
+import { Column } from 'react-table'; // React
 
-// Placeholder data
-
-// const DATA = Array(4).fill({
-//   rcdPermitId: { rcdPermitId: 354 },
-//   isRenewal: 'false',
-//   requestStatus: 'EXPIRING',
-//   expiryDate: '2021/01/01',
-//   applicationId: { applicationId: 1 },
-// });
-
-const COLUMNS = [
+const COLUMNS: Column<any>[] = [
   {
     Header: 'Permit #',
     accessor: 'rcdPermitId',
     disableSortBy: true,
     maxWidth: 140,
-    Cell: _renderPermitId,
+    Cell: ({ value }) => {
+      return (
+        <>
+          <Text as="p">{`#${value}`}</Text>
+        </>
+      );
+    },
   },
   {
     Header: 'Request Type',
     accessor: 'isRenewal',
     disableSortBy: true,
     maxWidth: 140,
-    Cell: _renderRequestType,
+    Cell: ({ value }) => {
+      return (
+        <>
+          <Text as="p">{value ? `Renewal` : `Replacement`}</Text>
+        </>
+      );
+    },
   },
   {
     Header: 'Status',
     accessor: 'requestStatus',
     disableSortBy: true,
     maxWidth: 195,
-    Cell: _renderStatusBadge,
+    Cell: ({ value }) => {
+      return (
+        <Box pr="10px">
+          <RequestStatusBadge variant={value} />
+        </Box>
+      );
+    },
   },
   {
     Header: 'Expiry Date',
     accessor: 'expiryDate',
     disableSortBy: true,
     maxWidth: 140,
+    Cell: ({ value }) => {
+      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+    },
   },
   {
     accessor: 'applicationId',
     disableSortBy: true,
     maxWidth: 140,
-    Cell: _renderAppLink,
+    Cell: ({ value }) => {
+      return (
+        <Link href={`/admin/request/${value}`} passHref>
+          <Text textStyle="body-regular" textColor="primary" as="a">
+            View APP
+          </Text>
+        </Link>
+      );
+    },
   },
 ];
-
-type PermitIdProps = {
-  value: { rcdPermitId: number };
-};
-
-function _renderPermitId({ value }: PermitIdProps) {
-  return (
-    <>
-      <Text as="p">{`#${value.rcdPermitId}`}</Text>
-    </>
-  );
-}
-
-type RequestTypeProps = {
-  value: { isRenewal: boolean };
-};
-
-function _renderRequestType({ value }: RequestTypeProps) {
-  return (
-    <>
-      <Text as="p">{value.isRenewal ? `Renewal` : `Replacement`}</Text>
-    </>
-  );
-}
-
-type StatusProps = {
-  value: ApplicationStatus | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
-};
-
-function _renderStatusBadge({ value }: StatusProps) {
-  return (
-    <Box pr="10px">
-      <RequestStatusBadge variant={value} />
-    </Box>
-  );
-}
-
-type appProps = {
-  value: { applicationId: number };
-};
-
-function _renderAppLink({ value }: appProps) {
-  return (
-    <Link href={`/admin/request/${value.applicationId}`} passHref>
-      <Text textStyle="body-regular" textColor="primary" as="a">
-        View APP
-      </Text>
-    </Link>
-  );
-}
 
 type AppHistoryProps = {
   readonly permits: Permit[];

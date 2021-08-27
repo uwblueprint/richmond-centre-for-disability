@@ -3,11 +3,10 @@ import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; //
 import { Guardian } from '@lib/graphql/types'; // Guardian type
 
 type GuardianInformationProps = {
-  guardian: Guardian;
+  guardian?: Guardian;
 };
 
-export default function GuardianInformationCard(props: GuardianInformationProps) {
-  const { guardian } = props;
+export default function GuardianInformationCard({ guardian }: GuardianInformationProps) {
   return (
     <PermitHolderInfoCard colSpan={7} header={`Guardian's Information`}>
       <Divider pt="24px" />
