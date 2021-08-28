@@ -30,14 +30,9 @@ import {
 type EditDoctorInformationModalProps = {
   children: ReactNode;
   readonly physician: DoctorInformationCardPhysician;
-  readonly onSave: (applicationData: any) => void;
 };
 
-export default function EditDoctorInformationModal({
-  children,
-}: // physician,
-// onSave,
-EditDoctorInformationModalProps) {
+export default function EditDoctorInformationModal({ children }: EditDoctorInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [name, setName] = useState('');

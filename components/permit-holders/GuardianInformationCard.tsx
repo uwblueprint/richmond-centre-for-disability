@@ -14,17 +14,17 @@ export default function GuardianInformationCard({ guardian }: GuardianInformatio
       <VStack spacing="12px" align="left" paddingTop="24px">
         <Box>
           <Text as="p" textStyle="body-regular">
-            {`${guardian?.firstName} ${guardian?.lastName}`}
+            {`${guardian?.firstName || ''} ${guardian?.lastName || ''}`}
           </Text>
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {`Phone: ${guardian?.phone}`}
+            {`Phone: ${guardian?.phone || ''}`}
           </Text>
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {`Relationship: ${guardian?.relationship}`}
+            {`Relationship: ${guardian?.relationship || ''}`}
           </Text>
         </Box>
       </VStack>
@@ -39,19 +39,19 @@ export default function GuardianInformationCard({ guardian }: GuardianInformatio
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {guardian?.addressLine1}
+            {guardian?.addressLine1 || ''}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {guardian?.addressLine2}
+            {guardian?.addressLine2 || ''}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {`${guardian?.city} ${guardian?.province}`}
+            {`${guardian?.city || ''} ${guardian?.province || ''}`}
           </Text>
           <Text as="p" textStyle="body-regular">
             {`Canada`}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {guardian?.postalCode}
+            {guardian?.postalCode || ''}
           </Text>
         </Box>
       </VStack>

@@ -21,7 +21,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
         physician && (
           // TODO: Pass down a real onSave function from props
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          <EditDoctorInformationModal physician={physician} onSave={() => {}}>
+          <EditDoctorInformationModal physician={physician}>
             <Button color="primary" variant="ghost" textDecoration="underline">
               <Text textStyle="body-bold">Edit</Text>
             </Button>
@@ -34,17 +34,17 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       <VStack spacing="12px" align="left" paddingTop="24px">
         <Box>
           <Text as="p" textStyle="body-regular">
-            {physician?.name}
+            {physician?.name || ''}
           </Text>
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {`MSP Number: ${physician?.mspNumber}`}
+            {`MSP Number: ${physician?.mspNumber || ''}`}
           </Text>
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {`Phone: ${physician?.phone}`}
+            {`Phone: ${physician?.phone || ''}`}
           </Text>
         </Box>
       </VStack>
@@ -59,19 +59,19 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {physician?.addressLine1}
+            {physician?.addressLine1 || ''}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {physician?.addressLine2}
+            {physician?.addressLine2 || ''}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {`${physician?.city} ${physician?.province}`}
+            {`${physician?.city || ''} ${physician?.province || ''}`}
           </Text>
           <Text as="p" textStyle="body-regular">
             {`Canada`}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {physician?.postalCode}
+            {physician?.postalCode || ''}
           </Text>
         </Box>
       </VStack>
