@@ -77,32 +77,29 @@ export type GetPermitHolderResponse = {
       > & {
         readonly applicationProcessing: Pick<ApplicationProcessing, 'status'>;
       };
-    } & {
-      readonly permits: ReadonlyArray<
-        Pick<
-          Permit,
-          'id' | 'rcdPermitId' | 'expiryDate' | 'receiptId' | 'active' | 'applicationId'
-        > & {
-          application: Pick<Application, 'isRenewal'> & {
-            applicationProcessing: Pick<ApplicationProcessing, 'status'>;
-          };
-        }
-      >;
-    } & {
-      readonly physician: Pick<
-        Physician,
-        | 'name'
-        | 'mspNumber'
-        | 'addressLine1'
-        | 'addressLine2'
-        | 'city'
-        | 'province'
-        | 'postalCode'
-        | 'phone'
-        | 'status'
-        | 'notes'
-      >;
     };
+  } & {
+    permits: ReadonlyArray<
+      Pick<Permit, 'rcdPermitId' | 'expiryDate' | 'applicationId'> & {
+        application: Pick<Application, 'isRenewal'> & {
+          applicationProcessing: Pick<ApplicationProcessing, 'status'>;
+        };
+      }
+    >;
+  } & {
+    readonly physician: Pick<
+      Physician,
+      | 'name'
+      | 'mspNumber'
+      | 'addressLine1'
+      | 'addressLine2'
+      | 'city'
+      | 'province'
+      | 'postalCode'
+      | 'phone'
+      | 'status'
+      | 'notes'
+    >;
   } & {
     readonly medicalInformation: {
       readonly physician: Pick<

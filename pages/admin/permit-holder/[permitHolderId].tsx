@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
-import { ApplicantStatus, Role } from '@lib/types'; // Role enum and Applicant Type
+import { ApplicantStatus, ApplicationStatus, Role } from '@lib/types'; // Role enum and Applicant Type
 import { authorize } from '@tools/authorization'; // Page authorization
 import PermitHolderHeader from '@components/permit-holders/PermitHolderHeader'; // Permit Holder header
 import DoctorInformationCard from '@components/permit-holders/DoctorInformationCard'; // Doctor information card
@@ -34,6 +34,14 @@ export type ApplicantData = {
   status?: ApplicantStatus;
 };
 
+export type PermitData = {
+  rcdPermitId: number;
+  expiryDate: Date;
+  applicationId: number;
+  isRenewal: boolean;
+  status: ApplicationStatus;
+};
+
 type Props = {
   readonly permitHolderId: number;
 };
@@ -41,6 +49,7 @@ type Props = {
 // Individual permit holder page
 export default function PermitHolder({ permitHolderId }: Props) {
   const [applicantData, setApplicantData] = useState<ApplicantData>();
+  const [permits, setPermits] = useState<PermitData[]>();
 
   const { data } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(GET_PERMIT_HOLDER, {
     variables: {
@@ -63,6 +72,15 @@ export default function PermitHolder({ permitHolderId }: Props) {
         postalCode: data.applicant.postalCode,
         status: data.applicant.status || undefined,
       });
+      setPermits(
+        data.applicant.permits.map(permit => ({
+          rcdPermitId: permit.rcdPermitId,
+          expiryDate: permit.expiryDate,
+          applicationId: permit.applicationId,
+          isRenewal: permit.application.isRenewal,
+          status: permit.application.applicationProcessing.status,
+        }))
+      );
     },
   });
 
@@ -84,7 +102,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
 
       <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>
-          <AppHistoryCard permits={data?.applicant.permits} />
+          <AppHistoryCard permits={permits || []} />
           <AttachedFilesCard permitHolderId={permitHolderId} />
           <MedicalHistoryCard permitHolderId={permitHolderId} />
         </Stack>

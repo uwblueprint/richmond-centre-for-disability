@@ -2,8 +2,8 @@ import { Box, Link, Text, Divider } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
-import { Permit } from '@lib/graphql/types'; // Types
 import { Column } from 'react-table'; // React
+import { PermitData } from '@pages/admin/permit-holder/[permitHolderId]'; // Permit Data Types
 
 const COLUMNS: Column<any>[] = [
   {
@@ -34,7 +34,7 @@ const COLUMNS: Column<any>[] = [
   },
   {
     Header: 'Status',
-    accessor: 'requestStatus',
+    accessor: 'status',
     disableSortBy: true,
     maxWidth: 195,
     Cell: ({ value }) => {
@@ -71,24 +71,15 @@ const COLUMNS: Column<any>[] = [
 ];
 
 type AppHistoryProps = {
-  readonly permits: Permit[];
+  readonly permits: PermitData[];
 };
 
 export default function AppHistoryCard({ permits }: AppHistoryProps) {
-  const appHistoryData =
-    permits?.map(permit => ({
-      rcdPermitId: permit.rcdPermitId,
-      isRenewal: permit.application.isRenewal,
-      requestStatus: permit.application.applicationProcessing?.status,
-      expiryDate: permit.expiryDate,
-      applicationId: permit.applicationId,
-    })) || [];
-
   return (
     <PermitHolderInfoCard header={`APP History`} alignGridItems="normal">
       <Divider pt="24px" />
       <Box padding="20px 24px">
-        <Table columns={COLUMNS} data={appHistoryData} />
+        <Table columns={COLUMNS} data={permits} />
       </Box>
     </PermitHolderInfoCard>
   );
