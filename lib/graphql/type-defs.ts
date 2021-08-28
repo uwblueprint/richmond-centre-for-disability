@@ -1,8 +1,28 @@
-import { loadFilesSync } from '@graphql-tools/load-files'; // Load GraphQL schemas
-import { mergeTypeDefs } from '@graphql-tools/merge'; // Merge typedefs
+import applicantsSchema from '@lib/applicants/schema'; // Applicants schema
+import applicationProcessingSchema from '@lib/application-processing/schema'; // Application processing schema
+import applicationsSchema from '@lib/applications/schema'; // Applications schema
+import employeesSchema from '@lib/employees/schema'; // Employees schema
+import mainSchema from '@lib/graphql/schema'; // Main schema
+import guardiansSchema from '@lib/guardian/schema'; // Guardians schema
+import medicalInformationSchema from '@lib/medical-information/schema'; // Medical information schema
+import metaSchema from '@lib/meta/schema'; // Meta schema
+import permitsSchema from '@lib/permits/schema'; // Permits schema
+import physiciansSchema from '@lib/physicians/schema'; // Physicians schema
+import replacementsSchema from '@lib/replacements/schema'; // Replacements schema
 
 // Merge schemas
-const typesArray = loadFilesSync('./lib/**/schema.graphql');
-const typeDefs = mergeTypeDefs(typesArray);
+const typeDefs = [
+  applicantsSchema,
+  applicationProcessingSchema,
+  applicationsSchema,
+  employeesSchema,
+  mainSchema,
+  guardiansSchema,
+  medicalInformationSchema,
+  metaSchema,
+  permitsSchema,
+  physiciansSchema,
+  replacementsSchema,
+];
 
 export default typeDefs;
