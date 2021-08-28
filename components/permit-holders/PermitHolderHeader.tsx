@@ -1,12 +1,13 @@
 import { Badge, Box, Flex, HStack, Text, Wrap } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import Link from 'next/link'; // Link
-import { Applicant, ApplicantStatus } from '@lib/graphql/types'; // Applicant type
+import { ApplicantStatus } from '@lib/graphql/types'; // Applicant type
 import React from 'react'; // React
+import { ApplicantData } from '@pages/admin/permit-holder/[permitHolderId]'; // Applicant data type
 
 type PermitHolderHeaderProps = {
-  readonly applicant: Applicant;
-  readonly applicantStatus: ApplicantStatus;
+  readonly applicant?: ApplicantData;
+  readonly applicantStatus?: ApplicantStatus;
 };
 
 export default function PermitHolderHeader({
@@ -27,14 +28,18 @@ export default function PermitHolderHeader({
             <Text textStyle="display-large" as="h1" marginRight={3}>
               {`${applicant?.firstName} ${applicant?.lastName}`}
             </Text>
-            <Wrap>
-              <Badge variant={applicantStatus}>{applicantStatus}</Badge>
-            </Wrap>
+            {applicantStatus && (
+              <Wrap>
+                <Badge variant={applicantStatus}>{applicantStatus}</Badge>
+              </Wrap>
+            )}
           </Flex>
           <HStack spacing={3} marginTop={3}>
-            <Text textStyle="caption" as="p">
-              ID: #{applicant?.rcdUserId}
-            </Text>
+            {applicant?.rcdUserId && (
+              <Text textStyle="caption" as="p">
+                ID: #{applicant?.rcdUserId}
+              </Text>
+            )}
           </HStack>
         </Box>
       </Flex>

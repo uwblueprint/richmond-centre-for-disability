@@ -41,7 +41,7 @@ EditDoctorInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [name, setName] = useState('');
-  const [mspNumber, setMspNumber] = useState<number | undefined>();
+  const [mspNumber, setMspNumber] = useState<number>(0);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [addressLine1, setAddressLine1] = useState('');
   const [addressLine2, setAddressLine2] = useState<string | undefined>('');
@@ -82,7 +82,7 @@ EditDoctorInformationModalProps) {
     await submitEditedDoctorInformation({
       variables: {
         input: {
-          mspNumber: parseInt(mspNumber),
+          mspNumber: mspNumber,
           name: name,
           phone: phoneNumber,
           addressLine1: addressLine1,

@@ -122,6 +122,7 @@ export type GetPermitHolderResponse = {
   } & {
     readonly guardian: Pick<
       Guardian,
+      | 'id'
       | 'firstName'
       | 'middleName'
       | 'lastName'

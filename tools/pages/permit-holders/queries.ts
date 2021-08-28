@@ -114,6 +114,7 @@ export const GET_PERMIT_HOLDER = gql`
       }
 
       guardian {
+        id
         firstName
         middleName
         lastName

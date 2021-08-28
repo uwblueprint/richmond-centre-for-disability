@@ -2,14 +2,12 @@ import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
-import { Applicant, ApplicantStatus, Role } from '@lib/types'; // Role enum and Applicant Type
+import { ApplicantStatus, Role } from '@lib/types'; // Role enum and Applicant Type
 import { authorize } from '@tools/authorization'; // Page authorization
 import PermitHolderHeader from '@components/permit-holders/PermitHolderHeader'; // Permit Holder header
-// TODO: Reimplement DoctorInformationCard
 import DoctorInformationCard from '@components/permit-holders/DoctorInformationCard'; // Doctor information card
 import PersonalInformationCard from '@components/permit-holders/PersonalInformationCard'; // Personal information card
 import { Gender, Province } from '@lib/types'; // Gender, Province, PhysicianStatus, PaymentType Enums
-// TODO: Reimplement GuardianInformationCard
 import GuardianInformationCard from '@components/permit-holders/GuardianInformationCard'; // Guardian Information card
 import AppHistoryCard from '@components/permit-holders/AppHistoryCard'; // APP History card
 import AttachedFilesCard from '@components/permit-holders/AttachedFilesCard'; // Attached Files card
@@ -19,20 +17,21 @@ import { GET_PERMIT_HOLDER } from '@tools/pages/permit-holders/queries'; // Perm
 import { useQuery } from '@apollo/client'; // Apollo
 import { useState } from 'react'; // React
 
-type ApplicantData = {
+export type ApplicantData = {
   id: number;
   rcdUserId?: number;
   firstName: string;
   lastName: string;
   gender: Gender;
   dateOfBirth: Date;
-  email: string;
+  email?: string;
   phone: string;
   province: Province;
   city: string;
   addressLine1: string;
+  addressLine2?: string;
   postalCode: string;
-  status: ApplicantStatus;
+  status?: ApplicantStatus;
 };
 
 type Props = {
@@ -48,36 +47,33 @@ export default function PermitHolder({ permitHolderId }: Props) {
       id: permitHolderId,
     },
     onCompleted: data => {
-      const info = {
+      setApplicantData({
         id: data.applicant.id,
-        rcdUserId: data.applicant.rcdUserId,
+        rcdUserId: data.applicant.rcdUserId || undefined,
         firstName: data.applicant.firstName,
         lastName: data.applicant.lastName,
         gender: data.applicant.gender,
         dateOfBirth: data.applicant.dateOfBirth,
-        email: data.applicant.email,
+        email: data.applicant.email || undefined,
         phone: data.applicant.phone,
         province: data.applicant.province,
         city: data.applicant.city,
         addressLine1: data.applicant.addressLine1,
+        addressLine2: data.applicant.addressLine2 || undefined,
         postalCode: data.applicant.postalCode,
-        status: data.applicant.status,
-      };
-      setApplicantData(info);
+        status: data.applicant.status || undefined,
+      });
     },
   });
 
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3}>
-        <PermitHolderHeader
-          applicant={applicantData as unknown as Applicant}
-          applicantStatus={applicantData?.status}
-        />
+        <PermitHolderHeader applicant={applicantData} applicantStatus={applicantData?.status} />
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
         <Stack spacing={5}>
-          <PersonalInformationCard applicant={applicantData as unknown as Applicant} />
+          <PersonalInformationCard applicant={applicantData} />
           <DoctorInformationCard
             physician={data?.applicant.medicalInformation.physician}
             permitHolderId={permitHolderId}
