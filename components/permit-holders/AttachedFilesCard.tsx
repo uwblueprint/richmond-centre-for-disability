@@ -1,14 +1,8 @@
 import { Box, Link, Text, Divider } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
-import { useState } from 'react'; //React
 import { Column } from 'react-table'; // React table
-import {
-  GetApplicantAttachedFilesRequest,
-  GetApplicantAttachedFilesResponse,
-  GET_APPLICANT_ATTACHED_FILES_QUERY,
-} from '@tools/pages/admin/permit-holders/[permitHolderId]'; // Applicant attached files query
-import { useQuery } from '@apollo/client'; // Apollo client
+import { PermitHolderAttachedFile } from '@pages/admin/permit-holder/[permitHolderId]'; // Attached file type
 
 const COLUMNS: Column<any>[] = [
   {
@@ -57,47 +51,31 @@ const COLUMNS: Column<any>[] = [
 
 type AttachedFile = {
   fileName: string;
-  associatedApp: number;
+  associatedApp?: number;
   dateUploaded: Date;
   fileUrl: string;
 };
 
 type Props = {
-  readonly permitHolderId: number;
+  readonly attachedFiles?: PermitHolderAttachedFile[];
 };
 
-export default function AttachedFilesCard({ permitHolderId }: Props) {
-  const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>();
+export default function AttachedFilesCard({ attachedFiles }: Props) {
   const path = require('path');
 
-  useQuery<GetApplicantAttachedFilesResponse, GetApplicantAttachedFilesRequest>(
-    GET_APPLICANT_ATTACHED_FILES_QUERY,
-    {
-      variables: {
-        id: permitHolderId,
-      },
-      onCompleted: data => {
-        const files: AttachedFile[] = [];
-        data.applicant.applications.forEach(application => {
-          application.applicationProcessing.documentUrls?.forEach(documentUrl => {
-            files.push({
-              fileName: path.parse(documentUrl).base,
-              associatedApp: application.id,
-              dateUploaded: application.applicationProcessing.createdAt,
-              fileUrl: documentUrl,
-            });
-          });
-        });
-        setAttachedFiles(files);
-      },
-    }
-  );
+  const attachedFilesData: AttachedFile[] =
+    attachedFiles?.map(attachedFile => ({
+      fileName: path.parse(attachedFile.fileUrl).base,
+      associatedApp: attachedFile.associatedApp,
+      dateUploaded: attachedFile.dateUploaded,
+      fileUrl: attachedFile.fileUrl,
+    })) || [];
 
   return (
     <PermitHolderInfoCard alignGridItems="normal" header={`Attached Files`}>
       <Divider pt="24px" />
       <Box padding="20px 24px">
-        <Table columns={COLUMNS} data={attachedFiles || []} />
+        <Table columns={COLUMNS} data={attachedFilesData || []} />
       </Box>
     </PermitHolderInfoCard>
   );

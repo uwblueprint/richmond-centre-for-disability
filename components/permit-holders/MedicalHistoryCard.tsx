@@ -1,16 +1,9 @@
 import { Box, Text, Divider, Link } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
-import { Aid } from '@lib/graphql/types'; // Aid enum
 import MedicalHistoryModal from '@components/permit-holders/modals/MedicalHistoryModal'; // Medical History Modal
-import { useQuery } from '@apollo/client'; // Apollo
-import {
-  GetApplicantApplicationsRequest,
-  GetApplicantApplicationsResponse,
-  GET_APPLICANT_APPLICATIONS_QUERY,
-} from '@tools/pages/admin/permit-holders/[permitHolderId]'; // Applicant applications query
-import { useState } from 'react'; // React
 import { Column } from 'react-table'; // React table
+import { MedicalHistoryEntry } from '@pages/admin/permit-holder/[permitHolderId]'; // Medical History type for table
 
 const COLUMNS: Column<any>[] = [
   {
@@ -46,49 +39,16 @@ const COLUMNS: Column<any>[] = [
   },
 ];
 
-type MedicalHistoryEntry = {
-  disablingCondition: string;
-  dateUploaded: Date;
-  associatedApplication: {
-    disability: string;
-    affectsMobility: boolean;
-    mobilityAidRequired: boolean;
-    cannotWalk100m: boolean;
-    aid: Aid[];
-    createdAt: Date;
-  };
-};
-
 type Props = {
-  readonly permitHolderId: number;
+  readonly medicalHistory?: MedicalHistoryEntry[];
 };
 
-export default function MedicalHistoryCard({ permitHolderId }: Props) {
-  const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
-
-  useQuery<GetApplicantApplicationsResponse, GetApplicantApplicationsRequest>(
-    GET_APPLICANT_APPLICATIONS_QUERY,
-    {
-      variables: {
-        id: permitHolderId,
-      },
-      onCompleted: data => {
-        setMedicalHistoryData(
-          data.applicant.applications.map(record => ({
-            disablingCondition: record.disability,
-            dateUploaded: record.createdAt,
-            associatedApplication: record,
-          }))
-        );
-      },
-    }
-  );
-
+export default function MedicalHistoryCard({ medicalHistory }: Props) {
   return (
     <PermitHolderInfoCard alignGridItems="normal" header={`Medical History`}>
       <Divider pt="24px" />
       <Box padding="20px 24px">
-        <Table columns={COLUMNS} data={medicalHistoryData || []} />
+        <Table columns={COLUMNS} data={medicalHistory || []} />
       </Box>
     </PermitHolderInfoCard>
   );

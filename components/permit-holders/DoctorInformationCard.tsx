@@ -3,11 +3,12 @@ import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; //
 import { Physician } from '@lib/graphql/types'; // Physician type
 import EditDoctorInformationModal from '@components/requests/modals/EditDoctorInformationModal'; // Edit doctor information modal component
 import PreviousDoctorsInformationModal from '@components/permit-holders/modals/PreviousDoctorsInformationModal'; // Previous Doctors' Information Modal
+import { PreviousPhysicianData } from '@pages/admin/permit-holder/[permitHolderId]';
 
 type DoctorInformationProps = {
   physician?: Physician;
   readonly isUpdated?: boolean;
-  readonly permitHolderId: number;
+  readonly previousPhysicianData?: PreviousPhysicianData[];
 };
 
 export default function DoctorInformationCard(props: DoctorInformationProps) {
@@ -77,11 +78,13 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       </VStack>
 
       <Flex w="100%" justifyContent="flex-end" paddingTop="8px">
-        <PreviousDoctorsInformationModal permitHolderId={props.permitHolderId}>
-          <Button color="primary" variant="ghost" textDecoration="underline">
-            <Text textStyle="body-bold">{'View previous doctors'}</Text>
-          </Button>
-        </PreviousDoctorsInformationModal>
+        {props.previousPhysicianData && (
+          <PreviousDoctorsInformationModal previousPhysicianData={props.previousPhysicianData}>
+            <Button color="primary" variant="ghost" textDecoration="underline">
+              <Text textStyle="body-bold">{'View previous doctors'}</Text>
+            </Button>
+          </PreviousDoctorsInformationModal>
+        )}
       </Flex>
     </PermitHolderInfoCard>
   );

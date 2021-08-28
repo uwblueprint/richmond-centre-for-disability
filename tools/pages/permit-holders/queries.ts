@@ -20,60 +20,6 @@ export const GET_PERMIT_HOLDER = gql`
       postalCode
       status
 
-      activePermit {
-        expiryDate
-        application {
-          isRenewal
-          physicianName
-          physicianMspNumber
-          physicianAddressLine1
-          physicianAddressLine2
-          physicianCity
-          physicianProvince
-          physicianPostalCode
-          physicianPhone
-          physicianNotes
-
-          processingFee
-          donationAmount
-          paymentMethod
-          shopifyConfirmationNumber
-
-          shippingAddressSameAsHomeAddress
-          billingAddressSameAsHomeAddress
-          shippingFullName
-          shippingAddressLine1
-          shippingAddressLine2
-          shippingCity
-          shippingProvince
-          shippingPostalCode
-          billingFullName
-          billingAddressLine1
-          billingAddressLine2
-          billingCity
-          billingProvince
-          billingPostalCode
-
-          guardianFirstName
-          guardianMiddleName
-          guardianLastName
-          guardianPhone
-          guardianProvince
-          guardianCity
-          guardianAddressLine1
-          guardianAddressLine2
-          guardianPostalCode
-          guardianRelationship
-          guardianNotes
-
-          createdAt
-
-          applicationProcessing {
-            status
-          }
-        }
-      }
-
       permits {
         id
         rcdPermitId
@@ -90,7 +36,6 @@ export const GET_PERMIT_HOLDER = gql`
       }
 
       medicalHistory {
-        applicationId
         physician {
           name
           mspNumber
@@ -125,6 +70,23 @@ export const GET_PERMIT_HOLDER = gql`
         postalCode
         phone
         relationship
+        notes
+      }
+
+      fileHistory {
+        documentUrls
+        appNumber
+        createdAt
+      }
+
+      applications {
+        id
+        disability
+        affectsMobility
+        mobilityAidRequired
+        cannotWalk100m
+        aid
+        createdAt
         notes
       }
     }

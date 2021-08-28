@@ -12,14 +12,8 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
-import {
-  GET_APPLICANT_PHYSICIANS_QUERY,
-  GetApplicantPhysiciansRequest,
-  GetApplicantPhysiciansResponse,
-} from '@tools/pages/admin/permit-holders/past-physicians-modal';
 import { ReactNode } from 'react'; // React
-import { useState } from 'react'; // React
-import { useQuery } from '@apollo/client'; // Apollo
+import { PreviousPhysicianData } from '@pages/admin/permit-holder/[permitHolderId]';
 
 const COLUMNS = [
   {
@@ -64,38 +58,14 @@ function _renderAppLink({ value }: appProps) {
 
 type PreviousDoctorsInformationModalProps = {
   children: ReactNode;
-  readonly permitHolderId: number;
-};
-
-type PreviousPhysicianData = {
-  name: string;
-  mspNumber: number;
-  phone: string;
+  readonly previousPhysicianData: PreviousPhysicianData[];
 };
 
 export default function PreviousDoctorsInformationModal({
   children,
-  permitHolderId,
+  previousPhysicianData,
 }: PreviousDoctorsInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const [physicianData, setPhysicianData] = useState<PreviousPhysicianData[]>();
-  useQuery<GetApplicantPhysiciansResponse, GetApplicantPhysiciansRequest>(
-    GET_APPLICANT_PHYSICIANS_QUERY,
-    {
-      variables: {
-        id: permitHolderId,
-      },
-      onCompleted: data => {
-        setPhysicianData(
-          data.applicant.medicalHistory.map(record => ({
-            name: record.physician.name,
-            mspNumber: record.physician.mspNumber,
-            phone: record.physician.phone,
-          }))
-        );
-      },
-    }
-  );
 
   return (
     <>
@@ -116,7 +86,7 @@ export default function PreviousDoctorsInformationModal({
           </ModalHeader>
           <ModalBody paddingY="0px" paddingX="4px">
             <Box>
-              <Table columns={COLUMNS} data={physicianData || []} />
+              <Table columns={COLUMNS} data={previousPhysicianData || []} />
             </Box>
           </ModalBody>
           <ModalFooter paddingTop="36px" paddingBottom="40px" paddingX="4px">

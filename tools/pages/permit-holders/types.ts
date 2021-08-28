@@ -5,7 +5,8 @@ import {
   ApplicationProcessing,
   Physician,
   Guardian,
-} from '@lib/graphql/types';
+  ApplicationFileAttachments,
+} from '@lib/graphql/types'; // GraphQL types
 
 export type GetPermitHolderRequest = {
   id: number;
@@ -31,54 +32,6 @@ export type GetPermitHolderResponse = {
     | 'postalCode'
     | 'status'
   > & {
-    readonly activePermit: Pick<Permit, 'expiryDate'> & {
-      readonly application: Pick<
-        Application,
-        | 'isRenewal'
-        | 'physicianName'
-        | 'physicianMspNumber'
-        | 'physicianAddressLine1'
-        | 'physicianAddressLine2'
-        | 'physicianCity'
-        | 'physicianProvince'
-        | 'physicianPostalCode'
-        | 'physicianPhone'
-        | 'physicianNotes'
-        | 'processingFee'
-        | 'donationAmount'
-        | 'paymentMethod'
-        | 'shopifyConfirmationNumber'
-        | 'shippingAddressSameAsHomeAddress'
-        | 'billingAddressSameAsHomeAddress'
-        | 'shippingFullName'
-        | 'shippingAddressLine1'
-        | 'shippingAddressLine2'
-        | 'shippingCity'
-        | 'shippingProvince'
-        | 'shippingPostalCode'
-        | 'billingFullName'
-        | 'billingAddressLine1'
-        | 'billingAddressLine2'
-        | 'billingCity'
-        | 'billingProvince'
-        | 'billingPostalCode'
-        | 'guardianFirstName'
-        | 'guardianMiddleName'
-        | 'guardianLastName'
-        | 'guardianPhone'
-        | 'guardianProvince'
-        | 'guardianCity'
-        | 'guardianAddressLine1'
-        | 'guardianAddressLine2'
-        | 'guardianPostalCode'
-        | 'guardianRelationship'
-        | 'guardianNotes'
-        | 'createdAt'
-      > & {
-        readonly applicationProcessing: Pick<ApplicationProcessing, 'status'>;
-      };
-    };
-  } & {
     permits: ReadonlyArray<
       Pick<Permit, 'rcdPermitId' | 'expiryDate' | 'applicationId'> & {
         application: Pick<Application, 'isRenewal'> & {
@@ -100,6 +53,10 @@ export type GetPermitHolderResponse = {
       | 'status'
       | 'notes'
     >;
+  } & {
+    readonly medicalHistory: ReadonlyArray<{
+      readonly physician: Pick<Physician, 'name' | 'mspNumber' | 'phone'>;
+    }>;
   } & {
     readonly medicalInformation: {
       readonly physician: Pick<
@@ -131,6 +88,24 @@ export type GetPermitHolderResponse = {
       | 'phone'
       | 'relationship'
       | 'notes'
+    >;
+  } & {
+    readonly fileHistory: ReadonlyArray<
+      Pick<ApplicationFileAttachments, 'documentUrls' | 'appNumber' | 'createdAt'>
+    >;
+  } & {
+    applications: ReadonlyArray<
+      Pick<
+        Application,
+        | 'id'
+        | 'disability'
+        | 'affectsMobility'
+        | 'mobilityAidRequired'
+        | 'cannotWalk100m'
+        | 'aid'
+        | 'createdAt'
+        | 'notes'
+      >
     >;
   };
 };

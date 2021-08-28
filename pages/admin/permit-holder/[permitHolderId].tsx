@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
-import { ApplicantStatus, ApplicationStatus, Role } from '@lib/types'; // Role enum and Applicant Type
+import { Aid, ApplicantStatus, ApplicationStatus, Role } from '@lib/types'; // Role enum and Applicant Type
 import { authorize } from '@tools/authorization'; // Page authorization
 import PermitHolderHeader from '@components/permit-holders/PermitHolderHeader'; // Permit Holder header
 import DoctorInformationCard from '@components/permit-holders/DoctorInformationCard'; // Doctor information card
@@ -42,6 +42,31 @@ export type PermitData = {
   status: ApplicationStatus;
 };
 
+export type PermitHolderAttachedFile = {
+  associatedApp?: number;
+  dateUploaded: Date;
+  fileUrl: string;
+};
+
+export type MedicalHistoryEntry = {
+  disablingCondition: string;
+  dateUploaded: Date;
+  associatedApplication: {
+    disability: string;
+    affectsMobility: boolean;
+    mobilityAidRequired: boolean;
+    cannotWalk100m: boolean;
+    aid: Aid[];
+    createdAt: Date;
+  };
+};
+
+export type PreviousPhysicianData = {
+  name: string;
+  mspNumber: number;
+  phone: string;
+};
+
 type Props = {
   readonly permitHolderId: number;
 };
@@ -50,6 +75,9 @@ type Props = {
 export default function PermitHolder({ permitHolderId }: Props) {
   const [applicantData, setApplicantData] = useState<ApplicantData>();
   const [permits, setPermits] = useState<PermitData[]>();
+  const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
+  const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
+  const [previousPhysicianData, setPreviousPhysicianData] = useState<PreviousPhysicianData[]>();
 
   const { data } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(GET_PERMIT_HOLDER, {
     variables: {
@@ -81,6 +109,31 @@ export default function PermitHolder({ permitHolderId }: Props) {
           status: permit.application.applicationProcessing.status,
         }))
       );
+      const files: PermitHolderAttachedFile[] = [];
+      data.applicant.fileHistory.forEach(application => {
+        application.documentUrls?.forEach(documentUrl => {
+          files.push({
+            associatedApp: application.appNumber || undefined,
+            dateUploaded: application.createdAt,
+            fileUrl: documentUrl,
+          });
+        });
+      });
+      setAttachedFiles(files);
+      setMedicalHistoryData(
+        data.applicant.applications.map(application => ({
+          disablingCondition: application.disability,
+          dateUploaded: application.createdAt,
+          associatedApplication: application,
+        }))
+      );
+      setPreviousPhysicianData(
+        data.applicant.medicalHistory.map(record => ({
+          name: record.physician.name,
+          mspNumber: record.physician.mspNumber,
+          phone: record.physician.phone,
+        }))
+      );
     },
   });
 
@@ -94,7 +147,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
           <PersonalInformationCard applicant={applicantData} />
           <DoctorInformationCard
             physician={data?.applicant.medicalInformation.physician}
-            permitHolderId={permitHolderId}
+            previousPhysicianData={previousPhysicianData}
           />
           <GuardianInformationCard guardian={data?.applicant.guardian} />
         </Stack>
@@ -103,8 +156,8 @@ export default function PermitHolder({ permitHolderId }: Props) {
       <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>
           <AppHistoryCard permits={permits || []} />
-          <AttachedFilesCard permitHolderId={permitHolderId} />
-          <MedicalHistoryCard permitHolderId={permitHolderId} />
+          <AttachedFilesCard attachedFiles={attachedFiles} />
+          <MedicalHistoryCard medicalHistory={medicalHistoryData} />
         </Stack>
       </GridItem>
     </Layout>
