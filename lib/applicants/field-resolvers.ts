@@ -1,9 +1,8 @@
 import { Resolver } from '@lib/resolvers'; // Resolver type
-import { Applicant } from '@lib/types'; // Applicant type
-import { SortOrder } from '@tools/types';
+import { Applicant, ApplicationStatus } from '@lib/types'; // Applicant type
+import { SortOrder } from '@tools/types'; // Sorting type
 import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
 import { ApolloError } from 'apollo-server-micro'; // Apollo errors
-import { ApplicationStatus } from '@prisma/client';
 
 /**
  * Field resolver to fetch all applications belonging to an applicant
@@ -64,7 +63,7 @@ export const applicantMedicalHistoryResolver: Resolver<Applicant> = async (
     where: {
       applicantId: parent?.id,
       applicationProcessing: {
-        status: ApplicationStatus.COMPLETED,
+        status: ApplicationStatus.Completed,
       },
     },
     select: {

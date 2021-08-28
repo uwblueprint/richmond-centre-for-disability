@@ -55,7 +55,7 @@ model Application {
   notes                                 String?
   rcdUserId                             Int?                  @map("rcd_user_id")
   isRenewal                             Boolean               @default(true) @map("is_renewal")
-  permitType                            permittype            @default(PERMANENT) @map("permit_type")
+  permitType                            PermitType            @default(PERMANENT) @map("permit_type")
   poaFormUrl                            String?               @map("poa_form_url") @db.VarChar(255)
   applicantId                           Int?                  @map("applicant_id")
   disability                            String                @db.VarChar(255)
@@ -333,7 +333,9 @@ enum ReasonForReplacement {
    @@map("reasonforreplacement")
 }
 
-enum permittype {
+enum PermitType {
   PERMANENT
   TEMPORARY
+
+  @@map("permittype")
 }

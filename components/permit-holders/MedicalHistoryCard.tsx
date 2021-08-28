@@ -3,14 +3,14 @@ import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
 import { Aid } from '@lib/graphql/types'; // Aid enum
 import MedicalHistoryModal from '@components/permit-holders/modals/MedicalHistoryModal'; // Medical History Modal
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client'; // Apollo
 import {
   GetApplicantApplicationsRequest,
   GetApplicantApplicationsResponse,
   GET_APPLICANT_APPLICATIONS_QUERY,
-} from '@tools/pages/admin/permit-holders/[permitHolderId]';
-import { useState } from 'react';
-import { Column } from 'react-table';
+} from '@tools/pages/admin/permit-holders/[permitHolderId]'; // Applicant applications query
+import { useState } from 'react'; // React
+import { Column } from 'react-table'; // React table
 
 const COLUMNS: Column<any>[] = [
   {

@@ -10,7 +10,6 @@ import {
   ModalBody,
   Button,
   useDisclosure,
-  // useQuery,
 } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import {
@@ -20,16 +19,7 @@ import {
 } from '@tools/pages/admin/permit-holders/past-physicians-modal';
 import { ReactNode } from 'react'; // React
 import { useState } from 'react'; // React
-import { useQuery } from '@apollo/client';
-
-// Placeholder data
-
-// const DATA = Array(4).fill({
-//   name: 'Charmaine Wang',
-//   phoneNumber: '000-000-000',
-//   mspNumber: 'XXXXX',
-//   applicationId: { applicationId: 1 },
-// });
+import { useQuery } from '@apollo/client'; // Apollo
 
 const COLUMNS = [
   {

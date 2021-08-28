@@ -30,6 +30,7 @@ import {
 type EditDoctorInformationModalProps = {
   children: ReactNode;
   readonly physician: DoctorInformationCardPhysician;
+  readonly onSave: (applicationData: any) => void;
 };
 
 export default function EditDoctorInformationModal({ children }: EditDoctorInformationModalProps) {
