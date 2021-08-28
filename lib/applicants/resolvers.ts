@@ -1,4 +1,5 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
+import { Prisma } from '@prisma/client'; // Prisma client
 import { Resolver } from '@lib/resolvers'; // Resolver type
 import {
   ApplicantAlreadyExistsError,
@@ -6,7 +7,7 @@ import {
   RcdUserIdAlreadyExistsError,
   InvalidPhoneNumberSuffixLengthError,
 } from '@lib/applicants/errors'; // Applicant errors
-import { DBErrorCode } from '@lib/db/errors'; // Database errors
+import { getUniqueConstraintFailedFields, DBErrorCode } from '@lib/db/errors'; // Database errors
 import { MspNumberDoesNotExistError } from '@lib/physicians/errors'; // Physician errors
 import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
@@ -226,7 +227,11 @@ export const createApplicant: Resolver = async (_, args, { prisma }) => {
       },
     });
   } catch (err) {
-    if (err.code === DBErrorCode.UniqueConstraintFailed && err.meta.target.includes('email')) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === DBErrorCode.UniqueConstraintFailed &&
+      getUniqueConstraintFailedFields(err)?.includes('email')
+    ) {
       throw new ApplicantAlreadyExistsError(`Applicant with email ${input.email} already exists`);
     }
   }
@@ -263,16 +268,24 @@ export const updateApplicant: Resolver = async (_, args, { prisma }) => {
       data: formattedApplicantData,
     });
   } catch (err) {
-    if (err.code === DBErrorCode.RecordNotFound) {
-      throw new ApplicantNotFoundError(`Applicant with ID ${id} not found`);
-    }
-    if (err.code === DBErrorCode.UniqueConstraintFailed && err.meta.target.includes('email')) {
-      throw new ApplicantAlreadyExistsError(`Applicant with email ${input.email} already exists`);
-    }
-    if (err.code === DBErrorCode.UniqueConstraintFailed && err.meta.target.includes('rcdUserId')) {
-      throw new RcdUserIdAlreadyExistsError(
-        `Applicant with RCD user ID ${input.rcdUserId} already exists`
-      );
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === DBErrorCode.RecordNotFound) {
+        throw new ApplicantNotFoundError(`Applicant with ID ${id} not found`);
+      }
+      if (
+        err.code === DBErrorCode.UniqueConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('email')
+      ) {
+        throw new ApplicantAlreadyExistsError(`Applicant with email ${input.email} already exists`);
+      }
+      if (
+        err.code === DBErrorCode.UniqueConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('rcdUserId')
+      ) {
+        throw new RcdUserIdAlreadyExistsError(
+          `Applicant with RCD user ID ${input.rcdUserId} already exists`
+        );
+      }
     }
   }
 

@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'; // Prisma client
 import { Resolver } from '@lib/resolvers'; // Resolver type
 import { Applicant, ApplicationStatus } from '@lib/types'; // Applicant type
 import { SortOrder } from '@tools/types'; // Sorting type
@@ -121,7 +122,11 @@ export const applicantActivePermitResolver: Resolver<Applicant> = async parent =
   try {
     return await getActivePermit(parent.id);
   } catch (err) {
-    throw new ApolloError(`Could not retrieve applicant's active permit`);
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      throw new ApolloError(err.message);
+    }
+
+    throw new ApolloError('Error querying active permit');
   }
 };
 

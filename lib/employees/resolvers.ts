@@ -1,7 +1,8 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
+import { Prisma } from '@prisma/client'; // Prisma client
 import { Resolver } from '@lib/resolvers'; // Resolver type
 import { EmployeeAlreadyExistsError } from '@lib/employees/errors'; // Employee errors
-import { DBErrorCode } from '@lib/db/errors'; // Database errors
+import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 
 /**
  * Query all the RCD employees in the internal-facing app
@@ -32,7 +33,11 @@ export const createEmployee: Resolver = async (_, args, { prisma }) => {
       },
     });
   } catch (err) {
-    if (err.code === DBErrorCode.UniqueConstraintFailed && err.meta.target.includes('email')) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === DBErrorCode.UniqueConstraintFailed &&
+      getUniqueConstraintFailedFields(err)?.includes('email')
+    ) {
       throw new EmployeeAlreadyExistsError(`Employee with email ${email} already exists`);
     }
   }

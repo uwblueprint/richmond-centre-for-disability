@@ -1,4 +1,5 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
+import { Prisma } from '@prisma/client'; // Prisma client
 import { Resolver } from '@lib/resolvers'; // Resolver type
 import { DBErrorCode } from '@lib/db/errors';
 import { ApplicationNotFoundError } from '@lib/application-processing/errors'; // Application processing errors
@@ -30,7 +31,10 @@ export const updateApplicationProcessing: Resolver = async (_, args, { prisma })
       },
     });
   } catch (err) {
-    if (err.code === DBErrorCode.RecordNotFound) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === DBErrorCode.RecordNotFound
+    ) {
       throw new ApplicationNotFoundError(`Application with ID ${applicationId} not found`);
     }
   }

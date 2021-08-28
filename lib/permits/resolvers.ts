@@ -1,11 +1,12 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
+import { Prisma } from '@prisma/client'; // Prisma client
 import { Resolver } from '@lib/resolvers'; // Resolver type
 import {
   PermitAlreadyExistsError,
   ApplicantIdDoesNotExistError,
   ApplicationIdDoesNotExistError,
 } from '@lib/permits/errors'; // Permit errors
-import { DBErrorCode } from '@lib/db/errors'; // Database errors
+import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 
 /**
  * Query all the permits in the internal-facing app
@@ -39,25 +40,29 @@ export const createPermit: Resolver = async (_, args, { prisma }) => {
       },
     });
   } catch (err) {
-    if (
-      err.code === DBErrorCode.UniqueConstraintFailed &&
-      err.meta.target.includes('rcdPermitId')
-    ) {
-      throw new PermitAlreadyExistsError(`Permit with ID ${args.input.rcdPermitId} already exists`);
-    } else if (
-      err.code === DBErrorCode.ForeignKeyConstraintFailed &&
-      err.meta?.target.includes('applicantId')
-    ) {
-      throw new ApplicantIdDoesNotExistError(
-        `Applicant ID ${args.input.applicantId} does not exist`
-      );
-    } else if (
-      err.code === DBErrorCode.ForeignKeyConstraintFailed &&
-      err.meta?.target.includes('applicationId')
-    ) {
-      throw new ApplicationIdDoesNotExistError(
-        `Application ID ${args.input.applicationId} does not exist`
-      );
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (
+        err.code === DBErrorCode.UniqueConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('rcdPermitId')
+      ) {
+        throw new PermitAlreadyExistsError(
+          `Permit with ID ${args.input.rcdPermitId} already exists`
+        );
+      } else if (
+        err.code === DBErrorCode.ForeignKeyConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('applicantId')
+      ) {
+        throw new ApplicantIdDoesNotExistError(
+          `Applicant ID ${args.input.applicantId} does not exist`
+        );
+      } else if (
+        err.code === DBErrorCode.ForeignKeyConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('applicationId')
+      ) {
+        throw new ApplicationIdDoesNotExistError(
+          `Application ID ${args.input.applicationId} does not exist`
+        );
+      }
     }
   }
 
