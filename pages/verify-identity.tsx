@@ -10,7 +10,6 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input,
   FormHelperText,
   NumberInput,
   NumberInputField,
@@ -27,6 +26,7 @@ import {
 import { InfoOutlineIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/applicant/Layout'; // Layout component
 import TOSModal from '@components/applicant/renewals/TOSModal'; // TOS Modal
+import DatePicker from '@components/DatePicker'; // Date picker component
 import {
   VERIFY_IDENTITY_MUTATION,
   VerifyIdentityRequest,
@@ -47,7 +47,7 @@ export default function IdentityVerificationForm() {
 
   const [userId, setUserId] = useState('');
   const [phoneNumberSuffix, setPhoneNumberSuffix] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString().substring(0, 10));
+  const [dateOfBirth, setDateOfBirth] = useState(new Date());
 
   // Verify identity query
   const [verifyIdentity, { data, loading }] = useMutation<
@@ -77,7 +77,7 @@ export default function IdentityVerificationForm() {
         input: {
           userId: parseInt(userId),
           phoneNumberSuffix,
-          dateOfBirth,
+          dateOfBirth: dateOfBirth.toISOString().substring(0, 10), // Strip time from DOB
           acceptedTos: acceptedTOSTimestamp,
         },
       },
@@ -135,12 +135,7 @@ export default function IdentityVerificationForm() {
             </FormControl>
             <FormControl isRequired textAlign="left" marginBottom="20px">
               <FormLabel>{`Date of Birth`}</FormLabel>
-              <Input
-                type="date"
-                width="184px"
-                value={dateOfBirth}
-                onChange={event => setDateOfBirth(event.target.value)}
-              />
+              <DatePicker width="184px" value={dateOfBirth} onDateChange={setDateOfBirth} />
               <FormHelperText>
                 {`Please enter your date of birth in YYYY-MM-DD format. For example, if you were born on
             20th August 1950, you would enter 20-08-1950`}

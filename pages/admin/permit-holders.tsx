@@ -65,7 +65,7 @@ const COLUMNS: Column<any>[] = [
     width: 140,
     maxWidth: 140,
     Cell: ({ value }) => {
-      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+      return <Text>{new Date(value).toLocaleDateString('en-CA')}</Text>;
     },
   },
   {

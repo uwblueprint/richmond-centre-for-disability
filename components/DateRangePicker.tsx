@@ -12,7 +12,7 @@ type DateRangePicker = {
  * that allows selecting a range of dates
  * @param {DateRangePicker} props - Props
  */
-export default function DayPicker(props: DateRangePicker) {
+export default function DateRangePicker(props: DateRangePicker) {
   return (
     <>
       <ReactDayPicker
