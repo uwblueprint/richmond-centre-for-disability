@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import { ReactNode } from 'react'; // React
-import { PreviousPhysicianData } from '@pages/admin/permit-holder/[permitHolderId]';
+import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/permit-holder-id';
 
 const COLUMNS = [
   {
@@ -86,7 +86,7 @@ export default function PreviousDoctorsInformationModal({
           </ModalHeader>
           <ModalBody paddingY="0px" paddingX="4px">
             <Box>
-              <Table columns={COLUMNS} data={previousPhysicianData || []} />
+              <Table columns={COLUMNS} data={previousPhysicianData} />
             </Box>
           </ModalBody>
           <ModalFooter paddingTop="36px" paddingBottom="40px" paddingX="4px">

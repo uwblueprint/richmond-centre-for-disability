@@ -125,6 +125,10 @@ export const applicantActivePermitResolver: Resolver<Applicant> = async parent =
   }
 };
 
+/**
+ * Field resolver to fetch the applicationProcessing object associated with an applicant
+ * @returns applicationProcessing object that contains document urls, the associated application number, and the date uploaded
+ */
 export const applicantFileHistoryResolver: Resolver<Applicant> = async (
   parent,
   _args,
@@ -133,6 +137,11 @@ export const applicantFileHistoryResolver: Resolver<Applicant> = async (
   const applicationProcessings = await prisma.application.findMany({
     where: {
       applicantId: parent?.id,
+      // NOT: [{
+      //   applicationProcessing: {
+      //     documentUrls: null,
+      //   }
+      // }],
     },
     include: {
       applicationProcessing: {

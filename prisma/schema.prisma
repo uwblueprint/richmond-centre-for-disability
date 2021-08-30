@@ -220,7 +220,7 @@ model ApplicationProcessing {
   appMailed         Boolean           @default(false) @map("app_mailed")
   createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt         DateTime          @default(now()) @map("updated_at") @db.Timestamptz(6)
-  applications      Application?      @relation("application_processingToapplications")
+  application      Application?       @relation("application_processingToapplications")
 
   @@map("application_processing")
 }

@@ -2,12 +2,10 @@ import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/internal/Layout'; // Layout component
-import { Aid, ApplicantStatus, ApplicationStatus, Role } from '@lib/types'; // Role enum and Applicant Type
 import { authorize } from '@tools/authorization'; // Page authorization
 import PermitHolderHeader from '@components/permit-holders/PermitHolderHeader'; // Permit Holder header
 import DoctorInformationCard from '@components/permit-holders/DoctorInformationCard'; // Doctor information card
 import PersonalInformationCard from '@components/permit-holders/PersonalInformationCard'; // Personal information card
-import { Gender, Province } from '@lib/types'; // Gender, Province, PhysicianStatus, PaymentType Enums
 import GuardianInformationCard from '@components/permit-holders/GuardianInformationCard'; // Guardian Information card
 import AppHistoryCard from '@components/permit-holders/AppHistoryCard'; // APP History card
 import AttachedFilesCard from '@components/permit-holders/AttachedFilesCard'; // Attached Files card
@@ -16,56 +14,14 @@ import { GetPermitHolderRequest, GetPermitHolderResponse } from '@tools/pages/pe
 import { GET_PERMIT_HOLDER } from '@tools/pages/permit-holders/queries'; // Permit holder query
 import { useQuery } from '@apollo/client'; // Apollo
 import { useState } from 'react'; // React
-
-export type ApplicantData = {
-  id: number;
-  rcdUserId?: number;
-  firstName: string;
-  lastName: string;
-  gender: Gender;
-  dateOfBirth: Date;
-  email?: string;
-  phone: string;
-  province: Province;
-  city: string;
-  addressLine1: string;
-  addressLine2?: string;
-  postalCode: string;
-  status?: ApplicantStatus;
-};
-
-export type PermitData = {
-  rcdPermitId: number;
-  expiryDate: Date;
-  applicationId: number;
-  isRenewal: boolean;
-  status: ApplicationStatus;
-};
-
-export type PermitHolderAttachedFile = {
-  associatedApp?: number;
-  dateUploaded: Date;
-  fileUrl: string;
-};
-
-export type MedicalHistoryEntry = {
-  disablingCondition: string;
-  dateUploaded: Date;
-  associatedApplication: {
-    disability: string;
-    affectsMobility: boolean;
-    mobilityAidRequired: boolean;
-    cannotWalk100m: boolean;
-    aid: Aid[];
-    createdAt: Date;
-  };
-};
-
-export type PreviousPhysicianData = {
-  name: string;
-  mspNumber: number;
-  phone: string;
-};
+import {
+  ApplicantData,
+  PermitData,
+  MedicalHistoryEntry,
+  PermitHolderAttachedFile,
+  PreviousPhysicianData,
+} from '@tools/pages/admin/permit-holders/permit-holder-id';
+import { Role } from '@lib/graphql/types';
 
 type Props = {
   readonly permitHolderId: number;
@@ -84,22 +40,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
       id: permitHolderId,
     },
     onCompleted: data => {
-      setApplicantData({
-        id: data.applicant.id,
-        rcdUserId: data.applicant.rcdUserId || undefined,
-        firstName: data.applicant.firstName,
-        lastName: data.applicant.lastName,
-        gender: data.applicant.gender,
-        dateOfBirth: data.applicant.dateOfBirth,
-        email: data.applicant.email || undefined,
-        phone: data.applicant.phone,
-        province: data.applicant.province,
-        city: data.applicant.city,
-        addressLine1: data.applicant.addressLine1,
-        addressLine2: data.applicant.addressLine2 || undefined,
-        postalCode: data.applicant.postalCode,
-        status: data.applicant.status || undefined,
-      });
+      setApplicantData(data.applicant);
       setPermits(
         data.applicant.permits.map(permit => ({
           rcdPermitId: permit.rcdPermitId,
@@ -113,8 +54,8 @@ export default function PermitHolder({ permitHolderId }: Props) {
       data.applicant.fileHistory.forEach(application => {
         application.documentUrls?.forEach(documentUrl => {
           files.push({
-            associatedApp: application.appNumber || undefined,
-            dateUploaded: application.createdAt,
+            appNumber: application.appNumber,
+            createdAt: application.createdAt,
             fileUrl: documentUrl,
           });
         });
@@ -122,9 +63,9 @@ export default function PermitHolder({ permitHolderId }: Props) {
       setAttachedFiles(files);
       setMedicalHistoryData(
         data.applicant.applications.map(application => ({
-          disablingCondition: application.disability,
-          dateUploaded: application.createdAt,
-          associatedApplication: application,
+          disability: application.disability,
+          createdAt: application.createdAt,
+          applicantApplication: application,
         }))
       );
       setPreviousPhysicianData(
@@ -140,24 +81,26 @@ export default function PermitHolder({ permitHolderId }: Props) {
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3}>
-        <PermitHolderHeader applicant={applicantData} applicantStatus={applicantData?.status} />
+        {applicantData && <PermitHolderHeader applicant={applicantData} />}
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
         <Stack spacing={5}>
-          <PersonalInformationCard applicant={applicantData} />
-          <DoctorInformationCard
-            physician={data?.applicant.medicalInformation.physician}
-            previousPhysicianData={previousPhysicianData}
-          />
-          <GuardianInformationCard guardian={data?.applicant.guardian} />
+          {applicantData && <PersonalInformationCard applicant={applicantData} />}
+          {data && previousPhysicianData && (
+            <DoctorInformationCard
+              physician={data.applicant.medicalInformation.physician}
+              previousPhysicianData={previousPhysicianData}
+            />
+          )}
+          {data && <GuardianInformationCard guardian={data?.applicant.guardian} />}
         </Stack>
       </GridItem>
 
       <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>
-          <AppHistoryCard permits={permits || []} />
+          {permits && <AppHistoryCard permits={permits} />}
           <AttachedFilesCard attachedFiles={attachedFiles} />
-          <MedicalHistoryCard medicalHistory={medicalHistoryData} />
+          {medicalHistoryData && <MedicalHistoryCard medicalHistory={medicalHistoryData} />}
         </Stack>
       </GridItem>
     </Layout>

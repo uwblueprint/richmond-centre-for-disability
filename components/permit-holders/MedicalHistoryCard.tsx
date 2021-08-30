@@ -3,7 +3,7 @@ import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
 import MedicalHistoryModal from '@components/permit-holders/modals/MedicalHistoryModal'; // Medical History Modal
 import { Column } from 'react-table'; // React table
-import { MedicalHistoryEntry } from '@pages/admin/permit-holder/[permitHolderId]'; // Medical History type for table
+import { MedicalHistoryEntry } from '@tools/pages/admin/permit-holders/permit-holder-id'; // Medical History type for table
 
 const COLUMNS: Column<any>[] = [
   {
@@ -18,7 +18,7 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     maxWidth: 200,
     Cell: ({ value }) => {
-      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+      return <Text>{new Date(value).toLocaleDateString('en-CA')}</Text>;
     },
   },
   {
@@ -40,7 +40,7 @@ const COLUMNS: Column<any>[] = [
 ];
 
 type Props = {
-  readonly medicalHistory?: MedicalHistoryEntry[];
+  readonly medicalHistory: MedicalHistoryEntry[];
 };
 
 export default function MedicalHistoryCard({ medicalHistory }: Props) {

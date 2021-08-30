@@ -3,7 +3,7 @@ import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; //
 import { Guardian } from '@lib/graphql/types'; // Guardian type
 
 type GuardianInformationProps = {
-  guardian?: Guardian;
+  guardian: Guardian;
 };
 
 export default function GuardianInformationCard({ guardian }: GuardianInformationProps) {

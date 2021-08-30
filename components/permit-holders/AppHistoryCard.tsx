@@ -1,9 +1,10 @@
-import { Box, Link, Text, Divider } from '@chakra-ui/react'; // Chakra UI
+import { Box, Text, Divider } from '@chakra-ui/react'; // Chakra UI
+import Link from 'next/link';
 import Table from '@components/internal/Table'; // Table component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
-import { Column } from 'react-table'; // React
-import { PermitData } from '@pages/admin/permit-holder/[permitHolderId]'; // Permit Data Types
+import { Column } from 'react-table'; // React Table
+import { PermitData } from '@tools/pages/admin/permit-holders/permit-holder-id'; // Permit Data Types
 
 const COLUMNS: Column<any>[] = [
   {
@@ -51,7 +52,7 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     maxWidth: 140,
     Cell: ({ value }) => {
-      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+      return <Text>{new Date(value).toLocaleDateString('en-CA')}</Text>;
     },
   },
   {

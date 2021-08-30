@@ -37,7 +37,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [name, setName] = useState('');
-  const [mspNumber, setMspNumber] = useState<number>(0);
+  const [mspNumber, setMspNumber] = useState(0);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [addressLine1, setAddressLine1] = useState('');
   const [addressLine2, setAddressLine2] = useState<string | undefined>('');
@@ -52,7 +52,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
     UpsertPhysicianRequest
   >(UPSERT_PHYSICIAN_MUTATION, {
     onCompleted: data => {
-      if (data?.upsertPhysician.ok) {
+      if (data.upsertPhysician.ok) {
         onClose();
         toast({
           render: () => (
@@ -84,7 +84,7 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
           addressLine1: addressLine1,
           addressLine2: addressLine2,
           city: city,
-          postalCode: postalCode,
+          postalCode,
         },
       },
     });

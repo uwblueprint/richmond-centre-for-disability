@@ -1,10 +1,9 @@
-import { Box, Link, Text, Divider } from '@chakra-ui/react'; // Chakra UI
+import { Box, Text, Divider } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
-import { Column } from 'react-table'; // React table
-import { PermitHolderAttachedFile } from '@pages/admin/permit-holder/[permitHolderId]'; // Attached file type
+import { PermitHolderAttachedFile } from '@tools/pages/admin/permit-holders/permit-holder-id'; // Attached file type
 
-const COLUMNS: Column<any>[] = [
+const COLUMNS = [
   {
     Header: 'File Name',
     accessor: 'fileName',
@@ -16,12 +15,8 @@ const COLUMNS: Column<any>[] = [
     accessor: 'associatedApp',
     disableSortBy: true,
     maxWidth: 220,
-    Cell: ({ value }) => {
-      return (
-        <>
-          <Text as="p">{`#${value.associatedApp}`}</Text>
-        </>
-      );
+    Cell: (value: any) => {
+      return <>{value && <Text as="p">{`#${value}`}</Text>}</>;
     },
   },
   {
@@ -29,26 +24,21 @@ const COLUMNS: Column<any>[] = [
     accessor: 'dateUploaded',
     disableSortBy: true,
     maxWidth: 160,
-    Cell: ({ value }) => {
-      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+    Cell: (value: any) => {
+      return <Text>{new Date(value).toLocaleDateString('en-CA')}</Text>;
     },
   },
   {
     accessor: 'fileUrl',
     disableSortBy: true,
     maxWidth: 140,
-    Cell: ({ value }) => {
-      return (
-        <Link href={`/${value}`} passHref>
-          <Text textStyle="body-regular" textColor="primary" as="a">
-            Download file
-          </Text>
-        </Link>
-      );
+    Cell: () => {
+      return null;
     },
   },
 ];
 
+//Will replace this type with a GraphQL type
 type AttachedFile = {
   fileName: string;
   associatedApp?: number;
@@ -66,8 +56,8 @@ export default function AttachedFilesCard({ attachedFiles }: Props) {
   const attachedFilesData: AttachedFile[] =
     attachedFiles?.map(attachedFile => ({
       fileName: path.parse(attachedFile.fileUrl).base,
-      associatedApp: attachedFile.associatedApp,
-      dateUploaded: attachedFile.dateUploaded,
+      associatedApp: attachedFile.appNumber || undefined,
+      dateUploaded: attachedFile.createdAt,
       fileUrl: attachedFile.fileUrl,
     })) || [];
 

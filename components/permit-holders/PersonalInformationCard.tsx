@@ -11,10 +11,10 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import EditUserInformationModal from '@components/permit-holders/modals/EditUserInformationModal'; // Edit User Information Modal
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
-import { ApplicantData } from '@pages/admin/permit-holder/[permitHolderId]'; // Applicant data type
+import { ApplicantData } from '@tools/pages/admin/permit-holders/permit-holder-id'; // Applicant data type
 
 type PersonalInformationProps = {
-  readonly applicant?: ApplicantData;
+  readonly applicant: ApplicantData;
 };
 
 export default function PersonalInformationCard(props: PersonalInformationProps) {
@@ -30,20 +30,18 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         </Text>
       }
       editModal={
-        applicant && (
-          <EditUserInformationModal applicantId={applicant?.id}>
-            <Button color="primary" variant="ghost" textDecoration="underline">
-              <Text textStyle="body-bold">Edit</Text>
-            </Button>
-          </EditUserInformationModal>
-        )
+        <EditUserInformationModal applicantId={applicant?.id}>
+          <Button color="primary" variant="ghost" textDecoration="underline">
+            <Text textStyle="body-bold">Edit</Text>
+          </Button>
+        </EditUserInformationModal>
       }
     >
       <VStack spacing="12px" align="left">
         <Box>
           <Text as="p" textStyle="body-regular">
             Date of Birth:{' '}
-            {applicant?.dateOfBirth && new Date(applicant.dateOfBirth).toLocaleDateString('en-ZA')}
+            {applicant?.dateOfBirth && new Date(applicant.dateOfBirth).toLocaleDateString('en-CA')}
           </Text>
         </Box>
         <Box>

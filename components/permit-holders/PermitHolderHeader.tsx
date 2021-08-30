@@ -1,19 +1,14 @@
 import { Badge, Box, Flex, HStack, Text, Wrap } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import Link from 'next/link'; // Link
-import { ApplicantStatus } from '@lib/graphql/types'; // Applicant type
-import React from 'react'; // React
-import { ApplicantData } from '@pages/admin/permit-holder/[permitHolderId]'; // Applicant data type
+import { ApplicantData } from '@tools/pages/admin/permit-holders/permit-holder-id'; // Applicant data type
+import React from 'react';
 
 type PermitHolderHeaderProps = {
-  readonly applicant?: ApplicantData;
-  readonly applicantStatus?: ApplicantStatus;
+  readonly applicant: ApplicantData;
 };
 
-export default function PermitHolderHeader({
-  applicant,
-  applicantStatus,
-}: PermitHolderHeaderProps) {
+export default function PermitHolderHeader({ applicant }: PermitHolderHeaderProps) {
   return (
     <Box textAlign="left">
       <Link href="/admin/permit-holders" passHref>
@@ -30,18 +25,16 @@ export default function PermitHolderHeader({
                 {`${applicant.firstName} ${applicant.lastName}`}
               </Text>
             )}
-            {applicantStatus && (
+            {applicant.status && (
               <Wrap>
-                <Badge variant={applicantStatus}>{applicantStatus}</Badge>
+                <Badge variant={applicant.status}>{applicant.status}</Badge>
               </Wrap>
             )}
           </Flex>
           <HStack spacing={3} marginTop={3}>
-            {applicant?.rcdUserId && (
-              <Text textStyle="caption" as="p">
-                ID: #{applicant?.rcdUserId}
-              </Text>
-            )}
+            <Text textStyle="caption" as="p">
+              ID: #{applicant?.rcdUserId}
+            </Text>
           </HStack>
         </Box>
       </Flex>
