@@ -53,7 +53,7 @@ export type Applicant = {
   permits: Array<Permit>;
   medicalHistory: Maybe<Array<MedicalHistory>>;
   mostRecentPermit: Permit;
-  fileHistory: Maybe<Array<ApplicationFileAttachments>>;
+  fileHistory: Array<ApplicationFileAttachments>;
 };
 
 export enum ApplicantStatus {

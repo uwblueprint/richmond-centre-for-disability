@@ -18,7 +18,6 @@ import {
   ApplicantData,
   PermitData,
   MedicalHistoryEntry,
-  PermitHolderAttachedFile,
   PreviousPhysicianData,
 } from '@tools/pages/admin/permit-holders/permit-holder-id'; // Permit holder types
 import { Role, UpdateApplicantInput, UpsertPhysicianInput } from '@lib/graphql/types'; // GraphQL types
@@ -43,7 +42,8 @@ export default function PermitHolder({ permitHolderId }: Props) {
   const [applicantData, setApplicantData] = useState<ApplicantData>();
   const [permits, setPermits] = useState<PermitData[]>();
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
-  const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
+  // TODO: uncomment when AWS is setup and we use real files
+  // const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
   const [previousPhysicianData, setPreviousPhysicianData] = useState<PreviousPhysicianData[]>();
 
   const { data } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(GET_PERMIT_HOLDER, {
@@ -61,17 +61,18 @@ export default function PermitHolder({ permitHolderId }: Props) {
           status: permit.application.applicationProcessing.status,
         }))
       );
-      const files: PermitHolderAttachedFile[] = [];
-      data.applicant.fileHistory.forEach(application => {
-        application.documentUrls?.forEach(documentUrl => {
-          files.push({
-            appNumber: application.appNumber,
-            createdAt: application.createdAt,
-            fileUrl: documentUrl,
-          });
-        });
-      });
-      setAttachedFiles(files);
+      // TODO: uncomment when AWS is setup and we use real files
+      // const files: PermitHolderAttachedFile[] = [];
+      // data.applicant.fileHistory.forEach(application => {
+      //   application.documentUrls?.forEach(documentUrl => {
+      //     files.push({
+      //       appNumber: application.appNumber,
+      //       createdAt: application.createdAt,
+      //       fileUrl: documentUrl,
+      //     });
+      //   });
+      // });
+      // setAttachedFiles(files);
       setMedicalHistoryData(
         data.applicant.applications.map(application => ({
           disability: application.disability,
@@ -179,7 +180,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
       <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>
           {permits && <AppHistoryCard permits={permits} />}
-          {attachedFiles && <AttachedFilesCard attachedFiles={attachedFiles} />}
+          {data && <AttachedFilesCard />}
           {medicalHistoryData && <MedicalHistoryCard medicalHistory={medicalHistoryData} />}
         </Stack>
       </GridItem>
