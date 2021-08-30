@@ -58,7 +58,7 @@ export default function EditDoctorInformationModal({
   const handleSubmit = async (event: SyntheticEvent) => {
     setLoading(true);
     event.preventDefault();
-    onSave({
+    await onSave({
       mspNumber,
       name,
       phone: phoneNumber,

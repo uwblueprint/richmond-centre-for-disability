@@ -21,8 +21,6 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       header={`Doctor's Information`}
       updated={isUpdated}
       editModal={
-        // TODO: Pass down a real onSave function from props
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         <EditDoctorInformationModal physician={physician} onSave={onSave}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
