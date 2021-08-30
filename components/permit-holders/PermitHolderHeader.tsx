@@ -19,11 +19,9 @@ export default function PermitHolderHeader({ applicant }: PermitHolderHeaderProp
       <Flex marginTop={5} alignItems="center">
         <Box>
           <Flex alignItems="center">
-            {
-              <Text textStyle="display-large" as="h1" marginRight={3}>
-                {`${applicant.firstName} ${applicant.lastName}`}
-              </Text>
-            }
+            <Text textStyle="display-large" as="h1" marginRight={3}>
+              {`${applicant.firstName} ${applicant.lastName}`}
+            </Text>
             {applicant.status && (
               <Wrap>
                 <Badge variant={applicant.status}>{applicant.status}</Badge>

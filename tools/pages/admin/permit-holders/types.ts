@@ -7,7 +7,7 @@ import {
   Physician,
 } from '@lib/graphql/types';
 
-//Used in PermitHolderHeader and PersonalInformationCard components
+//Applicant data to show in Personal Information Card component
 export type ApplicantData = Pick<
   Applicant,
   | 'id'
@@ -26,17 +26,17 @@ export type ApplicantData = Pick<
   | 'status'
 >;
 
-//Used in AppHistoryCard component
+//Permit data to be displayed in the App History Card component
 export type PermitData = Pick<Permit, 'rcdPermitId' | 'expiryDate' | 'applicationId'> &
   Pick<Application, 'isRenewal'> &
   Pick<ApplicationProcessing, 'status'>;
 
-//Used in [permitHolderId].tsx
+//Application Processing data that will be displayed in the Attached Files Card component
 export type PermitHolderAttachedFile = Pick<ApplicationProcessing, 'appNumber' | 'createdAt'> & {
   readonly fileUrl: string;
 };
 
-//Used in MedicalHistoyCard component
+//Medical history data to show in Medical History Card component
 export type MedicalHistoryEntry = Pick<MedicalInformation, 'disability' | 'createdAt'> & {
   readonly applicantApplication: Pick<
     Application,
@@ -49,5 +49,5 @@ export type MedicalHistoryEntry = Pick<MedicalInformation, 'disability' | 'creat
   >;
 };
 
-//Used in DoctorInformationCard and PreviousDoctorsInformationModal
+//Physician data to show in DoctorInformationCard and PreviousDoctorsInformationModal
 export type PreviousPhysicianData = Pick<Physician, 'name' | 'mspNumber' | 'phone'>;

@@ -3,7 +3,7 @@ import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
 import MedicalHistoryModal from '@components/permit-holders/modals/MedicalHistoryModal'; // Medical History Modal
 import { Column } from 'react-table'; // React table
-import { MedicalHistoryEntry } from '@tools/pages/admin/permit-holders/permit-holder-id'; // Medical History type for table
+import { MedicalHistoryEntry } from '@tools/pages/admin/permit-holders/types'; // Medical History type for table
 
 const COLUMNS: Column<any>[] = [
   {

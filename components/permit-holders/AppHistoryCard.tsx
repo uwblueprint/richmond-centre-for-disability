@@ -4,7 +4,7 @@ import Table from '@components/internal/Table'; // Table component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import { Column } from 'react-table'; // React Table
-import { PermitData } from '@tools/pages/admin/permit-holders/permit-holder-id'; // Permit Data Types
+import { PermitData } from '@tools/pages/admin/permit-holders/types'; // Permit Data Types
 
 const COLUMNS: Column<any>[] = [
   {

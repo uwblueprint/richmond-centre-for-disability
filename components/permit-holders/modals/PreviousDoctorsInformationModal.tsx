@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import { ReactNode } from 'react'; // React
-import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/permit-holder-id';
+import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/types';
 
 const COLUMNS = [
   {

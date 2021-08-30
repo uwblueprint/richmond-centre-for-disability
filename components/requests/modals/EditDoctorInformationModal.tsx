@@ -16,7 +16,7 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
+import { useState, SyntheticEvent, ReactNode, useEffect } from 'react'; // React
 import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
 import { UpsertPhysicianInput } from '@lib/graphql/types'; // Upsert physician type
 
@@ -28,6 +28,7 @@ type EditDoctorInformationModalProps = {
 
 export default function EditDoctorInformationModal({
   children,
+  physician,
   onSave,
 }: EditDoctorInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -41,16 +42,15 @@ export default function EditDoctorInformationModal({
   const [postalCode, setPostalCode] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // const successfulEditToast = useToast();
-  // useEffect(() => {
-  //   setName(physician.name);
-  //   setMspNumber(physician.mspNumber);
-  //   setPhoneNumber(physician.phone);
-  //   setAddressLine1(physician.addressLine1);
-  //   setAddressLine2(physician.addressLine2 || undefined);
-  //   setCity(physician.city);
-  //   setPostalCode(physician.postalCode);
-  // }, [physician]);
+  useEffect(() => {
+    setName(physician.name);
+    setMspNumber(physician.mspNumber);
+    setPhoneNumber(physician.phone);
+    setAddressLine1(physician.addressLine1);
+    setAddressLine2(physician.addressLine2 || undefined);
+    setCity(physician.city);
+    setPostalCode(physician.postalCode);
+  }, [physician]);
 
   /**
    * Handle edit submission
