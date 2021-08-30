@@ -39,25 +39,35 @@ export default function EditDoctorInformationModal({
   const [addressLine2, setAddressLine2] = useState<string | undefined>('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  let loading = false;
+  // const successfulEditToast = useToast();
+  // useEffect(() => {
+  //   setName(physician.name);
+  //   setMspNumber(physician.mspNumber);
+  //   setPhoneNumber(physician.phone);
+  //   setAddressLine1(physician.addressLine1);
+  //   setAddressLine2(physician.addressLine2 || undefined);
+  //   setCity(physician.city);
+  //   setPostalCode(physician.postalCode);
+  // }, [physician]);
 
   /**
    * Handle edit submission
    */
   const handleSubmit = async (event: SyntheticEvent) => {
-    loading = true;
+    setLoading(true);
     event.preventDefault();
     onSave({
-      mspNumber: mspNumber,
-      name: name,
+      mspNumber,
+      name,
       phone: phoneNumber,
-      addressLine1: addressLine1,
-      addressLine2: addressLine2,
-      city: city,
+      addressLine1,
+      addressLine2,
+      city,
       postalCode,
     });
-    loading = false;
+    setLoading(false);
     onClose();
   };
 

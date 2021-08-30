@@ -3,7 +3,7 @@ import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; //
 import { Physician, UpsertPhysicianInput } from '@lib/graphql/types'; // Physician type
 import EditDoctorInformationModal from '@components/requests/modals/EditDoctorInformationModal'; // Edit doctor information modal component
 import PreviousDoctorsInformationModal from '@components/permit-holders/modals/PreviousDoctorsInformationModal'; // Previous Doctors' Information Modal
-import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/permit-holder-id';
+import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/types';
 
 type DoctorInformationProps = {
   physician: Physician;
@@ -21,13 +21,13 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       header={`Doctor's Information`}
       updated={isUpdated}
       editModal={
-        physician && (
-          <EditDoctorInformationModal physician={physician} onSave={onSave}>
-            <Button color="primary" variant="ghost" textDecoration="underline">
-              <Text textStyle="body-bold">Edit</Text>
-            </Button>
-          </EditDoctorInformationModal>
-        )
+        // TODO: Pass down a real onSave function from props
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        <EditDoctorInformationModal physician={physician} onSave={onSave}>
+          <Button color="primary" variant="ghost" textDecoration="underline">
+            <Text textStyle="body-bold">Edit</Text>
+          </Button>
+        </EditDoctorInformationModal>
       }
     >
       <Divider pt="24px" />
@@ -40,12 +40,12 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {`MSP Number: ${physician?.mspNumber || ''}`}
+            {`MSP Number: ${physician.mspNumber || ''}`}
           </Text>
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {`Phone: ${physician?.phone || ''}`}
+            {`Phone: ${physician.phone || ''}`}
           </Text>
         </Box>
       </VStack>
@@ -60,19 +60,19 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {physician?.addressLine1 || ''}
+            {physician.addressLine1 || ''}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {physician?.addressLine2 || ''}
+            {physician.addressLine2 || ''}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {`${physician?.city || ''} ${physician?.province || ''}`}
+            {`${physician.city || ''} ${physician.province || ''}`}
           </Text>
           <Text as="p" textStyle="body-regular">
             {`Canada`}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {physician?.postalCode || ''}
+            {physician.postalCode || ''}
           </Text>
         </Box>
       </VStack>

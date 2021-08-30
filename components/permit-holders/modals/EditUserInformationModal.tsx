@@ -51,15 +51,15 @@ export default function EditUserInformationModal({
 
   //   TODO: Add error states for each field (post-mvp)
 
-  let loading = false;
+  const [loading, setLoading] = useState(false);
 
   /**
    * Handle edit submission
    */
   const handleSubmit = async (event: SyntheticEvent) => {
-    loading = true;
+    setLoading(true);
     event.preventDefault();
-    onSave({
+    await onSave({
       id: applicantId,
       firstName,
       lastName,
@@ -72,7 +72,7 @@ export default function EditUserInformationModal({
       city,
       postalCode,
     });
-    loading = false;
+    setLoading(false);
     onClose();
   };
 

@@ -19,7 +19,7 @@ import {
   PermitData,
   MedicalHistoryEntry,
   PreviousPhysicianData,
-} from '@tools/pages/admin/permit-holders/permit-holder-id'; // Permit holder types
+} from '@tools/pages/admin/permit-holders/types'; // Permit holder types
 import { Role, UpdateApplicantInput, UpsertPhysicianInput } from '@lib/graphql/types'; // GraphQL types
 import {
   UpsertPhysicianRequest,
@@ -121,7 +121,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
     UpdateApplicantRequest
   >(UPDATE_APPLICANT_MUTATION, {
     onCompleted: data => {
-      if (data?.updateApplicant.ok) {
+      if (data.updateApplicant.ok) {
         toast({
           render: () => (
             <SuccessfulEditAlert>{"User's information has been edited."}</SuccessfulEditAlert>
@@ -166,21 +166,23 @@ export default function PermitHolder({ permitHolderId }: Props) {
               onSave={handleUpdateUserInformation}
             />
           )}
-          {data && previousPhysicianData && (
+          {data?.applicant.medicalInformation.physician && previousPhysicianData && (
             <DoctorInformationCard
               physician={data.applicant.medicalInformation.physician}
               previousPhysicianData={previousPhysicianData}
               onSave={handleUpdateDoctorInformation}
             />
           )}
-          {data && <GuardianInformationCard guardian={data?.applicant.guardian} />}
+          {data?.applicant.guardian && (
+            <GuardianInformationCard guardian={data?.applicant.guardian} />
+          )}
         </Stack>
       </GridItem>
 
       <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>
           {permits && <AppHistoryCard permits={permits} />}
-          {data && <AttachedFilesCard />}
+          {<AttachedFilesCard />}
           {medicalHistoryData && <MedicalHistoryCard medicalHistory={medicalHistoryData} />}
         </Stack>
       </GridItem>

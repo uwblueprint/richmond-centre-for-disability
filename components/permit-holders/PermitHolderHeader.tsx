@@ -1,7 +1,7 @@
 import { Badge, Box, Flex, HStack, Text, Wrap } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import Link from 'next/link'; // Link
-import { ApplicantData } from '@tools/pages/admin/permit-holders/permit-holder-id'; // Applicant data type
+import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
 
 type PermitHolderHeaderProps = {
   readonly applicant: ApplicantData;
@@ -19,11 +19,11 @@ export default function PermitHolderHeader({ applicant }: PermitHolderHeaderProp
       <Flex marginTop={5} alignItems="center">
         <Box>
           <Flex alignItems="center">
-            {applicant && (
+            {
               <Text textStyle="display-large" as="h1" marginRight={3}>
                 {`${applicant.firstName} ${applicant.lastName}`}
               </Text>
-            )}
+            }
             {applicant.status && (
               <Wrap>
                 <Badge variant={applicant.status}>{applicant.status}</Badge>
@@ -32,7 +32,7 @@ export default function PermitHolderHeader({ applicant }: PermitHolderHeaderProp
           </Flex>
           <HStack spacing={3} marginTop={3}>
             <Text textStyle="caption" as="p">
-              ID: #{applicant?.rcdUserId}
+              ID: #{applicant.rcdUserId}
             </Text>
           </HStack>
         </Box>

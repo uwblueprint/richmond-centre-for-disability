@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import EditUserInformationModal from '@components/permit-holders/modals/EditUserInformationModal'; // Edit User Information Modal
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
-import { ApplicantData } from '@tools/pages/admin/permit-holders/permit-holder-id'; // Applicant data type
+import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
 import { UpdateApplicantInput } from '@lib/graphql/types';
 
 type PersonalInformationProps = {
@@ -32,7 +32,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         </Text>
       }
       editModal={
-        <EditUserInformationModal applicantId={applicant?.id} onSave={onSave}>
+        <EditUserInformationModal applicantId={applicant.id} onSave={onSave}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
@@ -42,13 +42,12 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
       <VStack spacing="12px" align="left">
         <Box>
           <Text as="p" textStyle="body-regular">
-            Date of Birth:{' '}
-            {applicant?.dateOfBirth && new Date(applicant.dateOfBirth).toLocaleDateString('en-CA')}
+            Date of Birth: {new Date(applicant.dateOfBirth).toLocaleDateString('en-CA')}
           </Text>
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            Gender: {applicant?.gender.toLowerCase().replace(/^\w/, c => c.toUpperCase())}
+            Gender: {applicant.gender.toLowerCase().replace(/^\w/, c => c.toUpperCase())}
           </Text>
         </Box>
       </VStack>
@@ -78,13 +77,13 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
               textDecoration="underline"
               onClick={onCopy}
             >
-              {applicant?.email}
+              {applicant.email}
             </Link>
           </Tooltip>
         </Box>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {applicant?.phone}
+            {applicant.phone}
           </Text>
         </Box>
       </VStack>
@@ -101,19 +100,19 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         </HStack>
         <Box>
           <Text as="p" textStyle="body-regular">
-            {applicant?.addressLine1}
+            {applicant.addressLine1}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {applicant?.addressLine2}
+            {applicant.addressLine2}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {applicant?.city} {applicant?.province}
+            {applicant.city} {applicant.province}
           </Text>
           <Text as="p" textStyle="body-regular">
             Canada
           </Text>
           <Text as="p" textStyle="body-regular">
-            {applicant?.postalCode}
+            {applicant.postalCode}
           </Text>
         </Box>
       </VStack>
