@@ -15,25 +15,21 @@ import {
   FormHelperText,
   Box,
   Divider,
-  useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
 import { useState, SyntheticEvent, ReactNode } from 'react'; // React
 import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
-import { useMutation } from '@apollo/client'; // Apollo Client
-import {
-  UPSERT_PHYSICIAN_MUTATION,
-  UpsertPhysicianRequest,
-  UpsertPhysicianResponse,
-} from '@tools/pages/admin/permit-holders/upsert-physician'; // Page tools
+import { UpsertPhysicianInput } from '@lib/graphql/types'; // Upsert physician type
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;
   readonly physician: DoctorInformationCardPhysician;
-  readonly onSave: (applicationData: any) => void;
+  readonly onSave: (physicianData: UpsertPhysicianInput) => void;
 };
 
-export default function EditDoctorInformationModal({ children }: EditDoctorInformationModalProps) {
+export default function EditDoctorInformationModal({
+  children,
+  onSave,
+}: EditDoctorInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [name, setName] = useState('');
@@ -44,50 +40,25 @@ export default function EditDoctorInformationModal({ children }: EditDoctorInfor
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
-  const toast = useToast();
-
-  // Submit edited doctor information mutation
-  const [submitEditedDoctorInformation, { loading }] = useMutation<
-    UpsertPhysicianResponse,
-    UpsertPhysicianRequest
-  >(UPSERT_PHYSICIAN_MUTATION, {
-    onCompleted: data => {
-      if (data.upsertPhysician.ok) {
-        onClose();
-        toast({
-          render: () => (
-            <SuccessfulEditAlert>{'Doctor’s information has been edited.'}</SuccessfulEditAlert>
-          ),
-        });
-      }
-    },
-    onError: error => {
-      onClose();
-      toast({
-        status: 'error',
-        description: error.message,
-      });
-    },
-  });
+  let loading = false;
 
   /**
    * Handle edit submission
    */
   const handleSubmit = async (event: SyntheticEvent) => {
+    loading = true;
     event.preventDefault();
-    await submitEditedDoctorInformation({
-      variables: {
-        input: {
-          mspNumber: mspNumber,
-          name: name,
-          phone: phoneNumber,
-          addressLine1: addressLine1,
-          addressLine2: addressLine2,
-          city: city,
-          postalCode,
-        },
-      },
+    onSave({
+      mspNumber: mspNumber,
+      name: name,
+      phone: phoneNumber,
+      addressLine1: addressLine1,
+      addressLine2: addressLine2,
+      city: city,
+      postalCode,
     });
+    loading = false;
+    onClose();
   };
 
   return (

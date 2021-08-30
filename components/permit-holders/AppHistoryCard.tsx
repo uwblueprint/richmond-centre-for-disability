@@ -1,5 +1,5 @@
 import { Box, Text, Divider } from '@chakra-ui/react'; // Chakra UI
-import Link from 'next/link';
+import Link from 'next/link'; //Next.js Link
 import Table from '@components/internal/Table'; // Table component
 import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Request status badge component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component

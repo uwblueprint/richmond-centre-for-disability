@@ -16,26 +16,20 @@ import {
   Box,
   Select,
   Divider,
-  useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, ReactNode, SyntheticEvent } from 'react'; // React
-import { Gender } from '@lib/graphql/types'; // Gender Enum
-import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
-import { useMutation } from '@apollo/client'; // Apollo Client
-import {
-  UpdateApplicantRequest,
-  UpdateApplicantResponse,
-  UPDATE_APPLICANT_MUTATION,
-} from '@tools/pages/admin/permit-holders/update-applicant'; // Page tools
+import { Gender, UpdateApplicantInput } from '@lib/graphql/types'; // Gender Enum
 
 type EditUserInformationModalProps = {
   applicantId: number;
   children: ReactNode;
+  readonly onSave: (applicationData: UpdateApplicantInput) => void;
 };
 
 export default function EditUserInformationModal({
   applicantId,
   children,
+  onSave,
 }: EditUserInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -57,54 +51,29 @@ export default function EditUserInformationModal({
 
   //   TODO: Add error states for each field (post-mvp)
 
-  const toast = useToast();
-
-  // Submit edited user information mutation
-  const [submitEditedUserInformation, { loading }] = useMutation<
-    UpdateApplicantResponse,
-    UpdateApplicantRequest
-  >(UPDATE_APPLICANT_MUTATION, {
-    onCompleted: data => {
-      if (data?.updateApplicant.ok) {
-        onClose();
-        toast({
-          render: () => (
-            <SuccessfulEditAlert>{"User's information has been edited."}</SuccessfulEditAlert>
-          ),
-        });
-      }
-    },
-    onError: error => {
-      onClose();
-      toast({
-        status: 'error',
-        description: error.message,
-      });
-    },
-  });
+  let loading = false;
 
   /**
    * Handle edit submission
    */
   const handleSubmit = async (event: SyntheticEvent) => {
+    loading = true;
     event.preventDefault();
-    await submitEditedUserInformation({
-      variables: {
-        input: {
-          id: applicantId,
-          firstName,
-          lastName,
-          dateOfBirth,
-          gender,
-          email,
-          phone: phoneNumber,
-          addressLine1,
-          addressLine2,
-          city,
-          postalCode,
-        },
-      },
+    onSave({
+      id: applicantId,
+      firstName,
+      lastName,
+      dateOfBirth,
+      gender,
+      email,
+      phone: phoneNumber,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
     });
+    loading = false;
+    onClose();
   };
 
   return (

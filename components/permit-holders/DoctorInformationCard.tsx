@@ -1,6 +1,6 @@
 import { Box, Text, Divider, VStack, Button, Flex } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
-import { Physician } from '@lib/graphql/types'; // Physician type
+import { Physician, UpsertPhysicianInput } from '@lib/graphql/types'; // Physician type
 import EditDoctorInformationModal from '@components/requests/modals/EditDoctorInformationModal'; // Edit doctor information modal component
 import PreviousDoctorsInformationModal from '@components/permit-holders/modals/PreviousDoctorsInformationModal'; // Previous Doctors' Information Modal
 import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/permit-holder-id';
@@ -9,10 +9,12 @@ type DoctorInformationProps = {
   physician: Physician;
   readonly isUpdated?: boolean;
   readonly previousPhysicianData: PreviousPhysicianData[];
+  readonly onSave: (physicianData: UpsertPhysicianInput) => void;
 };
 
 export default function DoctorInformationCard(props: DoctorInformationProps) {
-  const { physician, isUpdated } = props;
+  const { physician, isUpdated, previousPhysicianData, onSave } = props;
+
   return (
     <PermitHolderInfoCard
       colSpan={7}
@@ -22,7 +24,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
         physician && (
           // TODO: Pass down a real onSave function from props
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          <EditDoctorInformationModal physician={physician} onSave={() => {}}>
+          <EditDoctorInformationModal physician={physician} onSave={onSave}>
             <Button color="primary" variant="ghost" textDecoration="underline">
               <Text textStyle="body-bold">Edit</Text>
             </Button>
@@ -78,8 +80,8 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       </VStack>
 
       <Flex w="100%" justifyContent="flex-end" paddingTop="8px">
-        {props.previousPhysicianData.length > 0 && (
-          <PreviousDoctorsInformationModal previousPhysicianData={props.previousPhysicianData}>
+        {previousPhysicianData.length > 0 && (
+          <PreviousDoctorsInformationModal previousPhysicianData={previousPhysicianData}>
             <Button color="primary" variant="ghost" textDecoration="underline">
               <Text textStyle="body-bold">{'View previous doctors'}</Text>
             </Button>

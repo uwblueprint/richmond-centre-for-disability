@@ -47,25 +47,24 @@ type AttachedFile = {
 };
 
 type Props = {
-  readonly attachedFiles?: PermitHolderAttachedFile[];
+  readonly attachedFiles: PermitHolderAttachedFile[];
 };
 
 export default function AttachedFilesCard({ attachedFiles }: Props) {
   const path = require('path');
 
-  const attachedFilesData: AttachedFile[] =
-    attachedFiles?.map(attachedFile => ({
-      fileName: path.parse(attachedFile.fileUrl).base,
-      associatedApp: attachedFile.appNumber || undefined,
-      dateUploaded: attachedFile.createdAt,
-      fileUrl: attachedFile.fileUrl,
-    })) || [];
+  const attachedFilesData: AttachedFile[] = attachedFiles.map(attachedFile => ({
+    fileName: path.parse(attachedFile.fileUrl).base,
+    associatedApp: attachedFile.appNumber || undefined,
+    dateUploaded: attachedFile.createdAt,
+    fileUrl: attachedFile.fileUrl,
+  }));
 
   return (
     <PermitHolderInfoCard alignGridItems="normal" header={`Attached Files`}>
       <Divider pt="24px" />
       <Box padding="20px 24px">
-        <Table columns={COLUMNS} data={attachedFilesData || []} />
+        <Table columns={COLUMNS} data={attachedFilesData} />
       </Box>
     </PermitHolderInfoCard>
   );

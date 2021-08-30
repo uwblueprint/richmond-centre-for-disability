@@ -1,4 +1,4 @@
-import { Box, Text, Divider, Link } from '@chakra-ui/react'; // Chakra UI
+import { Box, Text, Divider, Button } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
 import MedicalHistoryModal from '@components/permit-holders/modals/MedicalHistoryModal'; // Medical History Modal
@@ -8,13 +8,13 @@ import { MedicalHistoryEntry } from '@tools/pages/admin/permit-holders/permit-ho
 const COLUMNS: Column<any>[] = [
   {
     Header: 'Disabling Condition',
-    accessor: 'disablingCondition',
+    accessor: 'disability',
     disableSortBy: true,
     minWidth: 250,
   },
   {
     Header: 'Certification Date',
-    accessor: 'dateUploaded',
+    accessor: 'createdAt',
     disableSortBy: true,
     maxWidth: 200,
     Cell: ({ value }) => {
@@ -22,19 +22,22 @@ const COLUMNS: Column<any>[] = [
     },
   },
   {
-    accessor: 'associatedApplication',
+    accessor: 'applicantApplication',
     disableSortBy: true,
     minWidth: 180,
     Cell: ({ value }) => {
-      return (
-        <MedicalHistoryModal application={value}>
-          <Link>
-            <Text as="a" color="primary" textStyle="body-regular">
-              View details
-            </Text>
-          </Link>
-        </MedicalHistoryModal>
-      );
+      if (value) {
+        return (
+          <MedicalHistoryModal application={value}>
+            <Button color="primary" variant="ghost" textDecoration="underline">
+              <Text as="a" textStyle="body-regular">
+                View details
+              </Text>
+            </Button>
+          </MedicalHistoryModal>
+        );
+      }
+      return null;
     },
   },
 ];
@@ -48,7 +51,7 @@ export default function MedicalHistoryCard({ medicalHistory }: Props) {
     <PermitHolderInfoCard alignGridItems="normal" header={`Medical History`}>
       <Divider pt="24px" />
       <Box padding="20px 24px">
-        <Table columns={COLUMNS} data={medicalHistory || []} />
+        <Table columns={COLUMNS} data={medicalHistory} />
       </Box>
     </PermitHolderInfoCard>
   );
