@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next'; // Get server side props
+import { useRouter } from 'next/router'; // Next router
 import { getSession } from 'next-auth/client'; // Session management
 import { useQuery } from '@apollo/client';
 import {
@@ -223,6 +224,8 @@ type PermitTableInputData = PermitHolder & {
 
 // Internal permit holders page
 export default function PermitHolders() {
+  const router = useRouter();
+
   // Filters
   const [permitStatusFilter, setPermitStatusFilter] = useState<PermitStatus>();
   const [userStatusFilter, setUserStatusFilter] = useState<UserStatus>();
@@ -433,6 +436,7 @@ export default function PermitHolders() {
               onChangeSortOrder={sortOrder => {
                 setSortOrder(sortOrder);
               }}
+              onRowClick={({ id }) => router.push(`/admin/permit-holder/${id}`)}
             />
             <Flex justifyContent="flex-end">
               <Pagination
