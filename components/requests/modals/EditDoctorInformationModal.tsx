@@ -18,12 +18,17 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, SyntheticEvent, ReactNode, useEffect } from 'react'; // React
 import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
-import { UpsertPhysicianInput } from '@lib/graphql/types'; // Upsert physician type
+import { Physician } from '@lib/graphql/types'; // GraphQL types
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;
   readonly physician: DoctorInformationCardPhysician;
-  readonly onSave: (physicianData: UpsertPhysicianInput) => void;
+  readonly onSave: (
+    physicianData: Pick<
+      Physician,
+      'mspNumber' | 'name' | 'addressLine1' | 'addressLine2' | 'city' | 'postalCode' | 'phone'
+    >
+  ) => void; // Callback that accepts the inputs defined in this page
 };
 
 export default function EditDoctorInformationModal({
@@ -37,17 +42,16 @@ export default function EditDoctorInformationModal({
   const [mspNumber, setMspNumber] = useState(0);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [addressLine1, setAddressLine1] = useState('');
-  const [addressLine2, setAddressLine2] = useState<string | undefined>('');
+  const [addressLine2, setAddressLine2] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setName(physician.name);
     setMspNumber(physician.mspNumber);
     setPhoneNumber(physician.phone);
     setAddressLine1(physician.addressLine1);
-    setAddressLine2(physician.addressLine2 || undefined);
+    setAddressLine2(physician.addressLine2 || '');
     setCity(physician.city);
     setPostalCode(physician.postalCode);
   }, [physician]);
@@ -55,10 +59,9 @@ export default function EditDoctorInformationModal({
   /**
    * Handle edit submission
    */
-  const handleSubmit = async (event: SyntheticEvent) => {
-    setLoading(true);
+  const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    await onSave({
+    onSave({
       mspNumber,
       name,
       phone: phoneNumber,
@@ -67,7 +70,6 @@ export default function EditDoctorInformationModal({
       city,
       postalCode,
     });
-    setLoading(false);
     onClose();
   };
 
@@ -172,7 +174,7 @@ export default function EditDoctorInformationModal({
               <Button colorScheme="gray" variant="solid" onClick={onClose}>
                 {'Cancel'}
               </Button>
-              <Button variant="solid" type="submit" ml={'12px'} isLoading={loading}>
+              <Button variant="solid" type="submit" ml={'12px'}>
                 {'Save'}
               </Button>
             </ModalFooter>
