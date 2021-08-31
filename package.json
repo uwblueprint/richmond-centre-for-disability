@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start --port ${PORT-3000}",
+    "start": "next start",
     "type-check": "tsc",
     "generate-graphql-types": "node ./lib/scripts/generate-graphql-types.js",
     "lint": "yarn lint:prettier && yarn lint:eslint && yarn lint:tsc",
@@ -23,10 +23,11 @@
     "@emotion/react": "11",
     "@emotion/styled": "11",
     "@fontsource/noto-sans": "^4.4.5",
-    "@graphql-tools/load-files": "^6.3.2",
-    "@graphql-tools/merge": "^6.2.14",
     "@prisma/client": "^2.28.0",
+    "@types/node": "^16.7.4",
+    "@types/nodemailer": "^6.4.4",
     "@types/react-helmet": "^6.1.2",
+    "@types/react-table": "^7.7.2",
     "apollo-server-micro": "^2.24.1",
     "chakra-ui-steps": "^1.1.1",
     "framer-motion": "4",
@@ -41,17 +42,15 @@
     "react-helmet": "^6.1.0",
     "react-intersection-observer": "^8.32.0",
     "react-table": "^7.7.0",
+    "typescript": "^4.4.2",
     "unstated-next": "^1.1.0"
   },
   "devDependencies": {
     "@graphql-codegen/add": "^2.0.2",
     "@graphql-codegen/cli": "1.21.4",
     "@graphql-codegen/typescript": "^1.22.0",
-    "@types/node": "^15.3.1",
-    "@types/nodemailer": "^6.4.2",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
-    "@types/react-table": "^7.7.2",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
     "apollo": "^2.33.2",
@@ -62,8 +61,7 @@
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.0",
     "prisma": "^2.28.0",
-    "ts-node": "^10.0.0",
-    "typescript": "^4.2.4"
+    "ts-node": "^10.0.0"
   },
   "husky": {
     "hooks": {

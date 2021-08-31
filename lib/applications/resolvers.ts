@@ -1,4 +1,5 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
+import { Prisma } from '@prisma/client'; // Prisma client
 import { Resolver } from '@lib/resolvers'; // Resolver type
 import {
   ShopifyConfirmationNumberAlreadyExistsError,
@@ -8,7 +9,7 @@ import {
   UpdatedFieldsMissingError,
 } from '@lib/applications/errors'; // Application errors
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
-import { DBErrorCode } from '@lib/db/errors'; // Database errors
+import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
 import { PaymentType } from '@lib/graphql/types'; // GraphQL types
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
@@ -166,22 +167,24 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
       },
     });
   } catch (err) {
-    if (
-      err.code === DBErrorCode.UniqueConstraintFailed &&
-      err.meta?.target.includes('shopifyConfirmationNumber')
-    ) {
-      throw new ShopifyConfirmationNumberAlreadyExistsError(
-        `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
-      );
-    } else if (
-      err.code === DBErrorCode.ForeignKeyConstraintFailed &&
-      err.meta?.target.includes('applicantId')
-    ) {
-      throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
-    } else if (err.code === DBErrorCode.LengthConstraintFailed) {
-      throw new ApplicationFieldTooLongError(
-        'Length constraint failed, provided value too long for an application field.'
-      );
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (
+        err.code === DBErrorCode.UniqueConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('shopifyConfirmationNumber')
+      ) {
+        throw new ShopifyConfirmationNumberAlreadyExistsError(
+          `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
+        );
+      } else if (
+        err.code === DBErrorCode.ForeignKeyConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('applicantId')
+      ) {
+        throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
+      } else if (err.code === DBErrorCode.LengthConstraintFailed) {
+        throw new ApplicationFieldTooLongError(
+          'Length constraint failed, provided value too long for an application field.'
+        );
+      }
     }
   }
 
@@ -212,7 +215,10 @@ export const updateApplication: Resolver = async (_, args, { prisma }) => {
       },
     });
   } catch (err) {
-    if (err.code === DBErrorCode.RecordNotFound) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === DBErrorCode.RecordNotFound
+    ) {
       throw new ApplicationNotFoundError(`Application with ID ${id} not found`);
     }
   }
@@ -339,22 +345,24 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
       },
     });
   } catch (err) {
-    if (
-      err.code === DBErrorCode.UniqueConstraintFailed &&
-      err.meta?.target.includes('shopifyConfirmationNumber')
-    ) {
-      throw new ShopifyConfirmationNumberAlreadyExistsError(
-        `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
-      );
-    } else if (
-      err.code === DBErrorCode.ForeignKeyConstraintFailed &&
-      err.meta?.target.includes('applicantId')
-    ) {
-      throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
-    } else if (err.code === DBErrorCode.LengthConstraintFailed) {
-      throw new ApplicationFieldTooLongError(
-        'Length constraint failed, provided value too long for an application field.'
-      );
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (
+        err.code === DBErrorCode.UniqueConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('shopifyConfirmationNumber')
+      ) {
+        throw new ShopifyConfirmationNumberAlreadyExistsError(
+          `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
+        );
+      } else if (
+        err.code === DBErrorCode.ForeignKeyConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('applicantId')
+      ) {
+        throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
+      } else if (err.code === DBErrorCode.LengthConstraintFailed) {
+        throw new ApplicationFieldTooLongError(
+          'Length constraint failed, provided value too long for an application field.'
+        );
+      }
     }
   }
 

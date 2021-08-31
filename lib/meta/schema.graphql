@@ -1,3 +1,0 @@
-type Meta {
-  orgName: String!
-}

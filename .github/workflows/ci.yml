@@ -50,6 +50,8 @@ jobs:
             - name: Linting ESlint
               run: yarn lint:eslint
 
+            - name: Linting TypeScript
+              run: yarn lint:tsc
+
             - name: Build
               run: yarn build
-              

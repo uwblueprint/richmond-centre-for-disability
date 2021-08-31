@@ -1,12 +1,11 @@
 import { PrismaClient } from '@prisma/client'; // Prisma ORM
 
-// add prisma to the NodeJS global type
-interface CustomNodeJsGlobal extends NodeJS.Global {
-  prisma: PrismaClient;
+// Add Prisma to the NodeJS global type
+declare global {
+  // var must be used for globally scoped variables
+  // eslint-disable-next-line no-var
+  var prisma: PrismaClient;
 }
-
-// Prevent multiple instances of Prisma Client in development
-declare const global: CustomNodeJsGlobal;
 
 const prisma = global.prisma || new PrismaClient();
 
