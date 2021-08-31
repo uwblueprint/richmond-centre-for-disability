@@ -8,7 +8,7 @@ import { PersonalInformationCardApplicant } from '@tools/components/internal/req
 import { getPermitExpiryStatus } from '@tools/components/internal/request-status-badge'; // Get variant of RequestStatusBadge
 
 type Props = {
-  readonly applicant?: PersonalInformationCardApplicant;
+  readonly applicant: PersonalInformationCardApplicant;
   readonly contactInfoUpdated?: boolean;
   readonly addressInfoUpdated?: boolean;
   readonly onSave: (applicationData: Omit<UpdateApplicationInput, 'id'>) => void;

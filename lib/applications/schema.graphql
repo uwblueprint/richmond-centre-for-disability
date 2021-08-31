@@ -84,6 +84,7 @@ type Application {
   # Replacement
   replacement: Replacement
 
+  # Misc
   createdAt: Date!
 }
 

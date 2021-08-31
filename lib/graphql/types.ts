@@ -53,6 +53,7 @@ export type Applicant = {
   permits: Array<Permit>;
   medicalHistory: Maybe<Array<MedicalHistory>>;
   mostRecentPermit: Permit;
+  fileHistory: Array<ApplicationFileAttachments>;
 };
 
 export enum ApplicantStatus {
@@ -150,6 +151,14 @@ export type Application = {
   applicationProcessing: Maybe<ApplicationProcessing>;
   /** Replacement */
   replacement: Maybe<Replacement>;
+  /** Misc */
+  createdAt: Scalars['Date'];
+};
+
+export type ApplicationFileAttachments = {
+  __typename?: 'ApplicationFileAttachments';
+  documentUrls: Maybe<Array<Scalars['String']>>;
+  appNumber: Maybe<Scalars['Int']>;
   createdAt: Scalars['Date'];
 };
 
@@ -427,6 +436,7 @@ export type MedicalInformation = {
   applicantId: Scalars['Int'];
   physician: Physician;
   physicianId: Scalars['Int'];
+  createdAt: Scalars['Date'];
 };
 
 export type Meta = {
@@ -823,10 +833,10 @@ export type UpsertPhysicianInput = {
   addressLine1: Scalars['String'];
   addressLine2?: Maybe<Scalars['String']>;
   city: Scalars['String'];
-  province: Province;
+  province?: Maybe<Province>;
   postalCode: Scalars['String'];
   phone: Scalars['String'];
-  status: PhysicianStatus;
+  status?: Maybe<PhysicianStatus>;
   notes?: Maybe<Scalars['String']>;
 };
 

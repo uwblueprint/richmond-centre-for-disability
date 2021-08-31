@@ -6,8 +6,7 @@ type GuardianInformationProps = {
   guardian: Guardian;
 };
 
-export default function GuardianInformationCard(props: GuardianInformationProps) {
-  const { guardian } = props;
+export default function GuardianInformationCard({ guardian }: GuardianInformationProps) {
   return (
     <PermitHolderInfoCard colSpan={7} header={`Guardian's Information`}>
       <Divider pt="24px" />
@@ -43,7 +42,7 @@ export default function GuardianInformationCard(props: GuardianInformationProps)
             {guardian.addressLine1}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {guardian.addressLine2}
+            {guardian.addressLine2 || ''}
           </Text>
           <Text as="p" textStyle="body-regular">
             {`${guardian.city} ${guardian.province}`}

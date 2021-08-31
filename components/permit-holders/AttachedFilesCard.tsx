@@ -1,17 +1,16 @@
-import { Box, Link, Text, Divider } from '@chakra-ui/react'; // Chakra UI
+import { Box, Text, Divider } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
-
-// Placeholder data
+import { Column } from 'react-table';
 
 const DATA = Array(4).fill({
   fileName: 'test.pdf',
-  associatedApp: { associatedApp: 12345 },
+  associatedApp: 12345,
   dateUploaded: '2021/01/01',
-  fileUrl: { fileUrl: '/' },
+  fileUrl: '/',
 });
 
-const COLUMNS = [
+const COLUMNS: Column<any>[] = [
   {
     Header: 'File Name',
     accessor: 'fileName',
@@ -23,49 +22,32 @@ const COLUMNS = [
     accessor: 'associatedApp',
     disableSortBy: true,
     maxWidth: 220,
-    Cell: _renderAssociatedApp,
+    Cell: ({ value }) => {
+      return <>{value && <Text as="p">{`#${value}`}</Text>}</>;
+    },
   },
   {
     Header: 'Date Uploaded',
     accessor: 'dateUploaded',
     disableSortBy: true,
     maxWidth: 160,
+    Cell: ({ value }) => {
+      return <Text>{new Date(value).toLocaleDateString('en-CA')}</Text>;
+    },
   },
   {
     accessor: 'fileUrl',
     disableSortBy: true,
     maxWidth: 140,
-    Cell: _renderFileLink,
+    Cell: () => {
+      return null;
+    },
   },
 ];
 
-type AssociatedAppProps = {
-  value: { associatedApp: number };
-};
-
-function _renderAssociatedApp({ value }: AssociatedAppProps) {
-  return (
-    <>
-      <Text as="p">{`#${value.associatedApp}`}</Text>
-    </>
-  );
-}
-
-type downloadFileProps = {
-  value: { fileUrl: number };
-};
-
-function _renderFileLink({ value }: downloadFileProps) {
-  return (
-    <Link href={`/${value.fileUrl}`} passHref>
-      <Text textStyle="body-regular" textColor="primary" as="a">
-        Download file
-      </Text>
-    </Link>
-  );
-}
-
 export default function AttachedFilesCard() {
+  //TODO: use attachedFiles from [permitHolderId].tsx instead of hardcoded DATA when AWS is setup.
+
   return (
     <PermitHolderInfoCard alignGridItems="normal" header={`Attached Files`}>
       <Divider pt="24px" />

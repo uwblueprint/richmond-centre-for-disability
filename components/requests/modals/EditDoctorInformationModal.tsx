@@ -15,16 +15,20 @@ import {
   FormHelperText,
   Box,
   Divider,
-  useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
-import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
+import { useState, SyntheticEvent, ReactNode, useEffect } from 'react'; // React
 import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
+import { Physician } from '@lib/graphql/types'; // GraphQL types
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;
   readonly physician: DoctorInformationCardPhysician;
-  readonly onSave: (applicationData: any) => void;
+  readonly onSave: (
+    physicianData: Pick<
+      Physician,
+      'mspNumber' | 'name' | 'addressLine1' | 'addressLine2' | 'city' | 'postalCode' | 'phone'
+    >
+  ) => void; // Callback that accepts the inputs defined in this page
 };
 
 export default function EditDoctorInformationModal({
@@ -35,42 +39,38 @@ export default function EditDoctorInformationModal({
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [name, setName] = useState('');
-  const [mspNumber, setMspNumber] = useState<number | undefined>();
+  const [mspNumber, setMspNumber] = useState(0);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [addressLine1, setAddressLine1] = useState('');
-  const [addressLine2, setAddressLine2] = useState<string | undefined>('');
+  const [addressLine2, setAddressLine2] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
-  const successfulEditToast = useToast();
   useEffect(() => {
     setName(physician.name);
     setMspNumber(physician.mspNumber);
     setPhoneNumber(physician.phone);
     setAddressLine1(physician.addressLine1);
-    setAddressLine2(physician.addressLine2 || undefined);
+    setAddressLine2(physician.addressLine2 || '');
     setCity(physician.city);
     setPostalCode(physician.postalCode);
   }, [physician]);
 
+  /**
+   * Handle edit submission
+   */
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     onSave({
-      physicianName: name,
-      physicianMspNumber: mspNumber,
-      physicianPhone: phoneNumber,
-      physicianAddressLine1: addressLine1,
-      physicianAddressLine2: addressLine2,
-      physicianCity: city,
-      physicianPostalCode: postalCode,
+      mspNumber,
+      name,
+      phone: phoneNumber,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
     });
     onClose();
-
-    successfulEditToast({
-      render: () => (
-        <SuccessfulEditAlert>{'Doctor’s information has been edited.'}</SuccessfulEditAlert>
-      ),
-    });
   };
 
   return (

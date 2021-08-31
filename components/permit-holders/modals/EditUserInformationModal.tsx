@@ -16,24 +16,28 @@ import {
   Box,
   Select,
   Divider,
-  useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, SyntheticEvent, ReactNode } from 'react'; // React
-import { Gender } from '@lib/graphql/types'; // Gender Enum
-import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful edit alert/toast
+import { useState, ReactNode, SyntheticEvent } from 'react'; // React
+import { Gender, UpdateApplicantInput } from '@lib/graphql/types'; // Gender Enum
 
 type EditUserInformationModalProps = {
+  applicantId: number;
   children: ReactNode;
+  readonly onSave: (applicationData: UpdateApplicantInput) => void;
 };
 
-export default function EditUserInformationModal({ children }: EditUserInformationModalProps) {
+export default function EditUserInformationModal({
+  applicantId,
+  children,
+  onSave,
+}: EditUserInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   // Personal information state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString().substring(0, 10));
-  const [gender, setGender] = useState<Gender | string>('');
+  const [gender, setGender] = useState<Gender | undefined>();
 
   // Contact information state
   const [email, setEmail] = useState('');
@@ -47,18 +51,29 @@ export default function EditUserInformationModal({ children }: EditUserInformati
 
   //   TODO: Add error states for each field (post-mvp)
 
-  const successfulEditToast = useToast();
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (event: SyntheticEvent) => {
+  /**
+   * Handle edit submission
+   */
+  const handleSubmit = async (event: SyntheticEvent) => {
+    setLoading(true);
     event.preventDefault();
-    // TODO: Will be addressed in API hookup
-    onClose();
-
-    successfulEditToast({
-      render: () => (
-        <SuccessfulEditAlert>{"User's information has been edited."}</SuccessfulEditAlert>
-      ),
+    await onSave({
+      id: applicantId,
+      firstName,
+      lastName,
+      dateOfBirth,
+      gender,
+      email,
+      phone: phoneNumber,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
     });
+    setLoading(false);
+    onClose();
   };
 
   return (
@@ -112,7 +127,7 @@ export default function EditUserInformationModal({ children }: EditUserInformati
                     <Select
                       placeholder="None Selected"
                       value={gender}
-                      onChange={event => setGender(event.target.value)}
+                      onChange={event => setGender(event.target.value as Gender)}
                     >
                       <option value={Gender.Male}>{'Male'}</option>
                       <option value={Gender.Female}>{'Female'}</option>
@@ -206,7 +221,7 @@ export default function EditUserInformationModal({ children }: EditUserInformati
               <Button colorScheme="gray" variant="solid" onClick={onClose}>
                 {'Cancel'}
               </Button>
-              <Button variant="solid" type="submit" ml={'12px'}>
+              <Button variant="solid" type="submit" ml={'12px'} isLoading={loading}>
                 {'Save'}
               </Button>
             </ModalFooter>

@@ -1,67 +1,57 @@
-import { Box, Text, Divider, Link } from '@chakra-ui/react'; // Chakra UI
+import { Box, Text, Divider, Button } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
-import { Aid, MedicalInformation } from '@lib/graphql/types'; // Aid enum & MedicalInformation type
 import MedicalHistoryModal from '@components/permit-holders/modals/MedicalHistoryModal'; // Medical History Modal
+import { Column } from 'react-table'; // React table
+import { MedicalHistoryEntry } from '@tools/pages/admin/permit-holders/types'; // Medical History type for table
 
-// Placeholder data
-const mockMedicalHistory = {
-  disability: 'Condition 1',
-  affectsMobility: true,
-  mobilityAidRequired: true,
-  cannotWalk100m: true,
-  aid: [Aid.Cane, Aid.ElectricChair],
-  notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  certificationDate: '2021/01/01',
-};
-
-const DATA = Array(4).fill({
-  disablingCondition: 'Condition 1',
-  associatedApp: { associatedApp: 12345 },
-  dateUploaded: '2021/01/01',
-  fileUrl: { fileUrl: '/' },
-  application: { application: mockMedicalHistory },
-});
-
-const COLUMNS = [
+const COLUMNS: Column<any>[] = [
   {
     Header: 'Disabling Condition',
-    accessor: 'disablingCondition',
+    accessor: 'disability',
     disableSortBy: true,
     minWidth: 250,
   },
   {
     Header: 'Certification Date',
-    accessor: 'dateUploaded',
+    accessor: 'createdAt',
     disableSortBy: true,
     maxWidth: 200,
+    Cell: ({ value }) => {
+      return <Text>{new Date(value).toLocaleDateString('en-CA')}</Text>;
+    },
   },
   {
-    accessor: 'associatedApplicationId',
+    accessor: 'applicantApplication',
     disableSortBy: true,
     minWidth: 180,
-    Cell: _renderConditionDetailsLink,
+    Cell: ({ value }) => {
+      if (value) {
+        return (
+          <MedicalHistoryModal application={value}>
+            <Button color="primary" variant="ghost" textDecoration="underline">
+              <Text as="a" textStyle="body-regular">
+                View details
+              </Text>
+            </Button>
+          </MedicalHistoryModal>
+        );
+      }
+      return null;
+    },
   },
 ];
 
-function _renderConditionDetailsLink() {
-  return (
-    <MedicalHistoryModal medicalInformation={mockMedicalHistory as MedicalInformation}>
-      <Link>
-        <Text as="a" color="primary" textStyle="body-regular">
-          View details
-        </Text>
-      </Link>
-    </MedicalHistoryModal>
-  );
-}
+type Props = {
+  readonly medicalHistory: MedicalHistoryEntry[];
+};
 
-export default function MedicalHistoryCard() {
+export default function MedicalHistoryCard({ medicalHistory }: Props) {
   return (
     <PermitHolderInfoCard alignGridItems="normal" header={`Medical History`}>
       <Divider pt="24px" />
       <Box padding="20px 24px">
-        <Table columns={COLUMNS} data={DATA} />
+        <Table columns={COLUMNS} data={medicalHistory} />
       </Box>
     </PermitHolderInfoCard>
   );

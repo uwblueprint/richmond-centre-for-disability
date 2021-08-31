@@ -13,15 +13,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import { ReactNode } from 'react'; // React
-
-// Placeholder data
-
-const DATA = Array(4).fill({
-  name: 'Charmaine Wang',
-  phoneNumber: '000-000-000',
-  mspNumber: 'XXXXX',
-  applicationId: { applicationId: 1 },
-});
+import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/types';
 
 const COLUMNS = [
   {
@@ -66,10 +58,12 @@ function _renderAppLink({ value }: appProps) {
 
 type PreviousDoctorsInformationModalProps = {
   children: ReactNode;
+  readonly previousPhysicianData: PreviousPhysicianData[];
 };
 
 export default function PreviousDoctorsInformationModal({
   children,
+  previousPhysicianData,
 }: PreviousDoctorsInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -92,7 +86,7 @@ export default function PreviousDoctorsInformationModal({
           </ModalHeader>
           <ModalBody paddingY="0px" paddingX="4px">
             <Box>
-              <Table columns={COLUMNS} data={DATA} />
+              <Table columns={COLUMNS} data={previousPhysicianData} />
             </Box>
           </ModalBody>
           <ModalFooter paddingTop="36px" paddingBottom="40px" paddingX="4px">

@@ -11,15 +11,17 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import EditUserInformationModal from '@components/permit-holders/modals/EditUserInformationModal'; // Edit User Information Modal
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
-import { Applicant } from '@lib/graphql/types'; // Applicant type
+import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
+import { UpdateApplicantInput } from '@lib/graphql/types';
 
 type PersonalInformationProps = {
-  readonly applicant: Applicant;
+  readonly applicant: ApplicantData;
+  readonly onSave: (applicationData: UpdateApplicantInput) => void;
 };
 
 export default function PersonalInformationCard(props: PersonalInformationProps) {
-  const { applicant } = props;
-  const { hasCopied, onCopy } = useClipboard(applicant.email ? applicant.email : '');
+  const { applicant, onSave } = props;
+  const { hasCopied, onCopy } = useClipboard(applicant?.email ? applicant?.email : '');
 
   return (
     <PermitHolderInfoCard
@@ -30,7 +32,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         </Text>
       }
       editModal={
-        <EditUserInformationModal>
+        <EditUserInformationModal applicantId={applicant.id} onSave={onSave}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
@@ -40,7 +42,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
       <VStack spacing="12px" align="left">
         <Box>
           <Text as="p" textStyle="body-regular">
-            Date of Birth: {applicant.dateOfBirth}
+            Date of Birth: {new Date(applicant.dateOfBirth).toLocaleDateString('en-CA')}
           </Text>
         </Box>
         <Box>

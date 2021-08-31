@@ -30,3 +30,9 @@ type UpdateApplicationProcessingResult {
 type CompleteApplicationResult {
   ok: Boolean!
 }
+
+type ApplicationFileAttachments {
+  documentUrls: [String!]
+  appNumber: Int
+  createdAt: Date!
+}

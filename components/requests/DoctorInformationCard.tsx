@@ -1,23 +1,58 @@
 import { Box, Text, Divider, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import EditDoctorInformationModal from '@components/requests/modals/EditDoctorInformationModal'; // Edit modal
+import { Physician, UpdateApplicationInput } from '@lib/graphql/types'; // GraphQL types
 import { DoctorInformationCardPhysician } from '@tools/components/internal/requests/doctor-information-card'; // Physician type
 
 type DoctorInformationProps = {
   readonly physician: DoctorInformationCardPhysician;
   readonly isUpdated?: boolean;
-  readonly onSave: (applicationData: any) => void;
+  readonly onSave: (
+    physicianData: Pick<
+      UpdateApplicationInput,
+      | 'physicianMspNumber'
+      | 'physicianName'
+      | 'physicianAddressLine1'
+      | 'physicianAddressLine2'
+      | 'physicianCity'
+      | 'physicianPostalCode'
+      | 'physicianPhone'
+    >
+  ) => void;
 };
 
 export default function DoctorInformationCard(props: DoctorInformationProps) {
   const { physician, isUpdated, onSave } = props;
+
+  /**
+   * Handle saving physician data
+   * @param physicianData Physician data to save
+   */
+  const savePhysicianData = (
+    physicianData: Pick<
+      Physician,
+      'mspNumber' | 'name' | 'addressLine1' | 'addressLine2' | 'city' | 'postalCode' | 'phone'
+    >
+  ) => {
+    const { mspNumber, name, addressLine1, addressLine2, city, postalCode, phone } = physicianData;
+    onSave({
+      physicianName: name,
+      physicianMspNumber: mspNumber,
+      physicianPhone: phone,
+      physicianAddressLine1: addressLine1,
+      physicianAddressLine2: addressLine2,
+      physicianCity: city,
+      physicianPostalCode: postalCode,
+    });
+  };
+
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Doctor's Information`}
       updated={isUpdated}
       editModal={
-        <EditDoctorInformationModal physician={physician} onSave={onSave}>
+        <EditDoctorInformationModal physician={physician} onSave={savePhysicianData}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>

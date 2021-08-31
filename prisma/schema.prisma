@@ -186,7 +186,7 @@ model Physician {
   addressLine1       String               @map("address_line_1") @db.VarChar(255)
   addressLine2       String?              @map("address_line_2") @db.VarChar(255)
   city               String               @db.VarChar(255)
-  province           Province
+  province           Province             @default(BC)
   postalCode         String               @map("postal_code") @db.Char(6)
   phone              String               @db.VarChar(50)
   status             PhysicianStatus      @default(ACTIVE)
@@ -337,5 +337,5 @@ enum PermitType {
   PERMANENT
   TEMPORARY
 
-   @@map("permittype")
+  @@map("permittype")
 }

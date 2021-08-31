@@ -11,6 +11,7 @@ type MedicalInformation {
   applicantId: Int!
   physician: Physician!
   physicianId: Int!
+  createdAt: Date!
 }
 
 # Fields to specify when creating a medical information record for an applicant

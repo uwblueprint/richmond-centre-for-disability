@@ -1,6 +1,6 @@
 import { Resolver } from '@lib/resolvers'; // Resolver type
-import { Applicant } from '@lib/types'; // Applicant type
-import { SortOrder } from '@tools/types';
+import { Applicant, ApplicationStatus } from '@lib/types'; // Applicant type
+import { SortOrder } from '@tools/types'; // Sorting type
 import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
 import { ApolloError } from 'apollo-server-micro'; // Apollo errors
 
@@ -62,6 +62,9 @@ export const applicantMedicalHistoryResolver: Resolver<Applicant> = async (
   const applications = await prisma.application.findMany({
     where: {
       applicantId: parent?.id,
+      applicationProcessing: {
+        status: ApplicationStatus.Completed,
+      },
     },
     select: {
       physicianMspNumber: true,
@@ -120,4 +123,31 @@ export const applicantActivePermitResolver: Resolver<Applicant> = async parent =
   } catch (err) {
     throw new ApolloError(`Could not retrieve applicant's active permit`);
   }
+};
+
+/**
+ * Field resolver to fetch the applicationProcessing objects associated with an applicant
+ * @returns applicationProcessing objects that contain document URLs, the associated application number, and the date uploaded
+ */
+export const applicantFileHistoryResolver: Resolver<Applicant> = async (
+  parent,
+  _args,
+  { prisma }
+) => {
+  const applicationProcessings = await prisma.application.findMany({
+    where: {
+      applicantId: parent?.id,
+    },
+    include: {
+      applicationProcessing: {
+        select: {
+          documentUrls: true,
+          appNumber: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
+
+  return applicationProcessings;
 };
