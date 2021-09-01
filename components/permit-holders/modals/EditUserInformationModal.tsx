@@ -17,17 +17,18 @@ import {
   Select,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, ReactNode, SyntheticEvent } from 'react'; // React
+import { useState, useEffect, ReactNode, SyntheticEvent } from 'react'; // React
 import { Gender, UpdateApplicantInput } from '@lib/graphql/types'; // Gender Enum
+import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
 
 type EditUserInformationModalProps = {
-  applicantId: number;
+  applicant: ApplicantData;
   children: ReactNode;
   readonly onSave: (applicationData: UpdateApplicantInput) => void;
 };
 
 export default function EditUserInformationModal({
-  applicantId,
+  applicant,
   children,
   onSave,
 }: EditUserInformationModalProps) {
@@ -53,6 +54,19 @@ export default function EditUserInformationModal({
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    setFirstName(applicant.firstName);
+    setLastName(applicant.lastName);
+    setDateOfBirth(new Date(applicant.dateOfBirth).toISOString().substring(0, 10));
+    setGender(applicant.gender);
+    setEmail(applicant.email || '');
+    setPhoneNumber(applicant.phone);
+    setAddressLine1(applicant.addressLine1);
+    setAddressLine2(applicant.addressLine2 || '');
+    setCity(applicant.city);
+    setPostalCode(applicant.postalCode);
+  }, [applicant]);
+
   /**
    * Handle edit submission
    */
@@ -60,7 +74,7 @@ export default function EditUserInformationModal({
     setLoading(true);
     event.preventDefault();
     await onSave({
-      id: applicantId,
+      id: applicant.id,
       firstName,
       lastName,
       dateOfBirth,

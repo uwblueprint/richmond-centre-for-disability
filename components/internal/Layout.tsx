@@ -61,6 +61,7 @@ function Meta() {
       />
       <meta charSet="utf-8" />
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      <link rel="icon" href="/assets/favicon.ico" />
     </Head>
   );
 }
@@ -101,8 +102,18 @@ function Header() {
                 <TabList height="100%" borderBottomColor="transparent">
                   {authorize(session, [Role.Secretary]) && (
                     <>
-                      <Tab path={InternalPagePath.Requests}>Requests</Tab>
-                      <Tab path={InternalPagePath.PermitHolders}>Permit Holders</Tab>
+                      <Tab
+                        path={InternalPagePath.Requests}
+                        additionalMatches={[InternalPagePath.Request]}
+                      >
+                        Requests
+                      </Tab>
+                      <Tab
+                        path={InternalPagePath.PermitHolders}
+                        additionalMatches={[InternalPagePath.PermitHolder]}
+                      >
+                        Permit Holders
+                      </Tab>
                     </>
                   )}
                   {authorize(session, [Role.Accounting]) && (

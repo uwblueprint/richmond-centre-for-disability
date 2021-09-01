@@ -32,7 +32,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         </Text>
       }
       editModal={
-        <EditUserInformationModal applicantId={applicant.id} onSave={onSave}>
+        <EditUserInformationModal applicant={applicant} onSave={onSave}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>

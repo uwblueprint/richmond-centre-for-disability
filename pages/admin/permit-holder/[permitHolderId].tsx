@@ -15,7 +15,6 @@ import { GET_PERMIT_HOLDER } from '@tools/pages/permit-holders/queries'; // Perm
 import { useMutation, useQuery } from '@apollo/client'; // Apollo
 import { useState } from 'react'; // React
 import {
-  ApplicantData,
   PermitData,
   MedicalHistoryEntry,
   PreviousPhysicianData,
@@ -26,7 +25,6 @@ import {
   UpsertPhysicianResponse,
   UPSERT_PHYSICIAN_MUTATION,
 } from '@tools/pages/admin/permit-holders/upsert-physician'; // Upsert Physician types
-import SuccessfulEditAlert from '@components/permit-holders/SuccessfulEditAlert'; // Successful Edit Alert component
 import {
   UpdateApplicantRequest,
   UpdateApplicantResponse,
@@ -39,7 +37,6 @@ type Props = {
 
 // Individual permit holder page
 export default function PermitHolder({ permitHolderId }: Props) {
-  const [applicantData, setApplicantData] = useState<ApplicantData>();
   const [permits, setPermits] = useState<PermitData[]>();
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
   // TODO: uncomment when AWS is setup and we use real files
@@ -51,7 +48,6 @@ export default function PermitHolder({ permitHolderId }: Props) {
       id: permitHolderId,
     },
     onCompleted: data => {
-      setApplicantData(data.applicant);
       setPermits(
         data.applicant.permits.map(permit => ({
           rcdPermitId: permit.rcdPermitId,
@@ -100,9 +96,8 @@ export default function PermitHolder({ permitHolderId }: Props) {
     onCompleted: data => {
       if (data.upsertPhysician.ok) {
         toast({
-          render: () => (
-            <SuccessfulEditAlert>{'Doctor’s information has been edited.'}</SuccessfulEditAlert>
-          ),
+          status: 'success',
+          description: "Doctor's information has been edited.",
         });
       }
     },
@@ -123,9 +118,8 @@ export default function PermitHolder({ permitHolderId }: Props) {
     onCompleted: data => {
       if (data.updateApplicant.ok) {
         toast({
-          render: () => (
-            <SuccessfulEditAlert>{"User's information has been edited."}</SuccessfulEditAlert>
-          ),
+          status: 'success',
+          description: "User's information has been edited.",
         });
       }
     },
@@ -135,6 +129,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
         description: error.message,
       });
     },
+    refetchQueries: ['GetPermitHolder'],
   });
 
   /**
@@ -156,13 +151,13 @@ export default function PermitHolder({ permitHolderId }: Props) {
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3}>
-        {applicantData && <PermitHolderHeader applicant={applicantData} />}
+        {data?.applicant && <PermitHolderHeader applicant={data.applicant} />}
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
         <Stack spacing={5}>
-          {applicantData && (
+          {data?.applicant && (
             <PersonalInformationCard
-              applicant={applicantData}
+              applicant={data.applicant}
               onSave={handleUpdateUserInformation}
             />
           )}
