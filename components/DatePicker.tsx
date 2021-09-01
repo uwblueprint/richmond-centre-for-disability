@@ -6,7 +6,7 @@ import 'react-day-picker/lib/style.css'; // React Day Picker default styling
 type Props = {
   readonly value: Date; // Date value
   readonly onDateChange: (day: Date) => void; // Callback on date change
-} & Pick<ChakraProps, 'width'>;
+} & Partial<Pick<ChakraProps, 'width'>>;
 
 /**
  * Custom date picker component wrapping React Day Picker
@@ -20,6 +20,7 @@ export default function DatePicker(props: Props) {
   return (
     <>
       <ReactDayPickerInput
+        style={width !== undefined ? { width } : undefined}
         component={(props: any) => <Input width={width} {...props} />}
         formatDate={date => date.toLocaleDateString('en-CA')}
         value={value}

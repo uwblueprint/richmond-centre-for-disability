@@ -130,7 +130,7 @@ export default function EditUserInformationModal({
                 <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
                     <FormLabel>{`Date of birth`}</FormLabel>
-                    <DatePicker value={dateOfBirth} onDateChange={setDateOfBirth} />
+                    <DatePicker width="100%" value={dateOfBirth} onDateChange={setDateOfBirth} />
                   </FormControl>
 
                   <FormControl isRequired>
