@@ -18,7 +18,6 @@ import {
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, ReactNode, SyntheticEvent } from 'react'; // React
-import DatePicker from '@components/DatePicker'; // Date picker
 import { Gender, UpdateApplicantInput } from '@lib/graphql/types'; // Gender Enum
 import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
 
@@ -38,7 +37,7 @@ export default function EditUserInformationModal({
   // Personal information state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString().substring(0, 10));
   const [gender, setGender] = useState<Gender | undefined>();
 
   // Contact information state
@@ -58,7 +57,7 @@ export default function EditUserInformationModal({
   useEffect(() => {
     setFirstName(applicant.firstName);
     setLastName(applicant.lastName);
-    setDateOfBirth(new Date(applicant.dateOfBirth));
+    setDateOfBirth(new Date(applicant.dateOfBirth).toISOString().substring(0, 10));
     setGender(applicant.gender);
     setEmail(applicant.email || '');
     setPhoneNumber(applicant.phone);
@@ -130,7 +129,11 @@ export default function EditUserInformationModal({
                 <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
                     <FormLabel>{`Date of birth`}</FormLabel>
-                    <DatePicker width="100%" value={dateOfBirth} onDateChange={setDateOfBirth} />
+                    <Input
+                      type="date"
+                      value={dateOfBirth}
+                      onChange={event => setDateOfBirth(event.target.value)}
+                    />
                   </FormControl>
 
                   <FormControl isRequired>

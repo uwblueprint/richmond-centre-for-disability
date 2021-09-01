@@ -30,7 +30,7 @@ export const getTabIndex = (path: string, role: Role): number => {
     // Accounting
     return 0; // Only has access to 1 tab
   } else {
-    //
+    // Admin
     if (path === InternalPagePath.Requests || path.includes(InternalPagePath.Request)) {
       return 0;
     }
