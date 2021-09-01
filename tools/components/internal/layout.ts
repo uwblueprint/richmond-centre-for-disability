@@ -3,7 +3,9 @@ import { Role } from '@lib/types'; // Role enum
 // Enum for internal page paths
 export enum InternalPagePath {
   Requests = '/admin',
+  Request = '/admin/request',
   PermitHolders = '/admin/permit-holders',
+  PermitHolder = '/admin/permit-holder',
   Reports = '/admin/reports',
   AdminManagement = '/admin/admin-management',
 }
@@ -17,30 +19,30 @@ export enum InternalPagePath {
 export const getTabIndex = (path: string, role: Role): number => {
   if (role === Role.Secretary) {
     // Secretary
-    switch (path) {
-      case InternalPagePath.Requests:
-        return 0;
-      case InternalPagePath.PermitHolders:
-        return 1;
-      default:
-        return 0;
+    if (path === InternalPagePath.Requests || path.includes(InternalPagePath.Request)) {
+      return 0;
     }
+    if (path === InternalPagePath.PermitHolders || path.includes(InternalPagePath.PermitHolder)) {
+      return 1;
+    }
+    return 0;
   } else if (role === Role.Accounting) {
     // Accounting
     return 0; // Only has access to 1 tab
   } else {
-    // Admin
-    switch (path) {
-      case InternalPagePath.Requests:
-        return 0;
-      case InternalPagePath.PermitHolders:
-        return 1;
-      case InternalPagePath.Reports:
-        return 2;
-      case InternalPagePath.AdminManagement:
-        return 3;
-      default:
-        return 0;
+    //
+    if (path === InternalPagePath.Requests || path.includes(InternalPagePath.Request)) {
+      return 0;
     }
+    if (path === InternalPagePath.PermitHolders || path.includes(InternalPagePath.PermitHolder)) {
+      return 1;
+    }
+    if (path === InternalPagePath.Reports) {
+      return 2;
+    }
+    if (path === InternalPagePath.AdminManagement) {
+      return 3;
+    }
+    return 0;
   }
 };

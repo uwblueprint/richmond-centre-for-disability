@@ -17,17 +17,19 @@ import {
   Select,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, ReactNode, SyntheticEvent } from 'react'; // React
+import { useState, useEffect, ReactNode, SyntheticEvent } from 'react'; // React
+import DatePicker from '@components/DatePicker'; // Date picker
 import { Gender, UpdateApplicantInput } from '@lib/graphql/types'; // Gender Enum
+import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
 
 type EditUserInformationModalProps = {
-  applicantId: number;
+  applicant: ApplicantData;
   children: ReactNode;
   readonly onSave: (applicationData: UpdateApplicantInput) => void;
 };
 
 export default function EditUserInformationModal({
-  applicantId,
+  applicant,
   children,
   onSave,
 }: EditUserInformationModalProps) {
@@ -36,7 +38,7 @@ export default function EditUserInformationModal({
   // Personal information state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString().substring(0, 10));
+  const [dateOfBirth, setDateOfBirth] = useState(new Date());
   const [gender, setGender] = useState<Gender | undefined>();
 
   // Contact information state
@@ -53,6 +55,19 @@ export default function EditUserInformationModal({
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    setFirstName(applicant.firstName);
+    setLastName(applicant.lastName);
+    setDateOfBirth(new Date(applicant.dateOfBirth));
+    setGender(applicant.gender);
+    setEmail(applicant.email || '');
+    setPhoneNumber(applicant.phone);
+    setAddressLine1(applicant.addressLine1);
+    setAddressLine2(applicant.addressLine2 || '');
+    setCity(applicant.city);
+    setPostalCode(applicant.postalCode);
+  }, [applicant]);
+
   /**
    * Handle edit submission
    */
@@ -60,7 +75,7 @@ export default function EditUserInformationModal({
     setLoading(true);
     event.preventDefault();
     await onSave({
-      id: applicantId,
+      id: applicant.id,
       firstName,
       lastName,
       dateOfBirth,
@@ -115,11 +130,7 @@ export default function EditUserInformationModal({
                 <Stack direction="row" spacing="20px">
                   <FormControl isRequired>
                     <FormLabel>{`Date of birth`}</FormLabel>
-                    <Input
-                      type="date"
-                      value={dateOfBirth}
-                      onChange={event => setDateOfBirth(event.target.value)}
-                    />
+                    <DatePicker value={dateOfBirth} onDateChange={setDateOfBirth} />
                   </FormControl>
 
                   <FormControl isRequired>

@@ -38,7 +38,7 @@ export default `
     province: Province
     postalCode: String!
     phone: String!
-    status: PhysicianStatus!
+    status: PhysicianStatus
     notes: String
   }
 
