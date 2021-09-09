@@ -820,6 +820,7 @@ export type UpdateMedicalInformationInput = {
   notes?: Maybe<Scalars['String']>;
   certificationDate?: Maybe<Scalars['Date']>;
   aid?: Maybe<Array<Aid>>;
+  physician: Physician;
 };
 
 export type UpdateMedicalInformationResult = {

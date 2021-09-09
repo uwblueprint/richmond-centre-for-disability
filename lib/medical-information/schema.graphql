@@ -35,6 +35,7 @@ input UpdateMedicalInformationInput {
   notes: String
   certificationDate: Date
   aid: [Aid!]
+  physician: Physician
 }
 
 type UpdateMedicalInformationResult {

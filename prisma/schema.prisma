@@ -337,5 +337,5 @@ enum PermitType {
   PERMANENT
   TEMPORARY
 
-  @@map("permittype")
+   @@map("permittype")
 }

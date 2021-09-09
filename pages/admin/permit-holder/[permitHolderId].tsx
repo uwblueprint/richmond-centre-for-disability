@@ -32,6 +32,11 @@ import {
   UpdateApplicantResponse,
   UPDATE_APPLICANT_MUTATION,
 } from '@tools/pages/admin/permit-holders/update-applicant'; // Update applicant types
+import {
+  UpdateMedicalInformationRequest,
+  UpdateMedicalInformationResponse,
+  UPDATE_MEDICAL_INFORMATION_MUTATION,
+} from '@tools/pages/admin/permit-holders/update-medical-information';
 
 type Props = {
   readonly permitHolderId: number;
@@ -42,6 +47,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
   const [applicantData, setApplicantData] = useState<ApplicantData>();
   const [permits, setPermits] = useState<PermitData[]>();
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
+  const [isErrorOnUpdateDoctor, setIsErrorOnUpdateDoctor] = useState<boolean>(false);
   // TODO: uncomment when AWS is setup and we use real files
   // const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
   const [previousPhysicianData, setPreviousPhysicianData] = useState<PreviousPhysicianData[]>();
@@ -97,20 +103,12 @@ export default function PermitHolder({ permitHolderId }: Props) {
     UpsertPhysicianResponse,
     UpsertPhysicianRequest
   >(UPSERT_PHYSICIAN_MUTATION, {
-    onCompleted: data => {
-      if (data.upsertPhysician.ok) {
-        toast({
-          render: () => (
-            <SuccessfulEditAlert>{'Doctor’s information has been edited.'}</SuccessfulEditAlert>
-          ),
-        });
-      }
-    },
     onError: error => {
       toast({
         status: 'error',
         description: error.message,
       });
+      setIsErrorOnUpdateDoctor(true);
     },
     refetchQueries: ['GetPermitHolder'],
   });
@@ -137,12 +135,50 @@ export default function PermitHolder({ permitHolderId }: Props) {
     },
   });
 
+  // Submit updated medical information mutation
+  const [submitUpdatedMedicalInformation] = useMutation<
+    UpdateMedicalInformationResponse,
+    UpdateMedicalInformationRequest
+  >(UPDATE_MEDICAL_INFORMATION_MUTATION, {
+    onError: error => {
+      setIsErrorOnUpdateDoctor(true);
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
+
   /**
    * Update Doctor Information handler
    * @param physicianData Updated physician data
    */
   const handleUpdateDoctorInformation = (physicianData: UpsertPhysicianInput) => {
-    submitEditedDoctorInformation({ variables: { input: { ...physicianData } } });
+    if (data) {
+      const oldDoctorMSP = data.applicant.medicalInformation.physician.mspNumber;
+      setIsErrorOnUpdateDoctor(false);
+
+      submitEditedDoctorInformation({ variables: { input: { ...physicianData } } });
+
+      if (!isErrorOnUpdateDoctor && physicianData.mspNumber !== oldDoctorMSP) {
+        submitUpdatedMedicalInformation({
+          variables: {
+            input: {
+              applicantId: parseInt(data.applicant.id),
+              physician: physicianData,
+            },
+          },
+        });
+      }
+
+      if (!isErrorOnUpdateDoctor) {
+        toast({
+          render: () => (
+            <SuccessfulEditAlert>{"User's information has been edited."}</SuccessfulEditAlert>
+          ),
+        });
+      }
+    }
   };
 
   /**
