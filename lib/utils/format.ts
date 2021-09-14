@@ -50,7 +50,7 @@ export const formatDateVerbose = (date: Date): string => {
 
   // Removes first comma and writes am/pm in lowercase
   const formattedDate =
-    localeDateString.replace(',', '').substring(0, localeDateString.length - 2) +
+    localeDateString.replace(',', '').substring(0, localeDateString.length - 3) +
     localeDateString[localeDateString.length - 2].toLowerCase() +
     localeDateString[localeDateString.length - 1].toLowerCase();
 
