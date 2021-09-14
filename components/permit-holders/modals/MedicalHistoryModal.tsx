@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ReactNode } from 'react'; // React
 import { Aid, Application } from '@lib/graphql/types'; // Application type & Aid enum
+import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 type MedicalHistoryModalProps = {
   application: Application;
@@ -56,9 +57,7 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
             paddingX="4px"
           >
             <Text as="h2" textStyle="display-medium-bold">
-              {`${application.disability} (${new Date(application.createdAt).toLocaleDateString(
-                'en-CA'
-              )})`}
+              {`${application.disability} (${formatDate(application.createdAt)})`}
             </Text>
           </ModalHeader>
           <ModalBody paddingTop="0px" paddingBottom="36px" paddingX="4px">

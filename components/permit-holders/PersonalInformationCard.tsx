@@ -13,6 +13,7 @@ import EditUserInformationModal from '@components/permit-holders/modals/EditUser
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card component
 import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
 import { UpdateApplicantInput } from '@lib/graphql/types';
+import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 type PersonalInformationProps = {
   readonly applicant: ApplicantData;
@@ -42,7 +43,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
       <VStack spacing="12px" align="left">
         <Box>
           <Text as="p" textStyle="body-regular">
-            Date of Birth: {new Date(applicant.dateOfBirth).toLocaleDateString('en-CA')}
+            Date of Birth: {formatDate(applicant.dateOfBirth)}
           </Text>
         </Box>
         <Box>

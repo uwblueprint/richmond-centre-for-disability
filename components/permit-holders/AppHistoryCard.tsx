@@ -5,6 +5,7 @@ import RequestStatusBadge from '@components/internal/RequestStatusBadge'; // Req
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import { Column } from 'react-table'; // React Table
 import { PermitData } from '@tools/pages/admin/permit-holders/types'; // Permit Data Types
+import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 const COLUMNS: Column<any>[] = [
   {
@@ -52,7 +53,7 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     maxWidth: 140,
     Cell: ({ value }) => {
-      return <Text>{new Date(value).toLocaleDateString('en-CA')}</Text>;
+      return <Text>{formatDate(value)}</Text>;
     },
   },
   {

@@ -38,6 +38,7 @@ import { SortOptions, SortOrder } from '@tools/types'; // Sorting types
 import { Column } from 'react-table'; // Column type for table
 import useDebounce from '@tools/hooks/useDebounce'; // Debouncer
 import { useEffect } from 'react'; // React
+import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 const COLUMNS: Column<any>[] = [
   {
@@ -66,7 +67,7 @@ const COLUMNS: Column<any>[] = [
     width: 140,
     maxWidth: 140,
     Cell: ({ value }) => {
-      return <Text>{new Date(value).toLocaleDateString('en-CA')}</Text>;
+      return <Text>{formatDate(value)}</Text>;
     },
   },
   {

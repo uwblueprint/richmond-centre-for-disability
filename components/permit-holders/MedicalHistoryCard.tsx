@@ -4,6 +4,7 @@ import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard';
 import MedicalHistoryModal from '@components/permit-holders/modals/MedicalHistoryModal'; // Medical History Modal
 import { Column } from 'react-table'; // React table
 import { MedicalHistoryEntry } from '@tools/pages/admin/permit-holders/types'; // Medical History type for table
+import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 const COLUMNS: Column<any>[] = [
   {
@@ -18,7 +19,7 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     maxWidth: 200,
     Cell: ({ value }) => {
-      return <Text>{new Date(value).toLocaleDateString('en-CA')}</Text>;
+      return <Text>{formatDate(value)}</Text>;
     },
   },
   {

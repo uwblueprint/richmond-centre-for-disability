@@ -2,6 +2,7 @@ import { Box, Text, Divider } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/internal/Table'; // Table component
 import PermitHolderInfoCard from '@components/internal/PermitHolderInfoCard'; // Custom Card Component
 import { Column } from 'react-table';
+import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 const DATA = Array(4).fill({
   fileName: 'test.pdf',
@@ -32,7 +33,7 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     maxWidth: 160,
     Cell: ({ value }) => {
-      return <Text>{new Date(value).toLocaleDateString('en-CA')}</Text>;
+      return <Text>{formatDate(value)}</Text>;
     },
   },
   {
