@@ -13,7 +13,7 @@ import MedicalHistoryCard from '@components/permit-holders/MedicalHistoryCard'; 
 import { GetPermitHolderRequest, GetPermitHolderResponse } from '@tools/pages/permit-holders/types';
 import { GET_PERMIT_HOLDER } from '@tools/pages/permit-holders/queries'; // Permit holder query
 import { useMutation, useQuery } from '@apollo/client'; // Apollo
-import { useState } from 'react'; // React
+import React, { useState } from 'react'; // React
 import {
   PermitData,
   MedicalHistoryEntry,
@@ -44,7 +44,6 @@ type Props = {
 export default function PermitHolder({ permitHolderId }: Props) {
   const [permits, setPermits] = useState<PermitData[]>();
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
-
   // TODO: uncomment when AWS is setup and we use real files
   // const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
   const [previousPhysicianData, setPreviousPhysicianData] = useState<PreviousPhysicianData[]>();
@@ -121,6 +120,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
         status: 'error',
         description: error.message,
       });
+      setIsErrorOnUpdateDoctor(true);
     },
   });
 
@@ -144,6 +144,20 @@ export default function PermitHolder({ permitHolderId }: Props) {
       });
     },
     refetchQueries: ['GetPermitHolder'],
+  });
+
+  // Submit updated medical information mutation
+  const [submitUpdatedMedicalInformation] = useMutation<
+    UpdateMedicalInformationResponse,
+    UpdateMedicalInformationRequest
+  >(UPDATE_MEDICAL_INFORMATION_MUTATION, {
+    onError: error => {
+      setIsErrorOnUpdateDoctor(true);
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
   });
 
   /**
