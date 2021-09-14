@@ -13,7 +13,7 @@ import MedicalHistoryCard from '@components/permit-holders/MedicalHistoryCard'; 
 import { GetPermitHolderRequest, GetPermitHolderResponse } from '@tools/pages/permit-holders/types';
 import { GET_PERMIT_HOLDER } from '@tools/pages/permit-holders/queries'; // Permit holder query
 import { useMutation, useQuery } from '@apollo/client'; // Apollo
-import { useState } from 'react'; // React
+import React, { useState } from 'react'; // React
 import {
   PermitData,
   MedicalHistoryEntry,
@@ -30,6 +30,11 @@ import {
   UpdateApplicantResponse,
   UPDATE_APPLICANT_MUTATION,
 } from '@tools/pages/admin/permit-holders/update-applicant'; // Update applicant types
+import {
+  UpdateMedicalInformationRequest,
+  UpdateMedicalInformationResponse,
+  UPDATE_MEDICAL_INFORMATION_MUTATION,
+} from '@tools/pages/admin/permit-holders/update-medical-information';
 
 type Props = {
   readonly permitHolderId: number;
@@ -39,6 +44,7 @@ type Props = {
 export default function PermitHolder({ permitHolderId }: Props) {
   const [permits, setPermits] = useState<PermitData[]>();
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
+  const [isErrorOnUpdateDoctor, setIsErrorOnUpdateDoctor] = useState<boolean>(false);
   // TODO: uncomment when AWS is setup and we use real files
   // const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
   const [previousPhysicianData, setPreviousPhysicianData] = useState<PreviousPhysicianData[]>();
@@ -93,19 +99,12 @@ export default function PermitHolder({ permitHolderId }: Props) {
     UpsertPhysicianResponse,
     UpsertPhysicianRequest
   >(UPSERT_PHYSICIAN_MUTATION, {
-    onCompleted: data => {
-      if (data.upsertPhysician.ok) {
-        toast({
-          status: 'success',
-          description: "Doctor's information has been edited.",
-        });
-      }
-    },
     onError: error => {
       toast({
         status: 'error',
         description: error.message,
       });
+      setIsErrorOnUpdateDoctor(true);
     },
     refetchQueries: ['GetPermitHolder'],
   });
@@ -132,12 +131,49 @@ export default function PermitHolder({ permitHolderId }: Props) {
     refetchQueries: ['GetPermitHolder'],
   });
 
+  // Submit updated medical information mutation
+  const [submitUpdatedMedicalInformation] = useMutation<
+    UpdateMedicalInformationResponse,
+    UpdateMedicalInformationRequest
+  >(UPDATE_MEDICAL_INFORMATION_MUTATION, {
+    onError: error => {
+      setIsErrorOnUpdateDoctor(true);
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
+
   /**
    * Update Doctor Information handler
    * @param physicianData Updated physician data
    */
   const handleUpdateDoctorInformation = (physicianData: UpsertPhysicianInput) => {
-    submitEditedDoctorInformation({ variables: { input: { ...physicianData } } });
+    if (data) {
+      const oldDoctorMSP = data.applicant.medicalInformation.physician.mspNumber;
+      setIsErrorOnUpdateDoctor(false);
+
+      submitEditedDoctorInformation({ variables: { input: { ...physicianData } } });
+
+      if (!isErrorOnUpdateDoctor && physicianData.mspNumber !== oldDoctorMSP) {
+        submitUpdatedMedicalInformation({
+          variables: {
+            input: {
+              applicantId: data.applicant.id,
+              physician: undefined,
+            },
+          },
+        });
+      }
+
+      if (!isErrorOnUpdateDoctor) {
+        toast({
+          status: 'success',
+          description: "User's information has been edited.",
+        });
+      }
+    }
   };
 
   /**
