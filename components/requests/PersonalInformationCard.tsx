@@ -30,7 +30,7 @@ export default function PersonalInformationCard(props: Props) {
 
   // Personal information card header
   const Header = (
-    <Link href={`/permit-holder/${applicant.id}`}>
+    <Link href={`/admin/permit-holder/${applicant.id}`}>
       <Text
         variant="link"
         textStyle="display-small-semibold"
