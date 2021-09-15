@@ -40,58 +40,64 @@ type Props = {
   readonly permitHolderId: number;
 };
 
+// Must be defined outside of PermitHolder function otherwise variable does not maintain value
+let physicianId: number;
+
 // Individual permit holder page
 export default function PermitHolder({ permitHolderId }: Props) {
   const [permits, setPermits] = useState<PermitData[]>();
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
   const [isErrorOnUpdateDoctor, setIsErrorOnUpdateDoctor] = useState<boolean>(false);
-  const [updatedPhysicianId, setUpdatedPhysicianId] = useState<number>();
+
   // TODO: uncomment when AWS is setup and we use real files
   // const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
   const [previousPhysicianData, setPreviousPhysicianData] = useState<PreviousPhysicianData[]>();
 
-  const { data } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(GET_PERMIT_HOLDER, {
-    variables: {
-      id: permitHolderId,
-    },
-    onCompleted: data => {
-      setPermits(
-        data.applicant.permits.map(permit => ({
-          rcdPermitId: permit.rcdPermitId,
-          expiryDate: permit.expiryDate,
-          applicationId: permit.applicationId,
-          isRenewal: permit.application.isRenewal,
-          status: permit.application.applicationProcessing.status,
-        }))
-      );
-      // TODO: uncomment when AWS is setup and we use real files
-      // const files: PermitHolderAttachedFile[] = [];
-      // data.applicant.fileHistory.forEach(application => {
-      //   application.documentUrls?.forEach(documentUrl => {
-      //     files.push({
-      //       appNumber: application.appNumber,
-      //       createdAt: application.createdAt,
-      //       fileUrl: documentUrl,
-      //     });
-      //   });
-      // });
-      // setAttachedFiles(files);
-      setMedicalHistoryData(
-        data.applicant.applications.map(application => ({
-          disability: application.disability,
-          createdAt: application.createdAt,
-          applicantApplication: application,
-        }))
-      );
-      setPreviousPhysicianData(
-        data.applicant.medicalHistory.map(record => ({
-          name: record.physician.name,
-          mspNumber: record.physician.mspNumber,
-          phone: record.physician.phone,
-        }))
-      );
-    },
-  });
+  const { data, refetch } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(
+    GET_PERMIT_HOLDER,
+    {
+      variables: {
+        id: permitHolderId,
+      },
+      onCompleted: data => {
+        setPermits(
+          data.applicant.permits.map(permit => ({
+            rcdPermitId: permit.rcdPermitId,
+            expiryDate: permit.expiryDate,
+            applicationId: permit.applicationId,
+            isRenewal: permit.application.isRenewal,
+            status: permit.application.applicationProcessing.status,
+          }))
+        );
+        // TODO: uncomment when AWS is setup and we use real files
+        // const files: PermitHolderAttachedFile[] = [];
+        // data.applicant.fileHistory.forEach(application => {
+        //   application.documentUrls?.forEach(documentUrl => {
+        //     files.push({
+        //       appNumber: application.appNumber,
+        //       createdAt: application.createdAt,
+        //       fileUrl: documentUrl,
+        //     });
+        //   });
+        // });
+        // setAttachedFiles(files);
+        setMedicalHistoryData(
+          data.applicant.applications.map(application => ({
+            disability: application.disability,
+            createdAt: application.createdAt,
+            applicantApplication: application,
+          }))
+        );
+        setPreviousPhysicianData(
+          data.applicant.medicalHistory.map(record => ({
+            name: record.physician.name,
+            mspNumber: record.physician.mspNumber,
+            phone: record.physician.phone,
+          }))
+        );
+      },
+    }
+  );
 
   const toast = useToast();
 
@@ -107,7 +113,6 @@ export default function PermitHolder({ permitHolderId }: Props) {
         description: error.message,
       });
     },
-    refetchQueries: ['GetPermitHolder'],
   });
 
   // Submit edited doctor information mutation
@@ -116,8 +121,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
     UpsertPhysicianRequest
   >(UPSERT_PHYSICIAN_MUTATION, {
     onCompleted: data => {
-      setUpdatedPhysicianId(data?.upsertPhysician.physicianId);
-      // console.log("done updating doctor info pt 1");
+      physicianId = data.upsertPhysician.physicianId;
     },
     onError: error => {
       toast({
@@ -126,7 +130,6 @@ export default function PermitHolder({ permitHolderId }: Props) {
       });
       setIsErrorOnUpdateDoctor(true);
     },
-    refetchQueries: ['GetPermitHolder'],
   });
 
   // Submit edited user information mutation
@@ -155,23 +158,19 @@ export default function PermitHolder({ permitHolderId }: Props) {
    * Update Doctor Information handler
    * @param physicianData Updated physician data
    */
-  const handleUpdateDoctorInformation = (physicianData: UpsertPhysicianInput) => {
+  const handleUpdateDoctorInformation = async (physicianData: UpsertPhysicianInput) => {
     if (data) {
       const oldDoctorMSP = data.applicant.medicalInformation.physician.mspNumber;
       setIsErrorOnUpdateDoctor(false);
 
-      // console.log("updating doctor info");
-      submitEditedDoctorInformation({ variables: { input: { ...physicianData } } });
-      // console.log("done updating doctor info pt 2");
+      await submitEditedDoctorInformation({ variables: { input: { ...physicianData } } });
 
       if (!isErrorOnUpdateDoctor && physicianData.mspNumber !== oldDoctorMSP) {
-        // console.log("updating medical info");
-
-        submitUpdatedMedicalInformation({
+        await submitUpdatedMedicalInformation({
           variables: {
             input: {
               applicantId: parseInt(data.applicant.id),
-              physicianId: updatedPhysicianId,
+              physicianId: physicianId,
             },
           },
         });
@@ -183,6 +182,8 @@ export default function PermitHolder({ permitHolderId }: Props) {
           description: "Doctor's information has been edited.",
         });
       }
+
+      refetch();
     }
   };
 

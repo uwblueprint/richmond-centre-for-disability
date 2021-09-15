@@ -844,6 +844,7 @@ export type UpsertPhysicianInput = {
 export type UpsertPhysicianResult = {
   __typename?: 'UpsertPhysicianResult';
   ok: Scalars['Boolean'];
+  physicianId: Scalars['Int'];
 };
 
 export enum UserStatus {

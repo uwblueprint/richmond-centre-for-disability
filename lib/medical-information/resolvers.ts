@@ -11,7 +11,6 @@ import { DBErrorCode } from '@lib/db/errors'; // Database errors
 export const updateMedicalInformation: Resolver = async (_, args, { prisma }) => {
   const { input } = args;
   const { applicantId, ...rest } = input;
-  // console.log("medical info resolver");
 
   let updatedApplicant;
   try {
@@ -32,9 +31,7 @@ export const updateMedicalInformation: Resolver = async (_, args, { prisma }) =>
     ) {
       throw new ApplicantNotFoundError(`Applicant with ID ${applicantId} does not exist`);
     }
-    // console.log(err);
   }
-  // console.log("medical info resolver 2");
 
   if (!updatedApplicant) {
     throw new ApolloError('Medical information was unable to be updated');
