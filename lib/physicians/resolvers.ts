@@ -97,5 +97,6 @@ export const upsertPhysician: Resolver = async (_, args, { prisma }) => {
 
   return {
     ok: true,
+    physicianId: upsertedPhysician.id,
   };
 };

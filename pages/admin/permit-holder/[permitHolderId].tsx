@@ -45,6 +45,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
   const [permits, setPermits] = useState<PermitData[]>();
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
   const [isErrorOnUpdateDoctor, setIsErrorOnUpdateDoctor] = useState<boolean>(false);
+  const [updatedPhysicianId, setUpdatedPhysicianId] = useState<number>();
   // TODO: uncomment when AWS is setup and we use real files
   // const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
   const [previousPhysicianData, setPreviousPhysicianData] = useState<PreviousPhysicianData[]>();
@@ -94,11 +95,30 @@ export default function PermitHolder({ permitHolderId }: Props) {
 
   const toast = useToast();
 
+  // Submit updated medical information mutation
+  const [submitUpdatedMedicalInformation] = useMutation<
+    UpdateMedicalInformationResponse,
+    UpdateMedicalInformationRequest
+  >(UPDATE_MEDICAL_INFORMATION_MUTATION, {
+    onError: error => {
+      setIsErrorOnUpdateDoctor(true);
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+    refetchQueries: ['GetPermitHolder'],
+  });
+
   // Submit edited doctor information mutation
   const [submitEditedDoctorInformation] = useMutation<
     UpsertPhysicianResponse,
     UpsertPhysicianRequest
   >(UPSERT_PHYSICIAN_MUTATION, {
+    onCompleted: data => {
+      setUpdatedPhysicianId(data?.upsertPhysician.physicianId);
+      // console.log("done updating doctor info pt 1");
+    },
     onError: error => {
       toast({
         status: 'error',
@@ -131,20 +151,6 @@ export default function PermitHolder({ permitHolderId }: Props) {
     refetchQueries: ['GetPermitHolder'],
   });
 
-  // Submit updated medical information mutation
-  const [submitUpdatedMedicalInformation] = useMutation<
-    UpdateMedicalInformationResponse,
-    UpdateMedicalInformationRequest
-  >(UPDATE_MEDICAL_INFORMATION_MUTATION, {
-    onError: error => {
-      setIsErrorOnUpdateDoctor(true);
-      toast({
-        status: 'error',
-        description: error.message,
-      });
-    },
-  });
-
   /**
    * Update Doctor Information handler
    * @param physicianData Updated physician data
@@ -154,14 +160,18 @@ export default function PermitHolder({ permitHolderId }: Props) {
       const oldDoctorMSP = data.applicant.medicalInformation.physician.mspNumber;
       setIsErrorOnUpdateDoctor(false);
 
+      // console.log("updating doctor info");
       submitEditedDoctorInformation({ variables: { input: { ...physicianData } } });
+      // console.log("done updating doctor info pt 2");
 
       if (!isErrorOnUpdateDoctor && physicianData.mspNumber !== oldDoctorMSP) {
+        // console.log("updating medical info");
+
         submitUpdatedMedicalInformation({
           variables: {
             input: {
-              applicantId: data.applicant.id,
-              physician: undefined,
+              applicantId: parseInt(data.applicant.id),
+              physicianId: updatedPhysicianId,
             },
           },
         });
@@ -170,7 +180,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
       if (!isErrorOnUpdateDoctor) {
         toast({
           status: 'success',
-          description: "User's information has been edited.",
+          description: "Doctor's information has been edited.",
         });
       }
     }

@@ -6,6 +6,7 @@ export const UPSERT_PHYSICIAN_MUTATION = gql`
   mutation UpsertPhysician($input: UpsertPhysicianInput!) {
     upsertPhysician(input: $input) {
       ok
+      physicianId
     }
   }
 `;

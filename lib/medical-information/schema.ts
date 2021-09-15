@@ -36,6 +36,7 @@ export default `
     notes: String
     certificationDate: Date
     aid: [Aid!]
+    physicianId: Int
   }
 
   type UpdateMedicalInformationResult {
