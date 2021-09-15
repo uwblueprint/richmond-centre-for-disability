@@ -2,6 +2,7 @@
 // Relative paths required, path aliases throw error with seed command
 import prisma from '../index'; // Prisma client
 import { Province } from '../../lib/graphql/types'; // GraphQL types
+import { UpsertGuardian } from '../types'; // Seeding types
 
 // Upsert applicant guardians
 const guardians = [
@@ -42,17 +43,16 @@ const guardians = [
 
 /**
  * Upsert guardians
+ * @param data Custom guardian data to be upserted
  */
-export default async function guardianUpsert(): Promise<void> {
-  const guardianUpserts = [];
-  for (const guardian of guardians) {
+export default async function guardianUpsert(data?: UpsertGuardian[]): Promise<void> {
+  for (const guardian of data || guardians) {
     const { id, ...rest } = guardian;
     const guardianUpsert = await prisma.guardian.upsert({
       where: { id },
       update: { ...rest },
       create: guardian,
     });
-    guardianUpserts.push(guardianUpsert);
     console.log({ guardianUpsert });
   }
 }

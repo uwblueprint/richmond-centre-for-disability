@@ -2,6 +2,7 @@
 // Relative paths required, path aliases throw error with seed command
 import prisma from '../index'; // Prisma client
 import { Gender, Province, PaymentType, Aid } from '../../lib/graphql/types'; // GraphQL types
+import { UpsertApplication } from '../types'; // Seeding types
 
 // Seed data
 const applications = [
@@ -94,10 +95,10 @@ const applications = [
 
 /**
  * Upsert applications
+ * @param data Custom application data to be upserted
  */
-export default async function applicationUpsert(): Promise<void> {
-  const applicationUpserts = [];
-  for (const application of applications) {
+export default async function applicationUpsert(data?: UpsertApplication[]): Promise<void> {
+  for (const application of data || applications) {
     const { id, ...rest } = application;
     const applicationUpsert = await prisma.application.upsert({
       where: { id },
@@ -107,7 +108,6 @@ export default async function applicationUpsert(): Promise<void> {
         ...rest,
       },
     });
-    applicationUpserts.push(applicationUpsert);
     console.log({ applicationUpsert });
   }
 }

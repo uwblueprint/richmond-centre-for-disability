@@ -136,7 +136,7 @@ CREATE TABLE applicants (
   rcd_user_id               INTEGER UNIQUE,
   status                    ApplicantStatus,
   accepted_tos              TIMESTAMPTZ,
-  guardian_id               INTEGER UNIQUE NOT NULL,
+  guardian_id               INTEGER UNIQUE,
   medical_information_id    INTEGER UNIQUE NOT NULL,
   created_at                TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at                TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -19,7 +19,7 @@ export default `
     status: ApplicantStatus
     activePermit: Permit
     applications: [Application!]
-    guardianId: Int!
+    guardianId: Int
     guardian: Guardian!
     medicalInformationId: Int!
     medicalInformation: MedicalInformation!

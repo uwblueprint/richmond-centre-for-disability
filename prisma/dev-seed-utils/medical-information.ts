@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 // Relative paths required, path aliases throw error with seed command
 import prisma from '../index'; // Prisma client
+import { UpsertMedicalInformation } from '../types'; // Seeding types
 
 // Seed data
 const medicalInformationRecords = [
@@ -32,17 +33,18 @@ const medicalInformationRecords = [
 
 /**
  * Upsert medical information records for applicants
+ * @param data Custom medical information data to be upserted
  */
-export default async function medicalInformationUpsert(): Promise<void> {
-  const medicalInformationUpserts = [];
-  for (const medicalInformation of medicalInformationRecords) {
+export default async function medicalInformationUpsert(
+  data?: UpsertMedicalInformation[]
+): Promise<void> {
+  for (const medicalInformation of data || medicalInformationRecords) {
     const { id, ...rest } = medicalInformation;
     const medicalInformationUpsert = await prisma.medicalInformation.upsert({
       where: { id },
       update: { ...rest },
       create: medicalInformation,
     });
-    medicalInformationUpserts.push(medicalInformationUpsert);
     console.log({ medicalInformationUpsert });
   }
 }

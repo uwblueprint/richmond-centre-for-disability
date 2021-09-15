@@ -25,11 +25,11 @@ model Applicant {
   rcdUserId            Int?               @unique @map("rcd_user_id")
   status               ApplicantStatus?
   acceptedTos          DateTime?          @map("accepted_tos") @db.Timestamptz(6)
-  guardianId           Int                @unique @map("guardian_id")
+  guardianId           Int?               @unique @map("guardian_id")
   medicalInformationId Int                @unique @map("medical_information_id")
   createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt            DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  guardian             Guardian           @relation("applicantsToguardians", fields: [guardianId], references: [id])
+  guardian             Guardian?          @relation("applicantsToguardians", fields: [guardianId], references: [id])
   medicalInformation   MedicalInformation @relation("applicantsTomedical_information", fields: [medicalInformationId], references: [id])
   applications         Application[]
   permits              Permit[]
