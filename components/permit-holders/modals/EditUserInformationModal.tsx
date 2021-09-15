@@ -20,6 +20,7 @@ import {
 import { useState, useEffect, ReactNode, SyntheticEvent } from 'react'; // React
 import { Gender, UpdateApplicantInput } from '@lib/graphql/types'; // Gender Enum
 import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
+import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 type EditUserInformationModalProps = {
   applicant: ApplicantData;
@@ -37,7 +38,7 @@ export default function EditUserInformationModal({
   // Personal information state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString().substring(0, 10));
+  const [dateOfBirth, setDateOfBirth] = useState(formatDate(new Date(), true));
   const [gender, setGender] = useState<Gender | undefined>();
 
   // Contact information state
@@ -57,7 +58,7 @@ export default function EditUserInformationModal({
   useEffect(() => {
     setFirstName(applicant.firstName);
     setLastName(applicant.lastName);
-    setDateOfBirth(new Date(applicant.dateOfBirth).toISOString().substring(0, 10));
+    setDateOfBirth(formatDate(applicant.dateOfBirth, true));
     setGender(applicant.gender);
     setEmail(applicant.email || '');
     setPhoneNumber(applicant.phone);

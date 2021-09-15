@@ -28,10 +28,13 @@ export const formatNumberInput = (numberInputString: string): string => {
 /**
  * Format date to be in MM/DD/YYYY format and in UTC time zone to avoid the date being set back by a day
  * @param {Date} date date to be formatted
+ * @param {boolean} dateInput Whether the date is being displayed in Input element of type date
  * @returns {string} formatted date
  */
-export const formatDate = (date: Date): string => {
-  return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
+export const formatDate = (date: Date, dateInput = false): string => {
+  return dateInput
+    ? new Date(date).toISOString().substring(0, 10)
+    : new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
 };
 
 /**
