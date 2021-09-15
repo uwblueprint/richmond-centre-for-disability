@@ -44,6 +44,7 @@ type Props = {
 export default function PermitHolder({ permitHolderId }: Props) {
   const [permits, setPermits] = useState<PermitData[]>();
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
+
   // TODO: uncomment when AWS is setup and we use real files
   // const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
   const [previousPhysicianData, setPreviousPhysicianData] = useState<PreviousPhysicianData[]>();
@@ -115,6 +116,10 @@ export default function PermitHolder({ permitHolderId }: Props) {
     UpsertPhysicianResponse,
     UpsertPhysicianRequest
   >(UPSERT_PHYSICIAN_MUTATION, {
+    onCompleted: data => {
+      setUpdatedPhysicianId(data?.upsertPhysician.physicianId);
+      // console.log("done updating doctor info pt 1");
+    },
     onError: error => {
       toast({
         status: 'error',
@@ -144,20 +149,6 @@ export default function PermitHolder({ permitHolderId }: Props) {
       });
     },
     refetchQueries: ['GetPermitHolder'],
-  });
-
-  // Submit updated medical information mutation
-  const [submitUpdatedMedicalInformation] = useMutation<
-    UpdateMedicalInformationResponse,
-    UpdateMedicalInformationRequest
-  >(UPDATE_MEDICAL_INFORMATION_MUTATION, {
-    onError: error => {
-      setIsErrorOnUpdateDoctor(true);
-      toast({
-        status: 'error',
-        description: error.message,
-      });
-    },
   });
 
   /**
