@@ -13,7 +13,7 @@ import MedicalHistoryCard from '@components/permit-holders/MedicalHistoryCard'; 
 import { GetPermitHolderRequest, GetPermitHolderResponse } from '@tools/pages/permit-holders/types';
 import { GET_PERMIT_HOLDER } from '@tools/pages/permit-holders/queries'; // Permit holder query
 import { useMutation, useQuery } from '@apollo/client'; // Apollo
-import React, { useState } from 'react'; // React
+import { useState } from 'react'; // React
 import {
   PermitData,
   MedicalHistoryEntry,
@@ -169,7 +169,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
         await submitUpdatedMedicalInformation({
           variables: {
             input: {
-              applicantId: parseInt(data.applicant.id),
+              applicantId: +data.applicant.id,
               physicianId: physicianId,
             },
           },
