@@ -20,7 +20,6 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
 import { ReplacementData } from '@tools/components/internal/requests/reason-for-replacement-card'; // ReplacementData type
-import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 type EditReasonForReplacementModalProps = {
   readonly replacement: ReplacementData;
@@ -37,7 +36,7 @@ export default function EditReasonForReplacementModal({
   const [reason, setReason] = useState('');
 
   //   Lost Information state
-  const [date, setDate] = useState(formatDate(new Date()));
+  const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
   const [timestamp, setTimestamp] = useState('');
   const [location, setLocation] = useState<string | undefined>('');
   const [eventDescription, setEventDescription] = useState<string | undefined>('');
