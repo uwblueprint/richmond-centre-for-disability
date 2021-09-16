@@ -34,7 +34,7 @@ import {
   UpdateMedicalInformationRequest,
   UpdateMedicalInformationResponse,
   UPDATE_MEDICAL_INFORMATION_MUTATION,
-} from '@tools/pages/admin/permit-holders/update-medical-information';
+} from '@tools/pages/admin/permit-holders/update-medical-information'; // Medical information types
 
 type Props = {
   readonly permitHolderId: number;
@@ -44,7 +44,6 @@ type Props = {
 export default function PermitHolder({ permitHolderId }: Props) {
   const [permits, setPermits] = useState<PermitData[]>();
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
-  const [isErrorOnUpdateDoctor, setIsErrorOnUpdateDoctor] = useState<boolean>(false);
 
   // TODO: uncomment when AWS is setup and we use real files
   // const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
@@ -105,7 +104,6 @@ export default function PermitHolder({ permitHolderId }: Props) {
     UpdateMedicalInformationRequest
   >(UPDATE_MEDICAL_INFORMATION_MUTATION, {
     onError: error => {
-      setIsErrorOnUpdateDoctor(true);
       toast({
         status: 'error',
         description: error.message,
@@ -123,7 +121,6 @@ export default function PermitHolder({ permitHolderId }: Props) {
         status: 'error',
         description: error.message,
       });
-      setIsErrorOnUpdateDoctor(true);
     },
   });
 
@@ -156,12 +153,12 @@ export default function PermitHolder({ permitHolderId }: Props) {
   const handleUpdateDoctorInformation = async (physicianData: UpsertPhysicianInput) => {
     if (data) {
       const oldDoctorMSP = data.applicant.medicalInformation.physician.mspNumber;
-      setIsErrorOnUpdateDoctor(false);
 
       const result = await submitEditedDoctorInformation({
         variables: { input: { ...physicianData } },
       });
       const physicianId = result?.data?.upsertPhysician.physicianId;
+      const isErrorOnUpdateDoctor = result?.data?.upsertPhysician.ok ? false : true;
 
       // If the physician's MSP number changed, then a new physician is created by submitEditedDoctorInformation.
       // This updates the physicianId in the applicants medical information to be the new physician's id.
