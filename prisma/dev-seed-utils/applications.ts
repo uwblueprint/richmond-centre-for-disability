@@ -102,8 +102,9 @@ export default async function applicationUpsert(data?: UpsertApplication[]): Pro
     const { id, ...rest } = application;
     const applicationUpsert = await prisma.application.upsert({
       where: { id },
-      update: { ...rest },
+      update: rest,
       create: {
+        id,
         dateOfBirth: new Date().toISOString(),
         ...rest,
       },

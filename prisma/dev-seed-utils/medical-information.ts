@@ -42,7 +42,7 @@ export default async function medicalInformationUpsert(
     const { id, ...rest } = medicalInformation;
     const medicalInformationUpsert = await prisma.medicalInformation.upsert({
       where: { id },
-      update: { ...rest },
+      update: rest,
       create: medicalInformation,
     });
     console.log({ medicalInformationUpsert });

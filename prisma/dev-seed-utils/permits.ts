@@ -36,8 +36,8 @@ export default async function permitUpsert(data?: UpsertPermit[]): Promise<void>
     const { rcdPermitId, expiryDate = new Date().toISOString(), ...rest } = permit;
     const permitUpsert = await prisma.permit.upsert({
       where: { rcdPermitId },
-      update: { ...rest },
-      create: { rcdPermitId: rcdPermitId, expiryDate, ...rest },
+      update: rest,
+      create: { rcdPermitId, expiryDate, ...rest },
     });
     console.log({ permitUpsert });
   }

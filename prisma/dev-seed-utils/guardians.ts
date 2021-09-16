@@ -50,7 +50,7 @@ export default async function guardianUpsert(data?: UpsertGuardian[]): Promise<v
     const { id, ...rest } = guardian;
     const guardianUpsert = await prisma.guardian.upsert({
       where: { id },
-      update: { ...rest },
+      update: rest,
       create: guardian,
     });
     console.log({ guardianUpsert });

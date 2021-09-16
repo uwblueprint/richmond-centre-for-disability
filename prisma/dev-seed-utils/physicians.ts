@@ -39,7 +39,7 @@ export default async function physicianUpsert(data?: UpsertPhysician[]): Promise
     const { id, ...rest } = physician;
     const physicianUpsert = await prisma.physician.upsert({
       where: { id },
-      update: { ...rest },
+      update: rest,
       create: physician,
     });
     console.log({ physicianUpsert });

@@ -27,8 +27,8 @@ export default async function applicationProcessingUpsert(
     const { id, ...rest } = applicationProcessing;
     const applicationProcessingUpsert = await prisma.applicationProcessing.upsert({
       where: { id },
-      update: { ...rest },
-      create: rest,
+      update: rest,
+      create: applicationProcessing,
     });
     console.log({ applicationProcessingUpsert });
   }
