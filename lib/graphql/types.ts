@@ -47,7 +47,7 @@ export type Applicant = {
   activePermit: Maybe<Permit>;
   applications: Maybe<Array<Application>>;
   guardianId: Maybe<Scalars['Int']>;
-  guardian: Guardian;
+  guardian: Maybe<Guardian>;
   medicalInformationId: Scalars['Int'];
   medicalInformation: MedicalInformation;
   permits: Array<Permit>;

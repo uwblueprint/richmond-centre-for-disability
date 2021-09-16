@@ -1,3 +1,4 @@
+// TODO: `guardian` should be optional in `CreateApplicantInput`
 export default `
   type Applicant {
     id: ID!
@@ -20,7 +21,7 @@ export default `
     activePermit: Permit
     applications: [Application!]
     guardianId: Int
-    guardian: Guardian!
+    guardian: Guardian
     medicalInformationId: Int!
     medicalInformation: MedicalInformation!
     permits: [Permit!]!
