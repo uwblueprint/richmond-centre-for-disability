@@ -24,7 +24,7 @@ export default async function replacementUpsert(): Promise<void> {
     const { id, ...rest } = replacement;
     const replacementUpsert = await prisma.replacement.upsert({
       where: { id },
-      update: { ...rest },
+      update: rest,
       create: replacement,
     });
     replacementUpserts.push(replacementUpsert);
