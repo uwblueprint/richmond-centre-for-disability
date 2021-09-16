@@ -24,3 +24,38 @@ export const formatPostalCode = (postalCode: string): string => {
 export const formatNumberInput = (numberInputString: string): string => {
   return numberInputString.replace(/^\$/, '');
 };
+
+/**
+ * Format date to be in MM/DD/YYYY format and in UTC time zone to avoid the date being set back by a day
+ * @param {Date} date date to be formatted
+ * @param {boolean} dateInput Whether the date is being displayed in Input element of type date
+ * @returns {string} formatted date
+ */
+export const formatDate = (date: Date, dateInput = false): string => {
+  return dateInput
+    ? new Date(date).toISOString().substring(0, 10)
+    : new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
+};
+
+/**
+ * Format date to be in written in the following format: Sep 11 2021, 03:07 pm
+ * @param {Date} date date to be formatted
+ * @returns {string} formatted verbose date
+ */
+export const formatDateVerbose = (date: Date): string => {
+  const localeDateString = new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: 'numeric',
+  });
+
+  // Removes first comma and writes am/pm in lowercase
+  const formattedDate =
+    localeDateString.replace(',', '').substring(0, localeDateString.length - 3) +
+    localeDateString[localeDateString.length - 2].toLowerCase() +
+    localeDateString[localeDateString.length - 1].toLowerCase();
+
+  return formattedDate;
+};

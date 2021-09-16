@@ -34,6 +34,7 @@ import {
   getErrorMessage,
 } from '@tools/pages/applicant/verify-identity'; // Tools
 import Request from '@containers/Request'; // Request state
+import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 export default function IdentityVerificationForm() {
   // Router
@@ -47,7 +48,7 @@ export default function IdentityVerificationForm() {
 
   const [userId, setUserId] = useState('');
   const [phoneNumberSuffix, setPhoneNumberSuffix] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString().substring(0, 10));
+  const [dateOfBirth, setDateOfBirth] = useState(formatDate(new Date(), true));
 
   // Verify identity query
   const [verifyIdentity, { data, loading }] = useMutation<
@@ -143,7 +144,7 @@ export default function IdentityVerificationForm() {
               />
               <FormHelperText>
                 {`Please enter your date of birth in YYYY-MM-DD format. For example, if you were born on
-            20th August 1950, you would enter 20-08-1950`}
+            20th August 1950, you would enter 1950-08-20`}
               </FormHelperText>
             </FormControl>
             {data?.verifyIdentity.failureReason && (

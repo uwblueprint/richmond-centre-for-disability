@@ -36,6 +36,7 @@ import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
 import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //GraphQL types
 import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
+import { formatDateVerbose } from '@lib/utils/format'; // Verbose date formatter util
 
 // Map uppercase enum strings to lowercase
 const permitTypeString: Record<string, string> = {
@@ -70,7 +71,7 @@ const COLUMNS: Column<any>[] = [
     width: 240,
     sortDescFirst: true,
     Cell: ({ value }) => {
-      return <Text>{new Date(value).toLocaleDateString('en-ZA')}</Text>;
+      return <Text>{formatDateVerbose(value)}</Text>;
     },
   },
   {
