@@ -44,5 +44,6 @@ export default `
 
   type UpsertPhysicianResult {
     ok: Boolean!
+    physicianId: Int!
   }
 `;

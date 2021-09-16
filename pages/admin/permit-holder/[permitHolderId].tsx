@@ -30,6 +30,11 @@ import {
   UpdateApplicantResponse,
   UPDATE_APPLICANT_MUTATION,
 } from '@tools/pages/admin/permit-holders/update-applicant'; // Update applicant types
+import {
+  UpdateMedicalInformationRequest,
+  UpdateMedicalInformationResponse,
+  UPDATE_MEDICAL_INFORMATION_MUTATION,
+} from '@tools/pages/admin/permit-holders/update-medical-information'; // Medical information types
 
 type Props = {
   readonly permitHolderId: number;
@@ -39,75 +44,84 @@ type Props = {
 export default function PermitHolder({ permitHolderId }: Props) {
   const [permits, setPermits] = useState<PermitData[]>();
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
+
   // TODO: uncomment when AWS is setup and we use real files
   // const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
   const [previousPhysicianData, setPreviousPhysicianData] = useState<PreviousPhysicianData[]>();
 
-  const { data } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(GET_PERMIT_HOLDER, {
-    variables: {
-      id: permitHolderId,
-    },
-    onCompleted: data => {
-      setPermits(
-        data.applicant.permits.map(permit => ({
-          rcdPermitId: permit.rcdPermitId,
-          expiryDate: permit.expiryDate,
-          applicationId: permit.applicationId,
-          isRenewal: permit.application.isRenewal,
-          status: permit.application.applicationProcessing.status,
-        }))
-      );
-      // TODO: uncomment when AWS is setup and we use real files
-      // const files: PermitHolderAttachedFile[] = [];
-      // data.applicant.fileHistory.forEach(application => {
-      //   application.documentUrls?.forEach(documentUrl => {
-      //     files.push({
-      //       appNumber: application.appNumber,
-      //       createdAt: application.createdAt,
-      //       fileUrl: documentUrl,
-      //     });
-      //   });
-      // });
-      // setAttachedFiles(files);
-      setMedicalHistoryData(
-        data.applicant.applications.map(application => ({
-          disability: application.disability,
-          createdAt: application.createdAt,
-          applicantApplication: application,
-        }))
-      );
-      setPreviousPhysicianData(
-        data.applicant.medicalHistory.map(record => ({
-          name: record.physician.name,
-          mspNumber: record.physician.mspNumber,
-          phone: record.physician.phone,
-        }))
-      );
-    },
-  });
+  const { data, refetch } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(
+    GET_PERMIT_HOLDER,
+    {
+      variables: {
+        id: permitHolderId,
+      },
+      fetchPolicy: 'network-only',
+      onCompleted: data => {
+        setPermits(
+          data.applicant.permits.map(permit => ({
+            rcdPermitId: permit.rcdPermitId,
+            expiryDate: permit.expiryDate,
+            applicationId: permit.applicationId,
+            isRenewal: permit.application.isRenewal,
+            status: permit.application.applicationProcessing.status,
+          }))
+        );
+        // TODO: uncomment when AWS is setup and we use real files
+        // const files: PermitHolderAttachedFile[] = [];
+        // data.applicant.fileHistory.forEach(application => {
+        //   application.documentUrls?.forEach(documentUrl => {
+        //     files.push({
+        //       appNumber: application.appNumber,
+        //       createdAt: application.createdAt,
+        //       fileUrl: documentUrl,
+        //     });
+        //   });
+        // });
+        // setAttachedFiles(files);
+        setMedicalHistoryData(
+          data.applicant.applications.map(application => ({
+            disability: application.disability,
+            createdAt: application.createdAt,
+            applicantApplication: application,
+          }))
+        );
+        setPreviousPhysicianData(
+          data.applicant.medicalHistory.map(record => ({
+            name: record.physician.name,
+            mspNumber: record.physician.mspNumber,
+            phone: record.physician.phone,
+          }))
+        );
+      },
+    }
+  );
 
   const toast = useToast();
 
-  // Submit edited doctor information mutation
-  const [submitEditedDoctorInformation] = useMutation<
-    UpsertPhysicianResponse,
-    UpsertPhysicianRequest
-  >(UPSERT_PHYSICIAN_MUTATION, {
-    onCompleted: data => {
-      if (data.upsertPhysician.ok) {
-        toast({
-          status: 'success',
-          description: "Doctor's information has been edited.",
-        });
-      }
-    },
+  // Submit updated medical information mutation
+  const [submitUpdatedMedicalInformation] = useMutation<
+    UpdateMedicalInformationResponse,
+    UpdateMedicalInformationRequest
+  >(UPDATE_MEDICAL_INFORMATION_MUTATION, {
     onError: error => {
       toast({
         status: 'error',
         description: error.message,
       });
     },
-    refetchQueries: ['GetPermitHolder'],
+  });
+
+  // Submit edited doctor information mutation
+  const [submitEditedDoctorInformation] = useMutation<
+    UpsertPhysicianResponse,
+    UpsertPhysicianRequest
+  >(UPSERT_PHYSICIAN_MUTATION, {
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
   });
 
   // Submit edited user information mutation
@@ -136,8 +150,42 @@ export default function PermitHolder({ permitHolderId }: Props) {
    * Update Doctor Information handler
    * @param physicianData Updated physician data
    */
-  const handleUpdateDoctorInformation = (physicianData: UpsertPhysicianInput) => {
-    submitEditedDoctorInformation({ variables: { input: { ...physicianData } } });
+  const handleUpdateDoctorInformation = async (physicianData: UpsertPhysicianInput) => {
+    if (data) {
+      const oldDoctorMSP = data.applicant.medicalInformation.physician.mspNumber;
+
+      const editDoctorResult = await submitEditedDoctorInformation({
+        variables: { input: { ...physicianData } },
+      });
+      const physicianId = editDoctorResult?.data?.upsertPhysician.physicianId;
+      let isErrorOnUpdateDoctor = editDoctorResult?.data?.upsertPhysician.ok ? false : true;
+
+      // If the physician's MSP number changed, then a new physician is created by submitEditedDoctorInformation.
+      // This updates the physicianId in the applicants medical information to be the new physician's id.
+      if (!isErrorOnUpdateDoctor && physicianId && physicianData.mspNumber !== oldDoctorMSP) {
+        const updateMedicalInformationResult = await submitUpdatedMedicalInformation({
+          variables: {
+            input: {
+              applicantId: +data.applicant.id,
+              physicianId: physicianId,
+            },
+          },
+        });
+
+        isErrorOnUpdateDoctor = updateMedicalInformationResult?.data?.updateMedicalInformation.ok
+          ? false
+          : true;
+      }
+
+      if (!isErrorOnUpdateDoctor) {
+        toast({
+          status: 'success',
+          description: "Doctor's information has been edited.",
+        });
+      }
+
+      refetch();
+    }
   };
 
   /**

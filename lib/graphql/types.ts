@@ -820,6 +820,7 @@ export type UpdateMedicalInformationInput = {
   notes?: Maybe<Scalars['String']>;
   certificationDate?: Maybe<Scalars['Date']>;
   aid?: Maybe<Array<Aid>>;
+  physicianId?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateMedicalInformationResult = {
@@ -843,6 +844,7 @@ export type UpsertPhysicianInput = {
 export type UpsertPhysicianResult = {
   __typename?: 'UpsertPhysicianResult';
   ok: Scalars['Boolean'];
+  physicianId: Scalars['Int'];
 };
 
 export enum UserStatus {
