@@ -163,6 +163,8 @@ export default function PermitHolder({ permitHolderId }: Props) {
       });
       const physicianId = result?.data?.upsertPhysician.physicianId;
 
+      // If the physician's MSP number changed, then a new physician is created by submitEditedDoctorInformation.
+      // This updates the physicianId in the applicants medical information to be the new physician's id.
       if (!isErrorOnUpdateDoctor && physicianId && physicianData.mspNumber !== oldDoctorMSP) {
         await submitUpdatedMedicalInformation({
           variables: {
