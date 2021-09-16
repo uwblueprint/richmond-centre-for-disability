@@ -104,7 +104,7 @@ export default function EditDoctorInformationModal({
                   <FormControl isRequired>
                     <FormLabel>{'Medical Services Plan number'}</FormLabel>
                     <Input
-                      value={mspNumber}
+                      value={mspNumber || ''}
                       onChange={event => setMspNumber(parseInt(event.target.value))}
                     />
                   </FormControl>

@@ -40,9 +40,6 @@ type Props = {
   readonly permitHolderId: number;
 };
 
-// Must be defined outside of PermitHolder function otherwise variable does not maintain value
-let physicianId: number;
-
 // Individual permit holder page
 export default function PermitHolder({ permitHolderId }: Props) {
   const [permits, setPermits] = useState<PermitData[]>();
@@ -59,6 +56,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
       variables: {
         id: permitHolderId,
       },
+      fetchPolicy: 'network-only',
       onCompleted: data => {
         setPermits(
           data.applicant.permits.map(permit => ({
@@ -120,9 +118,6 @@ export default function PermitHolder({ permitHolderId }: Props) {
     UpsertPhysicianResponse,
     UpsertPhysicianRequest
   >(UPSERT_PHYSICIAN_MUTATION, {
-    onCompleted: data => {
-      physicianId = data.upsertPhysician.physicianId;
-    },
     onError: error => {
       toast({
         status: 'error',
@@ -163,9 +158,12 @@ export default function PermitHolder({ permitHolderId }: Props) {
       const oldDoctorMSP = data.applicant.medicalInformation.physician.mspNumber;
       setIsErrorOnUpdateDoctor(false);
 
-      await submitEditedDoctorInformation({ variables: { input: { ...physicianData } } });
+      const result = await submitEditedDoctorInformation({
+        variables: { input: { ...physicianData } },
+      });
+      const physicianId = result?.data?.upsertPhysician.physicianId;
 
-      if (!isErrorOnUpdateDoctor && physicianData.mspNumber !== oldDoctorMSP) {
+      if (!isErrorOnUpdateDoctor && physicianId && physicianData.mspNumber !== oldDoctorMSP) {
         await submitUpdatedMedicalInformation({
           variables: {
             input: {
