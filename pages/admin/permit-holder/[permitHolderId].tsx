@@ -154,16 +154,16 @@ export default function PermitHolder({ permitHolderId }: Props) {
     if (data) {
       const oldDoctorMSP = data.applicant.medicalInformation.physician.mspNumber;
 
-      const result = await submitEditedDoctorInformation({
+      const editDoctorResult = await submitEditedDoctorInformation({
         variables: { input: { ...physicianData } },
       });
-      const physicianId = result?.data?.upsertPhysician.physicianId;
-      const isErrorOnUpdateDoctor = result?.data?.upsertPhysician.ok ? false : true;
+      const physicianId = editDoctorResult?.data?.upsertPhysician.physicianId;
+      let isErrorOnUpdateDoctor = editDoctorResult?.data?.upsertPhysician.ok ? false : true;
 
       // If the physician's MSP number changed, then a new physician is created by submitEditedDoctorInformation.
       // This updates the physicianId in the applicants medical information to be the new physician's id.
       if (!isErrorOnUpdateDoctor && physicianId && physicianData.mspNumber !== oldDoctorMSP) {
-        await submitUpdatedMedicalInformation({
+        const updateMedicalInformationResult = await submitUpdatedMedicalInformation({
           variables: {
             input: {
               applicantId: +data.applicant.id,
@@ -171,6 +171,10 @@ export default function PermitHolder({ permitHolderId }: Props) {
             },
           },
         });
+
+        isErrorOnUpdateDoctor = updateMedicalInformationResult?.data?.updateMedicalInformation.ok
+          ? false
+          : true;
       }
 
       if (!isErrorOnUpdateDoctor) {
