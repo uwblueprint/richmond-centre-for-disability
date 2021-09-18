@@ -14,9 +14,10 @@ import {
   MenuItem,
   IconButton,
   Button,
+  Select,
 } from '@chakra-ui/react'; // Chakra UI
 // Internal home page
-import { AddIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { AddIcon } from '@chakra-ui/icons';
 import Pagination from '@components/internal/Pagination'; // Pagination component
 
 function renderActionsMenu() {
@@ -31,26 +32,23 @@ function renderActionsMenu() {
       />
       <MenuList>
         <MenuItem>Edit User</MenuItem>
-        <MenuItem color="text.critical">Delete User</MenuItem>
+        <MenuItem>Delete User</MenuItem>
       </MenuList>
     </Menu>
   );
 }
 
-function renderRoleMenu() {
+type RoleProps = {
+  readonly value: string;
+};
+
+function renderRoleMenu({ value }: RoleProps) {
   return (
-    <Menu>
-      <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-        Actions
-      </MenuButton>
-      <MenuList>
-        <MenuItem>Download</MenuItem>
-        <MenuItem>Create a Copy</MenuItem>
-        <MenuItem>Mark as Draft</MenuItem>
-        <MenuItem>Delete</MenuItem>
-        <MenuItem>Attend a Workshop</MenuItem>
-      </MenuList>
-    </Menu>
+    <Select defaultValue={value} width={190}>
+      <option value="frontDesk">Front Desk</option>
+      <option value="accountant">Accountant</option>
+      <option value="admin">Admin</option>
+    </Select>
   );
 }
 
@@ -58,22 +56,24 @@ const COLUMNS = [
   {
     Header: 'Name',
     accessor: 'name',
-    minWidth: 150,
-    width: 190,
+    sortDescFirst: true,
+    minWidth: 240,
+    width: 240,
   },
   {
     Header: 'Email',
     accessor: 'email',
-    minWidth: 200,
-    width: 240,
+    disableSortBy: true,
+    minWidth: 240,
+    width: 270,
   },
   {
     Header: 'Role',
     accessor: 'role',
     Cell: renderRoleMenu,
     disableSortBy: true,
-    maxWidth: 180,
-    width: 180,
+    maxWidth: 240,
+    width: 240,
   },
   {
     Header: 'Actions',
@@ -89,14 +89,32 @@ const DATA = [
   {
     name: 'Steve Rogers',
     email: 'steverogers@uwblueprint.org',
+    role: 'frontDesk',
   },
   {
     name: 'Tony Stark',
     email: 'tstark@avengers.inc',
+    role: 'accountant',
   },
   {
     name: 'Hulk',
     email: 'incrediblehulk@smash.com',
+    role: 'admin',
+  },
+  {
+    name: 'Doctor Strange',
+    email: 'strange@uwblueprint.org',
+    role: 'frontDesk',
+  },
+  {
+    name: 'Spiderman',
+    email: 'spider@avengers.inc',
+    role: 'accountant',
+  },
+  {
+    name: 'Thor',
+    email: 'thegodthor@asgard.odin',
+    role: 'admin',
   },
 ];
 
