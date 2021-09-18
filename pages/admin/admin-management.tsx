@@ -13,42 +13,74 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  Button,
 } from '@chakra-ui/react'; // Chakra UI
 // Internal home page
+import { AddIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import Pagination from '@components/internal/Pagination'; // Pagination component
+
+function renderActionsMenu() {
+  return (
+    <Menu>
+      <MenuButton
+        as={IconButton}
+        aria-label="Options"
+        icon={<img src="/assets/three-dots.svg" />}
+        variant="outline"
+        border="none"
+      />
+      <MenuList>
+        <MenuItem>Edit User</MenuItem>
+        <MenuItem color="text.critical">Delete User</MenuItem>
+      </MenuList>
+    </Menu>
+  );
+}
+
+function renderRoleMenu() {
+  return (
+    <Menu>
+      <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+        Actions
+      </MenuButton>
+      <MenuList>
+        <MenuItem>Download</MenuItem>
+        <MenuItem>Create a Copy</MenuItem>
+        <MenuItem>Mark as Draft</MenuItem>
+        <MenuItem>Delete</MenuItem>
+        <MenuItem>Attend a Workshop</MenuItem>
+      </MenuList>
+    </Menu>
+  );
+}
 
 const COLUMNS = [
   {
     Header: 'Name',
     accessor: 'name',
-    minWidth: 240,
-    width: 280,
+    minWidth: 150,
+    width: 190,
   },
   {
-    Header: 'Date Received',
-    accessor: 'dateReceived',
-    maxWidth: 240,
+    Header: 'Email',
+    accessor: 'email',
+    minWidth: 200,
     width: 240,
   },
   {
-    Header: 'Permit Type',
-    accessor: 'permitType',
+    Header: 'Role',
+    accessor: 'role',
+    Cell: renderRoleMenu,
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
   },
   {
-    Header: 'Request Type',
-    accessor: 'requestType',
+    Header: 'Actions',
+    Cell: renderActionsMenu,
     disableSortBy: true,
-    maxWidth: 180,
-    width: 180,
-  },
-  {
-    Header: 'Status',
-    accessor: 'status',
-    disableSortBy: true,
-    maxWidth: 180,
-    width: 100,
+    minWidth: 120,
+    width: 120,
   },
 ];
 
@@ -56,24 +88,15 @@ const COLUMNS = [
 const DATA = [
   {
     name: 'Steve Rogers',
-    dateReceived: 'Dec 21 2021, 8:30 pm',
-    permitType: 'Permanent',
-    requestType: 'Replacement',
-    status: 'PENDING',
+    email: 'steverogers@uwblueprint.org',
   },
   {
-    name: 'Steve Rogers',
-    dateReceived: 'Dec 21 2021, 8:30 pm',
-    permitType: 'Permanent',
-    requestType: 'Replacement',
-    status: 'INPROGRESS',
+    name: 'Tony Stark',
+    email: 'tstark@avengers.inc',
   },
   {
-    name: 'Steve Rogers',
-    dateReceived: 'Dec 21 2021, 8:30 pm',
-    permitType: 'Permanent',
-    requestType: 'Replacement',
-    status: 'COMPLETED',
+    name: 'Hulk',
+    email: 'incrediblehulk@smash.com',
   },
 ];
 
@@ -81,26 +104,14 @@ export default function AdminManagement() {
   return (
     <Layout>
       <GridItem colSpan={12}>
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            aria-label="Options"
-            icon={<img src="/assets/three-dots.svg" />}
-            variant="outline"
-            border="none"
-          />
-          <MenuList>
-            <MenuItem>New Tab</MenuItem>
-            <MenuItem>New Window</MenuItem>
-            <MenuItem>Open Closed Tab</MenuItem>
-            <MenuItem>Open File...</MenuItem>
-          </MenuList>
-        </Menu>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Admin Management</Text>
+          <Button leftIcon={<AddIcon />}>Add an RCD User</Button>
         </Flex>
         <Table columns={COLUMNS} data={DATA} />
-        <Flex justifyContent="flex-end">{/*<Pagination pageSize={20} totalCount={150} />*/}</Flex>
+        <Flex justifyContent="flex-end">
+          <Pagination pageNumber={0} pageSize={20} totalCount={100} />
+        </Flex>
       </GridItem>
     </Layout>
   );
