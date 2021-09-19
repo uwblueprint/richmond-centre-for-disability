@@ -53,6 +53,7 @@ function renderRoleMenu({ value }: { value: string }) {
   );
 }
 
+// Table columns
 const COLUMNS = [
   {
     Header: 'Name',
