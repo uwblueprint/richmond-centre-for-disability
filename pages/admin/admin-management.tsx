@@ -22,37 +22,6 @@ import {
 import { AddIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import Pagination from '@components/internal/Pagination'; // Pagination component
 
-function renderActionsMenu() {
-  return (
-    <Menu>
-      <MenuButton
-        as={IconButton}
-        aria-label="Options"
-        icon={<img src="/assets/three-dots.svg" />}
-        variant="outline"
-        border="none"
-      />
-      <MenuList>
-        <MenuItem>Edit User</MenuItem>
-        <MenuItem color="text.critical" textStyle="button-regular">
-          Delete User
-        </MenuItem>
-      </MenuList>
-    </Menu>
-  );
-}
-
-// Render the roles menu
-function renderRoleMenu({ value }: { value: string }) {
-  return (
-    <Select defaultValue={value} width={190}>
-      <option value="frontDesk">Front Desk</option>
-      <option value="accountant">Accountant</option>
-      <option value="admin">Admin</option>
-    </Select>
-  );
-}
-
 // Table columns
 const COLUMNS = [
   {
@@ -70,13 +39,39 @@ const COLUMNS = [
   {
     Header: 'Role',
     accessor: 'role',
-    Cell: renderRoleMenu,
+    Cell: ({ value }: { value: string }) => {
+      return (
+        <Select defaultValue={value} width={190}>
+          <option value="frontDesk">Front Desk</option>
+          <option value="accountant">Accountant</option>
+          <option value="admin">Admin</option>
+        </Select>
+      );
+    },
     disableSortBy: true,
     minWidth: 240,
   },
   {
     Header: 'Actions',
-    Cell: renderActionsMenu,
+    Cell: () => {
+      return (
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            aria-label="Options"
+            icon={<img src="/assets/three-dots.svg" />}
+            variant="outline"
+            border="none"
+          />
+          <MenuList>
+            <MenuItem>Edit User</MenuItem>
+            <MenuItem color="text.critical" textStyle="button-regular">
+              Delete User
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      );
+    },
     disableSortBy: true,
     width: 120,
   },
