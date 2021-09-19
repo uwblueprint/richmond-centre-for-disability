@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+// Eslint Disable Temporarily for Pagination since API hookup not complete.
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import Layout from '@components/internal/Layout'; // Layout component
@@ -7,6 +9,7 @@ import Table from '@components/internal/Table'; // Table component
 import {
   Flex,
   Text,
+  Box,
   GridItem,
   Menu,
   MenuButton,
@@ -32,7 +35,9 @@ function renderActionsMenu() {
       />
       <MenuList>
         <MenuItem>Edit User</MenuItem>
-        <MenuItem>Delete User</MenuItem>
+        <MenuItem color="text.critical" textStyle="button-regular">
+          Delete User
+        </MenuItem>
       </MenuList>
     </Menu>
   );
@@ -58,28 +63,24 @@ const COLUMNS = [
     accessor: 'name',
     sortDescFirst: true,
     minWidth: 240,
-    width: 240,
   },
   {
     Header: 'Email',
     accessor: 'email',
     disableSortBy: true,
-    minWidth: 240,
-    width: 270,
+    minWidth: 270,
   },
   {
     Header: 'Role',
     accessor: 'role',
     Cell: renderRoleMenu,
     disableSortBy: true,
-    maxWidth: 240,
-    width: 240,
+    minWidth: 240,
   },
   {
     Header: 'Actions',
     Cell: renderActionsMenu,
     disableSortBy: true,
-    minWidth: 120,
     width: 120,
   },
 ];
@@ -126,10 +127,14 @@ export default function AdminManagement() {
           <Text textStyle="display-xlarge">Admin Management</Text>
           <Button leftIcon={<AddIcon />}>Add an RCD User</Button>
         </Flex>
-        <Table columns={COLUMNS} data={DATA} />
-        <Flex justifyContent="flex-end">
-          <Pagination pageNumber={0} pageSize={20} totalCount={100} />
-        </Flex>
+        <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
+          <Box padding="20px 24px 0">
+            <Table columns={COLUMNS} data={DATA} />
+          </Box>
+          <Flex justifyContent="flex-end" padding="12px 24px">
+            <Pagination pageNumber={0} pageSize={20} totalCount={100} onPageChange={() => {}} />
+          </Flex>
+        </Box>
       </GridItem>
     </Layout>
   );
