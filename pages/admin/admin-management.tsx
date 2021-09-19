@@ -20,7 +20,7 @@ import {
   Select,
 } from '@chakra-ui/react'; // Chakra UI
 // Internal home page
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import Pagination from '@components/internal/Pagination'; // Pagination component
 
 function renderActionsMenu() {
