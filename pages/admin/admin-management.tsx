@@ -43,11 +43,8 @@ function renderActionsMenu() {
   );
 }
 
-type RoleProps = {
-  readonly value: string;
-};
-
-function renderRoleMenu({ value }: { value: string; }) {
+// Render the roles menu
+function renderRoleMenu({ value }: { value: string }) {
   return (
     <Select defaultValue={value} width={190}>
       <option value="frontDesk">Front Desk</option>
