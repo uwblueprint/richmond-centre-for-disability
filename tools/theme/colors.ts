@@ -18,6 +18,7 @@ const colors = {
   text: {
     secondary: '#323741',
     filler: '#A3AEBE',
+    critical: '#D72C0D',
   },
   overlay: {
     primary: {
