@@ -53,11 +53,9 @@ const COLUMNS: Column<any>[] = [
       return (
         <div>
           <Text>{`${value.firstName} ${value.lastName}`}</Text>
-          {value.rcdUserId && (
-            <Text textStyle="caption" textColor="secondary">
-              ID: {value.rcdUserId}
-            </Text>
-          )}
+          <Text textStyle="caption" textColor="secondary">
+            ID: {value.rcdUserId ? '#' + value.rcdUserId : 'N/A'}
+          </Text>
         </div>
       );
     },
@@ -165,12 +163,12 @@ export default function Requests() {
     notifyOnNetworkStatusChange: true,
     onCompleted: data => {
       setRequestsData(
-        data.applications.result.map(record => ({
+        data.applications?.result.map(record => ({
           id: record.id,
           name: {
             firstName: record.firstName,
             lastName: record.lastName,
-            rcdUserId: record.applicantId || undefined,
+            rcdUserId: record.rcdUserId || undefined,
           },
           dateReceived: record.createdAt,
           permitType: record.permitType,
