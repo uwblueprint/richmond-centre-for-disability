@@ -51,6 +51,7 @@ CREATE TABLE employees (
   email             VARCHAR(255) UNIQUE NOT NULL,
   email_verified    TIMESTAMPTZ,
   role              Role NOT NULL,
+  active            BOOLEAN NOT NULL DEFAULT true,
   created_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
