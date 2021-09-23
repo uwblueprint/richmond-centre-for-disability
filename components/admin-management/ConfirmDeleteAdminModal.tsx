@@ -33,7 +33,7 @@ export default function ConfirmDeleteAdminModal(props: Props) {
   } = props;
 
   return (
-    <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={cancelButtonRef}>
+    <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={cancelButtonRef} isCentered>
       <AlertDialogOverlay />
       <AlertDialogContent>
         <AlertDialogHeader>{`Delete ${name}`}</AlertDialogHeader>

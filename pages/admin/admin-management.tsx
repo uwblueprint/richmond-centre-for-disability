@@ -60,6 +60,9 @@ const DATA = [
   },
 ];
 
+/**
+ * Admin management page
+ */
 export default function AdminManagement() {
   // Deletion modal state
   const {
