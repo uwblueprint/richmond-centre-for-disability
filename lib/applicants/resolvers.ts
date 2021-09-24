@@ -49,7 +49,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
 
     let expiryDateUpperBound,
       expiryDateLowerBound,
-      userIDSearch,
+      rcdUserIDSearch,
       nameFilters,
       firstSearch,
       middleSearch,
@@ -57,7 +57,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
 
     // Parse search input for id or name
     if (parseInt(search)) {
-      userIDSearch = parseInt(search);
+      rcdUserIDSearch = parseInt(search);
     } else if (search) {
       // Split search to first, middle and last name elements
       [firstSearch, middleSearch, lastSearch] = search?.split(' ');
@@ -134,7 +134,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
 
     // Update default filter since there were filter arguments
     where = {
-      rcdUserId: userIDSearch,
+      rcdUserId: rcdUserIDSearch,
       status: userStatus,
       permits: permitFilter,
       ...nameFilters,

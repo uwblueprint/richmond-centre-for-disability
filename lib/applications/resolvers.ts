@@ -56,10 +56,10 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     } = filter;
 
     // Parse search string
-    let userIDSearch, firstSearch, middleSearch, lastSearch, nameFilters;
+    let rcdUserIDSearch, firstSearch, middleSearch, lastSearch, nameFilters;
 
     if (parseInt(search)) {
-      userIDSearch = parseInt(search);
+      rcdUserIDSearch = parseInt(search);
     } else if (search) {
       // Split search to first, middle and last name elements
       [firstSearch, middleSearch, lastSearch] = search?.split(' ');
@@ -113,7 +113,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     }
 
     where = {
-      rcdUserId: userIDSearch,
+      rcdUserId: rcdUserIDSearch,
       applicationProcessing: {
         status: status,
       },
