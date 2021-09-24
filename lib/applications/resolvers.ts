@@ -113,9 +113,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     }
 
     where = {
-      applicant: {
-        id: userIDSearch,
-      },
+      rcdUserId: userIDSearch,
       applicationProcessing: {
         status: status,
       },
