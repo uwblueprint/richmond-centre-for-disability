@@ -54,7 +54,7 @@ const COLUMNS: Column<any>[] = [
         <div>
           <Text>{`${value.firstName} ${value.lastName}`}</Text>
           <Text textStyle="caption" textColor="secondary">
-            ID: {value.rcdUserId ? '#' + value.rcdUserId : 'N/A'}
+            ID: {value.rcdUserId ? `#${value.rcdUserId}` : 'N/A'}
           </Text>
         </div>
       );
