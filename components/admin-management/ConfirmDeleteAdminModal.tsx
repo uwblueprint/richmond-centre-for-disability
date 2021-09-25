@@ -36,10 +36,17 @@ export default function ConfirmDeleteAdminModal(props: Props) {
     <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={cancelButtonRef} isCentered>
       <AlertDialogOverlay />
       <AlertDialogContent>
-        <AlertDialogHeader>{`Delete ${name}`}</AlertDialogHeader>
-        <AlertDialogBody>{`Are you sure you want to delete ${name}? This action is irreversible`}</AlertDialogBody>
+        <AlertDialogHeader paddingBottom="2px">{`Delete ${name}`}</AlertDialogHeader>
+        <AlertDialogBody>{`Are you sure you want to delete ${name}? This action is irreversible.`}</AlertDialogBody>
         <AlertDialogFooter>
-          <Button ref={cancelButtonRef} onClick={onClose} marginRight="12px">
+          <Button
+            ref={cancelButtonRef}
+            onClick={onClose}
+            marginRight="12px"
+            color="text.default"
+            bg="background.gray"
+            _hover={{ bg: 'background.grayHover' }}
+          >
             Cancel
           </Button>
           <Button
