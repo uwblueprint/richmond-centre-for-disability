@@ -450,6 +450,7 @@ export type Mutation = {
   createApplicant: CreateApplicantResult;
   updateApplicant: UpdateApplicantResult;
   createEmployee: CreateEmployeeResult;
+  updateEmployee: UpdateEmployeeResult;
   createPhysician: CreatePhysicianResult;
   upsertPhysician: UpsertPhysicianResult;
   createApplication: CreateApplicationResult;
@@ -476,6 +477,11 @@ export type MutationUpdateApplicantArgs = {
 
 export type MutationCreateEmployeeArgs = {
   input: CreateEmployeeInput;
+};
+
+
+export type MutationUpdateEmployeeArgs = {
+  input: UpdateEmployeeInput;
 };
 
 
@@ -795,6 +801,20 @@ export type UpdateApplicationProcessingResult = {
 
 export type UpdateApplicationResult = {
   __typename?: 'UpdateApplicationResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateEmployeeInput = {
+  id: Scalars['ID'];
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  role: Role;
+  active: Scalars['Boolean'];
+};
+
+export type UpdateEmployeeResult = {
+  __typename?: 'UpdateEmployeeResult';
   ok: Scalars['Boolean'];
 };
 
