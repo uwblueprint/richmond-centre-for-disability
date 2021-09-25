@@ -11,7 +11,7 @@ import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; /
 export const employee: Resolver = async (_parent, args, { prisma }) => {
   const employee = await prisma.employee.findUnique({
     where: {
-      id: parseInt(_args.id),
+      id: parseInt(args.id),
     },
   });
   return employee;
