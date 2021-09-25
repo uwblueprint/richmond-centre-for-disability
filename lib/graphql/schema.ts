@@ -4,6 +4,7 @@ export default `
     applicants(filter: ApplicantsFilter): QueryApplicantsResult
     applicant(id: ID!): Applicant
     employees: [Employee!]
+    employee(id: ID!): Employee
     physicians: [Physician!]
     applications(filter: ApplicationsFilter): QueryApplicationsResult
     application(id: ID!): Application
