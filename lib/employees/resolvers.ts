@@ -6,7 +6,7 @@ import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; /
 
 /**
  * Query for one employee in the internal-facing app given id
- * @returns employee row
+ * @returns employee if found, null otherwise
  */
 export const employee: Resolver = async (_parent, _args, { prisma }) => {
   const employee = await prisma.employee.findUnique({
