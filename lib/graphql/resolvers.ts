@@ -1,5 +1,5 @@
 import { meta } from '@lib/meta/resolvers'; // Metadata resolvers
-import { employees, createEmployee } from '@lib/employees/resolvers'; // Employee resolvers
+import { employee, employees, createEmployee } from '@lib/employees/resolvers'; // Employee resolvers
 import {
   applicant,
   applicants,
@@ -60,6 +60,7 @@ const resolvers = {
     application: authorize(application, [Role.Secretary]),
     permits: authorize(permits, [Role.Secretary]),
     applicant: authorize(applicant, [Role.Secretary]),
+    employee: authorize(employee, [Role.Admin]),
   },
   Mutation: {
     createApplicant: authorize(createApplicant, [Role.Secretary]),

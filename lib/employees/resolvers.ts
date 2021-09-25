@@ -5,6 +5,19 @@ import { EmployeeAlreadyExistsError } from '@lib/employees/errors'; // Employee 
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 
 /**
+ * Query for one employee in the internal-facing app given id
+ * @returns employee if found, null otherwise
+ */
+export const employee: Resolver = async (_parent, args, { prisma }) => {
+  const employee = await prisma.employee.findUnique({
+    where: {
+      id: parseInt(args.id),
+    },
+  });
+  return employee;
+};
+
+/**
  * Query all the RCD employees in the internal-facing app
  * @returns All RCD employees
  */
