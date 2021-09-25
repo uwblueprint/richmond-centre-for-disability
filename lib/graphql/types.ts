@@ -392,6 +392,7 @@ export type Employee = {
   lastName: Scalars['String'];
   email: Scalars['String'];
   role: Role;
+  active: Scalars['Boolean'];
 };
 
 export enum Gender {

@@ -119,6 +119,7 @@ model Employee {
   email         String    @unique @db.VarChar(255)
   emailVerified DateTime? @map("email_verified") @db.Timestamptz(6)
   role          Role
+  active        Boolean   @default(true)
   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
