@@ -27,7 +27,7 @@ export default `
     id: ID!
     firstName: String!
     lastName: String!
-    email: String
+    email: String!
     role: Role!
     active: Boolean
   }
