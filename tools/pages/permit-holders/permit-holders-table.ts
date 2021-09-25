@@ -19,7 +19,7 @@ export const GET_PERMIT_HOLDERS_QUERY = gql`
           rcdPermitId
         }
         status
-        id
+        rcdUserId
       }
       totalCount
     }
@@ -43,7 +43,7 @@ export type PermitHolder = Pick<
   | 'phone'
   | 'mostRecentPermit'
   | 'status'
-  | 'id'
+  | 'rcdUserId'
 >;
 
 export type GetPermitHoldersResponse = {

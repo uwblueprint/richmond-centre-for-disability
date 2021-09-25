@@ -11,7 +11,7 @@ export const GET_APPLICATIONS_QUERY = gql`
         createdAt
         permitType
         isRenewal
-        applicantId
+        rcdUserId
         applicationProcessing {
           status
         }
@@ -30,7 +30,7 @@ export type GetApplicationsResponse = {
     result: ReadonlyArray<
       Pick<
         Application,
-        'firstName' | 'lastName' | 'id' | 'createdAt' | 'permitType' | 'isRenewal' | 'applicantId'
+        'firstName' | 'lastName' | 'id' | 'createdAt' | 'permitType' | 'isRenewal' | 'rcdUserId'
       > & {
         applicationProcessing: Pick<ApplicationProcessing, 'status'>;
       }

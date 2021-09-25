@@ -54,7 +54,7 @@ const COLUMNS: Column<any>[] = [
             {value.firstName} {value.middleName || ''} {value.lastName}
           </Text>
           <Text textStyle="caption" textColor="secondary">
-            ID: {value.rcdUserId}
+            ID: {value.rcdUserId ? `#${value.rcdUserId}` : 'N/A'}
           </Text>
         </>
       );
@@ -190,7 +190,7 @@ type PermitTableInputData = PermitHolder & {
     firstName: string;
     lastName: string;
     middleName: string | null | undefined;
-    rcdUserId: number;
+    rcdUserId?: number;
   };
   homeAddress: {
     address: string;
@@ -246,7 +246,7 @@ export default function PermitHolders() {
           firstName: record.firstName,
           lastName: record.lastName,
           middleName: record.middleName || undefined,
-          rcdUserId: record.id,
+          rcdUserId: record.rcdUserId || undefined,
         },
         homeAddress: {
           address: record.addressLine1,
