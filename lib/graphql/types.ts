@@ -806,11 +806,10 @@ export type UpdateApplicationResult = {
 
 export type UpdateEmployeeInput = {
   id: Scalars['ID'];
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  email: Scalars['String'];
   role: Role;
-  active: Scalars['Boolean'];
 };
 
 export type UpdateEmployeeResult = {
