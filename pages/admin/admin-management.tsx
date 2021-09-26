@@ -6,7 +6,6 @@ import { getSession } from 'next-auth/client'; // Session management
 import Layout from '@components/internal/Layout'; // Layout component
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
-
 import {
   Flex,
   Text,
@@ -25,40 +24,10 @@ import { AddIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import Pagination from '@components/internal/Pagination'; // Pagination component
 import ConfirmDeleteAdminModal from '@components/admin-management/ConfirmDeleteAdminModal'; // Confirm Delete Admin modal
 import { UserToDelete } from '@tools/pages/admin-management/types'; // Admin management types
+import AdminModal from '@components/admin-management/AdminModal'; // Admin modal component
+import { Employee, Role } from '@lib/graphql/types'; // GraphQL types
 
-// Placeholder data
-const DATA = [
-  {
-    name: 'Steve Rogers',
-    email: 'steverogers@uwblueprint.org',
-    role: 'frontDesk',
-  },
-  {
-    name: 'Tony Stark',
-    email: 'tstark@avengers.inc',
-    role: 'accountant',
-  },
-  {
-    name: 'Hulk',
-    email: 'incrediblehulk@smash.com',
-    role: 'admin',
-  },
-  {
-    name: 'Doctor Strange',
-    email: 'strange@uwblueprint.org',
-    role: 'frontDesk',
-  },
-  {
-    name: 'Spiderman',
-    email: 'spider@avengers.inc',
-    role: 'accountant',
-  },
-  {
-    name: 'Thor',
-    email: 'thegodthor@asgard.odin',
-    role: 'admin',
-  },
-];
+
 
 /**
  * Admin management page
@@ -73,6 +42,23 @@ export default function AdminManagement() {
 
   // State for admin to delete
   const [userToDelete, setUserToDelete] = useState<UserToDelete>();
+
+  //New user modal state
+  const {
+    isOpen: isNewUserModalOpen,
+    onOpen: onOpenNewUserModal,
+    onClose: onCloseNewUserModal,
+  } = useDisclosure();
+
+  //Edit user modal state
+  const {
+    isOpen: isEditUserModalOpen,
+    onOpen: onOpenEditUserModal,
+    onClose: onCloseEditUserModal,
+  } = useDisclosure();
+
+  // State for admin to update
+  const [userToUpdate, setUserToUpdate] = useState<Omit<Employee, 'id' | 'active'>>();
 
   // Table columns
   const COLUMNS = [
@@ -94,9 +80,9 @@ export default function AdminManagement() {
       Cell: ({ value }: { value: string }) => {
         return (
           <Select defaultValue={value} width={190}>
-            <option value="frontDesk">Front Desk</option>
-            <option value="accountant">Accountant</option>
-            <option value="admin">Admin</option>
+            <option value={Role.Secretary}>Front Desk</option>
+            <option value={Role.Accounting}>Accountant</option>
+            <option value={Role.Admin}>Admin</option>
           </Select>
         );
       },
@@ -107,10 +93,12 @@ export default function AdminManagement() {
       Header: 'Actions',
       Cell: ({
         row: {
-          original: { id, name },
+          original: { id, firstName, lastName, email, role },
         },
       }: {
-        row: { original: { id: number; name: string } };
+        row: {
+          original: { id: number; firstName: string; lastName: string; email: string; role: Role };
+        };
       }) => {
         return (
           <Menu>
@@ -122,12 +110,27 @@ export default function AdminManagement() {
               border="none"
             />
             <MenuList>
-              <MenuItem>Edit User</MenuItem>
               <MenuItem
-                color="text.critical"
+                onClick={() => {
+                  setUserToUpdate({
+                    firstName,
+                    lastName,
+                    email,
+                    role,
+                  });
+                  onOpenEditUserModal();
+                }}
+              >
+                Edit User
+              </MenuItem>
+              <MenuItem 
+                color="text.critical" 
                 textStyle="button-regular"
                 onClick={() => {
-                  setUserToDelete({ id, name });
+                  setUserToDelete({ 
+                    id, 
+                    name: `${firstName} ${lastName}`
+                  });
                   onOpenConfirmDeleteModal();
                 }}
               >
@@ -142,12 +145,53 @@ export default function AdminManagement() {
     },
   ];
 
+    // Placeholder data
+    const DATA = [
+      {
+        name: 'Steve Rogers',
+        email: 'steverogers@uwblueprint.org',
+        role: Role.Secretary,
+      },
+      {
+        name: 'Tony Stark',
+        email: 'tstark@avengers.inc',
+        role: Role.Accounting,
+      },
+      {
+        name: 'Hulk',
+        email: 'incrediblehulk@smash.com',
+        role: Role.Admin,
+      },
+      {
+        name: 'Doctor Strange',
+        email: 'strange@uwblueprint.org',
+        role: Role.Secretary,
+      },
+      {
+        name: 'Spiderman',
+        email: 'spider@avengers.inc',
+        role: Role.Accounting,
+      },
+      {
+        name: 'Thor',
+        email: 'thegodthor@asgard.odin',
+        role: Role.Admin,
+      },
+    ];
+
   return (
     <Layout>
       <GridItem colSpan={12}>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Admin Management</Text>
-          <Button leftIcon={<AddIcon />}>Add an RCD User</Button>
+          <Button
+            leftIcon={<AddIcon />}
+            onClick={() => {
+              onOpenNewUserModal();
+            }}
+          >
+            Add an RCD User
+          </Button>
         </Flex>
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
           <Box padding="20px 24px 0">
@@ -167,6 +211,19 @@ export default function AdminManagement() {
           onDelete={onCloseConfirmDeleteModal}
         />
       )}
+      <AdminModal
+        isOpen={isNewUserModalOpen}
+        title="Add New User"
+        onClose={onCloseNewUserModal}
+        onSave={() => {}}
+      />
+      <AdminModal
+        isOpen={isEditUserModalOpen}
+        title="Edit User"
+        admin={userToUpdate}
+        onClose={onCloseEditUserModal}
+        onSave={() => {}}
+      />
     </Layout>
   );
 }
