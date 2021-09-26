@@ -29,7 +29,6 @@ export default `
     lastName: String!
     email: String!
     role: Role!
-    active: Boolean
   }
 
   type UpdateEmployeeResult {
