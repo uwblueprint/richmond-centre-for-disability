@@ -22,4 +22,16 @@ export default `
   type CreateEmployeeResult {
     ok: Boolean!
   }
+
+  input UpdateEmployeeInput {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    email: String!
+    role: Role!
+  }
+
+  type UpdateEmployeeResult {
+    ok: Boolean!
+  }
 `;

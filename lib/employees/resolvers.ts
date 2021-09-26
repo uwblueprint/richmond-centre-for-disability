@@ -1,7 +1,7 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Prisma } from '@prisma/client'; // Prisma client
 import { Resolver } from '@lib/resolvers'; // Resolver type
-import { EmployeeAlreadyExistsError } from '@lib/employees/errors'; // Employee errors
+import { EmployeeAlreadyExistsError, EmployeeNotFoundError } from '@lib/employees/errors'; // Employee errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 
 /**
@@ -58,6 +58,46 @@ export const createEmployee: Resolver = async (_, args, { prisma }) => {
   // Throw internal server error if user was not created
   if (!user) {
     throw new ApolloError('User was unable to be created');
+  }
+
+  return {
+    ok: true,
+  };
+};
+
+/**
+ * Update an employee
+ * @returns status of operation (ok)
+ */
+export const updateEmployee: Resolver = async (_, args, { prisma }) => {
+  const { input } = args;
+  const { id, ...rest } = input;
+  const employeeData = { ...rest };
+
+  let updatedEmployee;
+  try {
+    updatedEmployee = await prisma.employee.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: employeeData,
+    });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === DBErrorCode.RecordNotFound) {
+        throw new EmployeeNotFoundError(`Employee with ID ${id} not found`);
+      }
+      if (
+        err.code === DBErrorCode.UniqueConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('email')
+      ) {
+        throw new EmployeeAlreadyExistsError(`Employee with email ${input.email} already exists`);
+      }
+    }
+  }
+
+  if (!updatedEmployee) {
+    throw new ApolloError('Employee was unable to be updated');
   }
 
   return {
