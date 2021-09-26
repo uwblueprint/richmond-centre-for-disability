@@ -1,5 +1,5 @@
 import { meta } from '@lib/meta/resolvers'; // Metadata resolvers
-import { employees, createEmployee, updateEmployee } from '@lib/employees/resolvers'; // Employee resolvers
+import { employees, createEmployee, updateEmployee, employee } from '@lib/employees/resolvers'; // Employee resolvers
 import {
   applicant,
   applicants,
