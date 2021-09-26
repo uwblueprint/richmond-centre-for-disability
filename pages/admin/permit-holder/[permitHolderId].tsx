@@ -40,17 +40,10 @@ type Props = {
   readonly permitHolderId: number;
 };
 
-// Must be defined outside of PermitHolder function otherwise variable does not maintain value
-let physicianId: number;
-
 // Individual permit holder page
 export default function PermitHolder({ permitHolderId }: Props) {
   const [permits, setPermits] = useState<PermitData[]>();
   const [medicalHistoryData, setMedicalHistoryData] = useState<MedicalHistoryEntry[]>();
-<<<<<<< HEAD
-=======
-  const [isErrorOnUpdateDoctor, setIsErrorOnUpdateDoctor] = useState<boolean>(false);
->>>>>>> c9afb99 (creates new Physician when MSP number changes and updates Doctor's Information Card accordingly)
 
   // TODO: uncomment when AWS is setup and we use real files
   // const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
@@ -62,10 +55,7 @@ export default function PermitHolder({ permitHolderId }: Props) {
       variables: {
         id: permitHolderId,
       },
-<<<<<<< HEAD
       fetchPolicy: 'network-only',
-=======
->>>>>>> c9afb99 (creates new Physician when MSP number changes and updates Doctor's Information Card accordingly)
       onCompleted: data => {
         setPermits(
           data.applicant.permits.map(permit => ({
@@ -126,15 +116,11 @@ export default function PermitHolder({ permitHolderId }: Props) {
     UpsertPhysicianResponse,
     UpsertPhysicianRequest
   >(UPSERT_PHYSICIAN_MUTATION, {
-    onCompleted: data => {
-      physicianId = data.upsertPhysician.physicianId;
-    },
     onError: error => {
       toast({
         status: 'error',
         description: error.message,
       });
-      setIsErrorOnUpdateDoctor(true);
     },
   });
 
@@ -167,7 +153,6 @@ export default function PermitHolder({ permitHolderId }: Props) {
   const handleUpdateDoctorInformation = async (physicianData: UpsertPhysicianInput) => {
     if (data) {
       const oldDoctorMSP = data.applicant.medicalInformation.physician.mspNumber;
-<<<<<<< HEAD
 
       const editDoctorResult = await submitEditedDoctorInformation({
         variables: { input: { ...physicianData } },
@@ -182,17 +167,6 @@ export default function PermitHolder({ permitHolderId }: Props) {
           variables: {
             input: {
               applicantId: +data.applicant.id,
-=======
-      setIsErrorOnUpdateDoctor(false);
-
-      await submitEditedDoctorInformation({ variables: { input: { ...physicianData } } });
-
-      if (!isErrorOnUpdateDoctor && physicianData.mspNumber !== oldDoctorMSP) {
-        await submitUpdatedMedicalInformation({
-          variables: {
-            input: {
-              applicantId: parseInt(data.applicant.id),
->>>>>>> c9afb99 (creates new Physician when MSP number changes and updates Doctor's Information Card accordingly)
               physicianId: physicianId,
             },
           },
