@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client'; // Prisma client
 import { Resolver } from '@lib/resolvers'; // Resolver type
 import { EmployeeAlreadyExistsError, EmployeeNotFoundError } from '@lib/employees/errors'; // Employee errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
+import { SortOrder } from '@tools/types'; // Sorting Type
 
 /**
  * Query for one employee in the internal-facing app given id
@@ -19,10 +20,24 @@ export const employee: Resolver = async (_parent, args, { prisma }) => {
 
 /**
  * Query all the RCD employees in the internal-facing app
+ * Sorting:
+ * - order: array of tuples of the field being sorted and the order. Default [['firstName', 'asc'], ['lastName', 'asc']]
  * @returns All RCD employees
  */
-export const employees: Resolver = async (_parent, _args, { prisma }) => {
-  const employees = await prisma.employee.findMany();
+export const employees: Resolver = async (_parent, { filter }, { prisma }) => {
+  const sortingOrder: Record<string, SortOrder> = {};
+
+  if (filter?.order) {
+    filter.order.forEach(([field, order]: [string, SortOrder]) => (sortingOrder[field] = order));
+  }
+
+  const employees = await prisma.employee.findMany({
+    orderBy: [
+      { firstName: sortingOrder.name || SortOrder.ASC },
+      { lastName: sortingOrder.name || SortOrder.ASC },
+    ],
+  });
+
   return employees;
 };
 

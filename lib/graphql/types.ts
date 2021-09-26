@@ -395,6 +395,10 @@ export type Employee = {
   active: Scalars['Boolean'];
 };
 
+export type EmployeesFilter = {
+  order?: Maybe<Array<Array<Scalars['String']>>>;
+};
+
 export enum Gender {
   Male = 'MALE',
   Female = 'FEMALE',
@@ -629,6 +633,11 @@ export type QueryApplicantsArgs = {
 
 export type QueryApplicantArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryEmployeesArgs = {
+  filter: Maybe<EmployeesFilter>;
 };
 
 
