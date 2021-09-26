@@ -16,6 +16,7 @@ const colors = {
     caution: '#FF8A00',
   },
   text: {
+    default: '#1A1A1A',
     secondary: '#323741',
     filler: '#A3AEBE',
     critical: '#D72C0D',

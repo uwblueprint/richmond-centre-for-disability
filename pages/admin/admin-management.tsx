@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 // Eslint Disable Temporarily for Pagination since API hookup not complete.
+import { useState } from 'react'; // React
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import Layout from '@components/internal/Layout'; // Layout component
@@ -18,64 +19,12 @@ import {
   IconButton,
   Button,
   Select,
+  useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
 import { AddIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import Pagination from '@components/internal/Pagination'; // Pagination component
-
-// Table columns
-const COLUMNS = [
-  {
-    Header: 'Name',
-    accessor: 'name',
-    sortDescFirst: true,
-    minWidth: 240,
-  },
-  {
-    Header: 'Email',
-    accessor: 'email',
-    disableSortBy: true,
-    minWidth: 270,
-  },
-  {
-    Header: 'Role',
-    accessor: 'role',
-    Cell: ({ value }: { value: string }) => {
-      return (
-        <Select defaultValue={value} width={190}>
-          <option value="frontDesk">Front Desk</option>
-          <option value="accountant">Accountant</option>
-          <option value="admin">Admin</option>
-        </Select>
-      );
-    },
-    disableSortBy: true,
-    minWidth: 240,
-  },
-  {
-    Header: 'Actions',
-    Cell: () => {
-      return (
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            aria-label="Options"
-            icon={<img src="/assets/three-dots.svg" />}
-            variant="outline"
-            border="none"
-          />
-          <MenuList>
-            <MenuItem>Edit User</MenuItem>
-            <MenuItem color="text.critical" textStyle="button-regular">
-              Delete User
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      );
-    },
-    disableSortBy: true,
-    width: 120,
-  },
-];
+import ConfirmDeleteAdminModal from '@components/admin-management/ConfirmDeleteAdminModal'; // Confirm Delete Admin modal
+import { UserToDelete } from '@tools/pages/admin-management/types'; // Admin management types
 
 // Placeholder data
 const DATA = [
@@ -111,7 +60,88 @@ const DATA = [
   },
 ];
 
+/**
+ * Admin management page
+ */
 export default function AdminManagement() {
+  // Deletion modal state
+  const {
+    isOpen: isConfirmDeleteModalOpen,
+    onOpen: onOpenConfirmDeleteModal,
+    onClose: onCloseConfirmDeleteModal,
+  } = useDisclosure();
+
+  // State for admin to delete
+  const [userToDelete, setUserToDelete] = useState<UserToDelete>();
+
+  // Table columns
+  const COLUMNS = [
+    {
+      Header: 'Name',
+      accessor: 'name',
+      sortDescFirst: true,
+      minWidth: 240,
+    },
+    {
+      Header: 'Email',
+      accessor: 'email',
+      disableSortBy: true,
+      minWidth: 270,
+    },
+    {
+      Header: 'Role',
+      accessor: 'role',
+      Cell: ({ value }: { value: string }) => {
+        return (
+          <Select defaultValue={value} width={190}>
+            <option value="frontDesk">Front Desk</option>
+            <option value="accountant">Accountant</option>
+            <option value="admin">Admin</option>
+          </Select>
+        );
+      },
+      disableSortBy: true,
+      minWidth: 240,
+    },
+    {
+      Header: 'Actions',
+      Cell: ({
+        row: {
+          original: { id, name },
+        },
+      }: {
+        row: { original: { id: number; name: string } };
+      }) => {
+        return (
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              aria-label="Options"
+              icon={<img src="/assets/three-dots.svg" />}
+              variant="outline"
+              border="none"
+            />
+            <MenuList>
+              <MenuItem>Edit User</MenuItem>
+              <MenuItem
+                color="text.critical"
+                textStyle="button-regular"
+                onClick={() => {
+                  setUserToDelete({ id, name });
+                  onOpenConfirmDeleteModal();
+                }}
+              >
+                Delete User
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        );
+      },
+      disableSortBy: true,
+      width: 120,
+    },
+  ];
+
   return (
     <Layout>
       <GridItem colSpan={12}>
@@ -128,6 +158,15 @@ export default function AdminManagement() {
           </Flex>
         </Box>
       </GridItem>
+      {userToDelete && (
+        <ConfirmDeleteAdminModal
+          isOpen={isConfirmDeleteModalOpen}
+          onClose={onCloseConfirmDeleteModal}
+          user={userToDelete}
+          // TODO: Replace onDelete handler during API hookup
+          onDelete={onCloseConfirmDeleteModal}
+        />
+      )}
     </Layout>
   );
 }
