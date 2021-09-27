@@ -27,8 +27,6 @@ import { UserToDelete } from '@tools/pages/admin-management/types'; // Admin man
 import AdminModal from '@components/admin-management/AdminModal'; // Admin modal component
 import { Employee, Role } from '@lib/graphql/types'; // GraphQL types
 
-
-
 /**
  * Admin management page
  */
@@ -123,13 +121,13 @@ export default function AdminManagement() {
               >
                 Edit User
               </MenuItem>
-              <MenuItem 
-                color="text.critical" 
+              <MenuItem
+                color="text.critical"
                 textStyle="button-regular"
                 onClick={() => {
-                  setUserToDelete({ 
-                    id, 
-                    name: `${firstName} ${lastName}`
+                  setUserToDelete({
+                    id,
+                    name: `${firstName} ${lastName}`,
                   });
                   onOpenConfirmDeleteModal();
                 }}
@@ -145,39 +143,39 @@ export default function AdminManagement() {
     },
   ];
 
-    // Placeholder data
-    const DATA = [
-      {
-        name: 'Steve Rogers',
-        email: 'steverogers@uwblueprint.org',
-        role: Role.Secretary,
-      },
-      {
-        name: 'Tony Stark',
-        email: 'tstark@avengers.inc',
-        role: Role.Accounting,
-      },
-      {
-        name: 'Hulk',
-        email: 'incrediblehulk@smash.com',
-        role: Role.Admin,
-      },
-      {
-        name: 'Doctor Strange',
-        email: 'strange@uwblueprint.org',
-        role: Role.Secretary,
-      },
-      {
-        name: 'Spiderman',
-        email: 'spider@avengers.inc',
-        role: Role.Accounting,
-      },
-      {
-        name: 'Thor',
-        email: 'thegodthor@asgard.odin',
-        role: Role.Admin,
-      },
-    ];
+  // Placeholder data
+  const DATA = [
+    {
+      name: 'Steve Rogers',
+      email: 'steverogers@uwblueprint.org',
+      role: Role.Secretary,
+    },
+    {
+      name: 'Tony Stark',
+      email: 'tstark@avengers.inc',
+      role: Role.Accounting,
+    },
+    {
+      name: 'Hulk',
+      email: 'incrediblehulk@smash.com',
+      role: Role.Admin,
+    },
+    {
+      name: 'Doctor Strange',
+      email: 'strange@uwblueprint.org',
+      role: Role.Secretary,
+    },
+    {
+      name: 'Spiderman',
+      email: 'spider@avengers.inc',
+      role: Role.Accounting,
+    },
+    {
+      name: 'Thor',
+      email: 'thegodthor@asgard.odin',
+      role: Role.Admin,
+    },
+  ];
 
   return (
     <Layout>
