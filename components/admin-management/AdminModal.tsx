@@ -53,7 +53,7 @@ export default function AdminModal({ isOpen, title, admin, onClose, onSave }: Ad
     onClose();
   };
 
-  // Saves and closes modal after submit button pressed
+  // Saves and closes modal after submit button pressed by user
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     if (firstName && lastName && email && role) {
