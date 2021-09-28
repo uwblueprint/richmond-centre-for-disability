@@ -37,8 +37,9 @@ export const employees: Resolver = async (_parent, { filter }, { prisma }) => {
       { lastName: sortingOrder.name || SortOrder.ASC },
     ],
   });
-
-  return employees;
+  return {
+    result: employees,
+  };
 };
 
 /**

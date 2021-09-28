@@ -671,6 +671,11 @@ export type QueryEmployeeInput = {
   id?: Maybe<Scalars['ID']>;
 };
 
+export type QueryEmployeesResult = {
+  __typename?: 'QueryEmployeesResult';
+  result: Array<Employee>;
+};
+
 export enum ReasonForReplacement {
   Lost = 'LOST',
   Stolen = 'STOLEN',
