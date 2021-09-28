@@ -21,13 +21,28 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { AddIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import Pagination from '@components/internal/Pagination'; // Pagination component
+import { Role } from '@lib/graphql/types';
+import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
+import { useQuery } from '@apollo/client'; //Apollo client
+import { useState } from 'react'; // React
+import {
+  GetEmployeesResponse,
+  GET_EMPLOYEES_QUERY,
+  GetEmployeesRequest,
+} from '@tools/pages/admin/admin-management/get-employees';
 
 // Table columns
 const COLUMNS = [
   {
     Header: 'Name',
     accessor: 'name',
-    sortDescFirst: true,
+    Cell: ({ value }) => {
+      return (
+        <div>
+          <Text>{`${value.firstName} ${value.lastName}`}</Text>
+        </div>
+      );
+    },
     minWidth: 240,
   },
   {
@@ -42,9 +57,9 @@ const COLUMNS = [
     Cell: ({ value }: { value: string }) => {
       return (
         <Select defaultValue={value} width={190}>
-          <option value="frontDesk">Front Desk</option>
-          <option value="accountant">Accountant</option>
-          <option value="admin">Admin</option>
+          <option value="SECRETARY">Front Desk</option>
+          <option value="ACCOUNTING">Accountant</option>
+          <option value="ADMIN">Admin</option>
         </Select>
       );
     },
@@ -77,41 +92,39 @@ const COLUMNS = [
   },
 ];
 
-// Placeholder data
-const DATA = [
-  {
-    name: 'Steve Rogers',
-    email: 'steverogers@uwblueprint.org',
-    role: 'frontDesk',
-  },
-  {
-    name: 'Tony Stark',
-    email: 'tstark@avengers.inc',
-    role: 'accountant',
-  },
-  {
-    name: 'Hulk',
-    email: 'incrediblehulk@smash.com',
-    role: 'admin',
-  },
-  {
-    name: 'Doctor Strange',
-    email: 'strange@uwblueprint.org',
-    role: 'frontDesk',
-  },
-  {
-    name: 'Spiderman',
-    email: 'spider@avengers.inc',
-    role: 'accountant',
-  },
-  {
-    name: 'Thor',
-    email: 'thegodthor@asgard.odin',
-    role: 'admin',
-  },
-];
+type EmployeeData = {
+  name: {
+    firstName: string;
+    lastName: string;
+  };
+  email: string;
+  role: Role;
+};
 
 export default function AdminManagement() {
+  const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
+  const [requestsData, setRequestsData] = useState<EmployeeData[]>();
+
+  useQuery<GetEmployeesResponse, GetEmployeesRequest>(GET_EMPLOYEES_QUERY, {
+    variables: {
+      filter: {
+        order: sortOrder,
+      },
+    },
+    onCompleted: data => {
+      setRequestsData(
+        data.employees?.result.map(employee => ({
+          name: {
+            firstName: employee.firstName,
+            lastName: employee.lastName,
+          },
+          email: employee.email,
+          role: employee.role,
+        }))
+      );
+    },
+  });
+
   return (
     <Layout>
       <GridItem colSpan={12}>
@@ -121,7 +134,11 @@ export default function AdminManagement() {
         </Flex>
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
           <Box padding="20px 24px 0">
-            <Table columns={COLUMNS} data={DATA} />
+            <Table
+              columns={COLUMNS}
+              data={requestsData || []}
+              onChangeSortOrder={sortOrder => setSortOrder(sortOrder)}
+            />
           </Box>
           <Flex justifyContent="flex-end" padding="12px 24px">
             <Pagination pageNumber={0} pageSize={20} totalCount={100} onPageChange={() => {}} />

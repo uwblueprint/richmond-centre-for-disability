@@ -3,7 +3,7 @@ export default `
     meta: Meta!
     applicants(filter: ApplicantsFilter): QueryApplicantsResult
     applicant(id: ID!): Applicant
-    employees: [Employee!]
+    employees(filter: EmployeesFilter): QueryEmployeesResult
     employee(id: ID!): Employee
     physicians: [Physician!]
     applications(filter: ApplicationsFilter): QueryApplicationsResult

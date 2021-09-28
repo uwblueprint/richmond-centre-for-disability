@@ -34,4 +34,12 @@ export default `
   type UpdateEmployeeResult {
     ok: Boolean!
   }
+
+  input EmployeesFilter {
+    order: [[String!]!]
+  }
+
+  type QueryEmployeesResult {
+    result: [Employee!]!
+  }
 `;
