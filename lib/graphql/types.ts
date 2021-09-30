@@ -617,7 +617,7 @@ export type Query = {
   meta: Meta;
   applicants: Maybe<QueryApplicantsResult>;
   applicant: Maybe<Applicant>;
-  employees: Maybe<Array<Employee>>;
+  employees: Maybe<QueryEmployeesResult>;
   employee: Maybe<Employee>;
   physicians: Maybe<Array<Physician>>;
   applications: Maybe<QueryApplicationsResult>;
@@ -669,6 +669,11 @@ export type QueryApplicationsResult = {
 
 export type QueryEmployeeInput = {
   id?: Maybe<Scalars['ID']>;
+};
+
+export type QueryEmployeesResult = {
+  __typename?: 'QueryEmployeesResult';
+  result: Array<Employee>;
 };
 
 export enum ReasonForReplacement {
