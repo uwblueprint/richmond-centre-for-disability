@@ -22,7 +22,10 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { AddIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import Pagination from '@components/internal/Pagination'; // Pagination component
-import { Role } from '@lib/graphql/types';
+import ConfirmDeleteAdminModal from '@components/admin-management/ConfirmDeleteAdminModal'; // Confirm Delete Admin modal
+import { UserToDelete } from '@tools/pages/admin-management/types'; // Admin management types
+import AdminModal from '@components/admin-management/AdminModal'; // Admin modal component
+import { Employee, Role } from '@lib/graphql/types'; // GraphQL types
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
 import { useQuery } from '@apollo/client'; //Apollo client
 import {
@@ -31,37 +34,53 @@ import {
   GetEmployeesRequest,
 } from '@tools/pages/admin/admin-management/get-employees';
 
-// Table columns
-const COLUMNS = [
-  {
-    Header: 'Name',
-    accessor: 'name',
-    Cell: ({ value }) => {
-      return (
-        <div>
-          <Text>{`${value.firstName} ${value.lastName}`}</Text>
-        </div>
-      );
+export default function AdminManagement() {
+  // Deletion modal state
+  const {
+    isOpen: isConfirmDeleteModalOpen,
+    onOpen: onOpenConfirmDeleteModal,
+    onClose: onCloseConfirmDeleteModal,
+  } = useDisclosure();
+
+  // State for admin to delete
+  const [userToDelete, setUserToDelete] = useState<UserToDelete>();
+
+  //New user modal state
+  const {
+    isOpen: isNewUserModalOpen,
+    onOpen: onOpenNewUserModal,
+    onClose: onCloseNewUserModal,
+  } = useDisclosure();
+
+  //Edit user modal state
+  const {
+    isOpen: isEditUserModalOpen,
+    onOpen: onOpenEditUserModal,
+    onClose: onCloseEditUserModal,
+  } = useDisclosure();
+
+  // State for admin to update
+  const [userToUpdate, setUserToUpdate] = useState<Omit<Employee, 'id' | 'active'>>();
+
+  // Table columns
+  const COLUMNS = [
+    {
+      Header: 'Name',
+      accessor: 'name',
+      Cell: ({ value }) => {
+        return (
+          <div>
+            <Text>{`${value.firstName} ${value.lastName}`}</Text>
+          </div>
+        );
+      },
+      minWidth: 240,
     },
-    minWidth: 240,
-  },
-  {
-    Header: 'Email',
-    accessor: 'email',
-    disableSortBy: true,
-    minWidth: 270,
-  },
-  {
-    Header: 'Role',
-    accessor: 'role',
-    Cell: ({ value }: { value: string }) => {
-      return (
-        <Select defaultValue={value} width={190}>
-          <option value="SECRETARY">Front Desk</option>
-          <option value="ACCOUNTING">Accountant</option>
-          <option value="ADMIN">Admin</option>
-        </Select>
-      );
+    {
+      Header: 'Email',
+      accessor: 'email',
+      disableSortBy: true,
+      minWidth: 270,
     },
     {
       Header: 'Role',
@@ -69,9 +88,9 @@ const COLUMNS = [
       Cell: ({ value }: { value: string }) => {
         return (
           <Select defaultValue={value} width={190}>
-            <option value={Role.Secretary}>Front Desk</option>
-            <option value={Role.Accounting}>Accountant</option>
-            <option value={Role.Admin}>Admin</option>
+            <option value="SECRETARY">Front Desk</option>
+            <option value="ACCOUNTING">Accountant</option>
+            <option value="ADMIN">Admin</option>
           </Select>
         );
       },
@@ -134,16 +153,15 @@ const COLUMNS = [
     },
   ];
 
-type EmployeeData = {
-  name: {
-    firstName: string;
-    lastName: string;
+  type EmployeeData = {
+    name: {
+      firstName: string;
+      lastName: string;
+    };
+    email: string;
+    role: Role;
   };
-  email: string;
-  role: Role;
-};
 
-export default function AdminManagement() {
   const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
   const [requestsData, setRequestsData] = useState<EmployeeData[]>();
 
