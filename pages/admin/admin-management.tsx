@@ -80,7 +80,7 @@ export default function AdminManagement() {
       Header: 'Email',
       accessor: 'email',
       disableSortBy: true,
-      minWidth: 270,
+      minWidth: 240,
     },
     {
       Header: 'Role',
@@ -95,7 +95,7 @@ export default function AdminManagement() {
         );
       },
       disableSortBy: true,
-      minWidth: 240,
+      maxWidth: 240,
     },
     {
       Header: 'Actions',
