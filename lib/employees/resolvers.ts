@@ -28,6 +28,9 @@ export const employees: Resolver = async (_parent, { filter }, { prisma }) => {
     filter.order.forEach(([field, order]: [string, SortOrder]) => (sortingOrder[field] = order));
   }
   const employees = await prisma.employee.findMany({
+    where: {
+      active: true,
+    },
     orderBy: [
       { firstName: sortingOrder.name || SortOrder.ASC },
       { lastName: sortingOrder.name || SortOrder.ASC },

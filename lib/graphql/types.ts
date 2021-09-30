@@ -617,7 +617,7 @@ export type Query = {
   meta: Meta;
   applicants: Maybe<QueryApplicantsResult>;
   applicant: Maybe<Applicant>;
-  employees: Maybe<Array<Employee>>;
+  employees: Maybe<QueryEmployeesResult>;
   employee: Maybe<Employee>;
   physicians: Maybe<Array<Physician>>;
   applications: Maybe<QueryApplicationsResult>;
@@ -633,6 +633,11 @@ export type QueryApplicantsArgs = {
 
 export type QueryApplicantArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryEmployeesArgs = {
+  filter: Maybe<EmployeesFilter>;
 };
 
 
