@@ -5,6 +5,7 @@ export const GET_EMPLOYEES_QUERY = gql`
   query getEmployees($filter: EmployeesFilter) {
     employees(filter: $filter) {
       result {
+        id
         firstName
         lastName
         email
@@ -20,6 +21,6 @@ export type GetEmployeesRequest = {
 
 export type GetEmployeesResponse = {
   employees: {
-    result: ReadonlyArray<Pick<Employee, 'firstName' | 'lastName' | 'email' | 'role'>>;
+    result: ReadonlyArray<Pick<Employee, 'id' | 'firstName' | 'lastName' | 'email' | 'role'>>;
   };
 };
