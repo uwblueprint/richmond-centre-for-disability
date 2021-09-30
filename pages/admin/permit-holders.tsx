@@ -18,6 +18,8 @@ import {
   Wrap,
   Badge,
   Tooltip,
+  IconButton,
+  useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
@@ -40,97 +42,7 @@ import { Column } from 'react-table'; // Column type for table
 import useDebounce from '@tools/hooks/useDebounce'; // Debouncer
 import { useEffect } from 'react'; // React
 import { formatDate } from '@lib/utils/format'; // Date formatter util
-
-const COLUMNS: Column<any>[] = [
-  {
-    Header: 'Name',
-    accessor: 'name',
-    width: 180,
-    minWidth: 180,
-    maxWidth: 180,
-    sortDescFirst: true,
-    Cell: ({ value }) => {
-      const name = `${value.firstName} ${value.middleName || ''} ${value.lastName}`;
-      return (
-        <>
-          <Tooltip label={name} placement="top-start">
-            <Text maxWidth="180" whiteSpace="nowrap" textOverflow="ellipsis" overflow="hidden">
-              {name}
-            </Text>
-          </Tooltip>
-          <Text textStyle="caption" textColor="secondary">
-            ID: {value.rcdUserId ? `#${value.rcdUserId}` : 'N/A'}
-          </Text>
-        </>
-      );
-    },
-  },
-  {
-    Header: 'Date of Birth',
-    accessor: 'dateOfBirth',
-    disableSortBy: true,
-    width: 140,
-    maxWidth: 140,
-    Cell: ({ value }) => {
-      return <Text>{formatDate(value)}</Text>;
-    },
-  },
-  {
-    Header: 'Home Address',
-    accessor: 'homeAddress',
-    disableSortBy: true,
-    width: 240,
-    minWidth: 240,
-    Cell: ({ value }) => {
-      return (
-        <>
-          <Text>{value.address}</Text>
-          <Text textStyle="caption" textColor="secondary">
-            {value.city}, {value.postalCode}
-          </Text>
-        </>
-      );
-    },
-  },
-  {
-    Header: 'Email',
-    accessor: 'email',
-    disableSortBy: true,
-    width: 240,
-    minWidth: 240,
-  },
-  {
-    Header: 'Phone #',
-    accessor: 'phone',
-    disableSortBy: true,
-    width: 140,
-    maxWidth: 140,
-  },
-  {
-    Header: 'Recent APP',
-    accessor: 'mostRecentPermit',
-    disableSortBy: true,
-    width: 140,
-    maxWidth: 140,
-    Cell: renderMostRecentPermit,
-  },
-  {
-    Header: 'User Status',
-    accessor: 'status',
-    disableSortBy: true,
-    width: 120,
-    maxWidth: 120,
-    Cell: ({ value }) => {
-      return (
-        value && (
-          <Wrap>
-            <Badge variant={value}>{value.toUpperCase()}</Badge>
-          </Wrap>
-        )
-      );
-    },
-  },
-];
+import InactivatePermitHolderModal from '@components/permit-holders/modals/InactivatePermitHolderModal'; // Inactivate Permit Holder modal
 
 const PAGE_SIZE = 20;
 
@@ -273,6 +185,146 @@ export default function PermitHolders() {
   ];
   const userStatusOptions = [UserStatus.Active, UserStatus.Inactive];
 
+  // Inactivate Permit Holder modal state
+  const {
+    isOpen: isInactivatePermitHolderModalOpen,
+    onOpen: onOpenInactivatePermitHolderModal,
+    onClose: onCloseInactivatePermitHolderModal,
+  } = useDisclosure();
+
+  const [permitHolderId, setPermitHolderId] = useState<number>();
+
+  const COLUMNS: Column<any>[] = [
+    {
+      Header: 'Name',
+      accessor: 'name',
+      width: 180,
+      minWidth: 180,
+      maxWidth: 180,
+      sortDescFirst: true,
+      Cell: ({ value }) => {
+        const name = `${value.firstName} ${value.middleName || ''} ${value.lastName}`;
+        return (
+          <>
+            <Tooltip label={name} placement="top-start">
+              <Text maxWidth="180" whiteSpace="nowrap" textOverflow="ellipsis" overflow="hidden">
+                {name}
+              </Text>
+            </Tooltip>
+            <Text textStyle="caption" textColor="secondary">
+              ID: {value.rcdUserId ? `#${value.rcdUserId}` : 'N/A'}
+            </Text>
+          </>
+        );
+      },
+    },
+    {
+      Header: 'Date of Birth',
+      accessor: 'dateOfBirth',
+      disableSortBy: true,
+      width: 140,
+      maxWidth: 140,
+      Cell: ({ value }) => {
+        return <Text>{formatDate(value)}</Text>;
+      },
+    },
+    {
+      Header: 'Home Address',
+      accessor: 'homeAddress',
+      disableSortBy: true,
+      width: 240,
+      minWidth: 240,
+      Cell: ({ value }) => {
+        return (
+          <>
+            <Text>{value.address}</Text>
+            <Text textStyle="caption" textColor="secondary">
+              {value.city}, {value.postalCode}
+            </Text>
+          </>
+        );
+      },
+    },
+    {
+      Header: 'Email',
+      accessor: 'email',
+      disableSortBy: true,
+      width: 240,
+      minWidth: 240,
+    },
+    {
+      Header: 'Phone #',
+      accessor: 'phone',
+      disableSortBy: true,
+      width: 140,
+      maxWidth: 140,
+    },
+    {
+      Header: 'Recent APP',
+      accessor: 'mostRecentPermit',
+      disableSortBy: true,
+      width: 140,
+      maxWidth: 140,
+      Cell: renderMostRecentPermit,
+    },
+    {
+      Header: 'User Status',
+      accessor: 'status',
+      disableSortBy: true,
+      width: 120,
+      maxWidth: 120,
+      Cell: ({ value }) => {
+        return (
+          value && (
+            <Wrap>
+              <Badge variant={value}>{value.toUpperCase()}</Badge>
+            </Wrap>
+          )
+        );
+      },
+    },
+    {
+      Header: 'Actions',
+      Cell: ({
+        row: {
+          original: { id },
+        },
+      }: {
+        row: { original: { id: number } };
+      }) => {
+        return (
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              aria-label="Options"
+              icon={<img src="/assets/three-dots.svg" />}
+              variant="outline"
+              border="none"
+              onClick={event => event.stopPropagation()}
+            />
+            <MenuList>
+              <MenuItem>{'View Permit Holder'}</MenuItem>
+              <MenuItem
+                color="text.critical"
+                textStyle="button-regular"
+                onClick={event => {
+                  event.stopPropagation();
+                  setPermitHolderId(id);
+                  onOpenInactivatePermitHolderModal();
+                }}
+              >
+                {'Set as Inactive'}
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        );
+      },
+      disableSortBy: true,
+      width: 120,
+      maxWidth: 120,
+    },
+  ];
+
   return (
     <Layout>
       <GridItem colSpan={12}>
@@ -404,6 +456,12 @@ export default function PermitHolders() {
           </Box>
         </Box>
       </GridItem>
+      {permitHolderId && (
+        <InactivatePermitHolderModal
+          isOpen={isInactivatePermitHolderModalOpen}
+          onClose={onCloseInactivatePermitHolderModal}
+        />
+      )}
     </Layout>
   );
 }
