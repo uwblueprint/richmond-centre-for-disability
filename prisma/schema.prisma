@@ -24,6 +24,7 @@ model Applicant {
   postalCode           String             @map("postal_code") @db.Char(6)
   rcdUserId            Int?               @unique @map("rcd_user_id")
   status               ApplicantStatus?
+  inactiveReason       String?            @map("inactive_reason") @db.VarChar(255)
   acceptedTos          DateTime?          @map("accepted_tos") @db.Timestamptz(6)
   guardianId           Int?               @unique @map("guardian_id")
   medicalInformationId Int                @unique @map("medical_information_id")

@@ -44,6 +44,7 @@ export type Applicant = {
   rcdUserId: Maybe<Scalars['Int']>;
   acceptedTos: Maybe<Scalars['Date']>;
   status: Maybe<ApplicantStatus>;
+  inactiveReason: Maybe<Scalars['String']>;
   activePermit: Maybe<Permit>;
   applications: Maybe<Array<Application>>;
   guardianId: Maybe<Scalars['Int']>;
@@ -711,6 +712,7 @@ export type UpdateApplicantInput = {
   addressLine1?: Maybe<Scalars['String']>;
   addressLine2?: Maybe<Scalars['String']>;
   postalCode?: Maybe<Scalars['String']>;
+  inactiveReason?: Maybe<Scalars['String']>;
   rcdUserId?: Maybe<Scalars['Int']>;
 };
 
