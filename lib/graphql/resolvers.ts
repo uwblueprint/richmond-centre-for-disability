@@ -1,5 +1,11 @@
 import { meta } from '@lib/meta/resolvers'; // Metadata resolvers
-import { employees, createEmployee, updateEmployee, employee } from '@lib/employees/resolvers'; // Employee resolvers
+import {
+  employees,
+  createEmployee,
+  updateEmployee,
+  employee,
+  deleteEmployee,
+} from '@lib/employees/resolvers'; // Employee resolvers
 import {
   applicant,
   applicants,
@@ -67,6 +73,7 @@ const resolvers = {
     updateApplicant: authorize(updateApplicant, [Role.Secretary]),
     createEmployee: authorize(createEmployee),
     updateEmployee: authorize(updateEmployee, [Role.Admin]),
+    deleteEmployee: authorize(deleteEmployee, [Role.Admin]),
     createPhysician: authorize(createPhysician, [Role.Secretary]),
     upsertPhysician: authorize(upsertPhysician, [Role.Secretary]),
     createApplication: authorize(createApplication, [Role.Secretary]),

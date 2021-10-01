@@ -34,7 +34,11 @@ export default `
   type UpdateEmployeeResult {
     ok: Boolean!
   }
-  
+
+  type DeleteEmployeeResult {
+    ok: Boolean!
+  }
+
   input EmployeesFilter {
     order: [[String!]!]
   }

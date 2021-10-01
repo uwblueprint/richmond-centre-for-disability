@@ -21,3 +21,14 @@ export class EmployeeNotFoundError extends ApolloError {
     Object.defineProperty(this, 'name', { value: 'EmployeeNotFoundError' });
   }
 }
+
+/**
+ * Employee with provided ID was already deleted from the DB
+ */
+export class EmployeeAlreadyDeletedError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'EMPLOYEE_ALREADY_DELETED');
+
+    Object.defineProperty(this, 'name', { value: 'EmployeeAlreadyDeletedError' });
+  }
+}

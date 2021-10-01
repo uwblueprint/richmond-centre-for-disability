@@ -1,7 +1,11 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Prisma } from '@prisma/client'; // Prisma client
 import { Resolver } from '@lib/resolvers'; // Resolver type
-import { EmployeeAlreadyExistsError, EmployeeNotFoundError } from '@lib/employees/errors'; // Employee errors
+import {
+  EmployeeAlreadyDeletedError,
+  EmployeeAlreadyExistsError,
+  EmployeeNotFoundError,
+} from '@lib/employees/errors'; // Employee errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting Type
 
@@ -118,4 +122,42 @@ export const updateEmployee: Resolver = async (_, args, { prisma }) => {
   return {
     ok: true,
   };
+};
+
+/**
+ * Delete an employee
+ * @returns status of operation (ok)
+ */
+export const deleteEmployee: Resolver = async (_, args, { prisma }) => {
+  const id = parseInt(args.id);
+  const employee = await prisma.employee.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      active: true,
+    },
+  });
+
+  if (employee === null) {
+    throw new EmployeeNotFoundError(`Employee with ID ${id} not found`);
+  } else if (!employee.active) {
+    throw new EmployeeAlreadyDeletedError(`Employee with ID ${id} already deleted`);
+  }
+
+  let updatedEmployee;
+  try {
+    updatedEmployee = await prisma.employee.update({
+      where: { id },
+      data: { active: false },
+    });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === DBErrorCode.RecordNotFound) {
+        throw new EmployeeNotFoundError(`Employee with ID ${id} not found`);
+      }
+    }
+  }
+  if (!updatedEmployee) throw new ApolloError('Employee was unable to be deleted');
+  return { ok: true };
 };
