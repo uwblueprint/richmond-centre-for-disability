@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'; // gql tag
 import { Employee, EmployeesFilter } from '@lib/graphql/types'; // GraphQL types
 
 /**
- * gql query to fetch all employees
+ * GQL query to fetch employees based on filter
  */
 export const GET_EMPLOYEES_QUERY = gql`
   query getEmployees($filter: EmployeesFilter) {
@@ -19,14 +19,14 @@ export const GET_EMPLOYEES_QUERY = gql`
 `;
 
 /**
- * applied filter to employee request
+ * Input parameters for fetch all employees
  */
 export type GetEmployeesRequest = {
   filter: EmployeesFilter;
 };
 
 /**
- * specifying fields given in response and data shape
+ * Response type of getting employees
  */
 export type GetEmployeesResponse = {
   employees: {
