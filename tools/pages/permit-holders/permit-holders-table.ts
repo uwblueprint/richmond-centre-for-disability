@@ -5,6 +5,7 @@ export const GET_PERMIT_HOLDERS_QUERY = gql`
   query FilterPermitHoldersQuery($filter: ApplicantsFilter) {
     applicants(filter: $filter) {
       result {
+        id
         firstName
         middleName
         lastName
@@ -32,6 +33,7 @@ export type GetPermitHoldersRequest = {
 
 export type PermitHolder = Pick<
   Applicant,
+  | 'id'
   | 'firstName'
   | 'middleName'
   | 'lastName'
