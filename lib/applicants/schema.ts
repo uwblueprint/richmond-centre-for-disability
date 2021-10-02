@@ -18,6 +18,7 @@ export default `
     rcdUserId: Int
     acceptedTos: Date
     status: ApplicantStatus
+    inactiveReason: String
     activePermit: Permit
     applications: [Application!]
     guardianId: Int
@@ -74,6 +75,7 @@ export default `
     addressLine1: String
     addressLine2: String
     postalCode: String
+    inactiveReason: String
     rcdUserId: Int
   }
 
