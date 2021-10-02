@@ -17,6 +17,7 @@ import {
   MenuItem,
   Wrap,
   Badge,
+  Tooltip,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
@@ -46,13 +47,17 @@ const COLUMNS: Column<any>[] = [
     accessor: 'name',
     width: 180,
     minWidth: 180,
+    maxWidth: 180,
     sortDescFirst: true,
     Cell: ({ value }) => {
+      const name = `${value.firstName} ${value.middleName || ''} ${value.lastName}`;
       return (
         <>
-          <Text>
-            {value.firstName} {value.middleName || ''} {value.lastName}
-          </Text>
+          <Tooltip label={name} placement="top-start">
+            <Text maxWidth="180" whiteSpace="nowrap" textOverflow="ellipsis" overflow="hidden">
+              {name}
+            </Text>
+          </Tooltip>
           <Text textStyle="caption" textColor="secondary">
             ID: {value.rcdUserId ? `#${value.rcdUserId}` : 'N/A'}
           </Text>
