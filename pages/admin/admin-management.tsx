@@ -32,10 +32,13 @@ import {
   GetEmployeesResponse,
   GET_EMPLOYEES_QUERY,
   GetEmployeesRequest,
-} from '@tools/pages/admin/admin-management/get-employees';
-import { EmployeeData } from '@tools/pages/admin/admin-management/types';
-import { Column } from 'react-table';
+} from '@tools/pages/admin/admin-management/get-employees'; //Employees query
+import { EmployeeData } from '@tools/pages/admin/admin-management/types'; // EmployeeData type
+import { Column } from 'react-table'; // Column type
 
+/**
+ * Admin management page
+ */
 export default function AdminManagement() {
   // Deletion modal state
   const {
