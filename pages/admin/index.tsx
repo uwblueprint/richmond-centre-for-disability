@@ -207,7 +207,7 @@ export default function Requests() {
             </MenuList>
           </Menu> */}
         </Flex>
-        <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
+        <Box border="1px solid" borderColor="border.secondary" borderRadius="12px" bgColor="white">
           <Tabs marginBottom="20px">
             <TabList paddingX="24px">
               <Tab

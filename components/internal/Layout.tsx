@@ -77,7 +77,7 @@ function Header() {
     <Flex
       height="80px"
       width="100%"
-      backgroundColor="#f4f6fc"
+      backgroundColor="background.grey"
       borderBottom="1px solid"
       borderBottomColor="border.secondary"
     >
