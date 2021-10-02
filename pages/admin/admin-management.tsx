@@ -36,9 +36,6 @@ import {
 import { EmployeeData } from '@tools/pages/admin/admin-management/types';
 import { Column } from 'react-table';
 
-/**
- * Admin management page
- */
 export default function AdminManagement() {
   // Deletion modal state
   const {
@@ -85,7 +82,7 @@ export default function AdminManagement() {
       Header: 'Email',
       accessor: 'email',
       disableSortBy: true,
-      minWidth: 270,
+      minWidth: 240,
     },
     {
       Header: 'Role',
@@ -93,14 +90,14 @@ export default function AdminManagement() {
       Cell: ({ value }: { value: string }) => {
         return (
           <Select defaultValue={value} width={190}>
-            <option value={Role.Secretary}>Front Desk</option>
-            <option value={Role.Accounting}>Accountant</option>
-            <option value={Role.Admin}>Admin</option>
+            <option value="SECRETARY">Front Desk</option>
+            <option value="ACCOUNTING">Accountant</option>
+            <option value="ADMIN">Admin</option>
           </Select>
         );
       },
       disableSortBy: true,
-      minWidth: 240,
+      maxWidth: 240,
     },
     {
       Header: 'Actions',
