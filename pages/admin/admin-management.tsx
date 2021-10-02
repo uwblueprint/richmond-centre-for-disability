@@ -93,9 +93,9 @@ export default function AdminManagement() {
       Cell: ({ value }: { value: string }) => {
         return (
           <Select defaultValue={value} width={190}>
-            <option value="SECRETARY">Front Desk</option>
-            <option value="ACCOUNTING">Accountant</option>
-            <option value="ADMIN">Admin</option>
+            <option value={Role.Secretary}>Front Desk</option>
+            <option value={Role.Accounting}>Accountant</option>
+            <option value={Role.Admin}>Admin</option>
           </Select>
         );
       },
