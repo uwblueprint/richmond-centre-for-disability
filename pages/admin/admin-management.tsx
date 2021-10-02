@@ -33,7 +33,12 @@ import {
   GET_EMPLOYEES_QUERY,
   GetEmployeesRequest,
 } from '@tools/pages/admin/admin-management/get-employees';
+import { EmployeeData } from '@tools/pages/admin/admin-management/types';
+import { Column } from 'react-table';
 
+/**
+ * Admin management page
+ */
 export default function AdminManagement() {
   // Deletion modal state
   const {
@@ -63,7 +68,7 @@ export default function AdminManagement() {
   const [userToUpdate, setUserToUpdate] = useState<Omit<Employee, 'id' | 'active'>>();
 
   // Table columns
-  const COLUMNS = [
+  const COLUMNS: Column<any>[] = [
     {
       Header: 'Name',
       accessor: 'name',
@@ -88,9 +93,9 @@ export default function AdminManagement() {
       Cell: ({ value }: { value: string }) => {
         return (
           <Select defaultValue={value} width={190}>
-            <option value="SECRETARY">Front Desk</option>
-            <option value="ACCOUNTING">Accountant</option>
-            <option value="ADMIN">Admin</option>
+            <option value={Role.Secretary}>Front Desk</option>
+            <option value={Role.Accounting}>Accountant</option>
+            <option value={Role.Admin}>Admin</option>
           </Select>
         );
       },
@@ -153,15 +158,6 @@ export default function AdminManagement() {
     },
   ];
 
-  type EmployeeData = {
-    name: {
-      firstName: string;
-      lastName: string;
-    };
-    email: string;
-    role: Role;
-  };
-
   const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
   const [requestsData, setRequestsData] = useState<EmployeeData[]>();
 
@@ -201,11 +197,7 @@ export default function AdminManagement() {
         </Flex>
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
           <Box padding="20px 24px 0">
-            <Table
-              columns={COLUMNS}
-              data={requestsData || []}
-              onChangeSortOrder={sortOrder => setSortOrder(sortOrder)}
-            />
+            <Table columns={COLUMNS} data={requestsData || []} onChangeSortOrder={setSortOrder} />
           </Box>
           <Flex justifyContent="flex-end" padding="12px 24px">
             <Pagination pageNumber={0} pageSize={20} totalCount={100} onPageChange={() => {}} />
