@@ -63,7 +63,7 @@ export default function InactivatePermitHolderModal({
             </FormControl>
           </ModalBody>
           <ModalFooter paddingY="16px">
-            <Button onClick={onClose} colorScheme="gray" variant="solid" size="lg">
+            <Button onClick={onClose} colorScheme="gray" variant="solid">
               {'Cancel'}
             </Button>
             <Button
@@ -71,7 +71,6 @@ export default function InactivatePermitHolderModal({
               _hover={{ bg: 'secondary.criticalHover' }}
               type="submit"
               ml={'12px'}
-              size="lg"
             >
               {'Set as Inactive'}
             </Button>
