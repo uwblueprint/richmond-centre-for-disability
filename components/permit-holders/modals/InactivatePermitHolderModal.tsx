@@ -50,7 +50,7 @@ export default function InactivatePermitHolderModal({
               {'Set Permit Holder as Inactive '}
             </Text>
           </ModalHeader>
-          <ModalBody paddingY="20px" paddingX="4px">
+          <ModalBody paddingTop="20px" paddingBottom="0px" paddingX="4px">
             <FormControl isRequired>
               <FormLabel as="h3" textStyle="button-semibold" color="text.secondary">
                 {'Reason for setting permit holder as inactive'}
@@ -62,8 +62,8 @@ export default function InactivatePermitHolderModal({
               />
             </FormControl>
           </ModalBody>
-          <ModalFooter paddingBottom="16px">
-            <Button onClick={onClose} marginRight="12px" colorScheme="gray" variant="solid">
+          <ModalFooter paddingY="16px">
+            <Button onClick={onClose} colorScheme="gray" variant="solid" size="lg">
               {'Cancel'}
             </Button>
             <Button
@@ -71,6 +71,7 @@ export default function InactivatePermitHolderModal({
               _hover={{ bg: 'secondary.criticalHover' }}
               type="submit"
               ml={'12px'}
+              size="lg"
             >
               {'Set as Inactive'}
             </Button>

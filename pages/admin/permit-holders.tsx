@@ -192,7 +192,7 @@ export default function PermitHolders() {
     onClose: onCloseInactivatePermitHolderModal,
   } = useDisclosure();
 
-  const [permitHolderId, setPermitHolderId] = useState<number>();
+  const [permitHolderToInactivate, setPermitHolderToInactivate] = useState<number>();
 
   const COLUMNS: Column<any>[] = [
     {
@@ -309,7 +309,7 @@ export default function PermitHolders() {
                 textStyle="button-regular"
                 onClick={event => {
                   event.stopPropagation();
-                  setPermitHolderId(id);
+                  setPermitHolderToInactivate(id);
                   onOpenInactivatePermitHolderModal();
                 }}
               >
@@ -456,7 +456,7 @@ export default function PermitHolders() {
           </Box>
         </Box>
       </GridItem>
-      {permitHolderId && (
+      {permitHolderToInactivate && (
         <InactivatePermitHolderModal
           isOpen={isInactivatePermitHolderModalOpen}
           onClose={onCloseInactivatePermitHolderModal}
