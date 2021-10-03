@@ -16,6 +16,7 @@ export default `
     updateApplicant(input: UpdateApplicantInput!): UpdateApplicantResult!
     createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
     updateEmployee(input: UpdateEmployeeInput!): UpdateEmployeeResult!
+    deleteEmployee(id: ID!): DeleteEmployeeResult!
     createPhysician(input: CreatePhysicianInput!): CreatePhysicianResult!
     upsertPhysician(input: UpsertPhysicianInput!): UpsertPhysicianResult!
     createApplication(input: CreateApplicationInput!): CreateApplicationResult!
