@@ -10,3 +10,14 @@ export class ApplicationNotFoundError extends ApolloError {
     Object.defineProperty(this, 'name', { value: 'ApplicationNotFoundError' });
   }
 }
+
+/**
+ * Missing guardian fields error
+ */
+export class MissingGuardianFieldsError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'MISSING_GUARDIAN_FIELDS');
+
+    Object.defineProperty(this, 'name', { value: 'MissingGuardianFieldsError' });
+  }
+}
