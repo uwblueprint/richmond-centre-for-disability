@@ -23,7 +23,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
-import { Permit, PermitStatus, Role, UserStatus } from '@lib/types'; // Role enum
+import { Permit, PermitStatus, Role, UserStatus } from '@lib/types'; // // Types
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/internal/Table'; // Table component
 import Pagination from '@components/internal/Pagination'; // Pagination component
@@ -42,7 +42,8 @@ import { Column } from 'react-table'; // Column type for table
 import useDebounce from '@tools/hooks/useDebounce'; // Debouncer
 import { useEffect } from 'react'; // React
 import { formatDate } from '@lib/utils/format'; // Date formatter util
-import InactivatePermitHolderModal from '@components/permit-holders/modals/InactivatePermitHolderModal'; // Inactivate Permit Holder modal
+import SetPermitHoldarStatusModal from '@components/permit-holders/modals/SetPermitHoldarStatusModal'; // Set Permit Holder Status modal
+import { SetPermitHolderStatusModalData } from '@tools/pages/permit-holders/types'; // Permit holder status modal type
 
 const PAGE_SIZE = 20;
 
@@ -185,14 +186,16 @@ export default function PermitHolders() {
   ];
   const userStatusOptions = [UserStatus.Active, UserStatus.Inactive];
 
-  // Inactivate Permit Holder modal state
+  // Set Permit Holder Status modal state
   const {
-    isOpen: isInactivatePermitHolderModalOpen,
-    onOpen: onOpenInactivatePermitHolderModal,
-    onClose: onCloseInactivatePermitHolderModal,
+    isOpen: isSetPermitHolderStatusModalOpen,
+    onOpen: onOpenSetPermitHolderStatusModal,
+    onClose: onCloseSetPermitHolderStatusModal,
   } = useDisclosure();
 
-  const [permitHolderToInactivate, setPermitHolderToInactivate] = useState<number>();
+  // Set Permit Holder Status modal data state
+  const [permitHolderModalData, setPermitHolderModalData] =
+    useState<SetPermitHolderStatusModalData>();
 
   const COLUMNS: Column<any>[] = [
     {
@@ -287,10 +290,10 @@ export default function PermitHolders() {
       Header: 'Actions',
       Cell: ({
         row: {
-          original: { id },
+          original: { id, status },
         },
       }: {
-        row: { original: { id: number } };
+        row: { original: { id: number; status: UserStatus } };
       }) => {
         return (
           <Menu>
@@ -305,15 +308,15 @@ export default function PermitHolders() {
             <MenuList>
               <MenuItem>{'View Permit Holder'}</MenuItem>
               <MenuItem
-                color="text.critical"
+                color={status === UserStatus.Active ? 'text.critical' : 'text.success'}
                 textStyle="button-regular"
                 onClick={event => {
                   event.stopPropagation();
-                  setPermitHolderToInactivate(id);
-                  onOpenInactivatePermitHolderModal();
+                  setPermitHolderModalData({ id, status });
+                  onOpenSetPermitHolderStatusModal();
                 }}
               >
-                {'Set as Inactive'}
+                {`Set as ${status === UserStatus.Active ? 'Inactive' : 'Active'}`}
               </MenuItem>
             </MenuList>
           </Menu>
@@ -456,10 +459,11 @@ export default function PermitHolders() {
           </Box>
         </Box>
       </GridItem>
-      {permitHolderToInactivate && (
-        <InactivatePermitHolderModal
-          isOpen={isInactivatePermitHolderModalOpen}
-          onClose={onCloseInactivatePermitHolderModal}
+      {permitHolderModalData && (
+        <SetPermitHoldarStatusModal
+          status={permitHolderModalData.status}
+          isOpen={isSetPermitHolderStatusModalOpen}
+          onClose={onCloseSetPermitHolderStatusModal}
         />
       )}
     </Layout>

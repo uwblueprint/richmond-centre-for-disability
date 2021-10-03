@@ -9,6 +9,7 @@ const colors = {
   secondary: {
     critical: '#DF1414',
     criticalHover: '#B21010',
+    successHover: '#1e7e34',
     warning: '#B98900',
     success: '#377E62',
     informative: '#00A0AC',
@@ -20,6 +21,7 @@ const colors = {
     secondary: '#323741',
     filler: '#A3AEBE',
     critical: '#D72C0D',
+    success: '#045D39',
   },
   overlay: {
     primary: {
