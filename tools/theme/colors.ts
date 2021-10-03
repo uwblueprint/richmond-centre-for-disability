@@ -11,7 +11,7 @@ const colors = {
     criticalHover: '#B21010',
     successHover: '#1e7e34',
     warning: '#B98900',
-    success: '#377E62',
+    success: '#009444',
     informative: '#00A0AC',
     gray: '#EDF2F7',
     caution: '#FF8A00',
