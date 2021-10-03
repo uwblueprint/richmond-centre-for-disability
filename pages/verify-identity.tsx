@@ -149,14 +149,6 @@ export default function IdentityVerificationForm() {
             20th August 1950, you would enter 1950-08-20`}
               </FormHelperText>
             </FormControl>
-            {/* {data?.verifyIdentity.failureReason && (
-              <Alert status="error" marginBottom="20px">
-                <AlertIcon />
-                <AlertDescription>
-                  {getErrorMessage(data.verifyIdentity.failureReason)}
-                </AlertDescription>
-              </Alert>
-            )} */}
             <Flex width="100%" justifyContent="flex-end">
               <Link href="/">
                 <Button variant="outline" marginRight="12px">{`Go back to home page`}</Button>
