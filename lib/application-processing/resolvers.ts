@@ -1,8 +1,14 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Prisma } from '@prisma/client'; // Prisma client
 import { Resolver } from '@lib/resolvers'; // Resolver type
+import { Province } from '@lib/graphql/types'; // GraphQL types
 import { DBErrorCode } from '@lib/db/errors';
-import { ApplicationNotFoundError } from '@lib/application-processing/errors'; // Application processing errors
+import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
+import {
+  ApplicationNotFoundError,
+  MissingGuardianFieldsError,
+} from '@lib/application-processing/errors'; // Application processing errors
+import { CompleteNewApplicationGuardianUpdate } from '@lib/application-processing/types'; // Application processing types
 
 /**
  * Updates the ApplicationProcessing object with the optional values provided
@@ -162,6 +168,18 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
 
     let applicantPromise;
     if (isRenewal) {
+      // Check whether applicant currently has guardian
+      const applicant = await prisma.applicant.findUnique({
+        where: { id: applicantId || undefined },
+        select: {
+          guardianId: true,
+        },
+      });
+
+      if (!applicant) {
+        throw new ApplicantNotFoundError('Applicant for renewal could not be found');
+      }
+
       applicantPromise = prisma.applicant.update({
         where: { id: applicantId || undefined },
         data: {
@@ -174,36 +192,70 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
               },
             },
           },
-          guardian: {
-            update: {
-              firstName: guardianFirstName || undefined,
-              middleName: guardianMiddleName,
-              lastName: guardianLastName || undefined,
-              phone: guardianPhone || undefined,
-              province: guardianProvince || undefined,
-              city: guardianCity || undefined,
-              addressLine1: guardianAddressLine1 || undefined,
-              addressLine2: guardianAddressLine2,
-              postalCode: guardianPostalCode || undefined,
-              relationship: guardianRelationship || undefined,
-              notes: guardianNotes,
-            },
-          },
+          guardian:
+            applicant.guardianId !== null
+              ? {
+                  update: {
+                    firstName: guardianFirstName || undefined,
+                    middleName: guardianMiddleName,
+                    lastName: guardianLastName || undefined,
+                    phone: guardianPhone || undefined,
+                    province: guardianProvince || undefined,
+                    city: guardianCity || undefined,
+                    addressLine1: guardianAddressLine1 || undefined,
+                    addressLine2: guardianAddressLine2,
+                    postalCode: guardianPostalCode || undefined,
+                    relationship: guardianRelationship || undefined,
+                    notes: guardianNotes,
+                  },
+                }
+              : undefined,
         },
       });
     } else {
-      // Enforce that guardian fields exist if there isn't an applicantId (new application)
+      // Guardian update object
+      let guardianUpdate: CompleteNewApplicationGuardianUpdate;
+
+      // Check whether a guardian was included in the application (check for required guardian fields)
       if (
-        !guardianFirstName ||
-        !guardianLastName ||
-        !guardianPhone ||
-        !guardianProvince ||
-        !guardianCity ||
-        !guardianAddressLine1 ||
-        !guardianPostalCode ||
+        guardianFirstName &&
+        guardianLastName &&
+        guardianPhone &&
+        guardianProvince &&
+        guardianCity &&
+        guardianAddressLine1 &&
+        guardianPostalCode &&
+        guardianRelationship
+      ) {
+        guardianUpdate = {
+          create: {
+            firstName: guardianFirstName,
+            middleName: guardianMiddleName,
+            lastName: guardianLastName,
+            phone: guardianPhone,
+            province: guardianProvince as Province,
+            city: guardianCity,
+            addressLine1: guardianAddressLine1,
+            addressLine2: guardianAddressLine2,
+            postalCode: guardianPostalCode,
+            relationship: guardianRelationship,
+            notes: guardianNotes,
+          },
+        };
+      } else if (
+        !guardianFirstName &&
+        !guardianLastName &&
+        !guardianPhone &&
+        !guardianProvince &&
+        !guardianCity &&
+        !guardianAddressLine1 &&
+        !guardianPostalCode &&
         !guardianRelationship
       ) {
-        return 'Missing required guardian fields.';
+        guardianUpdate = undefined;
+      } else {
+        // Must include all or none of the required guardian fields
+        throw new MissingGuardianFieldsError('Missing guardian fields');
       }
 
       applicantPromise = prisma.applicant.create({
@@ -217,21 +269,7 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
               },
             },
           },
-          guardian: {
-            create: {
-              firstName: guardianFirstName,
-              middleName: guardianMiddleName,
-              lastName: guardianLastName,
-              phone: guardianPhone,
-              province: guardianProvince,
-              city: guardianCity,
-              addressLine1: guardianAddressLine1,
-              addressLine2: guardianAddressLine2,
-              postalCode: guardianPostalCode,
-              relationship: guardianRelationship,
-              notes: guardianNotes,
-            },
-          },
+          guardian: guardianUpdate,
         },
       });
     }

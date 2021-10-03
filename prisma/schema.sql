@@ -136,6 +136,7 @@ CREATE TABLE applicants (
   postal_code               CHAR(6) NOT NULL,
   rcd_user_id               INTEGER UNIQUE,
   status                    ApplicantStatus,
+  inactive_reason           VARCHAR(255),
   accepted_tos              TIMESTAMPTZ,
   guardian_id               INTEGER UNIQUE,
   medical_information_id    INTEGER UNIQUE NOT NULL,

@@ -44,6 +44,7 @@ export type Applicant = {
   rcdUserId: Maybe<Scalars['Int']>;
   acceptedTos: Maybe<Scalars['Date']>;
   status: Maybe<ApplicantStatus>;
+  inactiveReason: Maybe<Scalars['String']>;
   activePermit: Maybe<Permit>;
   applications: Maybe<Array<Application>>;
   guardianId: Maybe<Scalars['Int']>;
@@ -628,7 +629,7 @@ export type Query = {
   meta: Meta;
   applicants: Maybe<QueryApplicantsResult>;
   applicant: Maybe<Applicant>;
-  employees: Maybe<Array<Employee>>;
+  employees: Maybe<QueryEmployeesResult>;
   employee: Maybe<Employee>;
   physicians: Maybe<Array<Physician>>;
   applications: Maybe<QueryApplicationsResult>;
@@ -682,6 +683,11 @@ export type QueryEmployeeInput = {
   id?: Maybe<Scalars['ID']>;
 };
 
+export type QueryEmployeesResult = {
+  __typename?: 'QueryEmployeesResult';
+  result: Array<Employee>;
+};
+
 export enum ReasonForReplacement {
   Lost = 'LOST',
   Stolen = 'STOLEN',
@@ -722,6 +728,7 @@ export type UpdateApplicantInput = {
   addressLine1?: Maybe<Scalars['String']>;
   addressLine2?: Maybe<Scalars['String']>;
   postalCode?: Maybe<Scalars['String']>;
+  inactiveReason?: Maybe<Scalars['String']>;
   rcdUserId?: Maybe<Scalars['Int']>;
 };
 

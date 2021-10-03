@@ -30,19 +30,21 @@ export const employee: Resolver = async (_parent, args, { prisma }) => {
  */
 export const employees: Resolver = async (_parent, { filter }, { prisma }) => {
   const sortingOrder: Record<string, SortOrder> = {};
-
   if (filter?.order) {
     filter.order.forEach(([field, order]: [string, SortOrder]) => (sortingOrder[field] = order));
   }
-
   const employees = await prisma.employee.findMany({
+    where: {
+      active: true,
+    },
     orderBy: [
       { firstName: sortingOrder.name || SortOrder.ASC },
       { lastName: sortingOrder.name || SortOrder.ASC },
     ],
   });
-
-  return employees;
+  return {
+    result: employees,
+  };
 };
 
 /**

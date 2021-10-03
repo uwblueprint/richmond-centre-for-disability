@@ -18,6 +18,7 @@ import {
   Input,
   InputLeftElement,
   Wrap,
+  Tooltip,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/internal/Layout'; // Layout component
@@ -50,9 +51,14 @@ const COLUMNS: Column<any>[] = [
     Header: 'Name',
     accessor: 'name',
     Cell: ({ value }) => {
+      const name = `${value.firstName} ${value.lastName}`;
       return (
         <div>
-          <Text>{`${value.firstName} ${value.lastName}`}</Text>
+          <Tooltip label={name} placement="top-start">
+            <Text maxWidth="280" whiteSpace="nowrap" textOverflow="ellipsis" overflow="hidden">
+              {name}
+            </Text>
+          </Tooltip>
           <Text textStyle="caption" textColor="secondary">
             ID: {value.rcdUserId ? `#${value.rcdUserId}` : 'N/A'}
           </Text>

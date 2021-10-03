@@ -13,14 +13,11 @@ import {
   FormHelperText,
   NumberInput,
   NumberInputField,
-  Alert,
-  AlertIcon,
   Popover,
   PopoverTrigger,
   PopoverContent,
   PopoverBody,
   PopoverFooter,
-  AlertDescription,
   Input,
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
@@ -51,23 +48,28 @@ export default function IdentityVerificationForm() {
   const [dateOfBirth, setDateOfBirth] = useState(formatDate(new Date(), true));
 
   // Verify identity query
-  const [verifyIdentity, { data, loading }] = useMutation<
-    VerifyIdentityResponse,
-    VerifyIdentityRequest
-  >(VERIFY_IDENTITY_MUTATION, {
-    onCompleted: data => {
-      if (data.verifyIdentity.ok && data.verifyIdentity.applicantId) {
-        setApplicantId(data.verifyIdentity.applicantId);
-        router.push('/renew');
-      }
-    },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-      });
-    },
-  });
+  const [verifyIdentity, { loading }] = useMutation<VerifyIdentityResponse, VerifyIdentityRequest>(
+    VERIFY_IDENTITY_MUTATION,
+    {
+      onCompleted: data => {
+        if (data.verifyIdentity.ok && data.verifyIdentity.applicantId) {
+          setApplicantId(data.verifyIdentity.applicantId);
+          router.push('/renew');
+        } else if (data.verifyIdentity.failureReason) {
+          toast({
+            status: 'error',
+            description: getErrorMessage(data.verifyIdentity.failureReason),
+          });
+        }
+      },
+      onError: error => {
+        toast({
+          status: 'error',
+          description: error.message,
+        });
+      },
+    }
+  );
 
   /**
    * Handle identity verification submit
@@ -147,14 +149,6 @@ export default function IdentityVerificationForm() {
             20th August 1950, you would enter 1950-08-20`}
               </FormHelperText>
             </FormControl>
-            {data?.verifyIdentity.failureReason && (
-              <Alert status="error" marginBottom="20px">
-                <AlertIcon />
-                <AlertDescription>
-                  {getErrorMessage(data.verifyIdentity.failureReason)}
-                </AlertDescription>
-              </Alert>
-            )}
             <Flex width="100%" justifyContent="flex-end">
               <Link href="/">
                 <Button variant="outline" marginRight="12px">{`Go back to home page`}</Button>

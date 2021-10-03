@@ -42,4 +42,8 @@ export default `
   input EmployeesFilter {
     order: [[String!]!]
   }
+
+  type QueryEmployeesResult {
+    result: [Employee!]!
+  }
 `;
