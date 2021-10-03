@@ -26,6 +26,15 @@ import ConfirmDeleteAdminModal from '@components/admin-management/ConfirmDeleteA
 import { UserToDelete } from '@tools/pages/admin-management/types'; // Admin management types
 import AdminModal from '@components/admin-management/AdminModal'; // Admin modal component
 import { Employee, Role } from '@lib/graphql/types'; // GraphQL types
+import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
+import { useQuery } from '@apollo/client'; //Apollo client
+import {
+  GetEmployeesResponse,
+  GET_EMPLOYEES_QUERY,
+  GetEmployeesRequest,
+} from '@tools/pages/admin/admin-management/get-employees'; //Employees query
+import { EmployeeData } from '@tools/pages/admin/admin-management/types'; // EmployeeData type
+import { Column } from 'react-table'; // Column type
 
 /**
  * Admin management page
@@ -59,18 +68,24 @@ export default function AdminManagement() {
   const [userToUpdate, setUserToUpdate] = useState<Omit<Employee, 'id' | 'active'>>();
 
   // Table columns
-  const COLUMNS = [
+  const COLUMNS: Column<any>[] = [
     {
       Header: 'Name',
       accessor: 'name',
-      sortDescFirst: true,
+      Cell: ({ value }) => {
+        return (
+          <div>
+            <Text>{`${value.firstName} ${value.lastName}`}</Text>
+          </div>
+        );
+      },
       minWidth: 240,
     },
     {
       Header: 'Email',
       accessor: 'email',
       disableSortBy: true,
-      minWidth: 270,
+      minWidth: 240,
     },
     {
       Header: 'Role',
@@ -85,7 +100,7 @@ export default function AdminManagement() {
         );
       },
       disableSortBy: true,
-      minWidth: 240,
+      maxWidth: 240,
     },
     {
       Header: 'Actions',
@@ -143,39 +158,28 @@ export default function AdminManagement() {
     },
   ];
 
-  // Placeholder data
-  const DATA = [
-    {
-      name: 'Steve Rogers',
-      email: 'steverogers@uwblueprint.org',
-      role: Role.Secretary,
+  const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
+  const [requestsData, setRequestsData] = useState<EmployeeData[]>();
+
+  useQuery<GetEmployeesResponse, GetEmployeesRequest>(GET_EMPLOYEES_QUERY, {
+    variables: {
+      filter: {
+        order: sortOrder,
+      },
     },
-    {
-      name: 'Tony Stark',
-      email: 'tstark@avengers.inc',
-      role: Role.Accounting,
+    onCompleted: data => {
+      setRequestsData(
+        data.employees?.result.map(employee => ({
+          name: {
+            firstName: employee.firstName,
+            lastName: employee.lastName,
+          },
+          email: employee.email,
+          role: employee.role,
+        }))
+      );
     },
-    {
-      name: 'Hulk',
-      email: 'incrediblehulk@smash.com',
-      role: Role.Admin,
-    },
-    {
-      name: 'Doctor Strange',
-      email: 'strange@uwblueprint.org',
-      role: Role.Secretary,
-    },
-    {
-      name: 'Spiderman',
-      email: 'spider@avengers.inc',
-      role: Role.Accounting,
-    },
-    {
-      name: 'Thor',
-      email: 'thegodthor@asgard.odin',
-      role: Role.Admin,
-    },
-  ];
+  });
 
   return (
     <Layout>
@@ -193,7 +197,7 @@ export default function AdminManagement() {
         </Flex>
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
           <Box padding="20px 24px 0">
-            <Table columns={COLUMNS} data={DATA} />
+            <Table columns={COLUMNS} data={requestsData || []} onChangeSortOrder={setSortOrder} />
           </Box>
           <Flex justifyContent="flex-end" padding="12px 24px">
             <Pagination pageNumber={0} pageSize={20} totalCount={100} onPageChange={() => {}} />
