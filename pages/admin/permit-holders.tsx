@@ -274,7 +274,12 @@ export default function PermitHolders() {
         <Flex align="left" marginBottom="32px">
           <Text textStyle="display-xlarge">Permit Holders</Text>
         </Flex>
-        <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
+        <Box
+          border="1px solid"
+          borderColor="border.secondary"
+          borderRadius="12px"
+          bg="background.white"
+        >
           <Box padding="20px 24px">
             <Flex marginBottom="20px">
               <Menu>

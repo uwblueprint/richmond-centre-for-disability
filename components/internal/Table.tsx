@@ -11,7 +11,6 @@ type Props = {
   readonly data: Array<any>; // Depends on shape of data
   readonly onChangeSortOrder?: (sort: SortOptions) => unknown; // Callback after changing sorting
   readonly onRowClick?: (row: any) => unknown;
-  //readonly hasHoverColour?: boolean;
 };
 
 export default function Table(props: Props) {
@@ -88,7 +87,7 @@ export default function Table(props: Props) {
                 key={row.id}
                 onClick={onRowClick ? () => onRowClick(row.original) : undefined}
                 cursor={onRowClick ? 'pointer' : undefined}
-                _hover={{ background: 'background.interactive' }}
+                _hover={onRowClick && { background: 'background.interactive' }}
               >
                 {row.cells.map((cell, i) => (
                   <Td

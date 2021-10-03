@@ -191,7 +191,12 @@ export default function AdminManagement() {
             Add an RCD User
           </Button>
         </Flex>
-        <Box border="1px solid" borderColor="border.secondary" borderRadius="12px">
+        <Box
+          border="1px solid"
+          borderColor="border.secondary"
+          borderRadius="12px"
+          bg="background.white"
+        >
           <Box padding="20px 24px 0">
             <Table columns={COLUMNS} data={DATA} />
           </Box>
