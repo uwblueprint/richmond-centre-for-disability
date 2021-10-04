@@ -42,7 +42,8 @@ import { Column } from 'react-table'; // Column type for table
 import useDebounce from '@tools/hooks/useDebounce'; // Debouncer
 import { useEffect } from 'react'; // React
 import { formatDate } from '@lib/utils/format'; // Date formatter util
-import SetPermitHoldarStatusModal from '@components/permit-holders/modals/SetPermitHoldarStatusModal'; // Set Permit Holder Status modal
+import SetPermitHolderToInactiveModal from '@components/permit-holders/modals/SetPermitHolderToInactiveModal'; // Set Permit Holder To Inactive modal
+import SetPermitHolderToActiveModal from '@components/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
 import { SetPermitHolderStatusModalData } from '@tools/pages/permit-holders/types'; // Permit holder status modal type
 
 const PAGE_SIZE = 20;
@@ -459,9 +460,14 @@ export default function PermitHolders() {
           </Box>
         </Box>
       </GridItem>
-      {permitHolderModalData && (
-        <SetPermitHoldarStatusModal
-          status={permitHolderModalData.status}
+      {permitHolderModalData?.status === UserStatus.Active && (
+        <SetPermitHolderToInactiveModal
+          isOpen={isSetPermitHolderStatusModalOpen}
+          onClose={onCloseSetPermitHolderStatusModal}
+        />
+      )}
+      {permitHolderModalData?.status === UserStatus.Inactive && (
+        <SetPermitHolderToActiveModal
           isOpen={isSetPermitHolderStatusModalOpen}
           onClose={onCloseSetPermitHolderStatusModal}
         />
