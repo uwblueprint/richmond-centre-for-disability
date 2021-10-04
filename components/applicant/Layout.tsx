@@ -18,7 +18,13 @@ export default function Layout({ children, header = true, footer = true }: Props
       <Meta />
       <Flex flexDirection="column" alignItems="center" minHeight="100vh">
         {header && <Header />}
-        <Flex flexGrow={1} width="100%" justifyContent="center" paddingY="64px">
+        <Flex
+          flexGrow={1}
+          width="100%"
+          justifyContent="center"
+          paddingY="64px"
+          backgroundColor="background.grey"
+        >
           <ApplicantGrid>{children}</ApplicantGrid>
         </Flex>
         {footer && <Footer />}
@@ -47,7 +53,7 @@ function Meta() {
 // Header
 function Header() {
   return (
-    <Center height="108px" width="100%" backgroundColor="#f4f6fc">
+    <Center height="108px" width="100%" backgroundColor="background.grey">
       <ApplicantGrid alignItems="center" isContent={false}>
         <GridItem colSpan={1}>
           <Link href="/">
@@ -79,7 +85,7 @@ function Header() {
 // Footer
 function Footer() {
   return (
-    <Center flexDirection="column" width="100%" paddingTop={20} backgroundColor="#f4f6fc">
+    <Center flexDirection="column" width="100%" paddingTop={20} backgroundColor="background.grey">
       <ApplicantGrid marginBottom={10} isContent={false}>
         <GridItem colSpan={2} textAlign="left">
           <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} priority />

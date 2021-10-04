@@ -87,6 +87,7 @@ export default function Table(props: Props) {
                 key={row.id}
                 onClick={onRowClick ? () => onRowClick(row.original) : undefined}
                 cursor={onRowClick ? 'pointer' : undefined}
+                _hover={onRowClick && { background: 'background.interactive' }}
               >
                 {row.cells.map((cell, i) => (
                   <Td

@@ -37,7 +37,13 @@ export default function Layout({ children, header = true, footer = true }: Props
       <Meta />
       <Flex flexDirection="column" alignItems="center" minHeight="100vh">
         {header && <Header />}
-        <Flex flexGrow={1} width="100%" justifyContent="center" paddingY="32px">
+        <Flex
+          flexGrow={1}
+          width="100%"
+          justifyContent="center"
+          paddingY="32px"
+          backgroundColor="background.grey"
+        >
           <InternalGrid>{children}</InternalGrid>
         </Flex>
         {footer && <Footer />}
@@ -77,7 +83,7 @@ function Header() {
     <Flex
       height="80px"
       width="100%"
-      backgroundColor="#f4f6fc"
+      backgroundColor="background.grey"
       borderBottom="1px solid"
       borderBottomColor="border.secondary"
     >
