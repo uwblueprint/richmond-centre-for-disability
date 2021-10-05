@@ -44,7 +44,7 @@ import { useEffect } from 'react'; // React
 import { formatDate } from '@lib/utils/format'; // Date formatter util
 import SetPermitHolderToInactiveModal from '@components/permit-holders/modals/SetPermitHolderToInactiveModal'; // Set Permit Holder To Inactive modal
 import SetPermitHolderToActiveModal from '@components/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
-import { SetPermitHolderStatusModalData } from '@tools/pages/permit-holders/types'; // Permit holder status modal type
+import { SetPermitHolderStatusModalData } from '@tools/pages/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
 
 const PAGE_SIZE = 20;
 
@@ -187,14 +187,14 @@ export default function PermitHolders() {
   ];
   const userStatusOptions = [UserStatus.Active, UserStatus.Inactive];
 
-  // Set Permit Holder Status modal state
+  // Set Permit Holder Inactive/Active modal state
   const {
     isOpen: isSetPermitHolderStatusModalOpen,
     onOpen: onOpenSetPermitHolderStatusModal,
     onClose: onCloseSetPermitHolderStatusModal,
   } = useDisclosure();
 
-  // Set Permit Holder Status modal data state
+  // Sets the data required for the Set Permit Holder Inactive/Active modals
   const [permitHolderModalData, setPermitHolderModalData] =
     useState<SetPermitHolderStatusModalData>();
 

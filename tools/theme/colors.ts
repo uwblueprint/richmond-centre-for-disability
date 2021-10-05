@@ -9,7 +9,6 @@ const colors = {
   secondary: {
     critical: '#DF1414',
     criticalHover: '#B21010',
-    successHover: '#1e7e34',
     warning: '#B98900',
     success: '#009444',
     informative: '#00A0AC',
