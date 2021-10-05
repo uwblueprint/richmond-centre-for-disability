@@ -21,11 +21,11 @@ import {
   Tooltip,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
-import Layout from '@components/internal/Layout'; // Layout component
+import Layout from '@components/admin/Layout'; // Layout component
 import { authorize } from '@tools/authorization'; // Page authorization
-import Table from '@components/internal/Table'; // Table component
-import Pagination from '@components/internal/Pagination'; // Pagination component
-import RequestStatusBadge from '@components/internal/RequestStatusBadge'; //Status badge component
+import Table from '@components/Table'; // Table component
+import Pagination from '@components/Pagination'; // Pagination component
+import RequestStatusBadge from '@components/admin/RequestStatusBadge'; //Status badge component
 import { useQuery } from '@apollo/client'; //Apollo client
 import { useEffect, useState } from 'react'; // React
 import {

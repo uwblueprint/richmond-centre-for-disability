@@ -3,9 +3,9 @@
 import { useState } from 'react'; // React
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
-import Layout from '@components/internal/Layout'; // Layout component
+import Layout from '@components/admin/Layout'; // Layout component
 import { authorize } from '@tools/authorization'; // Page authorization
-import Table from '@components/internal/Table'; // Table component
+import Table from '@components/Table'; // Table component
 import {
   Flex,
   Text,
@@ -21,10 +21,10 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
 import { AddIcon } from '@chakra-ui/icons'; // Chakra UI icons
-import Pagination from '@components/internal/Pagination'; // Pagination component
-import ConfirmDeleteAdminModal from '@components/admin-management/ConfirmDeleteAdminModal'; // Confirm Delete Admin modal
-import { UserToDelete } from '@tools/pages/admin-management/types'; // Admin management types
-import AdminModal from '@components/admin-management/AdminModal'; // Admin modal component
+import Pagination from '@components/Pagination'; // Pagination component
+import ConfirmDeleteAdminModal from '@components/admin/admin-management/modals/ConfirmDeleteAdminModal'; // Confirm Delete Admin modal
+import { UserToDelete } from '@tools/pages/admin/admin-management/types'; // Admin management types
+import AdminModal from '@components/admin/admin-management/modals/AdminModal'; // Admin modal component
 import { Employee, Role } from '@lib/graphql/types'; // GraphQL types
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
 import { useQuery } from '@apollo/client'; //Apollo client
