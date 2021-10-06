@@ -35,6 +35,8 @@ export default function SetPermitHolderToInactiveModal({
     onClose();
   };
 
+  // Sets permit holder status to inactive and closes modal
+  // TODO: API hookup
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     onClose();

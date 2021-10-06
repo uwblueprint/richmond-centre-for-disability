@@ -114,7 +114,7 @@ export type GetPermitHolderResponse = {
 /**
  * Type for data required in Set Permit Holder Status modal
  */
-export type SetPermitHolderStatusModalData = {
+export type SetPermitHolderToUpdateStatus = {
   readonly id: number;
   readonly status: UserStatus;
 };

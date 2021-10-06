@@ -44,7 +44,7 @@ import { useEffect } from 'react'; // React
 import { formatDate } from '@lib/utils/format'; // Date formatter util
 import SetPermitHolderToInactiveModal from '@components/permit-holders/modals/SetPermitHolderToInactiveModal'; // Set Permit Holder To Inactive modal
 import SetPermitHolderToActiveModal from '@components/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
-import { SetPermitHolderStatusModalData } from '@tools/pages/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
+import { SetPermitHolderToUpdateStatus } from '@tools/pages/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
 
 const PAGE_SIZE = 20;
 
@@ -195,8 +195,8 @@ export default function PermitHolders() {
   } = useDisclosure();
 
   // Sets the data required for the Set Permit Holder Inactive/Active modals
-  const [permitHolderModalData, setPermitHolderModalData] =
-    useState<SetPermitHolderStatusModalData>();
+  const [permitHolderToUpdateStatus, setPermitHolderToUpdateStatus] =
+    useState<SetPermitHolderToUpdateStatus>();
 
   const COLUMNS: Column<any>[] = [
     {
@@ -313,7 +313,7 @@ export default function PermitHolders() {
                 textStyle="button-regular"
                 onClick={event => {
                   event.stopPropagation();
-                  setPermitHolderModalData({ id, status });
+                  setPermitHolderToUpdateStatus({ id, status });
                   onOpenSetPermitHolderStatusModal();
                 }}
               >
@@ -460,13 +460,13 @@ export default function PermitHolders() {
           </Box>
         </Box>
       </GridItem>
-      {permitHolderModalData?.status === UserStatus.Active && (
+      {permitHolderToUpdateStatus?.status === UserStatus.Active && (
         <SetPermitHolderToInactiveModal
           isOpen={isSetPermitHolderStatusModalOpen}
           onClose={onCloseSetPermitHolderStatusModal}
         />
       )}
-      {permitHolderModalData?.status === UserStatus.Inactive && (
+      {permitHolderToUpdateStatus?.status === UserStatus.Inactive && (
         <SetPermitHolderToActiveModal
           isOpen={isSetPermitHolderStatusModalOpen}
           onClose={onCloseSetPermitHolderStatusModal}
