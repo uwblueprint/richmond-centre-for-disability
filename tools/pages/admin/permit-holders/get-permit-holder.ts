@@ -7,7 +7,6 @@ import {
   Physician,
   Guardian,
   ApplicationFileAttachments,
-  UserStatus,
 } from '@lib/graphql/types'; // GraphQL types
 
 export const GET_PERMIT_HOLDER = gql`
@@ -203,12 +202,4 @@ export type GetPermitHolderResponse = {
       >
     >;
   };
-};
-
-/**
- * Type for data required in Set Permit Holder Status modal
- */
-export type PermitHolderToUpdateStatus = {
-  readonly id: number;
-  readonly status: UserStatus;
 };

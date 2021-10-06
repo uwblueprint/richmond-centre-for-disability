@@ -5,6 +5,7 @@ import {
   MedicalInformation,
   Permit,
   Physician,
+  UserStatus,
 } from '@lib/graphql/types';
 
 //Applicant data to show in Personal Information Card component
@@ -51,3 +52,11 @@ export type MedicalHistoryEntry = Pick<MedicalInformation, 'disability' | 'creat
 
 //Physician data to show in DoctorInformationCard and PreviousDoctorsInformationModal
 export type PreviousPhysicianData = Pick<Physician, 'name' | 'mspNumber' | 'phone'>;
+
+/**
+ * Type for data required in Set Permit Holder Status modal
+ */
+export type PermitHolderToUpdateStatus = {
+  readonly id: number;
+  readonly status: UserStatus;
+};
