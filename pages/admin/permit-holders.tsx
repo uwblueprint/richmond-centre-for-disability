@@ -44,7 +44,7 @@ import { useEffect } from 'react'; // React
 import { formatDate } from '@lib/utils/format'; // Date formatter util
 import SetPermitHolderToInactiveModal from '@components/permit-holders/modals/SetPermitHolderToInactiveModal'; // Set Permit Holder To Inactive modal
 import SetPermitHolderToActiveModal from '@components/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
-import { SetPermitHolderToUpdateStatus } from '@tools/pages/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
+import { PermitHolderToUpdateStatus } from '@tools/pages/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
 
 const PAGE_SIZE = 20;
 
@@ -196,7 +196,7 @@ export default function PermitHolders() {
 
   // Sets the data required for the Set Permit Holder Inactive/Active modals
   const [permitHolderToUpdateStatus, setPermitHolderToUpdateStatus] =
-    useState<SetPermitHolderToUpdateStatus>();
+    useState<PermitHolderToUpdateStatus>();
 
   const COLUMNS: Column<any>[] = [
     {
