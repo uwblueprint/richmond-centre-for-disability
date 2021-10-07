@@ -22,18 +22,18 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
-import Layout from '@components/internal/Layout'; // Layout component
-import { Permit, PermitStatus, Role, UserStatus } from '@lib/types'; // // Types
+import Layout from '@components/admin/Layout'; // Layout component
+import { Permit, PermitStatus, Role, UserStatus } from '@lib/types'; // Types
 import { authorize } from '@tools/authorization'; // Page authorization
-import Table from '@components/internal/Table'; // Table component
-import Pagination from '@components/internal/Pagination'; // Pagination component
+import Table from '@components/Table'; // Table component
+import Pagination from '@components/Pagination'; // Pagination component
 import { useState } from 'react'; // React
 import {
   GET_PERMIT_HOLDERS_QUERY,
   GetPermitHoldersRequest,
   GetPermitHoldersResponse,
   PermitHolder,
-} from '@tools/pages/permit-holders/permit-holders-table'; // Permit Holders GQL Query
+} from '@tools/pages/admin/permit-holders/get-permit-holders'; // Permit Holders GQL Query
 import { DateUtils } from 'react-day-picker'; // Date Utils
 import DateRangePicker from '@components/DateRangePicker'; // Day Picker component
 import useDateRangePicker from '@tools/hooks/useDateRangePicker'; // Day Picker hook
@@ -42,9 +42,9 @@ import { Column } from 'react-table'; // Column type for table
 import useDebounce from '@tools/hooks/useDebounce'; // Debouncer
 import { useEffect } from 'react'; // React
 import { formatDate } from '@lib/utils/format'; // Date formatter util
-import SetPermitHolderToInactiveModal from '@components/permit-holders/modals/SetPermitHolderToInactiveModal'; // Set Permit Holder To Inactive modal
-import SetPermitHolderToActiveModal from '@components/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
-import { PermitHolderToUpdateStatus } from '@tools/pages/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
+import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToInactiveModal'; // Set Permit Holder To Inactive modal
+import SetPermitHolderToActiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
+import { PermitHolderToUpdateStatus } from '@tools/pages/admin/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
 
 const PAGE_SIZE = 20;
 

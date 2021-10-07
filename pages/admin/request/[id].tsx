@@ -1,23 +1,23 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
-import Layout from '@components/internal/Layout'; // Layout component
-import RequestHeader from '@components/requests/RequestHeader'; // Request header
-import DoctorInformationCard from '@components/requests/DoctorInformationCard'; // Doctor information card
-import PaymentInformationCard from '@components/requests/PaymentInformationCard'; // Payment information card
-import PersonalInformationCard from '@components/requests/PersonalInformationCard'; // Personal information card
-import ProcessingTasksCard from '@components/requests/ProcessingTasksCard'; // Processing tasks card
+import Layout from '@components/admin/Layout'; // Layout component
+import RequestHeader from '@components/admin/requests/RequestHeader'; // Request header
+import DoctorInformationCard from '@components/admin/requests/DoctorInformationCard'; // Doctor information card
+import PaymentInformationCard from '@components/admin/requests/PaymentInformationCard'; // Payment information card
+import PersonalInformationCard from '@components/admin/requests/PersonalInformationCard'; // Personal information card
+import ProcessingTasksCard from '@components/admin/requests/ProcessingTasksCard'; // Processing tasks card
 import { Role, ApplicationStatus, UpdateApplicationInput } from '@lib/types'; // Enum types
 import { authorize } from '@tools/authorization'; // Page authorization
 import { useQuery, useMutation } from '@apollo/client'; // Apollo Client hooks
-import { GET_APPLICATION_QUERY } from '@tools/pages/request/queries'; // Request page GraphQL queries
+import { GET_APPLICATION_QUERY } from '@tools/pages/admin/requests/queries'; // Request page GraphQL queries
 import {
   UPDATE_APPLICATION_MUTATION,
   APPROVE_APPLICATION_MUTATION,
   REJECT_APPLICATION_MUTATION,
   COMPLETE_APPLICATION_MUTATION,
   UPDATE_APPLICATION_PROCESSING_MUTATION,
-} from '@tools/pages/request/mutations'; // Request page GraphQL mutations
+} from '@tools/pages/admin/requests/mutations'; // Request page GraphQL mutations
 import {
   GetApplicationRequest,
   GetApplicationResponse,
@@ -31,7 +31,7 @@ import {
   CompleteApplicationResponse,
   UpdateApplicationProcessingRequest,
   UpdateApplicationProcessingResponse,
-} from '@tools/pages/request/types'; // Request query/mutation types
+} from '@tools/pages/admin/requests/types'; // Request query/mutation types
 
 type Props = {
   readonly id: number;
