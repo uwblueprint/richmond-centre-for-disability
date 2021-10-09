@@ -36,6 +36,10 @@ export default `
     employee: Employee!
   }
 
+  input DeleteEmployeeInput {
+    id: ID!
+  }
+
   type DeleteEmployeeResult {
     ok: Boolean!
   }

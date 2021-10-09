@@ -149,7 +149,8 @@ export const updateEmployee: Resolver = async (_, args, { prisma }) => {
  * @returns status of operation (ok)
  */
 export const deleteEmployee: Resolver = async (_, args, { prisma }) => {
-  const id = parseInt(args.id);
+  const id = parseInt(args.input.id);
+
   const employee = await prisma.employee.findUnique({
     where: {
       id,

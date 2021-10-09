@@ -386,6 +386,10 @@ export type CreateRenewalApplicationResult = {
 };
 
 
+export type DeleteEmployeeInput = {
+  id: Scalars['ID'];
+};
+
 export type DeleteEmployeeResult = {
   __typename?: 'DeleteEmployeeResult';
   ok: Scalars['Boolean'];
@@ -499,7 +503,7 @@ export type MutationUpdateEmployeeArgs = {
 
 
 export type MutationDeleteEmployeeArgs = {
-  id: Scalars['ID'];
+  input: DeleteEmployeeInput;
 };
 
 
