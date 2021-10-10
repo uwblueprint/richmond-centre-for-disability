@@ -108,6 +108,7 @@ model Application {
   applicant                        Applicant?            @relation(fields: [applicantId], references: [id])
   applicationProcessing            ApplicationProcessing @relation("application_processingToapplications", fields: [applicationProcessingId], references: [id])
   permits                          Permit?
+  renewals                         Renewal?              @relation("applicationsTorenewals")
   replacement                      Replacement?          @relation("applicationsToreplacements")
 
   @@map("applications")
@@ -242,6 +243,16 @@ model Replacement {
   application             Application          @relation("applicationsToreplacements", fields: [applicationId], references: [id])
 
   @@map("replacements")
+}
+
+model Renewal {
+  id                            Int         @id @default(autoincrement())
+  usesAccessibleConvertedVan    Boolean?    @map("uses_accessible_converted_van") @default(false)
+  requiresWiderParkingSpace     Boolean?    @map("requires_wider_parking_space") @default(false)
+  applicationId                 Int         @map("application_id") @unique
+  createdAt                     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  application                   Application @relation("applicationsTorenewals", fields: [applicationId], references: [id])
 }
 
 enum Aid {
