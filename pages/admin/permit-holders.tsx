@@ -45,6 +45,7 @@ import { formatDate } from '@lib/utils/format'; // Date formatter util
 import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToInactiveModal'; // Set Permit Holder To Inactive modal
 import SetPermitHolderToActiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
 import { PermitHolderToUpdateStatus } from '@tools/pages/admin/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
+import Typeahead from '@components/Typeahead';
 
 const PAGE_SIZE = 20;
 
@@ -135,6 +136,10 @@ export default function PermitHolders() {
   const [permitHolderData, setPermitHolderData] = useState<PermitTableInputData[]>();
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState<number>(0);
+
+  // Typeahead
+  const isTypeaheadLoading = false;
+  const typeaheadResults: string[] = [];
 
   // Debounce search filter so that it only gives us latest value if searchFilter has not been updated within last 500ms.
   // This will avoid firing a query for each key the user presses
@@ -334,6 +339,15 @@ export default function PermitHolders() {
       <GridItem colSpan={12}>
         <Flex align="left" marginBottom="32px">
           <Text textStyle="display-xlarge">Permit Holders</Text>
+        </Flex>
+        <Flex align="left" marginBottom="32px">
+          {/* eslint-disable @typescript-eslint/no-empty-function */}
+          <Typeahead
+            isLoading={isTypeaheadLoading}
+            onSearch={() => {}}
+            results={typeaheadResults}
+            placeholder={'Search for permit holder'}
+          />
         </Flex>
         <Box
           border="1px solid"
