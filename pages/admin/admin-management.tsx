@@ -83,6 +83,7 @@ export default function AdminManagement() {
           status: 'success',
           description: `${data.updateEmployee.employee.firstName} ${data.updateEmployee.employee.lastName} has been edited.`,
         });
+        refetch();
       },
       onError: error => {
         toast({
@@ -136,7 +137,7 @@ export default function AdminManagement() {
       }) => {
         return (
           <Select
-            defaultValue={role}
+            value={role}
             width={190}
             onChange={event => {
               setUserToUpdate({
@@ -230,12 +231,13 @@ export default function AdminManagement() {
   const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
   const [requestsData, setRequestsData] = useState<EmployeeData[]>();
 
-  useQuery<GetEmployeesResponse, GetEmployeesRequest>(GET_EMPLOYEES_QUERY, {
+  const { refetch } = useQuery<GetEmployeesResponse, GetEmployeesRequest>(GET_EMPLOYEES_QUERY, {
     variables: {
       filter: {
         order: sortOrder,
       },
     },
+    notifyOnNetworkStatusChange: true,
     onCompleted: data => {
       setRequestsData(
         data.employees?.result.map(employee => ({
