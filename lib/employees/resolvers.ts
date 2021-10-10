@@ -123,6 +123,7 @@ export const updateEmployee: Resolver = async (_, args, { prisma }) => {
 
   return {
     ok: true,
+    employee: updatedEmployee,
   };
 };
 

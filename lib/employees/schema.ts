@@ -33,6 +33,7 @@ export default `
 
   type UpdateEmployeeResult {
     ok: Boolean!
+    employee: Employee!
   }
 
   type DeleteEmployeeResult {

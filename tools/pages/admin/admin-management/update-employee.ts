@@ -1,14 +1,17 @@
+import { Employee } from '.prisma/client';
 import { gql } from '@apollo/client'; // gql tag
 import { UpdateEmployeeInput } from '@lib/graphql/types'; // GraphQL types
 
 /**
  * GQL query to fetch employees based on filter
  */
-export const UPDATE_EMPLYEE_MUTATION = gql`
-  mutation updateEmployee($input: UpdateEmployeeInput) {
-    employees(input: $input) {
-      result {
-        ok
+export const UPDATE_EMPLOYEE_MUTATION = gql`
+  mutation updateEmployeeMutation($input: UpdateEmployeeInput!) {
+    updateEmployee(input: $input) {
+      ok
+      employee {
+        firstName
+        lastName
       }
     }
   }
@@ -27,5 +30,6 @@ export type UpdateEmployeeRequest = {
 export type UpdateEmployeeResponse = {
   updateEmployee: {
     ok: true | false;
+    employee: Employee;
   };
 };
