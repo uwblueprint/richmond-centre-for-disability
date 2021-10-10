@@ -41,9 +41,12 @@ export default `
 
   input EmployeesFilter {
     order: [[String!]!]
+    limit: Int
+    offset: Int
   }
 
   type QueryEmployeesResult {
     result: [Employee!]!
+    totalCount: Int!
   }
 `;

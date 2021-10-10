@@ -36,6 +36,9 @@ import {
 import { EmployeeData } from '@tools/pages/admin/admin-management/types'; // EmployeeData type
 import { Column } from 'react-table'; // Column type
 
+// Max number of entries in a page
+const PAGE_SIZE = 20;
+
 /**
  * Admin management page
  */
@@ -158,13 +161,18 @@ export default function AdminManagement() {
     },
   ];
 
+  // Data & pagination
   const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
   const [requestsData, setRequestsData] = useState<EmployeeData[]>();
+  const [pageNumber, setPageNumber] = useState(0);
+  const [recordsCount, setRecordsCount] = useState(0);
 
   useQuery<GetEmployeesResponse, GetEmployeesRequest>(GET_EMPLOYEES_QUERY, {
     variables: {
       filter: {
         order: sortOrder,
+        offset: pageNumber * PAGE_SIZE,
+        limit: PAGE_SIZE,
       },
     },
     onCompleted: data => {
@@ -178,6 +186,7 @@ export default function AdminManagement() {
           role: employee.role,
         }))
       );
+      setRecordsCount(data.employees.totalCount);
     },
   });
 
@@ -205,7 +214,12 @@ export default function AdminManagement() {
             <Table columns={COLUMNS} data={requestsData || []} onChangeSortOrder={setSortOrder} />
           </Box>
           <Flex justifyContent="flex-end" padding="12px 24px">
-            <Pagination pageNumber={0} pageSize={20} totalCount={100} onPageChange={() => {}} />
+            <Pagination
+              pageNumber={pageNumber}
+              pageSize={PAGE_SIZE}
+              totalCount={recordsCount}
+              onPageChange={setPageNumber}
+            />
           </Flex>
         </Box>
       </GridItem>
