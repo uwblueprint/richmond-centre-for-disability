@@ -19,6 +19,7 @@ import {
   Button,
   Select,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { AddIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import Pagination from '@components/Pagination'; // Pagination component
@@ -27,7 +28,7 @@ import { UserToDelete } from '@tools/pages/admin/admin-management/types'; // Adm
 import AdminModal from '@components/admin/admin-management/modals/AdminModal'; // Admin modal component
 import { Employee, Role } from '@lib/graphql/types'; // GraphQL types
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
-import { useQuery } from '@apollo/client'; //Apollo client
+import { useMutation, useQuery } from '@apollo/client'; //Apollo client
 import {
   GetEmployeesResponse,
   GET_EMPLOYEES_QUERY,
@@ -35,6 +36,11 @@ import {
 } from '@tools/pages/admin/admin-management/get-employees'; //Employees query
 import { EmployeeData } from '@tools/pages/admin/admin-management/types'; // EmployeeData type
 import { Column } from 'react-table'; // Column type
+import {
+  UpdateEmployeeRequest,
+  UpdateEmployeeResponse,
+  UPDATE_EMPLOYEE_MUTATION,
+} from '@tools/pages/admin/admin-management/update-employee'; // Update Employee Mutation
 
 /**
  * Admin management page
@@ -65,7 +71,28 @@ export default function AdminManagement() {
   } = useDisclosure();
 
   // State for admin to update
-  const [userToUpdate, setUserToUpdate] = useState<Omit<Employee, 'id' | 'active'>>();
+  const [userToUpdate, setUserToUpdate] = useState<Omit<Employee, 'active'>>();
+
+  // Update Employee Hook
+  const toast = useToast();
+  const [updateEmployee] = useMutation<UpdateEmployeeResponse, UpdateEmployeeRequest>(
+    UPDATE_EMPLOYEE_MUTATION,
+    {
+      onCompleted: data => {
+        toast({
+          status: 'success',
+          description: `${data.updateEmployee.employee.firstName} ${data.updateEmployee.employee.lastName} has been edited.`,
+        });
+        refetch();
+      },
+      onError: error => {
+        toast({
+          status: 'error',
+          description: error.message,
+        });
+      },
+    }
+  );
 
   // Table columns
   const COLUMNS: Column<any>[] = [
@@ -89,10 +116,44 @@ export default function AdminManagement() {
     },
     {
       Header: 'Role',
-      accessor: 'role',
-      Cell: ({ value }: { value: string }) => {
+      Cell: ({
+        row: {
+          original: {
+            id,
+            name: { firstName, lastName },
+            email,
+            role,
+          },
+        },
+      }: {
+        row: {
+          original: {
+            id: number;
+            name: { firstName: string; lastName: string };
+            email: string;
+            role: Role;
+          };
+        };
+      }) => {
         return (
-          <Select defaultValue={value} width={190}>
+          <Select
+            value={role}
+            width={190}
+            onChange={event => {
+              setUserToUpdate({
+                id,
+                firstName,
+                lastName,
+                email,
+                role,
+              });
+              updateEmployee({
+                variables: {
+                  input: { id, firstName, lastName, email, role: event.target.value as Role },
+                },
+              });
+            }}
+          >
             <option value={Role.Secretary}>Front Desk</option>
             <option value={Role.Accounting}>Accountant</option>
             <option value={Role.Admin}>Admin</option>
@@ -106,11 +167,21 @@ export default function AdminManagement() {
       Header: 'Actions',
       Cell: ({
         row: {
-          original: { id, firstName, lastName, email, role },
+          original: {
+            id,
+            name: { firstName, lastName },
+            email,
+            role,
+          },
         },
       }: {
         row: {
-          original: { id: number; firstName: string; lastName: string; email: string; role: Role };
+          original: {
+            id: number;
+            name: { firstName: string; lastName: string };
+            email: string;
+            role: Role;
+          };
         };
       }) => {
         return (
@@ -126,6 +197,7 @@ export default function AdminManagement() {
               <MenuItem
                 onClick={() => {
                   setUserToUpdate({
+                    id,
                     firstName,
                     lastName,
                     email,
@@ -161,15 +233,17 @@ export default function AdminManagement() {
   const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
   const [requestsData, setRequestsData] = useState<EmployeeData[]>();
 
-  useQuery<GetEmployeesResponse, GetEmployeesRequest>(GET_EMPLOYEES_QUERY, {
+  const { refetch } = useQuery<GetEmployeesResponse, GetEmployeesRequest>(GET_EMPLOYEES_QUERY, {
     variables: {
       filter: {
         order: sortOrder,
       },
     },
+    notifyOnNetworkStatusChange: true,
     onCompleted: data => {
       setRequestsData(
         data.employees?.result.map(employee => ({
+          id: employee.id,
           name: {
             firstName: employee.firstName,
             lastName: employee.lastName,
@@ -229,7 +303,11 @@ export default function AdminManagement() {
         title="Edit User"
         admin={userToUpdate}
         onClose={onCloseEditUserModal}
-        onSave={() => {}}
+        onSave={(user: Omit<Employee, 'id' | 'active'>) => {
+          if (userToUpdate) {
+            updateEmployee({ variables: { input: { id: userToUpdate.id, ...user } } });
+          }
+        }}
       />
     </Layout>
   );
@@ -237,7 +315,6 @@ export default function AdminManagement() {
 
 export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
-
   // Only admins can access this page
   if (authorize(session, [])) {
     return {

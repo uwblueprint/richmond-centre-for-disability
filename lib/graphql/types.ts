@@ -842,6 +842,7 @@ export type UpdateEmployeeInput = {
 export type UpdateEmployeeResult = {
   __typename?: 'UpdateEmployeeResult';
   ok: Scalars['Boolean'];
+  employee: Employee;
 };
 
 export type UpdateGuardianInput = {
