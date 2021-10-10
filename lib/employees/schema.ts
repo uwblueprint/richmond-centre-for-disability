@@ -21,6 +21,7 @@ export default `
 
   type CreateEmployeeResult {
     ok: Boolean!
+    employee: Employee!
   }
 
   input UpdateEmployeeInput {
