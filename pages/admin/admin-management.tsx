@@ -148,7 +148,9 @@ export default function AdminManagement() {
                 role,
               });
               updateEmployee({
-                variables: { input: { id, firstName, lastName, email, role: event.target.value } },
+                variables: {
+                  input: { id, firstName, lastName, email, role: event.target.value as Role },
+                },
               });
             }}
           >
