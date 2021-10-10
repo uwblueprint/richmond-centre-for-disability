@@ -111,6 +111,7 @@ export default function AdminManagement() {
           status: 'success',
           description: `${data.createEmployee.employee.firstName} ${data.createEmployee.employee.lastName} has been added.`,
         });
+        refetch();
       },
       onError: error => {
         toast({
