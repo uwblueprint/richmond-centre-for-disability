@@ -265,6 +265,7 @@ export default function AdminManagement() {
   const [recordsCount, setRecordsCount] = useState(0);
 
   const { refetch } = useQuery<GetEmployeesResponse, GetEmployeesRequest>(GET_EMPLOYEES_QUERY, {
+    fetchPolicy: 'cache-and-network',
     variables: {
       filter: {
         order: sortOrder,
