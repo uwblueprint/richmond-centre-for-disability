@@ -14,6 +14,7 @@ export const GET_EMPLOYEES_QUERY = gql`
         email
         role
       }
+      totalCount
     }
   }
 `;
@@ -31,5 +32,6 @@ export type GetEmployeesRequest = {
 export type GetEmployeesResponse = {
   employees: {
     result: ReadonlyArray<Pick<Employee, 'id' | 'firstName' | 'lastName' | 'email' | 'role'>>;
+    totalCount: number;
   };
 };

@@ -403,6 +403,8 @@ export type Employee = {
 
 export type EmployeesFilter = {
   order?: Maybe<Array<Array<Scalars['String']>>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 };
 
 export enum Gender {
@@ -686,6 +688,7 @@ export type QueryEmployeeInput = {
 export type QueryEmployeesResult = {
   __typename?: 'QueryEmployeesResult';
   result: Array<Employee>;
+  totalCount: Scalars['Int'];
 };
 
 export enum ReasonForReplacement {

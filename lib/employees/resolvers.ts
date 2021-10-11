@@ -26,6 +26,10 @@ export const employee: Resolver = async (_parent, args, { prisma }) => {
  * Query all the RCD employees in the internal-facing app
  * Sorting:
  * - order: array of tuples of the field being sorted and the order. Default [['firstName', 'asc'], ['lastName', 'asc']]
+ *
+ * Pagination:
+ * - offset: Number of results to skip.
+ * - limit: Number of result to return
  * @returns All RCD employees
  */
 export const employees: Resolver = async (_parent, { filter }, { prisma }) => {
@@ -33,10 +37,22 @@ export const employees: Resolver = async (_parent, { filter }, { prisma }) => {
   if (filter?.order) {
     filter.order.forEach(([field, order]: [string, SortOrder]) => (sortingOrder[field] = order));
   }
+
+  const take = filter?.limit;
+  const skip = filter?.offset;
+
+  const where = {
+    active: true,
+  };
+
+  const totalCount = await prisma.employee.count({
+    where,
+  });
+
   const employees = await prisma.employee.findMany({
-    where: {
-      active: true,
-    },
+    where,
+    skip,
+    take,
     orderBy: [
       { firstName: sortingOrder.name || SortOrder.ASC },
       { lastName: sortingOrder.name || SortOrder.ASC },
@@ -44,6 +60,7 @@ export const employees: Resolver = async (_parent, { filter }, { prisma }) => {
   });
   return {
     result: employees,
+    totalCount: totalCount,
   };
 };
 
