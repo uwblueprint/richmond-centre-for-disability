@@ -45,7 +45,7 @@ import {
   CreateNewEmployeeRequest,
   CreateNewEmployeeResponse,
   CREATE_EMPLOYEE_MUTATION,
-} from './admin-management/create-user';
+} from '../../tools/pages/admin/admin-management/create-user';
 
 // Max number of entries in a page
 const PAGE_SIZE = 20;
