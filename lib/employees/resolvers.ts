@@ -149,7 +149,7 @@ export const updateEmployee: Resolver = async (_, args, { prisma }) => {
  * @returns status of operation (ok)
  */
 export const deleteEmployee: Resolver = async (_, args, { prisma }) => {
-  const id = parseInt(args.input.id);
+  const id = parseInt(args.input);
 
   const employee = await prisma.employee.findUnique({
     where: {
@@ -180,5 +180,5 @@ export const deleteEmployee: Resolver = async (_, args, { prisma }) => {
     }
   }
   if (!updatedEmployee) throw new ApolloError('Employee was unable to be deleted');
-  return { ok: true };
+  return { ok: true, employee: updatedEmployee };
 };

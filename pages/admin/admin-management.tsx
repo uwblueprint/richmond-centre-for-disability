@@ -296,9 +296,7 @@ export default function AdminManagement() {
     if (userToDelete) {
       await deleteEmployee({
         variables: {
-          input: {
-            id: userToDelete?.id,
-          },
+          input: userToDelete?.id,
         },
       });
     }
@@ -345,7 +343,6 @@ export default function AdminManagement() {
           isOpen={isConfirmDeleteModalOpen}
           onClose={onCloseConfirmDeleteModal}
           user={userToDelete}
-          // TODO: Replace onDelete handler during API hookup
           onDelete={handleDelete}
         />
       )}
