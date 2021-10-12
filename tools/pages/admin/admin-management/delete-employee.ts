@@ -6,8 +6,8 @@ import { MutationDeleteEmployeeArgs } from '@lib/graphql/types'; // GraphQL type
  * GQL query to delete employee
  */
 export const DELETE_EMPLOYEE_MUTATION = gql`
-  mutation DeleteEmployeeMutation($input: ID!) {
-    deleteEmployee(input: $input) {
+  mutation DeleteEmployeeMutation($id: ID!) {
+    deleteEmployee(id: $id) {
       ok
       employee {
         firstName

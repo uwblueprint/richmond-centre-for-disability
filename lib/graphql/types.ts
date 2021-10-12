@@ -500,7 +500,7 @@ export type MutationUpdateEmployeeArgs = {
 
 
 export type MutationDeleteEmployeeArgs = {
-  input: Scalars['ID'];
+  id: Scalars['ID'];
 };
 
 

@@ -284,7 +284,7 @@ export default function AdminManagement() {
         if (data.deleteEmployee.ok) {
           toast({
             status: 'success',
-            description: `${userToDelete?.name} has been deleted`,
+            description: `${data.deleteEmployee.employee.firstName} ${data.deleteEmployee.employee.lastName} has been deleted`,
           });
         }
       },
@@ -296,7 +296,7 @@ export default function AdminManagement() {
     if (userToDelete) {
       await deleteEmployee({
         variables: {
-          input: userToDelete?.id,
+          id: userToDelete?.id,
         },
       });
     }
