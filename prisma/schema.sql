@@ -274,3 +274,15 @@ CREATE TABLE replacements (
 
   FOREIGN KEY(application_id) REFERENCES applications(id)
 );
+
+-- Create renewals table (subset of applications)
+CREATE TABLE renewals (
+  id                             SERIAL PRIMARY KEY NOT NULL,
+  uses_accessible_converted_van  BOOLEAN DEFAULT FALSE,
+  requires_wider_parking_space   BOOLEAN DEFAULT FALSE,
+  application_id                 INTEGER UNIQUE NOT NULL,
+  created_at                     TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at                     TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY(application_id) REFERENCES applications(id)
+);
