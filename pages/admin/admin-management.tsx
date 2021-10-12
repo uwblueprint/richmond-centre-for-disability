@@ -276,6 +276,7 @@ export default function AdminManagement() {
     },
   });
 
+  // Delete Employee Hook
   const [deleteEmployee] = useMutation<DeleteEmployeeResponse, DeleteEmployeeRequest>(
     DELETE_EMPLOYEE_MUTATION,
     {
@@ -290,6 +291,7 @@ export default function AdminManagement() {
     }
   );
 
+  // Handle delete employee action
   const handleDelete = async () => {
     if (userToDelete) {
       await deleteEmployee({
