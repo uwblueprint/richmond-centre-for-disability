@@ -42,6 +42,12 @@ import {
   UPDATE_EMPLOYEE_MUTATION,
 } from '@tools/pages/admin/admin-management/update-employee'; // Update Employee Mutation
 
+import {
+  DeleteEmployeeRequest,
+  DeleteEmployeeResponse,
+  DELETE_EMPLOYEE_MUTATION,
+} from '@tools/pages/admin/admin-management/delete-employee'; // Delete Employee Mutation
+
 // Max number of entries in a page
 const PAGE_SIZE = 20;
 
@@ -262,7 +268,42 @@ export default function AdminManagement() {
       );
       setRecordsCount(data.employees.totalCount);
     },
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
   });
+
+  // Delete Employee Hook
+  const [deleteEmployee] = useMutation<DeleteEmployeeResponse, DeleteEmployeeRequest>(
+    DELETE_EMPLOYEE_MUTATION,
+    {
+      onCompleted: data => {
+        if (data.deleteEmployee.ok) {
+          toast({
+            status: 'success',
+            description: `${data.deleteEmployee.employee.firstName} ${data.deleteEmployee.employee.lastName} has been deleted`,
+          });
+        }
+      },
+    }
+  );
+
+  // Handle delete employee action
+  const handleDelete = async () => {
+    if (userToDelete) {
+      await deleteEmployee({
+        variables: {
+          id: userToDelete?.id,
+        },
+      });
+    }
+
+    onCloseConfirmDeleteModal();
+    refetch();
+  };
 
   return (
     <Layout>
@@ -302,8 +343,7 @@ export default function AdminManagement() {
           isOpen={isConfirmDeleteModalOpen}
           onClose={onCloseConfirmDeleteModal}
           user={userToDelete}
-          // TODO: Replace onDelete handler during API hookup
-          onDelete={onCloseConfirmDeleteModal}
+          onDelete={handleDelete}
         />
       )}
       <AdminModal

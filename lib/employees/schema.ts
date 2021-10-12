@@ -38,6 +38,7 @@ export default `
 
   type DeleteEmployeeResult {
     ok: Boolean!
+    employee: Employee!
   }
 
   input EmployeesFilter {

@@ -389,6 +389,7 @@ export type CreateRenewalApplicationResult = {
 export type DeleteEmployeeResult = {
   __typename?: 'DeleteEmployeeResult';
   ok: Scalars['Boolean'];
+  employee: Employee;
 };
 
 export type Employee = {
