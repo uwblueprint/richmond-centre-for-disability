@@ -1,9 +1,9 @@
-import { Employee } from '.prisma/client';
+import { Employee } from '@prisma/client';
 import { gql } from '@apollo/client'; // gql tag
 import { CreateEmployeeInput } from '@lib/graphql/types'; // GraphQL types
 
 /**
- * GQL query to fetch employees based on filter
+ * GQL query to create new employees
  */
 export const CREATE_EMPLOYEE_MUTATION = gql`
   mutation createEmployeeMutation($input: CreateEmployeeInput!) {
@@ -18,14 +18,14 @@ export const CREATE_EMPLOYEE_MUTATION = gql`
 `;
 
 /**
- * Input parameters for fetch all employees
+ * Input parameters for creating new employees
  */
 export type CreateNewEmployeeRequest = {
   input: CreateEmployeeInput;
 };
 
 /**
- * Response type of getting employees
+ * Response type of creating new employees
  */
 export type CreateNewEmployeeResponse = {
   createEmployee: {

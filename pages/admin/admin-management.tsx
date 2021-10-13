@@ -45,7 +45,7 @@ import {
   CreateNewEmployeeRequest,
   CreateNewEmployeeResponse,
   CREATE_EMPLOYEE_MUTATION,
-} from '../../tools/pages/admin/admin-management/create-user';
+} from '@tools/pages/admin/admin-management/create-user';
 
 // Max number of entries in a page
 const PAGE_SIZE = 20;
@@ -265,7 +265,6 @@ export default function AdminManagement() {
   const [recordsCount, setRecordsCount] = useState(0);
 
   const { refetch } = useQuery<GetEmployeesResponse, GetEmployeesRequest>(GET_EMPLOYEES_QUERY, {
-    fetchPolicy: 'cache-and-network',
     variables: {
       filter: {
         order: sortOrder,
