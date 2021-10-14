@@ -41,6 +41,11 @@ import {
   UpdateEmployeeResponse,
   UPDATE_EMPLOYEE_MUTATION,
 } from '@tools/pages/admin/admin-management/update-employee'; // Update Employee Mutation
+import {
+  CreateNewEmployeeRequest,
+  CreateNewEmployeeResponse,
+  CREATE_EMPLOYEE_MUTATION,
+} from '@tools/pages/admin/admin-management/create-user';
 
 import {
   DeleteEmployeeRequest,
@@ -91,6 +96,26 @@ export default function AdminManagement() {
         toast({
           status: 'success',
           description: `${data.updateEmployee.employee.firstName} ${data.updateEmployee.employee.lastName} has been edited.`,
+        });
+        refetch();
+      },
+      onError: error => {
+        toast({
+          status: 'error',
+          description: error.message,
+        });
+      },
+    }
+  );
+
+  // Add new user mutation
+  const [createEmployee] = useMutation<CreateNewEmployeeResponse, CreateNewEmployeeRequest>(
+    CREATE_EMPLOYEE_MUTATION,
+    {
+      onCompleted: data => {
+        toast({
+          status: 'success',
+          description: `${data.createEmployee.employee.firstName} ${data.createEmployee.employee.lastName} has been added.`,
         });
         refetch();
       },
@@ -350,7 +375,9 @@ export default function AdminManagement() {
         isOpen={isNewUserModalOpen}
         title="Add New User"
         onClose={onCloseNewUserModal}
-        onSave={() => {}}
+        onSave={(user: Omit<Employee, 'id' | 'active'>) => {
+          createEmployee({ variables: { input: { ...user } } });
+        }}
       />
       <AdminModal
         isOpen={isEditUserModalOpen}

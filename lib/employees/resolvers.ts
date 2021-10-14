@@ -100,6 +100,7 @@ export const createEmployee: Resolver = async (_, args, { prisma }) => {
 
   return {
     ok: true,
+    employee: user,
   };
 };
 

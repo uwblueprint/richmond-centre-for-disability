@@ -296,6 +296,7 @@ export type CreateEmployeeInput = {
 export type CreateEmployeeResult = {
   __typename?: 'CreateEmployeeResult';
   ok: Scalars['Boolean'];
+  employee: Employee;
 };
 
 /** Fields to specify when creating a guardian record for an applicant */
