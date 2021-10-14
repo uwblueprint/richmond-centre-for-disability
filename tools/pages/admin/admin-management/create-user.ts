@@ -3,7 +3,7 @@ import { gql } from '@apollo/client'; // gql tag
 import { CreateEmployeeInput } from '@lib/graphql/types'; // GraphQL types
 
 /**
- * GQL query to create new employees
+ * GQL mutation to create new employees
  */
 export const CREATE_EMPLOYEE_MUTATION = gql`
   mutation createEmployeeMutation($input: CreateEmployeeInput!) {
