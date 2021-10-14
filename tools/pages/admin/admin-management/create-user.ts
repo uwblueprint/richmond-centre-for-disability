@@ -29,7 +29,7 @@ export type CreateNewEmployeeRequest = {
  */
 export type CreateNewEmployeeResponse = {
   createEmployee: {
-    ok: true | false;
+    ok: boolean;
     employee: Employee;
   };
 };
