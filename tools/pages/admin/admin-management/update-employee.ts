@@ -3,7 +3,7 @@ import { gql } from '@apollo/client'; // gql tag
 import { UpdateEmployeeInput } from '@lib/graphql/types'; // GraphQL types
 
 /**
- * GQL mutation to fetch employees based on filter
+ * GQL query to fetch employees based on filter
  */
 export const UPDATE_EMPLOYEE_MUTATION = gql`
   mutation updateEmployeeMutation($input: UpdateEmployeeInput!) {
