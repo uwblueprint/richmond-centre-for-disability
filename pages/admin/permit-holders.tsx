@@ -120,7 +120,7 @@ type PermitTableInputData = PermitHolder & {
 };
 
 type githubUser = {
-  labal: string;
+  label: string;
   avatar_url: string;
   id: number;
   login: string;
