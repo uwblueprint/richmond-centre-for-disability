@@ -1,5 +1,4 @@
-import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
-import React from 'react';
+import { Flex, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import {
   AsyncTypeahead,
   AsyncTypeaheadProps,
@@ -26,7 +25,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
       filterBy={filterBy}
       id="async-typeahead"
       isLoading={isLoading}
-      minLength={3}
+      minLength={3} //verify
       onSearch={onSearch}
       options={results}
       placeholder={placeholder}
@@ -40,6 +39,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
             backgroundColor="white"
             borderColor="border.secondary"
             width="500px"
+            size="md"
             {...inputProps}
             ref={input => {
               inputRef(input);
@@ -52,7 +52,18 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
         <Menu {...menuProps}>
           {results.map((result, index) => (
             <MenuItem key={index} option={result} position={index}>
-              <Highlighter search={props.text}>{result.label}</Highlighter>
+              <Flex>
+                <img
+                  alt={result.login}
+                  src={result.avatar_url}
+                  style={{
+                    height: '24px',
+                    marginRight: '10px',
+                    width: '24px',
+                  }}
+                />
+                <Highlighter search={props.text}>{result.label}</Highlighter>
+              </Flex>
             </MenuItem>
           ))}
         </Menu>

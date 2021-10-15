@@ -119,6 +119,13 @@ type PermitTableInputData = PermitHolder & {
   };
 };
 
+type githubUser = {
+  labal: string;
+  avatar_url: string;
+  id: number;
+  login: string;
+};
+
 // Internal permit holders page
 export default function PermitHolders() {
   const router = useRouter();
@@ -139,7 +146,7 @@ export default function PermitHolders() {
 
   // Typeahead
   const [isTypeaheadLoading, setIsTypeaheadLoading] = useState(false);
-  const [typeaheadResults, setTypeaheadResults] = useState<string[]>([]);
+  const [typeaheadResults, setTypeaheadResults] = useState<githubUser[]>([]);
 
   // Debounce search filter so that it only gives us latest value if searchFilter has not been updated within last 500ms.
   // This will avoid firing a query for each key the user presses
@@ -342,7 +349,7 @@ export default function PermitHolders() {
     fetch(`${SEARCH_URI}?q=${query}+in:login&page=1&per_page=50`)
       .then(resp => resp.json())
       .then(({ items }) => {
-        const options = items.map(i => ({
+        const options = items.map((i: any) => ({
           label: i.login,
           avatar_url: i.avatar_url,
           id: i.id,
@@ -361,7 +368,6 @@ export default function PermitHolders() {
           <Text textStyle="display-xlarge">Permit Holders</Text>
         </Flex>
         <Flex marginBottom="100px" colSpan={12}>
-          {/* eslint-disable @typescript-eslint/no-empty-function */}
           <Typeahead
             isLoading={isTypeaheadLoading}
             onSearch={query => handleSearch(query)}
