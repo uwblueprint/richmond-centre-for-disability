@@ -138,8 +138,8 @@ export default function PermitHolders() {
   const [recordsCount, setRecordsCount] = useState<number>(0);
 
   // Typeahead
-  const isTypeaheadLoading = false;
-  const typeaheadResults: string[] = [];
+  const [isTypeaheadLoading, setIsTypeaheadLoading] = useState(false);
+  const [typeaheadResults, setTypeaheadResults] = useState<string[]>([]);
 
   // Debounce search filter so that it only gives us latest value if searchFilter has not been updated within last 500ms.
   // This will avoid firing a query for each key the user presses
@@ -334,17 +334,37 @@ export default function PermitHolders() {
     },
   ];
 
+  //TODO: remove. Used for testing Typeahead component
+  const SEARCH_URI = 'https://api.github.com/search/users';
+  const handleSearch = (query: string) => {
+    setIsTypeaheadLoading(true);
+
+    fetch(`${SEARCH_URI}?q=${query}+in:login&page=1&per_page=50`)
+      .then(resp => resp.json())
+      .then(({ items }) => {
+        const options = items.map(i => ({
+          label: i.login,
+          avatar_url: i.avatar_url,
+          id: i.id,
+          login: i.login,
+        }));
+
+        setTypeaheadResults(options);
+        setIsTypeaheadLoading(false);
+      });
+  };
+
   return (
     <Layout>
       <GridItem colSpan={12}>
         <Flex align="left" marginBottom="32px">
           <Text textStyle="display-xlarge">Permit Holders</Text>
         </Flex>
-        <Flex align="left" marginBottom="32px">
+        <Flex marginBottom="100px" colSpan={12}>
           {/* eslint-disable @typescript-eslint/no-empty-function */}
           <Typeahead
             isLoading={isTypeaheadLoading}
-            onSearch={() => {}}
+            onSearch={query => handleSearch(query)}
             results={typeaheadResults}
             placeholder={'Search for permit holder'}
           />
