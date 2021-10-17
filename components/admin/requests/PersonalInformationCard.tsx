@@ -43,7 +43,7 @@ export default function PersonalInformationCard(props: Props) {
 
   // Personal information card editing modal
   const EditModal = (
-    <EditPermitHolderInformationModal applicant={applicant} onSave={onSave}>
+    <EditPermitHolderInformationModal permitHolderInformation={applicant} onSave={onSave}>
       <Button variant="ghost" textDecoration="underline">
         <Text textStyle="body-bold">Edit</Text>
       </Button>
