@@ -1,8 +1,9 @@
-import { AsyncTypeahead, AsyncTypeaheadProps, TypeaheadModel } from 'react-bootstrap-typeahead';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
-import Helmet from 'react-helmet';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { AsyncTypeahead, AsyncTypeaheadProps, TypeaheadModel } from 'react-bootstrap-typeahead'; // Typeahead
+import 'react-bootstrap-typeahead/css/Typeahead.css'; //Typeahead styling
+import Helmet from 'react-helmet'; // Helmet
+import 'bootstrap/dist/css/bootstrap.min.css'; //Bootstrap styling
 
+// Typeahead props
 type Props<T extends TypeaheadModel> = Pick<
   AsyncTypeaheadProps<T>,
   'isLoading' | 'onSearch' | 'renderMenuItemChildren'
