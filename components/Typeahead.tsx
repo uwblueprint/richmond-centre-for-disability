@@ -39,8 +39,12 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
           .dropdown-item {
             color: #1A1A1A;
           }
-          .dropdown-item.active {
+          .dropdown-item.active, .dropdown-item:hover {
             background-color: #F2F7FE;
+            color: #1A1A1A;
+          }
+          .dropdown-item:active {
+            background-color: #E2E8F0;
             color: #1A1A1A;
           }
           .form-control.focus {
