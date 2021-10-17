@@ -1,7 +1,5 @@
-import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import { AsyncTypeahead, AsyncTypeaheadProps, TypeaheadModel } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import { SearchIcon } from '@chakra-ui/icons';
 import Helmet from 'react-helmet';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -28,33 +26,11 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
         options={results}
         placeholder={placeholder}
         positionFixed={true}
-        // inputProps={{
-        //   style:{
-        //     'width':'400px',
-        //     'color':'#A1A1A1'
-        // }}}
-        renderInput={({ inputRef, referenceElementRef, size: _size, ...inputProps }) => (
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <SearchIcon color="text.filler" />
-            </InputLeftElement>
-            <Input
-              backgroundColor="white"
-              borderColor="border.secondary"
-              maxwidth="500px"
-              minWidth="400px"
-              {...inputProps}
-              // onChange={() => {onChange(selected)}}
-              ref={input => {
-                // ! Fix react-bootstrap-typeahead type issues
-                if (inputRef) {
-                  (inputRef as (instance: HTMLInputElement | null) => void)(input);
-                }
-                referenceElementRef(input);
-              }}
-            />
-          </InputGroup>
-        )}
+        inputProps={{
+          style: {
+            width: '400px',
+          },
+        }}
         renderMenuItemChildren={renderMenuItemChildren}
       />
       <Helmet>
