@@ -46,6 +46,7 @@ import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/mod
 import SetPermitHolderToActiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
 import { PermitHolderToUpdateStatus } from '@tools/pages/admin/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
 import Typeahead from '@components/Typeahead';
+import { Highlighter } from 'react-bootstrap-typeahead';
 
 const PAGE_SIZE = 20;
 
@@ -373,6 +374,23 @@ export default function PermitHolders() {
             onSearch={query => handleSearch(query)}
             results={typeaheadResults}
             placeholder={'Search for permit holder'}
+            renderMenuItemChildren={(option, props) => {
+              // console.log(props);
+              return (
+                <Flex>
+                  <img
+                    alt={option.login}
+                    src={option.avatar_url}
+                    style={{
+                      height: '24px',
+                      marginRight: '10px',
+                      width: '24px',
+                    }}
+                  />
+                  <Highlighter search={props.text || ''}>{option.label}</Highlighter>
+                </Flex>
+              );
+            }}
           />
         </Flex>
         <Box
