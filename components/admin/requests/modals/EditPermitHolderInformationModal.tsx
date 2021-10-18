@@ -28,7 +28,7 @@ export default function EditPermitHolderInformationModal({
 }: EditPermitHolderInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [permitHolderInformation, setPermitHolderInformation] =
-    useState<PermitHolderInformationData>(currentPermitHolderInformation || {});
+    useState<PermitHolderInformationData>(currentPermitHolderInformation);
 
   useEffect(() => {
     setPermitHolderInformation(currentPermitHolderInformation);

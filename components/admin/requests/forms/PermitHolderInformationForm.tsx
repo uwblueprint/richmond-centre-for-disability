@@ -43,11 +43,11 @@ export default function PermitHolderInformationForm({
           <FormControl isRequired>
             <FormLabel>{'Last name'}</FormLabel>
             <Input
-              value={permitHolderInformation.firstName}
+              value={permitHolderInformation.lastName}
               onChange={event =>
                 onChange({
                   ...permitHolderInformation,
-                  firstName: event.target.value,
+                  lastName: event.target.value,
                 })
               }
             />
