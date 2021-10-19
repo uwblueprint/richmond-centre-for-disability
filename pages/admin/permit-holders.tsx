@@ -350,7 +350,7 @@ export default function PermitHolders() {
     fetch(`${SEARCH_URI}?q=${query}+in:login&page=1&per_page=50`)
       .then(resp => resp.json())
       .then(({ items }) => {
-        const options = items.map((i: any) => ({
+        const options = items?.map((i: any) => ({
           label: i.login,
           avatar_url: i.avatar_url,
           id: i.id,
