@@ -48,12 +48,20 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
             <VStack>
               <Box></Box>
               <Menu {...menuProps}>
-                {results.length == 0 && !isLoading ? (
-                  <Center height="80px">
-                    <Text textStyle="body-regular" color="secondary">
-                      No results found.
-                    </Text>
-                  </Center>
+                {results.length == 0 ? (
+                  isLoading ? (
+                    <Center height="80px">
+                      <Text textStyle="body-regular" color="secondary">
+                        Searching...
+                      </Text>
+                    </Center>
+                  ) : (
+                    <Center height="80px">
+                      <Text textStyle="body-regular" color="secondary">
+                        No results found.
+                      </Text>
+                    </Center>
+                  )
                 ) : (
                   results.map((result, index) => (
                     <>
