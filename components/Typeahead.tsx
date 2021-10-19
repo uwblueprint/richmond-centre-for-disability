@@ -49,8 +49,8 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
               <Box></Box>
               <Menu {...menuProps}>
                 {results.length == 0 && !isLoading ? (
-                  <Center>
-                    <Text textStyle="caption" color="secondary">
+                  <Center height="80px">
+                    <Text textStyle="body-regular" color="secondary">
                       No results found.
                     </Text>
                   </Center>
