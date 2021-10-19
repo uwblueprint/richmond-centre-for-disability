@@ -47,7 +47,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
           return (
             <VStack>
               <Box></Box>
-              <Menu {...menuProps}>
+              <Menu {...menuProps} maxHeight="280px">
                 {results.length == 0 ? (
                   isLoading ? (
                     <Center height="80px">
