@@ -9,7 +9,7 @@ type AdditionalQuestionsFormProps = {
 export default function AdditionalQuestionsForm({ data, onChange }: AdditionalQuestionsFormProps) {
   return (
     <>
-      <FormControl as="fieldset" isRequired paddingTop="20px">
+      <FormControl as="fieldset" isRequired>
         <FormLabel>{'Is the applicant using an accessible converted van?'}</FormLabel>
         <RadioGroup
           value={data.usesAccessibleConvertedVan ? '0' : '1'}
