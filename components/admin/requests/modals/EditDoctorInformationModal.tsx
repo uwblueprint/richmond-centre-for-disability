@@ -12,12 +12,12 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, SyntheticEvent, ReactNode, useEffect } from 'react'; // React
 import { Physician } from '@lib/graphql/types'; // GraphQL types
-import { DoctorInformationFormData } from '@tools/components/admin/requests/forms/doctor-information-form';
+import { DoctorInformation } from '@tools/components/admin/requests/forms/doctor-information-form';
 import DoctorInformationForm from '@components/admin/requests/forms/DoctorInformationForm';
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;
-  readonly doctorInformation: DoctorInformationFormData;
+  readonly doctorInformation: DoctorInformation;
   readonly onSave: (
     physicianData: Pick<
       Physician,
@@ -33,7 +33,7 @@ export default function EditDoctorInformationModal({
 }: EditDoctorInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [doctorInformation, setDoctorInformation] =
-    useState<DoctorInformationFormData>(currentDoctorInformation);
+    useState<DoctorInformation>(currentDoctorInformation);
 
   useEffect(() => {
     setDoctorInformation(currentDoctorInformation);
