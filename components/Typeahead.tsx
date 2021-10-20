@@ -48,7 +48,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
             <VStack>
               <Box></Box>
               <Menu {...menuProps}>
-                {results.length == 0 ? (
+                {results.length === 0 ? (
                   isLoading ? (
                     <Center height="80px">
                       <Text textStyle="body-regular" color="secondary">
@@ -68,7 +68,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
                       <MenuItem option={result} position={index}>
                         {renderMenuItemChildren(result, menuProps, index)}
                       </MenuItem>
-                      {index != results.length - 1 ? (
+                      {index !== results.length - 1 ? (
                         <Divider width="466px" borderWidth="0" color="border.secondary" />
                       ) : null}
                     </>
@@ -78,7 +78,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
             </VStack>
           );
         }}
-      ></AsyncTypeahead>
+      />
       <Helmet>
         <style>
           {`
