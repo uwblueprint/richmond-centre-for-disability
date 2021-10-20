@@ -1,6 +1,6 @@
 import { Renewal } from '@lib/graphql/types'; // Renewal type
 
-export type AdditionalQuestionsCardData = Pick<
+export type AdditionalQuestionsFormData = Pick<
   Renewal,
   'usesAccessibleConvertedVan' | 'requiresWiderParkingSpace'
 >;

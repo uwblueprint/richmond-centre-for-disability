@@ -1,9 +1,9 @@
 import { FormControl, FormLabel, Stack, Radio, RadioGroup } from '@chakra-ui/react'; // Chakra UI
-import { AdditionalQuestionsCardData } from '@tools/components/admin/requests/forms/renewals/additional-questions-card'; // AdditionalQuestionsCardData type
+import { AdditionalQuestionsFormData } from '@tools/components/admin/requests/renewal-additional-questions-form'; // AdditionalQuestionsFormData type
 
 type AdditionalQuestionsFormProps = {
-  data: AdditionalQuestionsCardData;
-  onChange: (additionalQuestionsFormData: AdditionalQuestionsCardData) => void;
+  data: AdditionalQuestionsFormData;
+  onChange: (additionalQuestionsFormData: AdditionalQuestionsFormData) => void;
 };
 
 export default function AdditionalQuestionsForm({ data, onChange }: AdditionalQuestionsFormProps) {
