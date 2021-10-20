@@ -8,13 +8,17 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { DoctorInformationFormData } from '@tools/components/admin/requests/forms/doctor-information-form';
+import { DoctorInformation } from '@tools/components/admin/requests/forms/doctor-information-form';
 
 type DoctorInformationFormProps = {
-  readonly doctorInformation: DoctorInformationFormData;
-  readonly onChange: (updatedData: DoctorInformationFormData) => void;
+  readonly doctorInformation: DoctorInformation;
+  readonly onChange: (updatedData: DoctorInformation) => void;
 };
-
+/**
+ * Form component for doctor information with styling.
+ * @param props - Props
+ * @returns doctor information form.
+ */
 export default function DoctorInformationForm({
   doctorInformation,
   onChange,
