@@ -23,10 +23,7 @@ export default function DoctorInformationForm({
     <>
       {/* Personal Information Section */}
       <Box paddingBottom="32px">
-        <Text as="h3" textStyle="heading" paddingBottom="24px">
-          {"Doctor's Information"}
-        </Text>
-        <Stack direction="row" spacing="20px">
+        <Stack direction="row" spacing="20px" paddingBottom="24px">
           <FormControl isRequired>
             <FormLabel>{'First name'}</FormLabel>
             <Input
@@ -91,7 +88,7 @@ export default function DoctorInformationForm({
         <Text as="h3" textStyle="heading" paddingBottom="24px">
           {'Address'}
           <Box as="span" textStyle="caption">
-            {'(must be in British Columbia)'}
+            {' (must be in British Columbia)'}
           </Box>
         </Text>
 

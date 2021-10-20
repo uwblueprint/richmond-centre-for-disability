@@ -1,12 +1,13 @@
 import { Box, Text, Divider, VStack, Button, Flex } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/PermitHolderInfoCard'; // Custom Card Component
-import { Physician, UpsertPhysicianInput } from '@lib/graphql/types'; // Physician type
+import { UpsertPhysicianInput } from '@lib/graphql/types'; // Physician type
 import EditDoctorInformationModal from '@components/admin/requests/modals/EditDoctorInformationModal'; // Edit doctor information modal component
 import PreviousDoctorsInformationModal from '@components/admin/permit-holders/modals/PreviousDoctorsInformationModal'; // Previous Doctors' Information Modal
 import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/types';
+import { DoctorInformationFormData } from '@tools/components/admin/requests/forms/doctor-information-form';
 
 type DoctorInformationProps = {
-  physician: Physician;
+  physician: DoctorInformationFormData;
   readonly isUpdated?: boolean;
   readonly previousPhysicianData: PreviousPhysicianData[];
   readonly onSave: (physicianData: UpsertPhysicianInput) => void;
@@ -64,7 +65,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
             {physician.addressLine2 || ''}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {`${physician.city} ${physician.province}`}
+            {`${physician.city}`}
           </Text>
           <Text as="p" textStyle="body-regular">
             {`Canada`}
