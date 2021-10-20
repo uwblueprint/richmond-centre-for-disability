@@ -1,34 +1,22 @@
-import { GridItem, Text, FormControl, FormLabel, Stack, Radio, RadioGroup } from '@chakra-ui/react'; // Chakra UI
-// import { AdditionalQuestionsFormData } from '@tools/components/admin/requests/forms/renewals/AdditionalQuestionsFormData';
+import { FormControl, FormLabel, Stack, Radio, RadioGroup } from '@chakra-ui/react'; // Chakra UI
+import { AdditionalQuestionsCardData } from '@tools/components/admin/requests/forms/renewals/additional-questions-card'; // AdditionalQuestionsCardData type
 
 type AdditionalQuestionsFormProps = {
-  // data: AdditionalQuestionsFormData;
-  // onSave: (additionalQuestionsFormData: AdditionalQuestionsFormData) => void;
+  data: AdditionalQuestionsCardData;
+  onChange: (additionalQuestionsFormData: AdditionalQuestionsCardData) => void;
 };
 
-/**
- * Custom Card component with styling.
- * @param props - Props
- * @returns Additional Questions Form Card.
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function AdditionalQuestionsForm(props: AdditionalQuestionsFormProps) {
+export default function AdditionalQuestionsForm({ data, onChange }: AdditionalQuestionsFormProps) {
   return (
-    <GridItem
-      padding="32px 40px 40px"
-      background="white"
-      border="1px solid"
-      borderColor="border.secondary"
-      boxSizing="border-box"
-      borderRadius="8px"
-    >
-      <Text as="h5" textStyle="display-small-semibold">
-        {'Additional Questions'}
-      </Text>
-
+    <>
       <FormControl as="fieldset" isRequired paddingTop="20px">
         <FormLabel>{'Is the applicant using an accessible converted van?'}</FormLabel>
-        <RadioGroup>
+        <RadioGroup
+          value={data.usesAccessibleConvertedVan ? '0' : '1'}
+          onChange={value =>
+            onChange({ ...data, usesAccessibleConvertedVan: value === '0' ? true : false })
+          }
+        >
           <Stack>
             <Radio value={'0'}>{'Yes'}</Radio>
             <Radio value={'1'}>{'No'}</Radio>
@@ -38,13 +26,18 @@ export default function AdditionalQuestionsForm(props: AdditionalQuestionsFormPr
 
       <FormControl as="fieldset" isRequired paddingTop="24px">
         <FormLabel>{'Does the applicant need a wider accessible parking space?'}</FormLabel>
-        <RadioGroup>
+        <RadioGroup
+          value={data.requiresWiderParkingSpace ? '0' : '1'}
+          onChange={value =>
+            onChange({ ...data, requiresWiderParkingSpace: value === '0' ? true : false })
+          }
+        >
           <Stack>
             <Radio value="0">{'Yes'}</Radio>
             <Radio value="1">{'No'}</Radio>
           </Stack>
         </RadioGroup>
       </FormControl>
-    </GridItem>
+    </>
   );
 }

@@ -699,6 +699,14 @@ export enum ReasonForReplacement {
   Other = 'OTHER'
 }
 
+export type Renewal = {
+  __typename?: 'Renewal';
+  id: Scalars['ID'];
+  usesAccessibleConvertedVan: Maybe<Scalars['Boolean']>;
+  requiresWiderParkingSpace: Maybe<Scalars['Boolean']>;
+  applicationId: Scalars['ID'];
+};
+
 export type Replacement = {
   __typename?: 'Replacement';
   id: Scalars['ID'];
