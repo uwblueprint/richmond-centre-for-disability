@@ -107,7 +107,7 @@ model Application {
   updatedAt                        DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   applicant                        Applicant?            @relation(fields: [applicantId], references: [id])
   applicationProcessing            ApplicationProcessing @relation("application_processingToapplications", fields: [applicationProcessingId], references: [id])
-  permits                          Permit?
+  permit                          Permit?
   renewal                         Renewal?              @relation("applicationsTorenewals")
   replacement                      Replacement?          @relation("applicationsToreplacements")
 
