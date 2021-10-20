@@ -8,8 +8,8 @@ import {
 import 'react-bootstrap-typeahead/css/Typeahead.css'; //Typeahead styling
 import Helmet from 'react-helmet'; // Helmet
 import 'bootstrap/dist/css/bootstrap.min.css'; //Bootstrap styling
-import { Center, Divider, VStack, Text } from '@chakra-ui/layout'; // Chakra UI
-import { Spacer } from '@chakra-ui/react';
+import { Center, Divider, VStack, Text } from '@chakra-ui/layout'; // Chakra UI Layout
+import { Spacer } from '@chakra-ui/react'; //Chakra UI React
 
 // Typeahead props
 type Props<T extends TypeaheadModel> = Pick<
