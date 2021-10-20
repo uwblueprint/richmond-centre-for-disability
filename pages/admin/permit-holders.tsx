@@ -45,8 +45,6 @@ import { formatDate } from '@lib/utils/format'; // Date formatter util
 import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToInactiveModal'; // Set Permit Holder To Inactive modal
 import SetPermitHolderToActiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
 import { PermitHolderToUpdateStatus } from '@tools/pages/admin/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
-import Typeahead from '@components/Typeahead';
-import { Highlighter } from 'react-bootstrap-typeahead';
 
 const PAGE_SIZE = 20;
 
@@ -120,13 +118,6 @@ type PermitTableInputData = PermitHolder & {
   };
 };
 
-type githubUser = {
-  label: string;
-  avatar_url: string;
-  id: number;
-  login: string;
-};
-
 // Internal permit holders page
 export default function PermitHolders() {
   const router = useRouter();
@@ -144,10 +135,6 @@ export default function PermitHolders() {
   const [permitHolderData, setPermitHolderData] = useState<PermitTableInputData[]>();
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState<number>(0);
-
-  // Typeahead
-  const [isTypeaheadLoading, setIsTypeaheadLoading] = useState(false);
-  const [typeaheadResults, setTypeaheadResults] = useState<githubUser[]>([]);
 
   // Debounce search filter so that it only gives us latest value if searchFilter has not been updated within last 500ms.
   // This will avoid firing a query for each key the user presses
@@ -342,56 +329,11 @@ export default function PermitHolders() {
     },
   ];
 
-  //TODO: remove. Used for testing Typeahead component
-  const SEARCH_URI = 'https://api.github.com/search/users';
-  const handleSearch = (query: string) => {
-    setIsTypeaheadLoading(true);
-
-    fetch(`${SEARCH_URI}?q=${query}+in:login&page=1&per_page=50`)
-      .then(resp => resp.json())
-      .then(({ items }) => {
-        const options = items?.map((i: any) => ({
-          label: i.login,
-          avatar_url: i.avatar_url,
-          id: i.id,
-          login: i.login,
-        }));
-
-        setTypeaheadResults(options);
-        setIsTypeaheadLoading(false);
-      });
-  };
-
   return (
     <Layout>
       <GridItem colSpan={12}>
         <Flex align="left" marginBottom="32px">
           <Text textStyle="display-xlarge">Permit Holders</Text>
-        </Flex>
-        <Flex marginBottom="100px" colSpan={12}>
-          <Typeahead
-            isLoading={isTypeaheadLoading}
-            onSearch={query => handleSearch(query)}
-            results={typeaheadResults}
-            placeholder={'Search for permit holder'}
-            renderMenuItemChildren={(option, props) => {
-              // console.log(props);
-              return (
-                <Flex>
-                  <img
-                    alt={option.login}
-                    src={option.avatar_url}
-                    style={{
-                      height: '24px',
-                      marginRight: '10px',
-                      width: '24px',
-                    }}
-                  />
-                  <Highlighter search={props.text || ''}>{option.label}</Highlighter>
-                </Flex>
-              );
-            }}
-          />
         </Flex>
         <Box
           border="1px solid"

@@ -8,17 +8,25 @@ import {
 import 'react-bootstrap-typeahead/css/Typeahead.css'; //Typeahead styling
 import Helmet from 'react-helmet'; // Helmet
 import 'bootstrap/dist/css/bootstrap.min.css'; //Bootstrap styling
-import { Box, Center, Divider, VStack, Text } from '@chakra-ui/layout'; // Chakra UI
+import { Center, Divider, VStack, Text } from '@chakra-ui/layout'; // Chakra UI
+import { Spacer } from '@chakra-ui/react';
 
 // Typeahead props
 type Props<T extends TypeaheadModel> = Pick<
   AsyncTypeaheadProps<T>,
-  'isLoading' | 'onSearch' | 'renderMenuItemChildren'
+  | 'isLoading' // boolean to indicate if query is loading
+  | 'onSearch' // function to execute query when text is entered in input field
+  | 'renderMenuItemChildren' // function to format each result in the menu
 > & {
-  results: Array<T>;
-  placeholder: string;
+  results: Array<T>; // array of results to display in the typeahead menu
+  placeholder: string; // placeholder text
 };
 
+/**
+ * Typeahead component to perform asynchronous queries
+ * @param props - props
+ * @returns Typeahead component which can be used to search with any query
+ */
 export default function Typeahead<T extends TypeaheadModel>(props: Required<Props<T>>) {
   const { isLoading, onSearch, renderMenuItemChildren, results, placeholder } = props;
   const filterBy = () => true;
@@ -46,7 +54,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
           menuProps.text = props.text;
           return (
             <VStack>
-              <Box></Box>
+              <Spacer height="8px" />
               <Menu {...menuProps} maxHeight="280px">
                 {results.length === 0 ? (
                   isLoading ? (
@@ -82,6 +90,9 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
       <Helmet>
         <style>
           {`
+          .dropdown-menu {
+            padding: 0;
+          }
           .dropdown-item {
             color: #1A1A1A;
           }
