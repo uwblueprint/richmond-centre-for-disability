@@ -108,7 +108,7 @@ model Application {
   applicant                        Applicant?            @relation(fields: [applicantId], references: [id])
   applicationProcessing            ApplicationProcessing @relation("application_processingToapplications", fields: [applicationProcessingId], references: [id])
   permits                          Permit?
-  renewals                         Renewal?              @relation("applicationsTorenewals")
+  renewal                         Renewal?              @relation("applicationsTorenewals")
   replacement                      Replacement?          @relation("applicationsToreplacements")
 
   @@map("applications")

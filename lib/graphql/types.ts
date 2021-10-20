@@ -363,6 +363,8 @@ export type CreateRenewalApplicationInput = {
   updatedAddress: Scalars['Boolean'];
   updatedContactInfo: Scalars['Boolean'];
   updatedPhysician: Scalars['Boolean'];
+  usesAccessibleConvertedVan: Scalars['Boolean'];
+  requiresWiderParkingSpace: Scalars['Boolean'];
   /** Personal address info (must be provided if updatedAddress === true) */
   addressLine1?: Maybe<Scalars['String']>;
   addressLine2?: Maybe<Scalars['String']>;
