@@ -134,7 +134,6 @@ export default function Request({ id }: Props) {
     billingProvince,
     billingPostalCode,
 
-    processingFee,
     donationAmount,
     paymentMethod,
 
@@ -165,8 +164,23 @@ export default function Request({ id }: Props) {
     mostRecentAppExpiryDate: new Date(expiryDate),
   };
 
-  // Payment data for Payment Information Card
-  const paymentInformationData = {
+  // Physician data for Doctor Information Card
+  const physicianData = {
+    name: physicianName,
+    mspNumber: physicianMspNumber,
+    addressLine1: physicianAddressLine1,
+    addressLine2: physicianAddressLine2,
+    city: physicianCity,
+    province: physicianProvince,
+    postalCode: physicianPostalCode,
+    phone: physicianPhone,
+    notes: physicianNotes,
+  };
+
+  // Payment data
+  const paymentInformation = {
+    paymentMethod,
+    donationAmount,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
     shippingAddressLine1,
@@ -181,22 +195,6 @@ export default function Request({ id }: Props) {
     billingCity,
     billingProvince,
     billingPostalCode,
-    processingFee,
-    donationAmount,
-    paymentMethod,
-  };
-
-  // Physician data for Doctor Information Card
-  const physicianData = {
-    name: physicianName,
-    mspNumber: physicianMspNumber,
-    addressLine1: physicianAddressLine1,
-    addressLine2: physicianAddressLine2,
-    city: physicianCity,
-    province: physicianProvince,
-    postalCode: physicianPostalCode,
-    phone: physicianPhone,
-    notes: physicianNotes,
   };
 
   /**
@@ -284,7 +282,7 @@ export default function Request({ id }: Props) {
             <DoctorInformationCard physician={physicianData} onSave={handleUpdateApplication} />
           )}
           <PaymentInformationCard
-            paymentInformation={paymentInformationData}
+            paymentInformation={paymentInformation}
             onSave={handleUpdateApplication}
           />
         </Stack>
