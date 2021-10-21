@@ -12,12 +12,12 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
 import { UpdateApplicationInput } from '@lib/graphql/types'; // GraphQL Types
-import { PermitHolderInformationData } from '@tools/components/admin/requests/forms/types';
+import { PermitHolderInformation } from '@tools/components/admin/requests/forms/types';
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm';
 
 type EditPermitHolderInformationModalProps = {
   children: ReactNode;
-  readonly permitHolderInformation: PermitHolderInformationData;
+  readonly permitHolderInformation: PermitHolderInformation;
   readonly onSave: (applicationData: Omit<UpdateApplicationInput, 'id'>) => void;
 };
 
@@ -27,8 +27,9 @@ export default function EditPermitHolderInformationModal({
   onSave,
 }: EditPermitHolderInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const [permitHolderInformation, setPermitHolderInformation] =
-    useState<PermitHolderInformationData>(currentPermitHolderInformation);
+  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>(
+    currentPermitHolderInformation
+  );
 
   useEffect(() => {
     setPermitHolderInformation(currentPermitHolderInformation);

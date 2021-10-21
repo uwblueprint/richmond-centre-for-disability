@@ -8,17 +8,17 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { PermitHolderInformationData } from '@tools/components/admin/requests/forms/types'; // Permit Holder Information Type
+import { PermitHolderInformation } from '@tools/components/admin/requests/forms/types'; // Permit Holder Information Type
 
 type PermitHolderInformationFormProps = {
-  readonly permitHolderInformation: PermitHolderInformationData;
-  readonly onChange: (updatedData: PermitHolderInformationData) => void;
+  readonly permitHolderInformation: PermitHolderInformation;
+  readonly onChange: (updatedData: PermitHolderInformation) => void;
 };
 
 /**
  * PermitHolderInformationForm Component for allowing users to edit permit holder information.
  *
- * @param {PermitHolderInformationData} permitHolderInformation Data Structure that holds all permit holder information for a client request.
+ * @param {PermitHolderInformation} permitHolderInformation Data Structure that holds all permit holder information for a client request.
  * @param onChange Function that uses the updated values from form.
  */
 export default function PermitHolderInformationForm({

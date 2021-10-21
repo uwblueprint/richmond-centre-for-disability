@@ -1,7 +1,7 @@
 import { Application, Renewal } from '@lib/graphql/types'; // GraphQL Types
 
 // Permit Holder Information Object
-export type PermitHolderInformationData = Pick<
+export type PermitHolderInformation = Pick<
   Application,
   | 'firstName'
   | 'lastName'
