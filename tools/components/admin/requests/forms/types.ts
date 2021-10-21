@@ -1,7 +1,7 @@
-import { Applicant } from '@lib/graphql/types';
+import { Application } from '@lib/graphql/types';
 
 export type PermitHolderInformationData = Pick<
-  Applicant,
+  Application,
   | 'firstName'
   | 'lastName'
   | 'email'

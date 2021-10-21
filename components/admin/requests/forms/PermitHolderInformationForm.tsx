@@ -15,6 +15,12 @@ type PermitHolderInformationFormProps = {
   readonly onChange: (updatedData: PermitHolderInformationData) => void;
 };
 
+/**
+ * PermitHolderInformationForm Component for allowing users to edit permit holder information.
+ *
+ * @param {PermitHolderInformationData} permitHolderInformation Data Structure that holds all permit holder information for a client request.
+ * @param onChange Function that uses the updated values from form.
+ */
 export default function PermitHolderInformationForm({
   permitHolderInformation,
   onChange,
