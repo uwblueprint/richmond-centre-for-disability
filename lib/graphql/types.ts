@@ -363,6 +363,8 @@ export type CreateRenewalApplicationInput = {
   updatedAddress: Scalars['Boolean'];
   updatedContactInfo: Scalars['Boolean'];
   updatedPhysician: Scalars['Boolean'];
+  usesAccessibleConvertedVan: Scalars['Boolean'];
+  requiresWiderParkingSpace: Scalars['Boolean'];
   /** Personal address info (must be provided if updatedAddress === true) */
   addressLine1?: Maybe<Scalars['String']>;
   addressLine2?: Maybe<Scalars['String']>;
@@ -698,6 +700,14 @@ export enum ReasonForReplacement {
   Stolen = 'STOLEN',
   Other = 'OTHER'
 }
+
+export type Renewal = {
+  __typename?: 'Renewal';
+  id: Scalars['ID'];
+  usesAccessibleConvertedVan: Maybe<Scalars['Boolean']>;
+  requiresWiderParkingSpace: Maybe<Scalars['Boolean']>;
+  applicationId: Scalars['ID'];
+};
 
 export type Replacement = {
   __typename?: 'Replacement';

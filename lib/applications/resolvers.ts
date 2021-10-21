@@ -256,6 +256,8 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
       physicianCity,
       physicianPostalCode,
       physicianPhone,
+      usesAccessibleConvertedVan,
+      requiresWiderParkingSpace,
     },
   } = args;
 
@@ -339,6 +341,12 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         },
         applicationProcessing: {
           create: {},
+        },
+        renewal: {
+          create: {
+            usesAccessibleConvertedVan,
+            requiresWiderParkingSpace,
+          },
         },
       },
     });

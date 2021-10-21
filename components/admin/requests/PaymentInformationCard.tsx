@@ -1,20 +1,20 @@
 import { Box, Text, Divider, SimpleGrid, VStack, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/PermitHolderInfoCard'; // Custom Card component
 import EditPaymentDetailsModal from '@components/admin/requests/modals/EditPaymentDetailsModal'; // Edit modal
-import { PaymentInformation } from '@tools/components/admin/requests/payment-information-card'; // Applicant type
+import { PaymentDetails } from '@tools/components/admin/requests/forms/types';
 
 type PaymentInformationProps = {
-  readonly paymentInformation: PaymentInformation;
+  readonly paymentInformation: PaymentDetails;
   readonly isUpdated?: boolean;
   readonly onSave: (applicationData: any) => void;
 };
 
 export default function PaymentInformationCard(props: PaymentInformationProps) {
   const { paymentInformation, isUpdated, onSave } = props;
+
   const {
-    processingFee,
-    donationAmount,
     paymentMethod,
+    donationAmount,
     shippingAddressLine1,
     shippingAddressLine2,
     shippingCity,
@@ -55,7 +55,8 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
           </Box>
           <Box>
             <Text as="p" textStyle="body-regular">
-              ${processingFee}
+              {/* Fixed cost */}
+              {'$26'}
             </Text>
           </Box>
           <Box>

@@ -161,6 +161,9 @@ export default function Renew() {
             physicianPostalCode: doctorPostalCode,
             physicianPhone: doctorPhoneNumber,
           }),
+          //TODO: Replace with dynamic values
+          usesAccessibleConvertedVan: false,
+          requiresWiderParkingSpace: false,
         },
       },
     });
