@@ -255,6 +255,9 @@ export default `
     updatedAddress: Boolean!
     updatedContactInfo: Boolean!
     updatedPhysician: Boolean!
+    usesAccessibleConvertedVan: Boolean!
+    requiresWiderParkingSpace: Boolean!
+
 
     # Personal address info (must be provided if updatedAddress === true)
     addressLine1: String
