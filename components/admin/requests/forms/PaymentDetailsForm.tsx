@@ -25,18 +25,10 @@ type PaymentDetailsFormProps = {
 };
 
 /**
- * Function Passed into PaymentDetailsProps for monitoring the changes done to fields in PaymentDetailsForm Component.
- *
- * @callback onChangeCallback
- * @param {PaymentDetails} updatedData
- */
-
-/**
  * PaymentDetailsForm Component for allowing users to edit payment details.
  *
  * @param {PaymentDetails} paymentInformation Data Structure that holds all paymentInformation for a client request.
  * @param {onChangeCallback} onChange Function that uses the updated values from form.
- * @returns
  */
 export default function PaymentDetailsForm({
   paymentInformation,
