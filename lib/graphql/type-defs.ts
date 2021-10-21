@@ -9,6 +9,7 @@ import metaSchema from '@lib/meta/schema'; // Meta schema
 import permitsSchema from '@lib/permits/schema'; // Permits schema
 import physiciansSchema from '@lib/physicians/schema'; // Physicians schema
 import replacementsSchema from '@lib/replacements/schema'; // Replacements schema
+import renewalsSchema from '@lib/renewals/schema'; // Renewals schema
 
 // Merge schemas
 const typeDefs = [
@@ -23,6 +24,7 @@ const typeDefs = [
   permitsSchema,
   physiciansSchema,
   replacementsSchema,
+  renewalsSchema,
 ];
 
 export default typeDefs;
