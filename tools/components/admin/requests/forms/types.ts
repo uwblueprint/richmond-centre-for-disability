@@ -1,5 +1,4 @@
-import { Renewal } from '@lib/graphql/types'; // Renewal type
-import { Application } from '@lib/graphql/types';
+import { Application, Renewal } from '@lib/graphql/types'; // Renewal type
 
 // Additional Questions Object
 export type AdditionalQuestions = Pick<
