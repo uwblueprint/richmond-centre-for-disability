@@ -11,6 +11,7 @@ type DoctorInformationProps = {
   readonly previousPhysicianData: PreviousPhysicianData[];
   readonly onSave: (physicianData: UpsertPhysicianInput) => void;
 };
+
 /**
  * Card component for doctor information using doctor information form.
  * @param props - Props

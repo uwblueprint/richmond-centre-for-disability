@@ -14,8 +14,9 @@ type DoctorInformationFormProps = {
   readonly doctorInformation: DoctorInformation;
   readonly onChange: (updatedData: DoctorInformation) => void;
 };
+
 /**
- * Form component for doctor information with styling.
+ * Form component for editing doctor information of request.
  * @param props - Props
  * @returns doctor information form.
  */
@@ -31,6 +32,7 @@ export default function DoctorInformationForm({
           <FormControl isRequired>
             <FormLabel>{'First name'}</FormLabel>
             <Input
+              /*TODO: Need to separate name into first and last name*/
               value={doctorInformation.name}
               onChange={event =>
                 onChange({
@@ -44,6 +46,7 @@ export default function DoctorInformationForm({
           <FormControl isRequired>
             <FormLabel>{'Last name'}</FormLabel>
             <Input
+              /*TODO: Need to separate name into first and last name*/
               value={doctorInformation.name}
               onChange={event =>
                 onChange({
