@@ -1,10 +1,10 @@
 import { Box, Text, Divider, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/PermitHolderInfoCard'; // Custom Card Component
 import EditReasonForReplacementModal from '@components/admin/requests/modals/EditReasonForReplacementModal'; // Edit modal
-import { ReplacementData } from '@tools/components/admin/requests/reason-for-replacement-card'; // ReplacementData type
+import { ReasonForReplacement } from '@tools/components/admin/requests/forms/types'; // ReasonForReplacement Type
 
 type ReplacementProps = {
-  readonly replacement: ReplacementData;
+  readonly replacement: ReasonForReplacement;
   readonly isUpdated?: boolean;
 };
 
@@ -16,7 +16,7 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
       header={`Reason For Replacement`}
       updated={isUpdated}
       editModal={
-        <EditReasonForReplacementModal replacement={replacement}>
+        <EditReasonForReplacementModal reasonForReplacement={replacement}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
