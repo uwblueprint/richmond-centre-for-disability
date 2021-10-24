@@ -32,7 +32,7 @@ export default function DoctorInformationForm({
           <FormControl isRequired>
             <FormLabel>{'First name'}</FormLabel>
             <Input
-              /*TODO: Need to separate name into first and last name*/
+              // TODO: Need to separate name into first and last name
               value={doctorInformation.name}
               onChange={event =>
                 onChange({
@@ -46,7 +46,7 @@ export default function DoctorInformationForm({
           <FormControl isRequired>
             <FormLabel>{'Last name'}</FormLabel>
             <Input
-              /*TODO: Need to separate name into first and last name*/
+              // TODO: Need to separate name into first and last name
               value={doctorInformation.name}
               onChange={event =>
                 onChange({
@@ -65,7 +65,7 @@ export default function DoctorInformationForm({
               onChange={event =>
                 onChange({
                   ...doctorInformation,
-                  mspNumber: event.target.valueAsNumber,
+                  mspNumber: parseInt(event.target.value),
                 })
               }
             />
