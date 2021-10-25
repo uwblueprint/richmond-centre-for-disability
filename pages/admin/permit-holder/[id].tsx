@@ -52,49 +52,52 @@ export default function PermitHolder({ id }: Props) {
   // const [attachedFiles, setAttachedFiles] = useState<PermitHolderAttachedFile[]>();
   const [previousPhysicianData, setPreviousPhysicianData] = useState<PreviousPhysicianData[]>();
 
-  const { data } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(GET_PERMIT_HOLDER, {
-    variables: {
-      id,
-    },
-    fetchPolicy: 'network-only',
-    onCompleted: data => {
-      setPermits(
-        data.applicant.permits.map(permit => ({
-          rcdPermitId: permit.rcdPermitId,
-          expiryDate: permit.expiryDate,
-          applicationId: permit.applicationId,
-          isRenewal: permit.application.isRenewal,
-          status: permit.application.applicationProcessing.status,
-        }))
-      );
-      // TODO: uncomment when AWS is setup and we use real files
-      // const files: PermitHolderAttachedFile[] = [];
-      // data.applicant.fileHistory.forEach(application => {
-      //   application.documentUrls?.forEach(documentUrl => {
-      //     files.push({
-      //       appNumber: application.appNumber,
-      //       createdAt: application.createdAt,
-      //       fileUrl: documentUrl,
-      //     });
-      //   });
-      // });
-      // setAttachedFiles(files);
-      setMedicalHistoryData(
-        data.applicant.applications.map(application => ({
-          disability: application.disability,
-          createdAt: application.createdAt,
-          applicantApplication: application,
-        }))
-      );
-      setPreviousPhysicianData(
-        data.applicant.medicalHistory.map(record => ({
-          name: record.physician.name,
-          mspNumber: record.physician.mspNumber,
-          phone: record.physician.phone,
-        }))
-      );
-    },
-  });
+  const { data, refetch } = useQuery<GetPermitHolderResponse, GetPermitHolderRequest>(
+    GET_PERMIT_HOLDER,
+    {
+      variables: {
+        id,
+      },
+      fetchPolicy: 'network-only',
+      onCompleted: data => {
+        setPermits(
+          data.applicant.permits.map(permit => ({
+            rcdPermitId: permit.rcdPermitId,
+            expiryDate: permit.expiryDate,
+            applicationId: permit.applicationId,
+            isRenewal: permit.application.isRenewal,
+            status: permit.application.applicationProcessing.status,
+          }))
+        );
+        // TODO: uncomment when AWS is setup and we use real files
+        // const files: PermitHolderAttachedFile[] = [];
+        // data.applicant.fileHistory.forEach(application => {
+        //   application.documentUrls?.forEach(documentUrl => {
+        //     files.push({
+        //       appNumber: application.appNumber,
+        //       createdAt: application.createdAt,
+        //       fileUrl: documentUrl,
+        //     });
+        //   });
+        // });
+        // setAttachedFiles(files);
+        setMedicalHistoryData(
+          data.applicant.applications.map(application => ({
+            disability: application.disability,
+            createdAt: application.createdAt,
+            applicantApplication: application,
+          }))
+        );
+        setPreviousPhysicianData(
+          data.applicant.medicalHistory.map(record => ({
+            name: record.physician.name,
+            mspNumber: record.physician.mspNumber,
+            phone: record.physician.phone,
+          }))
+        );
+      },
+    }
+  );
 
   const toast = useToast();
 
@@ -122,7 +125,6 @@ export default function PermitHolder({ id }: Props) {
         description: error.message,
       });
     },
-    refetchQueries: ['GetPermitHolder'],
   });
 
   // Submit edited user information mutation
@@ -184,6 +186,8 @@ export default function PermitHolder({ id }: Props) {
           description: "Doctor's information has been edited.",
         });
       }
+
+      refetch();
     }
   };
 

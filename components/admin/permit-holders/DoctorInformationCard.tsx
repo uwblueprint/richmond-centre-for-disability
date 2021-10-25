@@ -7,7 +7,7 @@ import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/types';
 import { DoctorInformation } from '@tools/components/admin/requests/forms/doctor-information-form';
 
 type DoctorInformationProps = {
-  physician: DoctorInformation;
+  readonly physician: DoctorInformation;
   readonly isUpdated?: boolean;
   readonly previousPhysicianData: PreviousPhysicianData[];
   readonly onSave: (physicianData: UpsertPhysicianInput) => void;
