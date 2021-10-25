@@ -52,7 +52,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       header={`Doctor's Information`}
       updated={isUpdated}
       editModal={
-        <EditDoctorInformationModal physician={physician} onSave={savePhysicianData}>
+        <EditDoctorInformationModal doctorInformation={physician} onSave={savePhysicianData}>
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
