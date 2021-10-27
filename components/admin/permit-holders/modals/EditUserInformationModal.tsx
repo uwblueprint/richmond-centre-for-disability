@@ -42,7 +42,7 @@ export default function EditUserInformationModal({
   const [gender, setGender] = useState<Gender | undefined>();
 
   // Contact information state
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState<string | null>('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
   // Home address information state
@@ -60,7 +60,7 @@ export default function EditUserInformationModal({
     setLastName(applicant.lastName);
     setDateOfBirth(formatDate(applicant.dateOfBirth, true));
     setGender(applicant.gender);
-    setEmail(applicant.email || '');
+    setEmail(applicant.email);
     setPhoneNumber(applicant.phone);
     setAddressLine1(applicant.addressLine1);
     setAddressLine2(applicant.addressLine2 || '');
@@ -169,7 +169,12 @@ export default function EditUserInformationModal({
                         {'(optional)'}
                       </Box>
                     </FormLabel>
-                    <Input value={email} onChange={event => setEmail(event.target.value)} />
+                    <Input
+                      value={email || ''}
+                      onChange={event =>
+                        setEmail(event.target.value === '' ? null : event.target.value)
+                      }
+                    />
                   </FormControl>
 
                   <FormControl isRequired>
