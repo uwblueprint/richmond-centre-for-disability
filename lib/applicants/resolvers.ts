@@ -67,19 +67,19 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
       if (firstSearch && middleSearch && lastSearch) {
         nameFilters = {
           AND: [
-            { firstName: { equals: firstSearch, mode: 'insensitive' } },
-            { middleName: { equals: middleSearch, mode: 'insensitive' } },
-            { lastName: { equals: lastSearch, mode: 'insensitive' } },
+            { firstName: { startsWith: firstSearch, mode: 'insensitive' } },
+            { middleName: { startsWith: middleSearch, mode: 'insensitive' } },
+            { lastName: { startsWith: lastSearch, mode: 'insensitive' } },
           ],
         };
         // If there are only two search elements, second element can correspond to either the middle or last name
         // search by first AND (middle OR last)
       } else if (firstSearch && middleSearch) {
         nameFilters = {
-          firstName: { equals: firstSearch, mode: 'insensitive' },
+          firstName: { startsWith: firstSearch, mode: 'insensitive' },
           OR: [
-            { middleName: { equals: middleSearch, mode: 'insensitive' } },
-            { lastName: { equals: middleSearch, mode: 'insensitive' } },
+            { middleName: { startsWith: middleSearch, mode: 'insensitive' } },
+            { lastName: { startsWith: middleSearch, mode: 'insensitive' } },
           ],
         };
         // If there is only one search element, it can correspond to the first, middle or last name
@@ -87,9 +87,9 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
       } else {
         nameFilters = {
           OR: [
-            { firstName: { equals: firstSearch, mode: 'insensitive' } },
-            { middleName: { equals: firstSearch, mode: 'insensitive' } },
-            { lastName: { equals: firstSearch, mode: 'insensitive' } },
+            { firstName: { startsWith: firstSearch, mode: 'insensitive' } },
+            { middleName: { startsWith: firstSearch, mode: 'insensitive' } },
+            { lastName: { startsWith: firstSearch, mode: 'insensitive' } },
           ],
         };
       }
