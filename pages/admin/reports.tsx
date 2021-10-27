@@ -60,6 +60,7 @@ export default function Reports() {
                   </Text>
                   <Input
                     type="date"
+                    placeholder="MM//DD/YYYY"
                     width="184px"
                     value={endDate}
                     onChange={event => {
@@ -72,7 +73,7 @@ export default function Reports() {
               </Box>
             </Flex>
             {startDate && endDate && loading == false ? (
-              <Box padding="150px">
+              <Box padding="153px">
                 <Text textStyle="display-large">Processing Date:</Text>
                 <Text textStyle="display-large">
                   {startDate} - {endDate}
@@ -86,7 +87,7 @@ export default function Reports() {
                 <Button leftIcon={<DownloadIcon />}>Export as .CSV</Button>
               </Box>
             ) : startDate && endDate && loading == true ? (
-              <Box padding="150px">
+              <Box padding="218px">
                 <Spinner
                   thickness="4px"
                   speed="0.65s"
@@ -98,12 +99,12 @@ export default function Reports() {
                 <Text textStyle="display-large">Fetching Data...</Text>
               </Box>
             ) : (
-              <Box padding="150px">
-                <SearchIcon w={20} h={20} />
+              <Box padding="180px">
+                <SearchIcon w={20} h={20} color="#8C9196" />
                 <Text padding="12px 0 12px" textStyle="display-large">
                   No Payments Found
                 </Text>
-                <Text fontSize="18px">Please select date range</Text>
+                <Text fontSize="18px">Please select a date range</Text>
               </Box>
             )}
           </Box>
