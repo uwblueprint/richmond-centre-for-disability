@@ -4,33 +4,23 @@ import { Text, GridItem } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
-// import { useState } from 'react';
-import { ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI Icons
-import { Button, Box, Flex, Menu, MenuButton, MenuList } from '@chakra-ui/react'; // Chakra UI
-// import useDateRangePicker from '@tools/hooks/useDateRangePicker';
-import { DownloadIcon } from '@chakra-ui/icons'; // Chakra UI icons
-
-type MenuTextProps = {
-  readonly name: string;
-  readonly value?: string;
-};
-
-function MenuText({ name, value }: MenuTextProps) {
-  return (
-    <>
-      <Text as="span" textStyle="button-semibold">
-        {`${name}: `}
-      </Text>
-      <Text as="span" textStyle="button-regular">
-        {value || 'All'}
-      </Text>
-    </>
-  );
-}
+import { Box, Flex, Input, Button, Spinner } from '@chakra-ui/react'; // Chakra UI
+import { DownloadIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI icons
+import { useState } from 'react'; // React
 
 // Internal home page
 export default function Reports() {
   // const { dateRange, addDayToDateRange, dateRangeString } = useDateRangePicker();
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  //TODO: Remove after API hookup
+  function removeLoading() {
+    setTimeout(function () {
+      setLoading(false);
+    }, 3000);
+  }
 
   return (
     <Layout>
@@ -44,50 +34,78 @@ export default function Reports() {
           borderRadius="12px"
           bg="background.white"
         >
-          <Box padding="24px">
+          <Box padding="24px" justifyContent="space-between">
             <Flex marginBottom="20px">
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  variant="outline"
-                  rightIcon={<ChevronDownIcon />}
-                  marginRight="12px"
-                  color="text.secondary"
-                  borderColor="border.secondary"
-                  textAlign="left"
-                  width="420px"
-                >
-                  <MenuText name={`Start date`} value={'YYYY-MM-DD'} />
-                </MenuButton>
-                <MenuList>{/* <DatePicker onDateChange={addDayToDateRange} /> */}</MenuList>
-              </Menu>
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  variant="outline"
-                  rightIcon={<ChevronDownIcon />}
-                  marginRight="12px"
-                  color="text.secondary"
-                  borderColor="border.secondary"
-                  textAlign="left"
-                  width="420px"
-                >
-                  <MenuText name={`End date`} value={'YYYY-MM-DD'} />
-                </MenuButton>
-                <MenuList></MenuList>
-              </Menu>
+              <Box marginRight="10px">
+                <Flex>
+                  <Text textStyle="button-semibold" padding="8px 8px 0 0">
+                    Start Date:{' '}
+                  </Text>
+                  <Input
+                    type="date"
+                    width="184px"
+                    value={startDate}
+                    onChange={event => setStartDate(event.target.value)}
+                  />
+                </Flex>
+              </Box>
+              <Text textStyle="button-semibold" padding="8px">
+                {' '}
+                -{' '}
+              </Text>
+              <Box marginLeft="10px">
+                <Flex>
+                  <Text textStyle="button-semibold" padding="8px 8px 0 0">
+                    End Date:{' '}
+                  </Text>
+                  <Input
+                    type="date"
+                    width="184px"
+                    value={endDate}
+                    onChange={event => {
+                      setEndDate(event.target.value);
+                      setLoading(true);
+                      removeLoading();
+                    }}
+                  />
+                </Flex>
+              </Box>
             </Flex>
-            <Box padding="100px">
-              <Text textStyle="display-large">Processing Date:</Text>
-              <Text textStyle="display-large">01/01/2021 - 02/02/2021</Text>
-              <Flex justify="center">
-                <Text padding="16px" margin="auto" w="23em">
-                  Accounting Report has been successfully generated. Please download the report as a
-                  .csv by clicking the button below:
+            {startDate && endDate && loading == false ? (
+              <Box padding="150px">
+                <Text textStyle="display-large">Processing Date:</Text>
+                <Text textStyle="display-large">
+                  {startDate} - {endDate}
                 </Text>
-              </Flex>
-              <Button leftIcon={<DownloadIcon />}>Export as .CSV</Button>
-            </Box>
+                <Flex justify="center">
+                  <Text padding="16px" margin="auto" w="23em">
+                    Accounting Report has been successfully generated. Please download the report as
+                    a .csv by clicking the button below:
+                  </Text>
+                </Flex>
+                <Button leftIcon={<DownloadIcon />}>Export as .CSV</Button>
+              </Box>
+            ) : startDate && endDate && loading == true ? (
+              <Box padding="150px">
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="blue.500"
+                  size="xl"
+                  paddingBottom="16px"
+                />
+                <Text textStyle="display-large">Fetching Data...</Text>
+              </Box>
+            ) : (
+              <Box padding="150px">
+                <SearchIcon w={20} h={20} />
+                <Text padding="12px 0 12px" textStyle="display-large">
+                  No Payments Found
+                </Text>
+                <Text fontSize="18px">Please select date range</Text>
+              </Box>
+            )}
           </Box>
         </Box>
       </GridItem>
