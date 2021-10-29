@@ -55,7 +55,7 @@ export default function ReasonForReplacementForm({
         <>
           <FormControl isRequired paddingBottom="24px">
             <FormLabel>{`Date`}</FormLabel>
-            <Input type="date" value={date} onChange={event => setDate(event.target.value)} />
+            <Input type="date" />
           </FormControl>
 
           <FormControl paddingBottom="24px">
@@ -67,11 +67,11 @@ export default function ReasonForReplacementForm({
             </FormLabel>
             <Input
               placeholder={'eg. 04:00 pm'}
-              value={reasonForReplacement.lostTimestamp}
-              onChange={value =>
+              value={reasonForReplacement.lostTimestamp || ''}
+              onChange={event =>
                 onChange({
                   ...reasonForReplacement,
-                  lostTimestamp: value,
+                  lostTimestamp: event.target.value,
                 })
               }
             />
