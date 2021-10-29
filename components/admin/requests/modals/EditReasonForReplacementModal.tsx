@@ -11,8 +11,8 @@ import {
   Box,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
-import ReasonForReplacementForm from '../forms/ReasonForReplacementForm';
-import { ReasonForReplacement } from '@tools/components/admin/requests/forms/types';
+import ReasonForReplacementForm from '@components/admin/requests/forms/ReasonForReplacementForm'; // ReasonForReplacement form fields
+import { ReasonForReplacement } from '@tools/components/admin/requests/forms/types'; // ReasonForReplacement Data type
 
 type EditReasonForReplacementModalProps = {
   readonly reasonForReplacement: ReasonForReplacement;

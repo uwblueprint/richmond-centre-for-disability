@@ -20,7 +20,7 @@ type ReasonForReplacementProps = {
 /**
  * ReasonForReplacementForm Component for allowing users to edit reason for replacement information.
  *
- * @param {ReasonForReplacement} ReasonForReplacementForm Data Structure that holds all reason for replacement information for a client request.
+ * @param {ReasonForReplacement} ReasonForReplacement Data Structure that holds all reason for replacement information for a client request.
  * @param onChange Function that uses the updated values from form.
  */
 export default function ReasonForReplacementForm({
