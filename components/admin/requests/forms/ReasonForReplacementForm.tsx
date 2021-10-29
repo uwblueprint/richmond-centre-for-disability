@@ -114,7 +114,7 @@ export default function ReasonForReplacementForm({
           <FormControl isRequired paddingBottom="24px">
             <FormLabel>{'Police file number'}</FormLabel>
             <Input
-              value={reasonForReplacement.stolenPoliceFileNumber || 0}
+              value={reasonForReplacement.stolenPoliceFileNumber || undefined}
               onChange={event =>
                 onChange({
                   ...reasonForReplacement,
