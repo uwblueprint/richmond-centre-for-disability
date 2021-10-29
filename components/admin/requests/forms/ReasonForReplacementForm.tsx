@@ -82,11 +82,11 @@ export default function ReasonForReplacementForm({
             <FormLabel>{'Location'}</FormLabel>
             <Input
               placeholder={'eg. Library'}
-              value={reasonForReplacement.lostLocation}
-              onChange={value =>
+              value={reasonForReplacement.lostLocation || ''}
+              onChange={event =>
                 onChange({
                   ...reasonForReplacement,
-                  lostLocation: value,
+                  lostLocation: event.target.value,
                 })
               }
             />
@@ -96,11 +96,11 @@ export default function ReasonForReplacementForm({
             <FormLabel>{'Event description'}</FormLabel>
             <Textarea
               placeholder={'Explain what happened.'}
-              value={reasonForReplacement.description}
-              onChange={value =>
+              value={reasonForReplacement.description || ''}
+              onChange={event =>
                 onChange({
                   ...reasonForReplacement,
-                  description: value,
+                  description: event.target.value,
                 })
               }
             />
@@ -114,11 +114,11 @@ export default function ReasonForReplacementForm({
           <FormControl isRequired paddingBottom="24px">
             <FormLabel>{'Police file number'}</FormLabel>
             <Input
-              value={reasonForReplacement.stolenPoliceFileNumber}
-              onChange={value =>
+              value={reasonForReplacement.stolenPoliceFileNumber || 0}
+              onChange={event =>
                 onChange({
                   ...reasonForReplacement,
-                  stolenPoliceFileNumber: value,
+                  stolenPoliceFileNumber: parseInt(event.target.value),
                 })
               }
             />
@@ -132,11 +132,11 @@ export default function ReasonForReplacementForm({
               </Box>
             </FormLabel>
             <Input
-              value={reasonForReplacement.stolenJurisdiction}
-              onChange={value =>
+              value={reasonForReplacement.stolenJurisdiction || ''}
+              onChange={event =>
                 onChange({
                   ...reasonForReplacement,
-                  stolenJurisdiction: value,
+                  stolenJurisdiction: event.target.value,
                 })
               }
             />
@@ -150,11 +150,11 @@ export default function ReasonForReplacementForm({
               </Box>
             </FormLabel>
             <Input
-              value={reasonForReplacement.stolenPoliceOfficerName}
-              onChange={value =>
+              value={reasonForReplacement.stolenPoliceOfficerName || ''}
+              onChange={event =>
                 onChange({
                   ...reasonForReplacement,
-                  stolenPoliceOfficerName: value,
+                  stolenPoliceOfficerName: event.target.value,
                 })
               }
             />
@@ -168,11 +168,11 @@ export default function ReasonForReplacementForm({
           <FormLabel>{'Event description'}</FormLabel>
           <Textarea
             placeholder={'Explain what happened.'}
-            value={reasonForReplacement.description}
-            onChange={value =>
+            value={reasonForReplacement.description || ''}
+            onChange={event =>
               onChange({
                 ...reasonForReplacement,
-                description: value,
+                description: event.target.value,
               })
             }
           />
