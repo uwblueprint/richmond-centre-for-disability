@@ -54,3 +54,14 @@ export class UpdatedFieldsMissingError extends ApolloError {
     Object.defineProperty(this, 'name', { value: 'UpdatedFieldsMissingError' });
   }
 }
+
+/**
+ * Empty or missing fields error (when submitting replacement application)
+ */
+export class EmptyFieldsMissingError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'EMPTY_FIELDS_MISSING_ERROR');
+
+    Object.defineProperty(this, 'name', { value: 'EmptyFieldsMissingError' });
+  }
+}
