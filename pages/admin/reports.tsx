@@ -72,32 +72,34 @@ export default function Reports() {
                 </Flex>
               </Box>
             </Flex>
-            {startDate && endDate && loading == false ? (
-              <Box padding="153px">
-                <Text textStyle="display-large">Processing Date:</Text>
-                <Text textStyle="display-large">
-                  {startDate} - {endDate}
-                </Text>
-                <Flex justify="center">
-                  <Text padding="16px" margin="auto" w="23em">
-                    Accounting Report has been successfully generated. Please download the report as
-                    a .csv by clicking the button below:
+            {startDate && endDate ? (
+              loading ? (
+                <Box padding="218px">
+                  <Spinner
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    color="blue.500"
+                    size="xl"
+                    paddingBottom="16px"
+                  />
+                  <Text textStyle="display-large">Fetching Data...</Text>
+                </Box>
+              ) : (
+                <Box padding="153px">
+                  <Text textStyle="display-large">Processing Date:</Text>
+                  <Text textStyle="display-large">
+                    {startDate} - {endDate}
                   </Text>
-                </Flex>
-                <Button leftIcon={<DownloadIcon />}>Export as .CSV</Button>
-              </Box>
-            ) : startDate && endDate && loading == true ? (
-              <Box padding="218px">
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  color="blue.500"
-                  size="xl"
-                  paddingBottom="16px"
-                />
-                <Text textStyle="display-large">Fetching Data...</Text>
-              </Box>
+                  <Flex justify="center">
+                    <Text padding="16px" margin="auto" w="23em">
+                      Accounting Report has been successfully generated. Please download the report
+                      as a .csv by clicking the button below:
+                    </Text>
+                  </Flex>
+                  <Button leftIcon={<DownloadIcon />}>Export as .CSV</Button>
+                </Box>
+              )
             ) : (
               <Box padding="180px">
                 <SearchIcon w={20} h={20} color="#8C9196" />
