@@ -20,6 +20,7 @@ import {
   createApplication,
   updateApplication,
   createRenewalApplication,
+  createReplacementApplication,
 } from '@lib/applications/resolvers'; // Application resolvers
 import { permits, createPermit } from '@lib/permits/resolvers'; // Permit resolvers
 import {
@@ -78,6 +79,7 @@ const resolvers = {
     upsertPhysician: authorize(upsertPhysician, [Role.Secretary]),
     createApplication: authorize(createApplication, [Role.Secretary]),
     createRenewalApplication,
+    createReplacementApplication,
     updateApplication: authorize(updateApplication, [Role.Secretary]),
     createPermit: authorize(createPermit, [Role.Secretary]),
     updateMedicalInformation: authorize(updateMedicalInformation, [Role.Secretary]),

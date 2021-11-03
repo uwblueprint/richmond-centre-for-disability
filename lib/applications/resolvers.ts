@@ -444,7 +444,7 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
     throw new ApplicantNotFoundError(`No applicant with ID ${applicantId} was found`);
   }
 
-  // Temporary Shopify confirmation number placeholder
+  // Temporary Shopify confirmation number placeholder,
   // TODO: Integrate with Shopify payments
   const currentDateTime = new Date().getTime().toString();
   const shopifyConfirmationNumber = currentDateTime.substr(currentDateTime.length - 7);
