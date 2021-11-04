@@ -498,6 +498,11 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
         billingCity,
         billingProvince,
         billingPostalCode,
+        applicant: {
+          connect: {
+            id: applicantId,
+          },
+        },
         // TODO: Modify logic when DB schema gets changed (medicalInfo is not undefined)
         applicationProcessing: {
           create: {},
@@ -513,6 +518,7 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
       },
     });
   } catch (err) {
+    console.log(err);
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (
         err.code === DBErrorCode.UniqueConstraintFailed &&

@@ -388,6 +388,46 @@ export type CreateRenewalApplicationResult = {
   ok: Scalars['Boolean'];
 };
 
+export type CreateReplacementApplicationInput = {
+  applicantId: Scalars['Int'];
+  /** Permit Holder Information */
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  addressLine1?: Maybe<Scalars['String']>;
+  addressLine2?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  postalCode?: Maybe<Scalars['String']>;
+  /** Replacement Information */
+  reason: ReasonForReplacement;
+  lostTimestamp?: Maybe<Scalars['Date']>;
+  lostLocation?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  /** Payment Information */
+  paymentMethod?: Maybe<PaymentType>;
+  donationAmount?: Maybe<Scalars['Float']>;
+  shippingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
+  shippingFullName?: Maybe<Scalars['String']>;
+  shippingAddressLine1?: Maybe<Scalars['String']>;
+  shippingAddressLine2?: Maybe<Scalars['String']>;
+  shippingCity?: Maybe<Scalars['String']>;
+  shippingProvince?: Maybe<Province>;
+  shippingPostalCode?: Maybe<Scalars['String']>;
+  billingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
+  billingFullName?: Maybe<Scalars['String']>;
+  billingAddressLine1?: Maybe<Scalars['String']>;
+  billingAddressLine2?: Maybe<Scalars['String']>;
+  billingCity?: Maybe<Scalars['String']>;
+  billingProvince?: Maybe<Province>;
+  billingPostalCode?: Maybe<Scalars['String']>;
+};
+
+export type CreateReplacementApplicationResult = {
+  __typename?: 'CreateReplacementApplicationResult';
+  ok: Scalars['Boolean'];
+};
+
 
 export type DeleteEmployeeResult = {
   __typename?: 'DeleteEmployeeResult';
@@ -472,6 +512,7 @@ export type Mutation = {
   upsertPhysician: UpsertPhysicianResult;
   createApplication: CreateApplicationResult;
   createRenewalApplication: CreateRenewalApplicationResult;
+  createReplacementApplication: CreateReplacementApplicationResult;
   updateApplication: UpdateApplicationResult;
   createPermit: CreatePermitResult;
   updateMedicalInformation: UpdateMedicalInformationResult;
@@ -524,6 +565,11 @@ export type MutationCreateApplicationArgs = {
 
 export type MutationCreateRenewalApplicationArgs = {
   input: CreateRenewalApplicationInput;
+};
+
+
+export type MutationCreateReplacementApplicationArgs = {
+  input: CreateReplacementApplicationInput;
 };
 
 
@@ -704,8 +750,8 @@ export enum ReasonForReplacement {
 export type Renewal = {
   __typename?: 'Renewal';
   id: Scalars['ID'];
-  usesAccessibleConvertedVan: Maybe<Scalars['Boolean']>;
-  requiresWiderParkingSpace: Maybe<Scalars['Boolean']>;
+  usesAccessibleConvertedVan: Scalars['Boolean'];
+  requiresWiderParkingSpace: Scalars['Boolean'];
   applicationId: Scalars['ID'];
 };
 
