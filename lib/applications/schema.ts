@@ -287,23 +287,23 @@ export default `
     applicantId: Int!,
 
     # Permit Holder Information
-    firstName: String,
-    lastName: String,
-    phone: String,
+    firstName: String!,
+    lastName: String!,
+    phone: String!,
     email: String,
-    addressLine1: String,
+    addressLine1: String!,
     addressLine2: String,
-    city: String,
-    postalCode: String,
+    city: String!,
+    postalCode: String!,
 
     # Replacement Information
     reason: ReasonForReplacement!,
-    lostTimestamp: Date,
-    lostLocation: String,
-    description: String,
+    lostTimestamp: Date!,
+    lostLocation: String!,
+    description: String!,
 
     # Payment Information
-    paymentMethod: PaymentType,
+    paymentMethod: PaymentType!,
     donationAmount: Float,
     shippingAddressSameAsHomeAddress: Boolean,
     shippingFullName: String,

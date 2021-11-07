@@ -186,7 +186,6 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
       }
     }
   }
-
   // Throw internal server error if application was not created
   if (!application) {
     throw new ApolloError('Application was unable to be created');
@@ -460,7 +459,7 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
         firstName,
         lastName,
         phone: formatPhoneNumber(phone),
-        email,
+        email: email ? email : applicant.email,
         dateOfBirth: applicant.dateOfBirth,
         gender: applicant.gender,
         customGender: applicant.customGender,
@@ -518,7 +517,6 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
       },
     });
   } catch (err) {
-    console.log(err);
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (
         err.code === DBErrorCode.UniqueConstraintFailed &&
