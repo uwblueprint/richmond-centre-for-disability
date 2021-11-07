@@ -10,6 +10,7 @@ import {
   Textarea,
 } from '@chakra-ui/react'; // Chakra UI
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
+import { formatDate } from '@lib/utils/format'; // Date formatter util
 import { ReasonForReplacement } from '@tools/components/admin/requests/forms/types'; // Reason For Replacement Type
 
 type ReasonForReplacementProps = {
@@ -55,7 +56,21 @@ export default function ReasonForReplacementForm({
         <>
           <FormControl isRequired paddingBottom="24px">
             <FormLabel>{`Date`}</FormLabel>
-            <Input type="date" />
+            <Input
+              type="date"
+              value={formatDate(new Date(reasonForReplacement.lostTimestamp), true) || ''}
+              onChange={event => {
+                const updatedlostTimestamp = new Date(reasonForReplacement.lostTimestamp);
+                updatedlostTimestamp.setFullYear(parseInt(event.target.value.substring(0, 4)));
+                updatedlostTimestamp.setMonth(parseInt(event.target.value.substring(5, 7)));
+                updatedlostTimestamp.setDate(parseInt(event.target.value.substring(8, 10)));
+
+                onChange({
+                  ...reasonForReplacement,
+                  lostTimestamp: updatedlostTimestamp,
+                });
+              }}
+            />
           </FormControl>
 
           <FormControl paddingBottom="24px">
@@ -67,13 +82,24 @@ export default function ReasonForReplacementForm({
             </FormLabel>
             <Input
               placeholder={'eg. 04:00 pm'}
-              value={reasonForReplacement.lostTimestamp || ''}
-              onChange={event =>
+              type="time"
+              value={
+                new Date(reasonForReplacement.lostTimestamp).toLocaleTimeString('en-US', {
+                  hour12: false,
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }) || ''
+              }
+              onChange={event => {
+                const updatedlostTimestamp = new Date(reasonForReplacement.lostTimestamp);
+                updatedlostTimestamp.setHours(parseInt(event.target.value.substring(0, 2)));
+                updatedlostTimestamp.setMinutes(parseInt(event.target.value.substring(3, 5)));
+
                 onChange({
                   ...reasonForReplacement,
-                  lostTimestamp: event.target.value,
-                })
-              }
+                  lostTimestamp: updatedlostTimestamp,
+                });
+              }}
             />
             <FormHelperText color="text.seconday">{'hh:mm am/pm'}</FormHelperText>
           </FormControl>
