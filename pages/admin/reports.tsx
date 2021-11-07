@@ -59,7 +59,6 @@ export default function Reports() {
                   </Text>
                   <Input
                     type="date"
-                    placeholder="MM/DD/YYYY"
                     width="184px"
                     value={endDate}
                     onChange={event => {
