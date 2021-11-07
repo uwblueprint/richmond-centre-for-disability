@@ -1,10 +1,9 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
-import { Text, GridItem } from '@chakra-ui/react'; // Chakra UI
+import { Text, GridItem, Box, Flex, Input, Button, Spinner } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
-import { Box, Flex, Input, Button, Spinner } from '@chakra-ui/react'; // Chakra UI
 import { DownloadIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import { useState } from 'react'; // React
 
@@ -60,7 +59,7 @@ export default function Reports() {
                   </Text>
                   <Input
                     type="date"
-                    placeholder="MM//DD/YYYY"
+                    placeholder="MM/DD/YYYY"
                     width="184px"
                     value={endDate}
                     onChange={event => {
