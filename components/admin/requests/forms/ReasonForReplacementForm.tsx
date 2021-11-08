@@ -58,16 +58,22 @@ export default function ReasonForReplacementForm({
             <FormLabel>{`Date`}</FormLabel>
             <Input
               type="date"
-              value={formatDate(new Date(reasonForReplacement.lostTimestamp), true) || ''}
+              value={
+                reasonForReplacement.lostTimestamp
+                  ? formatDate(new Date(reasonForReplacement.lostTimestamp), true)
+                  : ''
+              }
               onChange={event => {
                 const updatedlostTimestamp = new Date(reasonForReplacement.lostTimestamp);
                 updatedlostTimestamp.setFullYear(parseInt(event.target.value.substring(0, 4)));
-                updatedlostTimestamp.setMonth(parseInt(event.target.value.substring(5, 7)));
+                updatedlostTimestamp.setMonth(parseInt(event.target.value.substring(5, 7)) - 1);
                 updatedlostTimestamp.setDate(parseInt(event.target.value.substring(8, 10)));
 
                 onChange({
                   ...reasonForReplacement,
-                  lostTimestamp: updatedlostTimestamp,
+                  lostTimestamp: Date.parse(updatedlostTimestamp.toString())
+                    ? updatedlostTimestamp
+                    : reasonForReplacement.lostTimestamp,
                 });
               }}
             />
@@ -97,7 +103,9 @@ export default function ReasonForReplacementForm({
 
                 onChange({
                   ...reasonForReplacement,
-                  lostTimestamp: updatedlostTimestamp,
+                  lostTimestamp: Date.parse(updatedlostTimestamp.toString())
+                    ? updatedlostTimestamp
+                    : reasonForReplacement.lostTimestamp,
                 });
               }}
             />
