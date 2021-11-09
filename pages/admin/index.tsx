@@ -38,6 +38,7 @@ import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //Grap
 import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatDateVerbose } from '@lib/utils/format'; // Verbose date formatter util
+import PermitHolderTypeahead from '@components/admin/permit-holders/PermitHolderTypeahead';
 
 // Map uppercase enum strings to lowercase
 const permitTypeString: Record<string, string> = {
@@ -212,6 +213,9 @@ export default function Requests() {
               <MenuItem>Renewal Request</MenuItem>
             </MenuList>
           </Menu> */}
+        </Flex>
+        <Flex mb="30px">
+          <PermitHolderTypeahead />
         </Flex>
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px" bgColor="white">
           <Tabs marginBottom="20px">

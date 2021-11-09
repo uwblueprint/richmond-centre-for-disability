@@ -38,6 +38,16 @@ export const formatDate = (date: Date, dateInput = false): string => {
 };
 
 /**
+ * Format date to be in YYYY-MM-DD format
+ * TODO: verify timezone bug
+ * @param {Date} date date to be formatted
+ * @returns {string} formatted date
+ */
+export const formatDateYYYYMMDD = (date: Date): string => {
+  return new Date(date).toISOString().split('T')[0];
+};
+
+/**
  * Format date to be in written in the following format: Sep 11 2021, 03:07 pm
  * @param {Date} date date to be formatted
  * @returns {string} formatted verbose date
