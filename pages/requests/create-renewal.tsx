@@ -1,83 +1,190 @@
 import Layout from '@components/admin/Layout'; // Layout component
 import { Text, Box, Flex, Stack, Button, GridItem, Input } from '@chakra-ui/react'; // Chakra UI
 import { useState } from 'react'; // React
-import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm';
-import { PermitHolderInformation } from '@tools/components/admin/requests/forms/types';
-import DoctorInformationForm from '@components/admin/requests/forms/DoctorInformationForm';
-import { DoctorInformation } from '@tools/components/admin/requests/forms/doctor-information-form';
-import AdditionalQuestionsForm from '@components/admin/requests/forms/renewals/AdditionalQuestionsForm';
-import { AdditionalQuestions } from '@tools/components/admin/requests/forms/types';
-import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm';
-import { PaymentDetails } from '@tools/components/admin/requests/forms/types';
+import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
+import { PermitHolderInformation } from '@tools/components/admin/requests/forms/types'; //Permit holder information type
+import DoctorInformationForm from '@components/admin/requests/forms/DoctorInformationForm'; //Doctor information form
+import { DoctorInformation } from '@tools/components/admin/requests/forms/doctor-information-form'; //Doctor information type
+import AdditionalQuestionsForm from '@components/admin/requests/forms/renewals/AdditionalQuestionsForm'; //Additional questions form
+import { AdditionalQuestions } from '@tools/components/admin/requests/forms/types'; //Additional questions type
+import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm'; //Payment details form
+import { PaymentDetails } from '@tools/components/admin/requests/forms/types'; //Payment details type
+import { PaymentType, Province } from '@lib/graphql/types'; //GraphQL types
 
-type CreateRenewalRequestProps = {
-  readonly permitHolderInformation: PermitHolderInformation;
-  readonly doctorInformation: DoctorInformation;
-  readonly additionalQuestions: AdditionalQuestions;
-  readonly paymentDetails: PaymentDetails;
-};
-
-export default function CreateRenewal({
-  permitHolderInformation: currentPermitHolderInformation,
-  doctorInformation: currentDoctorInformation,
-  additionalQuestions: currentAdditionalQuestions,
-  paymentDetails: currentPaymentDetails,
-}: CreateRenewalRequestProps) {
-  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>(
-    currentPermitHolderInformation
-  );
-  const [doctorInformation, setDoctorInformation] =
-    useState<DoctorInformation>(currentDoctorInformation);
-  const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalQuestions>(
-    currentAdditionalQuestions
-  );
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>(currentPaymentDetails);
+export default function CreateRenewal() {
+  const [permitHolderID] = useState('303240');
+  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    postalCode: '',
+  });
+  const [doctorInformation, setDoctorInformation] = useState<DoctorInformation>({
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    postalCode: '',
+    name: '',
+    mspNumber: 0,
+  });
+  const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalQuestions>({
+    usesAccessibleConvertedVan: false,
+    requiresWiderParkingSpace: false,
+  });
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
+    paymentMethod: PaymentType.Mastercard,
+    donationAmount: 25,
+    shippingAddressSameAsHomeAddress: true,
+    shippingFullName: '',
+    shippingAddressLine1: '',
+    shippingAddressLine2: '',
+    shippingCity: '',
+    shippingProvince: Province.Bc,
+    shippingPostalCode: '',
+    billingAddressSameAsHomeAddress: true,
+    billingFullName: '',
+    billingAddressLine1: '',
+    billingAddressLine2: '',
+    billingCity: '',
+    billingProvince: Province.Bc,
+    billingPostalCode: '',
+  });
 
   return (
     <Layout footer={false}>
-      <GridItem colSpan={12}>
-        {/* Typeahead component */}
-        <Flex paddingY="32px">
-          <Text textStyle="display-large">New Renewal Request (User ID: )</Text>
-        </Flex>
-        <Box
-          border="1px solid"
-          borderColor="border.secondary"
-          borderRadius="12px"
-          bgColor="white"
-          paddingTop="32px"
-          paddingBottom="40px"
-          paddingX="40px"
-          align="left"
-        >
-          <Text textStyle="display-small-semibold" paddingBottom="20px">
-            Search Permit Holder
-          </Text>
-          <Input width="466px" />
-        </Box>
-        {/* Permit Holder Information Form */}
-        <PermitHolderInformationForm
-          permitHolderInformation={permitHolderInformation}
-          onChange={setPermitHolderInformation}
-        />
-        {/* Doctor's Information Form */}
-        <DoctorInformationForm
-          doctorInformation={doctorInformation}
-          onChange={setDoctorInformation}
-        />
-
-        {/* Additional Quesitons Form */}
-        <AdditionalQuestionsForm data={additionalQuestions} onChange={setAdditionalQuestions} />
-        {/* Payment Details Form */}
-        <PaymentDetailsForm paymentInformation={paymentDetails} onChange={setPaymentDetails} />
-
-        {/* Footer */}
-        <Box position="fixed" bottom="0" paddingY="20px">
-          <Stack direction="row" align="right">
-            <Box>
-              <Text textStyle="body-bold"> User ID: </Text>
+      <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
+        <Flex>
+          <Text textStyle="display-large">
+            New Renewal Request (User ID:
+            <Box as="span" color="primary">
+              {' '}
+              {permitHolderID}
             </Box>
-            <Box alignContent="right">
+            )
+          </Text>
+        </Flex>
+        {/* Typeahead component */}
+        <GridItem paddingTop="32px">
+          <Box
+            border="1px solid"
+            borderColor="border.secondary"
+            borderRadius="12px"
+            bgColor="white"
+            paddingTop="32px"
+            paddingBottom="40px"
+            paddingX="40px"
+            align="left"
+          >
+            <Text textStyle="display-small-semibold" paddingBottom="20px">
+              Search Permit Holder
+            </Text>
+            <Input width="466px" />
+          </Box>
+        </GridItem>
+        {/* Permit Holder Information Form */}
+        <GridItem paddingTop="32px">
+          <Box
+            border="1px solid"
+            borderColor="border.secondary"
+            borderRadius="12px"
+            bgColor="white"
+            paddingTop="32px"
+            paddingBottom="40px"
+            paddingX="40px"
+            align="left"
+          >
+            <Text textStyle="display-small-semibold" paddingBottom="20px">
+              Permit Holder Information
+            </Text>
+            <PermitHolderInformationForm
+              permitHolderInformation={permitHolderInformation}
+              onChange={setPermitHolderInformation}
+            />
+          </Box>
+        </GridItem>
+        {/* Doctor's Information Form */}
+        <GridItem paddingTop="32px">
+          <Box
+            border="1px solid"
+            borderColor="border.secondary"
+            borderRadius="12px"
+            bgColor="white"
+            paddingTop="32px"
+            paddingBottom="40px"
+            paddingX="40px"
+            align="left"
+          >
+            <Text textStyle="display-small-semibold" paddingBottom="20px">
+              Doctor Information
+            </Text>
+            <DoctorInformationForm
+              doctorInformation={doctorInformation}
+              onChange={setDoctorInformation}
+            />
+          </Box>
+        </GridItem>
+        {/* Additional Quesitons Form */}
+        <GridItem paddingTop="32px">
+          <Box
+            border="1px solid"
+            borderColor="border.secondary"
+            borderRadius="12px"
+            bgColor="white"
+            paddingTop="32px"
+            paddingBottom="40px"
+            paddingX="40px"
+            align="left"
+          >
+            <Text textStyle="display-small-semibold" paddingBottom="20px">
+              Additional Information
+            </Text>
+            <AdditionalQuestionsForm data={additionalQuestions} onChange={setAdditionalQuestions} />
+          </Box>
+        </GridItem>
+        {/* Payment Details Form */}
+        <GridItem paddingTop="32px" paddingBottom="68px">
+          <Box
+            border="1px solid"
+            borderColor="border.secondary"
+            borderRadius="12px"
+            bgColor="white"
+            paddingTop="32px"
+            paddingBottom="40px"
+            paddingX="40px"
+            align="left"
+          >
+            <Text textStyle="display-small-semibold" paddingBottom="20px">
+              Payment Information
+            </Text>
+            <PaymentDetailsForm paymentInformation={paymentDetails} onChange={setPaymentDetails} />
+          </Box>
+        </GridItem>
+        {/* Footer */}
+        <Box
+          position="fixed"
+          left="0"
+          bottom="0"
+          right="0"
+          paddingY="20px"
+          paddingX="188px"
+          bgColor="white"
+        >
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Box>
+              <Text textStyle="body-bold">
+                User ID:
+                <Box as="span" color="primary">
+                  {' '}
+                  {permitHolderID}
+                </Box>
+              </Text>
+            </Box>
+            <Box>
               <Button
                 bg="background.gray"
                 _hover={{ bg: 'background.grayHover' }}
