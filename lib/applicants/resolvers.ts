@@ -240,7 +240,6 @@ export const createApplicant: Resolver = async (_, args, { prisma }) => {
   if (!applicant) {
     throw new ApolloError('Applicant was unable to be created');
   }
-
   return {
     ok: true,
   };

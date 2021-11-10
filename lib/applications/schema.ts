@@ -282,4 +282,46 @@ export default `
   type CreateRenewalApplicationResult {
     ok: Boolean!
   }
+
+  input CreateReplacementApplicationInput {
+    applicantId: Int!
+
+    # Permit Holder Information
+    firstName: String!
+    lastName: String!
+    phone: String!
+    email: String
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    postalCode: String!
+
+    # Replacement Information
+    reason: ReasonForReplacement!
+    lostTimestamp: Date!
+    lostLocation: String!
+    description: String!
+
+    # Payment Information
+    paymentMethod: PaymentType!
+    donationAmount: Float
+    shippingAddressSameAsHomeAddress: Boolean!
+    shippingFullName: String
+    shippingAddressLine1: String
+    shippingAddressLine2: String
+    shippingCity: String
+    shippingProvince: Province
+    shippingPostalCode: String
+    billingAddressSameAsHomeAddress: Boolean!
+    billingFullName: String
+    billingAddressLine1: String
+    billingAddressLine2: String
+    billingCity: String
+    billingProvince: Province
+    billingPostalCode: String
+  }
+
+  type CreateReplacementApplicationResult {
+    ok: Boolean!
+  }
 `;

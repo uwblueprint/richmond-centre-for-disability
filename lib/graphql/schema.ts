@@ -21,6 +21,7 @@ export default `
     upsertPhysician(input: UpsertPhysicianInput!): UpsertPhysicianResult!
     createApplication(input: CreateApplicationInput!): CreateApplicationResult!
     createRenewalApplication(input: CreateRenewalApplicationInput!): CreateRenewalApplicationResult!
+    createReplacementApplication(input: CreateReplacementApplicationInput!): CreateReplacementApplicationResult!
     updateApplication(input: UpdateApplicationInput!): UpdateApplicationResult!
     createPermit(input: CreatePermitInput!): CreatePermitResult!
     updateMedicalInformation(input: UpdateMedicalInformationInput!): UpdateMedicalInformationResult!

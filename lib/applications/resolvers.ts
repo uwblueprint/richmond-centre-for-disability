@@ -7,6 +7,7 @@ import {
   ApplicationFieldTooLongError,
   ApplicationNotFoundError,
   UpdatedFieldsMissingError,
+  EmptyFieldsMissingError,
 } from '@lib/applications/errors'; // Application errors
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
@@ -185,7 +186,6 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
       }
     }
   }
-
   // Throw internal server error if application was not created
   if (!application) {
     throw new ApolloError('Application was unable to be created');
@@ -346,6 +346,172 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
           create: {
             usesAccessibleConvertedVan,
             requiresWiderParkingSpace,
+          },
+        },
+      },
+    });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (
+        err.code === DBErrorCode.UniqueConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('shopifyConfirmationNumber')
+      ) {
+        throw new ShopifyConfirmationNumberAlreadyExistsError(
+          `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
+        );
+      } else if (
+        err.code === DBErrorCode.ForeignKeyConstraintFailed &&
+        getUniqueConstraintFailedFields(err)?.includes('applicantId')
+      ) {
+        throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
+      } else if (err.code === DBErrorCode.LengthConstraintFailed) {
+        throw new ApplicationFieldTooLongError(
+          'Length constraint failed, provided value too long for an application field.'
+        );
+      }
+    }
+  }
+
+  // Throw internal server error if renewal application was not created
+  if (!application) {
+    throw new ApolloError('Application was unable to be created');
+  }
+
+  return {
+    ok: true,
+  };
+};
+
+/**
+ * Create a replacement application
+ * Requires updated field values to be provided if any of personal address, contact, or doctor info are updated.
+ * @returns Status of operation (ok)
+ */
+export const createReplacementApplication: Resolver = async (_, args, { prisma }) => {
+  const {
+    input: {
+      // Permit Holder Information Card
+      applicantId,
+      firstName,
+      lastName,
+      phone,
+      email,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+      // Reason for Replacement Card
+      reason,
+      // date,
+      lostTimestamp,
+      lostLocation,
+      description,
+      // Payment, Shipping, and Billing Card
+      paymentMethod,
+      donationAmount,
+      shippingAddressSameAsHomeAddress,
+      shippingFullName,
+      shippingAddressLine1,
+      shippingAddressLine2,
+      shippingCity,
+      shippingProvince,
+      shippingPostalCode,
+      billingAddressSameAsHomeAddress,
+      billingFullName,
+      billingAddressLine1,
+      billingAddressLine2,
+      billingCity,
+      billingProvince,
+      billingPostalCode,
+    },
+  } = args;
+
+  // Retrieve applicant record
+  const applicant = await prisma.applicant.findUnique({
+    where: { id: applicantId },
+    include: {
+      medicalInformation: {
+        include: {
+          physician: true,
+        },
+      },
+    },
+  });
+
+  // If applicant not found, throw error
+  if (!applicant) {
+    throw new ApplicantNotFoundError(`No applicant with ID ${applicantId} was found`);
+  }
+
+  // Temporary Shopify confirmation number placeholder,
+  // TODO: Integrate with Shopify payments
+  const currentDateTime = new Date().getTime().toString();
+  const shopifyConfirmationNumber = currentDateTime.substr(currentDateTime.length - 7);
+
+  if (!reason)
+    throw new EmptyFieldsMissingError('No reason for the replacement request was given.');
+
+  let application;
+  try {
+    const physician = applicant.medicalInformation.physician;
+    application = await prisma.application.create({
+      data: {
+        firstName,
+        lastName,
+        phone: formatPhoneNumber(phone),
+        email: email || applicant.email,
+        dateOfBirth: applicant.dateOfBirth,
+        gender: applicant.gender,
+        customGender: applicant.customGender,
+        province: applicant.province,
+        addressLine1,
+        addressLine2,
+        city,
+        postalCode: formatPostalCode(postalCode),
+        isRenewal: false,
+        // TODO: Link with Shopify checkout
+        shopifyConfirmationNumber,
+        processingFee: 26,
+        paymentMethod,
+        disability: applicant.medicalInformation.disability,
+        physicianName: physician.name,
+        physicianMspNumber: physician.mspNumber,
+        physicianAddressLine1: physician.addressLine1,
+        physicianAddressLine2: physician.addressLine2,
+        physicianCity: physician.city,
+        physicianPostalCode: physician.postalCode,
+        physicianPhone: physician.phone,
+        physicianProvince: physician.province,
+        donationAmount,
+        shippingAddressSameAsHomeAddress,
+        shippingFullName,
+        shippingAddressLine1,
+        shippingAddressLine2,
+        shippingCity,
+        shippingProvince,
+        shippingPostalCode,
+        billingAddressSameAsHomeAddress,
+        billingFullName,
+        billingAddressLine1,
+        billingAddressLine2,
+        billingCity,
+        billingProvince,
+        billingPostalCode,
+        applicant: {
+          connect: {
+            id: applicantId,
+          },
+        },
+        // TODO: Modify logic when DB schema gets changed (medicalInfo is not undefined)
+        applicationProcessing: {
+          create: {},
+        },
+        replacement: {
+          create: {
+            reason,
+            lostTimestamp,
+            lostLocation,
+            description,
           },
         },
       },
