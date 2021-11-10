@@ -459,7 +459,7 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
         firstName,
         lastName,
         phone: formatPhoneNumber(phone),
-        email: email ? email : applicant.email,
+        email: email || applicant.email,
         dateOfBirth: applicant.dateOfBirth,
         gender: applicant.gender,
         customGender: applicant.customGender,
