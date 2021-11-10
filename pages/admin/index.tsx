@@ -39,7 +39,7 @@ import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //Grap
 import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatDateVerbose } from '@lib/utils/format'; // Verbose date formatter util
-import GenerateReportModal from '@components/admin/requests/modals/GenerateReportModal';
+import GenerateReportModal from '@components/admin/requests/modals/GenerateReportModal'; // Generate report modal
 
 // Map uppercase enum strings to lowercase
 const permitTypeString: Record<string, string> = {
