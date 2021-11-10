@@ -1,26 +1,31 @@
-import { useQuery } from '@apollo/client';
-import { Text } from '@chakra-ui/layout';
-import Typeahead from '@components/Typeahead';
-import { formatDateYYYYMMDD } from '@lib/utils/format';
+import { useQuery } from '@apollo/client'; // Apollo
+import { Text } from '@chakra-ui/layout'; //Chakra UI
+import Typeahead from '@components/Typeahead'; // Typeahead component
+import { formatDateYYYYMMDD } from '@lib/utils/format'; // Date formatter util
 import {
   GetPermitHoldersRequest,
   GetPermitHoldersResponse,
   GET_PERMIT_HOLDERS_QUERY,
-} from '@tools/pages/admin/permit-holders/get-permit-holders';
-import { useState } from 'react';
+  PermitHolder,
+} from '@tools/pages/admin/permit-holders/get-permit-holders'; // Permit holders GQL query
+import { useState } from 'react'; // React
 
-type PermitHolderItem = {
-  label: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: Date;
+// Permit Holder Typeahead props
+type Props = {
+  setSelected: (selected: PermitHolder | undefined) => void; // record selected permit holder
 };
 
-export default function PermitHolderTypeahead() {
+/**
+ * Typeahead component to search for permit holders via asyncronous queries
+ * @returns Permit holder typeahead component to search for permit holders
+ */
+export default function PermitHolderTypeahead(props: Props) {
+  const { setSelected } = props;
   const [isTypeaheadLoading, setIsTypeaheadLoading] = useState(false);
-  const [permitHolderResults, setPermitHolderResults] = useState<PermitHolderItem[]>([]);
+  const [permitHolderResults, setPermitHolderResults] = useState<PermitHolder[]>([]);
   const [searchString, setSearchString] = useState<string>();
 
+  // permit holders query
   useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(GET_PERMIT_HOLDERS_QUERY, {
     variables: {
       filter: {
@@ -30,10 +35,7 @@ export default function PermitHolderTypeahead() {
     onCompleted: ({ applicants: { result } }) => {
       setPermitHolderResults(
         result.map(record => ({
-          label: record.firstName + ' ' + record.lastName,
-          firstName: record.firstName,
-          lastName: record.lastName,
-          dateOfBirth: record.dateOfBirth,
+          ...record,
         }))
       );
 
@@ -50,11 +52,11 @@ export default function PermitHolderTypeahead() {
     <Typeahead
       isLoading={isTypeaheadLoading}
       onSearch={searchPermitHolders}
-      renderMenuItemChildren={option => {
+      renderMenuItemChildren={(option: PermitHolder) => {
         return (
           <div>
             <Text textStyle="body-regular" mt="8px" mb="4px" ml="4px">
-              {option.label}
+              {option.firstName} {option.lastName}
             </Text>
             <Text textStyle="caption" textColor="text.secondary" mb="8px" ml="4px">
               Date of Birth: {formatDateYYYYMMDD(option.dateOfBirth)}
@@ -62,7 +64,9 @@ export default function PermitHolderTypeahead() {
           </div>
         );
       }}
+      labelKey={(option: PermitHolder) => `${option.firstName} ${option.lastName}`}
       results={permitHolderResults}
+      setSelected={setSelected}
       placeholder="Search by user ID, first name or last name"
     />
   );

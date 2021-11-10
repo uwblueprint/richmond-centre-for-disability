@@ -17,9 +17,11 @@ type Props<T extends TypeaheadModel> = Pick<
   | 'isLoading' // boolean to indicate if query is loading
   | 'onSearch' // function to execute query when text is entered in input field
   | 'renderMenuItemChildren' // function to format each result in the menu
+  | 'labelKey'
 > & {
   results: Array<T>; // array of results to display in the typeahead menu
   placeholder: string; // placeholder text
+  setSelected: (selected: T | undefined) => void; // record selected item
 };
 
 /**
@@ -28,7 +30,15 @@ type Props<T extends TypeaheadModel> = Pick<
  * @returns Typeahead component which can be used to search with any query
  */
 export default function Typeahead<T extends TypeaheadModel>(props: Required<Props<T>>) {
-  const { isLoading, onSearch, renderMenuItemChildren, results, placeholder } = props;
+  const {
+    isLoading,
+    onSearch,
+    renderMenuItemChildren,
+    labelKey,
+    results,
+    placeholder,
+    setSelected,
+  } = props;
   const filterBy = () => true;
 
   return (
@@ -39,6 +49,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
         isLoading={isLoading}
         minLength={3}
         onSearch={onSearch}
+        labelKey={labelKey}
         options={results}
         placeholder={placeholder}
         emptyLabel="No results found."
@@ -48,6 +59,9 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
             width: '466px',
             height: '44px',
           },
+        }}
+        onChange={selected => {
+          selected.length > 0 ? setSelected(selected[0]) : setSelected(undefined);
         }}
         renderMenuItemChildren={renderMenuItemChildren}
         renderMenu={(results, menuProps, props) => {

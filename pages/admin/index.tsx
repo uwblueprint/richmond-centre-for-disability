@@ -39,6 +39,7 @@ import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatDateVerbose } from '@lib/utils/format'; // Verbose date formatter util
 import PermitHolderTypeahead from '@components/admin/permit-holders/PermitHolderTypeahead';
+import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders';
 
 // Map uppercase enum strings to lowercase
 const permitTypeString: Record<string, string> = {
@@ -192,6 +193,9 @@ export default function Requests() {
     setPageNumber(0);
   }, [statusFilter, permitTypeFilter, requestTypeFilter, debouncedSearchFilter, sortOrder]);
 
+  //TODO: remove
+  const [, setSelectedPermitHolder] = useState<PermitHolder>();
+
   return (
     <Layout>
       <GridItem colSpan={12}>
@@ -214,8 +218,9 @@ export default function Requests() {
             </MenuList>
           </Menu> */}
         </Flex>
+        {/* TODO: remove */}
         <Flex mb="30px">
-          <PermitHolderTypeahead />
+          <PermitHolderTypeahead setSelected={setSelectedPermitHolder} />
         </Flex>
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px" bgColor="white">
           <Tabs marginBottom="20px">
