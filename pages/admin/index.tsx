@@ -19,6 +19,7 @@ import {
   InputLeftElement,
   Wrap,
   Tooltip,
+  useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/admin/Layout'; // Layout component
@@ -38,6 +39,7 @@ import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //Grap
 import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatDateVerbose } from '@lib/utils/format'; // Verbose date formatter util
+import GenerateReportModal from '@components/admin/requests/modals/GenerateReportModal';
 
 // Map uppercase enum strings to lowercase
 const permitTypeString: Record<string, string> = {
@@ -135,6 +137,13 @@ export default function Requests() {
   // Router
   const router = useRouter();
 
+  //Generate report modal
+  const {
+    isOpen: isGenerateReportModalOpen,
+    onOpen: onOpenGenerateReportModal,
+    onClose: onCloseGenerateReportModal,
+  } = useDisclosure();
+
   //Filters
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus>();
   const [permitTypeFilter, setPermitTypeFilter] = useState<PermitType>();
@@ -196,6 +205,9 @@ export default function Requests() {
       <GridItem colSpan={12}>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Requests</Text>
+          <Button variant="outline" onClick={() => onOpenGenerateReportModal()}>
+            Generate a Report
+          </Button>
           {/* TODO: 'Create a new request' function is out of scope for this term's MVP
           <Menu>
             <MenuButton
@@ -373,6 +385,10 @@ export default function Requests() {
           </Box>
         </Box>
       </GridItem>
+      <GenerateReportModal
+        isOpen={isGenerateReportModalOpen}
+        onClose={onCloseGenerateReportModal}
+      />
     </Layout>
   );
 }

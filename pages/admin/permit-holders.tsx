@@ -45,6 +45,7 @@ import { formatDate } from '@lib/utils/format'; // Date formatter util
 import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToInactiveModal'; // Set Permit Holder To Inactive modal
 import SetPermitHolderToActiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
 import { PermitHolderToUpdateStatus } from '@tools/pages/admin/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
+import GenerateReportModal from '@components/admin/permit-holders/modals/GenerateReportModal';
 
 const PAGE_SIZE = 20;
 
@@ -194,6 +195,13 @@ export default function PermitHolders() {
     onClose: onCloseSetPermitHolderStatusModal,
   } = useDisclosure();
 
+  //Generate report modal
+  const {
+    isOpen: isGenerateReportModalOpen,
+    onOpen: onOpenGenerateReportModal,
+    onClose: onCloseGenerateReportModal,
+  } = useDisclosure();
+
   // Sets the data required for the Set Permit Holder Inactive/Active modals
   const [permitHolderToUpdateStatus, setPermitHolderToUpdateStatus] =
     useState<PermitHolderToUpdateStatus>();
@@ -332,8 +340,11 @@ export default function PermitHolders() {
   return (
     <Layout>
       <GridItem colSpan={12}>
-        <Flex align="left" marginBottom="32px">
+        <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Permit Holders</Text>
+          <Button variant="outline" onClick={() => onOpenGenerateReportModal()}>
+            Generate a Report
+          </Button>
         </Flex>
         <Box
           border="1px solid"
@@ -477,6 +488,10 @@ export default function PermitHolders() {
           onClose={onCloseSetPermitHolderStatusModal}
         />
       )}
+      <GenerateReportModal
+        isOpen={isGenerateReportModalOpen}
+        onClose={onCloseGenerateReportModal}
+      />
     </Layout>
   );
 }
