@@ -49,7 +49,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
                 <Box paddingBottom="32px">
                   <Stack direction="row" spacing="20px">
                     <FormControl isRequired>
-                      <FormLabel>{'Application start Date'}</FormLabel>
+                      <FormLabel>{'Application start date'}</FormLabel>
                       <Input
                         type="date"
                         width="184px"
