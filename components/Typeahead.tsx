@@ -17,7 +17,7 @@ type Props<T extends TypeaheadModel> = Pick<
   | 'isLoading' // boolean to indicate if query is loading
   | 'onSearch' // function to execute query when text is entered in input field
   | 'renderMenuItemChildren' // function to format each result in the menu
-  | 'labelKey'
+  | 'labelKey' // string used for searching and rendering typeahead results
 > & {
   results: Array<T>; // array of results to display in the typeahead menu
   placeholder: string; // placeholder text
