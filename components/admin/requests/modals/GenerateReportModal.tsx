@@ -41,12 +41,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
         <Modal isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
           <ModalOverlay />
           <form>
-            <ModalContent
-              paddingLeft={'16px'}
-              maxWidth="45rem"
-              maxHeight="600px"
-              paddingRight="16px"
-            >
+            <ModalContent paddingLeft="16px" maxWidth="45rem" maxHeight="600px" paddingRight="16px">
               <ModalHeader paddingTop="24px" paddingBottom="12px">
                 <Text textStyle="display-medium-bold">Requests Report</Text>
               </ModalHeader>
@@ -88,10 +83,10 @@ export default function GenerateReportModal(props: GenerateReportProps) {
                   </Stack>
                 </Box>
                 <Box>
-                  <Checkbox paddingBottom={'6px'} fontWeight={'bold'}>
+                  <Checkbox paddingBottom="6px" fontWeight="bold">
                     Select All
                   </Checkbox>
-                  <SimpleGrid columns={3} spacingX={'20px'} spacingY={'6px'}>
+                  <SimpleGrid columns={3} spacingX="20px" spacingY="6px">
                     <Checkbox>User ID</Checkbox>
                     <Checkbox>Applicant Name</Checkbox>
                     <Checkbox>Applicant DoB</Checkbox>
@@ -124,9 +119,9 @@ export default function GenerateReportModal(props: GenerateReportProps) {
     );
   } else {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
         <ModalOverlay />
-        <ModalContent paddingLeft={'16px'} maxWidth="46rem" maxHeight="438px" paddingRight="16px">
+        <ModalContent paddingLeft="16px" maxWidth="46rem" maxHeight="438px" paddingRight="16px">
           <ModalHeader paddingTop="24px" paddingBottom="0px">
             <Stack direction="row">
               <Text textStyle="display-medium-bold" paddingRight="10px">
@@ -157,7 +152,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
               </Stack>
             </Box>
             <Box>
-              <SimpleGrid columns={3} spacingY={'6px'}>
+              <SimpleGrid columns={3} spacingY="6px">
                 <ListItem fontSize="17px">User ID</ListItem>
                 <ListItem fontSize="17px">Applicant Name</ListItem>
                 <ListItem fontSize="17px">Applicant DoB</ListItem>
@@ -181,7 +176,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
             >
               {'Back to Requests Table'}
             </Button>
-            <Button variant="solid" ml={'12px'} leftIcon={<DownloadIcon />}>
+            <Button variant="solid" ml="12px" leftIcon={<DownloadIcon />}>
               {'Export as CSV'}
             </Button>
           </ModalFooter>
