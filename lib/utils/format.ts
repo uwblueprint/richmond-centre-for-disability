@@ -39,7 +39,6 @@ export const formatDate = (date: Date, dateInput = false): string => {
 
 /**
  * Format date to be in YYYY-MM-DD format
- * TODO: verify timezone bug
  * @param {Date} date date to be formatted
  * @returns {string} formatted date
  */
