@@ -44,7 +44,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
             <ModalContent
               paddingLeft={'16px'}
               maxWidth="45rem"
-              maxHeight="547px"
+              maxHeight="600px"
               paddingRight="16px"
             >
               <ModalHeader paddingTop="24px" paddingBottom="12px">
@@ -53,7 +53,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
               <ModalBody paddingY="20px" paddingBottom="44px">
                 <Box paddingBottom="32px">
                   <FormControl isRequired>
-                    <FormLabel fontSize="22px" paddingBottom="16px">
+                    <FormLabel fontSize="20px" paddingBottom="16px">
                       {'Application Date'}
                     </FormLabel>
                   </FormControl>
@@ -83,7 +83,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
                 <Box>
                   <Stack direction="row" spacing="20px" paddingBottom="16px">
                     <FormControl>
-                      <FormLabel>{'Columns to Export'}</FormLabel>
+                      <FormLabel fontSize="20px">{'Columns to Export'}</FormLabel>
                     </FormControl>
                   </Stack>
                 </Box>
@@ -126,8 +126,8 @@ export default function GenerateReportModal(props: GenerateReportProps) {
     return (
       <Modal isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
         <ModalOverlay />
-        <ModalContent paddingLeft={'10px'} maxWidth="40rem">
-          <ModalHeader paddingTop="24px" paddingBottom="12px">
+        <ModalContent paddingLeft={'16px'} maxWidth="40rem" paddingRight="16px">
+          <ModalHeader paddingTop="24px" paddingBottom="0px">
             <Stack direction="row">
               <Text textStyle="display-medium-bold" paddingRight="10px">
                 Requests Report
@@ -140,9 +140,9 @@ export default function GenerateReportModal(props: GenerateReportProps) {
               </Button>
             </Stack>
           </ModalHeader>
-          <ModalBody paddingY="20px">
+          <ModalBody paddingTop="20px" paddingBottom="24px">
             <Box paddingBottom="20px">
-              <Stack spacing="20px">
+              <Stack spacing="16px">
                 <Stack direction="row" spacing="20px">
                   <Text textStyle="display-medium-bold" fontSize="22px">
                     Application Date:
@@ -157,19 +157,20 @@ export default function GenerateReportModal(props: GenerateReportProps) {
               </Stack>
             </Box>
             <Box>
-              <SimpleGrid columns={3} spacingY={'10px'}>
-                <ListItem fontSize="18px">User ID</ListItem>
-                <ListItem fontSize="18px">Applicant Name</ListItem>
-                <ListItem fontSize="18px">Applicant DoB</ListItem>
-                <ListItem fontSize="18px">Fee Amount</ListItem>
-                <ListItem fontSize="18px">Donation Amount</ListItem>
-                <ListItem fontSize="18px">Total Amount</ListItem>
-                <ListItem fontSize="18px">Payment Method</ListItem>
-                <ListItem fontSize="18px">Application Date</ListItem>
+              <SimpleGrid columns={3} spacingY={'6px'}>
+                <ListItem fontSize="17px">User ID</ListItem>
+                <ListItem fontSize="17px">Applicant Name</ListItem>
+                <ListItem fontSize="17px">Applicant DoB</ListItem>
+                <ListItem fontSize="17px">APP Number</ListItem>
+                <ListItem fontSize="17px">Application Date</ListItem>
+                <ListItem fontSize="17px">Payment Method</ListItem>
+                <ListItem fontSize="17px">Fee Amount</ListItem>
+                <ListItem fontSize="17px">Donation Amount</ListItem>
+                <ListItem fontSize="17px">Total Amount</ListItem>
               </SimpleGrid>
             </Box>
           </ModalBody>
-          <ModalFooter paddingBottom="24px">
+          <ModalFooter paddingBottom="40px">
             <Button
               colorScheme="gray"
               variant="solid"

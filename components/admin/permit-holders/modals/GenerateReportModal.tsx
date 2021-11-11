@@ -44,7 +44,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
             <ModalContent
               paddingLeft={'16px'}
               maxWidth="45rem"
-              maxHeight="547px"
+              maxHeight="600px"
               paddingRight="16px"
             >
               <ModalHeader paddingTop="24px" paddingBottom="12px">
@@ -53,7 +53,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
               <ModalBody paddingY="20px" paddingBottom="44px">
                 <Box paddingBottom="32px">
                   <FormControl isRequired>
-                    <FormLabel fontSize="22px" paddingBottom="16px">
+                    <FormLabel fontSize="20px" paddingBottom="16px">
                       {'Expiry Date'}
                     </FormLabel>
                   </FormControl>
@@ -83,7 +83,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
                 <Box>
                   <Stack direction="row" spacing="20px" paddingBottom="16px">
                     <FormControl>
-                      <FormLabel>{'Columns to Export'}</FormLabel>
+                      <FormLabel fontSize="20px">{'Columns to Export'}</FormLabel>
                     </FormControl>
                   </Stack>
                 </Box>
@@ -98,8 +98,11 @@ export default function GenerateReportModal(props: GenerateReportProps) {
                     <Checkbox>Home Address</Checkbox>
                     <Checkbox>Email</Checkbox>
                     <Checkbox>Phone Number</Checkbox>
-                    <Checkbox>Recent APP #</Checkbox>
-                    <Checkbox>Recent App Type</Checkbox>
+                    <Checkbox>Guardian/POA Name</Checkbox>
+                    <Checkbox>Guardian/POA Relation</Checkbox>
+                    <Checkbox>Guardian/POA Address</Checkbox>
+                    <Checkbox>Recent APP Number</Checkbox>
+                    <Checkbox>Recent APP Type</Checkbox>
                     <Checkbox>User Status</Checkbox>
                   </SimpleGrid>
                 </Box>
@@ -126,8 +129,8 @@ export default function GenerateReportModal(props: GenerateReportProps) {
     return (
       <Modal isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
         <ModalOverlay />
-        <ModalContent paddingLeft={'10px'} maxWidth="40rem">
-          <ModalHeader paddingTop="24px" paddingBottom="12px">
+        <ModalContent paddingLeft={'16px'} maxWidth="46rem" paddingRight="16px">
+          <ModalHeader paddingTop="24px" paddingBottom="0px">
             <Stack direction="row">
               <Text textStyle="display-medium-bold" paddingRight="10px">
                 Permit Holder Report
@@ -140,7 +143,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
               </Button>
             </Stack>
           </ModalHeader>
-          <ModalBody paddingY="20px">
+          <ModalBody paddingTop="20px" paddingBottom="24px">
             <Box paddingBottom="20px">
               <Stack spacing="20px">
                 <Stack direction="row" spacing="20px">
@@ -157,20 +160,23 @@ export default function GenerateReportModal(props: GenerateReportProps) {
               </Stack>
             </Box>
             <Box>
-              <SimpleGrid columns={3} spacingY={'10px'}>
-                <ListItem fontSize="18px">User ID</ListItem>
-                <ListItem fontSize="18px">Applicant Name</ListItem>
-                <ListItem fontSize="18px">Applicant DoB</ListItem>
-                <ListItem fontSize="18px">Home Address</ListItem>
-                <ListItem fontSize="18px">Email</ListItem>
-                <ListItem fontSize="18px">Phone Number</ListItem>
-                <ListItem fontSize="18px">Recent APP #</ListItem>
-                <ListItem fontSize="18px">Recent APP Type</ListItem>
-                <ListItem fontSize="18px">User Status</ListItem>
+              <SimpleGrid columns={3} spacingY={'6px'} spacingX="10px">
+                <ListItem fontSize="17px">User ID</ListItem>
+                <ListItem fontSize="17px">Applicant Name</ListItem>
+                <ListItem fontSize="17px">Applicant DoB</ListItem>
+                <ListItem fontSize="17px">Home Address</ListItem>
+                <ListItem fontSize="17px">Email</ListItem>
+                <ListItem fontSize="17px">Phone Number</ListItem>
+                <ListItem fontSize="17px">Guardian/POA Name</ListItem>
+                <ListItem fontSize="17px">Guardian/POA Relation</ListItem>
+                <ListItem fontSize="17px">Guardian/POA Address</ListItem>
+                <ListItem fontSize="17px">Recent APP Number</ListItem>
+                <ListItem fontSize="17px">Recent APP Type</ListItem>
+                <ListItem fontSize="17px">User Status</ListItem>
               </SimpleGrid>
             </Box>
           </ModalBody>
-          <ModalFooter paddingBottom="24px">
+          <ModalFooter paddingBottom="40px">
             <Button
               colorScheme="gray"
               variant="solid"
