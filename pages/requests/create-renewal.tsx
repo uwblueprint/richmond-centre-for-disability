@@ -60,7 +60,7 @@ export default function CreateRenewal() {
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
         <Flex>
           <Text textStyle="display-large">
-            New Renewal Request (User ID:
+            {`New Renewal Request (User ID:`}
             <Box as="span" color="primary">
               {' '}
               {permitHolderID}
@@ -81,7 +81,7 @@ export default function CreateRenewal() {
             align="left"
           >
             <Text textStyle="display-small-semibold" paddingBottom="20px">
-              Search Permit Holder
+              {`Search Permit Holder`}
             </Text>
             <Input width="466px" />
           </Box>
@@ -99,7 +99,7 @@ export default function CreateRenewal() {
             align="left"
           >
             <Text textStyle="display-small-semibold" paddingBottom="20px">
-              Permit Holder Information
+              {`Permit Holder's Information`}
             </Text>
             <PermitHolderInformationForm
               permitHolderInformation={permitHolderInformation}
@@ -120,7 +120,7 @@ export default function CreateRenewal() {
             align="left"
           >
             <Text textStyle="display-small-semibold" paddingBottom="20px">
-              Doctor Information
+              {`Doctor's Information`}
             </Text>
             <DoctorInformationForm
               doctorInformation={doctorInformation}
@@ -141,7 +141,7 @@ export default function CreateRenewal() {
             align="left"
           >
             <Text textStyle="display-small-semibold" paddingBottom="20px">
-              Additional Information
+              {`Additional Information`}
             </Text>
             <AdditionalQuestionsForm data={additionalQuestions} onChange={setAdditionalQuestions} />
           </Box>
@@ -159,7 +159,7 @@ export default function CreateRenewal() {
             align="left"
           >
             <Text textStyle="display-small-semibold" paddingBottom="20px">
-              Payment Information
+              {`Payment, Shipping, and Billing Information`}
             </Text>
             <PaymentDetailsForm paymentInformation={paymentDetails} onChange={setPaymentDetails} />
           </Box>
@@ -173,6 +173,7 @@ export default function CreateRenewal() {
           paddingY="20px"
           paddingX="188px"
           bgColor="white"
+          boxShadow="dark-lg"
         >
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Box>
