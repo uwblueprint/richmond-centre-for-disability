@@ -21,7 +21,7 @@ type Props<T extends TypeaheadModel> = Pick<
 > & {
   results: Array<T>; // array of results to display in the typeahead menu
   placeholder: string; // placeholder text
-  onSelected: (selected: T | undefined) => void; // record selected item
+  onSelect: (selected: T | undefined) => void; // record selected item
 };
 
 /**
@@ -30,15 +30,8 @@ type Props<T extends TypeaheadModel> = Pick<
  * @returns Typeahead component which can be used to search with any query
  */
 export default function Typeahead<T extends TypeaheadModel>(props: Required<Props<T>>) {
-  const {
-    isLoading,
-    onSearch,
-    renderMenuItemChildren,
-    labelKey,
-    results,
-    placeholder,
-    onSelected,
-  } = props;
+  const { isLoading, onSearch, renderMenuItemChildren, labelKey, results, placeholder, onSelect } =
+    props;
   const filterBy = () => true;
 
   return (
@@ -61,7 +54,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
           },
         }}
         onChange={selected => {
-          selected.length > 0 ? onSelected(selected[0]) : onSelected(undefined);
+          selected.length > 0 ? onSelect(selected[0]) : onSelect(undefined);
         }}
         renderMenuItemChildren={renderMenuItemChildren}
         renderMenu={(results, menuProps, props) => {

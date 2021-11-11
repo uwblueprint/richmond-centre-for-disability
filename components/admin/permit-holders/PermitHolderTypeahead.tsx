@@ -12,7 +12,7 @@ import { useState } from 'react'; // React
 
 // Permit Holder Typeahead props
 type Props = {
-  onSelected: (selected: PermitHolder | undefined) => void; // handle selected permit holder
+  onSelect: (selected: PermitHolder | undefined) => void; // handle selected permit holder
 };
 
 /**
@@ -20,7 +20,7 @@ type Props = {
  * @returns Permit holder typeahead component to search for permit holders
  */
 export default function PermitHolderTypeahead(props: Props) {
-  const { onSelected } = props;
+  const { onSelect } = props;
   const [isTypeaheadLoading, setIsTypeaheadLoading] = useState(false);
   const [permitHolderResults, setPermitHolderResults] = useState<PermitHolder[]>([]);
   const [searchString, setSearchString] = useState('');
@@ -66,7 +66,7 @@ export default function PermitHolderTypeahead(props: Props) {
       }}
       labelKey={(option: PermitHolder) => `${option.firstName} ${option.lastName}`}
       results={permitHolderResults}
-      onSelected={onSelected}
+      onSelect={onSelect}
       placeholder="Search by user ID, first name or last name"
     />
   );
