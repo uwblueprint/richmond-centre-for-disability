@@ -1,5 +1,5 @@
 import Layout from '@components/admin/Layout'; // Layout component
-import { Text, Box, Flex, Stack, Button, GridItem, Input } from '@chakra-ui/react'; // Chakra UI
+import { Text, Box, Flex, Stack, Button, GridItem, Input, Link } from '@chakra-ui/react'; // Chakra UI
 import { useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
 import { PermitHolderInformation } from '@tools/components/admin/requests/forms/types'; //Permit holder information type
@@ -12,7 +12,7 @@ import { PaymentDetails } from '@tools/components/admin/requests/forms/types'; /
 import { PaymentType, Province } from '@lib/graphql/types'; //GraphQL types
 
 export default function CreateRenewal() {
-  const [permitHolderID] = useState('303240');
+  const [permitHolderID] = useState(303240);
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
     firstName: '',
     lastName: '',
@@ -39,14 +39,14 @@ export default function CreateRenewal() {
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
     paymentMethod: PaymentType.Mastercard,
     donationAmount: 25,
-    shippingAddressSameAsHomeAddress: true,
+    shippingAddressSameAsHomeAddress: false,
     shippingFullName: '',
     shippingAddressLine1: '',
     shippingAddressLine2: '',
     shippingCity: '',
     shippingProvince: Province.Bc,
     shippingPostalCode: '',
-    billingAddressSameAsHomeAddress: true,
+    billingAddressSameAsHomeAddress: false,
     billingFullName: '',
     billingAddressLine1: '',
     billingAddressLine2: '',
@@ -56,15 +56,14 @@ export default function CreateRenewal() {
   });
 
   return (
-    <Layout footer={false}>
+    <Layout>
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
         <Flex>
           <Text textStyle="display-large">
-            {`New Renewal Request (User ID:`}
-            <Box as="span" color="primary">
-              {' '}
+            New Renewal Request (User ID:{' '}
+            <Link color="primary" href="/permit-holder/<permitHolderID>">
               {permitHolderID}
-            </Box>
+            </Link>
             )
           </Text>
         </Flex>
@@ -178,27 +177,30 @@ export default function CreateRenewal() {
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Box>
               <Text textStyle="body-bold">
-                User ID:
-                <Box as="span" color="primary">
-                  {' '}
+                User ID:{' '}
+                <Link color="primary" href="/permit-holder/<permitHolderID>">
                   {permitHolderID}
-                </Box>
+                </Link>
               </Text>
             </Box>
             <Box>
-              <Button
-                bg="background.gray"
-                _hover={{ bg: 'background.grayHover' }}
-                color="black"
-                marginRight="20px"
-                height="48px"
-                width="149px"
-              >
-                <Text textStyle="button-semibold">Cancel</Text>
-              </Button>
-              <Button bg="primary" height="48px" width="180px">
-                <Text textStyle="button-semibold">Create Request</Text>
-              </Button>
+              <Link href="/admin">
+                <Button
+                  bg="background.gray"
+                  _hover={{ bg: 'background.grayHover' }}
+                  color="black"
+                  marginRight="20px"
+                  height="48px"
+                  width="149px"
+                >
+                  <Text textStyle="button-semibold">Cancel</Text>
+                </Button>
+              </Link>
+              <Link href="#">
+                <Button bg="primary" height="48px" width="180px">
+                  <Text textStyle="button-semibold">Create Request</Text>
+                </Button>
+              </Link>
             </Box>
           </Stack>
         </Box>
