@@ -129,7 +129,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
     return (
       <Modal isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
         <ModalOverlay />
-        <ModalContent paddingLeft={'16px'} maxWidth="46rem" paddingRight="16px">
+        <ModalContent paddingLeft={'16px'} maxWidth="46rem" maxHeight="438px" paddingRight="16px">
           <ModalHeader paddingTop="24px" paddingBottom="0px">
             <Stack direction="row">
               <Text textStyle="display-medium-bold" paddingRight="10px">
