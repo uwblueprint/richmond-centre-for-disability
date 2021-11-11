@@ -9,7 +9,7 @@ import 'react-bootstrap-typeahead/css/Typeahead.css'; //Typeahead styling
 import Helmet from 'react-helmet'; // Helmet
 import 'bootstrap/dist/css/bootstrap.min.css'; //Bootstrap styling
 import { Center, Divider, VStack, Text } from '@chakra-ui/layout'; // Chakra UI Layout
-import { Spacer } from '@chakra-ui/react'; //Chakra UI React
+import { Spacer, Spinner } from '@chakra-ui/react'; //Chakra UI React
 
 // Typeahead props
 type Props<T extends TypeaheadModel> = Pick<
@@ -17,9 +17,11 @@ type Props<T extends TypeaheadModel> = Pick<
   | 'isLoading' // boolean to indicate if query is loading
   | 'onSearch' // function to execute query when text is entered in input field
   | 'renderMenuItemChildren' // function to format each result in the menu
+  | 'labelKey' // string used for searching and rendering typeahead results
 > & {
   results: Array<T>; // array of results to display in the typeahead menu
   placeholder: string; // placeholder text
+  onSelect: (selected: T | undefined) => void; // record selected item
 };
 
 /**
@@ -28,7 +30,8 @@ type Props<T extends TypeaheadModel> = Pick<
  * @returns Typeahead component which can be used to search with any query
  */
 export default function Typeahead<T extends TypeaheadModel>(props: Required<Props<T>>) {
-  const { isLoading, onSearch, renderMenuItemChildren, results, placeholder } = props;
+  const { isLoading, onSearch, renderMenuItemChildren, labelKey, results, placeholder, onSelect } =
+    props;
   const filterBy = () => true;
 
   return (
@@ -36,9 +39,10 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
       <AsyncTypeahead
         filterBy={filterBy}
         id="async-typeahead"
-        isLoading={isLoading}
+        isLoading={false} // always false to hide spinner in input field when loading
         minLength={3}
         onSearch={onSearch}
+        labelKey={labelKey}
         options={results}
         placeholder={placeholder}
         emptyLabel="No results found."
@@ -48,6 +52,9 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
             width: '466px',
             height: '44px',
           },
+        }}
+        onChange={selected => {
+          selected.length > 0 ? onSelect(selected[0]) : onSelect(undefined);
         }}
         renderMenuItemChildren={renderMenuItemChildren}
         renderMenu={(results, menuProps, props) => {
@@ -59,6 +66,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
                 {results.length === 0 ? (
                   isLoading ? (
                     <Center height="80px">
+                      <Spinner color="primary" mr="8px" />
                       <Text textStyle="body-regular" color="secondary">
                         Searching...
                       </Text>
