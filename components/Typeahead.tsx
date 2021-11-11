@@ -46,7 +46,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
       <AsyncTypeahead
         filterBy={filterBy}
         id="async-typeahead"
-        isLoading={isLoading}
+        isLoading={false}
         minLength={3}
         onSearch={onSearch}
         labelKey={labelKey}
