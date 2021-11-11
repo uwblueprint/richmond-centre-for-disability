@@ -41,15 +41,25 @@ export default function GenerateReportModal(props: GenerateReportProps) {
         <Modal isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
           <ModalOverlay />
           <form>
-            <ModalContent paddingLeft={'10px'} maxWidth="40rem">
+            <ModalContent
+              paddingLeft={'16px'}
+              maxWidth="45rem"
+              maxHeight="547px"
+              paddingRight="16px"
+            >
               <ModalHeader paddingTop="24px" paddingBottom="12px">
                 <Text textStyle="display-medium-bold">Requests Report</Text>
               </ModalHeader>
-              <ModalBody paddingY="20px">
+              <ModalBody paddingY="20px" paddingBottom="44px">
                 <Box paddingBottom="32px">
+                  <FormControl isRequired>
+                    <FormLabel fontSize="22px" paddingBottom="16px">
+                      {'Application Date'}
+                    </FormLabel>
+                  </FormControl>
                   <Stack direction="row" spacing="20px">
                     <FormControl isRequired>
-                      <FormLabel>{'Application start date'}</FormLabel>
+                      <FormLabel>{'Start date'}</FormLabel>
                       <Input
                         type="date"
                         width="184px"
@@ -58,7 +68,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
                       />
                     </FormControl>
                     <FormControl isRequired>
-                      <FormLabel>{'Application end date'}</FormLabel>
+                      <FormLabel>{'End date'}</FormLabel>
                       <Input
                         type="date"
                         width="184px"
@@ -71,25 +81,26 @@ export default function GenerateReportModal(props: GenerateReportProps) {
                   </Stack>
                 </Box>
                 <Box>
-                  <Stack direction="row" spacing="20px">
+                  <Stack direction="row" spacing="20px" paddingBottom="16px">
                     <FormControl>
                       <FormLabel>{'Columns to Export'}</FormLabel>
                     </FormControl>
                   </Stack>
                 </Box>
                 <Box>
-                  <Checkbox paddingBottom={'10px'} fontWeight={'bold'}>
+                  <Checkbox paddingBottom={'6px'} fontWeight={'bold'}>
                     Select All
                   </Checkbox>
-                  <SimpleGrid columns={3} spacingX={'0px'} spacingY={'10px'}>
+                  <SimpleGrid columns={3} spacingX={'20px'} spacingY={'6px'}>
                     <Checkbox>User ID</Checkbox>
                     <Checkbox>Applicant Name</Checkbox>
                     <Checkbox>Applicant DoB</Checkbox>
+                    <Checkbox>APP Number</Checkbox>
+                    <Checkbox>Application Date</Checkbox>
+                    <Checkbox>Payment Method</Checkbox>
                     <Checkbox>Fee Amount</Checkbox>
                     <Checkbox>Donation Amount</Checkbox>
                     <Checkbox>Total Amount</Checkbox>
-                    <Checkbox>Payment Method</Checkbox>
-                    <Checkbox>Application Date</Checkbox>
                   </SimpleGrid>
                 </Box>
               </ModalBody>
@@ -101,6 +112,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
                   variant="solid"
                   ml={'12px'}
                   onClick={() => setStep(GenerateReportModalEnum.EXPORT)}
+                  disabled={startDate && endDate ? false : true}
                 >
                   {'Next'}
                 </Button>
@@ -166,7 +178,7 @@ export default function GenerateReportModal(props: GenerateReportProps) {
                 onClose();
               }}
             >
-              {'Cancel'}
+              {'Back to Requests Table'}
             </Button>
             <Button variant="solid" ml={'12px'} leftIcon={<DownloadIcon />}>
               {'Export as CSV'}
