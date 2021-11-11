@@ -12,18 +12,18 @@ import { useState } from 'react'; // React
 
 // Permit Holder Typeahead props
 type Props = {
-  setSelected: (selected: PermitHolder | undefined) => void; // record selected permit holder
+  onSelected: (selected: PermitHolder | undefined) => void; // handle selected permit holder
 };
 
 /**
- * Typeahead component to search for permit holders via asyncronous queries
+ * Typeahead component to search for permit holders via asynchronous queries
  * @returns Permit holder typeahead component to search for permit holders
  */
 export default function PermitHolderTypeahead(props: Props) {
-  const { setSelected } = props;
+  const { onSelected } = props;
   const [isTypeaheadLoading, setIsTypeaheadLoading] = useState(false);
   const [permitHolderResults, setPermitHolderResults] = useState<PermitHolder[]>([]);
-  const [searchString, setSearchString] = useState<string>();
+  const [searchString, setSearchString] = useState('');
 
   // permit holders query
   useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(GET_PERMIT_HOLDERS_QUERY, {
@@ -43,7 +43,7 @@ export default function PermitHolderTypeahead(props: Props) {
     },
   });
 
-  const searchPermitHolders = (query: string) => {
+  const handleSearch = (query: string) => {
     setIsTypeaheadLoading(true);
     setSearchString(query);
   };
@@ -51,22 +51,22 @@ export default function PermitHolderTypeahead(props: Props) {
   return (
     <Typeahead
       isLoading={isTypeaheadLoading}
-      onSearch={searchPermitHolders}
+      onSearch={handleSearch}
       renderMenuItemChildren={(option: PermitHolder) => {
         return (
-          <div>
+          <>
             <Text textStyle="body-regular" mt="8px" mb="4px" ml="4px">
               {option.firstName} {option.lastName}
             </Text>
             <Text textStyle="caption" textColor="text.secondary" mb="8px" ml="4px">
               Date of Birth: {formatDateYYYYMMDD(option.dateOfBirth)}
             </Text>
-          </div>
+          </>
         );
       }}
       labelKey={(option: PermitHolder) => `${option.firstName} ${option.lastName}`}
       results={permitHolderResults}
-      setSelected={setSelected}
+      onSelected={onSelected}
       placeholder="Search by user ID, first name or last name"
     />
   );
