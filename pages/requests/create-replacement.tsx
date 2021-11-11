@@ -2,16 +2,19 @@ import Layout from '@components/admin/Layout'; // Layout component
 import { Text, Box, Flex, Stack, Button, GridItem, Input } from '@chakra-ui/react'; // Chakra UI
 import { useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
-import { PermitHolderInformation } from '@tools/components/admin/requests/forms/types'; //Permit holder information type
+import {
+  PaymentDetails,
+  PermitHolderInformation,
+} from '@tools/components/admin/requests/forms/types'; //Permit holder information type
 import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm'; //Payment details form
-import { PaymentDetails } from '@tools/components/admin/requests/forms/types'; //Payment details type
 import { PaymentType, Province } from '@lib/graphql/types'; //GraphQL types
 import { ReasonForReplacement } from '@tools/components/admin/requests/forms/types';
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
 import ReasonForReplacementForm from '@components/admin/requests/forms/ReasonForReplacementForm';
+import Link from 'next/link'; // Link component
 
 export default function CreateReplacement() {
-  const [permitHolderID] = useState('303240');
+  const [permitHolderID] = useState(303240);
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
     firstName: '',
     lastName: '',
@@ -36,14 +39,14 @@ export default function CreateReplacement() {
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
     paymentMethod: PaymentType.Mastercard,
     donationAmount: 25,
-    shippingAddressSameAsHomeAddress: true,
+    shippingAddressSameAsHomeAddress: false,
     shippingFullName: '',
     shippingAddressLine1: '',
     shippingAddressLine2: '',
     shippingCity: '',
     shippingProvince: Province.Bc,
     shippingPostalCode: '',
-    billingAddressSameAsHomeAddress: true,
+    billingAddressSameAsHomeAddress: false,
     billingFullName: '',
     billingAddressLine1: '',
     billingAddressLine2: '',
@@ -53,15 +56,19 @@ export default function CreateReplacement() {
   });
 
   return (
-    <Layout footer={false}>
+    <Layout>
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
         <Flex>
           <Text textStyle="display-large">
             {`New Replacement Request (User ID:`}
-            <Box as="span" color="primary">
-              {' '}
-              {permitHolderID}
-            </Box>
+            <Link href={`/admin/request/${permitHolderID}`} passHref>
+              <Box as="span" color="primary">
+                {' '}
+                <Link href={`/admin/request/${permitHolderID}`} passHref>
+                  <a>{permitHolderID}</a>
+                </Link>
+              </Box>
+            </Link>
             )
           </Text>
         </Flex>
@@ -157,21 +164,25 @@ export default function CreateReplacement() {
                 User ID:
                 <Box as="span" color="primary">
                   {' '}
-                  {permitHolderID}
+                  <Link href={`/admin/request/${permitHolderID}`} passHref>
+                    <a>{permitHolderID}</a>
+                  </Link>
                 </Box>
               </Text>
             </Box>
             <Box>
-              <Button
-                bg="background.gray"
-                _hover={{ bg: 'background.grayHover' }}
-                color="black"
-                marginRight="20px"
-                height="48px"
-                width="149px"
-              >
-                <Text textStyle="button-semibold">Cancel</Text>
-              </Button>
+              <Link href={`/admin`}>
+                <Button
+                  bg="background.gray"
+                  _hover={{ bg: 'background.grayHover' }}
+                  color="black"
+                  marginRight="20px"
+                  height="48px"
+                  width="149px"
+                >
+                  <Text textStyle="button-semibold">Cancel</Text>
+                </Button>
+              </Link>
               <Button bg="primary" height="48px" width="180px">
                 <Text textStyle="button-semibold">Create Request</Text>
               </Button>
