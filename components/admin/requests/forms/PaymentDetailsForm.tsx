@@ -101,7 +101,7 @@ export default function PaymentDetailsForm({
             <FormControl>
               <FormLabel>
                 {'Donation '}
-                <Box as="span" textStyle="body-regular">
+                <Box as="span" textStyle="body-regular" fontSize="sm">
                   {'(optional)'}
                 </Box>
               </FormLabel>
@@ -179,7 +179,7 @@ export default function PaymentDetailsForm({
             <FormControl paddingBottom="24px">
               <FormLabel>
                 {'Address line 2 '}
-                <Box as="span" textStyle="body-regular">
+                <Box as="span" textStyle="body-regular" fontSize="sm">
                   {'(optional)'}
                 </Box>
               </FormLabel>
@@ -212,7 +212,7 @@ export default function PaymentDetailsForm({
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel>{'Province / territory'}</FormLabel>
+                <FormLabel>{'Province / Territory'}</FormLabel>
                 <Select
                   placeholder="Select province / territory"
                   value={shippingProvince || undefined}
@@ -303,7 +303,7 @@ export default function PaymentDetailsForm({
             <FormControl paddingBottom="24px">
               <FormLabel>
                 {'Address line 2 '}
-                <Box as="span" textStyle="body-regular">
+                <Box as="span" textStyle="body-regular" fontSize="sm">
                   {'(optional)'}
                 </Box>
               </FormLabel>
@@ -336,7 +336,7 @@ export default function PaymentDetailsForm({
               </FormControl>
 
               <FormControl>
-                <FormLabel>{'Province / territory'}</FormLabel>
+                <FormLabel>{'Province / Territory'}</FormLabel>
                 <Select
                   placeholder="Select province / territory"
                   value={billingProvince || undefined}

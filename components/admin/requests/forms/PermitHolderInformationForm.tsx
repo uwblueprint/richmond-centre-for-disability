@@ -89,7 +89,7 @@ export default function PermitHolderInformationForm({
           <FormControl>
             <FormLabel>
               {'Email address '}
-              <Box as="span" textStyle="body-regular">
+              <Box as="span" textStyle="body-regular" fontSize="sm">
                 {'(optional)'}
               </Box>
             </FormLabel>
@@ -137,7 +137,7 @@ export default function PermitHolderInformationForm({
         <FormControl paddingBottom="24px">
           <FormLabel>
             {'Address line 2 '}
-            <Box as="span" textStyle="caption">
+            <Box as="span" textStyle="caption" fontSize="sm">
               {'(optional)'}
             </Box>
           </FormLabel>

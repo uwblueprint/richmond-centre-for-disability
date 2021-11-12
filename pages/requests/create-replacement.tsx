@@ -124,7 +124,7 @@ export default function CreateReplacement() {
             align="left"
           >
             <Text textStyle="display-small-semibold" paddingBottom="20px">
-              {`Reason For Replacement Form`}
+              {`Reason For Replacement`}
             </Text>
             <ReasonForReplacementForm reasonForReplacement={reasonDetails} onChange={setReason} />
           </Box>
