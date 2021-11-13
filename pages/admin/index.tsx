@@ -39,7 +39,7 @@ import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //Grap
 import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatDateVerbose } from '@lib/utils/format'; // Verbose date formatter util
-import GenerateReportModal from '@components/admin/requests/modals/GenerateReportModal'; // Generate report modal
+import GenerateReportModal from '@components/admin/reports/GenerateReportModal'; // Generate report modal
 
 // Map uppercase enum strings to lowercase
 const permitTypeString: Record<string, string> = {
@@ -205,7 +205,7 @@ export default function Requests() {
       <GridItem colSpan={12}>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Requests</Text>
-          <Button variant="outline" onClick={() => onOpenGenerateReportModal()}>
+          <Button variant="outline" onClick={onOpenGenerateReportModal}>
             Generate a Report
           </Button>
           {/* TODO: 'Create a new request' function is out of scope for this term's MVP
@@ -388,6 +388,7 @@ export default function Requests() {
       <GenerateReportModal
         isOpen={isGenerateReportModalOpen}
         onClose={onCloseGenerateReportModal}
+        page="requests"
       />
     </Layout>
   );
