@@ -61,14 +61,12 @@ export default function CreateReplacement() {
         <Flex>
           <Text textStyle="display-large">
             {`New Replacement Request (User ID:`}
-            <Link href={`/admin/request/${permitHolderID}`} passHref>
-              <Box as="span" color="primary">
-                {' '}
-                <Link href={`/admin/request/${permitHolderID}`} passHref>
-                  <a>{permitHolderID}</a>
-                </Link>
-              </Box>
-            </Link>
+            <Box as="span" color="primary">
+              {' '}
+              <Link href={`/admin/request/${permitHolderID}`} passHref>
+                <a>{permitHolderID}</a>
+              </Link>
+            </Box>
             )
           </Text>
         </Flex>
@@ -124,7 +122,7 @@ export default function CreateReplacement() {
             align="left"
           >
             <Text textStyle="display-small-semibold" paddingBottom="20px">
-              {`Reason For Replacement`}
+              {`Reason for Replacement`}
             </Text>
             <ReasonForReplacementForm reasonForReplacement={reasonDetails} onChange={setReason} />
           </Box>

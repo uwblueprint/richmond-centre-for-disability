@@ -83,7 +83,7 @@ export default function ReasonForReplacementForm({
 
             <FormControl paddingBottom="24px">
               <FormLabel>
-                {'Time stamp '}
+                {'Timestamp '}
                 <Box as="span" textStyle="body-regular" fontSize="sm">
                   {'(optional)'}
                 </Box>
@@ -110,7 +110,7 @@ export default function ReasonForReplacementForm({
                   });
                 }}
               />
-              <FormHelperText color="text.seconday">{'hh:mm am/pm'}</FormHelperText>
+              <FormHelperText color="text.seconday">{'Example: HH:MM AM/PM'}</FormHelperText>
             </FormControl>
           </SimpleGrid>
 
