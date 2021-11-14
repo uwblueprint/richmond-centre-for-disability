@@ -4,7 +4,7 @@ import { UpsertPhysicianInput } from '@lib/graphql/types'; // Physician type
 import EditDoctorInformationModal from '@components/admin/requests/modals/EditDoctorInformationModal'; // Edit doctor information modal component
 import PreviousDoctorsInformationModal from '@components/admin/permit-holders/modals/PreviousDoctorsInformationModal'; // Previous Doctors' Information Modal
 import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/types';
-import { DoctorInformation } from '@tools/components/admin/requests/forms/doctor-information-form';
+import { DoctorInformation } from '@tools/components/admin/requests/forms/types';
 
 type DoctorInformationProps = {
   readonly physician: DoctorInformation;

@@ -12,8 +12,8 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, SyntheticEvent, ReactNode, useEffect } from 'react'; // React
 import { Physician } from '@lib/graphql/types'; // GraphQL types
-import { DoctorInformation } from '@tools/components/admin/requests/forms/doctor-information-form';
 import DoctorInformationForm from '@components/admin/requests/forms/DoctorInformationForm';
+import { DoctorInformation } from '@tools/components/admin/requests/forms/types';
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;
