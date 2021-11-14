@@ -1,17 +1,20 @@
-import Layout from '@components/admin/Layout'; // Layout component
-import { Text, Box, Flex, Stack, Button, GridItem, Input } from '@chakra-ui/react'; // Chakra UI
 import { useState } from 'react'; // React
+import { GetServerSideProps } from 'next';
+import Link from 'next/link'; // Link component
+import { getSession } from 'next-auth/client'; // Session management
+import { authorize } from '@tools/authorization'; // Page authorization
+import { Text, Box, Flex, Stack, Button, GridItem, Input } from '@chakra-ui/react'; // Chakra UI
+import Layout from '@components/admin/Layout'; // Layout component
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
 import {
   PaymentDetails,
   PermitHolderInformation,
 } from '@tools/components/admin/requests/forms/types'; //Permit holder information type
 import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm'; //Payment details form
-import { PaymentType, Province } from '@lib/graphql/types'; //GraphQL types
+import { PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
 import { ReasonForReplacement } from '@tools/components/admin/requests/forms/types';
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
 import ReasonForReplacementForm from '@components/admin/requests/forms/ReasonForReplacementForm';
-import Link from 'next/link'; // Link component
 
 export default function CreateReplacement() {
   const [permitHolderID] = useState(303240);
@@ -191,3 +194,22 @@ export default function CreateReplacement() {
     </Layout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async context => {
+  const session = await getSession(context);
+
+  // Only secretaries and admins can access APP requests
+  if (authorize(session, [Role.Secretary])) {
+    return {
+      props: {},
+    };
+  }
+
+  // Redirect to login if roles requirement not satisfied
+  return {
+    redirect: {
+      destination: '/admin/login',
+      permanent: false,
+    },
+  };
+};
