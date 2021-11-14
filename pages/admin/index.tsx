@@ -19,9 +19,10 @@ import {
   InputLeftElement,
   Wrap,
   Tooltip,
+  HStack,
   useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
-import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI Icons
+import { ChevronDownIcon, SearchIcon, AddIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/admin/Layout'; // Layout component
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/Table'; // Table component
@@ -205,25 +206,30 @@ export default function Requests() {
       <GridItem colSpan={12}>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Requests</Text>
-          <Button variant="outline" onClick={onOpenGenerateReportModal}>
-            Generate a Report
-          </Button>
-          {/* TODO: 'Create a new request' function is out of scope for this term's MVP
-          <Menu>
-            <MenuButton
-              as={Button}
-              leftIcon={<AddIcon width="14px" height="14px" />}
-              height="48px"
-              pl="24px"
-              pr="24px"
-            >
-              Create a request
-            </MenuButton>
-            <MenuList>
-              <MenuItem>Replacement Request</MenuItem>
-              <MenuItem>Renewal Request</MenuItem>
-            </MenuList>
-          </Menu> */}
+          <HStack spacing="12px">
+            <Button height="48px" variant="outline" onClick={onOpenGenerateReportModal}>
+              Generate a Report
+            </Button>
+            <Menu>
+              <MenuButton
+                as={Button}
+                leftIcon={<AddIcon width="14px" height="14px" />}
+                height="48px"
+                pl="24px"
+                pr="24px"
+              >
+                Create a request
+              </MenuButton>
+              <MenuList>
+                <MenuItem onClick={() => router.push('/admin/request/create-replacement')}>
+                  Replacement Request
+                </MenuItem>
+                <MenuItem onClick={() => router.push('/admin/request/create-renewal')}>
+                  Renewal Request
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </HStack>
         </Flex>
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px" bgColor="white">
           <Tabs marginBottom="20px">
