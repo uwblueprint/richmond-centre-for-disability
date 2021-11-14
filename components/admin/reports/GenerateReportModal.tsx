@@ -24,6 +24,9 @@ type GenerateReportProps = {
   readonly isOpen: boolean;
   readonly onClose: () => void;
   readonly page: string;
+  readonly onChange?: () => void;
+  readonly onSubmit?: () => void;
+  readonly columms?: Array<any>;
 };
 
 export default function GenerateReportModal(props: GenerateReportProps) {
