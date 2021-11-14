@@ -63,7 +63,7 @@ export default function CreateReplacement() {
             {`New Replacement Request (User ID:`}
             <Box as="span" color="primary">
               {' '}
-              <Link href={`/admin/request/${permitHolderID}`} passHref>
+              <Link href={`/admin/request/${permitHolderID}`}>
                 <a>{permitHolderID}</a>
               </Link>
             </Box>
@@ -162,7 +162,7 @@ export default function CreateReplacement() {
                 User ID:
                 <Box as="span" color="primary">
                   {' '}
-                  <Link href={`/admin/request/${permitHolderID}`} passHref>
+                  <Link href={`/admin/request/${permitHolderID}`}>
                     <a>{permitHolderID}</a>
                   </Link>
                 </Box>
