@@ -1,15 +1,21 @@
 import Layout from '@components/admin/Layout'; // Layout component
-import { Text, Box, Flex, Stack, Button, GridItem, Input, Link } from '@chakra-ui/react'; // Chakra UI
-import { useState } from 'react'; // React
+import { Text, Box, Flex, Stack, Button, GridItem, Input } from '@chakra-ui/react'; // Chakra UI
+import React, { useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
-import { PermitHolderInformation } from '@tools/components/admin/requests/forms/types'; //Permit holder information type
+import {
+  DoctorInformation,
+  PermitHolderInformation,
+} from '@tools/components/admin/requests/forms/types'; //Permit holder information type
 import DoctorInformationForm from '@components/admin/requests/forms/DoctorInformationForm'; //Doctor information form
-import { DoctorInformation } from '@tools/components/admin/requests/forms/doctor-information-form'; //Doctor information type
 import AdditionalQuestionsForm from '@components/admin/requests/forms/renewals/AdditionalQuestionsForm'; //Additional questions form
 import { AdditionalQuestions } from '@tools/components/admin/requests/forms/types'; //Additional questions type
 import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm'; //Payment details form
 import { PaymentDetails } from '@tools/components/admin/requests/forms/types'; //Payment details type
-import { PaymentType, Province } from '@lib/graphql/types'; //GraphQL types
+import { PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
+import Link from 'next/link'; // Link
+import { authorize } from '@tools/authorization';
+import { getSession } from 'next-auth/client';
+import { GetServerSideProps } from 'next';
 
 export default function CreateRenewal() {
   const [permitHolderID] = useState(303240);
@@ -30,7 +36,7 @@ export default function CreateRenewal() {
     city: '',
     postalCode: '',
     name: '',
-    mspNumber: 0,
+    mspNumber: null,
   });
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalQuestions>({
     usesAccessibleConvertedVan: false,
@@ -61,8 +67,8 @@ export default function CreateRenewal() {
         <Flex>
           <Text textStyle="display-large">
             New Renewal Request (User ID:{' '}
-            <Link color="primary" href="/permit-holder/<permitHolderID>">
-              {permitHolderID}
+            <Link href={`/permit-holder/${permitHolderID}`}>
+              <a>{permitHolderID}</a>
             </Link>
             )
           </Text>
@@ -178,8 +184,8 @@ export default function CreateRenewal() {
             <Box>
               <Text textStyle="body-bold">
                 User ID:{' '}
-                <Link color="primary" href="/permit-holder/<permitHolderID>">
-                  {permitHolderID}
+                <Link href={`/permit-holder/${permitHolderID}`}>
+                  <a>{permitHolderID}</a>
                 </Link>
               </Text>
             </Box>
@@ -208,3 +214,22 @@ export default function CreateRenewal() {
     </Layout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async context => {
+  const session = await getSession(context);
+
+  // Only secretaries and admins can access APP requests
+  if (authorize(session, [Role.Secretary])) {
+    return {
+      props: {},
+    };
+  }
+
+  // Redirect to login if roles requirement not satisfied
+  return {
+    redirect: {
+      destination: '/admin/login',
+      permanent: false,
+    },
+  };
+};
