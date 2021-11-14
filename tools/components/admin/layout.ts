@@ -1,4 +1,4 @@
-import { Role } from '@lib/types'; // Role enum
+import { Role } from '@lib/graphql/types'; // Role enum
 
 // Enum for internal page paths
 export enum InternalPagePath {

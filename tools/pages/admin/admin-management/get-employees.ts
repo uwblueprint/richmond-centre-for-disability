@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'; // gql tag
+import gql from 'graphql-tag'; // gql tag
 import { Employee, EmployeesFilter } from '@lib/graphql/types'; // GraphQL types
 
 /**

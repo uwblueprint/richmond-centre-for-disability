@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client'; // gql tag
-import { UpsertPhysicianResult, MutationUpsertPhysicianArgs } from '@lib/types'; // GraphQL types
+import gql from 'graphql-tag'; // gql tag
+import { UpsertPhysicianResult, MutationUpsertPhysicianArgs } from '@lib/graphql/types'; // GraphQL types
 
 // Upsert physician mutation
 export const UPSERT_PHYSICIAN_MUTATION = gql`

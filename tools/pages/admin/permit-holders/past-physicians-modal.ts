@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 import { Physician } from '@lib/graphql/types';
 
 export const GET_APPLICANT_PHYSICIANS_QUERY = gql`

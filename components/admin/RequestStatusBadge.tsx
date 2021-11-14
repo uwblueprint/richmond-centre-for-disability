@@ -1,6 +1,6 @@
 import { Badge, Box, Wrap } from '@chakra-ui/react'; // Chakra UI
 import Image from 'next/image'; // Optimized images
-import { ApplicationStatus } from '@lib/types'; // Types
+import { ApplicationStatus } from '@lib/graphql/types'; // Types
 
 type Props = {
   variant: ApplicationStatus | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';

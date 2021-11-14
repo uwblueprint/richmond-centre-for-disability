@@ -1,6 +1,8 @@
-export default `
+import gql from 'graphql-tag'; // GraphQL tag
+
+export default gql`
   type MedicalInformation {
-    id: ID!
+    id: Int!
     disability: String!
     affectsMobility: Boolean!
     mobilityAidRequired: Boolean!

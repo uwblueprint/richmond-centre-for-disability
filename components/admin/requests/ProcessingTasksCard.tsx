@@ -2,7 +2,7 @@ import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/PermitHolderInfoCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/modals/AssignNumberModal'; // AssignNumber Modal component
 import ProcessingTaskStep from '@components/admin/requests/ProcessingTaskStep'; // Processing Task Step
-import { ApplicationProcessing } from '@lib/types'; // Types
+import { ApplicationProcessing } from '@lib/graphql/types'; // Types
 
 type ProcessingTasksCardProps = {
   readonly applicationProcessing: Pick<

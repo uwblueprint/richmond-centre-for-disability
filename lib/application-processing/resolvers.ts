@@ -1,7 +1,11 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Prisma } from '@prisma/client'; // Prisma client
-import { Resolver } from '@lib/resolvers'; // Resolver type
-import { Province } from '@lib/graphql/types'; // GraphQL types
+import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
+import {
+  MutationCompleteApplicationArgs,
+  MutationUpdateApplicationProcessingArgs,
+  Province,
+} from '@lib/graphql/types'; // GraphQL types
 import { DBErrorCode } from '@lib/db/errors';
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import {
@@ -14,46 +18,59 @@ import { CompleteNewApplicationGuardianUpdate } from '@lib/application-processin
  * Updates the ApplicationProcessing object with the optional values provided
  * @returns Status of operation (ok, error)
  */
-export const updateApplicationProcessing: Resolver = async (_, args, { prisma }) => {
-  const { input } = args;
-  const { applicationId, documentUrl, ...rest } = input;
+export const updateApplicationProcessing: Resolver<MutationUpdateApplicationProcessingArgs> =
+  async (_, args, { prisma }) => {
+    const { input } = args;
+    const {
+      applicationId,
+      documentUrl,
+      status,
+      appHolepunched,
+      walletCardCreated,
+      appMailed,
+      ...rest
+    } = input;
 
-  let updatedApplication;
-  try {
-    updatedApplication = await prisma.application.update({
-      where: { id: parseInt(applicationId) },
-      data: {
-        applicationProcessing: {
-          update: {
-            ...rest,
-            ...(documentUrl && {
-              // TODO: Figure out way to make this work when deleting files post-MVP
-              documentUrls: {
-                push: documentUrl,
-              },
-            }),
+    let updatedApplication;
+    try {
+      updatedApplication = await prisma.application.update({
+        where: { id: parseInt(applicationId) },
+        data: {
+          applicationProcessing: {
+            update: {
+              ...rest,
+              status: status || undefined,
+              appHolepunched: appHolepunched || undefined,
+              walletCardCreated: walletCardCreated || undefined,
+              appMailed: appMailed || undefined,
+              ...(documentUrl && {
+                // TODO: Figure out way to make this work when deleting files post-MVP
+                documentUrls: {
+                  push: documentUrl,
+                },
+              }),
+            },
           },
         },
-      },
-    });
-  } catch (err) {
-    if (
-      err instanceof Prisma.PrismaClientKnownRequestError &&
-      err.code === DBErrorCode.RecordNotFound
-    ) {
-      throw new ApplicationNotFoundError(`Application with ID ${applicationId} not found`);
+      });
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === DBErrorCode.RecordNotFound
+      ) {
+        throw new ApplicationNotFoundError(`Application with ID ${applicationId} not found`);
+      }
     }
-  }
 
-  // Throw internal server error if application processing object was not updated
-  if (!updatedApplication) {
-    throw new ApolloError('Application processing record was unable to be updated');
-  }
+    // Throw internal server error if application processing object was not updated
+    if (!updatedApplication) {
+      throw new ApolloError('Application processing record was unable to be updated');
+    }
 
-  return {
-    ok: true,
+    return {
+      ok: true,
+    };
   };
-};
 
 /**
  * Completes an application by setting the ApplicationStatus to COMPLETED, querying the application data,
@@ -61,7 +78,11 @@ export const updateApplicationProcessing: Resolver = async (_, args, { prisma })
  * @param {ID!} args.applicationId - The id of the Application to complete
  * @returns Status of operation (ok, error)
  */
-export const completeApplication: Resolver = async (_, args, { prisma }) => {
+export const completeApplication: Resolver<MutationCompleteApplicationArgs> = async (
+  _,
+  args,
+  { prisma }
+) => {
   const { applicationId } = args;
 
   try {

@@ -107,8 +107,8 @@ model Application {
   updatedAt                        DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   applicant                        Applicant?            @relation(fields: [applicantId], references: [id])
   applicationProcessing            ApplicationProcessing @relation("application_processingToapplications", fields: [applicationProcessingId], references: [id])
-  permit                          Permit?
-  renewal                         Renewal?              @relation("applicationsTorenewals")
+  permit                           Permit?
+  renewals                         renewals?             @relation("applicationsTorenewals")
   replacement                      Replacement?          @relation("applicationsToreplacements")
 
   @@map("applications")
@@ -245,14 +245,14 @@ model Replacement {
   @@map("replacements")
 }
 
-model Renewal {
+model renewals {
   id                            Int         @id @default(autoincrement())
-  usesAccessibleConvertedVan    Boolean?    @map("uses_accessible_converted_van") @default(false)
-  requiresWiderParkingSpace     Boolean?    @map("requires_wider_parking_space") @default(false)
-  applicationId                 Int         @map("application_id") @unique
-  createdAt                     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
-  application                   Application @relation("applicationsTorenewals", fields: [applicationId], references: [id])
+  uses_accessible_converted_van Boolean?    @default(false)
+  requires_wider_parking_space  Boolean?    @default(false)
+  application_id                Int         @unique
+  created_at                    DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at                    DateTime    @default(now()) @db.Timestamptz(6)
+  applications                  Application @relation("applicationsTorenewals", fields: [application_id], references: [id])
 }
 
 enum Aid {

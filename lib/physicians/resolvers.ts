@@ -1,5 +1,5 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
-import { Resolver } from '@lib/resolvers'; // Resolver type
+import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
 import { DBErrorCode } from '@lib/db/errors'; // Database errors
 import { PhysicianCreateError } from '@lib/physicians/errors'; // Physician error
 import { Prisma } from '.prisma/client';

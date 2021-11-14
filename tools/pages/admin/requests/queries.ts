@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'; // GraphQL queries
+import gql from 'graphql-tag'; // GraphQL queries
 
 // Queries an Application by ID along with the associated permit, replacement, applicationProcessing, and applicant
 export const GET_APPLICATION_QUERY = gql`

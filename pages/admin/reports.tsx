@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { Text, GridItem } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
-import { Role } from '@lib/types'; // Role enum
+import { Role } from '@lib/graphql/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 
 // Internal home page

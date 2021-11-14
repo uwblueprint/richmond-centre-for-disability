@@ -1,4 +1,6 @@
-export default `
+import gql from 'graphql-tag';
+
+export default gql`
   type Query {
     meta: Meta!
     applicants(filter: ApplicantsFilter): QueryApplicantsResult

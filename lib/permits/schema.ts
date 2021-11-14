@@ -1,6 +1,8 @@
-export default `
+import gql from 'graphql-tag'; // GraphQL tag
+
+export default gql`
   type Permit {
-    id: ID!
+    id: Int!
     rcdPermitId: Int!
     expiryDate: Date!
     receiptId: Int

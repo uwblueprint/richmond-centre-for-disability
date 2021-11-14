@@ -1,6 +1,7 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
+import { DateUtils } from 'react-day-picker'; // Date utils
 import { Prisma } from '@prisma/client'; // Prisma client
-import { Resolver } from '@lib/resolvers'; // Resolver type
+import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
 import {
   ApplicantAlreadyExistsError,
   ApplicantNotFoundError,
@@ -11,8 +12,15 @@ import { getUniqueConstraintFailedFields, DBErrorCode } from '@lib/db/errors'; /
 import { MspNumberDoesNotExistError } from '@lib/physicians/errors'; // Physician errors
 import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
-import { PermitStatus, VerifyIdentityFailureReason } from '@lib/types'; // GraphQL types
-import { DateUtils } from 'react-day-picker'; // Date utils
+import {
+  MutationCreateApplicantArgs,
+  MutationUpdateApplicantArgs,
+  MutationVerifyIdentityArgs,
+  PermitStatus,
+  QueryApplicantArgs,
+  QueryApplicantsArgs,
+  VerifyIdentityFailureReason,
+} from '@lib/graphql/types'; // GraphQL types
 import { SortOrder } from '@tools/types'; // Sorting Type
 
 /**
@@ -34,7 +42,11 @@ import { SortOrder } from '@tools/types'; // Sorting Type
  * - order: array of tuples of the field being sorted and the order. Default [['firstName', 'asc'], ['lastName', 'asc']]
  * @returns All RCD applicants that match the filter(s).
  */
-export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
+export const applicants: Resolver<QueryApplicantsArgs> = async (
+  _parent,
+  { filter },
+  { prisma }
+) => {
   // Create default filter
   let where = {};
 
@@ -56,7 +68,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
       lastSearch;
 
     // Parse search input for id or name
-    if (parseInt(search)) {
+    if (search && parseInt(search)) {
       rcdUserIDSearch = parseInt(search);
     } else if (search) {
       // Split search to first, middle and last name elements
@@ -146,11 +158,13 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
   const sortingOrder: Record<string, SortOrder> = {};
 
   if (filter?.order) {
-    filter.order.forEach(([field, order]: [string, SortOrder]) => (sortingOrder[field] = order));
+    filter.order.forEach(([field, order]) => {
+      sortingOrder[field] = order as SortOrder;
+    });
   }
 
-  const take = filter?.limit;
-  const skip = filter?.offset;
+  const take = filter?.limit || undefined;
+  const skip = filter?.offset || undefined;
 
   const totalCount = await prisma.applicant.count({
     where,
@@ -176,7 +190,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
  * Query an applicant based on ID
  * @returns Applicant with given ID
  */
-export const applicant: Resolver = async (_parent, args, { prisma }) => {
+export const applicant: Resolver<QueryApplicantArgs> = async (_parent, args, { prisma }) => {
   const applicant = await prisma.applicant.findUnique({
     where: {
       id: parseInt(args.id),
@@ -189,7 +203,11 @@ export const applicant: Resolver = async (_parent, args, { prisma }) => {
  * Create an applicant
  * @returns Status of operation (ok)
  */
-export const createApplicant: Resolver = async (_, args, { prisma }) => {
+export const createApplicant: Resolver<MutationCreateApplicantArgs> = async (
+  _,
+  args,
+  { prisma }
+) => {
   const { input } = args;
   const {
     medicalInformation: { physicianMspNumber, ...medicalInformation },
@@ -219,7 +237,15 @@ export const createApplicant: Resolver = async (_, args, { prisma }) => {
         postalCode: formatPostalCode(input.postalCode),
         phone: formatPhoneNumber(input.phone),
         medicalInformation: {
-          create: { ...medicalInformation, physicianId: physician.id },
+          create: {
+            ...medicalInformation,
+            aid: medicalInformation.aid === null ? [] : medicalInformation.aid,
+            physician: {
+              connect: {
+                id: physician.id,
+              },
+            },
+          },
         },
         guardian: {
           create: guardian,
@@ -250,13 +276,37 @@ export const createApplicant: Resolver = async (_, args, { prisma }) => {
  * Update an applicant
  * @returns Status of operation (ok)
  */
-export const updateApplicant: Resolver = async (_, args, { prisma }) => {
+export const updateApplicant: Resolver<MutationUpdateApplicantArgs> = async (
+  _,
+  args,
+  { prisma }
+) => {
   const { input } = args;
-  const { id, ...rest } = input;
+  const {
+    id,
+    firstName,
+    lastName,
+    dateOfBirth,
+    gender,
+    phone,
+    province,
+    city,
+    addressLine1,
+    postalCode,
+    ...rest
+  } = input;
+
   const formattedApplicantData = {
     ...rest,
-    phone: formatPhoneNumber(input.phone),
-    postalCode: formatPostalCode(input.postalCode),
+    firstName: firstName || undefined,
+    lastName: lastName || undefined,
+    dateOfBirth: dateOfBirth || undefined,
+    gender: gender || undefined,
+    province: province || undefined,
+    city: city || undefined,
+    addressLine1: addressLine1 || undefined,
+    phone: phone ? formatPhoneNumber(phone) : undefined,
+    postalCode: postalCode ? formatPostalCode(postalCode) : undefined,
   };
 
   let updatedApplicant;
@@ -305,7 +355,7 @@ export const updateApplicant: Resolver = async (_, args, { prisma }) => {
  * applicant has an active permit that is expiring within the next 30 days.
  * @returns Whether identity could be verified (ok), failure reason if ok=false, applicant ID if ok=true
  */
-export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
+export const verifyIdentity: Resolver<MutationVerifyIdentityArgs> = async (_, args, { prisma }) => {
   const {
     input: { userId, phoneNumberSuffix, dateOfBirth, acceptedTos },
   } = args;

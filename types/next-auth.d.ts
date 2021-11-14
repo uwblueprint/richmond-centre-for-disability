@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth'; // eslint-disable-line @typescript-eslint/no-unused-vars
-import { Role } from '@lib/types';
+import { Role } from '@lib/graphql/types';
 
 // From https://next-auth.js.org/getting-started/typescript#module-augmentation
 declare module 'next-auth' {

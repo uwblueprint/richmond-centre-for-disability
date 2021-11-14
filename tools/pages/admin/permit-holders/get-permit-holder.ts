@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'; // GraphQL queries
+import gql from 'graphql-tag'; // GraphQL queries
 import {
   Applicant,
   Application,

@@ -1,6 +1,8 @@
-export default `
+import gql from 'graphql-tag'; // GraphQL tag
+
+export default gql`
   type Replacement {
-    id: ID!
+    id: Int!
     reason: ReasonForReplacement!
     lostTimestamp: Date
     lostLocation: String

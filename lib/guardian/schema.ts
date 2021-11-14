@@ -1,6 +1,8 @@
-export default `
+import gql from 'graphql-tag'; // GraphQL tag
+
+export default gql`
   type Guardian {
-    id: ID!
+    id: Int!
     firstName: String!
     middleName: String
     lastName: String!

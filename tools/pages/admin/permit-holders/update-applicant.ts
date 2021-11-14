@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client'; // gql tag
-import { MutationUpdateApplicantArgs, UpdateApplicantResult } from '@lib/types'; // GraphQL types
+import gql from 'graphql-tag'; // gql tag
+import { MutationUpdateApplicantArgs, UpdateApplicantResult } from '@lib/graphql/types'; // GraphQL types
 
 // Update applicant mutation
 export const UPDATE_APPLICANT_MUTATION = gql`

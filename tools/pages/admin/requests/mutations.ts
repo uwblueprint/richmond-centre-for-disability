@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client'; // GraphQL queries
-import { ApplicationStatus } from '@lib/types'; // Types
+import gql from 'graphql-tag'; // GraphQL queries
+import { ApplicationStatus } from '@lib/graphql/types'; // Types
 
 // Update Application by ID and optional parameters
 export const UPDATE_APPLICATION_MUTATION = gql`

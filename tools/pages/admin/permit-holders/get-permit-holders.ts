@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'; // gql tag
+import gql from 'graphql-tag'; // gql tag
 import { ApplicantsFilter, Applicant } from '@lib/graphql/types';
 
 export const GET_PERMIT_HOLDERS_QUERY = gql`

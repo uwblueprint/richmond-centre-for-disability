@@ -15,7 +15,7 @@ import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Reques
 import ApproveRequestModal from '@components/admin/requests/modals/ApproveRequestModal'; // Approve button + modal
 import RejectRequestModal from '@components/admin/requests/modals/RejectRequestModal'; // Reject button + modal
 import CompleteRequestModal from '@components/admin/requests/modals/CompleteRequestModal'; // Mark as complete button + modal
-import { ApplicationStatus } from '@lib/types'; // Types
+import { ApplicationStatus } from '@lib/graphql/types'; // Types
 
 type RequestHeaderProps = {
   readonly applicationStatus?: ApplicationStatus;

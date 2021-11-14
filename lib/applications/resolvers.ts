@@ -1,6 +1,6 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Prisma } from '@prisma/client'; // Prisma client
-import { Resolver } from '@lib/resolvers'; // Resolver type
+import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
 import {
   ShopifyConfirmationNumberAlreadyExistsError,
   ApplicantIdDoesNotExistError,
@@ -11,14 +11,21 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { PaymentType } from '@lib/graphql/types'; // GraphQL types
+import {
+  MutationCreateApplicationArgs,
+  MutationCreateRenewalApplicationArgs,
+  MutationUpdateApplicationArgs,
+  PaymentType,
+  QueryApplicationArgs,
+  QueryApplicationsArgs,
+} from '@lib/graphql/types'; // GraphQL types
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 
 /**
  * Query an application by ID
  * @returns Application with given ID
  */
-export const application: Resolver = async (_parent, args, { prisma }) => {
+export const application: Resolver<QueryApplicationArgs> = async (_parent, args, { prisma }) => {
   const application = await prisma.application.findUnique({ where: { id: parseInt(args.id) } });
   return application;
 };
@@ -42,7 +49,11 @@ export const application: Resolver = async (_parent, args, { prisma }) => {
  *
  * @returns All RCD applications that match the filter(s).
  */
-export const applications: Resolver = async (_parent, { filter }, { prisma }) => {
+export const applications: Resolver<QueryApplicationsArgs> = async (
+  _parent,
+  { filter },
+  { prisma }
+) => {
   let where = {};
   let orderBy = undefined;
 
@@ -58,7 +69,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     // Parse search string
     let rcdUserIDSearch, firstSearch, middleSearch, lastSearch, nameFilters;
 
-    if (parseInt(search)) {
+    if (search && parseInt(search)) {
       rcdUserIDSearch = parseInt(search);
     } else if (search) {
       // Split search to first, middle and last name elements
@@ -100,13 +111,13 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     // Parse sorting order
     if (order && order.length > 0) {
       const sortingOrder: Array<Record<string, SortOrder>> = [];
-      order.forEach(([field, order]: [string, SortOrder]) => {
+      order.forEach(([field, order]) => {
         if (field === 'name') {
           // Primary sort is by first name and secondary sort is by last name
-          sortingOrder.push({ firstName: order });
-          sortingOrder.push({ lastName: order });
+          sortingOrder.push({ firstName: order as SortOrder });
+          sortingOrder.push({ lastName: order as SortOrder });
         } else if (field === 'dateReceived') {
-          sortingOrder.push({ createdAt: order });
+          sortingOrder.push({ createdAt: order as SortOrder });
         }
       });
       orderBy = sortingOrder;
@@ -149,18 +160,28 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
  * Create an RCD application
  * @returns Status of operation (ok, error)
  */
-export const createApplication: Resolver = async (_, args, { prisma }) => {
+export const createApplication: Resolver<MutationCreateApplicationArgs> = async (
+  _,
+  args,
+  { prisma }
+) => {
   const {
-    input: { applicantId, shopifyConfirmationNumber },
+    input: { applicantId, shopifyConfirmationNumber, ...rest },
   } = args;
 
   let application;
   try {
     application = await prisma.application.create({
       data: {
-        ...args.input,
-        applicant: {
-          connect: { id: applicantId },
+        shopifyConfirmationNumber,
+        ...rest,
+        ...(applicantId && {
+          applicant: {
+            connect: { id: applicantId },
+          },
+        }),
+        applicationProcessing: {
+          create: {},
         },
       },
     });
@@ -200,16 +221,22 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
  * Updates the Application object with the optional values provided
  * @returns Status of operation (ok, error)
  */
-export const updateApplication: Resolver = async (_, args, { prisma }) => {
+export const updateApplication: Resolver<MutationUpdateApplicationArgs> = async (
+  _,
+  args,
+  { prisma }
+) => {
   const { input } = args;
-  const { id, ...rest } = input;
+  // TODO: Add rest of fields
+  const { id } = input;
 
   let application;
   try {
     application = await prisma.application.update({
       where: { id: parseInt(id) },
       data: {
-        ...rest,
+        // TODO: Fix
+        // ...rest,
       },
     });
   } catch (err) {
@@ -236,7 +263,11 @@ export const updateApplication: Resolver = async (_, args, { prisma }) => {
  * Requires updated field values to be provided if any of personal address, contact, or doctor info are updated.
  * @returns Status of operation (ok)
  */
-export const createRenewalApplication: Resolver = async (_, args, { prisma }) => {
+export const createRenewalApplication: Resolver<MutationCreateRenewalApplicationArgs> = async (
+  _,
+  args,
+  { prisma }
+) => {
   const {
     input: {
       applicantId,

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'; // gql tag
+import gql from 'graphql-tag'; // gql tag
 import { Application, ApplicationsFilter, ApplicationProcessing } from '@lib/graphql/types'; //GraphQL types
 
 export const GET_APPLICATIONS_QUERY = gql`

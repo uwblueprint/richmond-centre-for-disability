@@ -22,7 +22,7 @@
       "@assets/*": ["public/assets/*"],
       "@components/*": ["components/*"],
       "@containers/*": ["containers/*"],
-      "@lib/*": ["lib/*", "lib/graphql/*"],
+      "@lib/*": ["lib/*"],
       "@pages/*": ["pages/*"],
       "@prisma/*": ["prisma/*"],
       "@public/*": ["public/*"],

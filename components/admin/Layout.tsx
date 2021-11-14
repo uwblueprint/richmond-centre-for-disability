@@ -19,7 +19,7 @@ import {
   MenuItem,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI icon
-import { Role } from '@lib/types'; // Role enum
+import { Role } from '@lib/graphql/types'; // Role enum
 import { InternalPagePath, getTabIndex } from '@tools/components/admin/layout'; // Routing enums and tools
 import Tab from '@components/admin/navbar/Tab'; // Custom Tab component
 import { authorize } from '@tools/authorization';

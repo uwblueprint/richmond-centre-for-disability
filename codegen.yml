@@ -16,5 +16,3 @@ generates:
         inputValue: false
         object: true
         defaultValue: true
-      scalars:
-        ID: number

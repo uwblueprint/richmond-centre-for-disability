@@ -1,5 +1,5 @@
-import { Role } from '@lib/types';
-import { Resolver } from '@lib/resolvers';
+import { Role } from '@lib/graphql/types';
+import { Resolver } from '@lib/graphql/resolvers';
 
 /**
  * authorize is a wrapper function around graphQL resolvers that grants or denies access to certain resources based on an employee's role.

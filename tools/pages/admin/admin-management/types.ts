@@ -1,4 +1,4 @@
-import { Role } from '@lib/types'; //GraphQL types
+import { Role } from '@lib/graphql/types'; //GraphQL types
 
 /**
  * Employee data type for admin-management table

@@ -1,6 +1,8 @@
-export default `
+import gql from 'graphql-tag'; // GraphQL tag
+
+export default gql`
   type ApplicationProcessing {
-    id: ID!
+    id: Int!
     status: ApplicationStatus!
     appNumber: Int
     appHolepunched: Boolean!

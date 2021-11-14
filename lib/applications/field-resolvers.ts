@@ -1,4 +1,4 @@
-import { Resolver } from '@lib/resolvers'; // Resolver type
+import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
 import { Application } from '@lib/graphql/types'; // Application type
 
 /**

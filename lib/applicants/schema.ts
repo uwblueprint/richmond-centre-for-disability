@@ -1,7 +1,9 @@
+import gql from 'graphql-tag'; // GraphQL tag
+
 // TODO: `guardian` should be optional in `CreateApplicantInput`
-export default `
+export default gql`
   type Applicant {
-    id: ID!
+    id: Int!
     firstName: String!
     middleName: String
     lastName: String!
@@ -56,7 +58,7 @@ export default `
   }
 
   type MedicalHistory {
-    applicationId: ID!
+    applicationId: Int!
     physician: Physician!
   }
 

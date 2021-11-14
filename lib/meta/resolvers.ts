@@ -1,4 +1,4 @@
-import { Meta } from '@lib/types'; // Meta typedef
+import { Meta } from '@lib/graphql/types'; // Meta typedef
 
 export const meta = (): Meta => {
   return {

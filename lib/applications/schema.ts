@@ -1,9 +1,11 @@
-export default `
+import gql from 'graphql-tag'; // GraphQL tag
+
+export default gql`
   type Application {
     # Applicant information
-    id: ID!
+    id: Int!
     firstName: String!
-    middleName: String!
+    middleName: String
     lastName: String!
     dateOfBirth: Date!
     gender: Gender!
@@ -154,7 +156,7 @@ export default `
   }
 
   input ApplicationsFilter {
-    order: [[String!]]
+    order: [[String!]!]
     permitType: PermitType
     requestType: String
     status: ApplicationStatus
@@ -257,7 +259,6 @@ export default `
     updatedPhysician: Boolean!
     usesAccessibleConvertedVan: Boolean!
     requiresWiderParkingSpace: Boolean!
-
 
     # Personal address info (must be provided if updatedAddress === true)
     addressLine1: String
