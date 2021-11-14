@@ -67,9 +67,11 @@ export default function CreateRenewal() {
         <Flex>
           <Text textStyle="display-large">
             New Renewal Request (User ID:{' '}
-            <Link href={`/permit-holder/${permitHolderID}`}>
-              <a>{permitHolderID}</a>
-            </Link>
+            <Box as="span" color="primary">
+              <Link href={`/permit-holder/${permitHolderID}`}>
+                <a>{permitHolderID}</a>
+              </Link>
+            </Box>
             )
           </Text>
         </Flex>
@@ -184,9 +186,11 @@ export default function CreateRenewal() {
             <Box>
               <Text textStyle="body-bold">
                 User ID:{' '}
-                <Link href={`/permit-holder/${permitHolderID}`}>
-                  <a>{permitHolderID}</a>
-                </Link>
+                <Box as="span" color="primary">
+                  <Link href={`/permit-holder/${permitHolderID}`}>
+                    <a>{permitHolderID}</a>
+                  </Link>
+                </Box>
               </Text>
             </Box>
             <Box>
