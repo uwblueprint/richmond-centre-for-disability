@@ -491,7 +491,7 @@ export default function PermitHolders() {
       <GenerateReportModal
         isOpen={isGenerateReportModalOpen}
         onClose={onCloseGenerateReportModal}
-        page="permit-holders"
+        page="permitHolders"
       />
     </Layout>
   );
