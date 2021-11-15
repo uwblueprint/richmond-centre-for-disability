@@ -36,7 +36,7 @@ export default function CreateRenewal() {
     city: '',
     postalCode: '',
     name: '',
-    mspNumber: 0,
+    mspNumber: 0, //TODO: change default value to undefined
   });
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalQuestions>({
     usesAccessibleConvertedVan: false,
@@ -44,7 +44,7 @@ export default function CreateRenewal() {
   });
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
     paymentMethod: PaymentType.Mastercard,
-    donationAmount: 25,
+    donationAmount: 0,
     shippingAddressSameAsHomeAddress: false,
     shippingFullName: '',
     shippingAddressLine1: '',
