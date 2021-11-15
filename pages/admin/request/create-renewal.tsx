@@ -36,7 +36,7 @@ export default function CreateRenewal() {
     city: '',
     postalCode: '',
     name: '',
-    mspNumber: null,
+    mspNumber: 0,
   });
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalQuestions>({
     usesAccessibleConvertedVan: false,

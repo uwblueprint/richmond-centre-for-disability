@@ -55,7 +55,5 @@ export type ReasonForReplacement = Pick<
 // Doctor Information Object
 export type DoctorInformation = Pick<
   Physician,
-  'name' | 'phone' | 'addressLine1' | 'addressLine2' | 'city' | 'postalCode'
-> & {
-  mspNumber: number | null;
-};
+  'mspNumber' | 'name' | 'phone' | 'addressLine1' | 'addressLine2' | 'city' | 'postalCode'
+>;
