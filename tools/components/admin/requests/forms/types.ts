@@ -1,4 +1,4 @@
-import { Application, Renewal, Replacement } from '@lib/graphql/types'; // GraphQL Types
+import { Application, Physician, Renewal, Replacement } from '@lib/graphql/types'; // GraphQL Types
 
 // Permit Holder Information Object
 export type PermitHolderInformation = Pick<
@@ -50,4 +50,10 @@ export type ReasonForReplacement = Pick<
   | 'stolenPoliceFileNumber'
   | 'stolenJurisdiction'
   | 'stolenPoliceOfficerName'
+>;
+
+// Doctor Information Object
+export type DoctorInformation = Pick<
+  Physician,
+  'mspNumber' | 'name' | 'phone' | 'addressLine1' | 'addressLine2' | 'city' | 'postalCode'
 >;
