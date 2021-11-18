@@ -30,23 +30,8 @@ export default function DoctorInformationForm({
       <Box paddingBottom="32px">
         <Stack direction="row" spacing="20px" paddingBottom="24px">
           <FormControl isRequired>
-            <FormLabel>{'First name'}</FormLabel>
+            <FormLabel>{'Name'}</FormLabel>
             <Input
-              // TODO: Need to separate name into first and last name
-              value={doctorInformation.name}
-              onChange={event =>
-                onChange({
-                  ...doctorInformation,
-                  name: event.target.value,
-                })
-              }
-            />
-          </FormControl>
-
-          <FormControl isRequired>
-            <FormLabel>{'Last name'}</FormLabel>
-            <Input
-              // TODO: Need to separate name into first and last name
               value={doctorInformation.name}
               onChange={event =>
                 onChange({
