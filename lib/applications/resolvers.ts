@@ -518,6 +518,7 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
   let application;
   try {
     const physician = applicant.medicalInformation.physician;
+    console.log(typeof applicantId);
     application = await prisma.application.create({
       data: {
         firstName,
@@ -581,6 +582,7 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
       },
     });
   } catch (err) {
+    console.log(err);
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (
         err.code === DBErrorCode.UniqueConstraintFailed &&

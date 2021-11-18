@@ -324,9 +324,9 @@ export default `
 
     # Replacement Information
     reason: ReasonForReplacement!
-    lostTimestamp: Date!
-    lostLocation: String!
-    description: String!
+    lostTimestamp: Date
+    lostLocation: String
+    description: String
 
     # Payment Information
     paymentMethod: PaymentType!
