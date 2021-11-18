@@ -85,6 +85,9 @@ export default `
     # Replacement
     replacement: Replacement
 
+    # Renewal
+    renewal: Renewal
+
     # Misc
     createdAt: Date!
   }

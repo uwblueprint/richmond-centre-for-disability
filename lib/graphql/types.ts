@@ -152,6 +152,8 @@ export type Application = {
   applicationProcessing: Maybe<ApplicationProcessing>;
   /** Replacement */
   replacement: Maybe<Replacement>;
+  /** Renewal */
+  renewal: Maybe<Renewal>;
   /** Misc */
   createdAt: Scalars['Date'];
 };
@@ -391,30 +393,30 @@ export type CreateRenewalApplicationResult = {
 export type CreateReplacementApplicationInput = {
   applicantId: Scalars['Int'];
   /** Permit Holder Information */
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  phone: Scalars['String'];
   email?: Maybe<Scalars['String']>;
-  addressLine1?: Maybe<Scalars['String']>;
+  addressLine1: Scalars['String'];
   addressLine2?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  postalCode?: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  postalCode: Scalars['String'];
   /** Replacement Information */
   reason: ReasonForReplacement;
-  lostTimestamp?: Maybe<Scalars['Date']>;
-  lostLocation?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  lostTimestamp: Scalars['Date'];
+  lostLocation: Scalars['String'];
+  description: Scalars['String'];
   /** Payment Information */
-  paymentMethod?: Maybe<PaymentType>;
+  paymentMethod: PaymentType;
   donationAmount?: Maybe<Scalars['Float']>;
-  shippingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
+  shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName?: Maybe<Scalars['String']>;
   shippingAddressLine1?: Maybe<Scalars['String']>;
   shippingAddressLine2?: Maybe<Scalars['String']>;
   shippingCity?: Maybe<Scalars['String']>;
   shippingProvince?: Maybe<Province>;
   shippingPostalCode?: Maybe<Scalars['String']>;
-  billingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
+  billingAddressSameAsHomeAddress: Scalars['Boolean'];
   billingFullName?: Maybe<Scalars['String']>;
   billingAddressLine1?: Maybe<Scalars['String']>;
   billingAddressLine2?: Maybe<Scalars['String']>;

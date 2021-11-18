@@ -58,3 +58,15 @@ export const applicationReplacementResolver: Resolver<Application> = async (
 ) => {
   return await prisma.replacement.findUnique({ where: { applicationId: parent?.id } });
 };
+
+/**
+ * Field resolver to fetch the renewal information associated with an application.
+ * @returns Renewal object
+ */
+export const applicationRenewalResolver: Resolver<Application> = async (
+  parent,
+  _args,
+  { prisma }
+) => {
+  return await prisma.renewal.findUnique({ where: { applicationId: parent?.id } });
+};

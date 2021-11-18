@@ -26,7 +26,7 @@ import {
 } from '@tools/pages/applicant/renew';
 
 export default function CreateRenewal() {
-  const [permitHolderID] = useState(303240);
+  const [permitHolderID, setPermitHolderID] = useState<number>();
   const [, setSelectedPermitHolder] = useState<PermitHolder | undefined>(undefined);
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
     firstName: '',
@@ -46,6 +46,7 @@ export default function CreateRenewal() {
     postalCode: '',
     name: '',
     mspNumber: 0, //TODO: change default value to undefined
+    //TODO: fix msp number rendering
   });
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalQuestions>({
     usesAccessibleConvertedVan: false,
@@ -73,6 +74,8 @@ export default function CreateRenewal() {
   // Toast message
   const toast = useToast();
 
+  const [showForms, setShowForms] = useState<boolean>(false);
+
   //TODO: get applicant id when fetching applicant data
   //figure out what to do otherwise
   const applicantId = 1;
@@ -87,7 +90,9 @@ export default function CreateRenewal() {
 
   const handleSelectedPermitHolder = (permitHolder: PermitHolder | undefined) => {
     setSelectedPermitHolder(permitHolder);
+    setPermitHolderID(permitHolder?.rcdUserId || undefined);
     //TODO: execute query to get all data on permit holder
+    setShowForms(true); // do on successful query
   };
 
   // Submit application mutation
@@ -112,7 +117,7 @@ export default function CreateRenewal() {
   });
 
   /**
-   * Handle edit submission
+   * Handle renewal request submission
    */
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
@@ -139,6 +144,7 @@ export default function CreateRenewal() {
           physicianPhone: doctorInformation.phone,
           usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
           requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
+          // TODO: BILLING INFO
         },
       },
     });
@@ -149,13 +155,16 @@ export default function CreateRenewal() {
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
         <Flex>
           <Text textStyle="display-large">
-            New Renewal Request (User ID:{' '}
-            <Box as="span" color="primary">
-              <Link href={`/permit-holder/${permitHolderID}`}>
-                <a>{permitHolderID}</a>
-              </Link>
-            </Box>
-            )
+            {`New Renewal Request`}{' '}
+            {permitHolderID &&
+              ` (User ID: ` && (
+                <Box as="span" color="primary">
+                  <Link href={`/permit-holder/${permitHolderID}`}>
+                    <a>{permitHolderID}</a>
+                  </Link>
+                </Box>
+              ) &&
+              `)`}
           </Text>
         </Flex>
         {/* Typeahead component */}
@@ -177,135 +186,137 @@ export default function CreateRenewal() {
           </Box>
         </GridItem>
         {/* Permit Holder Information Form */}
-        <form onSubmit={handleSubmit}>
-          <GridItem paddingTop="32px">
-            <Box
-              border="1px solid"
-              borderColor="border.secondary"
-              borderRadius="12px"
-              bgColor="white"
-              paddingTop="32px"
-              paddingBottom="40px"
-              paddingX="40px"
-              align="left"
-            >
-              <Text textStyle="display-small-semibold" paddingBottom="20px">
-                {`Permit Holder's Information`}
-              </Text>
-              <PermitHolderInformationForm
-                permitHolderInformation={permitHolderInformation}
-                onChange={setPermitHolderInformation}
-              />
-            </Box>
-          </GridItem>
-          {/* Doctor's Information Form */}
-          <GridItem paddingTop="32px">
-            <Box
-              border="1px solid"
-              borderColor="border.secondary"
-              borderRadius="12px"
-              bgColor="white"
-              paddingTop="32px"
-              paddingBottom="40px"
-              paddingX="40px"
-              align="left"
-            >
-              <Text textStyle="display-small-semibold" paddingBottom="20px">
-                {`Doctor's Information`}
-              </Text>
-              <DoctorInformationForm
-                doctorInformation={doctorInformation}
-                onChange={setDoctorInformation}
-              />
-            </Box>
-          </GridItem>
-          {/* Additional Quesitons Form */}
-          <GridItem paddingTop="32px">
-            <Box
-              border="1px solid"
-              borderColor="border.secondary"
-              borderRadius="12px"
-              bgColor="white"
-              paddingTop="32px"
-              paddingBottom="40px"
-              paddingX="40px"
-              align="left"
-            >
-              <Text textStyle="display-small-semibold" paddingBottom="20px">
-                {`Additional Information`}
-              </Text>
-              <AdditionalQuestionsForm
-                data={additionalQuestions}
-                onChange={setAdditionalQuestions}
-              />
-            </Box>
-          </GridItem>
-          {/* Payment Details Form */}
-          <GridItem paddingTop="32px" paddingBottom="68px">
-            <Box
-              border="1px solid"
-              borderColor="border.secondary"
-              borderRadius="12px"
-              bgColor="white"
-              paddingTop="32px"
-              paddingBottom="40px"
-              paddingX="40px"
-              align="left"
-            >
-              <Text textStyle="display-small-semibold" paddingBottom="20px">
-                {`Payment, Shipping, and Billing Information`}
-              </Text>
-              <PaymentDetailsForm
-                paymentInformation={paymentDetails}
-                onChange={setPaymentDetails}
-              />
-            </Box>
-          </GridItem>
-
-          {/* Footer */}
-          <Box
-            position="fixed"
-            left="0"
-            bottom="0"
-            right="0"
-            paddingY="20px"
-            paddingX="188px"
-            bgColor="white"
-            boxShadow="dark-lg"
-          >
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box>
-                <Text textStyle="body-bold">
-                  User ID:{' '}
-                  <Box as="span" color="primary">
-                    <Link href={`/permit-holder/${permitHolderID}`}>
-                      <a>{permitHolderID}</a>
-                    </Link>
-                  </Box>
+        {showForms && (
+          <form onSubmit={handleSubmit}>
+            <GridItem paddingTop="32px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Permit Holder's Information`}
                 </Text>
+                <PermitHolderInformationForm
+                  permitHolderInformation={permitHolderInformation}
+                  onChange={setPermitHolderInformation}
+                />
               </Box>
-              <Box>
-                <Link href="/admin">
-                  <Button
-                    bg="background.gray"
-                    _hover={{ bg: 'background.grayHover' }}
-                    color="black"
-                    marginRight="20px"
-                    height="48px"
-                    width="149px"
-                  >
-                    <Text textStyle="button-semibold">Cancel</Text>
+            </GridItem>
+            {/* Doctor's Information Form */}
+            <GridItem paddingTop="32px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Doctor's Information`}
+                </Text>
+                <DoctorInformationForm
+                  doctorInformation={doctorInformation}
+                  onChange={setDoctorInformation}
+                />
+              </Box>
+            </GridItem>
+            {/* Additional Quesitons Form */}
+            <GridItem paddingTop="32px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Additional Information`}
+                </Text>
+                <AdditionalQuestionsForm
+                  data={additionalQuestions}
+                  onChange={setAdditionalQuestions}
+                />
+              </Box>
+            </GridItem>
+            {/* Payment Details Form */}
+            <GridItem paddingTop="32px" paddingBottom="68px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Payment, Shipping, and Billing Information`}
+                </Text>
+                <PaymentDetailsForm
+                  paymentInformation={paymentDetails}
+                  onChange={setPaymentDetails}
+                />
+              </Box>
+            </GridItem>
+
+            {/* Footer */}
+            <Box
+              position="fixed"
+              left="0"
+              bottom="0"
+              right="0"
+              paddingY="20px"
+              paddingX="188px"
+              bgColor="white"
+              boxShadow="dark-lg"
+            >
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Text textStyle="body-bold">
+                    User ID:{' '}
+                    <Box as="span" color="primary">
+                      <Link href={`/permit-holder/${permitHolderID}`}>
+                        <a>{permitHolderID}</a>
+                      </Link>
+                    </Box>
+                  </Text>
+                </Box>
+                <Box>
+                  <Link href="/admin">
+                    <Button
+                      bg="background.gray"
+                      _hover={{ bg: 'background.grayHover' }}
+                      color="black"
+                      marginRight="20px"
+                      height="48px"
+                      width="149px"
+                    >
+                      <Text textStyle="button-semibold">Cancel</Text>
+                    </Button>
+                  </Link>
+                  {/* <Link href="#"> */}
+                  <Button bg="primary" height="48px" width="180px" type="submit" loading={loading}>
+                    <Text textStyle="button-semibold">Create Request</Text>
                   </Button>
-                </Link>
-                {/* <Link href="#"> */}
-                <Button bg="primary" height="48px" width="180px" type="submit" loading={loading}>
-                  <Text textStyle="button-semibold">Create Request</Text>
-                </Button>
-                {/* </Link> */}
-              </Box>
-            </Stack>
-          </Box>
-        </form>
+                  {/* </Link> */}
+                </Box>
+              </Stack>
+            </Box>
+          </form>
+        )}
       </GridItem>
     </Layout>
   );
