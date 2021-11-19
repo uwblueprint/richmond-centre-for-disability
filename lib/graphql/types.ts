@@ -368,6 +368,8 @@ export type CreateRenewalApplicationInput = {
   usesAccessibleConvertedVan: Scalars['Boolean'];
   requiresWiderParkingSpace: Scalars['Boolean'];
   /** Personal address info (must be provided if updatedAddress === true) */
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
   addressLine1?: Maybe<Scalars['String']>;
   addressLine2?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
@@ -383,6 +385,23 @@ export type CreateRenewalApplicationInput = {
   physicianCity?: Maybe<Scalars['String']>;
   physicianPostalCode?: Maybe<Scalars['String']>;
   physicianPhone?: Maybe<Scalars['String']>;
+  /** Payment information */
+  shippingFullName?: Maybe<Scalars['String']>;
+  shippingAddressLine1?: Maybe<Scalars['String']>;
+  shippingAddressLine2?: Maybe<Scalars['String']>;
+  shippingCity?: Maybe<Scalars['String']>;
+  shippingProvince?: Maybe<Province>;
+  shippingPostalCode?: Maybe<Scalars['String']>;
+  billingFullName?: Maybe<Scalars['String']>;
+  billingAddressLine1?: Maybe<Scalars['String']>;
+  billingAddressLine2?: Maybe<Scalars['String']>;
+  billingCity?: Maybe<Scalars['String']>;
+  billingProvince?: Maybe<Province>;
+  billingPostalCode?: Maybe<Scalars['String']>;
+  shippingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
+  billingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
+  donationAmount?: Maybe<Scalars['Float']>;
+  paymentMethod?: Maybe<PaymentType>;
 };
 
 export type CreateRenewalApplicationResult = {

@@ -263,6 +263,8 @@ export default `
 
 
     # Personal address info (must be provided if updatedAddress === true)
+    firstName: String
+    lastName: String
     addressLine1: String
     addressLine2: String
     city: String
@@ -280,10 +282,30 @@ export default `
     physicianCity: String
     physicianPostalCode: String
     physicianPhone: String
+
+    # Payment information
+    shippingFullName: String
+    shippingAddressLine1: String
+    shippingAddressLine2: String
+    shippingCity: String
+    shippingProvince: Province
+    shippingPostalCode: String
+
+    billingFullName: String
+    billingAddressLine1: String
+    billingAddressLine2: String
+    billingCity: String
+    billingProvince: Province
+    billingPostalCode: String
+    shippingAddressSameAsHomeAddress: Boolean
+    billingAddressSameAsHomeAddress: Boolean
+    donationAmount: Float
+    paymentMethod: PaymentType
   }
 
   type CreateRenewalApplicationResult {
     ok: Boolean!
+    applicationId: Int
   }
 
   input CreateReplacementApplicationInput {

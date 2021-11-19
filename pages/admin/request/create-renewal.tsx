@@ -77,7 +77,6 @@ export default function CreateRenewal() {
   const [showForms, setShowForms] = useState<boolean>(false);
 
   //TODO: get applicant id when fetching applicant data
-  //figure out what to do otherwise
   const applicantId = 1;
 
   // Always override address, contact info, and physician
@@ -104,8 +103,9 @@ export default function CreateRenewal() {
       if (data?.createRenewalApplication.ok) {
         toast({
           status: 'success',
-          description: 'Your application has been submitted!',
+          description: 'Renewal application has been submitted!', //TODO: verify text
         });
+        // redirect to /admin/request/[id].tsx
       }
     },
     onError: error => {
@@ -127,6 +127,8 @@ export default function CreateRenewal() {
         input: {
           applicantId,
           updatedAddress,
+          firstName: permitHolderInformation.firstName,
+          lastName: permitHolderInformation.lastName,
           addressLine1: permitHolderInformation.addressLine1,
           addressLine2: permitHolderInformation.addressLine2,
           city: permitHolderInformation.city,
@@ -144,7 +146,26 @@ export default function CreateRenewal() {
           physicianPhone: doctorInformation.phone,
           usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
           requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
-          // TODO: BILLING INFO
+          shippingAddressSameAsHomeAddress: paymentDetails.shippingAddressSameAsHomeAddress,
+          billingAddressSameAsHomeAddress: paymentDetails.billingAddressSameAsHomeAddress,
+          ...(paymentDetails.shippingAddressSameAsHomeAddress === false && {
+            shippingFullName: paymentDetails.shippingFullName,
+            shippingAddressLine1: paymentDetails.shippingAddressLine1,
+            shippingAddressLine2: paymentDetails.shippingAddressLine2,
+            shippingCity: paymentDetails.shippingCity,
+            shippingProvince: paymentDetails.shippingProvince,
+            shippingPostalCode: paymentDetails.shippingPostalCode,
+          }),
+          ...(paymentDetails.billingAddressSameAsHomeAddress === false && {
+            billingFullName: paymentDetails.billingFullName,
+            billingAddressLine1: paymentDetails.billingAddressLine1,
+            billingAddressLine2: paymentDetails.billingAddressLine2,
+            billingCity: paymentDetails.billingCity,
+            billingProvince: paymentDetails.billingProvince,
+            billingPostalCode: paymentDetails.billingPostalCode,
+          }),
+          donationAmount: paymentDetails.donationAmount,
+          paymentMethod: paymentDetails.paymentMethod,
         },
       },
     });

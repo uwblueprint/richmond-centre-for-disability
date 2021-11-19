@@ -241,6 +241,8 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
     input: {
       applicantId,
       updatedAddress,
+      firstName,
+      lastName,
       addressLine1,
       addressLine2,
       city,
@@ -258,6 +260,22 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
       physicianPhone,
       usesAccessibleConvertedVan,
       requiresWiderParkingSpace,
+      shippingFullName,
+      shippingAddressLine1,
+      shippingAddressLine2,
+      shippingCity,
+      shippingProvince,
+      shippingPostalCode,
+      billingFullName,
+      billingAddressLine1,
+      billingAddressLine2,
+      billingCity,
+      billingProvince,
+      billingPostalCode,
+      shippingAddressSameAsHomeAddress,
+      billingAddressSameAsHomeAddress,
+      donationAmount,
+      paymentMethod,
     },
   } = args;
 
@@ -306,8 +324,8 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
   try {
     application = await prisma.application.create({
       data: {
-        firstName: applicant.firstName,
-        lastName: applicant.lastName,
+        firstName: firstName || applicant.firstName,
+        lastName: lastName || applicant.lastName,
         dateOfBirth: applicant.dateOfBirth,
         gender: applicant.gender,
         customGender: applicant.customGender,
@@ -323,7 +341,8 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         // TODO: Link with Shopify checkout
         shopifyConfirmationNumber,
         processingFee: 26,
-        paymentMethod: PaymentType.Cash,
+        donationAmount,
+        paymentMethod: paymentMethod || PaymentType.Cash,
         // TODO: Modify logic when DB schema gets changed (medicalInfo is not undefined)
         disability: applicant.medicalInformation?.disability || 'Placeholder disability',
         physicianName: updatedPhysician ? physicianName : physician.name,
@@ -334,6 +353,24 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         physicianPostalCode: updatedPhysician ? physicianPostalCode : physician.postalCode,
         physicianPhone: updatedPhysician ? physicianPhone : physician.phone,
         physicianProvince: physician.province,
+        shippingAddressSameAsHomeAddress,
+        billingAddressSameAsHomeAddress,
+        ...(shippingAddressSameAsHomeAddress === false && {
+          shippingFullName,
+          shippingAddressLine1,
+          shippingAddressLine2,
+          shippingCity,
+          shippingProvince,
+          shippingPostalCode,
+        }),
+        ...(billingAddressSameAsHomeAddress === false && {
+          billingFullName,
+          billingAddressLine1,
+          billingAddressLine2,
+          billingCity,
+          billingProvince,
+          billingPostalCode,
+        }),
         applicant: {
           connect: {
             id: applicantId,
@@ -379,6 +416,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
 
   return {
     ok: true,
+    applicationId: application.id,
   };
 };
 
