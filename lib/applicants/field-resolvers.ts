@@ -178,7 +178,10 @@ export const applicantMostRecentRenewalApplicationResolver: Resolver<Applicant> 
       where: { isRenewal: true },
       orderBy: { createdAt: SortOrder.DESC },
       take: 1,
+      include: {
+        renewal: true,
+      },
     });
 
-  return renewal[0]; //TODO: what if this doesn't exist??
+  return renewal.length > 0 ? renewal[0] : null;
 };

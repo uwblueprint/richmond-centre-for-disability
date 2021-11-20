@@ -6,6 +6,7 @@ export const CREATE_RENEWAL_APPLICATION_MUTATION = gql`
   mutation CreateApplicationMutation($input: CreateRenewalApplicationInput!) {
     createRenewalApplication(input: $input) {
       ok
+      applicationId
     }
   }
 `;

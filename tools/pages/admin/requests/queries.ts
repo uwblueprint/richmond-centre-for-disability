@@ -75,3 +75,52 @@ export const GET_APPLICATION_QUERY = gql`
     }
   }
 `;
+
+export const GET_APPLICANT_RENEWAL_QUERY = gql`
+  query getApplicantRenewal($id: ID!) {
+    applicant(id: $id) {
+      firstName
+      lastName
+      email
+      phone
+      addressLine1
+      addressLine2
+      city
+      postalCode
+      id
+      rcdUserId
+      medicalInformation {
+        physician {
+          name
+          mspNumber
+          addressLine1
+          addressLine2
+          city
+          postalCode
+          phone
+        }
+      }
+      mostRecentRenewal {
+        id
+        shippingFullName
+        shippingAddressLine1
+        shippingAddressLine2
+        shippingCity
+        shippingProvince
+        shippingPostalCode
+        billingFullName
+        billingAddressLine1
+        billingAddressLine2
+        billingCity
+        billingProvince
+        billingPostalCode
+        shippingAddressSameAsHomeAddress
+        billingAddressSameAsHomeAddress
+        renewal {
+          usesAccessibleConvertedVan
+          requiresWiderParkingSpace
+        }
+      }
+    }
+  }
+`;

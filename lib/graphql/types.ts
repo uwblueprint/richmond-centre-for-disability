@@ -54,6 +54,7 @@ export type Applicant = {
   permits: Array<Permit>;
   medicalHistory: Maybe<Array<MedicalHistory>>;
   mostRecentPermit: Permit;
+  mostRecentRenewal: Maybe<Application>;
   fileHistory: Array<ApplicationFileAttachments>;
 };
 
@@ -407,6 +408,7 @@ export type CreateRenewalApplicationInput = {
 export type CreateRenewalApplicationResult = {
   __typename?: 'CreateRenewalApplicationResult';
   ok: Scalars['Boolean'];
+  applicationId: Maybe<Scalars['Int']>;
 };
 
 export type CreateReplacementApplicationInput = {

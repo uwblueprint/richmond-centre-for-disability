@@ -18,12 +18,17 @@ import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import PermitHolderTypeahead from '@components/admin/permit-holders/PermitHolderTypeahead';
 import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders';
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import {
   CreateRenewalApplicationRequest,
   CreateRenewalApplicationResponse,
   CREATE_RENEWAL_APPLICATION_MUTATION,
 } from '@tools/pages/applicant/renew';
+import { GET_APPLICANT_RENEWAL_QUERY } from '@tools/pages/admin/requests/queries';
+import {
+  GetApplicantRenewalRequest,
+  GetApplicantRenewalResponse,
+} from '@tools/pages/admin/requests/types';
 
 export default function CreateRenewal() {
   const [permitHolderID, setPermitHolderID] = useState<number>();
@@ -85,11 +90,85 @@ export default function CreateRenewal() {
   const updatedPhysician = true;
 
   //TODO: useLazyQuery on applicant table
-  // const [getApplicant] = useLazyQuery()
+  const [getApplicant] = useLazyQuery<GetApplicantRenewalResponse, GetApplicantRenewalRequest>(
+    GET_APPLICANT_RENEWAL_QUERY,
+    {
+      onCompleted: data => {
+        // set permitHolderInformation
+        setPermitHolderID(data.applicant.rcdUserId || undefined);
+        setPermitHolderInformation({
+          firstName: data.applicant.firstName,
+          lastName: data.applicant.lastName,
+          email: data.applicant.email,
+          phone: data.applicant.phone,
+          addressLine1: data.applicant.addressLine1,
+          addressLine2: data.applicant.addressLine2,
+          city: data.applicant.city,
+          postalCode: data.applicant.postalCode,
+        });
 
-  const handleSelectedPermitHolder = (permitHolder: PermitHolder | undefined) => {
+        // set doctorInformation
+        const physician = data.applicant.medicalInformation.physician;
+        setDoctorInformation({
+          phone: physician.phone,
+          addressLine1: physician.addressLine1,
+          addressLine2: physician.addressLine2,
+          city: physician.city,
+          postalCode: physician.postalCode,
+          name: physician.name,
+          mspNumber: physician.mspNumber,
+        });
+
+        // set additionalQuestions
+        if (data.applicant.mostRecentRenewal.renewal) {
+          setAdditionalQuestions({
+            usesAccessibleConvertedVan:
+              data.applicant.mostRecentRenewal.renewal.usesAccessibleConvertedVan,
+            requiresWiderParkingSpace:
+              data.applicant.mostRecentRenewal.renewal.requiresWiderParkingSpace,
+          });
+        } else {
+          setAdditionalQuestions({
+            usesAccessibleConvertedVan: false,
+            requiresWiderParkingSpace: false,
+          });
+        }
+
+        // set paymentDetails
+        //TODO: maybe don't pre-populate payment info
+        const previousApplication = data.applicant.mostRecentRenewal;
+        setPaymentDetails({
+          paymentMethod: previousApplication.paymentMethod,
+          donationAmount: 0,
+          shippingAddressSameAsHomeAddress: previousApplication.shippingAddressSameAsHomeAddress,
+          shippingFullName: previousApplication.shippingFullName,
+          shippingAddressLine1: previousApplication.shippingAddressLine1,
+          shippingAddressLine2: previousApplication.shippingAddressLine2,
+          shippingCity: previousApplication.shippingCity,
+          shippingProvince: previousApplication.shippingProvince,
+          shippingPostalCode: previousApplication.shippingPostalCode,
+          billingAddressSameAsHomeAddress: previousApplication.billingAddressSameAsHomeAddress,
+          billingFullName: previousApplication.billingFullName,
+          billingAddressLine1: previousApplication.billingAddressLine1,
+          billingAddressLine2: previousApplication.billingAddressLine2,
+          billingCity: previousApplication.billingCity,
+          billingProvince: previousApplication.billingProvince,
+          billingPostalCode: previousApplication.billingPostalCode,
+        });
+      },
+    }
+  );
+
+  const handleSelectedPermitHolder = async (permitHolder: PermitHolder | undefined) => {
     setSelectedPermitHolder(permitHolder);
     setPermitHolderID(permitHolder?.rcdUserId || undefined);
+    if (permitHolder) {
+      await getApplicant({
+        variables: {
+          id: permitHolder.id,
+        },
+      });
+    }
     //TODO: execute query to get all data on permit holder
     setShowForms(true); // do on successful query
   };
@@ -176,16 +255,16 @@ export default function CreateRenewal() {
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
         <Flex>
           <Text textStyle="display-large">
-            {`New Renewal Request`}{' '}
-            {permitHolderID &&
-              ` (User ID: ` && (
-                <Box as="span" color="primary">
-                  <Link href={`/permit-holder/${permitHolderID}`}>
-                    <a>{permitHolderID}</a>
-                  </Link>
-                </Box>
-              ) &&
-              `)`}
+            {`New Renewal Request`}
+            {permitHolderID && ` (User ID: `}
+            {permitHolderID && (
+              <Box as="span" color="primary">
+                <Link href={`/permit-holder/${permitHolderID}`}>
+                  <a>{permitHolderID}</a>
+                </Link>
+              </Box>
+            )}
+            {permitHolderID && `)`}
           </Text>
         </Flex>
         {/* Typeahead component */}
