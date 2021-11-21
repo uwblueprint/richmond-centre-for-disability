@@ -349,5 +349,6 @@ export default `
 
   type CreateReplacementApplicationResult {
     ok: Boolean!
+    applicationId: Int!
   }
 `;

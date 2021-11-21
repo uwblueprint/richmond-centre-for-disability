@@ -608,8 +608,9 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
   if (!application) {
     throw new ApolloError('Application was unable to be created');
   }
-
+  console.log(application.id);
   return {
     ok: true,
+    applicationId: application.id
   };
 };

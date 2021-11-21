@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client'; // gql tag
-import { CreateReplacementApplicationResult, MutationCreateReplacementApplicationArgs } from '@lib/types'; // GraphQL types
+import { CreateReplacementApplicationResult, MutationCreateReplacementApplicationArgs } from '@lib/graphql/types'; // GraphQL types
 
 // Create replacement application mutation
 export const CREATE_REPLACEMENT_APPLICATION_MUTATION = gql`

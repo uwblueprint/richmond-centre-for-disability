@@ -20,6 +20,7 @@ import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holde
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { GetApplicantRequest, GetApplicantResponse, GET_APPLICANT_QUERY } from '@lib/applicants/get-applicant';
 import { CREATE_REPLACEMENT_APPLICATION_MUTATION, CreateReplacementApplicationRequest, CreateReplacementApplicationResponse } from '@tools/pages/applicant/replace';
+import { useRouter } from 'next/router'; // Router
 export default function CreateReplacement() {
   const [applicantId, setApplicantID] = useState<number | undefined>(undefined);
   const [permitHolderID, setPermitHolderID] = useState<number | undefined>(undefined);
@@ -64,6 +65,7 @@ export default function CreateReplacement() {
   });
 
   const toast = useToast();
+  const router = useRouter();
 
   const [getApplicant] = useLazyQuery<GetApplicantResponse, GetApplicantRequest>(GET_APPLICANT_QUERY, {
     onCompleted: ({applicant: data}) => {
@@ -104,6 +106,8 @@ export default function CreateReplacement() {
           status: 'success',
           description: 'Your application has been submitted!',
         });
+        console.log(data);
+        router.push(`/admin/request/${data.createReplacementApplication.applicationId}`);
       }
     },
     onError: error => {
@@ -124,8 +128,6 @@ export default function CreateReplacement() {
       });
       return;
     }
-    console.log(applicantId);
-    console.log(typeof applicantId);
     await submitReplacementApplication({
       variables: {
         input: {

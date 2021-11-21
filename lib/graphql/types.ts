@@ -450,6 +450,7 @@ export type CreateReplacementApplicationInput = {
 export type CreateReplacementApplicationResult = {
   __typename?: 'CreateReplacementApplicationResult';
   ok: Scalars['Boolean'];
+  applicationId: Scalars['Int'];
 };
 
 
