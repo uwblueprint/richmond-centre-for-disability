@@ -362,13 +362,13 @@ export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
   }
 
   // Note: 30 days = 30 * 24 * 60 * 60 * 1000 milliseconds
-  if (activePermit.expiryDate.getTime() - new Date().getTime() > 30 * 24 * 60 * 60 * 1000) {
-    return {
-      ok: false,
-      failureReason: VerifyIdentityFailureReason.AppDoesNotExpireWithin_30Days,
-      applicantId: null,
-    };
-  }
+  // if (activePermit.expiryDate.getTime() - new Date().getTime() > 30 * 24 * 60 * 60 * 1000) {
+  //   return {
+  //     ok: false,
+  //     failureReason: VerifyIdentityFailureReason.AppDoesNotExpireWithin_30Days,
+  //     applicantId: null,
+  //   };
+  // }
 
   // Update applicant's accepted TOS timestamp
   try {

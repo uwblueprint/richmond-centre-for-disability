@@ -250,6 +250,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
       updatedContactInfo,
       phone,
       email,
+      rcdUserId,
       updatedPhysician,
       physicianName,
       physicianMspNumber,
@@ -320,23 +321,36 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
   const currentDateTime = new Date().getTime().toString();
   const shopifyConfirmationNumber = currentDateTime.substr(currentDateTime.length - 7);
 
+  const applicantFirstName = firstName || applicant.firstName;
+  const applicantLastName = lastName || applicant.lastName;
+  const applicantEmail = updatedContactInfo && email ? email : applicant.email;
+  const applicantCity = updatedAddress && city ? city : applicant.city;
+  const applicantAddressLine1 =
+    updatedAddress && addressLine1 ? addressLine1 : applicant.addressLine1;
+  const applicantAddressLine2 =
+    updatedAddress && addressLine2 ? addressLine2 : applicant.addressLine2;
+  const applicantPostalCode =
+    updatedAddress && postalCode ? formatPostalCode(postalCode) : applicant.postalCode;
+
+  //TODO: provinces
+
   let application;
   try {
     application = await prisma.application.create({
       data: {
-        firstName: firstName || applicant.firstName,
-        lastName: lastName || applicant.lastName,
+        firstName: applicantFirstName,
+        lastName: applicantLastName,
         dateOfBirth: applicant.dateOfBirth,
         gender: applicant.gender,
         customGender: applicant.customGender,
-        email: updatedContactInfo && email ? email : applicant.email,
+        email: applicantEmail,
         phone: updatedContactInfo && phone ? formatPhoneNumber(phone) : applicant.phone,
         province: applicant.province,
-        city: updatedAddress && city ? city : applicant.city,
-        addressLine1: updatedAddress && addressLine1 ? addressLine1 : applicant.addressLine1,
-        addressLine2: updatedAddress && addressLine2 ? addressLine2 : applicant.addressLine2,
-        postalCode:
-          updatedAddress && postalCode ? formatPostalCode(postalCode) : applicant.postalCode,
+        city: applicantCity,
+        addressLine1: applicantAddressLine1,
+        addressLine2: applicantAddressLine2,
+        postalCode: applicantPostalCode,
+        rcdUserId: rcdUserId || applicant.rcdUserId,
         isRenewal: true,
         // TODO: Link with Shopify checkout
         shopifyConfirmationNumber,
@@ -355,22 +369,34 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         physicianProvince: physician.province,
         shippingAddressSameAsHomeAddress,
         billingAddressSameAsHomeAddress,
-        ...(shippingAddressSameAsHomeAddress === false && {
-          shippingFullName,
-          shippingAddressLine1,
-          shippingAddressLine2,
-          shippingCity,
-          shippingProvince,
-          shippingPostalCode,
-        }),
-        ...(billingAddressSameAsHomeAddress === false && {
-          billingFullName,
-          billingAddressLine1,
-          billingAddressLine2,
-          billingCity,
-          billingProvince,
-          billingPostalCode,
-        }),
+        shippingFullName: shippingAddressSameAsHomeAddress
+          ? `${applicantFirstName} ${applicantLastName}`
+          : shippingFullName,
+        shippingAddressLine1: shippingAddressSameAsHomeAddress
+          ? applicantAddressLine1
+          : shippingAddressLine1,
+        shippingAddressLine2: shippingAddressSameAsHomeAddress
+          ? applicantAddressLine2
+          : shippingAddressLine2,
+        shippingCity: shippingAddressSameAsHomeAddress ? applicantCity : shippingCity,
+        shippingPostalCode: shippingAddressSameAsHomeAddress
+          ? applicantPostalCode
+          : shippingPostalCode,
+        shippingProvince,
+        billingFullName: billingAddressSameAsHomeAddress
+          ? `${applicantFirstName} ${applicantLastName}`
+          : billingFullName,
+        billingAddressLine1: billingAddressSameAsHomeAddress
+          ? applicantAddressLine1
+          : billingAddressLine1,
+        billingAddressLine2: billingAddressSameAsHomeAddress
+          ? applicantAddressLine2
+          : billingAddressLine2,
+        billingCity: billingAddressSameAsHomeAddress ? applicantCity : billingCity,
+        billingProvince,
+        billingPostalCode: billingAddressSameAsHomeAddress
+          ? applicantPostalCode
+          : billingPostalCode,
         applicant: {
           connect: {
             id: applicantId,

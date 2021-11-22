@@ -29,6 +29,7 @@ import {
   GetApplicantRenewalRequest,
   GetApplicantRenewalResponse,
 } from '@tools/pages/admin/requests/types';
+import { useRouter } from 'next/router';
 
 export default function CreateRenewal() {
   const [permitHolderID, setPermitHolderID] = useState<number>();
@@ -79,6 +80,9 @@ export default function CreateRenewal() {
   // Toast message
   const toast = useToast();
 
+  // Router
+  const router = useRouter();
+
   const [showForms, setShowForms] = useState<boolean>(false);
 
   //TODO: get applicant id when fetching applicant data
@@ -93,6 +97,7 @@ export default function CreateRenewal() {
   const [getApplicant] = useLazyQuery<GetApplicantRenewalResponse, GetApplicantRenewalRequest>(
     GET_APPLICANT_RENEWAL_QUERY,
     {
+      fetchPolicy: 'network-only',
       onCompleted: data => {
         // set permitHolderInformation
         setPermitHolderID(data.applicant.rcdUserId || undefined);
@@ -184,7 +189,8 @@ export default function CreateRenewal() {
           status: 'success',
           description: 'Renewal application has been submitted!', //TODO: verify text
         });
-        // redirect to /admin/request/[id].tsx
+
+        router.push(`/admin/request/${data.createRenewalApplication.applicationId}`);
       }
     },
     onError: error => {
@@ -215,6 +221,7 @@ export default function CreateRenewal() {
           updatedContactInfo,
           phone: permitHolderInformation.phone,
           email: permitHolderInformation.email,
+          rcdUserId: permitHolderID,
           updatedPhysician,
           physicianName: doctorInformation.name,
           physicianMspNumber: doctorInformation.mspNumber,

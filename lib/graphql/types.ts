@@ -368,6 +368,7 @@ export type CreateRenewalApplicationInput = {
   updatedPhysician: Scalars['Boolean'];
   usesAccessibleConvertedVan: Scalars['Boolean'];
   requiresWiderParkingSpace: Scalars['Boolean'];
+  rcdUserId?: Maybe<Scalars['Int']>;
   /** Personal address info (must be provided if updatedAddress === true) */
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;

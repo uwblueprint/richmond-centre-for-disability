@@ -260,6 +260,7 @@ export default `
     updatedPhysician: Boolean!
     usesAccessibleConvertedVan: Boolean!
     requiresWiderParkingSpace: Boolean!
+    rcdUserId: Int
 
 
     # Personal address info (must be provided if updatedAddress === true)
