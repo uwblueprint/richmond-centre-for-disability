@@ -46,7 +46,7 @@ export default function DoctorInformationForm({
           <FormControl isRequired>
             <FormLabel>{'Medical services plan number'}</FormLabel>
             <Input
-              value={doctorInformation.mspNumber}
+              value={doctorInformation.mspNumber || ''}
               onChange={event =>
                 onChange({
                   ...doctorInformation,

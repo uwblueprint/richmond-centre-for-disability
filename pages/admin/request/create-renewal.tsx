@@ -34,7 +34,6 @@ import { useRouter } from 'next/router';
 export default function CreateRenewal() {
   const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
   const [applicantID, setApplicantID] = useState<number>();
-  const [, setSelectedPermitHolder] = useState<PermitHolder | undefined>(undefined);
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
     firstName: '',
     lastName: '',
@@ -53,7 +52,6 @@ export default function CreateRenewal() {
     postalCode: '',
     name: '',
     mspNumber: 0, //TODO: change default value to undefined
-    //TODO: fix msp number rendering
   });
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalQuestions>({
     usesAccessibleConvertedVan: false,
@@ -89,6 +87,9 @@ export default function CreateRenewal() {
   const updatedContactInfo = true;
   const updatedPhysician = true;
 
+  /**
+   * Get information about applicant to pre-populate form
+   */
   const [getApplicant] = useLazyQuery<GetApplicantRenewalResponse, GetApplicantRenewalRequest>(
     GET_APPLICANT_RENEWAL_QUERY,
     {
@@ -160,8 +161,10 @@ export default function CreateRenewal() {
     }
   );
 
+  /**
+   * Set and fetch data about applicant when permit holder is selected
+   */
   const handleSelectedPermitHolder = async (permitHolder: PermitHolder | undefined) => {
-    setSelectedPermitHolder(permitHolder);
     setPermitHolderRcdUserID(permitHolder?.rcdUserId || undefined);
     if (permitHolder) {
       await getApplicant({
@@ -172,7 +175,9 @@ export default function CreateRenewal() {
     }
   };
 
-  // Submit application mutation
+  /**
+   * Submit application mutation
+   */
   const [submitRenewalApplication, { loading }] = useMutation<
     CreateRenewalApplicationResponse,
     CreateRenewalApplicationRequest
@@ -201,54 +206,56 @@ export default function CreateRenewal() {
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
 
-    await submitRenewalApplication({
-      variables: {
-        input: {
-          applicantId: applicantID,
-          updatedAddress,
-          firstName: permitHolderInformation.firstName,
-          lastName: permitHolderInformation.lastName,
-          addressLine1: permitHolderInformation.addressLine1,
-          addressLine2: permitHolderInformation.addressLine2,
-          city: permitHolderInformation.city,
-          postalCode: permitHolderInformation.postalCode,
-          updatedContactInfo,
-          phone: permitHolderInformation.phone,
-          email: permitHolderInformation.email,
-          rcdUserId: permitHolderRcdUserID,
-          updatedPhysician,
-          physicianName: doctorInformation.name,
-          physicianMspNumber: doctorInformation.mspNumber,
-          physicianAddressLine1: doctorInformation.addressLine1,
-          physicianAddressLine2: doctorInformation.addressLine2,
-          physicianCity: doctorInformation.city,
-          physicianPostalCode: doctorInformation.postalCode,
-          physicianPhone: doctorInformation.phone,
-          usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
-          requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
-          shippingAddressSameAsHomeAddress: paymentDetails.shippingAddressSameAsHomeAddress,
-          billingAddressSameAsHomeAddress: paymentDetails.billingAddressSameAsHomeAddress,
-          ...(paymentDetails.shippingAddressSameAsHomeAddress === false && {
-            shippingFullName: paymentDetails.shippingFullName,
-            shippingAddressLine1: paymentDetails.shippingAddressLine1,
-            shippingAddressLine2: paymentDetails.shippingAddressLine2,
-            shippingCity: paymentDetails.shippingCity,
-            shippingProvince: paymentDetails.shippingProvince,
-            shippingPostalCode: paymentDetails.shippingPostalCode,
-          }),
-          ...(paymentDetails.billingAddressSameAsHomeAddress === false && {
-            billingFullName: paymentDetails.billingFullName,
-            billingAddressLine1: paymentDetails.billingAddressLine1,
-            billingAddressLine2: paymentDetails.billingAddressLine2,
-            billingCity: paymentDetails.billingCity,
-            billingProvince: paymentDetails.billingProvince,
-            billingPostalCode: paymentDetails.billingPostalCode,
-          }),
-          donationAmount: paymentDetails.donationAmount,
-          paymentMethod: paymentDetails.paymentMethod,
+    if (applicantID) {
+      await submitRenewalApplication({
+        variables: {
+          input: {
+            applicantId: applicantID,
+            updatedAddress,
+            firstName: permitHolderInformation.firstName,
+            lastName: permitHolderInformation.lastName,
+            addressLine1: permitHolderInformation.addressLine1,
+            addressLine2: permitHolderInformation.addressLine2,
+            city: permitHolderInformation.city,
+            postalCode: permitHolderInformation.postalCode,
+            updatedContactInfo,
+            phone: permitHolderInformation.phone,
+            email: permitHolderInformation.email,
+            rcdUserId: permitHolderRcdUserID,
+            updatedPhysician,
+            physicianName: doctorInformation.name,
+            physicianMspNumber: doctorInformation.mspNumber,
+            physicianAddressLine1: doctorInformation.addressLine1,
+            physicianAddressLine2: doctorInformation.addressLine2,
+            physicianCity: doctorInformation.city,
+            physicianPostalCode: doctorInformation.postalCode,
+            physicianPhone: doctorInformation.phone,
+            usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
+            requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
+            shippingAddressSameAsHomeAddress: paymentDetails.shippingAddressSameAsHomeAddress,
+            billingAddressSameAsHomeAddress: paymentDetails.billingAddressSameAsHomeAddress,
+            ...(paymentDetails.shippingAddressSameAsHomeAddress === false && {
+              shippingFullName: paymentDetails.shippingFullName,
+              shippingAddressLine1: paymentDetails.shippingAddressLine1,
+              shippingAddressLine2: paymentDetails.shippingAddressLine2,
+              shippingCity: paymentDetails.shippingCity,
+              shippingProvince: paymentDetails.shippingProvince,
+              shippingPostalCode: paymentDetails.shippingPostalCode,
+            }),
+            ...(paymentDetails.billingAddressSameAsHomeAddress === false && {
+              billingFullName: paymentDetails.billingFullName,
+              billingAddressLine1: paymentDetails.billingAddressLine1,
+              billingAddressLine2: paymentDetails.billingAddressLine2,
+              billingCity: paymentDetails.billingCity,
+              billingProvince: paymentDetails.billingProvince,
+              billingPostalCode: paymentDetails.billingPostalCode,
+            }),
+            donationAmount: paymentDetails.donationAmount,
+            paymentMethod: paymentDetails.paymentMethod,
+          },
         },
-      },
-    });
+      });
+    }
   };
 
   return (
