@@ -234,7 +234,7 @@ export const updateApplication: Resolver = async (_, args, { prisma }) => {
 /**
  * Create a renewal application
  * Requires updated field values to be provided if any of personal address, contact, or doctor info are updated.
- * @returns Status of operation (ok)
+ * @returns Status of operation (ok) and application id of new renewal application
  */
 export const createRenewalApplication: Resolver = async (_, args, { prisma }) => {
   const {
