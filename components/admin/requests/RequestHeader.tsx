@@ -19,6 +19,7 @@ import { ApplicationStatus } from '@lib/types'; // Types
 
 type RequestHeaderProps = {
   readonly applicationStatus?: ApplicationStatus;
+  readonly applicationType: 'renewal' | 'replacement';
   readonly createdAt: Date;
   readonly allStepsCompleted: boolean;
   readonly onApprove: () => void;
@@ -39,6 +40,7 @@ export default function RequestHeader({
   applicationStatus,
   createdAt,
   allStepsCompleted,
+  applicationType,
   onApprove,
   onReject,
   onComplete,
@@ -123,7 +125,7 @@ export default function RequestHeader({
         <Box>
           <Flex alignItems="center">
             <Text textStyle="display-large" as="h1" marginRight={3}>
-              Renewal Request
+              {applicationType === 'renewal' ? `Renewal Request` : `Replacement Request`}
             </Text>
             {applicationStatus && <RequestStatusBadge variant={applicationStatus} />}
           </Flex>

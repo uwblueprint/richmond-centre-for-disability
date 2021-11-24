@@ -18,8 +18,16 @@ import ReasonForReplacementForm from '@components/admin/requests/forms/ReasonFor
 import PermitHolderTypeahead from '@components/admin/permit-holders/PermitHolderTypeahead';
 import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders'; // Permit holders GQL query}
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { GetApplicantRequest, GetApplicantResponse, GET_APPLICANT_QUERY } from '@lib/applicants/get-applicant';
-import { CREATE_REPLACEMENT_APPLICATION_MUTATION, CreateReplacementApplicationRequest, CreateReplacementApplicationResponse } from '@tools/pages/applicant/replace';
+import {
+  GetApplicantRequest,
+  GetApplicantResponse,
+  GET_APPLICANT_QUERY,
+} from '@lib/applicants/get-applicant';
+import {
+  CREATE_REPLACEMENT_APPLICATION_MUTATION,
+  CreateReplacementApplicationRequest,
+  CreateReplacementApplicationResponse,
+} from '@tools/pages/applicant/replace';
 import { useRouter } from 'next/router'; // Router
 export default function CreateReplacement() {
   const [applicantId, setApplicantID] = useState<number | undefined>(undefined);
@@ -67,30 +75,30 @@ export default function CreateReplacement() {
   const toast = useToast();
   const router = useRouter();
 
-  const [getApplicant] = useLazyQuery<GetApplicantResponse, GetApplicantRequest>(GET_APPLICANT_QUERY, {
-    onCompleted: ({applicant: data}) => {
-      console.log(data);
-      setPermitHolderInformation({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phone: data.phone,
-        addressLine1: data.addressLine1,
-        addressLine2: data.addressLine2,
-        city: data.city,
-        postalCode: data.postalCode
-      });
-      setPermitHolderID(data.rcdUserId || 0);
-      setApplicantID(+data.id);
+  const [getApplicant] = useLazyQuery<GetApplicantResponse, GetApplicantRequest>(
+    GET_APPLICANT_QUERY,
+    {
+      onCompleted: ({ applicant: data }) => {
+        setPermitHolderInformation({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phone: data.phone,
+          addressLine1: data.addressLine1,
+          addressLine2: data.addressLine2,
+          city: data.city,
+          postalCode: data.postalCode,
+        });
+        setPermitHolderID(data.rcdUserId || 0);
+        setApplicantID(+data.id);
+      },
     }
-  });
+  );
 
   const handleSelectedPermitHolder = (permitHolder: PermitHolder | undefined) => {
-    if (permitHolder)
-    {
-      if (permitHolder.id)
-      {
-        getApplicant({ variables: {id: permitHolder.id}});
+    if (permitHolder) {
+      if (permitHolder.id) {
+        getApplicant({ variables: { id: permitHolder.id } });
       }
     }
   };
@@ -106,7 +114,6 @@ export default function CreateReplacement() {
           status: 'success',
           description: 'Your application has been submitted!',
         });
-        console.log(data);
         router.push(`/admin/request/${data.createReplacementApplication.applicationId}`);
       }
     },
@@ -120,11 +127,10 @@ export default function CreateReplacement() {
 
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    if (applicantId == undefined)
-    {
+    if (applicantId == undefined) {
       toast({
         status: 'error',
-        description: 'You must select a permit holder for a Replacement Request.'
+        description: 'You must select a permit holder for a Replacement Request.',
       });
       return;
     }
@@ -199,110 +205,115 @@ export default function CreateReplacement() {
           </Box>
         </GridItem>
 
-        {applicantId != undefined &&
+        {applicantId != undefined && (
           <form onSubmit={handleSubmit}>
-          {/* Permit Holder Information Form */}
-          <GridItem paddingTop="32px">
-            <Box
-              border="1px solid"
-              borderColor="border.secondary"
-              borderRadius="12px"
-              bgColor="white"
-              paddingTop="32px"
-              paddingBottom="40px"
-              paddingX="40px"
-              align="left"
-            >
-              <Text textStyle="display-small-semibold" paddingBottom="20px">
-                {`Permit Holder's Information`}
-              </Text>
-              <PermitHolderInformationForm
-                permitHolderInformation={permitHolderInformation}
-                onChange={setPermitHolderInformation}
-              />
-            </Box>
-          </GridItem>
-          {/* Reason For Replacement Form */}
-          <GridItem paddingTop="32px">
-            <Box
-              border="1px solid"
-              borderColor="border.secondary"
-              borderRadius="12px"
-              bgColor="white"
-              paddingTop="32px"
-              paddingBottom="40px"
-              paddingX="40px"
-              align="left"
-            >
-              <Text textStyle="display-small-semibold" paddingBottom="20px">
-                {`Reason for Replacement`}
-              </Text>
-              <ReasonForReplacementForm reasonForReplacement={reasonDetails} onChange={setReason} />
-            </Box>
-          </GridItem>
-          {/* Payment Details Form */}
-          <GridItem paddingTop="32px" paddingBottom="68px">
-            <Box
-              border="1px solid"
-              borderColor="border.secondary"
-              borderRadius="12px"
-              bgColor="white"
-              paddingTop="32px"
-              paddingBottom="40px"
-              paddingX="40px"
-              align="left"
-            >
-              <Text textStyle="display-small-semibold" paddingBottom="20px">
-                {`Payment, Shipping, and Billing Information`}
-              </Text>
-              <PaymentDetailsForm paymentInformation={paymentDetails} onChange={setPaymentDetails} />
-            </Box>
-          </GridItem>
-          {/* Footer */}
-          <Box
-            position="fixed"
-            left="0"
-            bottom="0"
-            right="0"
-            paddingY="20px"
-            paddingX="188px"
-            bgColor="white"
-            boxShadow="dark-lg"
-          >
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box>
-                <Text textStyle="body-bold">
-                  User ID:
-                  <Box as="span" color="primary">
-                    {' '}
-                    <Link href={`/admin/request/${permitHolderID}`}>
-                      <a>{permitHolderID}</a>
-                    </Link>
-                  </Box>
+            {/* Permit Holder Information Form */}
+            <GridItem paddingTop="32px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Permit Holder's Information`}
                 </Text>
+                <PermitHolderInformationForm
+                  permitHolderInformation={permitHolderInformation}
+                  onChange={setPermitHolderInformation}
+                />
               </Box>
-              <Box>
-                <Link href={`/admin`}>
-                  <Button
-                    bg="background.gray"
-                    _hover={{ bg: 'background.grayHover' }}
-                    color="black"
-                    marginRight="20px"
-                    height="48px"
-                    width="149px"
-                  >
-                    <Text textStyle="button-semibold">Cancel</Text>
+            </GridItem>
+            {/* Reason For Replacement Form */}
+            <GridItem paddingTop="32px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Reason for Replacement`}
+                </Text>
+                <ReasonForReplacementForm
+                  reasonForReplacement={reasonDetails}
+                  onChange={setReason}
+                />
+              </Box>
+            </GridItem>
+            {/* Payment Details Form */}
+            <GridItem paddingTop="32px" paddingBottom="68px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Payment, Shipping, and Billing Information`}
+                </Text>
+                <PaymentDetailsForm
+                  paymentInformation={paymentDetails}
+                  onChange={setPaymentDetails}
+                />
+              </Box>
+            </GridItem>
+            {/* Footer */}
+            <Box
+              position="fixed"
+              left="0"
+              bottom="0"
+              right="0"
+              paddingY="20px"
+              paddingX="188px"
+              bgColor="white"
+              boxShadow="dark-lg"
+            >
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Text textStyle="body-bold">
+                    User ID:
+                    <Box as="span" color="primary">
+                      {' '}
+                      <Link href={`/admin/request/${permitHolderID}`}>
+                        <a>{permitHolderID}</a>
+                      </Link>
+                    </Box>
+                  </Text>
+                </Box>
+                <Box>
+                  <Link href={`/admin`}>
+                    <Button
+                      bg="background.gray"
+                      _hover={{ bg: 'background.grayHover' }}
+                      color="black"
+                      marginRight="20px"
+                      height="48px"
+                      width="149px"
+                    >
+                      <Text textStyle="button-semibold">Cancel</Text>
+                    </Button>
+                  </Link>
+                  <Button bg="primary" height="48px" width="180px" type="submit" loading={loading}>
+                    <Text textStyle="button-semibold">Create Request</Text>
                   </Button>
-                </Link>
-                <Button bg="primary" height="48px" width="180px" type="submit" loading={loading}>
-                  <Text textStyle="button-semibold">Create Request</Text>
-                </Button>
-              </Box>
-            </Stack>
-          </Box>
+                </Box>
+              </Stack>
+            </Box>
           </form>
-        }
-
+        )}
       </GridItem>
     </Layout>
   );

@@ -69,6 +69,7 @@ export type GetApplicationResponse = {
     | 'paymentMethod'
     | 'shopifyConfirmationNumber'
     | 'createdAt'
+    | 'isRenewal'
   > & {
     readonly applicationProcessing: Pick<
       ApplicationProcessing,
