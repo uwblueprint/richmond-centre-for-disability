@@ -8,12 +8,19 @@ import {
 } from '@lib/employees/errors'; // Employee errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting Type
+import {
+  MutationCreateEmployeeArgs,
+  MutationDeleteEmployeeArgs,
+  MutationUpdateEmployeeArgs,
+  QueryEmployeeArgs,
+  QueryEmployeesArgs,
+} from '@lib/graphql/types';
 
 /**
  * Query for one employee in the internal-facing app given id
  * @returns employee if found, null otherwise
  */
-export const employee: Resolver = async (_parent, args, { prisma }) => {
+export const employee: Resolver<QueryEmployeeArgs> = async (_parent, args, { prisma }) => {
   const employee = await prisma.employee.findUnique({
     where: {
       id: parseInt(args.id),
@@ -32,14 +39,14 @@ export const employee: Resolver = async (_parent, args, { prisma }) => {
  * - limit: Number of result to return
  * @returns All RCD employees
  */
-export const employees: Resolver = async (_parent, { filter }, { prisma }) => {
+export const employees: Resolver<QueryEmployeesArgs> = async (_parent, { filter }, { prisma }) => {
   const sortingOrder: Record<string, SortOrder> = {};
   if (filter?.order) {
-    filter.order.forEach(([field, order]: [string, SortOrder]) => (sortingOrder[field] = order));
+    filter.order.forEach(([field, order]) => (sortingOrder[field] = order as SortOrder));
   }
 
-  const take = filter?.limit;
-  const skip = filter?.offset;
+  const take = filter?.limit || undefined;
+  const skip = filter?.offset || undefined;
 
   const where = {
     active: true,
@@ -68,7 +75,7 @@ export const employees: Resolver = async (_parent, { filter }, { prisma }) => {
  * Create an RCD employee
  * @returns Status of operation (ok, error)
  */
-export const createEmployee: Resolver = async (_, args, { prisma }) => {
+export const createEmployee: Resolver<MutationCreateEmployeeArgs> = async (_, args, { prisma }) => {
   const {
     input: { firstName, lastName, email, role },
   } = args;
@@ -108,7 +115,7 @@ export const createEmployee: Resolver = async (_, args, { prisma }) => {
  * Update an employee
  * @returns status of operation (ok)
  */
-export const updateEmployee: Resolver = async (_, args, { prisma }) => {
+export const updateEmployee: Resolver<MutationUpdateEmployeeArgs> = async (_, args, { prisma }) => {
   const { input } = args;
   const { id, ...rest } = input;
   const employeeData = { ...rest };
@@ -149,7 +156,7 @@ export const updateEmployee: Resolver = async (_, args, { prisma }) => {
  * Delete an employee
  * @returns status of operation (ok)
  */
-export const deleteEmployee: Resolver = async (_, args, { prisma }) => {
+export const deleteEmployee: Resolver<MutationDeleteEmployeeArgs> = async (_, args, { prisma }) => {
   const id = parseInt(args.id);
 
   const employee = await prisma.employee.findUnique({

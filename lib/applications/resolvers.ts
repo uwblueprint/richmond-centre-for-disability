@@ -303,7 +303,7 @@ export const createRenewalApplication: Resolver<MutationCreateRenewalApplication
     throw new UpdatedFieldsMissingError('Missing updated contact info fields');
   }
 
-  // Validate updated doctor info fields
+  // Validate updated doctor info fields and get create fields for physician
   if (
     updatedPhysician &&
     (!physicianName ||
@@ -327,6 +327,51 @@ export const createRenewalApplication: Resolver<MutationCreateRenewalApplication
   }
 
   const physician = applicant.medicalInformation.physician;
+
+  // Validate physician fields and get create parameters
+  let physicianData: {
+    physicianName: string;
+    physicianMspNumber: number;
+    physicianAddressLine1: string;
+    physicianAddressLine2?: string | null;
+    physicianCity: string;
+    physicianPostalCode: string;
+    physicianPhone: string;
+  };
+
+  if (updatedPhysician) {
+    // Check for missing fields
+    if (
+      !physicianName ||
+      !physicianMspNumber ||
+      !physicianAddressLine1 ||
+      !physicianCity ||
+      !physicianPostalCode ||
+      !physicianPhone
+    ) {
+      throw new UpdatedFieldsMissingError('Missing updated physician fields');
+    }
+
+    physicianData = {
+      physicianName,
+      physicianMspNumber,
+      physicianAddressLine1,
+      physicianAddressLine2,
+      physicianCity,
+      physicianPostalCode,
+      physicianPhone,
+    };
+  } else {
+    physicianData = {
+      physicianName: physician.name,
+      physicianMspNumber: physician.mspNumber,
+      physicianAddressLine1: physician.addressLine1,
+      physicianAddressLine2: physician.addressLine2,
+      physicianCity: physician.city,
+      physicianPostalCode: physician.postalCode,
+      physicianPhone: physician.phone,
+    };
+  }
 
   // Temporary Shopify confirmation number placeholder
   // TODO: Integrate with Shopify payments
@@ -357,13 +402,7 @@ export const createRenewalApplication: Resolver<MutationCreateRenewalApplication
         paymentMethod: PaymentType.Cash,
         // TODO: Modify logic when DB schema gets changed (medicalInfo is not undefined)
         disability: applicant.medicalInformation?.disability || 'Placeholder disability',
-        physicianName: updatedPhysician ? physicianName : physician.name,
-        physicianMspNumber: updatedPhysician ? physicianMspNumber : physician.mspNumber,
-        physicianAddressLine1: updatedPhysician ? physicianAddressLine1 : physician.addressLine1,
-        physicianAddressLine2: updatedPhysician ? physicianAddressLine2 : physician.addressLine2,
-        physicianCity: updatedPhysician ? physicianCity : physician.city,
-        physicianPostalCode: updatedPhysician ? physicianPostalCode : physician.postalCode,
-        physicianPhone: updatedPhysician ? physicianPhone : physician.phone,
+        ...physicianData,
         physicianProvince: physician.province,
         applicant: {
           connect: {
