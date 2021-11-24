@@ -14,7 +14,7 @@ export const GET_APPLICANT_QUERY = gql`
       addressLine1
       addressLine2
       city
-      postalCode,
+      postalCode
       id
       rcdUserId
     }
@@ -24,10 +24,7 @@ export const GET_APPLICANT_QUERY = gql`
 /**
  * Input parameters for fetch all employees
  */
-export type GetApplicantRequest = Pick<
-    Applicant,
-    | 'id'
->;
+export type GetApplicantRequest = Pick<Applicant, 'id'>;
 
 /**
  * Response type of getting employees
@@ -45,6 +42,5 @@ export type GetApplicantResponse = {
     | 'postalCode'
     | 'rcdUserId'
     | 'id'
-    
->;
-}
+  >;
+};
