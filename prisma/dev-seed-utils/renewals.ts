@@ -10,12 +10,18 @@ const renewals = [
     requiresWiderParkingSpace: true,
     applicationId: 1,
   },
+  // {
+  //   id: 2,
+  //   usesAccessibleConvertedVan: false,
+  //   requiresWiderParkingSpace: true,
+  //   applicationId: 2,
+  // },
 ];
 
 /**
  * Upsert renewal applications
  */
-export default async function replacementUpsert(): Promise<void> {
+export default async function renewalsUpsert(): Promise<void> {
   const renewalUpserts = [];
   for (const renewal of renewals) {
     const { id, ...rest } = renewal;

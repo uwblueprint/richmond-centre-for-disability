@@ -332,8 +332,6 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
   const applicantPostalCode =
     updatedAddress && postalCode ? formatPostalCode(postalCode) : applicant.postalCode;
 
-  //TODO: provinces
-
   let application;
   try {
     application = await prisma.application.create({
@@ -364,7 +362,9 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         physicianAddressLine1: updatedPhysician ? physicianAddressLine1 : physician.addressLine1,
         physicianAddressLine2: updatedPhysician ? physicianAddressLine2 : physician.addressLine2,
         physicianCity: updatedPhysician ? physicianCity : physician.city,
-        physicianPostalCode: updatedPhysician ? physicianPostalCode : physician.postalCode,
+        physicianPostalCode: updatedPhysician
+          ? formatPostalCode(physicianPostalCode)
+          : physician.postalCode,
         physicianPhone: updatedPhysician ? physicianPhone : physician.phone,
         physicianProvince: physician.province,
         shippingAddressSameAsHomeAddress,
@@ -381,7 +381,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         shippingCity: shippingAddressSameAsHomeAddress ? applicantCity : shippingCity,
         shippingPostalCode: shippingAddressSameAsHomeAddress
           ? applicantPostalCode
-          : shippingPostalCode,
+          : formatPostalCode(shippingPostalCode),
         shippingProvince,
         billingFullName: billingAddressSameAsHomeAddress
           ? `${applicantFirstName} ${applicantLastName}`
@@ -396,7 +396,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         billingProvince,
         billingPostalCode: billingAddressSameAsHomeAddress
           ? applicantPostalCode
-          : billingPostalCode,
+          : formatPostalCode(billingPostalCode),
         applicant: {
           connect: {
             id: applicantId,

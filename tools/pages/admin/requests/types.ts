@@ -135,6 +135,7 @@ export type GetApplicantRenewalRequest = Pick<Applicant, 'id'>;
 export type GetApplicantRenewalResponse = {
   applicant: Pick<
     Applicant,
+    | 'id'
     | 'firstName'
     | 'lastName'
     | 'email'

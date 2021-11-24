@@ -32,7 +32,8 @@ import {
 import { useRouter } from 'next/router';
 
 export default function CreateRenewal() {
-  const [permitHolderID, setPermitHolderID] = useState<number>();
+  const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
+  const [applicantID, setApplicantID] = useState<number>();
   const [, setSelectedPermitHolder] = useState<PermitHolder | undefined>(undefined);
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
     firstName: '',
@@ -83,24 +84,19 @@ export default function CreateRenewal() {
   // Router
   const router = useRouter();
 
-  const [showForms, setShowForms] = useState<boolean>(false);
-
-  //TODO: get applicant id when fetching applicant data
-  const applicantId = 1;
-
   // Always override address, contact info, and physician
   const updatedAddress = true;
   const updatedContactInfo = true;
   const updatedPhysician = true;
 
-  //TODO: useLazyQuery on applicant table
   const [getApplicant] = useLazyQuery<GetApplicantRenewalResponse, GetApplicantRenewalRequest>(
     GET_APPLICANT_RENEWAL_QUERY,
     {
       fetchPolicy: 'network-only',
       onCompleted: data => {
         // set permitHolderInformation
-        setPermitHolderID(data.applicant.rcdUserId || undefined);
+        setPermitHolderRcdUserID(data.applicant.rcdUserId || undefined);
+        setApplicantID(+data.applicant.id);
         setPermitHolderInformation({
           firstName: data.applicant.firstName,
           lastName: data.applicant.lastName,
@@ -166,7 +162,7 @@ export default function CreateRenewal() {
 
   const handleSelectedPermitHolder = async (permitHolder: PermitHolder | undefined) => {
     setSelectedPermitHolder(permitHolder);
-    setPermitHolderID(permitHolder?.rcdUserId || undefined);
+    setPermitHolderRcdUserID(permitHolder?.rcdUserId || undefined);
     if (permitHolder) {
       await getApplicant({
         variables: {
@@ -174,8 +170,6 @@ export default function CreateRenewal() {
         },
       });
     }
-    //TODO: execute query to get all data on permit holder
-    setShowForms(true); // do on successful query
   };
 
   // Submit application mutation
@@ -210,7 +204,7 @@ export default function CreateRenewal() {
     await submitRenewalApplication({
       variables: {
         input: {
-          applicantId,
+          applicantId: applicantID,
           updatedAddress,
           firstName: permitHolderInformation.firstName,
           lastName: permitHolderInformation.lastName,
@@ -221,7 +215,7 @@ export default function CreateRenewal() {
           updatedContactInfo,
           phone: permitHolderInformation.phone,
           email: permitHolderInformation.email,
-          rcdUserId: permitHolderID,
+          rcdUserId: permitHolderRcdUserID,
           updatedPhysician,
           physicianName: doctorInformation.name,
           physicianMspNumber: doctorInformation.mspNumber,
@@ -263,15 +257,15 @@ export default function CreateRenewal() {
         <Flex>
           <Text textStyle="display-large">
             {`New Renewal Request`}
-            {permitHolderID && ` (User ID: `}
-            {permitHolderID && (
+            {permitHolderRcdUserID && ` (User ID: `}
+            {permitHolderRcdUserID && (
               <Box as="span" color="primary">
-                <Link href={`/permit-holder/${permitHolderID}`}>
-                  <a>{permitHolderID}</a>
+                <Link href={`/permit-holder/${permitHolderRcdUserID}`}>
+                  <a>{permitHolderRcdUserID}</a>
                 </Link>
               </Box>
             )}
-            {permitHolderID && `)`}
+            {permitHolderRcdUserID && `)`}
           </Text>
         </Flex>
         {/* Typeahead component */}
@@ -293,7 +287,7 @@ export default function CreateRenewal() {
           </Box>
         </GridItem>
         {/* Permit Holder Information Form */}
-        {showForms && (
+        {permitHolderRcdUserID && (
           <form onSubmit={handleSubmit}>
             <GridItem paddingTop="32px">
               <Box
@@ -395,8 +389,8 @@ export default function CreateRenewal() {
                   <Text textStyle="body-bold">
                     User ID:{' '}
                     <Box as="span" color="primary">
-                      <Link href={`/permit-holder/${permitHolderID}`}>
-                        <a>{permitHolderID}</a>
+                      <Link href={`/permit-holder/${permitHolderRcdUserID}`}>
+                        <a>{permitHolderRcdUserID}</a>
                       </Link>
                     </Box>
                   </Text>

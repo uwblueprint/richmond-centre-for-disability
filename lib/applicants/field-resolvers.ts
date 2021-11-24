@@ -162,8 +162,9 @@ export const applicantFileHistoryResolver: Resolver<Applicant> = async (
 };
 
 /**
- * Field resolver to fetch the most recent renewal request of an applicant
- * @returns Renewal object
+ * Field resolver to fetch the most recent renewal request of an applicant.
+ * If the applicant has no previous renewals, return the most recent application.
+ * @returns Application object
  */
 export const applicantMostRecentRenewalApplicationResolver: Resolver<Applicant> = async (
   parent,
@@ -175,8 +176,14 @@ export const applicantMostRecentRenewalApplicationResolver: Resolver<Applicant> 
       where: { id: parent.id },
     })
     .applications({
-      where: { isRenewal: true },
-      orderBy: { createdAt: SortOrder.DESC },
+      orderBy: [
+        {
+          isRenewal: SortOrder.DESC,
+        },
+        {
+          createdAt: SortOrder.DESC,
+        },
+      ],
       take: 1,
       include: {
         renewal: true,
