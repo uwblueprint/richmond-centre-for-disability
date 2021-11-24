@@ -10,12 +10,12 @@ const renewals = [
     requiresWiderParkingSpace: true,
     applicationId: 1,
   },
-  // {
-  //   id: 2,
-  //   usesAccessibleConvertedVan: false,
-  //   requiresWiderParkingSpace: true,
-  //   applicationId: 2,
-  // },
+  {
+    id: 2,
+    usesAccessibleConvertedVan: false,
+    requiresWiderParkingSpace: true,
+    applicationId: 2,
+  },
 ];
 
 /**
