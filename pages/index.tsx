@@ -68,21 +68,6 @@ export default function Landing() {
             <Text as="span">Renew your permit online</Text>
           </Button>
         </Link>
-        <Link href="#">
-          <Button
-            colorScheme="primary"
-            variant="solid"
-            fontWeight="semibold"
-            size="lg"
-            width="320px"
-            height="48px"
-            radius="6px"
-            mt="32px"
-            p="12px 25px 12px 25px"
-          >
-            <Text as="span">Request a replacement online</Text>
-          </Button>
-        </Link>
       </GridItem>
       <GridItem colSpan={5} colStart={7} mt="28px" textAlign="left">
         <Text as="h2" textStyle="display-medium" align="left" fontWeight="semibold">
