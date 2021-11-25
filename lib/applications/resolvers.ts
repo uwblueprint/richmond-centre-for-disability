@@ -14,6 +14,7 @@ import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; /
 import { SortOrder } from '@tools/types'; // Sorting type
 import { PaymentType } from '@lib/graphql/types'; // GraphQL types
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
+import { createObjectCsvWriter } from 'csv-writer';
 
 /**
  * Query an application by ID
@@ -610,4 +611,68 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
   return {
     ok: true,
   };
+};
+
+export const generateApplicantsReport: Resolver = async (_, args, { prisma }) => {
+  const {
+    input: { startDate, endDate, columns },
+  } = args;
+
+  const applications = await prisma.application.findMany({
+    where: {
+      createdAt: {
+        // NOTETOSELF: Check if `gte: startDate` works instead
+        gte: new Date(startDate),
+        lte: new Date(endDate),
+      },
+    },
+    select: {
+      // Replace with object in constants
+      // NOTETOSELF: Should I only select the fields that are in columns
+      rcdUserId: true,
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      dateOfBirth: true,
+      createdAt: true,
+      paymentMethod: true,
+      processingFee: true,
+      donationAmount: true,
+      permits: {
+        select: {
+          rcdPermitId: true,
+        },
+      },
+    },
+  });
+
+  // Adds totalAmount and applicantName properties
+  applications.map(application => ({
+    ...application,
+    totalAmount: application.processingFee + (application?.donationAmount || 0),
+    applicantName:
+      application.firstName + ` ${application.middleName}` + ` ${application.lastName}`,
+  }));
+
+  const csvWriter = createObjectCsvWriter({
+    path: 'temp/file.csv',
+    header: [
+      // NOTETOSELF: Should I only select the fields that are in columns
+      { id: 'rcdUserId', title: 'User ID' },
+      { id: 'applicantName', title: 'Applicant Name' },
+      { id: 'dateOfBirth', title: 'Applicant DoB' },
+      { id: 'rcdPermitId', title: 'APP Number' },
+      { id: 'createdAt', title: 'Application Date' },
+      { id: 'paymentMethod', title: 'Payment Method' },
+      { id: 'processingFee', title: 'Fee Amount' },
+      { id: 'donationAmount', title: 'Donation Amount' },
+      { id: 'totalAmount', title: 'Total Amount' },
+    ],
+  });
+
+  csvWriter
+    .writeRecords(applications) // returns a promise
+    .then(() => {
+      console.log('...Done');
+    });
 };

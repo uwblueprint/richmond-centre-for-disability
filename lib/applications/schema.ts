@@ -350,4 +350,14 @@ export default `
   type CreateReplacementApplicationResult {
     ok: Boolean!
   }
+
+  input GenerateApplicantsReportInput {
+    startDate: Date!
+    endDate: Date!
+    columns: [ApplicationsReportColumn!]!
+  }
+
+  type GenerateApplicantsReportResult {
+    ok: Boolean!
+  }
 `;
