@@ -176,14 +176,16 @@ export default function CreateReplacement() {
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
         <Flex>
           <Text textStyle="display-large">
-            {`New Replacement Request (User ID:`}
+            {applicantId != undefined
+              ? `New Replacement Request (User ID:`
+              : `New Replacement Request`}
             <Box as="span" color="primary">
               {' '}
               <Link href={`/admin/request/${permitHolderID}`}>
                 <a>{permitHolderID}</a>
               </Link>
             </Box>
-            )
+            {applicantId != undefined && ')'}
           </Text>
         </Flex>
         {/* Typeahead component */}
