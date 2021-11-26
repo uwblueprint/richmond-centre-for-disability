@@ -53,7 +53,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         </Box>
       </VStack>
 
-      <Divider pt="24px" />
+      <Divider mt="24px" />
 
       <VStack spacing="12px" pt="24px" align="left">
         <HStack spacing="12px">
@@ -89,7 +89,7 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         </Box>
       </VStack>
 
-      <Divider pt="24px" />
+      <Divider mt="24px" />
 
       <VStack spacing="12px" pt="24px" align="left">
         <HStack spacing="12px">

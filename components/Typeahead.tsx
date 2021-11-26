@@ -84,9 +84,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
                       <MenuItem option={result} position={index}>
                         {renderMenuItemChildren(result, menuProps, index)}
                       </MenuItem>
-                      {index !== results.length - 1 ? (
-                        <Divider width="466px" borderWidth="0" color="border.secondary" />
-                      ) : null}
+                      {index !== results.length - 1 ? <Divider /> : null}
                     </>
                   ))
                 )}

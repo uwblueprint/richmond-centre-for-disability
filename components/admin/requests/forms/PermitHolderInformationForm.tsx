@@ -61,7 +61,7 @@ export default function PermitHolderInformationForm({
         </Stack>
       </Box>
 
-      <Divider borderColor="border.secondary" />
+      <Divider />
 
       {/* Contact Information Section */}
 
@@ -106,7 +106,7 @@ export default function PermitHolderInformationForm({
         </Stack>
       </Box>
 
-      <Divider borderColor="border.secondary" />
+      <Divider />
 
       {/* Home Address Section */}
 

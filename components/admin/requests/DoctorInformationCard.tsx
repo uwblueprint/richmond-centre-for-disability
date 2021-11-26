@@ -59,7 +59,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
         </EditDoctorInformationModal>
       }
     >
-      <Divider pt="20px" />
+      <Divider mt="20px" />
       <SimpleGrid columns={2} spacingX="20px" spacingY="12px" pt="20px">
         <InfoSection title={`Name`}>{physician.name}</InfoSection>
         <InfoSection title={`MSP #`}>{String(physician.mspNumber)}</InfoSection>
