@@ -15,6 +15,7 @@ import { PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL type
 import { ReasonForReplacement } from '@tools/components/admin/requests/forms/types';
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
 import ReasonForReplacementForm from '@components/admin/requests/forms/ReasonForReplacementForm';
+import CancelCreateRequestModal from '@components/admin/requests/modals/CancelCreateRequestModal';
 
 export default function CreateReplacement() {
   const [permitHolderID] = useState(303240);
@@ -172,21 +173,23 @@ export default function CreateReplacement() {
               </Text>
             </Box>
             <Box>
-              <Link href={`/admin`}>
-                <Button
-                  bg="background.gray"
-                  _hover={{ bg: 'background.grayHover' }}
-                  color="black"
-                  marginRight="20px"
-                  height="48px"
-                  width="149px"
-                >
-                  <Text textStyle="button-semibold">Cancel</Text>
+              <Stack direction="row" justifyContent="space-between">
+                <CancelCreateRequestModal type="replacement">
+                  <Button
+                    bg="background.gray"
+                    _hover={{ bg: 'background.grayHover' }}
+                    color="black"
+                    marginRight="20px"
+                    height="48px"
+                    width="149px"
+                  >
+                    <Text textStyle="button-semibold">Cancel</Text>
+                  </Button>
+                </CancelCreateRequestModal>
+                <Button bg="primary" height="48px" width="180px">
+                  <Text textStyle="button-semibold">Create Request</Text>
                 </Button>
-              </Link>
-              <Button bg="primary" height="48px" width="180px">
-                <Text textStyle="button-semibold">Create Request</Text>
-              </Button>
+              </Stack>
             </Box>
           </Stack>
         </Box>

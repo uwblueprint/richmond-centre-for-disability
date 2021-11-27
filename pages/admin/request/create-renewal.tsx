@@ -16,6 +16,7 @@ import Link from 'next/link'; // Link
 import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
+import CancelCreateRequestModal from '@components/admin/requests/modals/CancelCreateRequestModal';
 
 export default function CreateRenewal() {
   const [permitHolderID] = useState(303240);
@@ -194,23 +195,25 @@ export default function CreateRenewal() {
               </Text>
             </Box>
             <Box>
-              <Link href="/admin">
-                <Button
-                  bg="background.gray"
-                  _hover={{ bg: 'background.grayHover' }}
-                  color="black"
-                  marginRight="20px"
-                  height="48px"
-                  width="149px"
-                >
-                  <Text textStyle="button-semibold">Cancel</Text>
-                </Button>
-              </Link>
-              <Link href="#">
-                <Button bg="primary" height="48px" width="180px">
-                  <Text textStyle="button-semibold">Create Request</Text>
-                </Button>
-              </Link>
+              <Stack direction="row" justifyContent="space-between">
+                <CancelCreateRequestModal type="renewal">
+                  <Button
+                    bg="background.gray"
+                    _hover={{ bg: 'background.grayHover' }}
+                    color="black"
+                    marginRight="20px"
+                    height="48px"
+                    width="149px"
+                  >
+                    <Text textStyle="button-semibold">Cancel</Text>
+                  </Button>
+                </CancelCreateRequestModal>
+                <Link href="#">
+                  <Button bg="primary" height="48px" width="180px">
+                    <Text textStyle="button-semibold">Create Request</Text>
+                  </Button>
+                </Link>
+              </Stack>
             </Box>
           </Stack>
         </Box>
