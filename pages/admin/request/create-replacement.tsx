@@ -27,7 +27,7 @@ import {
   CREATE_REPLACEMENT_APPLICATION_MUTATION,
   CreateReplacementApplicationRequest,
   CreateReplacementApplicationResponse,
-} from '@tools/pages/applicant/replace';
+} from '@tools/pages/applicant/replacements';
 import { useRouter } from 'next/router'; // Router
 export default function CreateReplacement() {
   const [applicantId, setApplicantID] = useState<number | undefined>(undefined);
@@ -78,28 +78,26 @@ export default function CreateReplacement() {
   const [getApplicant] = useLazyQuery<GetApplicantResponse, GetApplicantRequest>(
     GET_APPLICANT_QUERY,
     {
-      onCompleted: ({ applicant: data }) => {
+      onCompleted: ({ applicant }) => {
         setPermitHolderInformation({
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          phone: data.phone,
-          addressLine1: data.addressLine1,
-          addressLine2: data.addressLine2,
-          city: data.city,
-          postalCode: data.postalCode,
+          firstName: applicant.firstName,
+          lastName: applicant.lastName,
+          email: applicant.email,
+          phone: applicant.phone,
+          addressLine1: applicant.addressLine1,
+          addressLine2: applicant.addressLine2,
+          city: applicant.city,
+          postalCode: applicant.postalCode,
         });
-        setPermitHolderID(data.rcdUserId || 0);
-        setApplicantID(+data.id);
+        setPermitHolderID(applicant.rcdUserId || 0);
+        setApplicantID(+applicant.id);
       },
     }
   );
 
   const handleSelectedPermitHolder = (permitHolder: PermitHolder | undefined) => {
-    if (permitHolder) {
-      if (permitHolder.id) {
-        getApplicant({ variables: { id: permitHolder.id } });
-      }
+    if (permitHolder && permitHolder.id) {
+      getApplicant({ variables: { id: permitHolder.id } });
     }
   };
 
@@ -109,7 +107,7 @@ export default function CreateReplacement() {
     CreateReplacementApplicationRequest
   >(CREATE_REPLACEMENT_APPLICATION_MUTATION, {
     onCompleted: data => {
-      if (data?.createReplacementApplication.ok) {
+      if (data.createReplacementApplication.ok) {
         toast({
           status: 'success',
           description: 'Your application has been submitted!',
@@ -127,7 +125,7 @@ export default function CreateReplacement() {
 
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    if (applicantId == undefined) {
+    if (applicantId === undefined) {
       toast({
         status: 'error',
         description: 'You must select a permit holder for a Replacement Request.',
@@ -176,16 +174,19 @@ export default function CreateReplacement() {
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
         <Flex>
           <Text textStyle="display-large">
-            {applicantId != undefined
-              ? `New Replacement Request (User ID:`
-              : `New Replacement Request`}
-            <Box as="span" color="primary">
-              {' '}
-              <Link href={`/admin/request/${permitHolderID}`}>
-                <a>{permitHolderID}</a>
-              </Link>
-            </Box>
-            {applicantId != undefined && ')'}
+            {`New Replacement Request`}
+            {applicantId !== undefined && (
+              <>
+                {` (User ID: `}
+                <Box as="span" color="primary">
+                  {' '}
+                  <Link href={`/admin/permit-holder/${applicantId}`}>
+                    <a>{permitHolderID}</a>
+                  </Link>
+                </Box>
+                {`)`}
+              </>
+            )}
           </Text>
         </Flex>
         {/* Typeahead component */}
@@ -289,7 +290,7 @@ export default function CreateReplacement() {
                     User ID:
                     <Box as="span" color="primary">
                       {' '}
-                      <Link href={`/admin/request/${permitHolderID}`}>
+                      <Link href={`/admin/permit-holder/${applicantId}`}>
                         <a>{permitHolderID}</a>
                       </Link>
                     </Box>
