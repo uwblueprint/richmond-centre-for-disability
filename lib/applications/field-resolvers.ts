@@ -68,5 +68,5 @@ export const applicationRenewalResolver: Resolver<Application> = async (
   _args,
   { prisma }
 ) => {
-  return await prisma.renewal.findUnique({ where: { applicationId: parent?.id } });
+  return await prisma.renewal.findUnique({ where: { applicationId: parent.id } });
 };

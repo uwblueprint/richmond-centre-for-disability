@@ -108,14 +108,7 @@ export const GET_APPLICANT_RENEWAL_QUERY = gql`
         shippingCity
         shippingProvince
         shippingPostalCode
-        billingFullName
-        billingAddressLine1
-        billingAddressLine2
-        billingCity
-        billingProvince
-        billingPostalCode
         shippingAddressSameAsHomeAddress
-        billingAddressSameAsHomeAddress
         renewal {
           usesAccessibleConvertedVan
           requiresWiderParkingSpace

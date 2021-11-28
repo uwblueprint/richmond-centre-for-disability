@@ -137,11 +137,9 @@ export default function CreateRenewal() {
         }
 
         // set paymentDetails
-        //TODO: maybe don't pre-populate payment info
         const previousApplication = data.applicant.mostRecentRenewal;
         setPaymentDetails({
-          paymentMethod: previousApplication.paymentMethod,
-          donationAmount: 0,
+          ...paymentDetails,
           shippingAddressSameAsHomeAddress: previousApplication.shippingAddressSameAsHomeAddress,
           shippingFullName: previousApplication.shippingFullName,
           shippingAddressLine1: previousApplication.shippingAddressLine1,
@@ -149,13 +147,6 @@ export default function CreateRenewal() {
           shippingCity: previousApplication.shippingCity,
           shippingProvince: previousApplication.shippingProvince,
           shippingPostalCode: previousApplication.shippingPostalCode,
-          billingAddressSameAsHomeAddress: previousApplication.billingAddressSameAsHomeAddress,
-          billingFullName: previousApplication.billingFullName,
-          billingAddressLine1: previousApplication.billingAddressLine1,
-          billingAddressLine2: previousApplication.billingAddressLine2,
-          billingCity: previousApplication.billingCity,
-          billingProvince: previousApplication.billingProvince,
-          billingPostalCode: previousApplication.billingPostalCode,
         });
       },
     }
@@ -164,8 +155,8 @@ export default function CreateRenewal() {
   /**
    * Set and fetch data about applicant when permit holder is selected
    */
-  const handleSelectedPermitHolder = async (permitHolder: PermitHolder | undefined) => {
-    setPermitHolderRcdUserID(permitHolder?.rcdUserId || undefined);
+  const handleSelectPermitHolder = async (permitHolder: PermitHolder | undefined) => {
+    setPermitHolderRcdUserID(permitHolder?.rcdUserId);
     if (permitHolder) {
       await getApplicant({
         variables: {
@@ -183,10 +174,10 @@ export default function CreateRenewal() {
     CreateRenewalApplicationRequest
   >(CREATE_RENEWAL_APPLICATION_MUTATION, {
     onCompleted: data => {
-      if (data?.createRenewalApplication.ok) {
+      if (data.createRenewalApplication.ok) {
         toast({
           status: 'success',
-          description: 'Renewal application has been submitted!', //TODO: verify text
+          description: 'Renewal application has been submitted!',
         });
 
         router.push(`/admin/request/${data.createRenewalApplication.applicationId}`);
@@ -264,15 +255,17 @@ export default function CreateRenewal() {
         <Flex>
           <Text textStyle="display-large">
             {`New Renewal Request`}
-            {permitHolderRcdUserID && ` (User ID: `}
             {permitHolderRcdUserID && (
-              <Box as="span" color="primary">
-                <Link href={`/permit-holder/${permitHolderRcdUserID}`}>
-                  <a>{permitHolderRcdUserID}</a>
-                </Link>
-              </Box>
+              <>
+                {` (User ID: `}
+                <Box as="span" color="primary">
+                  <Link href={`/admin/permit-holder/${applicantID}`}>
+                    <a>{permitHolderRcdUserID}</a>
+                  </Link>
+                </Box>
+                {`)`}
+              </>
             )}
-            {permitHolderRcdUserID && `)`}
           </Text>
         </Flex>
         {/* Typeahead component */}
@@ -290,7 +283,7 @@ export default function CreateRenewal() {
             <Text textStyle="display-small-semibold" paddingBottom="20px">
               {`Search Permit Holder`}
             </Text>
-            <PermitHolderTypeahead onSelect={handleSelectedPermitHolder} />
+            <PermitHolderTypeahead onSelect={handleSelectPermitHolder} />
           </Box>
         </GridItem>
         {/* Permit Holder Information Form */}
@@ -396,7 +389,7 @@ export default function CreateRenewal() {
                   <Text textStyle="body-bold">
                     User ID:{' '}
                     <Box as="span" color="primary">
-                      <Link href={`/permit-holder/${permitHolderRcdUserID}`}>
+                      <Link href={`/admin/permit-holder/${applicantID}`}>
                         <a>{permitHolderRcdUserID}</a>
                       </Link>
                     </Box>
@@ -415,11 +408,9 @@ export default function CreateRenewal() {
                       <Text textStyle="button-semibold">Cancel</Text>
                     </Button>
                   </Link>
-                  {/* <Link href="#"> */}
                   <Button bg="primary" height="48px" width="180px" type="submit" loading={loading}>
                     <Text textStyle="button-semibold">Create Request</Text>
                   </Button>
-                  {/* </Link> */}
                 </Box>
               </Stack>
             </Box>

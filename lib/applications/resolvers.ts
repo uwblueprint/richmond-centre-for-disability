@@ -323,7 +323,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
 
   const applicantFirstName = firstName || applicant.firstName;
   const applicantLastName = lastName || applicant.lastName;
-  const applicantEmail = updatedContactInfo && email ? email : applicant.email;
+  const applicantEmail = updatedContactInfo ? email : applicant.email;
   const applicantCity = updatedAddress && city ? city : applicant.city;
   const applicantAddressLine1 =
     updatedAddress && addressLine1 ? addressLine1 : applicant.addressLine1;
