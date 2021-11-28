@@ -156,7 +156,7 @@ export default function CreateRenewal() {
    * Set and fetch data about applicant when permit holder is selected
    */
   const handleSelectPermitHolder = async (permitHolder: PermitHolder | undefined) => {
-    setPermitHolderRcdUserID(permitHolder?.rcdUserId);
+    setPermitHolderRcdUserID(permitHolder?.rcdUserId || undefined);
     if (permitHolder) {
       await getApplicant({
         variables: {
