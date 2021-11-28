@@ -12,9 +12,10 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { PaymentType } from '@lib/graphql/types'; // GraphQL types
+import { ApplicationsReportColumn, PaymentType } from '@lib/graphql/types'; // GraphQL types
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 import { createObjectCsvWriter } from 'csv-writer';
+import { GenerateApplicantsReportApplications } from '@lib/applications/constants';
 
 /**
  * Query an application by ID
@@ -618,26 +619,31 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
     input: { startDate, endDate, columns },
   } = args;
 
-  const applications = await prisma.application.findMany({
+  // NOTETOSELF: Consider making columns an object instead to avoid array look up inefficiency + clean up code
+
+  const applications: GenerateApplicantsReportApplications[] = await prisma.application.findMany({
     where: {
       createdAt: {
-        // NOTETOSELF: Check if `gte: startDate` works instead
         gte: new Date(startDate),
-        lte: new Date(endDate),
+        // TODO; Figure out why lte isn't working
+        // lte: new Date(endDate),
       },
     },
     select: {
-      // Replace with object in constants
-      // NOTETOSELF: Should I only select the fields that are in columns
-      rcdUserId: true,
-      firstName: true,
-      middleName: true,
-      lastName: true,
-      dateOfBirth: true,
-      createdAt: true,
-      paymentMethod: true,
-      processingFee: true,
-      donationAmount: true,
+      // TODO?: Replace with function/object in constants
+      rcdUserId: columns.includes(ApplicationsReportColumn.UserId),
+      firstName: columns.includes(ApplicationsReportColumn.ApplicantName),
+      middleName: columns.includes(ApplicationsReportColumn.ApplicantName),
+      lastName: columns.includes(ApplicationsReportColumn.ApplicantName),
+      dateOfBirth: columns.includes(ApplicationsReportColumn.ApplicantDob),
+      createdAt: columns.includes(ApplicationsReportColumn.ApplicationDate),
+      paymentMethod: columns.includes(ApplicationsReportColumn.PaymentMethod),
+      processingFee:
+        columns.includes(ApplicationsReportColumn.FeeAmount) ||
+        columns.includes(ApplicationsReportColumn.TotalAmount),
+      donationAmount:
+        columns.includes(ApplicationsReportColumn.DonationAmount) ||
+        columns.includes(ApplicationsReportColumn.TotalAmount),
       permits: {
         select: {
           rcdPermitId: true,
@@ -646,33 +652,53 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
     },
   });
 
-  // Adds totalAmount and applicantName properties
-  applications.map(application => ({
-    ...application,
-    totalAmount: application.processingFee + (application?.donationAmount || 0),
-    applicantName:
-      application.firstName + ` ${application.middleName}` + ` ${application.lastName}`,
-  }));
+  // Adds totalAmount and applicantName properties to applications object
+  applications.map(application => {
+    application.applicantName =
+      application.firstName +
+      (application.middleName
+        ? ` ${application.middleName} ${application.lastName}`
+        : ` ${application.lastName}`);
+    application.totalAmount = (application.processingFee || 0) + (application?.donationAmount || 0);
+    return application;
+  });
+
+  const csvHeaders = [];
+
+  if (columns.includes(ApplicationsReportColumn.UserId)) {
+    csvHeaders.push({ id: 'rcdUserId', title: 'User ID' });
+  }
+  if (columns.includes(ApplicationsReportColumn.ApplicantName)) {
+    csvHeaders.push({ id: 'applicantName', title: 'Applicant Name' });
+  }
+  if (columns.includes(ApplicationsReportColumn.ApplicantDob)) {
+    csvHeaders.push({ id: 'dateOfBirth', title: 'Applicant DoB' });
+  }
+  if (columns.includes(ApplicationsReportColumn.AppNumber)) {
+    csvHeaders.push({ id: 'rcdPermitId', title: 'APP Number' });
+  }
+  if (columns.includes(ApplicationsReportColumn.ApplicationDate)) {
+    csvHeaders.push({ id: 'createdAt', title: 'Application Date' });
+  }
+  if (columns.includes(ApplicationsReportColumn.PaymentMethod)) {
+    csvHeaders.push({ id: 'paymentMethod', title: 'Payment Method' });
+  }
+  if (columns.includes(ApplicationsReportColumn.FeeAmount)) {
+    csvHeaders.push({ id: 'processingFee', title: 'Fee Amount' });
+  }
+  if (columns.includes(ApplicationsReportColumn.DonationAmount)) {
+    csvHeaders.push({ id: 'donationAmount', title: 'Donation Amount' });
+  }
+  if (columns.includes(ApplicationsReportColumn.TotalAmount)) {
+    csvHeaders.push({ id: 'totalAmount', title: 'Total Amount' });
+  }
 
   const csvWriter = createObjectCsvWriter({
     path: 'temp/file.csv',
-    header: [
-      // NOTETOSELF: Should I only select the fields that are in columns
-      { id: 'rcdUserId', title: 'User ID' },
-      { id: 'applicantName', title: 'Applicant Name' },
-      { id: 'dateOfBirth', title: 'Applicant DoB' },
-      { id: 'rcdPermitId', title: 'APP Number' },
-      { id: 'createdAt', title: 'Application Date' },
-      { id: 'paymentMethod', title: 'Payment Method' },
-      { id: 'processingFee', title: 'Fee Amount' },
-      { id: 'donationAmount', title: 'Donation Amount' },
-      { id: 'totalAmount', title: 'Total Amount' },
-    ],
+    header: csvHeaders,
   });
 
-  csvWriter
-    .writeRecords(applications) // returns a promise
-    .then(() => {
-      console.log('...Done');
-    });
+  await csvWriter.writeRecords(applications);
+
+  return true;
 };
