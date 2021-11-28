@@ -176,14 +176,13 @@ export default function CreateReplacement() {
               <Stack direction="row" justifyContent="space-between">
                 <CancelCreateRequestModal type="replacement">
                   <Button
-                    bg="background.gray"
-                    _hover={{ bg: 'background.grayHover' }}
-                    color="black"
+                    bg="secondary.critical"
+                    _hover={{ bg: 'secondary.criticalHover' }}
                     marginRight="20px"
                     height="48px"
                     width="149px"
                   >
-                    <Text textStyle="button-semibold">Cancel</Text>
+                    <Text textStyle="button-semibold">Discard</Text>
                   </Button>
                 </CancelCreateRequestModal>
                 <Button bg="primary" height="48px" width="180px">

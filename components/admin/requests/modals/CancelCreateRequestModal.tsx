@@ -28,11 +28,11 @@ export default function CancelCreateRequestModal({ type, children }: CancelReque
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            Cancel {type === 'replacement' ? 'Replacement' : 'Renewal'} Request
+            Discard {type === 'replacement' ? 'Replacement' : 'Renewal'} Request
           </ModalHeader>
           <ModalBody>
             <Text textStyle="body-regular" paddingBottom="39px">
-              Are you sure you want to cancel this request? You will lose all your changes.
+              Are you sure you want to discard this request? You will lose all your changes.
             </Text>
           </ModalBody>
 
@@ -52,7 +52,7 @@ export default function CancelCreateRequestModal({ type, children }: CancelReque
                 _hover={{ bg: 'secondary.criticalHover' }}
                 onClick={onClose}
               >
-                <Text textStyle="button-semibold">Cancel</Text>
+                <Text textStyle="button-semibold">Discard</Text>
               </Button>
             </Link>
           </ModalFooter>

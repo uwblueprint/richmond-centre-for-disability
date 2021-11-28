@@ -198,14 +198,13 @@ export default function CreateRenewal() {
               <Stack direction="row" justifyContent="space-between">
                 <CancelCreateRequestModal type="renewal">
                   <Button
-                    bg="background.gray"
-                    _hover={{ bg: 'background.grayHover' }}
-                    color="black"
+                    bg="secondary.critical"
+                    _hover={{ bg: 'secondary.criticalHover' }}
                     marginRight="20px"
                     height="48px"
                     width="149px"
                   >
-                    <Text textStyle="button-semibold">Cancel</Text>
+                    <Text textStyle="button-semibold">Discard</Text>
                   </Button>
                 </CancelCreateRequestModal>
                 <Link href="#">
