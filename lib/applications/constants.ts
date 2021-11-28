@@ -10,6 +10,7 @@ export type GenerateApplicantsReportApplications = {
   processingFee?: number | null;
   donationAmount?: number | null;
   permits?: { rcdPermitId: number } | null;
-  applicantName?: string | null;
-  totalAmount?: number | null;
+  applicantName?: string;
+  totalAmount?: number;
+  rcdPermitId?: number;
 };

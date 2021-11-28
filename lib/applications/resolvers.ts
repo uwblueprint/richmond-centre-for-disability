@@ -660,6 +660,7 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
         ? ` ${application.middleName} ${application.lastName}`
         : ` ${application.lastName}`);
     application.totalAmount = (application.processingFee || 0) + (application?.donationAmount || 0);
+    application.rcdPermitId = application.permits?.rcdPermitId;
     return application;
   });
 
@@ -700,5 +701,7 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
 
   await csvWriter.writeRecords(applications);
 
-  return true;
+  return {
+    ok: true,
+  };
 };
