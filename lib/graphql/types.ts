@@ -54,6 +54,7 @@ export type Applicant = {
   permits: Array<Permit>;
   medicalHistory: Maybe<Array<MedicalHistory>>;
   mostRecentPermit: Permit;
+  mostRecentRenewal: Maybe<Application>;
   fileHistory: Array<ApplicationFileAttachments>;
 };
 
@@ -152,6 +153,8 @@ export type Application = {
   applicationProcessing: Maybe<ApplicationProcessing>;
   /** Replacement */
   replacement: Maybe<Replacement>;
+  /** Renewal */
+  renewal: Maybe<Renewal>;
   /** Misc */
   createdAt: Scalars['Date'];
 };
@@ -365,7 +368,10 @@ export type CreateRenewalApplicationInput = {
   updatedPhysician: Scalars['Boolean'];
   usesAccessibleConvertedVan: Scalars['Boolean'];
   requiresWiderParkingSpace: Scalars['Boolean'];
+  rcdUserId?: Maybe<Scalars['Int']>;
   /** Personal address info (must be provided if updatedAddress === true) */
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
   addressLine1?: Maybe<Scalars['String']>;
   addressLine2?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
@@ -381,40 +387,58 @@ export type CreateRenewalApplicationInput = {
   physicianCity?: Maybe<Scalars['String']>;
   physicianPostalCode?: Maybe<Scalars['String']>;
   physicianPhone?: Maybe<Scalars['String']>;
-};
-
-export type CreateRenewalApplicationResult = {
-  __typename?: 'CreateRenewalApplicationResult';
-  ok: Scalars['Boolean'];
-};
-
-export type CreateReplacementApplicationInput = {
-  applicantId: Scalars['Int'];
-  /** Permit Holder Information */
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  addressLine1?: Maybe<Scalars['String']>;
-  addressLine2?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  postalCode?: Maybe<Scalars['String']>;
-  /** Replacement Information */
-  reason: ReasonForReplacement;
-  lostTimestamp?: Maybe<Scalars['Date']>;
-  lostLocation?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  /** Payment Information */
-  paymentMethod?: Maybe<PaymentType>;
-  donationAmount?: Maybe<Scalars['Float']>;
-  shippingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
+  /** Payment information */
   shippingFullName?: Maybe<Scalars['String']>;
   shippingAddressLine1?: Maybe<Scalars['String']>;
   shippingAddressLine2?: Maybe<Scalars['String']>;
   shippingCity?: Maybe<Scalars['String']>;
   shippingProvince?: Maybe<Province>;
   shippingPostalCode?: Maybe<Scalars['String']>;
+  billingFullName?: Maybe<Scalars['String']>;
+  billingAddressLine1?: Maybe<Scalars['String']>;
+  billingAddressLine2?: Maybe<Scalars['String']>;
+  billingCity?: Maybe<Scalars['String']>;
+  billingProvince?: Maybe<Province>;
+  billingPostalCode?: Maybe<Scalars['String']>;
+  shippingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
   billingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
+  donationAmount?: Maybe<Scalars['Float']>;
+  paymentMethod?: Maybe<PaymentType>;
+};
+
+export type CreateRenewalApplicationResult = {
+  __typename?: 'CreateRenewalApplicationResult';
+  ok: Scalars['Boolean'];
+  applicationId: Maybe<Scalars['Int']>;
+};
+
+export type CreateReplacementApplicationInput = {
+  applicantId: Scalars['Int'];
+  /** Permit Holder Information */
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  phone: Scalars['String'];
+  email?: Maybe<Scalars['String']>;
+  addressLine1: Scalars['String'];
+  addressLine2?: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  postalCode: Scalars['String'];
+  /** Replacement Information */
+  reason: ReasonForReplacement;
+  lostTimestamp: Scalars['Date'];
+  lostLocation: Scalars['String'];
+  description: Scalars['String'];
+  /** Payment Information */
+  paymentMethod: PaymentType;
+  donationAmount?: Maybe<Scalars['Float']>;
+  shippingAddressSameAsHomeAddress: Scalars['Boolean'];
+  shippingFullName?: Maybe<Scalars['String']>;
+  shippingAddressLine1?: Maybe<Scalars['String']>;
+  shippingAddressLine2?: Maybe<Scalars['String']>;
+  shippingCity?: Maybe<Scalars['String']>;
+  shippingProvince?: Maybe<Province>;
+  shippingPostalCode?: Maybe<Scalars['String']>;
+  billingAddressSameAsHomeAddress: Scalars['Boolean'];
   billingFullName?: Maybe<Scalars['String']>;
   billingAddressLine1?: Maybe<Scalars['String']>;
   billingAddressLine2?: Maybe<Scalars['String']>;

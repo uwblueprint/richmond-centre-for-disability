@@ -41,11 +41,13 @@ import {
   applicantMostRecentPermitResolver,
   applicantActivePermitResolver,
   applicantFileHistoryResolver,
+  applicantMostRecentRenewalApplicationResolver,
 } from '@lib/applicants/field-resolvers'; // Applicant field resolvers
 import {
   applicationApplicantResolver,
   applicationPermitResolver,
   applicationApplicationProcessingResolver,
+  applicationRenewalResolver,
 } from '@lib/applications/field-resolvers'; // Application field resolvers
 import { permitApplicantResolver, permitApplicationResolver } from '@lib/permits/field-resolvers'; // Permit field resolvers
 import { updateMedicalInformation } from '@lib/medical-information/resolvers'; // Medical information resolvers
@@ -98,12 +100,14 @@ const resolvers = {
     mostRecentPermit: applicantMostRecentPermitResolver,
     activePermit: applicantActivePermitResolver,
     fileHistory: applicantFileHistoryResolver,
+    mostRecentRenewal: applicantMostRecentRenewalApplicationResolver,
   },
   Application: {
     applicant: applicationApplicantResolver,
     permit: applicationPermitResolver,
     applicationProcessing: applicationApplicationProcessingResolver,
     replacement: applicationReplacementResolver,
+    renewal: applicationRenewalResolver,
   },
   MedicalInformation: {
     physician: medicalInformationPhysicianResolver,

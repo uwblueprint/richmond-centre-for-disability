@@ -10,6 +10,7 @@ import devMedicalInformationUpsert from './dev-seed-utils/medical-information'; 
 import devPermitUpsert from './dev-seed-utils/permits'; // Dev permits upsert
 import devPhysicianUpsert from './dev-seed-utils/physicians'; // Dev physicians upsert
 import devReplacementUpsert from './dev-seed-utils/replacements'; // Dev replacements upsert
+import devRenewalUpsert from './dev-seed-utils/renewals'; // Dev replacements upsert
 import prodEmployeeUpsert from './prod-seed-utils/employees'; // Prod employees upsert
 
 /**
@@ -57,6 +58,9 @@ const devSeed = async () => {
 
   // Upsert replacements
   await devReplacementUpsert();
+
+  // Upsert renewals
+  await devRenewalUpsert();
 
   // Upsert permits
   await devPermitUpsert();

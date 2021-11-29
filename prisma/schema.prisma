@@ -107,8 +107,8 @@ model Application {
   updatedAt                        DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   applicant                        Applicant?            @relation(fields: [applicantId], references: [id])
   applicationProcessing            ApplicationProcessing @relation("application_processingToapplications", fields: [applicationProcessingId], references: [id])
-  permit                          Permit?
-  renewal                         Renewal?              @relation("applicationsTorenewals")
+  permit                           Permit?
+  renewal                          Renewal?              @relation("applicationsTorenewals")
   replacement                      Replacement?          @relation("applicationsToreplacements")
 
   @@map("applications")
@@ -246,13 +246,15 @@ model Replacement {
 }
 
 model Renewal {
-  id                            Int         @id @default(autoincrement())
-  usesAccessibleConvertedVan    Boolean?    @map("uses_accessible_converted_van") @default(false)
-  requiresWiderParkingSpace     Boolean?    @map("requires_wider_parking_space") @default(false)
-  applicationId                 Int         @map("application_id") @unique
-  createdAt                     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
-  application                   Application @relation("applicationsTorenewals", fields: [applicationId], references: [id])
+  id                         Int         @id @default(autoincrement())
+  usesAccessibleConvertedVan Boolean?    @default(false) @map("uses_accessible_converted_van")
+  requiresWiderParkingSpace  Boolean?    @default(false) @map("requires_wider_parking_space")
+  applicationId              Int         @unique @map("application_id")
+  createdAt                  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                  DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  application                Application @relation("applicationsTorenewals", fields: [applicationId], references: [id])
+
+  @@map("renewals")
 }
 
 enum Aid {

@@ -1,4 +1,5 @@
 import {
+  Applicant,
   Application,
   UpdateApplicationProcessingResult,
   UpdateApplicationResult,
@@ -9,6 +10,8 @@ import {
   MutationUpdateApplicationProcessingArgs,
   ApplicationProcessing,
   Permit,
+  Physician,
+  Renewal,
 } from '@lib/graphql/types'; // GraphQL types
 
 // Get application request type
@@ -123,4 +126,53 @@ export type CompleteApplicationRequest = {
 // Complete application response type
 export type CompleteApplicationResponse = {
   completeApplication: CompleteApplicationResult;
+};
+
+// Get Applicant Renewal Application Request
+export type GetApplicantRenewalRequest = Pick<Applicant, 'id'>;
+
+// Get Applicant Renewal Application Response
+export type GetApplicantRenewalResponse = {
+  applicant: Pick<
+    Applicant,
+    | 'id'
+    | 'firstName'
+    | 'lastName'
+    | 'email'
+    | 'phone'
+    | 'addressLine1'
+    | 'addressLine2'
+    | 'city'
+    | 'postalCode'
+    | 'rcdUserId'
+  > & {
+    medicalInformation: {
+      physician: Pick<
+        Physician,
+        'name' | 'mspNumber' | 'addressLine1' | 'addressLine2' | 'city' | 'postalCode' | 'phone'
+      >;
+    };
+  } & {
+    mostRecentRenewal: Pick<
+      Application,
+      | 'id'
+      | 'shippingFullName'
+      | 'shippingAddressLine1'
+      | 'shippingAddressLine2'
+      | 'shippingCity'
+      | 'shippingProvince'
+      | 'shippingPostalCode'
+      | 'billingFullName'
+      | 'billingAddressLine1'
+      | 'billingAddressLine2'
+      | 'billingCity'
+      | 'billingProvince'
+      | 'billingPostalCode'
+      | 'shippingAddressSameAsHomeAddress'
+      | 'billingAddressSameAsHomeAddress'
+      | 'paymentMethod'
+    > & {
+      renewal: Pick<Renewal, 'usesAccessibleConvertedVan' | 'requiresWiderParkingSpace'>;
+    };
+  };
 };
