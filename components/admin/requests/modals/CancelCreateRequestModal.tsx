@@ -17,7 +17,11 @@ type CancelRequestModalProps = {
   readonly type: 'replacement' | 'renewal';
   readonly children: ReactNode;
 };
-
+/**
+ * Modal for Cancel Create Request
+ * @param type Whether modal is being used for replacement or renewal form
+ * @param children ReactNode children elements in component
+ */
 export default function CancelCreateRequestModal({ type, children }: CancelRequestModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 

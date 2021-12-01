@@ -182,11 +182,11 @@ export default function CreateReplacement() {
                     height="48px"
                     width="149px"
                   >
-                    <Text textStyle="button-semibold">Discard</Text>
+                    <Text textStyle="button-semibold">Discard request</Text>
                   </Button>
                 </CancelCreateRequestModal>
                 <Button bg="primary" height="48px" width="180px">
-                  <Text textStyle="button-semibold">Create Request</Text>
+                  <Text textStyle="button-semibold">Create request</Text>
                 </Button>
               </Stack>
             </Box>
