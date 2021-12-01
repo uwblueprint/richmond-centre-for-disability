@@ -4,11 +4,7 @@ import prisma from '../index'; // Prisma client
 import { UpsertApplicationProcessing } from '../types'; // Seeding types
 
 // Seed data
-<<<<<<< HEAD
-const applicationProcessings = [{}, {}, {}, {}];
-=======
 const applicationProcessings = [{}, {}, {}];
->>>>>>> Fixup
 
 /**
  * Upsert application processing records
