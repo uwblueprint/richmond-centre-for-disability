@@ -1,3 +1,6 @@
+/**
+ * applications object type used in csv generatiion
+ */
 export type GenerateApplicantsReportApplications = {
   rcdUserId: number | null;
   firstName: string | null;
