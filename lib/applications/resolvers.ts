@@ -15,7 +15,7 @@ import { SortOrder } from '@tools/types'; // Sorting type
 import { ApplicationsReportColumn, PaymentType } from '@lib/graphql/types'; // GraphQL types
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 import { createObjectCsvWriter } from 'csv-writer';
-import { GenerateApplicantsReportApplications } from '@lib/applications/constants';
+import { GenerateApplicantsReportApplications } from '@lib/applications/types';
 
 /**
  * Query an application by ID
@@ -619,31 +619,29 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
     input: { startDate, endDate, columns },
   } = args;
 
-  // NOTETOSELF: Consider making columns an object instead to avoid array look up inefficiency + clean up code
+  const columnsSet = new Set(columns);
 
   const applications: GenerateApplicantsReportApplications[] = await prisma.application.findMany({
     where: {
       createdAt: {
         gte: new Date(startDate),
-        // TODO; Figure out why lte isn't working
-        // lte: new Date(endDate),
+        lte: new Date(endDate),
       },
     },
     select: {
-      // TODO?: Replace with function/object in constants
-      rcdUserId: columns.includes(ApplicationsReportColumn.UserId),
-      firstName: columns.includes(ApplicationsReportColumn.ApplicantName),
-      middleName: columns.includes(ApplicationsReportColumn.ApplicantName),
-      lastName: columns.includes(ApplicationsReportColumn.ApplicantName),
-      dateOfBirth: columns.includes(ApplicationsReportColumn.ApplicantDob),
-      createdAt: columns.includes(ApplicationsReportColumn.ApplicationDate),
-      paymentMethod: columns.includes(ApplicationsReportColumn.PaymentMethod),
+      rcdUserId: columnsSet.has(ApplicationsReportColumn.UserId),
+      firstName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
+      middleName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
+      lastName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
+      dateOfBirth: columnsSet.has(ApplicationsReportColumn.ApplicantDob),
+      createdAt: columnsSet.has(ApplicationsReportColumn.ApplicationDate),
+      paymentMethod: columnsSet.has(ApplicationsReportColumn.PaymentMethod),
       processingFee:
-        columns.includes(ApplicationsReportColumn.FeeAmount) ||
-        columns.includes(ApplicationsReportColumn.TotalAmount),
+        columnsSet.has(ApplicationsReportColumn.FeeAmount) ||
+        columnsSet.has(ApplicationsReportColumn.TotalAmount),
       donationAmount:
-        columns.includes(ApplicationsReportColumn.DonationAmount) ||
-        columns.includes(ApplicationsReportColumn.TotalAmount),
+        columnsSet.has(ApplicationsReportColumn.DonationAmount) ||
+        columnsSet.has(ApplicationsReportColumn.TotalAmount),
       permits: {
         select: {
           rcdPermitId: true,
@@ -652,7 +650,7 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
     },
   });
 
-  // Adds totalAmount and applicantName properties to applications object
+  // Adds totalAmount, applicantName and rcdPermitId properties to applications object
   applications.map(application => {
     application.applicantName =
       application.firstName +
@@ -666,31 +664,31 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
 
   const csvHeaders = [];
 
-  if (columns.includes(ApplicationsReportColumn.UserId)) {
+  if (columnsSet.has(ApplicationsReportColumn.UserId)) {
     csvHeaders.push({ id: 'rcdUserId', title: 'User ID' });
   }
-  if (columns.includes(ApplicationsReportColumn.ApplicantName)) {
+  if (columnsSet.has(ApplicationsReportColumn.ApplicantName)) {
     csvHeaders.push({ id: 'applicantName', title: 'Applicant Name' });
   }
-  if (columns.includes(ApplicationsReportColumn.ApplicantDob)) {
+  if (columnsSet.has(ApplicationsReportColumn.ApplicantDob)) {
     csvHeaders.push({ id: 'dateOfBirth', title: 'Applicant DoB' });
   }
-  if (columns.includes(ApplicationsReportColumn.AppNumber)) {
+  if (columnsSet.has(ApplicationsReportColumn.AppNumber)) {
     csvHeaders.push({ id: 'rcdPermitId', title: 'APP Number' });
   }
-  if (columns.includes(ApplicationsReportColumn.ApplicationDate)) {
+  if (columnsSet.has(ApplicationsReportColumn.ApplicationDate)) {
     csvHeaders.push({ id: 'createdAt', title: 'Application Date' });
   }
-  if (columns.includes(ApplicationsReportColumn.PaymentMethod)) {
+  if (columnsSet.has(ApplicationsReportColumn.PaymentMethod)) {
     csvHeaders.push({ id: 'paymentMethod', title: 'Payment Method' });
   }
-  if (columns.includes(ApplicationsReportColumn.FeeAmount)) {
+  if (columnsSet.has(ApplicationsReportColumn.FeeAmount)) {
     csvHeaders.push({ id: 'processingFee', title: 'Fee Amount' });
   }
-  if (columns.includes(ApplicationsReportColumn.DonationAmount)) {
+  if (columnsSet.has(ApplicationsReportColumn.DonationAmount)) {
     csvHeaders.push({ id: 'donationAmount', title: 'Donation Amount' });
   }
-  if (columns.includes(ApplicationsReportColumn.TotalAmount)) {
+  if (columnsSet.has(ApplicationsReportColumn.TotalAmount)) {
     csvHeaders.push({ id: 'totalAmount', title: 'Total Amount' });
   }
 

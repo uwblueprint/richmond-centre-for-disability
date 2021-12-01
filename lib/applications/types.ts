@@ -1,4 +1,3 @@
-// TODO: Rename
 export type GenerateApplicantsReportApplications = {
   rcdUserId: number | null;
   firstName: string | null;
