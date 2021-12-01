@@ -55,6 +55,7 @@ export type Applicant = {
   medicalHistory: Maybe<Array<MedicalHistory>>;
   mostRecentPermit: Permit;
   mostRecentRenewal: Maybe<Application>;
+  mostRecentApplication: Maybe<Application>;
   fileHistory: Array<ApplicationFileAttachments>;
 };
 
@@ -425,9 +426,9 @@ export type CreateReplacementApplicationInput = {
   postalCode: Scalars['String'];
   /** Replacement Information */
   reason: ReasonForReplacement;
-  lostTimestamp: Scalars['Date'];
-  lostLocation: Scalars['String'];
-  description: Scalars['String'];
+  lostTimestamp?: Maybe<Scalars['Date']>;
+  lostLocation?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   /** Payment Information */
   paymentMethod: PaymentType;
   donationAmount?: Maybe<Scalars['Float']>;

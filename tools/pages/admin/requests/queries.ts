@@ -117,3 +117,29 @@ export const GET_APPLICANT_RENEWAL_QUERY = gql`
     }
   }
 `;
+
+export const GET_APPLICANT_REPLACEMENT_QUERY = gql`
+  query getApplicant($id: ID!) {
+    applicant(id: $id) {
+      firstName
+      lastName
+      email
+      phone
+      addressLine1
+      addressLine2
+      city
+      postalCode
+      id
+      rcdUserId
+      mostRecentApplication {
+        shippingAddressSameAsHomeAddress
+        shippingFullName
+        shippingAddressLine1
+        shippingAddressLine2
+        shippingCity
+        shippingProvince
+        shippingPostalCode
+      }
+    }
+  }
+`;

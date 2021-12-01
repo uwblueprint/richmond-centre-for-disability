@@ -163,17 +163,45 @@ export type GetApplicantRenewalResponse = {
       | 'shippingCity'
       | 'shippingProvince'
       | 'shippingPostalCode'
-      | 'billingFullName'
-      | 'billingAddressLine1'
-      | 'billingAddressLine2'
-      | 'billingCity'
-      | 'billingProvince'
-      | 'billingPostalCode'
       | 'shippingAddressSameAsHomeAddress'
-      | 'billingAddressSameAsHomeAddress'
-      | 'paymentMethod'
     > & {
       renewal: Pick<Renewal, 'usesAccessibleConvertedVan' | 'requiresWiderParkingSpace'>;
     };
+  };
+};
+
+/**
+ * Input parameters for fetching an applicant for replacement request
+ */
+export type GetApplicantReplacementRequest = Pick<Applicant, 'id'>;
+
+/**
+ * Response type for fetching an applicant for replacement request
+ */
+export type GetApplicantReplacementResponse = {
+  applicant: Pick<
+    Applicant,
+    | 'firstName'
+    | 'lastName'
+    | 'email'
+    | 'phone'
+    | 'addressLine1'
+    | 'addressLine2'
+    | 'city'
+    | 'postalCode'
+    | 'rcdUserId'
+    | 'id'
+  > & {
+    mostRecentApplication: Pick<
+      Application,
+      | 'id'
+      | 'shippingFullName'
+      | 'shippingAddressLine1'
+      | 'shippingAddressLine2'
+      | 'shippingCity'
+      | 'shippingProvince'
+      | 'shippingPostalCode'
+      | 'shippingAddressSameAsHomeAddress'
+    >;
   };
 };

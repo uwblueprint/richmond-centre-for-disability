@@ -18,17 +18,18 @@ import ReasonForReplacementForm from '@components/admin/requests/forms/ReasonFor
 import PermitHolderTypeahead from '@components/admin/permit-holders/PermitHolderTypeahead';
 import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders'; // Permit holders GQL query}
 import { useLazyQuery, useMutation } from '@apollo/client';
+import { GET_APPLICANT_REPLACEMENT_QUERY } from '@tools/pages/admin/requests/queries';
 import {
-  GetApplicantRequest,
-  GetApplicantResponse,
-  GET_APPLICANT_QUERY,
-} from '@lib/applicants/get-applicant';
+  GetApplicantReplacementRequest,
+  GetApplicantReplacementResponse,
+} from '@tools/pages/admin/requests/types';
 import {
   CREATE_REPLACEMENT_APPLICATION_MUTATION,
   CreateReplacementApplicationRequest,
   CreateReplacementApplicationResponse,
 } from '@tools/pages/applicant/replacements';
 import { useRouter } from 'next/router'; // Router
+
 export default function CreateReplacement() {
   const [applicantId, setApplicantID] = useState<number | undefined>(undefined);
   const [permitHolderID, setPermitHolderID] = useState<number | undefined>(undefined);
@@ -75,25 +76,40 @@ export default function CreateReplacement() {
   const toast = useToast();
   const router = useRouter();
 
-  const [getApplicant] = useLazyQuery<GetApplicantResponse, GetApplicantRequest>(
-    GET_APPLICANT_QUERY,
-    {
-      onCompleted: ({ applicant }) => {
-        setPermitHolderInformation({
-          firstName: applicant.firstName,
-          lastName: applicant.lastName,
-          email: applicant.email,
-          phone: applicant.phone,
-          addressLine1: applicant.addressLine1,
-          addressLine2: applicant.addressLine2,
-          city: applicant.city,
-          postalCode: applicant.postalCode,
+  const [getApplicant] = useLazyQuery<
+    GetApplicantReplacementResponse,
+    GetApplicantReplacementRequest
+  >(GET_APPLICANT_REPLACEMENT_QUERY, {
+    onCompleted: ({ applicant }) => {
+      setPermitHolderInformation({
+        firstName: applicant.firstName,
+        lastName: applicant.lastName,
+        email: applicant.email,
+        phone: applicant.phone,
+        addressLine1: applicant.addressLine1,
+        addressLine2: applicant.addressLine2,
+        city: applicant.city,
+        postalCode: applicant.postalCode,
+      });
+
+      const lastApplication = applicant.mostRecentApplication;
+      if (lastApplication !== undefined) {
+        setPaymentDetails({
+          ...paymentDetails,
+          shippingAddressSameAsHomeAddress: lastApplication.shippingAddressSameAsHomeAddress,
+          shippingFullName: lastApplication.shippingFullName,
+          shippingAddressLine1: lastApplication.shippingAddressLine1,
+          shippingAddressLine2: lastApplication.shippingAddressLine2,
+          shippingCity: lastApplication.shippingCity,
+          shippingProvince: lastApplication.shippingProvince,
+          shippingPostalCode: lastApplication.shippingPostalCode,
         });
-        setPermitHolderID(applicant.rcdUserId || 0);
-        setApplicantID(+applicant.id);
-      },
-    }
-  );
+      }
+
+      setPermitHolderID(applicant.rcdUserId || 0);
+      setApplicantID(+applicant.id);
+    },
+  });
 
   const handleSelectedPermitHolder = (permitHolder: PermitHolder | undefined) => {
     if (permitHolder && permitHolder.id) {
@@ -146,8 +162,8 @@ export default function CreateReplacement() {
           postalCode: permitHolderInformation.postalCode,
           reason: reasonDetails.reason,
           lostTimestamp: reasonDetails.lostTimestamp,
-          lostLocation: reasonDetails.lostLocation,
-          description: reasonDetails.description,
+          lostLocation: reasonDetails.lostLocation || '',
+          description: reasonDetails.description || '',
           paymentMethod: paymentDetails.paymentMethod,
           donationAmount: paymentDetails.donationAmount,
           shippingAddressSameAsHomeAddress: paymentDetails.shippingAddressSameAsHomeAddress,
