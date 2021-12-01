@@ -93,7 +93,7 @@ export default function CreateReplacement() {
       });
 
       const lastApplication = applicant.mostRecentApplication;
-      if (lastApplication !== undefined) {
+      if (lastApplication !== null) {
         setPaymentDetails({
           ...paymentDetails,
           shippingAddressSameAsHomeAddress: lastApplication.shippingAddressSameAsHomeAddress,
@@ -111,7 +111,7 @@ export default function CreateReplacement() {
     },
   });
 
-  const handleSelectedPermitHolder = (permitHolder: PermitHolder | undefined) => {
+  const handleSelectPermitHolder = (permitHolder: PermitHolder | undefined) => {
     if (permitHolder && permitHolder.id) {
       getApplicant({ variables: { id: permitHolder.id } });
     }
@@ -195,7 +195,6 @@ export default function CreateReplacement() {
               <>
                 {` (User ID: `}
                 <Box as="span" color="primary">
-                  {' '}
                   <Link href={`/admin/permit-holder/${applicantId}`}>
                     <a>{permitHolderID}</a>
                   </Link>
@@ -220,11 +219,11 @@ export default function CreateReplacement() {
             <Text textStyle="display-small-semibold" paddingBottom="20px">
               {`Search Permit Holder`}
             </Text>
-            <PermitHolderTypeahead onSelect={handleSelectedPermitHolder} />
+            <PermitHolderTypeahead onSelect={handleSelectPermitHolder} />
           </Box>
         </GridItem>
 
-        {applicantId != undefined && (
+        {applicantId !== undefined && (
           <form onSubmit={handleSubmit}>
             {/* Permit Holder Information Form */}
             <GridItem paddingTop="32px">
