@@ -192,3 +192,28 @@ export const applicantMostRecentRenewalApplicationResolver: Resolver<Applicant> 
 
   return renewal.length > 0 ? renewal[0] : null;
 };
+
+/**
+ * Field resolver to fetch the most recent application request of an applicant.
+ * If the applicant has no previous applications, return null.
+ * @returns Application object
+ */
+export const applicantMostRecentApplicationResolver: Resolver<Applicant> = async (
+  parent,
+  _args,
+  { prisma }
+) => {
+  const application = await prisma.applicant
+    .findUnique({
+      where: { id: parent.id },
+    })
+    .applications({
+      orderBy: [
+        {
+          createdAt: SortOrder.DESC,
+        },
+      ],
+      take: 1,
+    });
+  return application.length > 0 ? application[0] : null;
+};

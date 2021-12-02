@@ -31,7 +31,7 @@ export default function ProcessingTasksCard({
 
   return (
     <PermitHolderInfoCard colSpan={7} header={`Processing Tasks`}>
-      <Divider pt="20px" />
+      <Divider mt="20px" />
       <VStack marginTop={5} spacing={10} alignItems="left" width="100%">
         {/* Task 1: Assign new APP number: Assign number (MODAL) */}
         <ProcessingTaskStep

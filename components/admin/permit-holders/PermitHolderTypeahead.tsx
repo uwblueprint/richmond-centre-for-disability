@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'; // Apollo
-import { Text } from '@chakra-ui/layout'; //Chakra UI
+import { Text } from '@chakra-ui/react'; //Chakra UI
 import Typeahead from '@components/Typeahead'; // Typeahead component
 import { formatDateYYYYMMDD } from '@lib/utils/format'; // Date formatter util
 import {

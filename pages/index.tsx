@@ -116,7 +116,7 @@ export default function Landing() {
         </Link>
       </GridItem>
       <GridItem colSpan={12} colStart={0} mb="44px" mt="52px">
-        <Divider borderColor="#AAAAAA" />
+        <Divider />
       </GridItem>
       <GridItem colSpan={8} colStart={1} mb="64px">
         <Text as="h2" textStyle="display-large" textAlign="left">

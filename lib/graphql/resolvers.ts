@@ -42,6 +42,7 @@ import {
   applicantActivePermitResolver,
   applicantFileHistoryResolver,
   applicantMostRecentRenewalApplicationResolver,
+  applicantMostRecentApplicationResolver,
 } from '@lib/applicants/field-resolvers'; // Applicant field resolvers
 import {
   applicationApplicantResolver,
@@ -101,6 +102,7 @@ const resolvers = {
     activePermit: applicantActivePermitResolver,
     fileHistory: applicantFileHistoryResolver,
     mostRecentRenewal: applicantMostRecentRenewalApplicationResolver,
+    mostRecentApplication: applicantMostRecentApplicationResolver,
   },
   Application: {
     applicant: applicationApplicantResolver,

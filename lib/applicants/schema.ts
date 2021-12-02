@@ -29,6 +29,7 @@ export default `
     medicalHistory: [MedicalHistory!]
     mostRecentPermit: Permit!
     mostRecentRenewal: Application
+    mostRecentApplication: Application
     fileHistory: [ApplicationFileAttachments!]!
   }
 
