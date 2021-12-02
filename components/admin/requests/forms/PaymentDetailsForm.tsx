@@ -124,7 +124,7 @@ export default function PaymentDetailsForm({
         </Grid>
       </Box>
 
-      <Divider borderColor="border.secondary" />
+      <Divider />
 
       <Box paddingY="32px">
         <Text as="h3" textStyle="heading" paddingBottom="24px">
@@ -248,7 +248,7 @@ export default function PaymentDetailsForm({
         )}
       </Box>
 
-      <Divider borderColor="border.secondary" />
+      <Divider />
 
       <Box paddingTop="32px">
         <Text as="h3" textStyle="heading" paddingBottom="24px">

@@ -50,7 +50,7 @@ type Props = {
 export default function MedicalHistoryCard({ medicalHistory }: Props) {
   return (
     <PermitHolderInfoCard alignGridItems="normal" header={`Medical History`}>
-      <Divider pt="24px" />
+      <Divider mt="24px" />
       <Box padding="20px 24px">
         <Table columns={COLUMNS} data={medicalHistory} />
       </Box>

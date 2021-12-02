@@ -34,7 +34,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
         </EditDoctorInformationModal>
       }
     >
-      <Divider pt="24px" />
+      <Divider mt="24px" />
 
       <VStack spacing="12px" align="left" paddingTop="24px">
         <Box>
@@ -54,7 +54,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
         </Box>
       </VStack>
 
-      <Divider pt="24px" />
+      <Divider mt="24px" />
 
       <VStack spacing="12px" pt="24px" align="left">
         <Box>

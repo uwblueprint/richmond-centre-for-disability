@@ -72,7 +72,7 @@ export default function DoctorInformationForm({
         </Stack>
       </Box>
 
-      <Divider borderColor="border.secondary" />
+      <Divider />
 
       {/* Address Section */}
 

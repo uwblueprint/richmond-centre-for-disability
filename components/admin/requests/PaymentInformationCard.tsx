@@ -40,7 +40,7 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
         </EditPaymentDetailsModal>
       }
     >
-      <Divider pt="20px" />
+      <Divider mt="20px" />
       <VStack align="left" spacing="12px" pt="20px">
         <Box w="200px" h="27px">
           <Text as="h4" textStyle="body-bold">
@@ -76,7 +76,7 @@ export default function PaymentInformationCard(props: PaymentInformationProps) {
           </Box>
         </SimpleGrid>
       </VStack>
-      <Divider pt="20px" />
+      <Divider mt="20px" />
       <SimpleGrid columns={2} spacingX="150px" spacingY="12px" pt="20px">
         <VStack spacingY="12px" align="left">
           <Box>

@@ -23,7 +23,7 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
         </EditReasonForReplacementModal>
       }
     >
-      <Divider pt="24px" />
+      <Divider mt="24px" />
       <SimpleGrid columns={2} spacingY="12px" spacingX="20px" pt="20px">
         <InfoSection title={`Cause`}>{replacement.reason}</InfoSection>
         <InfoSection title={`Event Timestamp`}>{replacement.lostTimestamp}</InfoSection>

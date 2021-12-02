@@ -260,6 +260,7 @@ export default function Request({ id }: Props) {
           applicationStatus={
             applicationProcessing === null ? undefined : applicationProcessing.status
           }
+          applicationType="renewal" // TODO: Allow for replacement type in later ticket.
           createdAt={new Date(createdAt)}
           allStepsCompleted={allStepsCompleted}
           onApprove={handleApproveApplication}

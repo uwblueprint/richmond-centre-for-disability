@@ -77,7 +77,7 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
               </HStack>
             )}
 
-            <Divider borderColor="border.secondary" />
+            <Divider />
 
             {application.aid && (
               <Box paddingTop="24px">

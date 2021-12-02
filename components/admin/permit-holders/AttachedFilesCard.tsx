@@ -51,7 +51,7 @@ export default function AttachedFilesCard() {
 
   return (
     <PermitHolderInfoCard alignGridItems="normal" header={`Attached Files`}>
-      <Divider pt="24px" />
+      <Divider mt="24px" />
       <Box padding="20px 24px">
         <Table columns={COLUMNS} data={DATA} />
       </Box>

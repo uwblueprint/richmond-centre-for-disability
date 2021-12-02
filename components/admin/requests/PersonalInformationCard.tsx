@@ -77,7 +77,7 @@ export default function PersonalInformationCard(props: Props) {
           </Text>
         </Box>
       </VStack>
-      <Divider pt="24px" />
+      <Divider mt="24px" />
       <VStack spacing="12px" pt="12px" align="left">
         <HStack spacing="12px">
           <Box>
@@ -104,7 +104,7 @@ export default function PersonalInformationCard(props: Props) {
           </Text>
         </Box>
       </VStack>
-      <Divider pt="24px" />
+      <Divider mt="24px" />
       <VStack spacing="12px" pt="12px" align="left">
         <HStack spacing="12px">
           <Box>

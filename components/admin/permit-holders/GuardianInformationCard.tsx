@@ -9,7 +9,7 @@ type GuardianInformationProps = {
 export default function GuardianInformationCard({ guardian }: GuardianInformationProps) {
   return (
     <PermitHolderInfoCard colSpan={7} header={`Guardian's Information`}>
-      <Divider pt="24px" />
+      <Divider mt="24px" />
 
       <VStack spacing="12px" align="left" paddingTop="24px">
         <Box>
@@ -29,7 +29,7 @@ export default function GuardianInformationCard({ guardian }: GuardianInformatio
         </Box>
       </VStack>
 
-      <Divider pt="24px" />
+      <Divider mt="24px" />
 
       <VStack spacing="12px" pt="24px" align="left">
         <Box>
