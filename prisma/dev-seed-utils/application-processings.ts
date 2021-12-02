@@ -4,17 +4,7 @@ import prisma from '../index'; // Prisma client
 import { UpsertApplicationProcessing } from '../types'; // Seeding types
 
 // Seed data
-const applicationProcessings = [
-  {
-    id: 1,
-  },
-  {
-    id: 2,
-  },
-  {
-    id: 3,
-  },
-];
+const applicationProcessings = [{}, {}, {}, {}];
 
 /**
  * Upsert application processing records
@@ -24,11 +14,11 @@ export default async function applicationProcessingUpsert(
   data?: UpsertApplicationProcessing[]
 ): Promise<void> {
   for (const applicationProcessing of data || applicationProcessings) {
-    const { id, ...rest } = applicationProcessing;
-    const applicationProcessingUpsert = await prisma.applicationProcessing.upsert({
-      where: { id },
-      update: rest,
-      create: applicationProcessing,
+    const { ...rest } = applicationProcessing;
+    const applicationProcessingUpsert = await prisma.applicationProcessing.create({
+      data: {
+        ...rest,
+      },
     });
     console.log({ applicationProcessingUpsert });
   }

@@ -234,13 +234,15 @@ export const updateApplication: Resolver = async (_, args, { prisma }) => {
 /**
  * Create a renewal application
  * Requires updated field values to be provided if any of personal address, contact, or doctor info are updated.
- * @returns Status of operation (ok)
+ * @returns Status of operation (ok) and application id of new renewal application
  */
 export const createRenewalApplication: Resolver = async (_, args, { prisma }) => {
   const {
     input: {
       applicantId,
       updatedAddress,
+      firstName,
+      lastName,
       addressLine1,
       addressLine2,
       city,
@@ -248,6 +250,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
       updatedContactInfo,
       phone,
       email,
+      rcdUserId,
       updatedPhysician,
       physicianName,
       physicianMspNumber,
@@ -258,6 +261,22 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
       physicianPhone,
       usesAccessibleConvertedVan,
       requiresWiderParkingSpace,
+      shippingFullName,
+      shippingAddressLine1,
+      shippingAddressLine2,
+      shippingCity,
+      shippingProvince,
+      shippingPostalCode,
+      billingFullName,
+      billingAddressLine1,
+      billingAddressLine2,
+      billingCity,
+      billingProvince,
+      billingPostalCode,
+      shippingAddressSameAsHomeAddress,
+      billingAddressSameAsHomeAddress,
+      donationAmount,
+      paymentMethod,
     },
   } = args;
 
@@ -302,28 +321,40 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
   const currentDateTime = new Date().getTime().toString();
   const shopifyConfirmationNumber = currentDateTime.substr(currentDateTime.length - 7);
 
+  const applicantFirstName = firstName || applicant.firstName;
+  const applicantLastName = lastName || applicant.lastName;
+  const applicantEmail = updatedContactInfo ? email : applicant.email;
+  const applicantCity = updatedAddress && city ? city : applicant.city;
+  const applicantAddressLine1 =
+    updatedAddress && addressLine1 ? addressLine1 : applicant.addressLine1;
+  const applicantAddressLine2 =
+    updatedAddress && addressLine2 ? addressLine2 : applicant.addressLine2;
+  const applicantPostalCode =
+    updatedAddress && postalCode ? formatPostalCode(postalCode) : applicant.postalCode;
+
   let application;
   try {
     application = await prisma.application.create({
       data: {
-        firstName: applicant.firstName,
-        lastName: applicant.lastName,
+        firstName: applicantFirstName,
+        lastName: applicantLastName,
         dateOfBirth: applicant.dateOfBirth,
         gender: applicant.gender,
         customGender: applicant.customGender,
-        email: updatedContactInfo && email ? email : applicant.email,
+        email: applicantEmail,
         phone: updatedContactInfo && phone ? formatPhoneNumber(phone) : applicant.phone,
         province: applicant.province,
-        city: updatedAddress && city ? city : applicant.city,
-        addressLine1: updatedAddress && addressLine1 ? addressLine1 : applicant.addressLine1,
-        addressLine2: updatedAddress && addressLine2 ? addressLine2 : applicant.addressLine2,
-        postalCode:
-          updatedAddress && postalCode ? formatPostalCode(postalCode) : applicant.postalCode,
+        city: applicantCity,
+        addressLine1: applicantAddressLine1,
+        addressLine2: applicantAddressLine2,
+        postalCode: applicantPostalCode,
+        rcdUserId: rcdUserId || applicant.rcdUserId,
         isRenewal: true,
         // TODO: Link with Shopify checkout
         shopifyConfirmationNumber,
         processingFee: 26,
-        paymentMethod: PaymentType.Cash,
+        donationAmount,
+        paymentMethod: paymentMethod || PaymentType.Cash,
         // TODO: Modify logic when DB schema gets changed (medicalInfo is not undefined)
         disability: applicant.medicalInformation?.disability || 'Placeholder disability',
         physicianName: updatedPhysician ? physicianName : physician.name,
@@ -331,9 +362,41 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         physicianAddressLine1: updatedPhysician ? physicianAddressLine1 : physician.addressLine1,
         physicianAddressLine2: updatedPhysician ? physicianAddressLine2 : physician.addressLine2,
         physicianCity: updatedPhysician ? physicianCity : physician.city,
-        physicianPostalCode: updatedPhysician ? physicianPostalCode : physician.postalCode,
+        physicianPostalCode: updatedPhysician
+          ? formatPostalCode(physicianPostalCode)
+          : physician.postalCode,
         physicianPhone: updatedPhysician ? physicianPhone : physician.phone,
         physicianProvince: physician.province,
+        shippingAddressSameAsHomeAddress,
+        billingAddressSameAsHomeAddress,
+        shippingFullName: shippingAddressSameAsHomeAddress
+          ? `${applicantFirstName} ${applicantLastName}`
+          : shippingFullName,
+        shippingAddressLine1: shippingAddressSameAsHomeAddress
+          ? applicantAddressLine1
+          : shippingAddressLine1,
+        shippingAddressLine2: shippingAddressSameAsHomeAddress
+          ? applicantAddressLine2
+          : shippingAddressLine2,
+        shippingCity: shippingAddressSameAsHomeAddress ? applicantCity : shippingCity,
+        shippingPostalCode: shippingAddressSameAsHomeAddress
+          ? applicantPostalCode
+          : formatPostalCode(shippingPostalCode),
+        shippingProvince,
+        billingFullName: billingAddressSameAsHomeAddress
+          ? `${applicantFirstName} ${applicantLastName}`
+          : billingFullName,
+        billingAddressLine1: billingAddressSameAsHomeAddress
+          ? applicantAddressLine1
+          : billingAddressLine1,
+        billingAddressLine2: billingAddressSameAsHomeAddress
+          ? applicantAddressLine2
+          : billingAddressLine2,
+        billingCity: billingAddressSameAsHomeAddress ? applicantCity : billingCity,
+        billingProvince,
+        billingPostalCode: billingAddressSameAsHomeAddress
+          ? applicantPostalCode
+          : formatPostalCode(billingPostalCode),
         applicant: {
           connect: {
             id: applicantId,
@@ -379,6 +442,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
 
   return {
     ok: true,
+    applicationId: application.id,
   };
 };
 

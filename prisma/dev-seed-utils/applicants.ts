@@ -7,7 +7,6 @@ import { UpsertApplicant } from '../types'; // Seeding types
 // Seed data
 const applicants = [
   {
-    id: 1,
     rcdUserId: 12345,
     firstName: 'Applicant',
     middleName: 'Middle-One',
@@ -24,7 +23,6 @@ const applicants = [
     status: ApplicantStatus.Active,
   },
   {
-    id: 2,
     rcdUserId: 23456,
     firstName: 'Applicant',
     lastName: 'Two',
@@ -40,7 +38,6 @@ const applicants = [
     status: ApplicantStatus.Active,
   },
   {
-    id: 3,
     firstName: 'Applicant',
     lastName: 'Three',
     email: 'applicantthree@email.com',
@@ -63,11 +60,12 @@ const applicants = [
  */
 export default async function applicantUpsert(data?: UpsertApplicant[]): Promise<void> {
   for (const applicant of data || applicants) {
-    const { id, ...rest } = applicant;
-    const applicantUpsert = await prisma.applicant.upsert({
-      where: { id },
-      update: rest,
-      create: { id, dateOfBirth: new Date().toISOString(), ...rest },
+    const { ...rest } = applicant;
+    const applicantUpsert = await prisma.applicant.create({
+      data: {
+        dateOfBirth: new Date().toISOString(),
+        ...rest,
+      },
     });
     console.log({ applicantUpsert });
   }

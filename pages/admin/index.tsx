@@ -176,6 +176,7 @@ export default function Requests() {
         limit: PAGE_SIZE,
       },
     },
+    fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
     onCompleted: data => {
       setRequestsData(

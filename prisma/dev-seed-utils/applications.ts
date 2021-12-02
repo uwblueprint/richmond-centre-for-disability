@@ -7,7 +7,6 @@ import { UpsertApplication } from '../types'; // Seeding types
 // Seed data
 const applications = [
   {
-    id: 1,
     rcdUserId: 12345,
     firstName: 'Applicant',
     lastName: 'One',
@@ -40,7 +39,6 @@ const applications = [
     applicationProcessingId: 1,
   },
   {
-    id: 2,
     rcdUserId: 23456,
     firstName: 'Applicant',
     lastName: 'Two',
@@ -67,7 +65,33 @@ const applications = [
     applicationProcessingId: 2,
   },
   {
-    id: 3,
+    rcdUserId: 23456,
+    firstName: 'Applicant',
+    lastName: 'Two',
+    gender: Gender.Female,
+    phone: '0987654321',
+    province: Province.Bc,
+    city: 'Vancouver',
+    addressLine1: '789 Vancouver Rd.',
+    postalCode: 'B1C2D3',
+    disability: 'Requires walker',
+    aid: [Aid.Walker],
+    physicianName: 'Dr. Physician2',
+    physicianMspNumber: 67890,
+    physicianAddressLine1: '789 Alberta Rd.',
+    physicianCity: 'Calgary',
+    physicianProvince: Province.Ab,
+    physicianPostalCode: 'H4K3S0',
+    physicianPhone: '8264029163',
+    processingFee: 26,
+    paymentMethod: PaymentType.Cheque,
+    shopifyConfirmationNumber: '0145830',
+    applicantId: 2,
+    email: 'applicanttwo@gmail.com',
+    applicationProcessingId: 3,
+    isRenewal: false,
+  },
+  {
     firstName: 'Applicant',
     lastName: 'Three',
     gender: Gender.Male,
@@ -89,7 +113,7 @@ const applications = [
     paymentMethod: PaymentType.Cheque,
     shopifyConfirmationNumber: '0245675',
     applicantId: 3,
-    applicationProcessingId: 3,
+    applicationProcessingId: 4,
   },
 ];
 
@@ -99,12 +123,9 @@ const applications = [
  */
 export default async function applicationUpsert(data?: UpsertApplication[]): Promise<void> {
   for (const application of data || applications) {
-    const { id, ...rest } = application;
-    const applicationUpsert = await prisma.application.upsert({
-      where: { id },
-      update: rest,
-      create: {
-        id,
+    const { ...rest } = application;
+    const applicationUpsert = await prisma.application.create({
+      data: {
         dateOfBirth: new Date().toISOString(),
         ...rest,
       },

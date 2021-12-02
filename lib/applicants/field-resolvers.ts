@@ -160,3 +160,35 @@ export const applicantFileHistoryResolver: Resolver<Applicant> = async (
 
   return applicationProcessings;
 };
+
+/**
+ * Field resolver to fetch the most recent renewal request of an applicant.
+ * If the applicant has no previous renewals, return the most recent application.
+ * @returns Application object
+ */
+export const applicantMostRecentRenewalApplicationResolver: Resolver<Applicant> = async (
+  parent,
+  _args,
+  { prisma }
+) => {
+  const renewal = await prisma.applicant
+    .findUnique({
+      where: { id: parent.id },
+    })
+    .applications({
+      orderBy: [
+        {
+          isRenewal: SortOrder.DESC,
+        },
+        {
+          createdAt: SortOrder.DESC,
+        },
+      ],
+      take: 1,
+      include: {
+        renewal: true,
+      },
+    });
+
+  return renewal.length > 0 ? renewal[0] : null;
+};

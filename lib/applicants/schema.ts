@@ -28,6 +28,7 @@ export default `
     permits: [Permit!]!
     medicalHistory: [MedicalHistory!]
     mostRecentPermit: Permit!
+    mostRecentRenewal: Application
     fileHistory: [ApplicationFileAttachments!]!
   }
 
