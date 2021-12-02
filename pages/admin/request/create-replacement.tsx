@@ -15,6 +15,7 @@ import { PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL type
 import { ReasonForReplacement } from '@tools/components/admin/requests/forms/types';
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
 import ReasonForReplacementForm from '@components/admin/requests/forms/ReasonForReplacementForm';
+import CancelCreateRequestModal from '@components/admin/requests/modals/CancelCreateRequestModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/PermitHolderTypeahead';
 import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders'; // Permit holders GQL query}
 import { useLazyQuery, useMutation } from '@apollo/client';
@@ -302,9 +303,8 @@ export default function CreateReplacement() {
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Box>
                   <Text textStyle="body-bold">
-                    User ID:
+                    User ID:{' '}
                     <Box as="span" color="primary">
-                      {' '}
                       <Link href={`/admin/permit-holder/${applicantId}`}>
                         <a>{permitHolderID}</a>
                       </Link>
@@ -312,21 +312,30 @@ export default function CreateReplacement() {
                   </Text>
                 </Box>
                 <Box>
-                  <Link href={`/admin`}>
-                    <Button
-                      bg="background.gray"
-                      _hover={{ bg: 'background.grayHover' }}
-                      color="black"
-                      marginRight="20px"
-                      height="48px"
-                      width="149px"
-                    >
-                      <Text textStyle="button-semibold">Cancel</Text>
-                    </Button>
-                  </Link>
-                  <Button bg="primary" height="48px" width="180px" type="submit" loading={loading}>
-                    <Text textStyle="button-semibold">Create Request</Text>
-                  </Button>
+                  <Stack direction="row" justifyContent="space-between">
+                    <CancelCreateRequestModal type="renewal">
+                      <Button
+                        bg="secondary.critical"
+                        _hover={{ bg: 'secondary.criticalHover' }}
+                        marginRight="20px"
+                        height="48px"
+                        width="149px"
+                      >
+                        <Text textStyle="button-semibold">Discard request</Text>
+                      </Button>
+                    </CancelCreateRequestModal>
+                    <Link href="#">
+                      <Button
+                        bg="primary"
+                        height="48px"
+                        width="180px"
+                        type="submit"
+                        loading={loading}
+                      >
+                        <Text textStyle="button-semibold">Create request</Text>
+                      </Button>
+                    </Link>
+                  </Stack>
                 </Box>
               </Stack>
             </Box>
