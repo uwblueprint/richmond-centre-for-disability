@@ -15,7 +15,6 @@ import { SortOrder } from '@tools/types'; // Sorting type
 import { ApplicationsReportColumn, PaymentType } from '@lib/graphql/types'; // GraphQL types
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 import { createObjectCsvWriter } from 'csv-writer';
-import { GenerateApplicantsReportApplications } from '@lib/applications/types';
 
 /**
  * Query an application by ID
@@ -621,7 +620,7 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
 
   const columnsSet = new Set(columns);
 
-  const applications: GenerateApplicantsReportApplications[] = await prisma.application.findMany({
+  const applications = await prisma.application.findMany({
     where: {
       createdAt: {
         gte: new Date(startDate),
@@ -650,16 +649,16 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
     },
   });
 
-  // Adds totalAmount, applicantName and rcdPermitId properties to applications object
-  applications.map(application => {
-    application.applicantName =
-      application.firstName +
-      (application.middleName
-        ? ` ${application.middleName} ${application.lastName}`
-        : ` ${application.lastName}`);
-    application.totalAmount = (application.processingFee || 0) + (application?.donationAmount || 0);
-    application.rcdPermitId = application.permits?.rcdPermitId;
-    return application;
+  // Adds totalAmount, applicantName and rcdPermitId properties to allow for csv writing
+  const csvApplications = applications.map(application => {
+    return {
+      ...application,
+      applicantName: `${application.firstName} ${application.middleName || ''} ${
+        application.lastName
+      }`,
+      totalAmount: (application.processingFee || 0) + (application?.donationAmount || 0),
+      rcdPermitId: application.permits?.rcdPermitId,
+    };
   });
 
   const csvHeaders = [];
@@ -697,7 +696,7 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
     header: csvHeaders,
   });
 
-  await csvWriter.writeRecords(applications);
+  await csvWriter.writeRecords(csvApplications);
 
   return {
     ok: true,

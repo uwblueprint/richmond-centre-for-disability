@@ -201,7 +201,7 @@ export type ApplicationsFilter = {
 export enum ApplicationsReportColumn {
   UserId = 'USER_ID',
   ApplicantName = 'APPLICANT_NAME',
-  ApplicantDob = 'APPLICANT_DOB',
+  ApplicantDateOfBirth = 'APPLICANT_DATE_OF_BIRTH',
   AppNumber = 'APP_NUMBER',
   ApplicationDate = 'APPLICATION_DATE',
   PaymentMethod = 'PAYMENT_METHOD',
@@ -499,6 +499,7 @@ export type GenerateApplicantsReportInput = {
   columns: Array<ApplicationsReportColumn>;
 };
 
+/** TODO: Return link to AWS S3 file */
 export type GenerateApplicantsReportResult = {
   __typename?: 'GenerateApplicantsReportResult';
   ok: Scalars['Boolean'];
@@ -734,7 +735,7 @@ export type Query = {
   applications: Maybe<QueryApplicationsResult>;
   application: Maybe<Application>;
   permits: Maybe<Array<Permit>>;
-  generateApplicantsReport: GenerateApplicantsReportResult;
+  generateApplicantsReport: Maybe<GenerateApplicantsReportResult>;
 };
 
 

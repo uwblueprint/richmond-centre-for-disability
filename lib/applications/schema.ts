@@ -357,6 +357,7 @@ export default `
     columns: [ApplicationsReportColumn!]!
   }
 
+  # TODO: Return link to AWS S3 file
   type GenerateApplicantsReportResult {
     ok: Boolean!
   }
