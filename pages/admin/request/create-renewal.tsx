@@ -410,7 +410,7 @@ export default function CreateRenewal() {
                       </Button>
                     </CancelCreateRequestModal>
                     <Link href="#">
-                      <Button bg="primary" height="48px" width="180px">
+                      <Button bg="primary" height="48px" width="180px" type="submit" loading={loading}>
                         <Text textStyle="button-semibold">Create request</Text>
                       </Button>
                     </Link>
