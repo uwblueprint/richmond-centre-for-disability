@@ -623,8 +623,8 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
   const applications = await prisma.application.findMany({
     where: {
       createdAt: {
-        gte: new Date(startDate),
-        lte: new Date(endDate),
+        gte: startDate,
+        lte: endDate,
       },
     },
     select: {
@@ -632,7 +632,7 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
       firstName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
       middleName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
       lastName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
-      dateOfBirth: columnsSet.has(ApplicationsReportColumn.ApplicantDob),
+      dateOfBirth: columnsSet.has(ApplicationsReportColumn.ApplicantDateOfBirth),
       createdAt: columnsSet.has(ApplicationsReportColumn.ApplicationDate),
       paymentMethod: columnsSet.has(ApplicationsReportColumn.PaymentMethod),
       processingFee:
@@ -641,7 +641,7 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
       donationAmount:
         columnsSet.has(ApplicationsReportColumn.DonationAmount) ||
         columnsSet.has(ApplicationsReportColumn.TotalAmount),
-      permits: {
+      permit: {
         select: {
           rcdPermitId: true,
         },
@@ -653,11 +653,13 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
   const csvApplications = applications.map(application => {
     return {
       ...application,
-      applicantName: `${application.firstName} ${application.middleName || ''} ${
-        application.lastName
-      }`,
+      applicantName:
+        application.firstName +
+        (application.middleName
+          ? ` ${application.middleName} ${application.lastName}`
+          : ` ${application.lastName}`),
       totalAmount: (application.processingFee || 0) + (application?.donationAmount || 0),
-      rcdPermitId: application.permits?.rcdPermitId,
+      rcdPermitId: application.permit?.rcdPermitId,
     };
   });
 
@@ -669,7 +671,7 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
   if (columnsSet.has(ApplicationsReportColumn.ApplicantName)) {
     csvHeaders.push({ id: 'applicantName', title: 'Applicant Name' });
   }
-  if (columnsSet.has(ApplicationsReportColumn.ApplicantDob)) {
+  if (columnsSet.has(ApplicationsReportColumn.ApplicantDateOfBirth)) {
     csvHeaders.push({ id: 'dateOfBirth', title: 'Applicant DoB' });
   }
   if (columnsSet.has(ApplicationsReportColumn.AppNumber)) {
