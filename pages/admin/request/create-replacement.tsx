@@ -305,8 +305,8 @@ export default function CreateReplacement() {
                   <Text textStyle="body-bold">
                     User ID:{' '}
                     <Box as="span" color="primary">
-                      <Link href={`/admin/permit-holder/${applicantID}`}>
-                        <a>{permitHolderRcdUserID}</a>
+                      <Link href={`/admin/permit-holder/${applicantId}`}>
+                        <a>{permitHolderID}</a>
                       </Link>
                     </Box>
                   </Text>
