@@ -325,7 +325,13 @@ export default function CreateReplacement() {
                       </Button>
                     </CancelCreateRequestModal>
                     <Link href="#">
-                      <Button bg="primary" height="48px" width="180px" type="submit" loading={loading}>
+                      <Button
+                        bg="primary"
+                        height="48px"
+                        width="180px"
+                        type="submit"
+                        loading={loading}
+                      >
                         <Text textStyle="button-semibold">Create request</Text>
                       </Button>
                     </Link>
