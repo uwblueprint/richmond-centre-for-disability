@@ -93,7 +93,7 @@ export default function CreateReplacement() {
       });
 
       const lastApplication = applicant.mostRecentApplication;
-      if (lastApplication !== null) {
+      if (lastApplication) {
         setPaymentDetails({
           ...paymentDetails,
           shippingAddressSameAsHomeAddress: lastApplication.shippingAddressSameAsHomeAddress,
