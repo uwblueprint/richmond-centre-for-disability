@@ -199,6 +199,18 @@ export type ApplicationsFilter = {
   offset?: Maybe<Scalars['Int']>;
 };
 
+export enum ApplicationsReportColumn {
+  UserId = 'USER_ID',
+  ApplicantName = 'APPLICANT_NAME',
+  ApplicantDateOfBirth = 'APPLICANT_DATE_OF_BIRTH',
+  AppNumber = 'APP_NUMBER',
+  ApplicationDate = 'APPLICATION_DATE',
+  PaymentMethod = 'PAYMENT_METHOD',
+  FeeAmount = 'FEE_AMOUNT',
+  DonationAmount = 'DONATION_AMOUNT',
+  TotalAmount = 'TOTAL_AMOUNT'
+}
+
 export type CompleteApplicationResult = {
   __typename?: 'CompleteApplicationResult';
   ok: Scalars['Boolean'];
@@ -483,6 +495,18 @@ export enum Gender {
   Other = 'OTHER'
 }
 
+export type GenerateApplicantsReportInput = {
+  startDate: Scalars['Date'];
+  endDate: Scalars['Date'];
+  columns: Array<ApplicationsReportColumn>;
+};
+
+/** TODO: Return link to AWS S3 file */
+export type GenerateApplicantsReportResult = {
+  __typename?: 'GenerateApplicantsReportResult';
+  ok: Scalars['Boolean'];
+};
+
 export type Guardian = {
   __typename?: 'Guardian';
   id: Scalars['ID'];
@@ -713,6 +737,7 @@ export type Query = {
   applications: Maybe<QueryApplicationsResult>;
   application: Maybe<Application>;
   permits: Maybe<Array<Permit>>;
+  generateApplicantsReport: Maybe<GenerateApplicantsReportResult>;
 };
 
 
@@ -743,6 +768,11 @@ export type QueryApplicationsArgs = {
 
 export type QueryApplicationArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryGenerateApplicantsReportArgs = {
+  input: GenerateApplicantsReportInput;
 };
 
 export type QueryApplicantsResult = {

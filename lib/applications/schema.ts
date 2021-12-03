@@ -351,4 +351,15 @@ export default `
     ok: Boolean!
     applicationId: Int!
   }
+
+  input GenerateApplicantsReportInput {
+    startDate: Date!
+    endDate: Date!
+    columns: [ApplicationsReportColumn!]!
+  }
+
+  # TODO: Return link to AWS S3 file
+  type GenerateApplicantsReportResult {
+    ok: Boolean!
+  }
 `;

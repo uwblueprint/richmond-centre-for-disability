@@ -9,6 +9,7 @@ export default `
     applications(filter: ApplicationsFilter): QueryApplicationsResult
     application(id: ID!): Application
     permits: [Permit!]
+    generateApplicantsReport(input: GenerateApplicantsReportInput!): GenerateApplicantsReportResult
   }
 
   type Mutation {
@@ -118,5 +119,17 @@ export default `
   enum PermitType {
     PERMANENT
     TEMPORARY
+  }
+
+  enum ApplicationsReportColumn {
+    USER_ID
+    APPLICANT_NAME
+    APPLICANT_DATE_OF_BIRTH
+    APP_NUMBER
+    APPLICATION_DATE
+    PAYMENT_METHOD
+    FEE_AMOUNT
+    DONATION_AMOUNT
+    TOTAL_AMOUNT
   }
 `;

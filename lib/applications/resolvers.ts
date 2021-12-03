@@ -12,8 +12,9 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { PaymentType } from '@lib/graphql/types'; // GraphQL types
+import { ApplicationsReportColumn, PaymentType } from '@lib/graphql/types'; // GraphQL types
 import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
+import { createObjectCsvWriter } from 'csv-writer';
 
 /**
  * Query an application by ID
@@ -609,5 +610,97 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
   return {
     ok: true,
     applicationId: application.id,
+  };
+};
+
+export const generateApplicantsReport: Resolver = async (_, args, { prisma }) => {
+  const {
+    input: { startDate, endDate, columns },
+  } = args;
+
+  const columnsSet = new Set(columns);
+
+  const applications = await prisma.application.findMany({
+    where: {
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
+    },
+    select: {
+      rcdUserId: columnsSet.has(ApplicationsReportColumn.UserId),
+      firstName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
+      middleName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
+      lastName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
+      dateOfBirth: columnsSet.has(ApplicationsReportColumn.ApplicantDateOfBirth),
+      createdAt: columnsSet.has(ApplicationsReportColumn.ApplicationDate),
+      paymentMethod: columnsSet.has(ApplicationsReportColumn.PaymentMethod),
+      processingFee:
+        columnsSet.has(ApplicationsReportColumn.FeeAmount) ||
+        columnsSet.has(ApplicationsReportColumn.TotalAmount),
+      donationAmount:
+        columnsSet.has(ApplicationsReportColumn.DonationAmount) ||
+        columnsSet.has(ApplicationsReportColumn.TotalAmount),
+      permit: {
+        select: {
+          rcdPermitId: true,
+        },
+      },
+    },
+  });
+
+  // Adds totalAmount, applicantName and rcdPermitId properties to allow for csv writing
+  const csvApplications = applications.map(application => {
+    return {
+      ...application,
+      applicantName:
+        application.firstName +
+        (application.middleName
+          ? ` ${application.middleName} ${application.lastName}`
+          : ` ${application.lastName}`),
+      totalAmount: (application.processingFee || 0) + (application?.donationAmount || 0),
+      rcdPermitId: application.permit?.rcdPermitId,
+    };
+  });
+
+  const csvHeaders = [];
+
+  if (columnsSet.has(ApplicationsReportColumn.UserId)) {
+    csvHeaders.push({ id: 'rcdUserId', title: 'User ID' });
+  }
+  if (columnsSet.has(ApplicationsReportColumn.ApplicantName)) {
+    csvHeaders.push({ id: 'applicantName', title: 'Applicant Name' });
+  }
+  if (columnsSet.has(ApplicationsReportColumn.ApplicantDateOfBirth)) {
+    csvHeaders.push({ id: 'dateOfBirth', title: 'Applicant DoB' });
+  }
+  if (columnsSet.has(ApplicationsReportColumn.AppNumber)) {
+    csvHeaders.push({ id: 'rcdPermitId', title: 'APP Number' });
+  }
+  if (columnsSet.has(ApplicationsReportColumn.ApplicationDate)) {
+    csvHeaders.push({ id: 'createdAt', title: 'Application Date' });
+  }
+  if (columnsSet.has(ApplicationsReportColumn.PaymentMethod)) {
+    csvHeaders.push({ id: 'paymentMethod', title: 'Payment Method' });
+  }
+  if (columnsSet.has(ApplicationsReportColumn.FeeAmount)) {
+    csvHeaders.push({ id: 'processingFee', title: 'Fee Amount' });
+  }
+  if (columnsSet.has(ApplicationsReportColumn.DonationAmount)) {
+    csvHeaders.push({ id: 'donationAmount', title: 'Donation Amount' });
+  }
+  if (columnsSet.has(ApplicationsReportColumn.TotalAmount)) {
+    csvHeaders.push({ id: 'totalAmount', title: 'Total Amount' });
+  }
+
+  const csvWriter = createObjectCsvWriter({
+    path: 'temp/file.csv',
+    header: csvHeaders,
+  });
+
+  await csvWriter.writeRecords(csvApplications);
+
+  return {
+    ok: true,
   };
 };
