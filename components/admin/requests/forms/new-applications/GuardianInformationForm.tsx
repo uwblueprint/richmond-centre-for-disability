@@ -10,7 +10,7 @@ import {
   Button,
 } from '@chakra-ui/react'; // Chakra UI
 import { AttachmentIcon } from '@chakra-ui/icons';
-import { GuardianInformation } from '@tools/components/admin/requests/forms/types'; // Permit Holder Information Type
+import { GuardianInformation } from '@tools/components/admin/requests/forms/types'; // Guardian Information Type
 
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
@@ -19,9 +19,9 @@ type GuardianInformationFormProps = {
 };
 
 /**
- * PermitHolderInformationForm Component for allowing users to edit permit holder information.
+ * GuardianInformationForm Component for allowing users to edit guardian information.
  *
- * @param {PermitHolderInformation} permitHolderInformation Data Structure that holds all permit holder information for a client request.
+ * @param {GuardianInformation} permitHolderInformation Data Structure that holds all guardian information for a client request.
  * @param onChange Function that uses the updated values from form.
  */
 export default function GuardianInformationForm({
