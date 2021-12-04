@@ -57,3 +57,27 @@ export type DoctorInformation = Pick<
   Physician,
   'mspNumber' | 'name' | 'phone' | 'addressLine1' | 'addressLine2' | 'city' | 'postalCode'
 >;
+
+// Physician Assessment Information Object
+export type PhysicianAssessmentInformation = Pick<
+  Application,
+  'disability' | 'affectsMobility' | 'mobilityAidRequired' | 'cannotWalk100m' | 'permitType'
+> & {
+  physicianCertificationDate: string;
+  patientEligibilityDescription?: string;
+};
+
+// Guardian Information Object
+export type GuardianInformation = Pick<
+  Application,
+  | 'firstName'
+  | 'middleName'
+  | 'lastName'
+  | 'guardianRelationship'
+  | 'phone'
+  | 'addressLine1'
+  | 'addressLine2'
+  | 'city'
+  | 'postalCode'
+  | 'poaFormUrl'
+>;

@@ -29,7 +29,7 @@ import Table from '@components/Table'; // Table component
 import Pagination from '@components/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; //Status badge component
 import { useQuery } from '@apollo/client'; //Apollo client
-import { useEffect, useState } from 'react'; // React
+import React, { useEffect, useState } from 'react'; // React
 import {
   GetApplicationsRequest,
   GetApplicationsResponse,
@@ -41,7 +41,6 @@ import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatDateVerbose } from '@lib/utils/format'; // Verbose date formatter util
 import GenerateReportModal from '@components/admin/reports/GenerateReportModal'; // Generate report modal
-
 // Map uppercase enum strings to lowercase
 const permitTypeString: Record<string, string> = {
   [PermitType.Permanent]: 'Permanent',
