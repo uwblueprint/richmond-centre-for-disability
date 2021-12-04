@@ -65,6 +65,7 @@ export type PhysicianAssessmentInformation = Pick<
 > & {
   physicianCertificationDate: string;
   patientEligibilityDescription?: string;
+  temporaryPermitExpiryDate?: string;
 };
 
 // Guardian Information Object

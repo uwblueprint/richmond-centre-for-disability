@@ -1,14 +1,10 @@
 import Layout from '@components/admin/Layout'; // Layout component
-<<<<<<< HEAD
-import { Text, Box, Flex, Stack, Button, GridItem, useToast } from '@chakra-ui/react'; // Chakra UI
+import { Text, Box, Flex, Stack, Button, GridItem, useToast, Input } from '@chakra-ui/react'; // Chakra UI
 import { SyntheticEvent, useState } from 'react'; // React
-=======
-import { Text, Box, Flex, Stack, Button, GridItem, Input } from '@chakra-ui/react'; // Chakra UI
-import React, { useState } from 'react'; // React
->>>>>>> ccacceb (added new form pages)
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
 import {
   DoctorInformation,
+  GuardianInformation,
   PermitHolderInformation,
   PhysicianAssessmentInformation,
 } from '@tools/components/admin/requests/forms/types'; //Permit holder information type
@@ -22,7 +18,6 @@ import Link from 'next/link'; // Link
 import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
-<<<<<<< HEAD
 import CancelCreateRequestModal from '@components/admin/requests/modals/CancelCreateRequestModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/PermitHolderTypeahead';
 import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders';
@@ -38,10 +33,8 @@ import {
   GetApplicantRenewalResponse,
 } from '@tools/pages/admin/requests/types';
 import { useRouter } from 'next/router';
-=======
 import PhysicianAssessmentForm from '@components/admin/requests/forms/new-applications/PhysicianAssessmentForm';
-// import GuardianInformationForm from '@components/admin/requests/forms/new-applications/GuardianInformationForm';
->>>>>>> ccacceb (added new form pages)
+import GuardianInformationForm from '@components/admin/requests/forms/new-applications/GuardianInformationForm';
 
 export default function CreateRenewal() {
   const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
@@ -270,20 +263,21 @@ export default function CreateRenewal() {
       physicianCertificationDate: new Date().toISOString(),
     });
 
-  // const [guardianInformation, setGuardianInformation] = useState<GuardianInformation>({
-  //   firstName: '',
-  //   middleName: '',
-  //   lastName: '',
-  //   guardianRelationship: '',
-  //   phone: '',
-  //   addressLine1: '',
-  //   addressLine2: '',
-  //   city: '',
-  //   postalCode: '',
-  //   poaFormUrl: '',
-  // });
+  const [guardianInformation, setGuardianInformation] = useState<GuardianInformation>({
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    guardianRelationship: '',
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    postalCode: '',
+    poaFormUrl: '',
+  });
 
-  // const onFileUpload = () => {};
+  /* eslint-disable @typescript-eslint/no-empty-function */
+  const onFileUpload = () => {};
 
   return (
     <Layout>
@@ -304,6 +298,7 @@ export default function CreateRenewal() {
             )}
           </Text>
         </Flex>
+        {/* TODO: remove before merging */}
         <GridItem paddingTop="32px">
           <Box
             border="1px solid"
@@ -321,7 +316,6 @@ export default function CreateRenewal() {
             />
           </Box>
         </GridItem>
-
         <GridItem paddingTop="32px">
           <Box
             border="1px solid"
@@ -333,13 +327,14 @@ export default function CreateRenewal() {
             paddingX="40px"
             align="left"
           >
-            {/* <GuardianInformationForm
+            <GuardianInformationForm
               guardianInformation={guardianInformation}
               onChange={setGuardianInformation}
               onFileUpload={onFileUpload}
-            /> */}
+            />
           </Box>
         </GridItem>
+        {/* /////////////////////////////// */}
 
         {/* Typeahead component */}
         <GridItem paddingTop="32px">

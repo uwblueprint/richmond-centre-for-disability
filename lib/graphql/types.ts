@@ -438,9 +438,9 @@ export type CreateReplacementApplicationInput = {
   postalCode: Scalars['String'];
   /** Replacement Information */
   reason: ReasonForReplacement;
-  lostTimestamp?: Maybe<Scalars['Date']>;
-  lostLocation?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  lostTimestamp: Scalars['Date'];
+  lostLocation: Scalars['String'];
+  description: Scalars['String'];
   /** Payment Information */
   paymentMethod: PaymentType;
   donationAmount?: Maybe<Scalars['Float']>;

@@ -83,22 +83,25 @@ export default function PhysicianAssessmentForm({
             <RadioGroup
               value={
                 physicianAssessmentInformation.affectsMobility
-                  ? 0
+                  ? '0'
                   : physicianAssessmentInformation.cannotWalk100m
-                  ? 1
+                  ? '1'
                   : physicianAssessmentInformation.mobilityAidRequired
-                  ? 2
-                  : 3
+                  ? '2'
+                  : '3'
               }
-              onChange={value =>
+              onChange={value => {
                 // handleChangedPatientEligibility
                 onChange({
                   ...physicianAssessmentInformation,
                   affectsMobility: value === '0',
                   cannotWalk100m: value === '1',
                   mobilityAidRequired: value === '2',
-                })
-              }
+                  ...(value !== '3' && {
+                    patientEligibilityDescription: undefined,
+                  }),
+                });
+              }}
             >
               <Stack>
                 <Radio value={'0'}>
@@ -162,6 +165,23 @@ export default function PhysicianAssessmentForm({
             </Stack>
           </RadioGroup>
         </FormControl>
+
+        {physicianAssessmentInformation.permitType == PermitType.Temporary && (
+          <FormControl isRequired>
+            <FormLabel>{'Temporary permit will expire on'}</FormLabel>
+            <Input
+              type="date"
+              value={physicianAssessmentInformation.temporaryPermitExpiryDate}
+              onChange={event =>
+                onChange({
+                  ...physicianAssessmentInformation,
+                  temporaryPermitExpiryDate: event.target.value,
+                })
+              }
+            />
+            <FormHelperText color="text.seconday">{'Format: YYYY-MM-DD'}</FormHelperText>
+          </FormControl>
+        )}
       </Box>
     </>
   );
