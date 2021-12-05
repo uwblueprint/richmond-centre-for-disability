@@ -124,7 +124,7 @@ export default function PhysicianAssessmentForm({
             physicianAssessmentInformation.cannotWalk100m == false &&
             physicianAssessmentInformation.mobilityAidRequired === false && (
               <FormControl isRequired>
-                <FormLabel>{'Event description'}</FormLabel>
+                <FormLabel>{'Description'}</FormLabel>
                 <Textarea
                   value={physicianAssessmentInformation.patientEligibilityDescription || ''}
                   onChange={event =>
