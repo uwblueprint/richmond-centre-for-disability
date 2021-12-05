@@ -9,7 +9,7 @@ export default `
     applications(filter: ApplicationsFilter): QueryApplicationsResult
     application(id: ID!): Application
     permits: [Permit!]
-    generateApplicantsReport(input: GenerateApplicantsReportInput!): GenerateApplicantsReportResult
+    generateApplicationsReport(input: GenerateApplicationsReportInput!): GenerateApplicationsReportResult
   }
 
   type Mutation {

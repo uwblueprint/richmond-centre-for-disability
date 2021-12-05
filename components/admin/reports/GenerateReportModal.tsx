@@ -22,9 +22,9 @@ import { DownloadIcon } from '@chakra-ui/icons';
 import { GenerateReportStep } from '@tools/components/admin/reports/generate-report-steps'; //GenerateReportStep enum
 import { useLazyQuery } from '@apollo/client';
 import {
-  GenerateApplicantsReportRequest,
-  GenerateApplicantsReportResponse,
-  GENERATE_APPLICANTS_REPORT_QUERY,
+  GenerateApplicationsReportRequest,
+  GenerateApplicationsReportResponse,
+  GENERATE_APPLICATIONS_REPORT_QUERY,
 } from '@tools/pages/admin/requests/queries';
 import { ApplicationsReportColumn } from '@lib/graphql/types';
 
@@ -64,9 +64,17 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
 
   // Export csv query
   const [exportCSV, { loading }] = useLazyQuery<
-    GenerateApplicantsReportResponse,
-    GenerateApplicantsReportRequest
-  >(GENERATE_APPLICANTS_REPORT_QUERY, {
+    GenerateApplicationsReportResponse,
+    GenerateApplicationsReportRequest
+  >(GENERATE_APPLICATIONS_REPORT_QUERY, {
+    onCompleted: data => {
+      if (data?.generateApplicationsReport.ok) {
+        toast({
+          status: 'success',
+          description: 'A CSV report has been successfully generated.',
+        });
+      }
+    },
     onError: error => {
       toast({
         status: 'error',

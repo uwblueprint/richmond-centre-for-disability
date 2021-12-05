@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'; // GraphQL queries
 import {
-  GenerateApplicantsReportResult,
-  QueryGenerateApplicantsReportArgs,
+  GenerateApplicationsReportResult,
+  QueryGenerateApplicationsReportArgs,
 } from '@lib/graphql/types';
 
 // Queries an Application by ID along with the associated permit, replacement, applicationProcessing, and applicant
@@ -156,18 +156,18 @@ export const GET_APPLICANT_REPLACEMENT_QUERY = gql`
   }
 `;
 
-export const GENERATE_APPLICANTS_REPORT_QUERY = gql`
-  query GenerateApplicantsReportQuery($input: GenerateApplicantsReportInput!) {
-    generateApplicantsReport(input: $input) {
+export const GENERATE_APPLICATIONS_REPORT_QUERY = gql`
+  query GenerateApplicationsReportQuery($input: GenerateApplicationsReportInput!) {
+    generateApplicationsReport(input: $input) {
       ok
     }
   }
 `;
 
 // Generate applicants report query arguments
-export type GenerateApplicantsReportRequest = QueryGenerateApplicantsReportArgs;
+export type GenerateApplicationsReportRequest = QueryGenerateApplicationsReportArgs;
 
 // Generate applicants report query result
-export type GenerateApplicantsReportResponse = {
-  generateApplicantsReport: GenerateApplicantsReportResult;
+export type GenerateApplicationsReportResponse = {
+  generateApplicationsReport: GenerateApplicationsReportResult;
 };
