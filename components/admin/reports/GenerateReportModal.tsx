@@ -175,7 +175,13 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
               </Checkbox>
               {page === 'requests' ? (
                 <SimpleGrid columns={3} spacingX="20px" spacingY="6px">
-                  <Checkbox isChecked={userID} onChange={event => setUserID(event.target.checked)}>
+                  <Checkbox
+                    isChecked={userID}
+                    onChange={event => {
+                      setUserID(event.target.checked);
+                      !event.target.checked && setSelectAll(false);
+                    }}
+                  >
                     User ID
                   </Checkbox>
                   <Checkbox
