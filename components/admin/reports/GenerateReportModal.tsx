@@ -16,9 +16,17 @@ import {
   Checkbox,
   SimpleGrid,
   ListItem,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { DownloadIcon } from '@chakra-ui/icons';
 import { GenerateReportStep } from '@tools/components/admin/reports/generate-report-steps'; //GenerateReportStep enum
+import { useLazyQuery } from '@apollo/client';
+import {
+  GenerateApplicantsReportRequest,
+  GenerateApplicantsReportResponse,
+  GENERATE_APPLICANTS_REPORT_QUERY,
+} from '@tools/pages/admin/requests/queries';
+import { ApplicationsReportColumn } from '@lib/graphql/types';
 
 type GenerateReportProps<T> = {
   readonly page: 'requests' | 'permitHolders';
@@ -39,7 +47,7 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
   const [endDate, setEndDate] = useState('');
   const [step, setStep] = useState(GenerateReportStep.SelectColumns);
 
-  // Request checkbox states
+  // Checkbox states
   const [selectAll, setSelectAll] = useState(false);
   const [userID, setUserID] = useState(false);
   const [applicantName, setApplicantName] = useState(false);
@@ -50,6 +58,51 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
   const [feeAmount, setFeeAmount] = useState(false);
   const [donationAmount, setDonationAmount] = useState(false);
   const [totalAmount, setTotalAmount] = useState(false);
+
+  // Toast message
+  const toast = useToast();
+
+  // Export csv query
+  const [exportCSV, { loading }] = useLazyQuery<
+    GenerateApplicantsReportResponse,
+    GenerateApplicantsReportRequest
+  >(GENERATE_APPLICANTS_REPORT_QUERY, {
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
+
+  /**
+   * Handle CSV export
+   */
+  const handleSubmit = async () => {
+    const columns = [];
+
+    userID && columns.push(ApplicationsReportColumn.UserId);
+    applicantName && columns.push(ApplicationsReportColumn.ApplicantName);
+    applicantDoB && columns.push(ApplicationsReportColumn.ApplicantDateOfBirth);
+    APPNumber && columns.push(ApplicationsReportColumn.AppNumber);
+    applicationDate && columns.push(ApplicationsReportColumn.ApplicationDate);
+    paymentMethod && columns.push(ApplicationsReportColumn.PaymentMethod);
+    feeAmount && columns.push(ApplicationsReportColumn.FeeAmount);
+    donationAmount && columns.push(ApplicationsReportColumn.DonationAmount);
+    totalAmount && columns.push(ApplicationsReportColumn.TotalAmount);
+
+    await exportCSV({
+      variables: {
+        input: {
+          startDate,
+          endDate,
+          columns,
+        },
+      },
+    });
+
+    onClose();
+  };
 
   /**
    * Render select columns step
@@ -224,7 +277,19 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
               variant="solid"
               ml={'12px'}
               onClick={() => setStep(GenerateReportStep.Export)}
-              disabled={!startDate || !endDate}
+              disabled={
+                !startDate ||
+                !endDate ||
+                (!userID &&
+                  !applicantName &&
+                  !applicantDoB &&
+                  !APPNumber &&
+                  !applicationDate &&
+                  !paymentMethod &&
+                  !feeAmount &&
+                  !donationAmount &&
+                  !totalAmount)
+              }
             >
               {'Next'}
             </Button>
@@ -269,15 +334,15 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
           <Box>
             {page === 'requests' ? (
               <SimpleGrid columns={3} spacingY="6px">
-                <ListItem fontSize="17px">User ID</ListItem>
-                <ListItem fontSize="17px">Applicant Name</ListItem>
-                <ListItem fontSize="17px">Applicant DoB</ListItem>
-                <ListItem fontSize="17px">APP Number</ListItem>
-                <ListItem fontSize="17px">Application Date</ListItem>
-                <ListItem fontSize="17px">Payment Method</ListItem>
-                <ListItem fontSize="17px">Fee Amount</ListItem>
-                <ListItem fontSize="17px">Donation Amount</ListItem>
-                <ListItem fontSize="17px">Total Amount</ListItem>
+                {userID && <ListItem fontSize="17px">User ID</ListItem>}
+                {applicantName && <ListItem fontSize="17px">Applicant Name</ListItem>}
+                {applicantDoB && <ListItem fontSize="17px">Applicant DoB</ListItem>}
+                {APPNumber && <ListItem fontSize="17px">APP Number</ListItem>}
+                {applicationDate && <ListItem fontSize="17px">Application Date</ListItem>}
+                {paymentMethod && <ListItem fontSize="17px">Payment Method</ListItem>}
+                {feeAmount && <ListItem fontSize="17px">Fee Amount</ListItem>}
+                {donationAmount && <ListItem fontSize="17px">Donation Amount</ListItem>}
+                {totalAmount && <ListItem fontSize="17px">Total Amount</ListItem>}
               </SimpleGrid>
             ) : (
               <SimpleGrid columns={3} spacingY="6px" spacingX="10px">
@@ -308,7 +373,13 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
           >
             {page === 'requests' ? 'Back to Requests Table' : 'Back to Permit Holder Table'}
           </Button>
-          <Button variant="solid" ml="12px" leftIcon={<DownloadIcon />}>
+          <Button
+            onClick={handleSubmit}
+            loading={loading}
+            variant="solid"
+            ml="12px"
+            leftIcon={<DownloadIcon />}
+          >
             {'Export as CSV'}
           </Button>
         </ModalFooter>
