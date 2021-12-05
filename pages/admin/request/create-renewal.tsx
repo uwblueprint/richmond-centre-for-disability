@@ -36,7 +36,7 @@ import PersonalInformationCard from '@components/admin/permit-holders/PersonalIn
 import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
 
 export default function CreateRenewal() {
-  const [onRequestPage, setOnRequestPage] = useState<Boolean>(false);
+  const [onRequestPage, setOnRequestPage] = useState<boolean>(false);
   const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
   const [applicantID, setApplicantID] = useState<number>();
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
@@ -235,7 +235,6 @@ export default function CreateRenewal() {
    */
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-
     if (applicantID) {
       await submitRenewalApplication({
         variables: {
@@ -332,6 +331,8 @@ export default function CreateRenewal() {
                 <PersonalInformationCard
                   applicant={personalInformationCard}
                   showName={true}
+                  // TODO: make PersonalInformationCard not need onSave function.
+                  // eslint-disable-next-line @typescript-eslint/no-empty-function
                   onSave={() => {}}
                 />
               )}
@@ -465,17 +466,15 @@ export default function CreateRenewal() {
                         <Text textStyle="button-semibold">Discard request</Text>
                       </Button>
                     </CancelCreateRequestModal>
-                    <Link href="#">
-                      <Button
-                        bg="primary"
-                        height="48px"
-                        width="180px"
-                        type="submit"
-                        loading={loading}
-                      >
-                        <Text textStyle="button-semibold">Create request</Text>
-                      </Button>
-                    </Link>
+                    <Button
+                      bg="primary"
+                      height="48px"
+                      width="180px"
+                      type="submit"
+                      loading={loading}
+                    >
+                      <Text textStyle="button-semibold">Create request</Text>
+                    </Button>
                   </Stack>
                 </Box>
               </Stack>

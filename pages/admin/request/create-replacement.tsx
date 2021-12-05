@@ -35,7 +35,7 @@ import PersonalInformationCard from '@components/admin/permit-holders/PersonalIn
 import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
 
 export default function CreateReplacement() {
-  const [onRequestPage, setOnRequestPage] = useState<Boolean>(false);
+  const [onRequestPage, setOnRequestPage] = useState<boolean>(false);
   const [applicantId, setApplicantID] = useState<number | undefined>(undefined);
   const [permitHolderID, setPermitHolderID] = useState<number | undefined>(undefined);
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
@@ -265,6 +265,8 @@ export default function CreateReplacement() {
                 <PersonalInformationCard
                   applicant={personalInformationCard}
                   showName={true}
+                  // TODO: make PersonalInformationCard not need onSave function.
+                  // eslint-disable-next-line @typescript-eslint/no-empty-function
                   onSave={() => {}}
                 />
               )}
@@ -377,17 +379,15 @@ export default function CreateReplacement() {
                         <Text textStyle="button-semibold">Discard request</Text>
                       </Button>
                     </CancelCreateRequestModal>
-                    <Link href="#">
-                      <Button
-                        bg="primary"
-                        height="48px"
-                        width="180px"
-                        type="submit"
-                        loading={loading}
-                      >
-                        <Text textStyle="button-semibold">Create request</Text>
-                      </Button>
-                    </Link>
+                    <Button
+                      bg="primary"
+                      height="48px"
+                      width="180px"
+                      type="submit"
+                      loading={loading}
+                    >
+                      <Text textStyle="button-semibold">Create request</Text>
+                    </Button>
                   </Stack>
                 </Box>
               </Stack>
