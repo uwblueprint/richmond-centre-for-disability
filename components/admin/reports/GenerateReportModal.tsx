@@ -39,6 +39,18 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
   const [endDate, setEndDate] = useState('');
   const [step, setStep] = useState(GenerateReportStep.SelectColumns);
 
+  // Request checkbox states
+  const [selectAll, setSelectAll] = useState(false);
+  const [userID, setUserID] = useState(false);
+  const [applicantName, setApplicantName] = useState(false);
+  const [applicantDoB, setApplicantDoB] = useState(false);
+  const [APPNumber, setAPPNumber] = useState(false);
+  const [applicationDate, setApplicationDate] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(false);
+  const [feeAmount, setFeeAmount] = useState(false);
+  const [donationAmount, setDonationAmount] = useState(false);
+  const [totalAmount, setTotalAmount] = useState(false);
+
   /**
    * Render select columns step
    */
@@ -89,20 +101,102 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
               </Stack>
             </Box>
             <Box>
-              <Checkbox paddingBottom="6px" fontWeight="bold">
+              <Checkbox
+                paddingBottom="6px"
+                fontWeight="bold"
+                isChecked={selectAll}
+                onChange={event => {
+                  setSelectAll(event.target.checked);
+                  setUserID(event.target.checked);
+                  setApplicantName(event.target.checked);
+                  setApplicantDoB(event.target.checked);
+                  setAPPNumber(event.target.checked);
+                  setApplicationDate(event.target.checked);
+                  setPaymentMethod(event.target.checked);
+                  setFeeAmount(event.target.checked);
+                  setDonationAmount(event.target.checked);
+                  setTotalAmount(event.target.checked);
+                }}
+              >
                 Select All
               </Checkbox>
               {page === 'requests' ? (
                 <SimpleGrid columns={3} spacingX="20px" spacingY="6px">
-                  <Checkbox>User ID</Checkbox>
-                  <Checkbox>Applicant Name</Checkbox>
-                  <Checkbox>Applicant DoB</Checkbox>
-                  <Checkbox>APP Number</Checkbox>
-                  <Checkbox>Application Date</Checkbox>
-                  <Checkbox>Payment Method</Checkbox>
-                  <Checkbox>Fee Amount</Checkbox>
-                  <Checkbox>Donation Amount</Checkbox>
-                  <Checkbox>Total Amount</Checkbox>
+                  <Checkbox isChecked={userID} onChange={event => setUserID(event.target.checked)}>
+                    User ID
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={applicantName}
+                    onChange={event => {
+                      setApplicantName(event.target.checked);
+                      !event.target.checked && setSelectAll(false);
+                    }}
+                  >
+                    Applicant Name
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={applicantDoB}
+                    onChange={event => {
+                      setApplicantDoB(event.target.checked);
+                      !event.target.checked && setSelectAll(false);
+                    }}
+                  >
+                    Applicant DoB
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={APPNumber}
+                    onChange={event => {
+                      setAPPNumber(event.target.checked);
+                      !event.target.checked && setSelectAll(false);
+                    }}
+                  >
+                    APP Number
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={applicationDate}
+                    onChange={event => {
+                      setApplicationDate(event.target.checked);
+                      !event.target.checked && setSelectAll(false);
+                    }}
+                  >
+                    Application Date
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={paymentMethod}
+                    onChange={event => {
+                      setPaymentMethod(event.target.checked);
+                      !event.target.checked && setSelectAll(false);
+                    }}
+                  >
+                    Payment Method
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={feeAmount}
+                    onChange={event => {
+                      setFeeAmount(event.target.checked);
+                      !event.target.checked && setSelectAll(false);
+                    }}
+                  >
+                    Fee Amount
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={donationAmount}
+                    onChange={event => {
+                      setDonationAmount(event.target.checked);
+                      !event.target.checked && setSelectAll(false);
+                    }}
+                  >
+                    Donation Amount
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={totalAmount}
+                    onChange={event => {
+                      setTotalAmount(event.target.checked);
+                      !event.target.checked && setSelectAll(false);
+                    }}
+                  >
+                    Total Amount
+                  </Checkbox>
                 </SimpleGrid>
               ) : (
                 <SimpleGrid columns={3} spacingX="0px" spacingY="6px">
