@@ -209,6 +209,7 @@ export default function PermitHolder({ id }: Props) {
           {data?.applicant && (
             <PersonalInformationCard
               applicant={data.applicant}
+              showName={false}
               onSave={handleUpdateUserInformation}
             />
           )}

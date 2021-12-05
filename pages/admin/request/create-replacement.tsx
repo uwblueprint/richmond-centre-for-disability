@@ -11,7 +11,7 @@ import {
   PermitHolderInformation,
 } from '@tools/components/admin/requests/forms/types'; //Permit holder information type
 import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm'; //Payment details form
-import { PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
+import { ApplicantStatus, Gender, PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
 import { ReasonForReplacement } from '@tools/components/admin/requests/forms/types';
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
 import ReasonForReplacementForm from '@components/admin/requests/forms/ReasonForReplacementForm';
@@ -30,8 +30,12 @@ import {
   CreateReplacementApplicationResponse,
 } from '@tools/pages/applicant/replacements';
 import { useRouter } from 'next/router'; // Router
+import BackToSearch from '@components/admin/requests/modals/BackToSearchModal';
+import PersonalInformationCard from '@components/admin/permit-holders/PersonalInformationCard';
+import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
 
 export default function CreateReplacement() {
+  const [onRequestPage, setOnRequestPage] = useState<Boolean>(false);
   const [applicantId, setApplicantID] = useState<number | undefined>(undefined);
   const [permitHolderID, setPermitHolderID] = useState<number | undefined>(undefined);
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
@@ -43,6 +47,22 @@ export default function CreateReplacement() {
     addressLine2: '',
     city: '',
     postalCode: '',
+  });
+  const [personalInformationCard, setPermitInformationCard] = useState<ApplicantData>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    postalCode: '',
+    rcdUserId: 0,
+    id: 0,
+    dateOfBirth: '',
+    status: ApplicantStatus.Active,
+    gender: Gender.Other,
+    province: Province.On,
   });
 
   const [reasonDetails, setReason] = useState<ReasonForReplacement>({
@@ -106,7 +126,22 @@ export default function CreateReplacement() {
           shippingPostalCode: lastApplication.shippingPostalCode,
         });
       }
-
+      setPermitInformationCard({
+        id: +applicant.id,
+        rcdUserId: applicant.rcdUserId || 0,
+        firstName: applicant.firstName,
+        lastName: applicant.lastName,
+        gender: applicant.gender,
+        dateOfBirth: applicant.dateOfBirth,
+        email: applicant.email,
+        phone: applicant.phone,
+        province: applicant.province,
+        city: applicant.city,
+        addressLine1: applicant.addressLine1,
+        addressLine2: applicant.addressLine2,
+        status: applicant.status,
+        postalCode: applicant.postalCode,
+      });
       setPermitHolderID(applicant.rcdUserId || 0);
       setApplicantID(+applicant.id);
     },
@@ -206,25 +241,38 @@ export default function CreateReplacement() {
           </Text>
         </Flex>
         {/* Typeahead component */}
-        <GridItem paddingTop="32px">
-          <Box
-            border="1px solid"
-            borderColor="border.secondary"
-            borderRadius="12px"
-            bgColor="white"
-            paddingTop="32px"
-            paddingBottom="40px"
-            paddingX="40px"
-            align="left"
-          >
-            <Text textStyle="display-small-semibold" paddingBottom="20px">
-              {`Search Permit Holder`}
-            </Text>
-            <PermitHolderTypeahead onSelect={handleSelectPermitHolder} />
-          </Box>
-        </GridItem>
+        {!onRequestPage && (
+          <>
+            <GridItem paddingTop="32px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Search Permit Holder`}
+                </Text>
+                <PermitHolderTypeahead onSelect={handleSelectPermitHolder} />
+              </Box>
+            </GridItem>
+            <GridItem paddingTop="32px">
+              {applicantId !== undefined && (
+                <PersonalInformationCard
+                  applicant={personalInformationCard}
+                  showName={true}
+                  onSave={() => {}}
+                />
+              )}
+            </GridItem>
+          </>
+        )}
 
-        {applicantId !== undefined && (
+        {applicantId !== undefined && onRequestPage && (
           <form onSubmit={handleSubmit}>
             {/* Permit Holder Information Form */}
             <GridItem paddingTop="32px">
@@ -302,14 +350,19 @@ export default function CreateReplacement() {
             >
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Text textStyle="body-bold">
-                    User ID:{' '}
-                    <Box as="span" color="primary">
-                      <Link href={`/admin/permit-holder/${applicantId}`}>
-                        <a>{permitHolderID}</a>
-                      </Link>
-                    </Box>
-                  </Text>
+                  <Button
+                    bg="background.gray"
+                    _hover={{ bg: 'background.grayHover' }}
+                    marginRight="20px"
+                    height="48px"
+                    width="180px"
+                  >
+                    <BackToSearch onGoBack={() => setOnRequestPage(false)}>
+                      <Text textStyle="button-semibold" color="text.default">
+                        Back to search
+                      </Text>
+                    </BackToSearch>
+                  </Button>
                 </Box>
                 <Box>
                   <Stack direction="row" justifyContent="space-between">
@@ -319,7 +372,7 @@ export default function CreateReplacement() {
                         _hover={{ bg: 'secondary.criticalHover' }}
                         marginRight="20px"
                         height="48px"
-                        width="149px"
+                        width="188px"
                       >
                         <Text textStyle="button-semibold">Discard request</Text>
                       </Button>
@@ -340,6 +393,53 @@ export default function CreateReplacement() {
               </Stack>
             </Box>
           </form>
+        )}
+        {/* Footer on Permit Search*/}
+        {!onRequestPage && (
+          <Box
+            position="fixed"
+            left="0"
+            bottom="0"
+            right="0"
+            paddingY="20px"
+            paddingX="188px"
+            bgColor="white"
+            boxShadow="dark-lg"
+          >
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Box />
+              <Box>
+                <Stack direction="row" justifyContent="space-between">
+                  <Link href={`/admin`}>
+                    <Button
+                      bg="background.gray"
+                      _hover={{ bg: 'background.grayHover' }}
+                      marginRight="20px"
+                      height="48px"
+                      width="149px"
+                    >
+                      <Text textStyle="button-semibold" color="text.default">
+                        Cancel
+                      </Text>
+                    </Button>
+                  </Link>
+                  <Link href="#">
+                    <Button
+                      bg="primary"
+                      height="48px"
+                      width="217px"
+                      type="submit"
+                      loading={loading}
+                      isDisabled={applicantId == undefined}
+                      onClick={() => setOnRequestPage(true)}
+                    >
+                      <Text textStyle="button-semibold">Proceed to request</Text>
+                    </Button>
+                  </Link>
+                </Stack>
+              </Box>
+            </Stack>
+          </Box>
         )}
       </GridItem>
     </Layout>

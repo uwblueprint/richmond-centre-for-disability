@@ -89,6 +89,10 @@ export const GET_APPLICANT_RENEWAL_QUERY = gql`
       postalCode
       id
       rcdUserId
+      dateOfBirth
+      status
+      gender
+      province
       medicalInformation {
         physician {
           name
@@ -131,6 +135,10 @@ export const GET_APPLICANT_REPLACEMENT_QUERY = gql`
       postalCode
       id
       rcdUserId
+      dateOfBirth
+      status
+      gender
+      province
       mostRecentApplication {
         shippingAddressSameAsHomeAddress
         shippingFullName

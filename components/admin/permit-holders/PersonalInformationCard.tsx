@@ -8,6 +8,9 @@ import {
   Button,
   Tooltip,
   useClipboard,
+  Flex,
+  Wrap,
+  Badge,
 } from '@chakra-ui/react'; // Chakra UI
 import EditUserInformationModal from '@components/admin/permit-holders/modals/EditUserInformationModal'; // Edit User Information Modal
 import PermitHolderInfoCard from '@components/admin/PermitHolderInfoCard'; // Custom Card component
@@ -17,30 +20,68 @@ import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 type PersonalInformationProps = {
   readonly applicant: ApplicantData;
+  readonly showName: boolean;
   readonly onSave: (applicationData: UpdateApplicantInput) => void;
 };
 
 export default function PersonalInformationCard(props: PersonalInformationProps) {
-  const { applicant, onSave } = props;
+  const { applicant, showName, onSave } = props;
   const { hasCopied, onCopy } = useClipboard(applicant?.email ? applicant?.email : '');
 
   return (
     <PermitHolderInfoCard
       colSpan={5}
       header={
-        <Text as="h4" textStyle="body-bold">
-          Personal Information
-        </Text>
+        <>
+          {showName && (
+            <Flex marginTop={5} alignItems="center">
+              <Box>
+                <Flex alignItems="center">
+                  <Text textStyle="display-large" as="h1" marginRight={3}>
+                    {`${applicant.firstName} ${applicant.lastName}`}
+                  </Text>
+                  {applicant.status && (
+                    <Wrap>
+                      <Badge variant={applicant.status}>{applicant.status}</Badge>
+                    </Wrap>
+                  )}
+                </Flex>
+                <HStack spacing={3} marginTop={0}>
+                  <Text textStyle="caption" as="p">
+                    ID: #{applicant.rcdUserId}
+                  </Text>
+                </HStack>
+              </Box>
+            </Flex>
+          )}
+          {!showName && (
+            <Text as="h4" textStyle="body-bold">
+              Personal Information
+            </Text>
+          )}
+        </>
       }
       editModal={
-        <EditUserInformationModal applicant={applicant} onSave={onSave}>
-          <Button color="primary" variant="ghost" textDecoration="underline">
-            <Text textStyle="body-bold">Edit</Text>
-          </Button>
-        </EditUserInformationModal>
+        !showName && (
+          <EditUserInformationModal applicant={applicant} onSave={onSave}>
+            <Button color="primary" variant="ghost" textDecoration="underline">
+              <Text textStyle="body-bold">Edit</Text>
+            </Button>
+          </EditUserInformationModal>
+        )
       }
     >
-      <VStack spacing="12px" align="left">
+      {showName && (
+        <>
+          <Divider mt="24px" />
+          <HStack spacing="12px" pt="24px" align="left">
+            <Text as="h4" textStyle="body-bold">
+              Personal Information
+            </Text>
+          </HStack>
+        </>
+      )}
+      <VStack spacing="12px" align="left" textAlign="left">
         <Box>
           <Text as="p" textStyle="body-regular">
             Date of Birth: {formatDate(applicant.dateOfBirth)}
@@ -52,10 +93,8 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
           </Text>
         </Box>
       </VStack>
-
       <Divider mt="24px" />
-
-      <VStack spacing="12px" pt="24px" align="left">
+      <VStack spacing="12px" pt="24px" align="left" textAlign="left">
         <HStack spacing="12px">
           <Box>
             <Text as="h4" textStyle="body-bold">
@@ -88,10 +127,8 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
           </Text>
         </Box>
       </VStack>
-
       <Divider mt="24px" />
-
-      <VStack spacing="12px" pt="24px" align="left">
+      <VStack spacing="12px" pt="24px" align="left" textAlign="left">
         <HStack spacing="12px">
           <Box>
             <Text as="h4" textStyle="body-bold">

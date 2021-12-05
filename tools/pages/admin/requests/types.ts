@@ -146,6 +146,10 @@ export type GetApplicantRenewalResponse = {
     | 'city'
     | 'postalCode'
     | 'rcdUserId'
+    | 'dateOfBirth'
+    | 'status'
+    | 'gender'
+    | 'province'
   > & {
     medicalInformation: {
       physician: Pick<
@@ -175,7 +179,7 @@ export type GetApplicantRenewalResponse = {
  */
 export type GetApplicantReplacementRequest = Pick<Applicant, 'id'>;
 
-/**
+/**p
  * Response type for fetching an applicant for replacement request
  */
 export type GetApplicantReplacementResponse = {
@@ -191,6 +195,10 @@ export type GetApplicantReplacementResponse = {
     | 'postalCode'
     | 'rcdUserId'
     | 'id'
+    | 'dateOfBirth'
+    | 'status'
+    | 'gender'
+    | 'province'
   > & {
     mostRecentApplication: Pick<
       Application,
