@@ -32,8 +32,8 @@ import {
 } from '@tools/pages/admin/requests/types';
 import { useRouter } from 'next/router';
 import BackToSearch from '@components/admin/requests/modals/BackToSearchModal';
-import PersonalInformationCard from '@components/admin/permit-holders/PersonalInformationCard';
 import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
+import SelectedPermitHolderCard from '@components/admin/requests/SelectedPermitHolderCard';
 
 export default function CreateRenewal() {
   const [onRequestPage, setOnRequestPage] = useState<boolean>(false);
@@ -328,13 +328,7 @@ export default function CreateRenewal() {
             </GridItem>
             <GridItem paddingTop="32px">
               {permitHolderRcdUserID && (
-                <PersonalInformationCard
-                  applicant={personalInformationCard}
-                  showName={true}
-                  // TODO: make PersonalInformationCard not need onSave function.
-                  // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onSave={() => {}}
-                />
+                <SelectedPermitHolderCard applicant={personalInformationCard} />
               )}
             </GridItem>
           </>

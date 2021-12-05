@@ -31,7 +31,7 @@ import {
 } from '@tools/pages/applicant/replacements';
 import { useRouter } from 'next/router'; // Router
 import BackToSearch from '@components/admin/requests/modals/BackToSearchModal';
-import PersonalInformationCard from '@components/admin/permit-holders/PersonalInformationCard';
+import SelectedPermitHolderCard from '@components/admin/requests/SelectedPermitHolderCard';
 import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
 
 export default function CreateReplacement() {
@@ -262,13 +262,7 @@ export default function CreateReplacement() {
             </GridItem>
             <GridItem paddingTop="32px">
               {applicantId !== undefined && (
-                <PersonalInformationCard
-                  applicant={personalInformationCard}
-                  showName={true}
-                  // TODO: make PersonalInformationCard not need onSave function.
-                  // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onSave={() => {}}
-                />
+                <SelectedPermitHolderCard applicant={personalInformationCard} />
               )}
             </GridItem>
           </>
