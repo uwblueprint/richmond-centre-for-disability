@@ -440,7 +440,13 @@ export default function CreateRenewal() {
                     height="48px"
                     width="180px"
                   >
-                    <BackToSearch onGoBack={() => setOnRequestPage(false)}>
+                    <BackToSearch
+                      onGoBack={() => {
+                        setApplicantID(undefined);
+                        setPermitHolderRcdUserID(undefined);
+                        setOnRequestPage(false);
+                      }}
+                    >
                       <Text textStyle="button-semibold" color="text.default">
                         Back to search
                       </Text>

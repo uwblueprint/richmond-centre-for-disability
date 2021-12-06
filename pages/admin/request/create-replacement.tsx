@@ -353,7 +353,13 @@ export default function CreateReplacement() {
                     height="48px"
                     width="180px"
                   >
-                    <BackToSearch onGoBack={() => setOnRequestPage(false)}>
+                    <BackToSearch
+                      onGoBack={() => {
+                        setApplicantID(undefined);
+                        setPermitHolderID(undefined);
+                        setOnRequestPage(false);
+                      }}
+                    >
                       <Text textStyle="button-semibold" color="text.default">
                         Back to search
                       </Text>
@@ -362,7 +368,7 @@ export default function CreateReplacement() {
                 </Box>
                 <Box>
                   <Stack direction="row" justifyContent="space-between">
-                    <CancelCreateRequestModal type="renewal">
+                    <CancelCreateRequestModal type="replacement">
                       <Button
                         bg="secondary.critical"
                         _hover={{ bg: 'secondary.criticalHover' }}
