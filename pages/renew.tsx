@@ -547,7 +547,6 @@ export default function Renew() {
             </Box>
             <Flex width="100%" justifyContent="flex-end">
               <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
-              {/* TODO: Replace with `Proceed to payment` button */}
               <Button
                 variant="solid"
                 onClick={handleSubmit}
@@ -559,12 +558,7 @@ export default function Renew() {
                   invalidContact ||
                   invalidDoctor
                 }
-              >{`Submit`}</Button>
-              {/* <Button
-                variant="solid"
-                onClick={nextStep}
-                disabled={!certified || invalidPersonalAddress || invalidContact || invalidDoctor}
-              >{`Proceed to payment`}</Button> */}
+              >{`Proceed to payment`}</Button>
             </Flex>
           </Step>
         </Steps>
