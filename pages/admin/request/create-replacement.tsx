@@ -414,30 +414,34 @@ export default function CreateReplacement() {
               <Box>
                 <Stack direction="row" justifyContent="space-between">
                   <Link href={`/admin`}>
-                    <Button
-                      bg="background.gray"
-                      _hover={{ bg: 'background.grayHover' }}
-                      marginRight="20px"
-                      height="48px"
-                      width="149px"
-                    >
-                      <Text textStyle="button-semibold" color="text.default">
-                        Cancel
-                      </Text>
-                    </Button>
+                    <a>
+                      <Button
+                        bg="background.gray"
+                        _hover={{ bg: 'background.grayHover' }}
+                        marginRight="20px"
+                        height="48px"
+                        width="149px"
+                      >
+                        <Text textStyle="button-semibold" color="text.default">
+                          Cancel
+                        </Text>
+                      </Button>
+                    </a>
                   </Link>
                   <Link href="#">
-                    <Button
-                      bg="primary"
-                      height="48px"
-                      width="217px"
-                      type="submit"
-                      loading={loading}
-                      isDisabled={applicantId == undefined}
-                      onClick={() => setNewPageState(RequestFlowPageState.SubmitingRequestPage)}
-                    >
-                      <Text textStyle="button-semibold">Proceed to request</Text>
-                    </Button>
+                    <a>
+                      <Button
+                        bg="primary"
+                        height="48px"
+                        width="217px"
+                        type="submit"
+                        loading={loading}
+                        isDisabled={applicantId == undefined}
+                        onClick={() => setNewPageState(RequestFlowPageState.SubmitingRequestPage)}
+                      >
+                        <Text textStyle="button-semibold">Proceed to request</Text>
+                      </Button>
+                    </a>
                   </Link>
                 </Stack>
               </Box>
