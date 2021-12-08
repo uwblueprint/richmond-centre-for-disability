@@ -10,25 +10,34 @@ import {
   Button,
 } from '@chakra-ui/react'; // Chakra UI
 import { AttachmentIcon } from '@chakra-ui/icons';
-import { GuardianInformation } from '@tools/components/admin/requests/forms/types'; // Guardian Information Type
+import { GuardianInformation } from '@tools/components/admin/requests/forms/types'; // Permit Holder Information Type
+import { ChangeEventHandler } from 'react';
 
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
   readonly onChange: (updatedData: GuardianInformation) => void;
-  readonly onFileUpload: (args: Record<string, any>) => void;
+  readonly fileList: FileList;
 };
 
 /**
  * GuardianInformationForm Component for allowing users to edit guardian information.
  *
- * @param {GuardianInformation} permitHolderInformation Data Structure that holds all guardian information for a client request.
+ * @param {GuardianInformation} guardianInformation Object that holds all guardian information for a client request.
  * @param onChange Function that uses the updated values from form.
  */
 export default function GuardianInformationForm({
   guardianInformation,
   onChange,
-  onFileUpload,
 }: GuardianInformationFormProps) {
+  const handleChange =
+    (field: keyof GuardianInformation): ChangeEventHandler<HTMLInputElement> =>
+    event => {
+      onChange({
+        ...guardianInformation,
+        [field]: event.target.value,
+      });
+    };
+
   return (
     <>
       {/* Personal Information Section */}
@@ -39,57 +48,24 @@ export default function GuardianInformationForm({
         <Stack direction="row" spacing="20px">
           <FormControl isRequired>
             <FormLabel>{'First name'}</FormLabel>
-            <Input
-              value={guardianInformation.firstName}
-              onChange={event =>
-                onChange({
-                  ...guardianInformation,
-                  firstName: event.target.value,
-                })
-              }
-            />
+            <Input value={guardianInformation.firstName} onChange={handleChange('firstName')} />
           </FormControl>
 
           <FormControl>
             <FormLabel>{'Middle name'}</FormLabel>
-            <Input
-              value={guardianInformation.middleName}
-              onChange={event =>
-                onChange({
-                  ...guardianInformation,
-                  lastName: event.target.value,
-                })
-              }
-            />
+            <Input value={guardianInformation.middleName} onChange={handleChange('middleName')} />
           </FormControl>
 
           <FormControl isRequired>
             <FormLabel>{'Last name'}</FormLabel>
-            <Input
-              value={guardianInformation.lastName}
-              onChange={event =>
-                onChange({
-                  ...guardianInformation,
-                  lastName: event.target.value,
-                })
-              }
-            />
+            <Input value={guardianInformation.lastName} onChange={handleChange('lastName')} />
           </FormControl>
         </Stack>
 
         <Stack direction="row" spacing="20px" paddingTop="20px">
           <FormControl isRequired>
             <FormLabel>{'Phone number'}</FormLabel>
-            <Input
-              value={guardianInformation.phone}
-              type="tel"
-              onChange={event =>
-                onChange({
-                  ...guardianInformation,
-                  phone: event.target.value,
-                })
-              }
-            />
+            <Input value={guardianInformation.phone} type="tel" onChange={handleChange('phone')} />
             <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
           </FormControl>
 
@@ -97,18 +73,13 @@ export default function GuardianInformationForm({
             <FormLabel>{'Relationship to applicant'}</FormLabel>
             <Input
               value={guardianInformation.guardianRelationship || ''}
-              onChange={event =>
-                onChange({
-                  ...guardianInformation,
-                  guardianRelationship: event.target.value,
-                })
-              }
+              onChange={handleChange('guardianRelationship')}
             />
           </FormControl>
         </Stack>
       </Box>
 
-      <Divider borderColor="border.secondary" />
+      <Divider />
 
       {/* Address Section */}
 
@@ -119,15 +90,7 @@ export default function GuardianInformationForm({
 
         <FormControl isRequired paddingBottom="24px">
           <FormLabel>{'Address line 1'}</FormLabel>
-          <Input
-            value={guardianInformation.addressLine1}
-            onChange={event =>
-              onChange({
-                ...guardianInformation,
-                addressLine1: event.target.value,
-              })
-            }
-          />
+          <Input value={guardianInformation.addressLine1} onChange={handleChange('addressLine1')} />
           <FormHelperText color="text.seconday">
             {'Street Address, P.O. Box, Company Name, c/o'}
           </FormHelperText>
@@ -142,12 +105,7 @@ export default function GuardianInformationForm({
           </FormLabel>
           <Input
             value={guardianInformation.addressLine2 || ''}
-            onChange={event =>
-              onChange({
-                ...guardianInformation,
-                addressLine2: event.target.value,
-              })
-            }
+            onChange={handleChange('addressLine2')}
           />
           <FormHelperText color="text.seconday">
             {'Apartment, suite, unit, building, floor, etc'}
@@ -157,28 +115,12 @@ export default function GuardianInformationForm({
         <Stack direction="row" spacing="20px">
           <FormControl isRequired>
             <FormLabel>{'City'}</FormLabel>
-            <Input
-              value={guardianInformation.city}
-              onChange={event =>
-                onChange({
-                  ...guardianInformation,
-                  city: event.target.value,
-                })
-              }
-            />
+            <Input value={guardianInformation.city} onChange={handleChange('city')} />
           </FormControl>
 
           <FormControl isRequired>
             <FormLabel>{'Postal code'}</FormLabel>
-            <Input
-              value={guardianInformation.postalCode}
-              onChange={event =>
-                onChange({
-                  ...guardianInformation,
-                  postalCode: event.target.value,
-                })
-              }
-            />
+            <Input value={guardianInformation.postalCode} onChange={handleChange('postalCode')} />
             <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
           </FormControl>
         </Stack>
@@ -186,15 +128,11 @@ export default function GuardianInformationForm({
         <Text as="h3" textStyle="heading" paddingBottom="20px">
           {'Upload POA File'}
         </Text>
+        {/* TODO: Implement the file upload functionality using the fileList prop */}
         <Text color="text.seconday">
           {'Only ONE file can be added. Files must be .pdf and can be a maximum of 5MB in size.'}{' '}
         </Text>
-        <Button
-          variant="solid"
-          marginTop="15px"
-          leftIcon={<AttachmentIcon />}
-          onClick={() => onFileUpload({ documentUrl: 'documentUrl' })}
-        >
+        <Button variant="solid" marginTop="15px" leftIcon={<AttachmentIcon />}>
           {'Click to add attachement'}
         </Button>
       </Box>

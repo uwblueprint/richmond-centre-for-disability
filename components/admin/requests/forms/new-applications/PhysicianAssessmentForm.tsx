@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { PermitType } from '@lib/graphql/types';
 import { PhysicianAssessmentInformation } from '@tools/components/admin/requests/forms/types';
-import React from 'react';
+import { ChangeEventHandler } from 'react';
 
 type PhysicianAssessmentFormProps = {
   readonly physicianAssessmentInformation: PhysicianAssessmentInformation;
@@ -23,16 +23,24 @@ type PhysicianAssessmentFormProps = {
 /**
  * PhysicianAssessmentForm Component for allowing users to edit physician assessment information.
  *
- * @param {PhysicianAssessmentInformation} physicianAssessmentInformation Data Structure that holds all physician assessment information for a client request.
+ * @param {PhysicianAssessmentInformation} physicianAssessmentInformation Object that holds all physician assessment information for a client request.
  * @param onChange Function that uses the updated values from form.
  */
 export default function PhysicianAssessmentForm({
   physicianAssessmentInformation,
   onChange,
 }: PhysicianAssessmentFormProps) {
+  const handleChange =
+    (field: keyof PhysicianAssessmentInformation): ChangeEventHandler<HTMLInputElement> =>
+    event => {
+      onChange({
+        ...physicianAssessmentInformation,
+        [field]: event.target.value,
+      });
+    };
+
   return (
     <>
-      {/* Personal Information Section */}
       <Box paddingBottom="32px">
         <Text as="h3" textStyle="heading" paddingBottom="24px">
           {`Physician’s Assessment`}
@@ -42,12 +50,7 @@ export default function PhysicianAssessmentForm({
             <FormLabel>{'Medical name of disabling condition(s)'}</FormLabel>
             <Input
               value={physicianAssessmentInformation?.disability}
-              onChange={event =>
-                onChange({
-                  ...physicianAssessmentInformation,
-                  disability: event.target.value,
-                })
-              }
+              onChange={handleChange('disability')}
             />
           </FormControl>
 
@@ -56,19 +59,14 @@ export default function PhysicianAssessmentForm({
             <Input
               type="date"
               value={physicianAssessmentInformation.physicianCertificationDate}
-              onChange={event =>
-                onChange({
-                  ...physicianAssessmentInformation,
-                  physicianCertificationDate: event.target.value,
-                })
-              }
+              onChange={handleChange('physicianCertificationDate')}
             />
             <FormHelperText color="text.seconday">{'Format: YYYY-MM-DD'}</FormHelperText>
           </FormControl>
         </Stack>
       </Box>
 
-      <Divider borderColor="border.secondary" />
+      <Divider />
 
       {/* Patient Eligibility Section */}
 
@@ -80,6 +78,7 @@ export default function PhysicianAssessmentForm({
         <Stack spacing="20px">
           <FormControl isRequired>
             <FormLabel>{'Please select the condition'}</FormLabel>
+            {/* TODO: Revise DB schema to replace the 3 boolean columns to a single enum column */}
             <RadioGroup
               value={
                 physicianAssessmentInformation.affectsMobility
@@ -120,9 +119,9 @@ export default function PhysicianAssessmentForm({
             </RadioGroup>
           </FormControl>
 
-          {physicianAssessmentInformation.affectsMobility === false &&
-            physicianAssessmentInformation.cannotWalk100m == false &&
-            physicianAssessmentInformation.mobilityAidRequired === false && (
+          {!physicianAssessmentInformation.affectsMobility &&
+            !physicianAssessmentInformation.cannotWalk100m &&
+            !physicianAssessmentInformation.mobilityAidRequired && (
               <FormControl isRequired>
                 <FormLabel>{'Description'}</FormLabel>
                 <Textarea
@@ -165,8 +164,7 @@ export default function PhysicianAssessmentForm({
             </Stack>
           </RadioGroup>
         </FormControl>
-
-        {physicianAssessmentInformation.permitType == PermitType.Temporary && (
+        {physicianAssessmentInformation.permitType === PermitType.Temporary && (
           <FormControl isRequired>
             <FormLabel>{'Temporary permit will expire on'}</FormLabel>
             <Input

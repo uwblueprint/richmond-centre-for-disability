@@ -29,7 +29,7 @@ import Table from '@components/Table'; // Table component
 import Pagination from '@components/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; //Status badge component
 import { useQuery } from '@apollo/client'; //Apollo client
-import React, { useEffect, useState } from 'react'; // React
+import { useEffect, useState } from 'react'; // React
 import {
   GetApplicationsRequest,
   GetApplicationsResponse,

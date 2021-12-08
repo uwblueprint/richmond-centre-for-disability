@@ -63,6 +63,7 @@ export type PhysicianAssessmentInformation = Pick<
   Application,
   'disability' | 'affectsMobility' | 'mobilityAidRequired' | 'cannotWalk100m' | 'permitType'
 > & {
+  //TODO: Update DB to account for these columns
   physicianCertificationDate: string;
   patientEligibilityDescription?: string;
   temporaryPermitExpiryDate?: string;
