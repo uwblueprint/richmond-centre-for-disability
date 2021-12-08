@@ -43,6 +43,9 @@ CREATE TYPE ReasonForReplacement as ENUM('LOST', 'STOLEN', 'OTHER');
 -- Create permit type enum
 CREATE TYPE PermitType as ENUM('PERMANENT', 'TEMPORARY');
 
+-- Create payment status enum
+CREATE TYPE PaymentStatus as ENUM('PENDING', 'COMPLETED');
+
 -- Create employees table
 CREATE TABLE employees (
   id                SERIAL PRIMARY KEY NOT NULL,
@@ -151,6 +154,7 @@ CREATE TABLE applicants (
 CREATE TABLE application_processing (
   id                  SERIAL PRIMARY KEY NOT NULL,
   status              ApplicationStatus NOT NULL DEFAULT 'PENDING',
+  payment_status      PaymentStatus NOT NULL DEFAULT 'PENDING',
   app_number          INTEGER UNIQUE,
   app_holepunched     BOOLEAN NOT NULL DEFAULT false,
   wallet_card_created BOOLEAN NOT NULL DEFAULT false,

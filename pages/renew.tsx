@@ -87,21 +87,30 @@ export default function Renew() {
       !doctorPhoneNumber);
 
   const shopifyCheckout = async () => {
+    /* Setup Shopify Checkout on success. */
     const client = Client.buildClient({
       domain: 'poppy-hazel.myshopify.com',
       storefrontAccessToken: '64b319dde0d72cf6491db234e9a6b3e4',
     });
-    const checkout = await client.checkout.create();
-    // Shopify product id can be found when viewing URL in admin e.g poppy-hazel.myshopify.com/admin/products/6570386915350
+
+    // Product id can be found when viewing URL in Shopify admin (e.g poppy-hazel.myshopify.com/admin/products/6570386915350).
+    // Shopify SDK only accepts encoded product id.
     const productId = 'gid://shopify/Product/6570386915350';
-    // Shopify SDK only accepts encoded product id
     const encodedId = Buffer.from(productId).toString('base64');
-    const product = await client.product.fetch(encodedId);
-    // Add product to cart
+
+    // Fetching product and creating the cart are independent so both can run in parallel.
+    const productPromise = client.product.fetch(encodedId);
+    const cartPromise = client.checkout.create();
+
+    // Wait for product and cart.
+    const [product, cart] = await Promise.all([productPromise, cartPromise]);
+
+    // Add product to cart.
     const lineItemsToAdd = [{ variantId: product.variants[0].id, quantity: 1 }];
-    await client.checkout.addLineItems(checkout.id, lineItemsToAdd);
-    // Open checkout window
-    window.open(checkout?.webUrl);
+    await client.checkout.addLineItems(cart.id, lineItemsToAdd);
+
+    // Open checkout window.
+    window.location.href = cart.webUrl;
   };
 
   // Submit application mutation
