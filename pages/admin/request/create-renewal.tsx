@@ -4,7 +4,7 @@ import { SyntheticEvent, useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
 import {
   DoctorInformation,
-  GuardianInformation,
+  // GuardianInformation,
   PermitHolderInformation,
   PhysicianAssessmentInformation,
 } from '@tools/components/admin/requests/forms/types'; //Permit holder information type
@@ -34,7 +34,7 @@ import {
 } from '@tools/pages/admin/requests/types';
 import { useRouter } from 'next/router';
 import PhysicianAssessmentForm from '@components/admin/requests/forms/new-applications/PhysicianAssessmentForm';
-import GuardianInformationForm from '@components/admin/requests/forms/new-applications/GuardianInformationForm';
+// import GuardianInformationForm from '@components/admin/requests/forms/new-applications/GuardianInformationForm';
 
 export default function CreateRenewal() {
   const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
@@ -263,22 +263,20 @@ export default function CreateRenewal() {
       physicianCertificationDate: new Date().toISOString(),
     });
 
-  const [guardianInformation, setGuardianInformation] = useState<GuardianInformation>({
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    guardianRelationship: '',
-    phone: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    postalCode: '',
-    poaFormUrl: '',
-  });
+  // const [guardianInformation, setGuardianInformation] = useState<GuardianInformation>({
+  //   firstName: '',
+  //   middleName: '',
+  //   lastName: '',
+  //   guardianRelationship: '',
+  //   phone: '',
+  //   addressLine1: '',
+  //   addressLine2: '',
+  //   city: '',
+  //   postalCode: '',
+  //   poaFormUrl: '',
+  // });
 
   /* eslint-disable @typescript-eslint/no-empty-function */
-  const onFileUpload = () => {};
-
   return (
     <Layout>
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
@@ -327,11 +325,11 @@ export default function CreateRenewal() {
             paddingX="40px"
             align="left"
           >
-            <GuardianInformationForm
+            {/* <GuardianInformationForm
               guardianInformation={guardianInformation}
               onChange={setGuardianInformation}
-              onFileUpload={onFileUpload}
-            />
+              fileList={testFiles}
+            /> */}
           </Box>
         </GridItem>
         {/* /////////////////////////////// */}
