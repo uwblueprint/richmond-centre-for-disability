@@ -20,7 +20,7 @@ type BackToSearchProps = {
  * Modal for Back To Search Button Going Back to Requests
  * @param children ReactNode children elements in component
  */
-export default function BackToSearch({ children, onGoBack }: BackToSearchProps) {
+export default function BackToSearchModal({ children, onGoBack }: BackToSearchProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (

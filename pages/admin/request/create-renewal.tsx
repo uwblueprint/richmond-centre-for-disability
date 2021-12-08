@@ -29,14 +29,17 @@ import { GET_APPLICANT_RENEWAL_QUERY } from '@tools/pages/admin/requests/queries
 import {
   GetApplicantRenewalRequest,
   GetApplicantRenewalResponse,
+  RequestFlowPageState,
 } from '@tools/pages/admin/requests/types';
 import { useRouter } from 'next/router';
-import BackToSearch from '@components/admin/requests/modals/BackToSearchModal';
+import BackToSearchModal from '@components/admin/requests/modals/BackToSearchModal';
 import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
 import SelectedPermitHolderCard from '@components/admin/requests/SelectedPermitHolderCard';
 
 export default function CreateRenewal() {
-  const [onRequestPage, setOnRequestPage] = useState<boolean>(false);
+  const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
+    RequestFlowPageState.SubmitingRequestPage
+  );
   const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
   const [applicantID, setApplicantID] = useState<number>();
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
@@ -116,7 +119,7 @@ export default function CreateRenewal() {
     {
       fetchPolicy: 'network-only',
       onCompleted: data => {
-        // set permitHolderInformation
+        // set personal information card
         setPersonalInformationCard({
           id: +data.applicant.id,
           rcdUserId: data.applicant.rcdUserId || 0,
@@ -133,6 +136,8 @@ export default function CreateRenewal() {
           status: data.applicant.status,
           postalCode: data.applicant.postalCode,
         });
+
+        // set permitHolderInformation
         setPermitHolderRcdUserID(data.applicant.rcdUserId || undefined);
         setApplicantID(+data.applicant.id);
         setPermitHolderInformation({
@@ -145,8 +150,6 @@ export default function CreateRenewal() {
           city: data.applicant.city,
           postalCode: data.applicant.postalCode,
         });
-
-        // set permit information card
 
         // set doctorInformation
         const physician = data.applicant.medicalInformation.physician;
@@ -306,8 +309,7 @@ export default function CreateRenewal() {
             )}
           </Text>
         </Flex>
-        {/* Typeahead component */}
-        {!onRequestPage && (
+        {currentPageState == RequestFlowPageState.SelectingPermitHolderPage && (
           <>
             <GridItem paddingTop="32px">
               <Box
@@ -334,7 +336,7 @@ export default function CreateRenewal() {
           </>
         )}
         {/* Permit Holder Information Form */}
-        {permitHolderRcdUserID && onRequestPage && (
+        {permitHolderRcdUserID && currentPageState == RequestFlowPageState.SubmitingRequestPage && (
           <form onSubmit={handleSubmit}>
             <GridItem paddingTop="32px">
               <Box
@@ -440,17 +442,17 @@ export default function CreateRenewal() {
                     height="48px"
                     width="180px"
                   >
-                    <BackToSearch
+                    <BackToSearchModal
                       onGoBack={() => {
                         setApplicantID(undefined);
                         setPermitHolderRcdUserID(undefined);
-                        setOnRequestPage(false);
+                        setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
                       }}
                     >
                       <Text textStyle="button-semibold" color="text.default">
                         Back to search
                       </Text>
-                    </BackToSearch>
+                    </BackToSearchModal>
                   </Button>
                 </Box>
                 <Box>
@@ -482,7 +484,7 @@ export default function CreateRenewal() {
           </form>
         )}
         {/* Footer on Permit Searcher Page*/}
-        {!onRequestPage && (
+        {currentPageState == RequestFlowPageState.SelectingPermitHolderPage && (
           <Box
             position="fixed"
             left="0"
@@ -518,7 +520,7 @@ export default function CreateRenewal() {
                       type="submit"
                       loading={loading}
                       isDisabled={permitHolderRcdUserID === undefined}
-                      onClick={() => setOnRequestPage(true)}
+                      onClick={() => setNewPageState(RequestFlowPageState.SubmitingRequestPage)}
                     >
                       <Text textStyle="button-semibold">Proceed to request</Text>
                     </Button>

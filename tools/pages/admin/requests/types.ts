@@ -179,7 +179,7 @@ export type GetApplicantRenewalResponse = {
  */
 export type GetApplicantReplacementRequest = Pick<Applicant, 'id'>;
 
-/**p
+/**
  * Response type for fetching an applicant for replacement request
  */
 export type GetApplicantReplacementResponse = {
@@ -213,3 +213,11 @@ export type GetApplicantReplacementResponse = {
     >;
   };
 };
+
+/**
+ * Enum Type for APP creation request flow.
+ */
+export enum RequestFlowPageState {
+  SelectingPermitHolderPage,
+  SubmitingRequestPage,
+}

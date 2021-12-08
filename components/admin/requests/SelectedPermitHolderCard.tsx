@@ -21,7 +21,7 @@ type SelectedPermitHolderCardProps = {
 
 export default function SelectedPermitHolderCard(props: SelectedPermitHolderCardProps) {
   const { applicant } = props;
-  const { hasCopied, onCopy } = useClipboard(applicant?.email ? applicant?.email : '');
+  const { hasCopied, onCopy } = useClipboard(applicant?.email || '');
 
   return (
     <GridItem
@@ -60,58 +60,46 @@ export default function SelectedPermitHolderCard(props: SelectedPermitHolderCard
 
       <VStack spacing="12px" pt="24px" align="left">
         <HStack spacing="12px">
-          <Box>
-            <Text as="h4" textStyle="body-bold">
-              Personal Information
-            </Text>
-          </Box>
+          <Text as="h4" textStyle="body-bold">
+            Personal Information
+          </Text>
         </HStack>
-        <Box>
-          <Text as="p" textStyle="body-regular">
-            Date of Birth: {formatDate(applicant.dateOfBirth)}
-          </Text>
-        </Box>
-        <Box>
-          <Text as="p" textStyle="body-regular">
-            Gender: {applicant.gender.toLowerCase().replace(/^\w/, c => c.toUpperCase())}
-          </Text>
-        </Box>
+        <Text as="p" textStyle="body-regular">
+          Date of Birth: {formatDate(applicant.dateOfBirth)}
+        </Text>
+        <Text as="p" textStyle="body-regular">
+          Gender: {applicant.gender.toLowerCase().replace(/^\w/, c => c.toUpperCase())}
+        </Text>
       </VStack>
 
       <Divider mt="24px" />
 
       <VStack spacing="12px" pt="24px" align="left">
         <HStack spacing="12px">
-          <Box>
-            <Text as="h4" textStyle="body-bold">
-              Contact Information
-            </Text>
-          </Box>
-        </HStack>
-        <Box>
-          <Tooltip
-            hasArrow
-            closeOnClick={false}
-            label={hasCopied ? 'Copied to clipboard' : 'Click to copy address'}
-            placement="top"
-            bg="background.grayHover"
-            color="black"
-          >
-            <Link
-              textStyle="body-regular"
-              color="primary"
-              textDecoration="underline"
-              onClick={onCopy}
-            >
-              {applicant.email}
-            </Link>
-          </Tooltip>
-        </Box>
-        <Box>
-          <Text as="p" textStyle="body-regular">
-            {applicant.phone}
+          <Text as="h4" textStyle="body-bold">
+            Contact Information
           </Text>
-        </Box>
+        </HStack>
+        <Tooltip
+          hasArrow
+          closeOnClick={false}
+          label={hasCopied ? 'Copied to clipboard' : 'Click to copy address'}
+          placement="top"
+          bg="background.grayHover"
+          color="black"
+        >
+          <Link
+            textStyle="body-regular"
+            color="primary"
+            textDecoration="underline"
+            onClick={onCopy}
+          >
+            {applicant.email}
+          </Link>
+        </Tooltip>
+        <Text as="p" textStyle="body-regular">
+          {applicant.phone}
+        </Text>
       </VStack>
 
       <Divider mt="24px" />
