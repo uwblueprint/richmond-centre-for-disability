@@ -86,6 +86,24 @@ export default function Renew() {
       !doctorPostalCode ||
       !doctorPhoneNumber);
 
+  const shopifyCheckout = async () => {
+    const client = Client.buildClient({
+      domain: 'poppy-hazel.myshopify.com',
+      storefrontAccessToken: '64b319dde0d72cf6491db234e9a6b3e4',
+    });
+    const checkout = await client.checkout.create();
+    // Shopify product id can be found when viewing URL in admin e.g poppy-hazel.myshopify.com/admin/products/6570386915350
+    const productId = 'gid://shopify/Product/6570386915350';
+    // Shopify SDK only accepts encoded product id
+    const encodedId = Buffer.from(productId).toString('base64');
+    const product = await client.product.fetch(encodedId);
+    // Add product to cart
+    const lineItemsToAdd = [{ variantId: product.variants[0].id, quantity: 1 }];
+    await client.checkout.addLineItems(checkout.id, lineItemsToAdd);
+    // Open checkout window
+    window.open(checkout?.webUrl);
+  };
+
   // Submit application mutation
   const [submitApplication, { loading }] = useMutation<
     CreateRenewalApplicationResponse,
@@ -97,6 +115,7 @@ export default function Renew() {
           status: 'success',
           description: 'Your application has been submitted!',
         });
+        shopifyCheckout();
       }
     },
     onError: error => {
@@ -169,22 +188,6 @@ export default function Renew() {
         },
       },
     });
-
-    const client = Client.buildClient({
-      domain: 'poppy-hazel.myshopify.com',
-      storefrontAccessToken: '64b319dde0d72cf6491db234e9a6b3e4',
-    });
-    const checkout = await client.checkout.create();
-    // Shopify product id can be found when viewing URL in admin e.g poppy-hazel.myshopify.com/admin/products/6570386915350
-    const productId = 'gid://shopify/Product/6570386915350';
-    // Shopify SDK only accepts encoded product id
-    const encodedId = Buffer.from(productId).toString('base64');
-    const product = await client.product.fetch(encodedId);
-    // Add product to cart
-    const lineItemsToAdd = [{ variantId: product.variants[0].id, quantity: 1 }];
-    await client.checkout.addLineItems(checkout.id, lineItemsToAdd);
-    // Open checkout window
-    window.open(checkout?.webUrl);
   };
 
   return (
