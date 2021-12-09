@@ -13,7 +13,7 @@ import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant er
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
 import { ApplicationsReportColumn, PaymentType } from '@lib/graphql/types'; // GraphQL types
-import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
+import { formatDate, formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 import { createObjectCsvWriter } from 'csv-writer';
 
 /**
@@ -649,10 +649,19 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
     },
   });
 
-  // Adds totalAmount, applicantName and rcdPermitId properties to allow for csv writing
+  // Formats the date fields and adds totalAmount, applicantName and rcdPermitId properties to allow for csv writing
   const csvApplications = applications.map(application => {
     return {
       ...application,
+      dateOfBirth: formatDate(application.dateOfBirth),
+      applicationDate: application.createdAt.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: 'numeric',
+        timeZone: 'America/Vancouver',
+      }),
       applicantName:
         application.firstName +
         (application.middleName
@@ -678,7 +687,7 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
     csvHeaders.push({ id: 'rcdPermitId', title: 'APP Number' });
   }
   if (columnsSet.has(ApplicationsReportColumn.ApplicationDate)) {
-    csvHeaders.push({ id: 'createdAt', title: 'Application Date' });
+    csvHeaders.push({ id: 'applicationDate', title: 'Application Date' });
   }
   if (columnsSet.has(ApplicationsReportColumn.PaymentMethod)) {
     csvHeaders.push({ id: 'paymentMethod', title: 'Payment Method' });
