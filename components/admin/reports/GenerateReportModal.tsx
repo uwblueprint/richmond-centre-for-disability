@@ -88,7 +88,9 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
       if (data?.generateApplicationsReport.ok) {
         toast({
           status: 'success',
-          description: 'A CSV report has been successfully generated.',
+          description: `A CSV ${
+            page === 'permitHolders' ? 'permit holders' : 'requests'
+          } report has been successfully generated.`,
         });
       }
     },
