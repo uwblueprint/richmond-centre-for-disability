@@ -41,7 +41,6 @@ import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatDateVerbose } from '@lib/utils/format'; // Verbose date formatter util
 import GenerateReportModal from '@components/admin/reports/GenerateReportModal'; // Generate report modal
-
 // Map uppercase enum strings to lowercase
 const permitTypeString: Record<string, string> = {
   [PermitType.Permanent]: 'Permanent',
