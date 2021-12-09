@@ -654,7 +654,14 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
     return {
       ...application,
       dateOfBirth: formatDate(application.dateOfBirth),
-      // TODO: Confirm desired format applicationDate: formatDate(application.createdAt),
+      applicationDate: application.createdAt.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: 'numeric',
+        timeZone: 'America/Vancouver',
+      }),
       applicantName:
         application.firstName +
         (application.middleName
@@ -680,7 +687,7 @@ export const generateApplicantsReport: Resolver = async (_, args, { prisma }) =>
     csvHeaders.push({ id: 'rcdPermitId', title: 'APP Number' });
   }
   if (columnsSet.has(ApplicationsReportColumn.ApplicationDate)) {
-    csvHeaders.push({ id: 'createdAt', title: 'Application Date' });
+    csvHeaders.push({ id: 'applicationDate', title: 'Application Date' });
   }
   if (columnsSet.has(ApplicationsReportColumn.PaymentMethod)) {
     csvHeaders.push({ id: 'paymentMethod', title: 'Payment Method' });
