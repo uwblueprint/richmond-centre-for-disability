@@ -4,16 +4,14 @@ import { SyntheticEvent, useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
 import {
   DoctorInformation,
-  // GuardianInformation,
   PermitHolderInformation,
-  PhysicianAssessmentInformation,
 } from '@tools/components/admin/requests/forms/types'; //Permit holder information type
 import DoctorInformationForm from '@components/admin/requests/forms/DoctorInformationForm'; //Doctor information form
 import AdditionalQuestionsForm from '@components/admin/requests/forms/renewals/AdditionalQuestionsForm'; //Additional questions form
 import { AdditionalQuestions } from '@tools/components/admin/requests/forms/types'; //Additional questions type
 import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm'; //Payment details form
 import { PaymentDetails } from '@tools/components/admin/requests/forms/types'; //Payment details type
-import { PaymentType, PermitType, Province, Role } from '@lib/graphql/types'; //GraphQL types
+import { PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
 import Link from 'next/link'; // Link
 import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
@@ -33,8 +31,6 @@ import {
   GetApplicantRenewalResponse,
 } from '@tools/pages/admin/requests/types';
 import { useRouter } from 'next/router';
-import PhysicianAssessmentForm from '@components/admin/requests/forms/new-applications/PhysicianAssessmentForm';
-// import GuardianInformationForm from '@components/admin/requests/forms/new-applications/GuardianInformationForm';
 
 export default function CreateRenewal() {
   const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
@@ -253,28 +249,6 @@ export default function CreateRenewal() {
       });
     }
   };
-  const [physiscianAssessmentInformation, setPhysiscianAssessmentInformation] =
-    useState<PhysicianAssessmentInformation>({
-      disability: 'disability',
-      affectsMobility: true,
-      mobilityAidRequired: false,
-      cannotWalk100m: false,
-      permitType: PermitType.Permanent,
-      physicianCertificationDate: new Date().toISOString(),
-    });
-
-  // const [guardianInformation, setGuardianInformation] = useState<GuardianInformation>({
-  //   firstName: '',
-  //   middleName: '',
-  //   lastName: '',
-  //   guardianRelationship: '',
-  //   phone: '',
-  //   addressLine1: '',
-  //   addressLine2: '',
-  //   city: '',
-  //   postalCode: '',
-  //   poaFormUrl: '',
-  // });
 
   /* eslint-disable @typescript-eslint/no-empty-function */
   return (
@@ -296,44 +270,6 @@ export default function CreateRenewal() {
             )}
           </Text>
         </Flex>
-        {/* TODO: remove before merging */}
-        <GridItem paddingTop="32px">
-          <Box
-            border="1px solid"
-            borderColor="border.secondary"
-            borderRadius="12px"
-            bgColor="white"
-            paddingTop="32px"
-            paddingBottom="40px"
-            paddingX="40px"
-            align="left"
-          >
-            <PhysicianAssessmentForm
-              physicianAssessmentInformation={physiscianAssessmentInformation}
-              onChange={setPhysiscianAssessmentInformation}
-            />
-          </Box>
-        </GridItem>
-        <GridItem paddingTop="32px">
-          <Box
-            border="1px solid"
-            borderColor="border.secondary"
-            borderRadius="12px"
-            bgColor="white"
-            paddingTop="32px"
-            paddingBottom="40px"
-            paddingX="40px"
-            align="left"
-          >
-            {/* <GuardianInformationForm
-              guardianInformation={guardianInformation}
-              onChange={setGuardianInformation}
-              fileList={testFiles}
-            /> */}
-          </Box>
-        </GridItem>
-        {/* /////////////////////////////// */}
-
         {/* Typeahead component */}
         <GridItem paddingTop="32px">
           <Box
