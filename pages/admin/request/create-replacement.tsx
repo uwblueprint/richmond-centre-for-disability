@@ -3,7 +3,17 @@ import { GetServerSideProps } from 'next';
 import Link from 'next/link'; // Link component
 import { getSession } from 'next-auth/client'; // Session management
 import { authorize } from '@tools/authorization'; // Page authorization
-import { Text, Box, Flex, Stack, Button, GridItem, useToast } from '@chakra-ui/react'; // Chakra UI
+import {
+  Text,
+  Box,
+  Flex,
+  Stack,
+  Button,
+  GridItem,
+  useToast,
+  HStack,
+  Spacer,
+} from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
 import {
@@ -409,8 +419,8 @@ export default function CreateReplacement() {
             bgColor="white"
             boxShadow="dark-lg"
           >
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box />
+            <HStack alignItems="right">
+              <Spacer />
               <Box>
                 <Stack direction="row" justifyContent="space-between">
                   <Link href={`/admin`}>
@@ -445,7 +455,7 @@ export default function CreateReplacement() {
                   </Link>
                 </Stack>
               </Box>
-            </Stack>
+            </HStack>
           </Box>
         )}
       </GridItem>
