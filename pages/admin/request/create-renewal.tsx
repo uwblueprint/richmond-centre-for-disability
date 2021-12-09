@@ -250,7 +250,6 @@ export default function CreateRenewal() {
     }
   };
 
-  /* eslint-disable @typescript-eslint/no-empty-function */
   return (
     <Layout>
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
