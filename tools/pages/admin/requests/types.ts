@@ -146,6 +146,10 @@ export type GetApplicantRenewalResponse = {
     | 'city'
     | 'postalCode'
     | 'rcdUserId'
+    | 'dateOfBirth'
+    | 'status'
+    | 'gender'
+    | 'province'
   > & {
     medicalInformation: {
       physician: Pick<
@@ -191,6 +195,10 @@ export type GetApplicantReplacementResponse = {
     | 'postalCode'
     | 'rcdUserId'
     | 'id'
+    | 'dateOfBirth'
+    | 'status'
+    | 'gender'
+    | 'province'
   > & {
     mostRecentApplication: Pick<
       Application,
@@ -205,3 +213,11 @@ export type GetApplicantReplacementResponse = {
     >;
   };
 };
+
+/**
+ * Enum Type for APP creation request flow.
+ */
+export enum RequestFlowPageState {
+  SelectingPermitHolderPage,
+  SubmitingRequestPage,
+}

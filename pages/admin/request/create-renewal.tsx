@@ -11,7 +11,7 @@ import AdditionalQuestionsForm from '@components/admin/requests/forms/renewals/A
 import { AdditionalQuestions } from '@tools/components/admin/requests/forms/types'; //Additional questions type
 import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm'; //Payment details form
 import { PaymentDetails } from '@tools/components/admin/requests/forms/types'; //Payment details type
-import { PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
+import { ApplicantStatus, Gender, PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
 import Link from 'next/link'; // Link
 import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
@@ -29,10 +29,17 @@ import { GET_APPLICANT_RENEWAL_QUERY } from '@tools/pages/admin/requests/queries
 import {
   GetApplicantRenewalRequest,
   GetApplicantRenewalResponse,
+  RequestFlowPageState,
 } from '@tools/pages/admin/requests/types';
 import { useRouter } from 'next/router';
+import BackToSearchModal from '@components/admin/requests/modals/BackToSearchModal';
+import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
+import SelectedPermitHolderCard from '@components/admin/requests/SelectedPermitHolderCard';
 
 export default function CreateRenewal() {
+  const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
+    RequestFlowPageState.SubmitingRequestPage
+  );
   const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
   const [applicantID, setApplicantID] = useState<number>();
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
@@ -76,6 +83,22 @@ export default function CreateRenewal() {
     billingProvince: Province.Bc,
     billingPostalCode: '',
   });
+  const [personalInformationCard, setPersonalInformationCard] = useState<ApplicantData>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    postalCode: '',
+    rcdUserId: 0,
+    id: 0,
+    dateOfBirth: '',
+    status: ApplicantStatus.Active,
+    gender: Gender.Other,
+    province: Province.On,
+  });
 
   // Toast message
   const toast = useToast();
@@ -96,6 +119,24 @@ export default function CreateRenewal() {
     {
       fetchPolicy: 'network-only',
       onCompleted: data => {
+        // set personal information card
+        setPersonalInformationCard({
+          id: +data.applicant.id,
+          rcdUserId: data.applicant.rcdUserId || 0,
+          firstName: data.applicant.firstName,
+          lastName: data.applicant.lastName,
+          gender: data.applicant.gender,
+          dateOfBirth: data.applicant.dateOfBirth,
+          email: data.applicant.email,
+          phone: data.applicant.phone,
+          province: data.applicant.province,
+          city: data.applicant.city,
+          addressLine1: data.applicant.addressLine1,
+          addressLine2: data.applicant.addressLine2,
+          status: data.applicant.status,
+          postalCode: data.applicant.postalCode,
+        });
+
         // set permitHolderInformation
         setPermitHolderRcdUserID(data.applicant.rcdUserId || undefined);
         setApplicantID(+data.applicant.id);
@@ -197,7 +238,6 @@ export default function CreateRenewal() {
    */
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-
     if (applicantID) {
       await submitRenewalApplication({
         variables: {
@@ -269,26 +309,34 @@ export default function CreateRenewal() {
             )}
           </Text>
         </Flex>
-        {/* Typeahead component */}
-        <GridItem paddingTop="32px">
-          <Box
-            border="1px solid"
-            borderColor="border.secondary"
-            borderRadius="12px"
-            bgColor="white"
-            paddingTop="32px"
-            paddingBottom="40px"
-            paddingX="40px"
-            align="left"
-          >
-            <Text textStyle="display-small-semibold" paddingBottom="20px">
-              {`Search Permit Holder`}
-            </Text>
-            <PermitHolderTypeahead onSelect={handleSelectPermitHolder} />
-          </Box>
-        </GridItem>
+        {currentPageState == RequestFlowPageState.SelectingPermitHolderPage && (
+          <>
+            <GridItem paddingTop="32px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Search Permit Holder`}
+                </Text>
+                <PermitHolderTypeahead onSelect={handleSelectPermitHolder} />
+              </Box>
+            </GridItem>
+            <GridItem paddingTop="32px">
+              {permitHolderRcdUserID && (
+                <SelectedPermitHolderCard applicant={personalInformationCard} />
+              )}
+            </GridItem>
+          </>
+        )}
         {/* Permit Holder Information Form */}
-        {permitHolderRcdUserID && (
+        {permitHolderRcdUserID && currentPageState == RequestFlowPageState.SubmitingRequestPage && (
           <form onSubmit={handleSubmit}>
             <GridItem paddingTop="32px">
               <Box
@@ -387,14 +435,25 @@ export default function CreateRenewal() {
             >
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Text textStyle="body-bold">
-                    User ID:{' '}
-                    <Box as="span" color="primary">
-                      <Link href={`/admin/permit-holder/${applicantID}`}>
-                        <a>{permitHolderRcdUserID}</a>
-                      </Link>
-                    </Box>
-                  </Text>
+                  <Button
+                    bg="background.gray"
+                    _hover={{ bg: 'background.grayHover' }}
+                    marginRight="20px"
+                    height="48px"
+                    width="180px"
+                  >
+                    <BackToSearchModal
+                      onGoBack={() => {
+                        setApplicantID(undefined);
+                        setPermitHolderRcdUserID(undefined);
+                        setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
+                      }}
+                    >
+                      <Text textStyle="button-semibold" color="text.default">
+                        Back to search
+                      </Text>
+                    </BackToSearchModal>
+                  </Button>
                 </Box>
                 <Box>
                   <Stack direction="row" justifyContent="space-between">
@@ -404,27 +463,76 @@ export default function CreateRenewal() {
                         _hover={{ bg: 'secondary.criticalHover' }}
                         marginRight="20px"
                         height="48px"
-                        width="149px"
+                        width="188px"
                       >
                         <Text textStyle="button-semibold">Discard request</Text>
                       </Button>
                     </CancelCreateRequestModal>
-                    <Link href="#">
-                      <Button
-                        bg="primary"
-                        height="48px"
-                        width="180px"
-                        type="submit"
-                        loading={loading}
-                      >
-                        <Text textStyle="button-semibold">Create request</Text>
-                      </Button>
-                    </Link>
+                    <Button
+                      bg="primary"
+                      height="48px"
+                      width="180px"
+                      type="submit"
+                      loading={loading}
+                    >
+                      <Text textStyle="button-semibold">Create request</Text>
+                    </Button>
                   </Stack>
                 </Box>
               </Stack>
             </Box>
           </form>
+        )}
+        {/* Footer on Permit Searcher Page*/}
+        {currentPageState == RequestFlowPageState.SelectingPermitHolderPage && (
+          <Box
+            position="fixed"
+            left="0"
+            bottom="0"
+            right="0"
+            paddingY="20px"
+            paddingX="188px"
+            bgColor="white"
+            boxShadow="dark-lg"
+          >
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Box />
+              <Box>
+                <Stack direction="row" justifyContent="space-between">
+                  <Link href={`/admin`}>
+                    <a>
+                      <Button
+                        bg="background.gray"
+                        _hover={{ bg: 'background.grayHover' }}
+                        marginRight="20px"
+                        height="48px"
+                        width="149px"
+                      >
+                        <Text textStyle="button-semibold" color="text.default">
+                          Cancel
+                        </Text>
+                      </Button>
+                    </a>
+                  </Link>
+                  <Link href="#">
+                    <a>
+                      <Button
+                        bg="primary"
+                        height="48px"
+                        width="217px"
+                        type="submit"
+                        loading={loading}
+                        isDisabled={permitHolderRcdUserID === undefined}
+                        onClick={() => setNewPageState(RequestFlowPageState.SubmitingRequestPage)}
+                      >
+                        <Text textStyle="button-semibold">Proceed to request</Text>
+                      </Button>
+                    </a>
+                  </Link>
+                </Stack>
+              </Box>
+            </Stack>
+          </Box>
         )}
       </GridItem>
     </Layout>

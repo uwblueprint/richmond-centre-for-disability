@@ -3,7 +3,17 @@ import { GetServerSideProps } from 'next';
 import Link from 'next/link'; // Link component
 import { getSession } from 'next-auth/client'; // Session management
 import { authorize } from '@tools/authorization'; // Page authorization
-import { Text, Box, Flex, Stack, Button, GridItem, useToast } from '@chakra-ui/react'; // Chakra UI
+import {
+  Text,
+  Box,
+  Flex,
+  Stack,
+  Button,
+  GridItem,
+  useToast,
+  HStack,
+  Spacer,
+} from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
 import {
@@ -11,7 +21,7 @@ import {
   PermitHolderInformation,
 } from '@tools/components/admin/requests/forms/types'; //Permit holder information type
 import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm'; //Payment details form
-import { PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
+import { ApplicantStatus, Gender, PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
 import { ReasonForReplacement } from '@tools/components/admin/requests/forms/types';
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
 import ReasonForReplacementForm from '@components/admin/requests/forms/ReasonForReplacementForm';
@@ -23,6 +33,7 @@ import { GET_APPLICANT_REPLACEMENT_QUERY } from '@tools/pages/admin/requests/que
 import {
   GetApplicantReplacementRequest,
   GetApplicantReplacementResponse,
+  RequestFlowPageState,
 } from '@tools/pages/admin/requests/types';
 import {
   CREATE_REPLACEMENT_APPLICATION_MUTATION,
@@ -30,8 +41,14 @@ import {
   CreateReplacementApplicationResponse,
 } from '@tools/pages/applicant/replacements';
 import { useRouter } from 'next/router'; // Router
+import BackToSearchModal from '@components/admin/requests/modals/BackToSearchModal';
+import SelectedPermitHolderCard from '@components/admin/requests/SelectedPermitHolderCard';
+import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
 
 export default function CreateReplacement() {
+  const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
+    RequestFlowPageState.SelectingPermitHolderPage
+  );
   const [applicantId, setApplicantID] = useState<number | undefined>(undefined);
   const [permitHolderID, setPermitHolderID] = useState<number | undefined>(undefined);
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
@@ -43,6 +60,22 @@ export default function CreateReplacement() {
     addressLine2: '',
     city: '',
     postalCode: '',
+  });
+  const [personalInformationCard, setPermitInformationCard] = useState<ApplicantData>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    postalCode: '',
+    rcdUserId: 0,
+    id: 0,
+    dateOfBirth: '',
+    status: ApplicantStatus.Active,
+    gender: Gender.Other,
+    province: Province.On,
   });
 
   const [reasonDetails, setReason] = useState<ReasonForReplacement>({
@@ -106,7 +139,22 @@ export default function CreateReplacement() {
           shippingPostalCode: lastApplication.shippingPostalCode,
         });
       }
-
+      setPermitInformationCard({
+        id: +applicant.id,
+        rcdUserId: applicant.rcdUserId || 0,
+        firstName: applicant.firstName,
+        lastName: applicant.lastName,
+        gender: applicant.gender,
+        dateOfBirth: applicant.dateOfBirth,
+        email: applicant.email,
+        phone: applicant.phone,
+        province: applicant.province,
+        city: applicant.city,
+        addressLine1: applicant.addressLine1,
+        addressLine2: applicant.addressLine2,
+        status: applicant.status,
+        postalCode: applicant.postalCode,
+      });
       setPermitHolderID(applicant.rcdUserId || 0);
       setApplicantID(+applicant.id);
     },
@@ -205,126 +253,145 @@ export default function CreateReplacement() {
             )}
           </Text>
         </Flex>
-        {/* Typeahead component */}
-        <GridItem paddingTop="32px">
-          <Box
-            border="1px solid"
-            borderColor="border.secondary"
-            borderRadius="12px"
-            bgColor="white"
-            paddingTop="32px"
-            paddingBottom="40px"
-            paddingX="40px"
-            align="left"
-          >
-            <Text textStyle="display-small-semibold" paddingBottom="20px">
-              {`Search Permit Holder`}
-            </Text>
-            <PermitHolderTypeahead onSelect={handleSelectPermitHolder} />
-          </Box>
-        </GridItem>
+        {currentPageState == RequestFlowPageState.SelectingPermitHolderPage && (
+          <>
+            <GridItem paddingTop="32px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Search Permit Holder`}
+                </Text>
+                <PermitHolderTypeahead onSelect={handleSelectPermitHolder} />
+              </Box>
+            </GridItem>
+            <GridItem paddingTop="32px">
+              {applicantId !== undefined && (
+                <SelectedPermitHolderCard applicant={personalInformationCard} />
+              )}
+            </GridItem>
+          </>
+        )}
 
-        {applicantId !== undefined && (
-          <form onSubmit={handleSubmit}>
-            {/* Permit Holder Information Form */}
-            <GridItem paddingTop="32px">
-              <Box
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                paddingTop="32px"
-                paddingBottom="40px"
-                paddingX="40px"
-                align="left"
-              >
-                <Text textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Permit Holder's Information`}
-                </Text>
-                <PermitHolderInformationForm
-                  permitHolderInformation={permitHolderInformation}
-                  onChange={setPermitHolderInformation}
-                />
-              </Box>
-            </GridItem>
-            {/* Reason For Replacement Form */}
-            <GridItem paddingTop="32px">
-              <Box
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                paddingTop="32px"
-                paddingBottom="40px"
-                paddingX="40px"
-                align="left"
-              >
-                <Text textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Reason for Replacement`}
-                </Text>
-                <ReasonForReplacementForm
-                  reasonForReplacement={reasonDetails}
-                  onChange={setReason}
-                />
-              </Box>
-            </GridItem>
-            {/* Payment Details Form */}
-            <GridItem paddingTop="32px" paddingBottom="68px">
-              <Box
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                paddingTop="32px"
-                paddingBottom="40px"
-                paddingX="40px"
-                align="left"
-              >
-                <Text textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Payment, Shipping, and Billing Information`}
-                </Text>
-                <PaymentDetailsForm
-                  paymentInformation={paymentDetails}
-                  onChange={setPaymentDetails}
-                />
-              </Box>
-            </GridItem>
-            {/* Footer */}
-            <Box
-              position="fixed"
-              left="0"
-              bottom="0"
-              right="0"
-              paddingY="20px"
-              paddingX="188px"
-              bgColor="white"
-              boxShadow="dark-lg"
-            >
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Box>
-                  <Text textStyle="body-bold">
-                    User ID:{' '}
-                    <Box as="span" color="primary">
-                      <Link href={`/admin/permit-holder/${applicantId}`}>
-                        <a>{permitHolderID}</a>
-                      </Link>
-                    </Box>
+        {applicantId !== undefined &&
+          currentPageState == RequestFlowPageState.SubmitingRequestPage && (
+            <form onSubmit={handleSubmit}>
+              {/* Permit Holder Information Form */}
+              <GridItem paddingTop="32px">
+                <Box
+                  border="1px solid"
+                  borderColor="border.secondary"
+                  borderRadius="12px"
+                  bgColor="white"
+                  paddingTop="32px"
+                  paddingBottom="40px"
+                  paddingX="40px"
+                  align="left"
+                >
+                  <Text textStyle="display-small-semibold" paddingBottom="20px">
+                    {`Permit Holder's Information`}
                   </Text>
+                  <PermitHolderInformationForm
+                    permitHolderInformation={permitHolderInformation}
+                    onChange={setPermitHolderInformation}
+                  />
                 </Box>
-                <Box>
-                  <Stack direction="row" justifyContent="space-between">
-                    <CancelCreateRequestModal type="renewal">
-                      <Button
-                        bg="secondary.critical"
-                        _hover={{ bg: 'secondary.criticalHover' }}
-                        marginRight="20px"
-                        height="48px"
-                        width="149px"
+              </GridItem>
+              {/* Reason For Replacement Form */}
+              <GridItem paddingTop="32px">
+                <Box
+                  border="1px solid"
+                  borderColor="border.secondary"
+                  borderRadius="12px"
+                  bgColor="white"
+                  paddingTop="32px"
+                  paddingBottom="40px"
+                  paddingX="40px"
+                  align="left"
+                >
+                  <Text textStyle="display-small-semibold" paddingBottom="20px">
+                    {`Reason for Replacement`}
+                  </Text>
+                  <ReasonForReplacementForm
+                    reasonForReplacement={reasonDetails}
+                    onChange={setReason}
+                  />
+                </Box>
+              </GridItem>
+              {/* Payment Details Form */}
+              <GridItem paddingTop="32px" paddingBottom="68px">
+                <Box
+                  border="1px solid"
+                  borderColor="border.secondary"
+                  borderRadius="12px"
+                  bgColor="white"
+                  paddingTop="32px"
+                  paddingBottom="40px"
+                  paddingX="40px"
+                  align="left"
+                >
+                  <Text textStyle="display-small-semibold" paddingBottom="20px">
+                    {`Payment, Shipping, and Billing Information`}
+                  </Text>
+                  <PaymentDetailsForm
+                    paymentInformation={paymentDetails}
+                    onChange={setPaymentDetails}
+                  />
+                </Box>
+              </GridItem>
+              {/* Footer */}
+              <Box
+                position="fixed"
+                left="0"
+                bottom="0"
+                right="0"
+                paddingY="20px"
+                paddingX="188px"
+                bgColor="white"
+                boxShadow="dark-lg"
+              >
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Box>
+                    <Button
+                      bg="background.gray"
+                      _hover={{ bg: 'background.grayHover' }}
+                      marginRight="20px"
+                      height="48px"
+                      width="180px"
+                    >
+                      <BackToSearchModal
+                        onGoBack={() => {
+                          setApplicantID(undefined);
+                          setPermitHolderID(undefined);
+                          setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
+                        }}
                       >
-                        <Text textStyle="button-semibold">Discard request</Text>
-                      </Button>
-                    </CancelCreateRequestModal>
-                    <Link href="#">
+                        <Text textStyle="button-semibold" color="text.default">
+                          Back to search
+                        </Text>
+                      </BackToSearchModal>
+                    </Button>
+                  </Box>
+                  <Box>
+                    <Stack direction="row" justifyContent="space-between">
+                      <CancelCreateRequestModal type="replacement">
+                        <Button
+                          bg="secondary.critical"
+                          _hover={{ bg: 'secondary.criticalHover' }}
+                          marginRight="20px"
+                          height="48px"
+                          width="188px"
+                        >
+                          <Text textStyle="button-semibold">Discard request</Text>
+                        </Button>
+                      </CancelCreateRequestModal>
                       <Button
                         bg="primary"
                         height="48px"
@@ -334,12 +401,62 @@ export default function CreateReplacement() {
                       >
                         <Text textStyle="button-semibold">Create request</Text>
                       </Button>
-                    </Link>
-                  </Stack>
-                </Box>
-              </Stack>
-            </Box>
-          </form>
+                    </Stack>
+                  </Box>
+                </Stack>
+              </Box>
+            </form>
+          )}
+        {/* Footer on Permit Search*/}
+        {currentPageState == RequestFlowPageState.SelectingPermitHolderPage && (
+          <Box
+            position="fixed"
+            left="0"
+            bottom="0"
+            right="0"
+            paddingY="20px"
+            paddingX="188px"
+            bgColor="white"
+            boxShadow="dark-lg"
+          >
+            <HStack alignItems="right">
+              <Spacer />
+              <Box>
+                <Stack direction="row" justifyContent="space-between">
+                  <Link href={`/admin`}>
+                    <a>
+                      <Button
+                        bg="background.gray"
+                        _hover={{ bg: 'background.grayHover' }}
+                        marginRight="20px"
+                        height="48px"
+                        width="149px"
+                      >
+                        <Text textStyle="button-semibold" color="text.default">
+                          Cancel
+                        </Text>
+                      </Button>
+                    </a>
+                  </Link>
+                  <Link href="#">
+                    <a>
+                      <Button
+                        bg="primary"
+                        height="48px"
+                        width="217px"
+                        type="submit"
+                        loading={loading}
+                        isDisabled={applicantId == undefined}
+                        onClick={() => setNewPageState(RequestFlowPageState.SubmitingRequestPage)}
+                      >
+                        <Text textStyle="button-semibold">Proceed to request</Text>
+                      </Button>
+                    </a>
+                  </Link>
+                </Stack>
+              </Box>
+            </HStack>
+          </Box>
         )}
       </GridItem>
     </Layout>
