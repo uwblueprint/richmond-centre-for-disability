@@ -110,7 +110,7 @@ export default function CreateReplacement() {
   const toast = useToast();
   const router = useRouter();
 
-  const [getApplicant] = useLazyQuery<
+  const [getApplicant, { loading: permitSearchLoading }] = useLazyQuery<
     GetApplicantReplacementResponse,
     GetApplicantReplacementRequest
   >(GET_APPLICANT_REPLACEMENT_QUERY, {
@@ -167,7 +167,7 @@ export default function CreateReplacement() {
   };
 
   // Submit application mutation
-  const [submitReplacementApplication, { loading }] = useMutation<
+  const [submitReplacementApplication, { loading: loadingSubmitRequest }] = useMutation<
     CreateReplacementApplicationResponse,
     CreateReplacementApplicationRequest
   >(CREATE_REPLACEMENT_APPLICATION_MUTATION, {
@@ -273,8 +273,11 @@ export default function CreateReplacement() {
               </Box>
             </GridItem>
             <GridItem paddingTop="32px">
-              {applicantId !== undefined && (
-                <SelectedPermitHolderCard applicant={personalInformationCard} />
+              {(applicantId !== undefined || permitSearchLoading) && (
+                <SelectedPermitHolderCard
+                  applicant={personalInformationCard}
+                  loading={permitSearchLoading}
+                />
               )}
             </GridItem>
           </>
@@ -397,7 +400,7 @@ export default function CreateReplacement() {
                         height="48px"
                         width="180px"
                         type="submit"
-                        loading={loading}
+                        isLoading={loadingSubmitRequest}
                       >
                         <Text textStyle="button-semibold">Create request</Text>
                       </Button>
@@ -445,7 +448,6 @@ export default function CreateReplacement() {
                         height="48px"
                         width="217px"
                         type="submit"
-                        loading={loading}
                         isDisabled={applicantId == undefined}
                         onClick={() => setNewPageState(RequestFlowPageState.SubmitingRequestPage)}
                       >

@@ -11,17 +11,45 @@ import {
   Flex,
   Wrap,
   Badge,
+  Spinner,
+  Center,
 } from '@chakra-ui/react'; // Chakra UI
 import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
 import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 type SelectedPermitHolderCardProps = {
   readonly applicant: ApplicantData;
+  readonly loading: boolean;
 };
 
 export default function SelectedPermitHolderCard(props: SelectedPermitHolderCardProps) {
-  const { applicant } = props;
+  const { applicant, loading } = props;
   const { hasCopied, onCopy } = useClipboard(applicant?.email || '');
+
+  if (loading) {
+    return (
+      <GridItem
+        display="flex"
+        flexDirection="column"
+        padding="20px 24px 24px"
+        background="white"
+        border="1px solid"
+        borderColor="border.secondary"
+        boxSizing="border-box"
+        borderRadius="8px"
+        textAlign="left"
+      >
+        <Center height="240px">
+          <VStack>
+            <Spinner color="primary" mr="8px" size="xl" thickness="4px" />
+            <Text textStyle="display-small-semibold" color="secondary" fontSize="xl">
+              Loading Data...
+            </Text>
+          </VStack>
+        </Center>
+      </GridItem>
+    );
+  }
 
   return (
     <GridItem
