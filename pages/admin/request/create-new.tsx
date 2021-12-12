@@ -536,7 +536,7 @@ export default function CreateNew() {
                 align="left"
               >
                 <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Additional Information`}
+                  {`Payment, Shipping and Billing Information`}
                 </Text>
                 <PaymentDetailsForm
                   paymentInformation={paymentDetails}
