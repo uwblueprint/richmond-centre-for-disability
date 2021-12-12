@@ -28,9 +28,7 @@ export default function SelectedPermitHolderCard(props: SelectedPermitHolderCard
 
   if (loading) {
     return (
-      <GridItem
-        display="flex"
-        flexDirection="column"
+      <VStack
         padding="20px 24px 24px"
         background="white"
         border="1px solid"
@@ -47,7 +45,7 @@ export default function SelectedPermitHolderCard(props: SelectedPermitHolderCard
             </Text>
           </VStack>
         </Center>
-      </GridItem>
+      </VStack>
     );
   }
 

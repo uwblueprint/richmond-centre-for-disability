@@ -114,7 +114,7 @@ export default function CreateRenewal() {
   /**
    * Get information about applicant to pre-populate form
    */
-  const [getApplicant, { loading: userSearchLoading }] = useLazyQuery<
+  const [getApplicant, { loading: getApplicantLoading }] = useLazyQuery<
     GetApplicantRenewalResponse,
     GetApplicantRenewalRequest
   >(GET_APPLICANT_RENEWAL_QUERY, {
@@ -332,14 +332,14 @@ export default function CreateRenewal() {
               {permitHolderRcdUserID && (
                 <SelectedPermitHolderCard
                   applicant={personalInformationCard}
-                  loading={userSearchLoading}
+                  loading={getApplicantLoading}
                 />
               )}
             </GridItem>
           </>
         )}
         {/* Permit Holder Information Form */}
-        {permitHolderRcdUserID && currentPageState == RequestFlowPageState.SubmitingRequestPage && (
+        {permitHolderRcdUserID && currentPageState == RequestFlowPageState.SubmittingRequestPage && (
           <form onSubmit={handleSubmit}>
             <GridItem paddingTop="32px">
               <Box
@@ -444,6 +444,7 @@ export default function CreateRenewal() {
                     marginRight="20px"
                     height="48px"
                     width="180px"
+                    isDisabled={submitRequestLoading}
                   >
                     <BackToSearchModal
                       onGoBack={() => {
@@ -467,6 +468,7 @@ export default function CreateRenewal() {
                         marginRight="20px"
                         height="48px"
                         width="188px"
+                        isDisabled={submitRequestLoading}
                       >
                         <Text textStyle="button-semibold">Discard request</Text>
                       </Button>
@@ -525,7 +527,7 @@ export default function CreateRenewal() {
                         width="217px"
                         type="submit"
                         isDisabled={permitHolderRcdUserID === undefined}
-                        onClick={() => setNewPageState(RequestFlowPageState.SubmitingRequestPage)}
+                        onClick={() => setNewPageState(RequestFlowPageState.SubmittingRequestPage)}
                       >
                         <Text textStyle="button-semibold">Proceed to request</Text>
                       </Button>

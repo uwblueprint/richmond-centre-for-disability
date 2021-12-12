@@ -110,7 +110,7 @@ export default function CreateReplacement() {
   const toast = useToast();
   const router = useRouter();
 
-  const [getApplicant, { loading: permitSearchLoading }] = useLazyQuery<
+  const [getApplicant, { loading: getApplicantLoading }] = useLazyQuery<
     GetApplicantReplacementResponse,
     GetApplicantReplacementRequest
   >(GET_APPLICANT_REPLACEMENT_QUERY, {
@@ -167,7 +167,7 @@ export default function CreateReplacement() {
   };
 
   // Submit application mutation
-  const [submitReplacementApplication, { loading: loadingSubmitRequest }] = useMutation<
+  const [submitReplacementApplication, { loading: submitRequestLoading }] = useMutation<
     CreateReplacementApplicationResponse,
     CreateReplacementApplicationRequest
   >(CREATE_REPLACEMENT_APPLICATION_MUTATION, {
@@ -273,10 +273,10 @@ export default function CreateReplacement() {
               </Box>
             </GridItem>
             <GridItem paddingTop="32px">
-              {(applicantId !== undefined || permitSearchLoading) && (
+              {(applicantId !== undefined || getApplicantLoading) && (
                 <SelectedPermitHolderCard
                   applicant={personalInformationCard}
-                  loading={permitSearchLoading}
+                  loading={getApplicantLoading}
                 />
               )}
             </GridItem>
@@ -284,7 +284,7 @@ export default function CreateReplacement() {
         )}
 
         {applicantId !== undefined &&
-          currentPageState == RequestFlowPageState.SubmitingRequestPage && (
+          currentPageState == RequestFlowPageState.SubmittingRequestPage && (
             <form onSubmit={handleSubmit}>
               {/* Permit Holder Information Form */}
               <GridItem paddingTop="32px">
@@ -368,6 +368,7 @@ export default function CreateReplacement() {
                       marginRight="20px"
                       height="48px"
                       width="180px"
+                      isDisabled={submitRequestLoading}
                     >
                       <BackToSearchModal
                         onGoBack={() => {
@@ -391,6 +392,7 @@ export default function CreateReplacement() {
                           marginRight="20px"
                           height="48px"
                           width="188px"
+                          isDisabled={submitRequestLoading}
                         >
                           <Text textStyle="button-semibold">Discard request</Text>
                         </Button>
@@ -400,7 +402,7 @@ export default function CreateReplacement() {
                         height="48px"
                         width="180px"
                         type="submit"
-                        isLoading={loadingSubmitRequest}
+                        isLoading={submitRequestLoading}
                       >
                         <Text textStyle="button-semibold">Create request</Text>
                       </Button>
@@ -449,7 +451,7 @@ export default function CreateReplacement() {
                         width="217px"
                         type="submit"
                         isDisabled={applicantId == undefined}
-                        onClick={() => setNewPageState(RequestFlowPageState.SubmitingRequestPage)}
+                        onClick={() => setNewPageState(RequestFlowPageState.SubmittingRequestPage)}
                       >
                         <Text textStyle="button-semibold">Proceed to request</Text>
                       </Button>
