@@ -38,7 +38,7 @@ import SelectedPermitHolderCard from '@components/admin/requests/SelectedPermitH
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
-    RequestFlowPageState.SubmitingRequestPage
+    RequestFlowPageState.SelectingPermitHolderPage
   );
   const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
   const [applicantID, setApplicantID] = useState<number>();
@@ -114,85 +114,85 @@ export default function CreateRenewal() {
   /**
    * Get information about applicant to pre-populate form
    */
-  const [getApplicant] = useLazyQuery<GetApplicantRenewalResponse, GetApplicantRenewalRequest>(
-    GET_APPLICANT_RENEWAL_QUERY,
-    {
-      fetchPolicy: 'network-only',
-      onCompleted: data => {
-        // set personal information card
-        setPersonalInformationCard({
-          id: +data.applicant.id,
-          rcdUserId: data.applicant.rcdUserId || 0,
-          firstName: data.applicant.firstName,
-          lastName: data.applicant.lastName,
-          gender: data.applicant.gender,
-          dateOfBirth: data.applicant.dateOfBirth,
-          email: data.applicant.email,
-          phone: data.applicant.phone,
-          province: data.applicant.province,
-          city: data.applicant.city,
-          addressLine1: data.applicant.addressLine1,
-          addressLine2: data.applicant.addressLine2,
-          status: data.applicant.status,
-          postalCode: data.applicant.postalCode,
-        });
+  const [getApplicant, { loading: getApplicantLoading }] = useLazyQuery<
+    GetApplicantRenewalResponse,
+    GetApplicantRenewalRequest
+  >(GET_APPLICANT_RENEWAL_QUERY, {
+    fetchPolicy: 'network-only',
+    onCompleted: data => {
+      // set personal information card
+      setPersonalInformationCard({
+        id: +data.applicant.id,
+        rcdUserId: data.applicant.rcdUserId || 0,
+        firstName: data.applicant.firstName,
+        lastName: data.applicant.lastName,
+        gender: data.applicant.gender,
+        dateOfBirth: data.applicant.dateOfBirth,
+        email: data.applicant.email,
+        phone: data.applicant.phone,
+        province: data.applicant.province,
+        city: data.applicant.city,
+        addressLine1: data.applicant.addressLine1,
+        addressLine2: data.applicant.addressLine2,
+        status: data.applicant.status,
+        postalCode: data.applicant.postalCode,
+      });
 
-        // set permitHolderInformation
-        setPermitHolderRcdUserID(data.applicant.rcdUserId || undefined);
-        setApplicantID(+data.applicant.id);
-        setPermitHolderInformation({
-          firstName: data.applicant.firstName,
-          lastName: data.applicant.lastName,
-          email: data.applicant.email,
-          phone: data.applicant.phone,
-          addressLine1: data.applicant.addressLine1,
-          addressLine2: data.applicant.addressLine2,
-          city: data.applicant.city,
-          postalCode: data.applicant.postalCode,
-        });
+      // set permitHolderInformation
+      setPermitHolderRcdUserID(data.applicant.rcdUserId || undefined);
+      setApplicantID(+data.applicant.id);
+      setPermitHolderInformation({
+        firstName: data.applicant.firstName,
+        lastName: data.applicant.lastName,
+        email: data.applicant.email,
+        phone: data.applicant.phone,
+        addressLine1: data.applicant.addressLine1,
+        addressLine2: data.applicant.addressLine2,
+        city: data.applicant.city,
+        postalCode: data.applicant.postalCode,
+      });
 
-        // set doctorInformation
-        const physician = data.applicant.medicalInformation.physician;
-        setDoctorInformation({
-          phone: physician.phone,
-          addressLine1: physician.addressLine1,
-          addressLine2: physician.addressLine2,
-          city: physician.city,
-          postalCode: physician.postalCode,
-          name: physician.name,
-          mspNumber: physician.mspNumber,
-        });
+      // set doctorInformation
+      const physician = data.applicant.medicalInformation.physician;
+      setDoctorInformation({
+        phone: physician.phone,
+        addressLine1: physician.addressLine1,
+        addressLine2: physician.addressLine2,
+        city: physician.city,
+        postalCode: physician.postalCode,
+        name: physician.name,
+        mspNumber: physician.mspNumber,
+      });
 
-        // set additionalQuestions
-        if (data.applicant.mostRecentRenewal.renewal) {
-          setAdditionalQuestions({
-            usesAccessibleConvertedVan:
-              data.applicant.mostRecentRenewal.renewal.usesAccessibleConvertedVan,
-            requiresWiderParkingSpace:
-              data.applicant.mostRecentRenewal.renewal.requiresWiderParkingSpace,
-          });
-        } else {
-          setAdditionalQuestions({
-            usesAccessibleConvertedVan: false,
-            requiresWiderParkingSpace: false,
-          });
-        }
-
-        // set paymentDetails
-        const previousApplication = data.applicant.mostRecentRenewal;
-        setPaymentDetails({
-          ...paymentDetails,
-          shippingAddressSameAsHomeAddress: previousApplication.shippingAddressSameAsHomeAddress,
-          shippingFullName: previousApplication.shippingFullName,
-          shippingAddressLine1: previousApplication.shippingAddressLine1,
-          shippingAddressLine2: previousApplication.shippingAddressLine2,
-          shippingCity: previousApplication.shippingCity,
-          shippingProvince: previousApplication.shippingProvince,
-          shippingPostalCode: previousApplication.shippingPostalCode,
+      // set additionalQuestions
+      if (data.applicant.mostRecentRenewal.renewal) {
+        setAdditionalQuestions({
+          usesAccessibleConvertedVan:
+            data.applicant.mostRecentRenewal.renewal.usesAccessibleConvertedVan,
+          requiresWiderParkingSpace:
+            data.applicant.mostRecentRenewal.renewal.requiresWiderParkingSpace,
         });
-      },
-    }
-  );
+      } else {
+        setAdditionalQuestions({
+          usesAccessibleConvertedVan: false,
+          requiresWiderParkingSpace: false,
+        });
+      }
+
+      // set paymentDetails
+      const previousApplication = data.applicant.mostRecentRenewal;
+      setPaymentDetails({
+        ...paymentDetails,
+        shippingAddressSameAsHomeAddress: previousApplication.shippingAddressSameAsHomeAddress,
+        shippingFullName: previousApplication.shippingFullName,
+        shippingAddressLine1: previousApplication.shippingAddressLine1,
+        shippingAddressLine2: previousApplication.shippingAddressLine2,
+        shippingCity: previousApplication.shippingCity,
+        shippingProvince: previousApplication.shippingProvince,
+        shippingPostalCode: previousApplication.shippingPostalCode,
+      });
+    },
+  });
 
   /**
    * Set and fetch data about applicant when permit holder is selected
@@ -211,7 +211,7 @@ export default function CreateRenewal() {
   /**
    * Submit application mutation
    */
-  const [submitRenewalApplication, { loading }] = useMutation<
+  const [submitRenewalApplication, { loading: submitRequestLoading }] = useMutation<
     CreateRenewalApplicationResponse,
     CreateRenewalApplicationRequest
   >(CREATE_RENEWAL_APPLICATION_MUTATION, {
@@ -330,13 +330,16 @@ export default function CreateRenewal() {
             </GridItem>
             <GridItem paddingTop="32px">
               {permitHolderRcdUserID && (
-                <SelectedPermitHolderCard applicant={personalInformationCard} />
+                <SelectedPermitHolderCard
+                  applicant={personalInformationCard}
+                  loading={getApplicantLoading}
+                />
               )}
             </GridItem>
           </>
         )}
         {/* Permit Holder Information Form */}
-        {permitHolderRcdUserID && currentPageState == RequestFlowPageState.SubmitingRequestPage && (
+        {permitHolderRcdUserID && currentPageState == RequestFlowPageState.SubmittingRequestPage && (
           <form onSubmit={handleSubmit}>
             <GridItem paddingTop="32px">
               <Box
@@ -441,6 +444,7 @@ export default function CreateRenewal() {
                     marginRight="20px"
                     height="48px"
                     width="180px"
+                    isDisabled={submitRequestLoading}
                   >
                     <BackToSearchModal
                       onGoBack={() => {
@@ -464,6 +468,7 @@ export default function CreateRenewal() {
                         marginRight="20px"
                         height="48px"
                         width="188px"
+                        isDisabled={submitRequestLoading}
                       >
                         <Text textStyle="button-semibold">Discard request</Text>
                       </Button>
@@ -473,7 +478,7 @@ export default function CreateRenewal() {
                       height="48px"
                       width="180px"
                       type="submit"
-                      loading={loading}
+                      isLoading={submitRequestLoading}
                     >
                       <Text textStyle="button-semibold">Create request</Text>
                     </Button>
@@ -521,9 +526,8 @@ export default function CreateRenewal() {
                         height="48px"
                         width="217px"
                         type="submit"
-                        loading={loading}
                         isDisabled={permitHolderRcdUserID === undefined}
-                        onClick={() => setNewPageState(RequestFlowPageState.SubmitingRequestPage)}
+                        onClick={() => setNewPageState(RequestFlowPageState.SubmittingRequestPage)}
                       >
                         <Text textStyle="button-semibold">Proceed to request</Text>
                       </Button>

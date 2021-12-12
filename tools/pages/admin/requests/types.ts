@@ -219,5 +219,5 @@ export type GetApplicantReplacementResponse = {
  */
 export enum RequestFlowPageState {
   SelectingPermitHolderPage,
-  SubmitingRequestPage,
+  SubmittingRequestPage,
 }
