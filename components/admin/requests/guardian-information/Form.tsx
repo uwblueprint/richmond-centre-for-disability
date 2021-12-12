@@ -16,7 +16,7 @@ import { ChangeEventHandler } from 'react';
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
   readonly onChange: (updatedData: GuardianInformation) => void;
-  readonly fileList: FileList;
+  readonly files: FileList | null;
 };
 
 /**
