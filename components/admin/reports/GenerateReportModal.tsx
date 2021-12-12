@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react'; // React
+import { ChangeEvent, useState, useMemo } from 'react'; // React
 import {
   Modal,
   ModalOverlay,
@@ -49,7 +49,11 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
 
   const [selectedColumns, setSelectedColumns] = useState<Set<ApplicationsReportColumn>>(new Set());
 
-  // A function that returns an event-handler function that adds/removes the column from selectedColumns
+  const areAllColumnsSelected = useMemo(
+    () => Object.values(ApplicationsReportColumn).every(column => selectedColumns.has(column)),
+    [selectedColumns]
+  );
+
   const handleSelectColumn =
     (column: ApplicationsReportColumn) => (event: ChangeEvent<HTMLInputElement>) => {
       const updatedSelectedColumns = new Set([...selectedColumns]);
@@ -85,7 +89,7 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
     GenerateApplicationsReportRequest
   >(GENERATE_APPLICATIONS_REPORT_QUERY, {
     onCompleted: data => {
-      if (data?.generateApplicationsReport.ok) {
+      if (data.generateApplicationsReport.ok) {
         toast({
           status: 'success',
           description: `A CSV ${
@@ -106,33 +110,12 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
    * Handle CSV export
    */
   const handleSubmit = async () => {
-    const columns = [];
-
-    selectedColumns.has(ApplicationsReportColumn.UserId) &&
-      columns.push(ApplicationsReportColumn.UserId);
-    selectedColumns.has(ApplicationsReportColumn.ApplicantName) &&
-      columns.push(ApplicationsReportColumn.ApplicantName);
-    selectedColumns.has(ApplicationsReportColumn.ApplicantDateOfBirth) &&
-      columns.push(ApplicationsReportColumn.ApplicantDateOfBirth);
-    selectedColumns.has(ApplicationsReportColumn.AppNumber) &&
-      columns.push(ApplicationsReportColumn.AppNumber);
-    selectedColumns.has(ApplicationsReportColumn.ApplicationDate) &&
-      columns.push(ApplicationsReportColumn.ApplicationDate);
-    selectedColumns.has(ApplicationsReportColumn.PaymentMethod) &&
-      columns.push(ApplicationsReportColumn.PaymentMethod);
-    selectedColumns.has(ApplicationsReportColumn.FeeAmount) &&
-      columns.push(ApplicationsReportColumn.FeeAmount);
-    selectedColumns.has(ApplicationsReportColumn.DonationAmount) &&
-      columns.push(ApplicationsReportColumn.DonationAmount);
-    selectedColumns.has(ApplicationsReportColumn.TotalAmount) &&
-      columns.push(ApplicationsReportColumn.TotalAmount);
-
     await exportCSV({
       variables: {
         input: {
           startDate,
           endDate,
-          columns,
+          columns: [...selectedColumns],
         },
       },
     });
@@ -193,19 +176,7 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
               <Checkbox
                 paddingBottom="6px"
                 fontWeight="bold"
-                isChecked={
-                  page === 'requests'
-                    ? selectedColumns.has(ApplicationsReportColumn.UserId) &&
-                      selectedColumns.has(ApplicationsReportColumn.ApplicantName) &&
-                      selectedColumns.has(ApplicationsReportColumn.ApplicantDateOfBirth) &&
-                      selectedColumns.has(ApplicationsReportColumn.AppNumber) &&
-                      selectedColumns.has(ApplicationsReportColumn.ApplicationDate) &&
-                      selectedColumns.has(ApplicationsReportColumn.PaymentMethod) &&
-                      selectedColumns.has(ApplicationsReportColumn.FeeAmount) &&
-                      selectedColumns.has(ApplicationsReportColumn.DonationAmount) &&
-                      selectedColumns.has(ApplicationsReportColumn.TotalAmount)
-                    : false
-                }
+                isChecked={page === 'requests' ? areAllColumnsSelected : false}
                 onChange={handleSelectAllColumns}
               >
                 Select All
@@ -293,19 +264,7 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
               variant="solid"
               ml={'12px'}
               onClick={() => setStep(GenerateReportStep.Export)}
-              disabled={
-                !startDate ||
-                !endDate ||
-                (!selectedColumns.has(ApplicationsReportColumn.UserId) &&
-                  !selectedColumns.has(ApplicationsReportColumn.ApplicantName) &&
-                  !selectedColumns.has(ApplicationsReportColumn.ApplicantDateOfBirth) &&
-                  !selectedColumns.has(ApplicationsReportColumn.AppNumber) &&
-                  !selectedColumns.has(ApplicationsReportColumn.ApplicationDate) &&
-                  !selectedColumns.has(ApplicationsReportColumn.PaymentMethod) &&
-                  !selectedColumns.has(ApplicationsReportColumn.FeeAmount) &&
-                  !selectedColumns.has(ApplicationsReportColumn.DonationAmount) &&
-                  !selectedColumns.has(ApplicationsReportColumn.TotalAmount))
-              }
+              disabled={!startDate || !endDate || selectedColumns.size === 0}
             >
               {'Next'}
             </Button>
