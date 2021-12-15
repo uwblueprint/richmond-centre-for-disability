@@ -97,29 +97,25 @@ export default `
     firstName: String!
     middleName: String!
     lastName: String!
-    dateOfBirth: Date!
+    dateOfBirth: Date
     gender: Gender!
     customGender: String
     email: String
     phone: String!
-    province: Province!
     city: String!
     addressLine1: String!
     addressLine2: String
     postalCode: String!
     notes: String
-    rcdUserId: Int
-    isRenewal: Boolean!
-    permitType: PermitType!
-    poaFormUrl: String
     applicantId: Int
 
-    # Medical information
+    # Physician Assessment 
     disability: String!
-    affectsMobility: Boolean!
-    mobilityAidRequired: Boolean!
-    cannotWalk100m: Boolean!
-    aid: [Aid!]!
+    physicianCertificationDate: String!
+    patientEligibility: String!
+    description: String
+    permitType: PermitType!
+    expiryDate: Date
 
     #Physician Information
     physicianName: String!
@@ -127,29 +123,46 @@ export default `
     physicianAddressLine1: String!
     physicianAddressLine2: String
     physicianCity: String!
-    physicianProvince: Province!
     physicianPostalCode: String!
     physicianPhone: String!
-    physicianNotes: String
+
+    #Guardian
+    guardianFirstName: String!
+    guardianMiddleName: String
+    guardianLastName: String!
+    guardianPhone: String!
+    guardianCity: String!
+    guardianAddressLine1: String!
+    guardianAddressLine2: String
+    guardianPostalCode: String!
+    guardianRelationship: String!
+    poaFormUrl: String
+
+    #Additional Information
+    usesAccessibleConvertedVan: Boolean!
+    requiresWiderParkingSpace: Boolean!
 
     #Payment Information
     processingFee: Float!
     donationAmount: Float
     paymentMethod: PaymentType!
     shopifyConfirmationNumber: String!
-
-    #Guardian
-    guardianFirstName: String
-    guardianMiddleName: String
-    guardianLastName: String
-    guardianPhone: String
-    guardianProvince: Province
-    guardianCity: String
-    guardianAddressLine1: String
-    guardianAddressLine2: String
-    guardianPostalCode: String
-    guardianRelationship: String
-    guardianNotes: String
+    shippingFullName: String!
+    shippingAddressLine1: String!
+    shippingAddressLine2: String
+    shippingCity: String!
+    shippingProvince: Province!
+    shippingCountry: String!
+    shippingPostalCode: String!
+    billingFullName: String!
+    billingAddressLine1: String!
+    billingAddressLine2: String
+    billingCity: String!
+    billingProvince: Province!
+    billingCountry: String!
+    billingPostalCode: String!
+    shippingAddressSameAsHomeAddress: Boolean
+    billingAddressSameAsHomeAddress: Boolean
   }
 
   type CreateApplicationResult {
