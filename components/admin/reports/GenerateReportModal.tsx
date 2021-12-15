@@ -1,4 +1,4 @@
-import { useState } from 'react'; // React
+import { ChangeEvent, useState, useMemo } from 'react'; // React
 import {
   Modal,
   ModalOverlay,
@@ -16,9 +16,17 @@ import {
   Checkbox,
   SimpleGrid,
   ListItem,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { DownloadIcon } from '@chakra-ui/icons';
 import { GenerateReportStep } from '@tools/components/admin/reports/generate-report-steps'; //GenerateReportStep enum
+import { useLazyQuery } from '@apollo/client';
+import {
+  GenerateApplicationsReportRequest,
+  GenerateApplicationsReportResponse,
+  GENERATE_APPLICATIONS_REPORT_QUERY,
+} from '@tools/pages/admin/requests/queries';
+import { ApplicationsReportColumn } from '@lib/graphql/types';
 
 type GenerateReportProps<T> = {
   readonly page: 'requests' | 'permitHolders';
@@ -38,6 +46,82 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [step, setStep] = useState(GenerateReportStep.SelectColumns);
+
+  const [selectedColumns, setSelectedColumns] = useState<Set<ApplicationsReportColumn>>(new Set());
+
+  const areAllColumnsSelected = useMemo(
+    () => Object.values(ApplicationsReportColumn).every(column => selectedColumns.has(column)),
+    [selectedColumns]
+  );
+
+  const handleSelectColumn =
+    (column: ApplicationsReportColumn) => (event: ChangeEvent<HTMLInputElement>) => {
+      const updatedSelectedColumns = new Set([...selectedColumns]);
+      event.target.checked
+        ? updatedSelectedColumns.add(column)
+        : updatedSelectedColumns.delete(column);
+      setSelectedColumns(updatedSelectedColumns);
+    };
+
+  const handleSelectAllColumns = (event: ChangeEvent<HTMLInputElement>) => {
+    const updatedSelectedColumns = event.target.checked
+      ? new Set([
+          ApplicationsReportColumn.UserId,
+          ApplicationsReportColumn.ApplicantName,
+          ApplicationsReportColumn.ApplicantDateOfBirth,
+          ApplicationsReportColumn.AppNumber,
+          ApplicationsReportColumn.ApplicationDate,
+          ApplicationsReportColumn.PaymentMethod,
+          ApplicationsReportColumn.FeeAmount,
+          ApplicationsReportColumn.DonationAmount,
+          ApplicationsReportColumn.TotalAmount,
+        ])
+      : new Set([]);
+    setSelectedColumns(updatedSelectedColumns);
+  };
+
+  // Toast message
+  const toast = useToast();
+
+  // Export csv query
+  const [exportCSV, { loading }] = useLazyQuery<
+    GenerateApplicationsReportResponse,
+    GenerateApplicationsReportRequest
+  >(GENERATE_APPLICATIONS_REPORT_QUERY, {
+    onCompleted: data => {
+      if (data.generateApplicationsReport.ok) {
+        toast({
+          status: 'success',
+          description: `A CSV ${
+            page === 'permitHolders' ? 'permit holders' : 'requests'
+          } report has been successfully generated.`,
+        });
+      }
+    },
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
+
+  /**
+   * Handle CSV export
+   */
+  const handleSubmit = async () => {
+    await exportCSV({
+      variables: {
+        input: {
+          startDate,
+          endDate,
+          columns: [...selectedColumns],
+        },
+      },
+    });
+
+    onClose();
+  };
 
   /**
    * Render select columns step
@@ -89,20 +173,70 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
               </Stack>
             </Box>
             <Box>
-              <Checkbox paddingBottom="6px" fontWeight="bold">
+              <Checkbox
+                paddingBottom="6px"
+                fontWeight="bold"
+                isChecked={page === 'requests' ? areAllColumnsSelected : false}
+                onChange={handleSelectAllColumns}
+              >
                 Select All
               </Checkbox>
               {page === 'requests' ? (
                 <SimpleGrid columns={3} spacingX="20px" spacingY="6px">
-                  <Checkbox>User ID</Checkbox>
-                  <Checkbox>Applicant Name</Checkbox>
-                  <Checkbox>Applicant DoB</Checkbox>
-                  <Checkbox>APP Number</Checkbox>
-                  <Checkbox>Application Date</Checkbox>
-                  <Checkbox>Payment Method</Checkbox>
-                  <Checkbox>Fee Amount</Checkbox>
-                  <Checkbox>Donation Amount</Checkbox>
-                  <Checkbox>Total Amount</Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(ApplicationsReportColumn.UserId)}
+                    onChange={handleSelectColumn(ApplicationsReportColumn.UserId)}
+                  >
+                    User ID
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(ApplicationsReportColumn.ApplicantName)}
+                    onChange={handleSelectColumn(ApplicationsReportColumn.ApplicantName)}
+                  >
+                    Applicant Name
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(ApplicationsReportColumn.ApplicantDateOfBirth)}
+                    onChange={handleSelectColumn(ApplicationsReportColumn.ApplicantDateOfBirth)}
+                  >
+                    Applicant DoB
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(ApplicationsReportColumn.AppNumber)}
+                    onChange={handleSelectColumn(ApplicationsReportColumn.AppNumber)}
+                  >
+                    APP Number
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(ApplicationsReportColumn.ApplicationDate)}
+                    onChange={handleSelectColumn(ApplicationsReportColumn.ApplicationDate)}
+                  >
+                    Application Date
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(ApplicationsReportColumn.PaymentMethod)}
+                    onChange={handleSelectColumn(ApplicationsReportColumn.PaymentMethod)}
+                  >
+                    Payment Method
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(ApplicationsReportColumn.FeeAmount)}
+                    onChange={handleSelectColumn(ApplicationsReportColumn.FeeAmount)}
+                  >
+                    Fee Amount
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(ApplicationsReportColumn.DonationAmount)}
+                    onChange={handleSelectColumn(ApplicationsReportColumn.DonationAmount)}
+                  >
+                    Donation Amount
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(ApplicationsReportColumn.TotalAmount)}
+                    onChange={handleSelectColumn(ApplicationsReportColumn.TotalAmount)}
+                  >
+                    Total Amount
+                  </Checkbox>
                 </SimpleGrid>
               ) : (
                 <SimpleGrid columns={3} spacingX="0px" spacingY="6px">
@@ -130,7 +264,7 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
               variant="solid"
               ml={'12px'}
               onClick={() => setStep(GenerateReportStep.Export)}
-              disabled={!startDate || !endDate}
+              disabled={!startDate || !endDate || selectedColumns.size === 0}
             >
               {'Next'}
             </Button>
@@ -175,15 +309,33 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
           <Box>
             {page === 'requests' ? (
               <SimpleGrid columns={3} spacingY="6px">
-                <ListItem fontSize="17px">User ID</ListItem>
-                <ListItem fontSize="17px">Applicant Name</ListItem>
-                <ListItem fontSize="17px">Applicant DoB</ListItem>
-                <ListItem fontSize="17px">APP Number</ListItem>
-                <ListItem fontSize="17px">Application Date</ListItem>
-                <ListItem fontSize="17px">Payment Method</ListItem>
-                <ListItem fontSize="17px">Fee Amount</ListItem>
-                <ListItem fontSize="17px">Donation Amount</ListItem>
-                <ListItem fontSize="17px">Total Amount</ListItem>
+                {selectedColumns.has(ApplicationsReportColumn.UserId) && (
+                  <ListItem fontSize="17px">User ID</ListItem>
+                )}
+                {selectedColumns.has(ApplicationsReportColumn.ApplicantName) && (
+                  <ListItem fontSize="17px">Applicant Name</ListItem>
+                )}
+                {selectedColumns.has(ApplicationsReportColumn.ApplicantDateOfBirth) && (
+                  <ListItem fontSize="17px">Applicant DoB</ListItem>
+                )}
+                {selectedColumns.has(ApplicationsReportColumn.AppNumber) && (
+                  <ListItem fontSize="17px">APP Number</ListItem>
+                )}
+                {selectedColumns.has(ApplicationsReportColumn.ApplicationDate) && (
+                  <ListItem fontSize="17px">Application Date</ListItem>
+                )}
+                {selectedColumns.has(ApplicationsReportColumn.PaymentMethod) && (
+                  <ListItem fontSize="17px">Payment Method</ListItem>
+                )}
+                {selectedColumns.has(ApplicationsReportColumn.FeeAmount) && (
+                  <ListItem fontSize="17px">Fee Amount</ListItem>
+                )}
+                {selectedColumns.has(ApplicationsReportColumn.DonationAmount) && (
+                  <ListItem fontSize="17px">Donation Amount</ListItem>
+                )}
+                {selectedColumns.has(ApplicationsReportColumn.TotalAmount) && (
+                  <ListItem fontSize="17px">Total Amount</ListItem>
+                )}
               </SimpleGrid>
             ) : (
               <SimpleGrid columns={3} spacingY="6px" spacingX="10px">
@@ -214,7 +366,13 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
           >
             {page === 'requests' ? 'Back to Requests Table' : 'Back to Permit Holder Table'}
           </Button>
-          <Button variant="solid" ml="12px" leftIcon={<DownloadIcon />}>
+          <Button
+            onClick={handleSubmit}
+            loading={loading}
+            variant="solid"
+            ml="12px"
+            leftIcon={<DownloadIcon />}
+          >
             {'Export as CSV'}
           </Button>
         </ModalFooter>

@@ -613,7 +613,7 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
   };
 };
 
-export const generateApplicantsReport: Resolver = async (_, args, { prisma }) => {
+export const generateApplicationsReport: Resolver = async (_, args, { prisma }) => {
   const {
     input: { startDate, endDate, columns },
   } = args;

@@ -495,15 +495,15 @@ export enum Gender {
   Other = 'OTHER'
 }
 
-export type GenerateApplicantsReportInput = {
+export type GenerateApplicationsReportInput = {
   startDate: Scalars['Date'];
   endDate: Scalars['Date'];
   columns: Array<ApplicationsReportColumn>;
 };
 
 /** TODO: Return link to AWS S3 file */
-export type GenerateApplicantsReportResult = {
-  __typename?: 'GenerateApplicantsReportResult';
+export type GenerateApplicationsReportResult = {
+  __typename?: 'GenerateApplicationsReportResult';
   ok: Scalars['Boolean'];
 };
 
@@ -737,7 +737,7 @@ export type Query = {
   applications: Maybe<QueryApplicationsResult>;
   application: Maybe<Application>;
   permits: Maybe<Array<Permit>>;
-  generateApplicantsReport: Maybe<GenerateApplicantsReportResult>;
+  generateApplicationsReport: Maybe<GenerateApplicationsReportResult>;
 };
 
 
@@ -771,8 +771,8 @@ export type QueryApplicationArgs = {
 };
 
 
-export type QueryGenerateApplicantsReportArgs = {
-  input: GenerateApplicantsReportInput;
+export type QueryGenerateApplicationsReportArgs = {
+  input: GenerateApplicationsReportInput;
 };
 
 export type QueryApplicantsResult = {
