@@ -362,4 +362,15 @@ export default `
   type GenerateApplicationsReportResult {
     ok: Boolean!
   }
+
+  input GeneratePermitHoldersReportInput {
+    startDate: Date!
+    endDate: Date!
+    columns: [PermitHoldersReportColumn!]!
+  }
+
+  # TODO: Return link to AWS S3 file
+  type GeneratePermitHoldersReportResult {
+    ok: Boolean!
+  }
 `;

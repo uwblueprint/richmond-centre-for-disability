@@ -22,6 +22,7 @@ import {
   createRenewalApplication,
   createReplacementApplication,
   generateApplicationsReport,
+  generatePermitHoldersReport,
 } from '@lib/applications/resolvers'; // Application resolvers
 import { permits, createPermit } from '@lib/permits/resolvers'; // Permit resolvers
 import {
@@ -73,6 +74,7 @@ const resolvers = {
     applicant: authorize(applicant, [Role.Secretary]),
     employee: authorize(employee, [Role.Admin]),
     generateApplicationsReport: authorize(generateApplicationsReport, [Role.Secretary]),
+    generatePermitHoldersReport: authorize(generatePermitHoldersReport, [Role.Secretary]),
   },
   Mutation: {
     createApplicant: authorize(createApplicant, [Role.Secretary]),

@@ -10,6 +10,7 @@ export default `
     application(id: ID!): Application
     permits: [Permit!]
     generateApplicationsReport(input: GenerateApplicationsReportInput!): GenerateApplicationsReportResult
+    generatePermitHoldersReport(input: GeneratePermitHoldersReportInput!): GeneratePermitHoldersReportResult
   }
 
   type Mutation {
@@ -131,5 +132,20 @@ export default `
     FEE_AMOUNT
     DONATION_AMOUNT
     TOTAL_AMOUNT
+  }
+
+  enum PermitHoldersReportColumn {
+    USER_ID
+    APPLICANT_NAME
+    APPLICANT_DATE_OF_BIRTH
+    HOME_ADDRESS
+    EMAIL
+    PHONE_NUMBER
+    GUARDIAN_POA_NAME
+    GUARDIAN_POA_RELATION
+    GUARDIAN_POA_ADDRESS
+    RECENT_APP_NUMBER
+    RECENT_APP_TYPE
+    USER_STATUS
   }
 `;
