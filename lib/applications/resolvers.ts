@@ -775,19 +775,22 @@ export const generatePermitHoldersReport: Resolver = async (_, args, { prisma })
           ? ` ${application.middleName} ${application.lastName}`
           : ` ${application.lastName}`),
       rcdPermitId: application.permit?.rcdPermitId,
-      homeAddress: `${application.addressLine1}, ${
-        application.addressLine2 ? `${application.addressLine2},` : ''
-      } ${application.city}, ${application.province}, ${application.postalCode}`,
+      homeAddress: `${application.addressLine1}, 
+      ${application.addressLine2 ? `${application.addressLine2},` : ''} ${application.city}, ${
+        application.province
+      }, ${application.postalCode}`,
       userStatus: application.permit?.active ? 'Active' : 'Inactive',
       guardianPOAName:
         application.guardianFirstName +
         (application.guardianMiddleName
           ? ` ${application.guardianMiddleName} ${application.guardianLastName}`
           : ` ${application.guardianLastName}`),
-      guardianPOAAdress: `${application.guardianAddressLine1}, ${
-        application.guardianAddressLine2 ? `${application.guardianAddressLine2},` : ''
-      } ${application.guardianCity}, ${application.guardianProvince}, ${
-        application.guardianPostalCode
+      guardianPOAAdress: `${
+        application.guardianAddressLine1 ? `${application.guardianAddressLine1},` : ''
+      } ${application.guardianAddressLine2 ? `${application.guardianAddressLine2},` : ''} ${
+        application.guardianCity ? `${application.guardianCity},` : ''
+      } ${application.guardianProvince ? `${application.guardianProvince},` : ''} ${
+        application.guardianPostalCode ?? ''
       }`,
     };
   });
