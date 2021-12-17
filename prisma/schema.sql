@@ -182,6 +182,7 @@ CREATE TABLE applications (
   rcd_user_id    INTEGER,
   is_renewal     BOOLEAN NOT NULL DEFAULT true,
   permit_type    PermitType NOT NULL DEFAULT 'PERMANENT',
+  receive_email_updates BOOLEAN NOT NULL DEFAULT false,
   poa_form_url   VARCHAR(255),
   applicant_id   INTEGER,
   -- Medical information
