@@ -43,6 +43,13 @@ CREATE TYPE ReasonForReplacement as ENUM('LOST', 'STOLEN', 'OTHER');
 -- Create permit type enum
 CREATE TYPE PermitType as ENUM('PERMANENT', 'TEMPORARY');
 
+-- Create eligibility type enum
+CREATE TYPE Eligibility as ENUM(
+  'AFFECTS_MOBILITY',
+  'MOBILITY_AID_REQUIRED',
+  'CANNOT_WALK_100M'
+);
+
 -- Create employees table
 CREATE TABLE employees (
   id                SERIAL PRIMARY KEY NOT NULL,
@@ -173,51 +180,50 @@ CREATE TABLE applications (
   custom_gender  VARCHAR(255),
   email          VARCHAR(255),
   phone          VARCHAR(50) NOT NULL,
-  province       Province NOT NULL,
   city           VARCHAR(255) NOT NULL,
   address_line_1 VARCHAR(255) NOT NULL,
   address_line_2 VARCHAR(255),
   postal_code    CHAR(6) NOT NULL,
-  notes          TEXT,
   rcd_user_id    INTEGER,
   is_renewal     BOOLEAN NOT NULL DEFAULT true,
-  permit_type    PermitType NOT NULL DEFAULT 'PERMANENT',
   receive_email_updates BOOLEAN NOT NULL DEFAULT false,
-  poa_form_url   VARCHAR(255),
   applicant_id   INTEGER,
   -- Medical information
   disability               VARCHAR(255) NOT NULL,
-  affects_mobility         BOOLEAN NOT NULL DEFAULT false,
-  mobility_aid_required    BOOLEAN NOT NULL DEFAULT false,
-  cannot_walk_100m         BOOLEAN NOT NULL DEFAULT false,
-  aid                      Aid ARRAY,
+  certification_date       DATE NOT NULL,
+  patient_eligibility      Eligibility NOT NULL,
+  description              TEXT,
+  expiry_date              DATE NOT NULL,
+  permit_type              PermitType NOT NULL DEFAULT 'PERMANENT',
   -- Physician information
   physician_name            VARCHAR(255) NOT NULL,
   physician_msp_number      INTEGER NOT NULL,
+  physician_phone           VARCHAR(50) NOT NULL,
   physician_address_line_1  VARCHAR(255) NOT NULL,
   physician_address_line_2  VARCHAR(255),
   physician_city            VARCHAR(255) NOT NULL,
-  physician_province        Province NOT NULL,
   physician_postal_code     CHAR(6) NOT NULL,
-  physician_phone           VARCHAR(50) NOT NULL,
   physician_notes           TEXT,
-  -- Payment information
-  processing_fee                 FLOAT NOT NULL,
-  donation_amount                FLOAT,
-  payment_method                 PaymentType NOT NULL,
-  shopify_confirmation_number    VARCHAR(255) UNIQUE NOT NULL,
   -- Guardian information
   guardian_first_name     VARCHAR(255),
   guardian_middle_name    VARCHAR(255),
   guardian_last_name      VARCHAR(255),
   guardian_phone          VARCHAR(50),
-  guardian_province       Province,
-  guardian_city           VARCHAR(255),
+  guardian_relationship   VARCHAR(50),
   guardian_address_line_1 VARCHAR(255),
   guardian_address_line_2 VARCHAR(255),
+  guardian_city           VARCHAR(255),
   guardian_postal_code    CHAR(6),
-  guardian_relationship   VARCHAR(50),
+  poa_form_url            VARCHAR(255),
   guardian_notes          TEXT,
+  -- Additional Information
+  uses_accessible_converted_van BOOLEAN DEFAULT FALSE,
+  requires_wider_parking_space  BOOLEAN DEFAULT FALSE, 
+  -- Payment information
+  processing_fee                 FLOAT NOT NULL,
+  donation_amount                FLOAT,
+  payment_method                 PaymentType NOT NULL,
+  shopify_confirmation_number    VARCHAR(255) UNIQUE NOT NULL,
   -- Billing and shipping information
   shipping_full_name                       VARCHAR(255),
   shipping_address_line_1                  VARCHAR(255),

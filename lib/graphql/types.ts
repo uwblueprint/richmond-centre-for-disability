@@ -252,51 +252,66 @@ export type CreateApplicationInput = {
   customGender?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   phone: Scalars['String'];
-  province: Province;
   city: Scalars['String'];
   addressLine1: Scalars['String'];
   addressLine2?: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
-  notes?: Maybe<Scalars['String']>;
   rcdUserId?: Maybe<Scalars['Int']>;
   isRenewal: Scalars['Boolean'];
-  permitType: PermitType;
   receiveEmailUpdates: Scalars['Boolean'];
-  poaFormUrl?: Maybe<Scalars['String']>;
   applicantId?: Maybe<Scalars['Int']>;
   /** Medical information */
   disability: Scalars['String'];
-  affectsMobility: Scalars['Boolean'];
-  mobilityAidRequired: Scalars['Boolean'];
-  cannotWalk100m: Scalars['Boolean'];
-  aid: Array<Aid>;
+  certificationDate: Scalars['Date'];
+  patientEligibility: Eligibility;
+  description?: Maybe<Scalars['String']>;
+  expiryDate?: Maybe<Scalars['Date']>;
+  permitType: PermitType;
   /** Physician Information */
   physicianName: Scalars['String'];
   physicianMspNumber: Scalars['Int'];
+  physicianPhone: Scalars['String'];
   physicianAddressLine1: Scalars['String'];
   physicianAddressLine2?: Maybe<Scalars['String']>;
   physicianCity: Scalars['String'];
-  physicianProvince: Province;
   physicianPostalCode: Scalars['String'];
-  physicianPhone: Scalars['String'];
   physicianNotes?: Maybe<Scalars['String']>;
-  /** Payment Information */
-  processingFee: Scalars['Float'];
-  donationAmount?: Maybe<Scalars['Float']>;
-  paymentMethod: PaymentType;
-  shopifyConfirmationNumber: Scalars['String'];
   /** Guardian */
   guardianFirstName?: Maybe<Scalars['String']>;
   guardianMiddleName?: Maybe<Scalars['String']>;
   guardianLastName?: Maybe<Scalars['String']>;
   guardianPhone?: Maybe<Scalars['String']>;
-  guardianProvince?: Maybe<Province>;
-  guardianCity?: Maybe<Scalars['String']>;
+  guardianRelationship?: Maybe<Scalars['String']>;
   guardianAddressLine1?: Maybe<Scalars['String']>;
   guardianAddressLine2?: Maybe<Scalars['String']>;
+  guardianCity?: Maybe<Scalars['String']>;
   guardianPostalCode?: Maybe<Scalars['String']>;
-  guardianRelationship?: Maybe<Scalars['String']>;
+  poaFormUrl?: Maybe<Scalars['String']>;
   guardianNotes?: Maybe<Scalars['String']>;
+  /** Additional Information */
+  usesAccessibleConvertedVan: Scalars['Boolean'];
+  requiresWiderParkingSpace: Scalars['Boolean'];
+  /** Payment Information */
+  processingFee: Scalars['Float'];
+  donationAmount?: Maybe<Scalars['Float']>;
+  paymentMethod: PaymentType;
+  shopifyConfirmationNumber: Scalars['String'];
+  shippingFullName?: Maybe<Scalars['String']>;
+  shippingAddressLine1?: Maybe<Scalars['String']>;
+  shippingAddressLine2?: Maybe<Scalars['String']>;
+  shippingCity?: Maybe<Scalars['String']>;
+  shippingProvince?: Maybe<Province>;
+  /** shippingCountry: String */
+  shippingPostalCode?: Maybe<Scalars['String']>;
+  billingFullName?: Maybe<Scalars['String']>;
+  billingAddressLine1?: Maybe<Scalars['String']>;
+  billingAddressLine2?: Maybe<Scalars['String']>;
+  billingCity?: Maybe<Scalars['String']>;
+  billingProvince?: Maybe<Province>;
+  /** billingCountry: String */
+  billingPostalCode?: Maybe<Scalars['String']>;
+  shippingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
+  billingAddressSameAsHomeAddress?: Maybe<Scalars['Boolean']>;
 };
 
 export type CreateApplicationResult = {
@@ -475,6 +490,12 @@ export type DeleteEmployeeResult = {
   ok: Scalars['Boolean'];
   employee: Employee;
 };
+
+export enum Eligibility {
+  AffectsMobility = 'AFFECTS_MOBILITY',
+  MobilityAidRequired = 'MOBILITY_AID_REQUIRED',
+  CannotWalk_100M = 'CANNOT_WALK_100M'
+}
 
 export type Employee = {
   __typename?: 'Employee';

@@ -10,39 +10,56 @@ export default `
     customGender: String
     email: String
     phone: String!
-    province: Province!
     city: String!
     addressLine1: String!
     addressLine2: String
     postalCode: String!
-    notes: String
     rcdUserId: Int
     isRenewal: Boolean!
-    permitType: PermitType!
     receiveEmailUpdates: Boolean!
-    poaFormUrl: String
     applicantId: Int
     applicant: Applicant
 
     # Medical information
     disability: String!
-    affectsMobility: Boolean!
-    mobilityAidRequired: Boolean!
-    cannotWalk100m: Boolean!
-    aid: [Aid!]!
+    certificationDate: Date!
+    patientEligibility: Eligibility!
+    description: String
+    expiryDate: Date
+    permitType: PermitType!
 
     #Physician Information
     physicianName: String!
     physicianMspNumber: Int!
+    physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
     physicianCity: String!
-    physicianProvince: Province!
     physicianPostalCode: String!
-    physicianPhone: String!
     physicianNotes: String
 
+    #Guardian
+    guardianFirstName: String
+    guardianMiddleName: String
+    guardianLastName: String
+    guardianPhone: String
+    guardianRelationship: String
+    guardianAddressLine1: String
+    guardianAddressLine2: String
+    guardianCity: String
+    guardianPostalCode: String
+    poaFormUrl: String
+    guardianNotes: String
+
+    #Additional Information
+    usesAccessibleConvertedVan: Boolean!
+    requiresWiderParkingSpace: Boolean!
+
     #Payment Information
+    processingFee: Float!
+    donationAmount: Float
+    paymentMethod: PaymentType!
+    shopifyConfirmationNumber: String!
     shippingFullName: String
     shippingAddressLine1: String
     shippingAddressLine2: String
@@ -59,23 +76,6 @@ export default `
     billingPostalCode: String
     shippingAddressSameAsHomeAddress: Boolean!
     billingAddressSameAsHomeAddress: Boolean!
-    processingFee: Float!
-    donationAmount: Float
-    paymentMethod: PaymentType!
-    shopifyConfirmationNumber: String!
-
-    #Guardian
-    guardianFirstName: String
-    guardianMiddleName: String
-    guardianLastName: String
-    guardianPhone: String
-    guardianProvince: Province
-    guardianCity: String
-    guardianAddressLine1: String
-    guardianAddressLine2: String
-    guardianPostalCode: String
-    guardianRelationship: String
-    guardianNotes: String
 
     # Permit
     permit: Permit
@@ -103,55 +103,71 @@ export default `
     customGender: String
     email: String
     phone: String!
-    province: Province!
     city: String!
     addressLine1: String!
     addressLine2: String
     postalCode: String!
-    notes: String
     rcdUserId: Int
     isRenewal: Boolean!
-    permitType: PermitType!
     receiveEmailUpdates: Boolean!
-    poaFormUrl: String
     applicantId: Int
 
     # Medical information
     disability: String!
-    affectsMobility: Boolean!
-    mobilityAidRequired: Boolean!
-    cannotWalk100m: Boolean!
-    aid: [Aid!]!
+    certificationDate: Date!
+    patientEligibility: Eligibility!
+    description: String
+    expiryDate: Date
+    permitType: PermitType!
 
     #Physician Information
     physicianName: String!
     physicianMspNumber: Int!
+    physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
     physicianCity: String!
-    physicianProvince: Province!
     physicianPostalCode: String!
-    physicianPhone: String!
     physicianNotes: String
-
-    #Payment Information
-    processingFee: Float!
-    donationAmount: Float
-    paymentMethod: PaymentType!
-    shopifyConfirmationNumber: String!
 
     #Guardian
     guardianFirstName: String
     guardianMiddleName: String
     guardianLastName: String
     guardianPhone: String
-    guardianProvince: Province
-    guardianCity: String
+    guardianRelationship: String
     guardianAddressLine1: String
     guardianAddressLine2: String
+    guardianCity: String
     guardianPostalCode: String
-    guardianRelationship: String
+    poaFormUrl: String
     guardianNotes: String
+
+    #Additional Information
+    usesAccessibleConvertedVan: Boolean!
+    requiresWiderParkingSpace: Boolean!
+
+    #Payment Information
+    processingFee: Float!
+    donationAmount: Float
+    paymentMethod: PaymentType!
+    shopifyConfirmationNumber: String!
+    shippingFullName: String
+    shippingAddressLine1: String
+    shippingAddressLine2: String
+    shippingCity: String
+    shippingProvince: Province
+    # shippingCountry: String
+    shippingPostalCode: String
+    billingFullName: String
+    billingAddressLine1: String
+    billingAddressLine2: String
+    billingCity: String
+    billingProvince: Province
+    # billingCountry: String
+    billingPostalCode: String
+    shippingAddressSameAsHomeAddress: Boolean
+    billingAddressSameAsHomeAddress: Boolean
   }
 
   type CreateApplicationResult {

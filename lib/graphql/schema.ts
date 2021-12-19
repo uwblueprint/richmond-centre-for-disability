@@ -148,4 +148,10 @@ export default `
     RECENT_APP_TYPE
     USER_STATUS
   }
+
+  enum Eligibility {
+    AFFECTS_MOBILITY
+    MOBILITY_AID_REQUIRED
+    CANNOT_WALK_100M
+  }
 `;
