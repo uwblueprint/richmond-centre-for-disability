@@ -62,6 +62,7 @@ export default function EditPermitHolderInformationModal({
             </ModalHeader>
             <ModalBody paddingY="20px" paddingX="4px">
               <PermitHolderInformationForm
+                type="replacement"
                 permitHolderInformation={permitHolderInformation}
                 onChange={setPermitHolderInformation}
               />
