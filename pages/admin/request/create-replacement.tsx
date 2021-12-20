@@ -302,6 +302,7 @@ export default function CreateReplacement() {
                     {`Permit Holder's Information`}
                   </Text>
                   <PermitHolderInformationForm
+                    type="replacement"
                     permitHolderInformation={permitHolderInformation}
                     onChange={setPermitHolderInformation}
                   />

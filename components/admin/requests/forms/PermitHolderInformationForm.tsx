@@ -7,24 +7,55 @@ import {
   FormHelperText,
   Box,
   Divider,
+  Checkbox,
 } from '@chakra-ui/react'; // Chakra UI
-import { PermitHolderInformation } from '@tools/components/admin/requests/forms/types'; // Permit Holder Information Type
+import {
+  NewAndRenewalPermitHolderInformation,
+  PermitHolderInformation,
+} from '@tools/components/admin/requests/forms/types'; // Permit Holder Information Type
 
-type PermitHolderInformationFormProps = {
+/**
+ * Props used for replacement requests.
+ *
+ * @param type identifies the prop object type
+ * @param {PermitHolderInformation} permitHolderInformation Data Structure that holds all permit holder information for a client request.
+ * @param onChange Function that uses the updated values from form.
+ */
+type ReplacementPermitHolderInformationFormProps = {
+  readonly type: 'replacement';
   readonly permitHolderInformation: PermitHolderInformation;
   readonly onChange: (updatedData: PermitHolderInformation) => void;
 };
 
 /**
+ * Props used for new or renewal requests.
+ *
+ * @param type identifies the prop object type
+ * @param {NewAndRenewalPermitHolderInformation} permitHolderInformation Data Structure that holds all permit holder information for a client request.
+ * @param onChange Function that uses the updated values from form.
+ */
+type NewAndRenewalPermitHolderInformationFormProps = {
+  readonly type: 'new' | 'renewal';
+  readonly permitHolderInformation: NewAndRenewalPermitHolderInformation;
+  readonly onChange: (updatedData: NewAndRenewalPermitHolderInformation) => void;
+};
+
+/**
+ * PermitHolderInformationFormProps props for allowing users to edit permit holder information.
+ * Either a ReplacementPermitHolderInformationFormProps or NewAndRenewalPermitHolderInformationFormProps.
+ */
+type PermitHolderInformationFormProps =
+  | ReplacementPermitHolderInformationFormProps
+  | NewAndRenewalPermitHolderInformationFormProps;
+
+/**
  * PermitHolderInformationForm Component for allowing users to edit permit holder information.
  *
+ * @param type indicates whether the form is being used for a replacement, new, or renewal request
  * @param {PermitHolderInformation} permitHolderInformation Data Structure that holds all permit holder information for a client request.
  * @param onChange Function that uses the updated values from form.
  */
-export default function PermitHolderInformationForm({
-  permitHolderInformation,
-  onChange,
-}: PermitHolderInformationFormProps) {
+export default function PermitHolderInformationForm(props: PermitHolderInformationFormProps) {
   return (
     <>
       {/* Personal Information Section */}
@@ -36,26 +67,40 @@ export default function PermitHolderInformationForm({
           <FormControl isRequired>
             <FormLabel>{'First name'}</FormLabel>
             <Input
-              value={permitHolderInformation.firstName}
-              onChange={event =>
-                onChange({
-                  ...permitHolderInformation,
-                  firstName: event.target.value,
-                })
-              }
+              value={props.permitHolderInformation.firstName}
+              onChange={event => {
+                if (props.type === 'replacement') {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    firstName: event.target.value,
+                  });
+                } else {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    firstName: event.target.value,
+                  });
+                }
+              }}
             />
           </FormControl>
 
           <FormControl isRequired>
             <FormLabel>{'Last name'}</FormLabel>
             <Input
-              value={permitHolderInformation.lastName}
-              onChange={event =>
-                onChange({
-                  ...permitHolderInformation,
-                  lastName: event.target.value,
-                })
-              }
+              value={props.permitHolderInformation.lastName}
+              onChange={event => {
+                if (props.type === 'replacement') {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    lastName: event.target.value,
+                  });
+                } else {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    lastName: event.target.value,
+                  });
+                }
+              }}
             />
           </FormControl>
         </Stack>
@@ -74,14 +119,21 @@ export default function PermitHolderInformationForm({
           <FormControl isRequired>
             <FormLabel>{'Phone number'}</FormLabel>
             <Input
-              value={permitHolderInformation.phone}
+              value={props.permitHolderInformation.phone}
               type="tel"
-              onChange={event =>
-                onChange({
-                  ...permitHolderInformation,
-                  phone: event.target.value,
-                })
-              }
+              onChange={event => {
+                if (props.type === 'replacement') {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    phone: event.target.value,
+                  });
+                } else {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    phone: event.target.value,
+                  });
+                }
+              }}
             />
             <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
           </FormControl>
@@ -94,16 +146,43 @@ export default function PermitHolderInformationForm({
               </Box>
             </FormLabel>
             <Input
-              value={permitHolderInformation.email || ''}
-              onChange={event =>
-                onChange({
-                  ...permitHolderInformation,
-                  email: event.target.value,
-                })
-              }
+              value={props.permitHolderInformation.email || ''}
+              onChange={event => {
+                if (props.type === 'replacement') {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    email: event.target.value,
+                  });
+                } else {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    email: event.target.value,
+                  });
+                }
+              }}
             />
           </FormControl>
         </Stack>
+
+        {props.type !== 'replacement' && (
+          <FormControl>
+            <Checkbox
+              paddingTop="24px"
+              isChecked={props.permitHolderInformation.receiveEmailUpdates}
+              isDisabled={
+                !props.permitHolderInformation.email || props.permitHolderInformation.email === ''
+              }
+              onChange={event => {
+                props.onChange({
+                  ...props.permitHolderInformation,
+                  receiveEmailUpdates: event.target.checked,
+                });
+              }}
+            >
+              {'Permit holder would like to receive renewal updates through email'}
+            </Checkbox>
+          </FormControl>
+        )}
       </Box>
 
       <Divider />
@@ -121,13 +200,20 @@ export default function PermitHolderInformationForm({
         <FormControl isRequired paddingBottom="24px">
           <FormLabel>{'Address line 1'}</FormLabel>
           <Input
-            value={permitHolderInformation.addressLine1}
-            onChange={event =>
-              onChange({
-                ...permitHolderInformation,
-                addressLine1: event.target.value,
-              })
-            }
+            value={props.permitHolderInformation.addressLine1}
+            onChange={event => {
+              if (props.type === 'replacement') {
+                props.onChange({
+                  ...props.permitHolderInformation,
+                  addressLine1: event.target.value,
+                });
+              } else {
+                props.onChange({
+                  ...props.permitHolderInformation,
+                  addressLine1: event.target.value,
+                });
+              }
+            }}
           />
           <FormHelperText color="text.seconday">
             {'Street Address, P.O. Box, Company Name, c/o'}
@@ -142,13 +228,20 @@ export default function PermitHolderInformationForm({
             </Box>
           </FormLabel>
           <Input
-            value={permitHolderInformation.addressLine2 || ''}
-            onChange={event =>
-              onChange({
-                ...permitHolderInformation,
-                addressLine2: event.target.value,
-              })
-            }
+            value={props.permitHolderInformation.addressLine2 || ''}
+            onChange={event => {
+              if (props.type === 'replacement') {
+                props.onChange({
+                  ...props.permitHolderInformation,
+                  addressLine2: event.target.value,
+                });
+              } else {
+                props.onChange({
+                  ...props.permitHolderInformation,
+                  addressLine2: event.target.value,
+                });
+              }
+            }}
           />
           <FormHelperText color="text.seconday">
             {'Apartment, suite, unit, building, floor, etc'}
@@ -159,26 +252,40 @@ export default function PermitHolderInformationForm({
           <FormControl isRequired>
             <FormLabel>{'City'}</FormLabel>
             <Input
-              value={permitHolderInformation.city}
-              onChange={event =>
-                onChange({
-                  ...permitHolderInformation,
-                  city: event.target.value,
-                })
-              }
+              value={props.permitHolderInformation.city}
+              onChange={event => {
+                if (props.type === 'replacement') {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    city: event.target.value,
+                  });
+                } else {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    city: event.target.value,
+                  });
+                }
+              }}
             />
           </FormControl>
 
           <FormControl isRequired>
             <FormLabel>{'Postal code'}</FormLabel>
             <Input
-              value={permitHolderInformation.postalCode}
-              onChange={event =>
-                onChange({
-                  ...permitHolderInformation,
-                  postalCode: event.target.value,
-                })
-              }
+              value={props.permitHolderInformation.postalCode}
+              onChange={event => {
+                if (props.type === 'replacement') {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    postalCode: event.target.value,
+                  });
+                } else {
+                  props.onChange({
+                    ...props.permitHolderInformation,
+                    postalCode: event.target.value,
+                  });
+                }
+              }}
             />
             <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
           </FormControl>

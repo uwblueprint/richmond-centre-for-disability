@@ -110,6 +110,7 @@ export const GET_APPLICANT_RENEWAL_QUERY = gql`
       }
       mostRecentRenewal {
         id
+        receiveEmailUpdates
         shippingFullName
         shippingAddressLine1
         shippingAddressLine2
