@@ -110,7 +110,7 @@ export default function Renew() {
     await client.checkout.addLineItems(cart.id, lineItemsToAdd);
 
     // Open checkout window.
-    window.location.href = cart.webUrl;
+    window.location.href = cart.checkoutUrl;
   };
 
   // Submit application mutation
