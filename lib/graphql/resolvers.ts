@@ -12,6 +12,7 @@ import {
   createApplicant,
   updateApplicant,
   verifyIdentity,
+  generatePermitHoldersReport,
 } from '@lib/applicants/resolvers'; // Applicant resolvers
 import { physicians, createPhysician, upsertPhysician } from '@lib/physicians/resolvers'; // Physician resolvers
 import {
@@ -22,7 +23,6 @@ import {
   createRenewalApplication,
   createReplacementApplication,
   generateApplicationsReport,
-  generatePermitHoldersReport,
 } from '@lib/applications/resolvers'; // Application resolvers
 import { permits, createPermit } from '@lib/permits/resolvers'; // Permit resolvers
 import {

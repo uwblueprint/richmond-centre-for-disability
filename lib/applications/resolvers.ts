@@ -12,11 +12,7 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import {
-  ApplicationsReportColumn,
-  PaymentType,
-  PermitHoldersReportColumn,
-} from '@lib/graphql/types'; // GraphQL types
+import { ApplicationsReportColumn, PaymentType } from '@lib/graphql/types'; // GraphQL types
 import { formatDate, formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 import { createObjectCsvWriter } from 'csv-writer';
 
@@ -708,134 +704,6 @@ export const generateApplicationsReport: Resolver = async (_, args, { prisma }) 
 
   const csvWriter = createObjectCsvWriter({
     path: 'temp/file.csv',
-    header: csvHeaders,
-  });
-
-  await csvWriter.writeRecords(csvApplications);
-
-  return {
-    ok: true,
-  };
-};
-
-export const generatePermitHoldersReport: Resolver = async (_, args, { prisma }) => {
-  const {
-    input: { startDate, endDate, columns },
-  } = args;
-
-  const columnsSet = new Set(columns);
-
-  const applications = await prisma.application.findMany({
-    where: {
-      createdAt: {
-        gte: startDate,
-        lte: endDate,
-      },
-    },
-    select: {
-      rcdUserId: columnsSet.has(PermitHoldersReportColumn.UserId),
-      firstName: columnsSet.has(PermitHoldersReportColumn.ApplicantName),
-      middleName: columnsSet.has(PermitHoldersReportColumn.ApplicantName),
-      lastName: columnsSet.has(PermitHoldersReportColumn.ApplicantName),
-      dateOfBirth: columnsSet.has(PermitHoldersReportColumn.ApplicantDateOfBirth),
-      addressLine1: columnsSet.has(PermitHoldersReportColumn.HomeAddress),
-      addressLine2: columnsSet.has(PermitHoldersReportColumn.HomeAddress),
-      city: columnsSet.has(PermitHoldersReportColumn.HomeAddress),
-      province: columnsSet.has(PermitHoldersReportColumn.HomeAddress),
-      postalCode: columnsSet.has(PermitHoldersReportColumn.HomeAddress),
-      email: columnsSet.has(PermitHoldersReportColumn.Email),
-      phone: columnsSet.has(PermitHoldersReportColumn.PhoneNumber),
-      guardianFirstName: columnsSet.has(PermitHoldersReportColumn.GuardianPoaName),
-      guardianMiddleName: columnsSet.has(PermitHoldersReportColumn.GuardianPoaName),
-      guardianLastName: columnsSet.has(PermitHoldersReportColumn.GuardianPoaName),
-      guardianRelationship: columnsSet.has(PermitHoldersReportColumn.GuardianPoaRelation),
-      guardianAddressLine1: columnsSet.has(PermitHoldersReportColumn.GuardianPoaAddress),
-      guardianAddressLine2: columnsSet.has(PermitHoldersReportColumn.GuardianPoaAddress),
-      guardianPostalCode: columnsSet.has(PermitHoldersReportColumn.GuardianPoaAddress),
-      guardianCity: columnsSet.has(PermitHoldersReportColumn.GuardianPoaAddress),
-      guardianProvince: columnsSet.has(PermitHoldersReportColumn.GuardianPoaAddress),
-      permit: {
-        select: {
-          rcdPermitId: true,
-          active: columnsSet.has(PermitHoldersReportColumn.UserStatus),
-        },
-      },
-      permitType: columnsSet.has(PermitHoldersReportColumn.RecentAppType),
-    },
-  });
-
-  // Formats the date fields and adds totalAmount, applicantName and rcdPermitId properties to allow for csv writing
-  const csvApplications = applications.map(application => {
-    return {
-      ...application,
-      dateOfBirth: formatDate(application.dateOfBirth),
-      applicantName:
-        application.firstName +
-        (application.middleName
-          ? ` ${application.middleName} ${application.lastName}`
-          : ` ${application.lastName}`),
-      rcdPermitId: application.permit?.rcdPermitId,
-      homeAddress: `${application.addressLine1}, 
-      ${application.addressLine2 ? `${application.addressLine2},` : ''} ${application.city}, ${
-        application.province
-      }, ${application.postalCode}`,
-      userStatus: application.permit?.active ? 'Active' : 'Inactive',
-      guardianPOAName:
-        application.guardianFirstName +
-        (application.guardianMiddleName
-          ? ` ${application.guardianMiddleName} ${application.guardianLastName}`
-          : ` ${application.guardianLastName}`),
-      guardianPOAAdress: `${
-        application.guardianAddressLine1 ? `${application.guardianAddressLine1},` : ''
-      } ${application.guardianAddressLine2 ? `${application.guardianAddressLine2},` : ''} ${
-        application.guardianCity ? `${application.guardianCity},` : ''
-      } ${application.guardianProvince ? `${application.guardianProvince},` : ''} ${
-        application.guardianPostalCode ?? ''
-      }`,
-    };
-  });
-
-  const csvHeaders = [];
-
-  if (columnsSet.has(PermitHoldersReportColumn.UserId)) {
-    csvHeaders.push({ id: 'rcdUserId', title: 'User ID' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.ApplicantName)) {
-    csvHeaders.push({ id: 'applicantName', title: 'Applicant Name' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.ApplicantDateOfBirth)) {
-    csvHeaders.push({ id: 'dateOfBirth', title: 'Applicant DoB' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.HomeAddress)) {
-    csvHeaders.push({ id: 'homeAddress', title: 'Home Address' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.Email)) {
-    csvHeaders.push({ id: 'email', title: 'Email' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.PhoneNumber)) {
-    csvHeaders.push({ id: 'phone', title: 'Phone Number' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaName)) {
-    csvHeaders.push({ id: 'guardianPoaName', title: 'Guardian/POA Name' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaRelation)) {
-    csvHeaders.push({ id: 'guardianRelationship', title: 'Guardian/POA Relation' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaAddress)) {
-    csvHeaders.push({ id: 'guardianPOAAdress', title: 'Guardian/POA Address' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.RecentAppNumber)) {
-    csvHeaders.push({ id: 'rcdPermitId', title: 'Recent APP Number' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.RecentAppType)) {
-    csvHeaders.push({ id: 'permitType', title: 'Recent APP Type' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.UserStatus)) {
-    csvHeaders.push({ id: 'userStatus', title: 'User Status' });
-  }
-
-  const csvWriter = createObjectCsvWriter({
-    path: 'temp/file-permit-holders.csv',
     header: csvHeaders,
   });
 

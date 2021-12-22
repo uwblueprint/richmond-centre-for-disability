@@ -10,10 +10,11 @@ import {
 import { getUniqueConstraintFailedFields, DBErrorCode } from '@lib/db/errors'; // Database errors
 import { MspNumberDoesNotExistError } from '@lib/physicians/errors'; // Physician errors
 import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
-import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
-import { PermitStatus, VerifyIdentityFailureReason } from '@lib/types'; // GraphQL types
+import { formatDate, formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
+import { PermitHoldersReportColumn, PermitStatus, VerifyIdentityFailureReason } from '@lib/types'; // GraphQL types
 import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
+import { createObjectCsvWriter } from 'csv-writer';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -388,5 +389,137 @@ export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
     ok: true,
     failureReason: null,
     applicantId: applicant.id,
+  };
+};
+
+export const generatePermitHoldersReport: Resolver = async (_, args, { prisma }) => {
+  const {
+    input: { startDate, endDate, columns },
+  } = args;
+
+  const columnsSet = new Set(columns);
+
+  const applicants = await prisma.applicant.findMany({
+    where: {
+      applications: {
+        some: {
+          createdAt: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+      },
+    },
+    select: {
+      rcdUserId: true,
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      dateOfBirth: true,
+      addressLine1: true,
+      addressLine2: true,
+      city: true,
+      province: true,
+      postalCode: true,
+      email: true,
+      phone: true,
+      status: true,
+      guardian: {
+        select: {
+          firstName: true,
+          middleName: true,
+          lastName: true,
+          relationship: true,
+          addressLine1: true,
+          addressLine2: true,
+          postalCode: true,
+          city: true,
+          province: true,
+        },
+      },
+      // permitType: columnsSet.has(PermitHoldersReportColumn.RecentAppType),
+      // NOTETOSELF: https://github.com/uwblueprint/richmond-centre-for-disability/pull/119/files#r771898266
+    },
+  });
+
+  // Formats the date fields and adds totalAmount, applicantName and rcdPermitId properties to allow for csv writing
+  const csvApplicants = applicants.map(applicant => {
+    return {
+      ...applicant,
+      dateOfBirth: formatDate(applicant.dateOfBirth),
+      applicantName:
+        applicant.firstName +
+        `${applicant.firstName}${applicant.middleName ? ` ${applicant.middleName}` : ''} ${
+          applicant.lastName
+        }`,
+      // NOTETOSELF: Address
+      // rcdPermitId: applicant.permit?.rcdPermitId,
+      homeAddress: `${applicant.addressLine1},${
+        applicant.addressLine2 ? ` ${applicant.addressLine2},` : ''
+      } ${applicant.city}, ${applicant.province} ${applicant.postalCode}`,
+      guardianPOAName: applicant.guardian
+        ? `${applicant.guardian.firstName}${
+            applicant.guardian?.middleName ? ` ${applicant.guardian.middleName}` : ''
+          } ${applicant.guardian.lastName}`
+        : '',
+      guardianPOAAdress: applicant.guardian
+        ? `${applicant.guardian.addressLine1}${
+            applicant.guardian.addressLine2 ? ` ${applicant.guardian.addressLine2},` : ''
+          } ${applicant.guardian.city}, ${applicant.guardian.province} ${
+            applicant.guardian.postalCode
+          }`
+        : '',
+    };
+  });
+
+  const csvHeaders = [];
+
+  if (columnsSet.has(PermitHoldersReportColumn.UserId)) {
+    csvHeaders.push({ id: 'rcdUserId', title: 'User ID' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.ApplicantName)) {
+    csvHeaders.push({ id: 'applicantName', title: 'Applicant Name' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.ApplicantDateOfBirth)) {
+    csvHeaders.push({ id: 'dateOfBirth', title: 'Applicant DoB' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.HomeAddress)) {
+    csvHeaders.push({ id: 'homeAddress', title: 'Home Address' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.Email)) {
+    csvHeaders.push({ id: 'email', title: 'Email' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.PhoneNumber)) {
+    csvHeaders.push({ id: 'phone', title: 'Phone Number' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaName)) {
+    csvHeaders.push({ id: 'guardianPoaName', title: 'Guardian/POA Name' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaRelation)) {
+    csvHeaders.push({ id: 'guardianRelationship', title: 'Guardian/POA Relation' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaAddress)) {
+    csvHeaders.push({ id: 'guardianPOAAdress', title: 'Guardian/POA Address' });
+  }
+  // NOTETOSELF: Address
+  // if (columnsSet.has(PermitHoldersReportColumn.RecentAppNumber)) {
+  //   csvHeaders.push({ id: 'rcdPermitId', title: 'Recent APP Number' });
+  // }
+  if (columnsSet.has(PermitHoldersReportColumn.RecentAppType)) {
+    csvHeaders.push({ id: 'permitType', title: 'Recent APP Type' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.UserStatus)) {
+    csvHeaders.push({ id: 'status', title: 'User Status' });
+  }
+
+  const csvWriter = createObjectCsvWriter({
+    path: 'temp/file-permit-holders.csv',
+    header: csvHeaders,
+  });
+
+  await csvWriter.writeRecords(csvApplicants);
+
+  return {
+    ok: true,
   };
 };
