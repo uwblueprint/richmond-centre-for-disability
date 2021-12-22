@@ -392,6 +392,11 @@ export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
   };
 };
 
+/**
+ * Generates csv with permit holders' info, given a start date, end date, and values from
+ * PermitHoldersReportColumn that the user would like to have on the generated csv
+ * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
+ */
 export const generatePermitHoldersReport: Resolver = async (_, args, { prisma }) => {
   const {
     input: { startDate, endDate, columns },
@@ -437,26 +442,48 @@ export const generatePermitHoldersReport: Resolver = async (_, args, { prisma })
           province: true,
         },
       },
-      // permitType: columnsSet.has(PermitHoldersReportColumn.RecentAppType),
-      // NOTETOSELF: https://github.com/uwblueprint/richmond-centre-for-disability/pull/119/files#r771898266
+      // Fetches rcdPermitId from latest permit
+      permits: {
+        orderBy: {
+          createdAt: SortOrder.DESC,
+        },
+        take: 1,
+        select: {
+          rcdPermitId: true,
+          // TODO: Update permit table to include permit type
+          // TODO: Once updated, fetch permitType from latest permit
+          // permitType: true,
+        },
+      },
+      // Fetches permitType from latest application
+      // TODO: Update permit table to include permit type
+      // TODO: Once updated, fetch field from latest permit instead and remove following code
+      applications: {
+        orderBy: {
+          createdAt: SortOrder.DESC,
+        },
+        take: 1,
+        select: {
+          permitType: true,
+        },
+      },
     },
   });
 
-  // Formats the date fields and adds totalAmount, applicantName and rcdPermitId properties to allow for csv writing
+  // Formats fields and adds properties to allow for csv writing
   const csvApplicants = applicants.map(applicant => {
     return {
       ...applicant,
       dateOfBirth: formatDate(applicant.dateOfBirth),
-      applicantName:
-        applicant.firstName +
-        `${applicant.firstName}${applicant.middleName ? ` ${applicant.middleName}` : ''} ${
-          applicant.lastName
-        }`,
-      // NOTETOSELF: Address
-      // rcdPermitId: applicant.permit?.rcdPermitId,
+      applicantName: `${applicant.firstName}${
+        applicant.middleName ? ` ${applicant.middleName}` : ''
+      } ${applicant.lastName}`,
+      rcdPermitId: applicant.permits[0].rcdPermitId,
+      permitType: applicant.applications[0].permitType,
       homeAddress: `${applicant.addressLine1},${
         applicant.addressLine2 ? ` ${applicant.addressLine2},` : ''
       } ${applicant.city}, ${applicant.province} ${applicant.postalCode}`,
+      guardianRelationship: applicant.guardian?.relationship,
       guardianPOAName: applicant.guardian
         ? `${applicant.guardian.firstName}${
             applicant.guardian?.middleName ? ` ${applicant.guardian.middleName}` : ''
@@ -493,7 +520,7 @@ export const generatePermitHoldersReport: Resolver = async (_, args, { prisma })
     csvHeaders.push({ id: 'phone', title: 'Phone Number' });
   }
   if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaName)) {
-    csvHeaders.push({ id: 'guardianPoaName', title: 'Guardian/POA Name' });
+    csvHeaders.push({ id: 'guardianPOAName', title: 'Guardian/POA Name' });
   }
   if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaRelation)) {
     csvHeaders.push({ id: 'guardianRelationship', title: 'Guardian/POA Relation' });
@@ -501,10 +528,9 @@ export const generatePermitHoldersReport: Resolver = async (_, args, { prisma })
   if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaAddress)) {
     csvHeaders.push({ id: 'guardianPOAAdress', title: 'Guardian/POA Address' });
   }
-  // NOTETOSELF: Address
-  // if (columnsSet.has(PermitHoldersReportColumn.RecentAppNumber)) {
-  //   csvHeaders.push({ id: 'rcdPermitId', title: 'Recent APP Number' });
-  // }
+  if (columnsSet.has(PermitHoldersReportColumn.RecentAppNumber)) {
+    csvHeaders.push({ id: 'rcdPermitId', title: 'Recent APP Number' });
+  }
   if (columnsSet.has(PermitHoldersReportColumn.RecentAppType)) {
     csvHeaders.push({ id: 'permitType', title: 'Recent APP Type' });
   }
