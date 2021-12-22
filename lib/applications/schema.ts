@@ -112,7 +112,7 @@ export default `
     rcdUserId: Int
     isRenewal: Boolean!
     permitType: PermitType!
-    receiveEmailUpdates: Boolean
+    receiveEmailUpdates: Boolean!
     poaFormUrl: String
     applicantId: Int
 
@@ -324,7 +324,6 @@ export default `
     addressLine2: String
     city: String!
     postalCode: String!
-    receiveEmailUpdates: Boolean
 
     # Replacement Information
     reason: ReasonForReplacement!

@@ -83,7 +83,7 @@ const resolvers = {
     createPhysician: authorize(createPhysician, [Role.Secretary]),
     upsertPhysician: authorize(upsertPhysician, [Role.Secretary]),
     createApplication: authorize(createApplication, [Role.Secretary]),
-    createRenewalApplication: authorize(createRenewalApplication, [Role.Secretary]),
+    createRenewalApplication: createRenewalApplication,
     createReplacementApplication: authorize(createReplacementApplication, [Role.Secretary]),
     updateApplication: authorize(updateApplication, [Role.Secretary]),
     createPermit: authorize(createPermit, [Role.Secretary]),

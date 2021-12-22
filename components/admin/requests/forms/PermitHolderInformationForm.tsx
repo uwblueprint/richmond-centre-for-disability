@@ -13,6 +13,7 @@ import {
   NewAndRenewalPermitHolderInformation,
   PermitHolderInformation,
 } from '@tools/components/admin/requests/forms/types'; // Permit Holder Information Type
+import { ChangeEventHandler } from 'react';
 
 /**
  * Props used for replacement requests.
@@ -56,6 +57,24 @@ type PermitHolderInformationFormProps =
  * @param onChange Function that uses the updated values from form.
  */
 export default function PermitHolderInformationForm(props: PermitHolderInformationFormProps) {
+  const handleChange =
+    (
+      field: keyof NewAndRenewalPermitHolderInformation | keyof PermitHolderInformation
+    ): ChangeEventHandler<HTMLInputElement> =>
+    event => {
+      if (props.type === 'replacement') {
+        props.onChange({
+          ...props.permitHolderInformation,
+          [field]: event.target.value,
+        });
+      } else {
+        props.onChange({
+          ...props.permitHolderInformation,
+          [field]: event.target.value,
+        });
+      }
+    };
+
   return (
     <>
       {/* Personal Information Section */}
@@ -68,19 +87,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             <FormLabel>{'First name'}</FormLabel>
             <Input
               value={props.permitHolderInformation.firstName}
-              onChange={event => {
-                if (props.type === 'replacement') {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    firstName: event.target.value,
-                  });
-                } else {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    firstName: event.target.value,
-                  });
-                }
-              }}
+              onChange={handleChange('firstName')}
             />
           </FormControl>
 
@@ -88,19 +95,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             <FormLabel>{'Last name'}</FormLabel>
             <Input
               value={props.permitHolderInformation.lastName}
-              onChange={event => {
-                if (props.type === 'replacement') {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    lastName: event.target.value,
-                  });
-                } else {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    lastName: event.target.value,
-                  });
-                }
-              }}
+              onChange={handleChange('lastName')}
             />
           </FormControl>
         </Stack>
@@ -121,19 +116,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             <Input
               value={props.permitHolderInformation.phone}
               type="tel"
-              onChange={event => {
-                if (props.type === 'replacement') {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    phone: event.target.value,
-                  });
-                } else {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    phone: event.target.value,
-                  });
-                }
-              }}
+              onChange={handleChange('phone')}
             />
             <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
           </FormControl>
@@ -147,19 +130,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             </FormLabel>
             <Input
               value={props.permitHolderInformation.email || ''}
-              onChange={event => {
-                if (props.type === 'replacement') {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    email: event.target.value,
-                  });
-                } else {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    email: event.target.value,
-                  });
-                }
-              }}
+              onChange={handleChange('email')}
             />
           </FormControl>
         </Stack>
@@ -172,12 +143,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
               isDisabled={
                 !props.permitHolderInformation.email || props.permitHolderInformation.email === ''
               }
-              onChange={event => {
-                props.onChange({
-                  ...props.permitHolderInformation,
-                  receiveEmailUpdates: event.target.checked,
-                });
-              }}
+              onChange={handleChange('receiveEmailUpdates')}
             >
               {'Permit holder would like to receive renewal updates through email'}
             </Checkbox>
@@ -201,19 +167,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
           <FormLabel>{'Address line 1'}</FormLabel>
           <Input
             value={props.permitHolderInformation.addressLine1}
-            onChange={event => {
-              if (props.type === 'replacement') {
-                props.onChange({
-                  ...props.permitHolderInformation,
-                  addressLine1: event.target.value,
-                });
-              } else {
-                props.onChange({
-                  ...props.permitHolderInformation,
-                  addressLine1: event.target.value,
-                });
-              }
-            }}
+            onChange={handleChange('addressLine1')}
           />
           <FormHelperText color="text.seconday">
             {'Street Address, P.O. Box, Company Name, c/o'}
@@ -229,19 +183,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
           </FormLabel>
           <Input
             value={props.permitHolderInformation.addressLine2 || ''}
-            onChange={event => {
-              if (props.type === 'replacement') {
-                props.onChange({
-                  ...props.permitHolderInformation,
-                  addressLine2: event.target.value,
-                });
-              } else {
-                props.onChange({
-                  ...props.permitHolderInformation,
-                  addressLine2: event.target.value,
-                });
-              }
-            }}
+            onChange={handleChange('addressLine2')}
           />
           <FormHelperText color="text.seconday">
             {'Apartment, suite, unit, building, floor, etc'}
@@ -251,41 +193,14 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
         <Stack direction="row" spacing="20px">
           <FormControl isRequired>
             <FormLabel>{'City'}</FormLabel>
-            <Input
-              value={props.permitHolderInformation.city}
-              onChange={event => {
-                if (props.type === 'replacement') {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    city: event.target.value,
-                  });
-                } else {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    city: event.target.value,
-                  });
-                }
-              }}
-            />
+            <Input value={props.permitHolderInformation.city} onChange={handleChange('city')} />
           </FormControl>
 
           <FormControl isRequired>
             <FormLabel>{'Postal code'}</FormLabel>
             <Input
               value={props.permitHolderInformation.postalCode}
-              onChange={event => {
-                if (props.type === 'replacement') {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    postalCode: event.target.value,
-                  });
-                } else {
-                  props.onChange({
-                    ...props.permitHolderInformation,
-                    postalCode: event.target.value,
-                  });
-                }
-              }}
+              onChange={handleChange('postalCode')}
             />
             <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
           </FormControl>
