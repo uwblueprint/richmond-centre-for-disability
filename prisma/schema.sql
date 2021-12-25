@@ -181,6 +181,7 @@ CREATE TABLE applications (
   email          VARCHAR(255),
   phone          VARCHAR(50) NOT NULL,
   city           VARCHAR(255) NOT NULL,
+  province       Province NOT NULL DEFAULT 'BC',
   address_line_1 VARCHAR(255) NOT NULL,
   address_line_2 VARCHAR(255),
   postal_code    CHAR(6) NOT NULL,
@@ -202,6 +203,7 @@ CREATE TABLE applications (
   physician_address_line_1  VARCHAR(255) NOT NULL,
   physician_address_line_2  VARCHAR(255),
   physician_city            VARCHAR(255) NOT NULL,
+  physician_province        Province NOT NULL DEFAULT 'BC',
   physician_postal_code     CHAR(6) NOT NULL,
   physician_notes           TEXT,
   -- Guardian information
@@ -213,6 +215,7 @@ CREATE TABLE applications (
   guardian_address_line_1 VARCHAR(255),
   guardian_address_line_2 VARCHAR(255),
   guardian_city           VARCHAR(255),
+  guardian_province       Province,
   guardian_postal_code    CHAR(6),
   poa_form_url            VARCHAR(255),
   guardian_notes          TEXT,

@@ -30,8 +30,8 @@ model Applicant {
   medicalInformationId Int                @unique @map("medical_information_id")
   createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt            DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  guardian             Guardian?          @relation("applicantsToguardians", fields: [guardianId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  medicalInformation   MedicalInformation @relation("applicantsTomedical_information", fields: [medicalInformationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  guardian             Guardian?          @relation("applicantsToguardians", fields: [guardianId], references: [id])
+  medicalInformation   MedicalInformation @relation("applicantsTomedical_information", fields: [medicalInformationId], references: [id])
   applications         Application[]
   permits              Permit[]
 
@@ -49,6 +49,7 @@ model Application {
   email                            String?               @db.VarChar(255)
   phone                            String                @db.VarChar(50)
   city                             String                @db.VarChar(255)
+  province                         Province              @default(BC)
   addressLine1                     String                @map("address_line_1") @db.VarChar(255)
   addressLine2                     String?               @map("address_line_2") @db.VarChar(255)
   postalCode                       String                @map("postal_code") @db.Char(6)
@@ -68,6 +69,7 @@ model Application {
   physicianAddressLine1            String                @map("physician_address_line_1") @db.VarChar(255)
   physicianAddressLine2            String?               @map("physician_address_line_2") @db.VarChar(255)
   physicianCity                    String                @map("physician_city") @db.VarChar(255)
+  physician_province               Province              @default(BC)
   physicianPostalCode              String                @map("physician_postal_code") @db.Char(6)
   physicianNotes                   String?               @map("physician_notes")
   guardianFirstName                String?               @map("guardian_first_name") @db.VarChar(255)
@@ -78,6 +80,7 @@ model Application {
   guardianAddressLine1             String?               @map("guardian_address_line_1") @db.VarChar(255)
   guardianAddressLine2             String?               @map("guardian_address_line_2") @db.VarChar(255)
   guardianCity                     String?               @map("guardian_city") @db.VarChar(255)
+  guardian_province                Province?
   guardianPostalCode               String?               @map("guardian_postal_code") @db.Char(6)
   poaFormUrl                       String?               @map("poa_form_url") @db.VarChar(255)
   guardianNotes                    String?               @map("guardian_notes")
@@ -104,8 +107,8 @@ model Application {
   applicationProcessingId          Int                   @unique @map("application_processing_id")
   createdAt                        DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                        DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  applicant                        Applicant?            @relation(fields: [applicantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  applicationProcessing            ApplicationProcessing @relation("application_processingToapplications", fields: [applicationProcessingId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  applicant                        Applicant?            @relation(fields: [applicantId], references: [id])
+  applicationProcessing            ApplicationProcessing @relation("application_processingToapplications", fields: [applicationProcessingId], references: [id])
   permit                           Permit?
   renewal                          Renewal?              @relation("applicationsTorenewals")
   replacement                      Replacement?          @relation("applicationsToreplacements")
@@ -159,7 +162,7 @@ model MedicalInformation {
   physicianId         Int        @map("physician_id")
   createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt           DateTime   @default(now()) @map("updated_at") @db.Timestamptz(6)
-  physician           Physician  @relation(fields: [physicianId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  physician           Physician  @relation(fields: [physicianId], references: [id])
   applicant           Applicant? @relation("applicantsTomedical_information")
 
   @@map("medical_information")
@@ -175,8 +178,8 @@ model Permit {
   applicantId   Int         @map("applicant_id")
   createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
-  applicant     Applicant   @relation(fields: [applicantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  application   Application @relation(fields: [applicationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  applicant     Applicant   @relation(fields: [applicantId], references: [id])
+  application   Application @relation(fields: [applicationId], references: [id])
 
   @@map("permits")
 }
@@ -239,7 +242,7 @@ model Replacement {
   applicationId           Int                  @unique @map("application_id")
   createdAt               DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt               DateTime             @default(now()) @map("updated_at") @db.Timestamptz(6)
-  application             Application          @relation("applicationsToreplacements", fields: [applicationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  application             Application          @relation("applicationsToreplacements", fields: [applicationId], references: [id])
 
   @@map("replacements")
 }
@@ -251,7 +254,7 @@ model Renewal {
   applicationId              Int         @unique @map("application_id")
   createdAt                  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                  DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
-  application                Application @relation("applicationsTorenewals", fields: [applicationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  application                Application @relation("applicationsTorenewals", fields: [applicationId], references: [id])
 
   @@map("renewals")
 }
@@ -263,14 +266,14 @@ enum Aid {
   SCOOTER
   WALKER
 
-  @@map("aid")
+   @@map("aid")
 }
 
 enum ApplicantStatus {
   ACTIVE
   INACTIVE
 
-  @@map("applicantstatus")
+   @@map("applicantstatus")
 }
 
 enum Gender {
@@ -278,7 +281,7 @@ enum Gender {
   FEMALE
   OTHER
 
-  @@map("gender")
+   @@map("gender")
 }
 
 enum PaymentType {
@@ -290,14 +293,14 @@ enum PaymentType {
   DEBIT
   MONEY_ORDER
 
-  @@map("paymenttype")
+   @@map("paymenttype")
 }
 
 enum PhysicianStatus {
   ACTIVE
   INACTIVE
 
-  @@map("physicianstatus")
+   @@map("physicianstatus")
 }
 
 enum Province {
@@ -315,7 +318,7 @@ enum Province {
   NT
   YT
 
-  @@map("province")
+   @@map("province")
 }
 
 enum Role {
@@ -323,7 +326,7 @@ enum Role {
   ACCOUNTING
   SECRETARY
 
-  @@map("role")
+   @@map("role")
 }
 
 enum ApplicationStatus {
@@ -336,7 +339,7 @@ enum ApplicationStatus {
   EXPIRED
   ACTIVE
 
-  @@map("applicationstatus")
+   @@map("applicationstatus")
 }
 
 enum ReasonForReplacement {
@@ -344,14 +347,14 @@ enum ReasonForReplacement {
   STOLEN
   OTHER
 
-  @@map("reasonforreplacement")
+   @@map("reasonforreplacement")
 }
 
 enum PermitType {
   PERMANENT
   TEMPORARY
 
-  @@map("permittype")
+   @@map("permittype")
 }
 
 enum Eligibility {
@@ -359,5 +362,5 @@ enum Eligibility {
   MOBILITY_AID_REQUIRED
   CANNOT_WALK_100M
 
-  @@map("eligibility")
+   @@map("eligibility")
 }
