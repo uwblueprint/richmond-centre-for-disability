@@ -16,6 +16,7 @@ export const GET_APPLICATION_QUERY = gql`
       gender
       customGender
       email
+      receiveEmailUpdates
       phone
       province
       city

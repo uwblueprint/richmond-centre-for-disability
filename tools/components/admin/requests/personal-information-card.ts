@@ -1,4 +1,5 @@
 import { Applicant } from '@lib/graphql/types'; // Applicant type
+import { Application } from '@prisma/client';
 
 /** Applicant type for Personal Information Card of View Request page */
 export type PersonalInformationCardApplicant = Pick<
@@ -15,7 +16,8 @@ export type PersonalInformationCardApplicant = Pick<
   | 'city'
   | 'province'
   | 'postalCode'
-> & {
-  readonly mostRecentAppNumber: number;
-  readonly mostRecentAppExpiryDate: Date;
-};
+> &
+  Pick<Application, 'receiveEmailUpdates'> & {
+    readonly mostRecentAppNumber: number;
+    readonly mostRecentAppExpiryDate: Date;
+  };

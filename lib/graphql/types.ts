@@ -261,7 +261,7 @@ export type CreateApplicationInput = {
   rcdUserId?: Maybe<Scalars['Int']>;
   isRenewal: Scalars['Boolean'];
   permitType: PermitType;
-  receiveEmailUpdates?: Maybe<Scalars['Boolean']>;
+  receiveEmailUpdates: Scalars['Boolean'];
   poaFormUrl?: Maybe<Scalars['String']>;
   applicantId?: Maybe<Scalars['Int']>;
   /** Medical information */
@@ -439,7 +439,6 @@ export type CreateReplacementApplicationInput = {
   addressLine2?: Maybe<Scalars['String']>;
   city: Scalars['String'];
   postalCode: Scalars['String'];
-  receiveEmailUpdates?: Maybe<Scalars['Boolean']>;
   /** Replacement Information */
   reason: ReasonForReplacement;
   lostTimestamp?: Maybe<Scalars['Date']>;

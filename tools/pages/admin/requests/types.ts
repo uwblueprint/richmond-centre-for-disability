@@ -30,6 +30,7 @@ export type GetApplicationResponse = {
     | 'gender'
     | 'customGender'
     | 'email'
+    | 'receiveEmailUpdates'
     | 'phone'
     | 'province'
     | 'city'

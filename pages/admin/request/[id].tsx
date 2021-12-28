@@ -102,6 +102,7 @@ export default function Request({ id }: Props) {
     middleName,
     lastName,
     email,
+    receiveEmailUpdates,
     phone,
     province,
     city,
@@ -153,6 +154,7 @@ export default function Request({ id }: Props) {
     lastName,
     rcdUserId,
     email,
+    receiveEmailUpdates,
     phone,
     addressLine1,
     addressLine2,
@@ -269,7 +271,11 @@ export default function Request({ id }: Props) {
         />
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
-        <PersonalInformationCard applicant={applicantData} onSave={handleUpdateApplication} />
+        <PersonalInformationCard
+          applicant={applicantData}
+          isRenewal={data.application.isRenewal}
+          onSave={handleUpdateApplication}
+        />
       </GridItem>
       <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>

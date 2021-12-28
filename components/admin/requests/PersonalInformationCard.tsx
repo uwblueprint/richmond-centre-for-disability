@@ -11,6 +11,7 @@ type Props = {
   readonly applicant: PersonalInformationCardApplicant;
   readonly contactInfoUpdated?: boolean;
   readonly addressInfoUpdated?: boolean;
+  readonly isRenewal: boolean;
   readonly onSave: (applicationData: Omit<UpdateApplicationInput, 'id'>) => void;
 };
 
@@ -22,7 +23,7 @@ type Props = {
  * @param onSave Callback function on save
  */
 export default function PersonalInformationCard(props: Props) {
-  const { applicant, contactInfoUpdated, addressInfoUpdated, onSave } = props;
+  const { applicant, contactInfoUpdated, addressInfoUpdated, isRenewal, onSave } = props;
 
   if (applicant === undefined) {
     return null;
@@ -43,7 +44,13 @@ export default function PersonalInformationCard(props: Props) {
 
   // Personal information card editing modal
   const EditModal = (
-    <EditPermitHolderInformationModal permitHolderInformation={applicant} onSave={onSave}>
+    <EditPermitHolderInformationModal
+      permitHolderInformation={{
+        type: isRenewal ? 'renewal' : 'replacement',
+        permitHolderInformation: applicant,
+      }}
+      onSave={onSave}
+    >
       <Button variant="ghost" textDecoration="underline">
         <Text textStyle="body-bold">Edit</Text>
       </Button>
