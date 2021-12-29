@@ -60,6 +60,7 @@ export const GET_APPLICATION_QUERY = gql`
       paymentMethod
       shopifyConfirmationNumber
       createdAt
+      isRenewal
 
       applicationProcessing {
         status

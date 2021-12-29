@@ -42,12 +42,15 @@ export default function PersonalInformationCard(props: Props) {
     </Link>
   );
 
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const { mostRecentAppNumber, mostRecentAppExpiryDate, ...permitHolder } = applicant;
+
   // Personal information card editing modal
   const EditModal = (
     <EditPermitHolderInformationModal
       permitHolderInformation={{
         type: isRenewal ? 'renewal' : 'replacement',
-        permitHolderInformation: applicant,
+        permitHolderInformation: permitHolder,
       }}
       onSave={onSave}
     >
