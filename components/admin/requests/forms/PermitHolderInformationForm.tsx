@@ -62,16 +62,17 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
       field: keyof NewAndRenewalPermitHolderInformation | keyof PermitHolderInformation
     ): ChangeEventHandler<HTMLInputElement> =>
     event => {
-      const fieldValue = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+      const updatedFieldValue =
+        event.target.type === 'checkbox' ? event.target.checked : event.target.value;
       if (props.type === 'replacement') {
         props.onChange({
           ...props.permitHolderInformation,
-          [field]: fieldValue,
+          [field]: updatedFieldValue,
         });
       } else {
         props.onChange({
           ...props.permitHolderInformation,
-          [field]: fieldValue,
+          [field]: updatedFieldValue,
         });
       }
     };
