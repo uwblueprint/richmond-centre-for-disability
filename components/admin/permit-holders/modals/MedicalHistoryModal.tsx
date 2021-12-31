@@ -61,17 +61,17 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
             </Text>
           </ModalHeader>
           <ModalBody paddingTop="0px" paddingBottom="36px" paddingX="4px">
-            {(application.affectsMobility ||
-              application.mobilityAidRequired ||
-              application.cannotWalk100m) && (
+            {(application.patientEligibility == 'AFFECTS_MOBILITY' ||
+              application.patientEligibility == 'MOBILITY_AID_REQUIRED' ||
+              application.patientEligibility == 'CANNOT_WALK_100M') && (
               <HStack paddingBottom="22px" spacing="16px">
-                {application.affectsMobility && (
+                {application.patientEligibility == 'AFFECTS_MOBILITY' && (
                   <Badge backgroundColor="background.informative">{'Affects Mobility'}</Badge>
                 )}
-                {application.mobilityAidRequired && (
+                {application.patientEligibility == 'MOBILITY_AID_REQUIRED' && (
                   <Badge backgroundColor="background.informative">{'Aid Required'}</Badge>
                 )}
-                {application.cannotWalk100m && (
+                {application.patientEligibility == 'CANNOT_WALK_100M' && (
                   <Badge backgroundColor="background.informative">{'Cannot walk > 100m'}</Badge>
                 )}
               </HStack>

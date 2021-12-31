@@ -92,6 +92,7 @@ export type Application = {
   addressLine2: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
   rcdUserId: Maybe<Scalars['Int']>;
+  notes: Maybe<Scalars['String']>;
   isRenewal: Scalars['Boolean'];
   receiveEmailUpdates: Scalars['Boolean'];
   applicantId: Maybe<Scalars['Int']>;
@@ -103,6 +104,7 @@ export type Application = {
   description: Maybe<Scalars['String']>;
   expiryDate: Maybe<Scalars['Date']>;
   permitType: PermitType;
+  aid: Array<Aid>;
   /** Physician Information */
   physicianName: Scalars['String'];
   physicianMspNumber: Scalars['Int'];
@@ -252,6 +254,7 @@ export type CreateApplicationInput = {
   email?: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   city: Scalars['String'];
+  notes?: Maybe<Scalars['String']>;
   addressLine1: Scalars['String'];
   addressLine2?: Maybe<Scalars['String']>;
   postalCode: Scalars['String'];
@@ -266,6 +269,7 @@ export type CreateApplicationInput = {
   description?: Maybe<Scalars['String']>;
   expiryDate?: Maybe<Scalars['Date']>;
   permitType: PermitType;
+  aid: Array<Aid>;
   /** Physician Information */
   physicianName: Scalars['String'];
   physicianMspNumber: Scalars['Int'];

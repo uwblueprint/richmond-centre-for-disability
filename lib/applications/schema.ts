@@ -15,6 +15,7 @@ export default `
     addressLine2: String
     postalCode: String!
     rcdUserId: Int
+    notes: String
     isRenewal: Boolean!
     receiveEmailUpdates: Boolean!
     applicantId: Int
@@ -27,6 +28,7 @@ export default `
     description: String
     expiryDate: Date
     permitType: PermitType!
+    aid: [Aid!]!
 
     #Physician Information
     physicianName: String!
@@ -104,6 +106,7 @@ export default `
     email: String
     phone: String!
     city: String!
+    notes: String
     addressLine1: String!
     addressLine2: String
     postalCode: String!
@@ -119,6 +122,7 @@ export default `
     description: String
     expiryDate: Date
     permitType: PermitType!
+    aid: [Aid!]!
 
     #Physician Information
     physicianName: String!
