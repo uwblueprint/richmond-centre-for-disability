@@ -133,7 +133,6 @@ export default function IdentityVerificationForm() {
             <FormControl isRequired textAlign="left" marginBottom="48px">
               <FormLabel>{`Last 4 digits of your phone number`}</FormLabel>
               <Input
-                type="string"
                 width="184px"
                 value={phoneNumberSuffix}
                 onChange={event => setPhoneNumberSuffix(event.target.value)}
