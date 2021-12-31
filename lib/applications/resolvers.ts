@@ -12,7 +12,7 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { ApplicationsReportColumn, PaymentType } from '@lib/graphql/types'; // GraphQL types
+import { ApplicationsReportColumn, Eligibility, PaymentType } from '@lib/graphql/types'; // GraphQL types
 import { formatDate, formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 import { createObjectCsvWriter } from 'csv-writer';
 
@@ -214,7 +214,6 @@ export const createApplication: Resolver = async (_, args, { prisma }) => {
       billingAddressSameAsHomeAddress,
     },
   } = args;
-
   let application;
   try {
     application = await prisma.application.create({
@@ -476,6 +475,12 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         rcdUserId: rcdUserId || applicant.rcdUserId,
         isRenewal: true,
         receiveEmailUpdates: receiveEmailUpdates,
+        patientEligibility: applicant.medicalInformation.affectsMobility
+          ? Eligibility.AffectsMobility
+          : applicant.medicalInformation.cannotWalk100m
+          ? Eligibility.CannotWalk_100M
+          : Eligibility.MobilityAidRequired,
+        certificationDate: applicant.medicalInformation.certificationDate,
         // TODO: Link with Shopify checkout
         shopifyConfirmationNumber,
         processingFee: 26,
@@ -624,6 +629,7 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
           physician: true,
         },
       },
+      applications: true,
     },
   });
 
@@ -662,6 +668,12 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
         processingFee: 26,
         paymentMethod,
         disability: applicant.medicalInformation.disability,
+        patientEligibility: applicant.medicalInformation.affectsMobility
+          ? Eligibility.AffectsMobility
+          : applicant.medicalInformation.cannotWalk100m
+          ? Eligibility.CannotWalk_100M
+          : Eligibility.MobilityAidRequired,
+        certificationDate: applicant.medicalInformation.certificationDate,
         physicianName: physician.name,
         physicianMspNumber: physician.mspNumber,
         physicianAddressLine1: physician.addressLine1,

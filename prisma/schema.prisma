@@ -53,16 +53,18 @@ model Application {
   addressLine1                     String                @map("address_line_1") @db.VarChar(255)
   addressLine2                     String?               @map("address_line_2") @db.VarChar(255)
   postalCode                       String                @map("postal_code") @db.Char(6)
+  notes                            String?
   rcdUserId                        Int?                  @map("rcd_user_id")
   isRenewal                        Boolean               @default(true) @map("is_renewal")
   receiveEmailUpdates              Boolean               @default(false) @map("receive_email_updates")
   applicantId                      Int?                  @map("applicant_id")
   disability                       String                @db.VarChar(255)
-  certificationDate                DateTime              @map("certification_date") @db.Date
+  certificationDate                DateTime?             @map("certification_date") @db.Date
   patientEligibility               Eligibility           @map("patient_eligibility")
   description                      String?
-  expiryDate                       DateTime              @map("expiry_date") @db.Date
+  expiryDate                       DateTime?             @map("expiry_date") @db.Date
   permitType                       PermitType            @default(PERMANENT) @map("permit_type")
+  aid                              Aid[]
   physicianName                    String                @map("physician_name") @db.VarChar(255)
   physicianMspNumber               Int                   @map("physician_msp_number")
   physicianPhone                   String                @map("physician_phone") @db.VarChar(50)
