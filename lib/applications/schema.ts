@@ -264,7 +264,7 @@ export default `
     usesAccessibleConvertedVan: Boolean!
     requiresWiderParkingSpace: Boolean!
     rcdUserId: Int
-    receiveEmailUpdates: Boolean
+    receiveEmailUpdates: Boolean!
 
     # Personal address info (must be provided if updatedAddress === true)
     firstName: String

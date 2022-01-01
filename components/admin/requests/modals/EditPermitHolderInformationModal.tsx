@@ -73,6 +73,7 @@ export default function EditPermitHolderInformationModal({
     onClose();
   };
 
+  //TODO: investigate this due to TS type checking
   const handleReplacementPermitHolderInformationChange = (updatedData: PermitHolderInformation) => {
     if (permitHolderTypeAndInformation.type === 'replacement') {
       setPermitHolderTypeAndInformation({
@@ -114,14 +115,13 @@ export default function EditPermitHolderInformationModal({
               </Text>
             </ModalHeader>
             <ModalBody paddingY="20px" paddingX="4px">
-              {permitHolderTypeAndInformation.type === 'replacement' && (
+              {permitHolderTypeAndInformation.type === 'replacement' ? (
                 <PermitHolderInformationForm
                   type={permitHolderTypeAndInformation.type}
                   permitHolderInformation={permitHolderTypeAndInformation.permitHolderInformation}
                   onChange={handleReplacementPermitHolderInformationChange}
                 />
-              )}
-              {permitHolderTypeAndInformation.type !== 'replacement' && (
+              ) : (
                 <PermitHolderInformationForm
                   type={permitHolderTypeAndInformation.type}
                   permitHolderInformation={permitHolderTypeAndInformation.permitHolderInformation}

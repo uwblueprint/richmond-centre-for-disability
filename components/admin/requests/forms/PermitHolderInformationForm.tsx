@@ -142,9 +142,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             <Checkbox
               paddingTop="24px"
               isChecked={props.permitHolderInformation.receiveEmailUpdates}
-              isDisabled={
-                !props.permitHolderInformation.email || props.permitHolderInformation.email === ''
-              }
+              isDisabled={!props.permitHolderInformation.email}
               onChange={handleChange('receiveEmailUpdates')}
             >
               {'Permit holder would like to receive renewal updates through email'}

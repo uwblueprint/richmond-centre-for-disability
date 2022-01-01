@@ -384,7 +384,7 @@ export type CreateRenewalApplicationInput = {
   usesAccessibleConvertedVan: Scalars['Boolean'];
   requiresWiderParkingSpace: Scalars['Boolean'];
   rcdUserId?: Maybe<Scalars['Int']>;
-  receiveEmailUpdates?: Maybe<Scalars['Boolean']>;
+  receiveEmailUpdates: Scalars['Boolean'];
   /** Personal address info (must be provided if updatedAddress === true) */
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;

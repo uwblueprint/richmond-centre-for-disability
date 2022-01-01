@@ -1,5 +1,4 @@
-import { Applicant } from '@lib/graphql/types'; // Applicant type
-import { Application } from '@prisma/client';
+import { Applicant, Application } from '@lib/graphql/types'; // Applicant type
 
 /** Applicant type for Personal Information Card of View Request page */
 export type PersonalInformationCardApplicant = Pick<
