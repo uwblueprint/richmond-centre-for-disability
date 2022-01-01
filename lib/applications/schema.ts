@@ -10,6 +10,7 @@ export default `
     customGender: String
     email: String
     phone: String!
+    province: Province!
     city: String!
     addressLine1: String!
     addressLine2: String
@@ -37,6 +38,7 @@ export default `
     physicianAddressLine1: String!
     physicianAddressLine2: String
     physicianCity: String!
+    physicianProvince: Province!
     physicianPostalCode: String!
     physicianNotes: String
 

@@ -87,6 +87,7 @@ export type Application = {
   customGender: Maybe<Scalars['String']>;
   email: Maybe<Scalars['String']>;
   phone: Scalars['String'];
+  province: Province;
   city: Scalars['String'];
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
@@ -112,6 +113,7 @@ export type Application = {
   physicianAddressLine1: Scalars['String'];
   physicianAddressLine2: Maybe<Scalars['String']>;
   physicianCity: Scalars['String'];
+  physicianProvince: Province;
   physicianPostalCode: Scalars['String'];
   physicianNotes: Maybe<Scalars['String']>;
   /** Guardian */

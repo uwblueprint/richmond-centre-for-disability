@@ -92,15 +92,12 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
       postalCode,
 
       disability,
-      affectsMobility,
-      mobilityAidRequired,
-      cannotWalk100m,
+      patientEligibility,
 
       guardianFirstName,
       guardianMiddleName,
       guardianLastName,
       guardianPhone,
-      guardianProvince,
       guardianCity,
       guardianAddressLine1,
       guardianAddressLine2,
@@ -113,7 +110,6 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
       physicianAddressLine1,
       physicianAddressLine2,
       physicianCity,
-      physicianProvince,
       physicianPostalCode,
       physicianPhone,
       physicianNotes,
@@ -140,9 +136,7 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
 
     const medicalInformationData = {
       disability,
-      affectsMobility,
-      mobilityAidRequired,
-      cannotWalk100m,
+      patientEligibility,
     };
 
     const physicianData = {
@@ -151,7 +145,6 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
       addressLine1: physicianAddressLine1,
       addressLine2: physicianAddressLine2,
       city: physicianCity,
-      province: physicianProvince,
       postalCode: physicianPostalCode,
       phone: physicianPhone,
       notes: physicianNotes,
@@ -200,7 +193,6 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
                     middleName: guardianMiddleName,
                     lastName: guardianLastName || undefined,
                     phone: guardianPhone || undefined,
-                    province: guardianProvince || undefined,
                     city: guardianCity || undefined,
                     addressLine1: guardianAddressLine1 || undefined,
                     addressLine2: guardianAddressLine2,
@@ -221,7 +213,6 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
         guardianFirstName &&
         guardianLastName &&
         guardianPhone &&
-        guardianProvince &&
         guardianCity &&
         guardianAddressLine1 &&
         guardianPostalCode &&
@@ -233,7 +224,7 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
             middleName: guardianMiddleName,
             lastName: guardianLastName,
             phone: guardianPhone,
-            province: guardianProvince as Province,
+            province: Province.Bc,
             city: guardianCity,
             addressLine1: guardianAddressLine1,
             addressLine2: guardianAddressLine2,
@@ -246,7 +237,6 @@ export const completeApplication: Resolver = async (_, args, { prisma }) => {
         !guardianFirstName &&
         !guardianLastName &&
         !guardianPhone &&
-        !guardianProvince &&
         !guardianCity &&
         !guardianAddressLine1 &&
         !guardianPostalCode &&
