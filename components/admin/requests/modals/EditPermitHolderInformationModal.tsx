@@ -12,12 +12,42 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
 import { UpdateApplicationInput } from '@lib/graphql/types'; // GraphQL Types
-import { PermitHolderInformation } from '@tools/components/admin/requests/forms/types';
+import {
+  NewAndRenewalPermitHolderInformation,
+  PermitHolderInformation,
+} from '@tools/components/admin/requests/forms/types';
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm';
 
+/**
+ * Permit holder information props used for replacement requests.
+ *
+ * @param type identifies the prop object type
+ * @param {PermitHolderInformation} permitHolderInformation Data Structure that holds all permit holder information for a client request.
+ */
+type ReplacementPermitHolderTypeInformation = {
+  readonly type: 'replacement';
+  readonly permitHolderInformation: PermitHolderInformation;
+};
+
+/**
+ * Permit holder information props used for new or renewal requests.
+ *
+ * @param type identifies the prop object type
+ * @param {NewAndRenewalPermitHolderInformation} permitHolderInformation Data Structure that holds all permit holder information for a client request.
+ */
+type NewAndRenewalPermitHolderTypeInformation = {
+  readonly type: 'new' | 'renewal';
+  readonly permitHolderInformation: NewAndRenewalPermitHolderInformation;
+};
+
+/**
+ * Props for Edit Permit Information Modal
+ */
 type EditPermitHolderInformationModalProps = {
   children: ReactNode;
-  readonly permitHolderInformation: PermitHolderInformation;
+  readonly permitHolderInformation:
+    | ReplacementPermitHolderTypeInformation
+    | NewAndRenewalPermitHolderTypeInformation;
   readonly onSave: (applicationData: Omit<UpdateApplicationInput, 'id'>) => void;
 };
 
@@ -27,20 +57,44 @@ export default function EditPermitHolderInformationModal({
   onSave,
 }: EditPermitHolderInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>(
-    currentPermitHolderInformation
-  );
+  const [permitHolderTypeAndInformation, setPermitHolderTypeAndInformation] = useState<
+    ReplacementPermitHolderTypeInformation | NewAndRenewalPermitHolderTypeInformation
+  >(currentPermitHolderInformation);
 
   useEffect(() => {
-    setPermitHolderInformation(currentPermitHolderInformation);
+    setPermitHolderTypeAndInformation(currentPermitHolderInformation);
   }, [currentPermitHolderInformation, isOpen]);
 
   //   TODO: Add error states for each field (post-mvp)
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    onSave(permitHolderInformation);
+    onSave(permitHolderTypeAndInformation.permitHolderInformation);
     onClose();
+  };
+
+  //TODO: investigate this due to TS type checking
+  const handleReplacementPermitHolderInformationChange = (updatedData: PermitHolderInformation) => {
+    if (permitHolderTypeAndInformation.type === 'replacement') {
+      setPermitHolderTypeAndInformation({
+        ...permitHolderTypeAndInformation,
+        permitHolderInformation: updatedData,
+      });
+    }
+  };
+
+  const handleNewAndRenewalPermitHolderInformationChange = (
+    updatedData: NewAndRenewalPermitHolderInformation
+  ) => {
+    if (
+      permitHolderTypeAndInformation.type === 'new' ||
+      permitHolderTypeAndInformation.type === 'renewal'
+    ) {
+      setPermitHolderTypeAndInformation({
+        ...permitHolderTypeAndInformation,
+        permitHolderInformation: updatedData,
+      });
+    }
   };
 
   return (
@@ -61,10 +115,19 @@ export default function EditPermitHolderInformationModal({
               </Text>
             </ModalHeader>
             <ModalBody paddingY="20px" paddingX="4px">
-              <PermitHolderInformationForm
-                permitHolderInformation={permitHolderInformation}
-                onChange={setPermitHolderInformation}
-              />
+              {permitHolderTypeAndInformation.type === 'replacement' ? (
+                <PermitHolderInformationForm
+                  type={permitHolderTypeAndInformation.type}
+                  permitHolderInformation={permitHolderTypeAndInformation.permitHolderInformation}
+                  onChange={handleReplacementPermitHolderInformationChange}
+                />
+              ) : (
+                <PermitHolderInformationForm
+                  type={permitHolderTypeAndInformation.type}
+                  permitHolderInformation={permitHolderTypeAndInformation.permitHolderInformation}
+                  onChange={handleNewAndRenewalPermitHolderInformationChange}
+                />
+              )}
             </ModalBody>
             <ModalFooter paddingBottom="24px" paddingX="4px">
               <Button colorScheme="gray" variant="solid" onClick={onClose}>

@@ -162,6 +162,7 @@ export default function Renew() {
             physicianPhone: doctorPhoneNumber,
           }),
           //TODO: Replace with dynamic values
+          receiveEmailUpdates: false,
           usesAccessibleConvertedVan: false,
           requiresWiderParkingSpace: false,
         },

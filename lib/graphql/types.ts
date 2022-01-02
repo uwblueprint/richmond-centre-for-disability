@@ -96,6 +96,7 @@ export type Application = {
   rcdUserId: Maybe<Scalars['Int']>;
   isRenewal: Scalars['Boolean'];
   permitType: PermitType;
+  receiveEmailUpdates: Scalars['Boolean'];
   poaFormUrl: Maybe<Scalars['String']>;
   applicantId: Maybe<Scalars['Int']>;
   applicant: Maybe<Applicant>;
@@ -260,6 +261,7 @@ export type CreateApplicationInput = {
   rcdUserId?: Maybe<Scalars['Int']>;
   isRenewal: Scalars['Boolean'];
   permitType: PermitType;
+  receiveEmailUpdates: Scalars['Boolean'];
   poaFormUrl?: Maybe<Scalars['String']>;
   applicantId?: Maybe<Scalars['Int']>;
   /** Medical information */
@@ -382,6 +384,7 @@ export type CreateRenewalApplicationInput = {
   usesAccessibleConvertedVan: Scalars['Boolean'];
   requiresWiderParkingSpace: Scalars['Boolean'];
   rcdUserId?: Maybe<Scalars['Int']>;
+  receiveEmailUpdates: Scalars['Boolean'];
   /** Personal address info (must be provided if updatedAddress === true) */
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
@@ -438,9 +441,9 @@ export type CreateReplacementApplicationInput = {
   postalCode: Scalars['String'];
   /** Replacement Information */
   reason: ReasonForReplacement;
-  lostTimestamp: Scalars['Date'];
-  lostLocation: Scalars['String'];
-  description: Scalars['String'];
+  lostTimestamp?: Maybe<Scalars['Date']>;
+  lostLocation?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   /** Payment Information */
   paymentMethod: PaymentType;
   donationAmount?: Maybe<Scalars['Float']>;
@@ -873,6 +876,7 @@ export type UpdateApplicationInput = {
   notes?: Maybe<Scalars['String']>;
   rcdUserId?: Maybe<Scalars['Int']>;
   isRenewal?: Maybe<Scalars['Boolean']>;
+  receiveEmailUpdates?: Maybe<Scalars['Boolean']>;
   poaFormUrl?: Maybe<Scalars['String']>;
   applicantId?: Maybe<Scalars['Int']>;
   /** Medical information */

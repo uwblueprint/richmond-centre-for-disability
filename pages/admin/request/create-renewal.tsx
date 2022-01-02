@@ -4,7 +4,7 @@ import { SyntheticEvent, useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
 import {
   DoctorInformation,
-  PermitHolderInformation,
+  NewAndRenewalPermitHolderInformation,
 } from '@tools/components/admin/requests/forms/types'; //Permit holder information type
 import DoctorInformationForm from '@components/admin/requests/forms/DoctorInformationForm'; //Doctor information form
 import AdditionalQuestionsForm from '@components/admin/requests/forms/renewals/AdditionalQuestionsForm'; //Additional questions form
@@ -42,16 +42,18 @@ export default function CreateRenewal() {
   );
   const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
   const [applicantID, setApplicantID] = useState<number>();
-  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    postalCode: '',
-  });
+  const [permitHolderInformation, setPermitHolderInformation] =
+    useState<NewAndRenewalPermitHolderInformation>({
+      firstName: '',
+      lastName: '',
+      email: '',
+      receiveEmailUpdates: false,
+      phone: '',
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      postalCode: '',
+    });
   const [doctorInformation, setDoctorInformation] = useState<DoctorInformation>({
     phone: '',
     addressLine1: '',
@@ -145,6 +147,7 @@ export default function CreateRenewal() {
         firstName: data.applicant.firstName,
         lastName: data.applicant.lastName,
         email: data.applicant.email,
+        receiveEmailUpdates: data.applicant.mostRecentRenewal.receiveEmailUpdates,
         phone: data.applicant.phone,
         addressLine1: data.applicant.addressLine1,
         addressLine2: data.applicant.addressLine2,
@@ -253,6 +256,7 @@ export default function CreateRenewal() {
             updatedContactInfo,
             phone: permitHolderInformation.phone,
             email: permitHolderInformation.email,
+            receiveEmailUpdates: permitHolderInformation.receiveEmailUpdates,
             rcdUserId: permitHolderRcdUserID,
             updatedPhysician,
             physicianName: doctorInformation.name,
@@ -356,6 +360,7 @@ export default function CreateRenewal() {
                   {`Permit Holder's Information`}
                 </Text>
                 <PermitHolderInformationForm
+                  type="renewal"
                   permitHolderInformation={permitHolderInformation}
                   onChange={setPermitHolderInformation}
                 />

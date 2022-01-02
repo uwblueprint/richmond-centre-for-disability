@@ -30,6 +30,7 @@ export type GetApplicationResponse = {
     | 'gender'
     | 'customGender'
     | 'email'
+    | 'receiveEmailUpdates'
     | 'phone'
     | 'province'
     | 'city'
@@ -161,6 +162,7 @@ export type GetApplicantRenewalResponse = {
     mostRecentRenewal: Pick<
       Application,
       | 'id'
+      | 'receiveEmailUpdates'
       | 'shippingFullName'
       | 'shippingAddressLine1'
       | 'shippingAddressLine2'

@@ -57,6 +57,7 @@ model Application {
   rcdUserId                        Int?                  @map("rcd_user_id")
   isRenewal                        Boolean               @default(true) @map("is_renewal")
   permitType                       PermitType            @default(PERMANENT) @map("permit_type")
+  receiveEmailUpdates              Boolean               @default(false) @map("receive_email_updates")
   poaFormUrl                       String?               @map("poa_form_url") @db.VarChar(255)
   applicantId                      Int?                  @map("applicant_id")
   disability                       String                @db.VarChar(255)

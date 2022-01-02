@@ -252,6 +252,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
       phone,
       email,
       rcdUserId,
+      receiveEmailUpdates,
       updatedPhysician,
       physicianName,
       physicianMspNumber,
@@ -351,6 +352,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         postalCode: applicantPostalCode,
         rcdUserId: rcdUserId || applicant.rcdUserId,
         isRenewal: true,
+        receiveEmailUpdates: receiveEmailUpdates,
         // TODO: Link with Shopify checkout
         shopifyConfirmationNumber,
         processingFee: 26,

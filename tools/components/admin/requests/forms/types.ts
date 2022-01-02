@@ -1,6 +1,6 @@
 import { Application, Physician, Renewal, Replacement } from '@lib/graphql/types'; // GraphQL Types
 
-// Permit Holder Information Object
+// Permit Holder Information Object for Replacements
 export type PermitHolderInformation = Pick<
   Application,
   | 'firstName'
@@ -12,6 +12,10 @@ export type PermitHolderInformation = Pick<
   | 'city'
   | 'postalCode'
 >;
+
+// Permit Holder Information Object for new and renewal permits
+export type NewAndRenewalPermitHolderInformation = PermitHolderInformation &
+  Pick<Application, 'receiveEmailUpdates'>;
 
 // Additional Questions Object
 export type AdditionalQuestions = Pick<

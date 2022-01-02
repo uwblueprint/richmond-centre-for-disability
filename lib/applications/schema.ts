@@ -19,6 +19,7 @@ export default `
     rcdUserId: Int
     isRenewal: Boolean!
     permitType: PermitType!
+    receiveEmailUpdates: Boolean!
     poaFormUrl: String
     applicantId: Int
     applicant: Applicant
@@ -111,6 +112,7 @@ export default `
     rcdUserId: Int
     isRenewal: Boolean!
     permitType: PermitType!
+    receiveEmailUpdates: Boolean!
     poaFormUrl: String
     applicantId: Int
 
@@ -191,6 +193,7 @@ export default `
     notes: String
     rcdUserId: Int
     isRenewal: Boolean
+    receiveEmailUpdates: Boolean
     poaFormUrl: String
     applicantId: Int
 
@@ -261,7 +264,7 @@ export default `
     usesAccessibleConvertedVan: Boolean!
     requiresWiderParkingSpace: Boolean!
     rcdUserId: Int
-
+    receiveEmailUpdates: Boolean!
 
     # Personal address info (must be provided if updatedAddress === true)
     firstName: String
