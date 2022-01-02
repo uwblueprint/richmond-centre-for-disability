@@ -499,7 +499,8 @@ export type DeleteEmployeeResult = {
 export enum Eligibility {
   AffectsMobility = 'AFFECTS_MOBILITY',
   MobilityAidRequired = 'MOBILITY_AID_REQUIRED',
-  CannotWalk_100M = 'CANNOT_WALK_100M'
+  CannotWalk_100M = 'CANNOT_WALK_100M',
+  Other = 'OTHER'
 }
 
 export type Employee = {

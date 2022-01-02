@@ -47,7 +47,8 @@ CREATE TYPE PermitType as ENUM('PERMANENT', 'TEMPORARY');
 CREATE TYPE Eligibility as ENUM(
   'AFFECTS_MOBILITY',
   'MOBILITY_AID_REQUIRED',
-  'CANNOT_WALK_100M'
+  'CANNOT_WALK_100M',
+  'OTHER'
 );
 
 -- Create employees table
