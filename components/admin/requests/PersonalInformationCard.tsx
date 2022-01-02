@@ -42,7 +42,8 @@ export default function PersonalInformationCard(props: Props) {
     </Link>
   );
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
+  // Remove unneeded fields
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { mostRecentAppNumber, mostRecentAppExpiryDate, ...permitHolder } = applicant;
 
   // Personal information card editing modal
