@@ -95,6 +95,7 @@ export default function Renew() {
         toast({
           status: 'success',
           description: 'Your application has been submitted!',
+          isClosable: true,
         });
       }
     },
@@ -102,6 +103,7 @@ export default function Renew() {
       toast({
         status: 'error',
         description: error.message,
+        isClosable: true,
       });
     },
   });
@@ -131,6 +133,7 @@ export default function Renew() {
         title: 'Identity verification failed',
         description: `You have not completed the identity verification step.
           Please complete the identity verification before filling out the renewal application form.`,
+        isClosable: true,
       });
       return;
     }

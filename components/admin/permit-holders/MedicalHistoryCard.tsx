@@ -30,7 +30,7 @@ const COLUMNS: Column<any>[] = [
       if (value) {
         return (
           <MedicalHistoryModal application={value}>
-            <Button color="primary" variant="ghost" textDecoration="underline">
+            <Button color="primary" variant="ghost">
               <Text as="a" textStyle="body-regular">
                 View details
               </Text>

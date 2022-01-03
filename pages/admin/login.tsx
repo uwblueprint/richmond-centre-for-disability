@@ -128,6 +128,7 @@ export default function Login() {
                         title: 'Login Email Resent',
                         description: 'We just sent another email to your inbox.',
                         variant: 'solid',
+                        isClosable: true,
                       });
                     }}
                     color="primary"

@@ -59,6 +59,7 @@ export default function IdentityVerificationForm() {
           toast({
             status: 'error',
             description: getErrorMessage(data.verifyIdentity.failureReason),
+            isClosable: true,
           });
         }
       },
@@ -66,6 +67,7 @@ export default function IdentityVerificationForm() {
         toast({
           status: 'error',
           description: error.message,
+          isClosable: true,
         });
       },
     }

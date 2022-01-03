@@ -176,6 +176,7 @@ export default function CreateReplacement() {
         toast({
           status: 'success',
           description: 'Your application has been submitted!',
+          isClosable: true,
         });
         router.push(`/admin/request/${data.createReplacementApplication.applicationId}`);
       }
@@ -184,6 +185,7 @@ export default function CreateReplacement() {
       toast({
         status: 'error',
         description: error.message,
+        isClosable: true,
       });
     },
   });
@@ -194,6 +196,7 @@ export default function CreateReplacement() {
       toast({
         status: 'error',
         description: 'You must select a permit holder for a Replacement Request.',
+        isClosable: true,
       });
       return;
     }
