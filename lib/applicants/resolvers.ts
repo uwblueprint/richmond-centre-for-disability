@@ -10,10 +10,11 @@ import {
 import { getUniqueConstraintFailedFields, DBErrorCode } from '@lib/db/errors'; // Database errors
 import { MspNumberDoesNotExistError } from '@lib/physicians/errors'; // Physician errors
 import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
-import { formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
-import { PermitStatus, VerifyIdentityFailureReason } from '@lib/types'; // GraphQL types
+import { formatDate, formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
+import { PermitHoldersReportColumn, PermitStatus, VerifyIdentityFailureReason } from '@lib/types'; // GraphQL types
 import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
+import { createObjectCsvWriter } from 'csv-writer';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -388,5 +389,163 @@ export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
     ok: true,
     failureReason: null,
     applicantId: applicant.id,
+  };
+};
+
+/**
+ * Generates csv with permit holders' info, given a start date, end date, and values from
+ * PermitHoldersReportColumn that the user would like to have on the generated csv
+ * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
+ */
+export const generatePermitHoldersReport: Resolver = async (_, args, { prisma }) => {
+  const {
+    input: { startDate, endDate, columns },
+  } = args;
+
+  const columnsSet = new Set(columns);
+
+  const applicants = await prisma.applicant.findMany({
+    where: {
+      permits: {
+        some: {
+          expiryDate: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+      },
+    },
+    select: {
+      rcdUserId: true,
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      dateOfBirth: true,
+      addressLine1: true,
+      addressLine2: true,
+      city: true,
+      province: true,
+      postalCode: true,
+      email: true,
+      phone: true,
+      status: true,
+      guardian: {
+        select: {
+          firstName: true,
+          middleName: true,
+          lastName: true,
+          relationship: true,
+          addressLine1: true,
+          addressLine2: true,
+          postalCode: true,
+          city: true,
+          province: true,
+        },
+      },
+      // Fetches rcdPermitId from latest permit
+      permits: {
+        orderBy: {
+          createdAt: SortOrder.DESC,
+        },
+        take: 1,
+        select: {
+          rcdPermitId: true,
+          // TODO: Update permit table to include permit type
+          // TODO: Once updated, fetch permitType from latest permit
+          // permitType: true,
+        },
+      },
+      // Fetches permitType from latest application
+      // TODO: Update permit table to include permit type
+      // TODO: Once updated, fetch field from latest permit instead and remove following code
+      applications: {
+        orderBy: {
+          createdAt: SortOrder.DESC,
+        },
+        take: 1,
+        select: {
+          permitType: true,
+        },
+      },
+    },
+  });
+
+  // Formats fields and adds properties to allow for csv writing
+  const csvApplicants = applicants.map(applicant => {
+    return {
+      ...applicant,
+      dateOfBirth: formatDate(applicant.dateOfBirth),
+      applicantName: `${applicant.firstName}${
+        applicant.middleName ? ` ${applicant.middleName}` : ''
+      } ${applicant.lastName}`,
+      rcdPermitId: applicant.permits[0].rcdPermitId,
+      permitType: applicant.applications[0].permitType,
+      homeAddress: `${applicant.addressLine1},${
+        applicant.addressLine2 ? ` ${applicant.addressLine2},` : ''
+      } ${applicant.city}, ${applicant.province} ${applicant.postalCode}`,
+      guardianRelationship: applicant.guardian?.relationship,
+      guardianPOAName: applicant.guardian
+        ? `${applicant.guardian.firstName}${
+            applicant.guardian?.middleName ? ` ${applicant.guardian.middleName}` : ''
+          } ${applicant.guardian.lastName}`
+        : '',
+      guardianPOAAdress: applicant.guardian
+        ? `${applicant.guardian.addressLine1}${
+            applicant.guardian.addressLine2 ? ` ${applicant.guardian.addressLine2},` : ''
+          } ${applicant.guardian.city}, ${applicant.guardian.province} ${
+            applicant.guardian.postalCode
+          }`
+        : '',
+    };
+  });
+
+  const csvHeaders = [];
+
+  if (columnsSet.has(PermitHoldersReportColumn.UserId)) {
+    csvHeaders.push({ id: 'rcdUserId', title: 'User ID' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.ApplicantName)) {
+    csvHeaders.push({ id: 'applicantName', title: 'Applicant Name' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.ApplicantDateOfBirth)) {
+    csvHeaders.push({ id: 'dateOfBirth', title: 'Applicant DoB' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.HomeAddress)) {
+    csvHeaders.push({ id: 'homeAddress', title: 'Home Address' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.Email)) {
+    csvHeaders.push({ id: 'email', title: 'Email' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.PhoneNumber)) {
+    csvHeaders.push({ id: 'phone', title: 'Phone Number' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaName)) {
+    csvHeaders.push({ id: 'guardianPOAName', title: 'Guardian/POA Name' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaRelation)) {
+    csvHeaders.push({ id: 'guardianRelationship', title: 'Guardian/POA Relation' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaAddress)) {
+    csvHeaders.push({ id: 'guardianPOAAdress', title: 'Guardian/POA Address' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.RecentAppNumber)) {
+    csvHeaders.push({ id: 'rcdPermitId', title: 'Recent APP Number' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.RecentAppType)) {
+    csvHeaders.push({ id: 'permitType', title: 'Recent APP Type' });
+  }
+  if (columnsSet.has(PermitHoldersReportColumn.UserStatus)) {
+    csvHeaders.push({ id: 'status', title: 'User Status' });
+  }
+
+  const csvWriter = createObjectCsvWriter({
+    path: 'temp/file-permit-holders.csv',
+    header: csvHeaders,
+  });
+
+  await csvWriter.writeRecords(csvApplicants);
+
+  return {
+    ok: true,
   };
 };

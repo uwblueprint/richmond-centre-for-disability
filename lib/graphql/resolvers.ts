@@ -12,6 +12,7 @@ import {
   createApplicant,
   updateApplicant,
   verifyIdentity,
+  generatePermitHoldersReport,
 } from '@lib/applicants/resolvers'; // Applicant resolvers
 import { physicians, createPhysician, upsertPhysician } from '@lib/physicians/resolvers'; // Physician resolvers
 import {
@@ -73,6 +74,7 @@ const resolvers = {
     applicant: authorize(applicant, [Role.Secretary]),
     employee: authorize(employee, [Role.Admin]),
     generateApplicationsReport: authorize(generateApplicationsReport, [Role.Secretary]),
+    generatePermitHoldersReport: authorize(generatePermitHoldersReport, [Role.Secretary]),
   },
   Mutation: {
     createApplicant: authorize(createApplicant, [Role.Secretary]),

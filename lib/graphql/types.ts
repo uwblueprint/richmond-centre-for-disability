@@ -510,6 +510,18 @@ export type GenerateApplicationsReportResult = {
   ok: Scalars['Boolean'];
 };
 
+export type GeneratePermitHoldersReportInput = {
+  startDate: Scalars['Date'];
+  endDate: Scalars['Date'];
+  columns: Array<PermitHoldersReportColumn>;
+};
+
+/** TODO: Return link to AWS S3 file */
+export type GeneratePermitHoldersReportResult = {
+  __typename?: 'GeneratePermitHoldersReportResult';
+  ok: Scalars['Boolean'];
+};
+
 export type Guardian = {
   __typename?: 'Guardian';
   id: Scalars['ID'];
@@ -683,6 +695,21 @@ export type Permit = {
   applicantId: Scalars['Int'];
 };
 
+export enum PermitHoldersReportColumn {
+  UserId = 'USER_ID',
+  ApplicantName = 'APPLICANT_NAME',
+  ApplicantDateOfBirth = 'APPLICANT_DATE_OF_BIRTH',
+  HomeAddress = 'HOME_ADDRESS',
+  Email = 'EMAIL',
+  PhoneNumber = 'PHONE_NUMBER',
+  GuardianPoaName = 'GUARDIAN_POA_NAME',
+  GuardianPoaRelation = 'GUARDIAN_POA_RELATION',
+  GuardianPoaAddress = 'GUARDIAN_POA_ADDRESS',
+  RecentAppNumber = 'RECENT_APP_NUMBER',
+  RecentAppType = 'RECENT_APP_TYPE',
+  UserStatus = 'USER_STATUS'
+}
+
 export enum PermitStatus {
   Valid = 'VALID',
   Expired = 'EXPIRED',
@@ -741,6 +768,7 @@ export type Query = {
   application: Maybe<Application>;
   permits: Maybe<Array<Permit>>;
   generateApplicationsReport: Maybe<GenerateApplicationsReportResult>;
+  generatePermitHoldersReport: Maybe<GeneratePermitHoldersReportResult>;
 };
 
 
@@ -776,6 +804,11 @@ export type QueryApplicationArgs = {
 
 export type QueryGenerateApplicationsReportArgs = {
   input: GenerateApplicationsReportInput;
+};
+
+
+export type QueryGeneratePermitHoldersReportArgs = {
+  input: GeneratePermitHoldersReportInput;
 };
 
 export type QueryApplicantsResult = {

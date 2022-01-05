@@ -615,6 +615,11 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
   };
 };
 
+/**
+ * Generates csv with applications' info, given a start date, end date, and values from
+ * ApplicationsReportColumn that the user would like to have on the generated csv
+ * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
+ */
 export const generateApplicationsReport: Resolver = async (_, args, { prisma }) => {
   const {
     input: { startDate, endDate, columns },
@@ -664,11 +669,9 @@ export const generateApplicationsReport: Resolver = async (_, args, { prisma }) 
         minute: 'numeric',
         timeZone: 'America/Vancouver',
       }),
-      applicantName:
-        application.firstName +
-        (application.middleName
-          ? ` ${application.middleName} ${application.lastName}`
-          : ` ${application.lastName}`),
+      applicantName: `${application.firstName}${
+        application.middleName ? ` ${application.middleName}` : ''
+      } ${application.lastName}`,
       totalAmount: (application.processingFee || 0) + (application?.donationAmount || 0),
       rcdPermitId: application.permit?.rcdPermitId,
     };
