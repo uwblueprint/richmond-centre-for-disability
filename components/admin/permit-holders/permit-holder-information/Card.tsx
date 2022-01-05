@@ -9,7 +9,7 @@ import {
   Tooltip,
   useClipboard,
 } from '@chakra-ui/react'; // Chakra UI
-import EditUserInformationModal from '@components/admin/permit-holders/modals/EditUserInformationModal'; // Edit User Information Modal
+import EditUserInformationModal from '@components/admin/permit-holders/permit-holder-information/EditModal'; // Edit User Information Modal
 import PermitHolderInfoCard from '@components/admin/PermitHolderInfoCard'; // Custom Card component
 import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
 import { UpdateApplicantInput } from '@lib/graphql/types';

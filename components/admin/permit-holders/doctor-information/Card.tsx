@@ -2,7 +2,7 @@ import { Box, Text, Divider, VStack, Button, Flex } from '@chakra-ui/react'; // 
 import PermitHolderInfoCard from '@components/admin/PermitHolderInfoCard'; // Custom Card Component
 import { UpsertPhysicianInput } from '@lib/graphql/types'; // Physician type
 import EditDoctorInformationModal from '@components/admin/requests/modals/EditDoctorInformationModal'; // Edit doctor information modal component
-import PreviousDoctorsInformationModal from '@components/admin/permit-holders/modals/PreviousDoctorsInformationModal'; // Previous Doctors' Information Modal
+import PreviousDoctorsModal from '@components/admin/permit-holders/doctor-information/PreviousDoctorsModal'; // Previous Doctors' Information Modal
 import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/types';
 import { DoctorInformation } from '@tools/components/admin/requests/forms/types';
 
@@ -83,11 +83,11 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
 
       <Flex w="100%" justifyContent="flex-end" paddingTop="8px">
         {previousPhysicianData.length > 0 && (
-          <PreviousDoctorsInformationModal previousPhysicianData={previousPhysicianData}>
+          <PreviousDoctorsModal previousPhysicianData={previousPhysicianData}>
             <Button color="primary" variant="ghost" textDecoration="underline">
               <Text textStyle="body-bold">{'View previous doctors'}</Text>
             </Button>
-          </PreviousDoctorsInformationModal>
+          </PreviousDoctorsModal>
         )}
       </Flex>
     </PermitHolderInfoCard>

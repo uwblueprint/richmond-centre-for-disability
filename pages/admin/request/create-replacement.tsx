@@ -26,7 +26,7 @@ import { ReasonForReplacement } from '@tools/components/admin/requests/forms/typ
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
 import ReasonForReplacementForm from '@components/admin/requests/forms/ReasonForReplacementForm';
 import CancelCreateRequestModal from '@components/admin/requests/modals/CancelCreateRequestModal';
-import PermitHolderTypeahead from '@components/admin/permit-holders/PermitHolderTypeahead';
+import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
 import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders'; // Permit holders GQL query}
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { GET_APPLICANT_REPLACEMENT_QUERY } from '@tools/pages/admin/requests/queries';

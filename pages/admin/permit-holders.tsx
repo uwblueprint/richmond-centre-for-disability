@@ -42,8 +42,8 @@ import { Column } from 'react-table'; // Column type for table
 import useDebounce from '@tools/hooks/useDebounce'; // Debouncer
 import { useEffect } from 'react'; // React
 import { formatDate } from '@lib/utils/format'; // Date formatter util
-import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToInactiveModal'; // Set Permit Holder To Inactive modal
-import SetPermitHolderToActiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
+import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/table/ConfirmSetInactiveModal'; // Set Permit Holder To Inactive modal
+import SetPermitHolderToActiveModal from '@components/admin/permit-holders/table/ConfirmSetActiveModal'; // Set Permit Holder To Active modal
 import { PermitHolderToUpdateStatus } from '@tools/pages/admin/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
 import GenerateReportModal from '@components/admin/reports/GenerateReportModal'; // Generate report modal
 

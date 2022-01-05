@@ -17,7 +17,7 @@ import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import CancelCreateRequestModal from '@components/admin/requests/modals/CancelCreateRequestModal';
-import PermitHolderTypeahead from '@components/admin/permit-holders/PermitHolderTypeahead';
+import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
 import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import {

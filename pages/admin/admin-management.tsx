@@ -23,9 +23,9 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { AddIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import Pagination from '@components/Pagination'; // Pagination component
-import ConfirmDeleteAdminModal from '@components/admin/admin-management/modals/ConfirmDeleteAdminModal'; // Confirm Delete Admin modal
+import ConfirmDeleteAdminModal from '@components/admin/admin-management/ConfirmDeleteAdminModal'; // Confirm Delete Admin modal
 import { UserToDelete } from '@tools/pages/admin/admin-management/types'; // Admin management types
-import AdminModal from '@components/admin/admin-management/modals/AdminModal'; // Admin modal component
+import AdminModal from '@components/admin/admin-management/AdminModal'; // Admin modal component
 import { Employee, Role } from '@lib/graphql/types'; // GraphQL types
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
 import { useMutation, useQuery } from '@apollo/client'; //Apollo client
