@@ -45,7 +45,7 @@ import {
   CreateNewEmployeeRequest,
   CreateNewEmployeeResponse,
   CREATE_EMPLOYEE_MUTATION,
-} from '@tools/pages/admin/admin-management/create-user';
+} from '@tools/pages/admin/admin-management/create-employee';
 
 import {
   DeleteEmployeeRequest,

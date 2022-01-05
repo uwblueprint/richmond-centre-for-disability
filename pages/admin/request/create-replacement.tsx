@@ -15,34 +15,32 @@ import {
   Spacer,
 } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
-import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
-import {
-  PaymentDetails,
-  PermitHolderInformation,
-} from '@tools/components/admin/requests/forms/types'; //Permit holder information type
-import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm'; //Payment details form
+import PermitHolderInformationForm from '@components/admin/requests/applicant-information/Form'; //Permit holder information form
+import { PermitHolderInformation } from '@tools/components/admin/requests/permit-holder-information';
+import { PaymentInformation } from '@tools/components/admin/requests/payment-information';
+import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
 import { ApplicantStatus, Gender, PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
-import { ReasonForReplacement } from '@tools/components/admin/requests/forms/types';
+import { ReasonForReplacement } from '@tools/components/admin/requests/reason-for-replacement';
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
-import ReasonForReplacementForm from '@components/admin/requests/forms/ReasonForReplacementForm';
-import CancelCreateRequestModal from '@components/admin/requests/modals/CancelCreateRequestModal';
+import ReasonForReplacementForm from '@components/admin/requests/reason-for-replacement/Form';
+import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
 import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders'; // Permit holders GQL query}
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { GET_APPLICANT_REPLACEMENT_QUERY } from '@tools/pages/admin/requests/queries';
 import {
+  GET_APPLICANT_REPLACEMENT_QUERY,
   GetApplicantReplacementRequest,
   GetApplicantReplacementResponse,
-  RequestFlowPageState,
-} from '@tools/pages/admin/requests/types';
+} from '@tools/pages/admin/requests/create/get-replacement-applicant';
+import { RequestFlowPageState } from '@tools/pages/admin/requests/types';
 import {
   CREATE_REPLACEMENT_APPLICATION_MUTATION,
   CreateReplacementApplicationRequest,
   CreateReplacementApplicationResponse,
 } from '@tools/pages/applicant/replacements';
 import { useRouter } from 'next/router'; // Router
-import BackToSearchModal from '@components/admin/requests/modals/BackToSearchModal';
-import SelectedPermitHolderCard from '@components/admin/requests/SelectedPermitHolderCard';
+import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
+import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
 import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
 
 export default function CreateReplacement() {
@@ -60,6 +58,7 @@ export default function CreateReplacement() {
     addressLine2: '',
     city: '',
     postalCode: '',
+    receiveEmailUpdates: false,
   });
   const [personalInformationCard, setPermitInformationCard] = useState<ApplicantData>({
     firstName: '',
@@ -88,7 +87,7 @@ export default function CreateReplacement() {
     stolenPoliceOfficerName: null,
   });
 
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
+  const [paymentDetails, setPaymentDetails] = useState<PaymentInformation>({
     paymentMethod: PaymentType.Mastercard,
     donationAmount: 25,
     shippingAddressSameAsHomeAddress: false,
@@ -124,6 +123,7 @@ export default function CreateReplacement() {
         addressLine2: applicant.addressLine2,
         city: applicant.city,
         postalCode: applicant.postalCode,
+        receiveEmailUpdates: false,
       });
 
       const lastApplication = applicant.mostRecentApplication;

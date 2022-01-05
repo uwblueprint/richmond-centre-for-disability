@@ -1,6 +1,6 @@
 import { Box, Text, Divider } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/Table'; // Table component
-import PermitHolderInfoCard from '@components/admin/PermitHolderInfoCard'; // Custom Card Component
+import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import { Column } from 'react-table';
 import { formatDate } from '@lib/utils/format'; // Date formatter util
 

@@ -1,16 +1,15 @@
 import { Box, Text, Divider, VStack, Button, Flex } from '@chakra-ui/react'; // Chakra UI
-import PermitHolderInfoCard from '@components/admin/PermitHolderInfoCard'; // Custom Card Component
-import { UpsertPhysicianInput } from '@lib/graphql/types'; // Physician type
-import EditDoctorInformationModal from '@components/admin/requests/modals/EditDoctorInformationModal'; // Edit doctor information modal component
+import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
+import EditDoctorInformationModal from '@components/admin/requests/doctor-information/EditModal'; // Edit doctor information modal component
 import PreviousDoctorsModal from '@components/admin/permit-holders/doctor-information/PreviousDoctorsModal'; // Previous Doctors' Information Modal
 import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/types';
-import { DoctorInformation } from '@tools/components/admin/requests/forms/types';
+import { Physician } from '@tools/components/admin/requests/doctor-information';
 
 type DoctorInformationProps = {
-  readonly physician: DoctorInformation;
+  readonly physician: Physician;
   readonly isUpdated?: boolean;
   readonly previousPhysicianData: PreviousPhysicianData[];
-  readonly onSave: (physicianData: UpsertPhysicianInput) => void;
+  readonly onSave: (physicianData: Physician) => void;
 };
 
 /**

@@ -1,5 +1,5 @@
 import { Box, Text, Divider, VStack } from '@chakra-ui/react'; // Chakra UI
-import PermitHolderInfoCard from '@components/admin/PermitHolderInfoCard'; // Custom Card Component
+import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import { Guardian } from '@lib/graphql/types'; // Guardian type
 
 type GuardianInformationProps = {
