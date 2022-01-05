@@ -200,7 +200,7 @@ export default function Renew() {
 
     const client = Client.buildClient({
       domain: 'poppy-hazel.myshopify.com',
-      storefrontAccessToken: process.env.STOREFRONT_ACCESS_TOKEN,
+      storefrontAccessToken: process.env.STOREFRONT_ACCESS_TOKEN || 'x`',
     });
     const checkout = await client.checkout.create();
     // Shopify product id can be found when viewing URL in admin e.g poppy-hazel.myshopify.com/admin/products/6570386915350
@@ -212,7 +212,7 @@ export default function Renew() {
     const lineItemsToAdd = [{ variantId: product.variants[0].id, quantity: 1 }];
     await client.checkout.addLineItems(checkout.id, lineItemsToAdd);
     // Open checkout window
-    window.open(checkout?.webUrl);
+    window.open(checkout?.checkoutUrl);
   };
 
   return (
