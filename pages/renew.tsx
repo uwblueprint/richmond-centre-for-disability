@@ -200,7 +200,7 @@ export default function Renew() {
 
     const client = Client.buildClient({
       domain: 'poppy-hazel.myshopify.com',
-      storefrontAccessToken: process.env.STOREFRONT_ACCESS_TOKEN || 'x`',
+      storefrontAccessToken: process.env.STOREFRONT_ACCESS_TOKEN || '',
     });
     const checkout = await client.checkout.create();
     // Shopify product id can be found when viewing URL in admin e.g poppy-hazel.myshopify.com/admin/products/6570386915350
