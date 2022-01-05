@@ -406,9 +406,9 @@ export const generatePermitHoldersReport: Resolver = async (_, args, { prisma })
 
   const applicants = await prisma.applicant.findMany({
     where: {
-      applications: {
+      permits: {
         some: {
-          createdAt: {
+          expiryDate: {
             gte: startDate,
             lte: endDate,
           },
