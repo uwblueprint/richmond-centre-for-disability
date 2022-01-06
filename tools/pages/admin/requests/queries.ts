@@ -1,7 +1,9 @@
 import { gql } from '@apollo/client'; // GraphQL queries
 import {
   GenerateApplicationsReportResult,
+  GeneratePermitHoldersReportResult,
   QueryGenerateApplicationsReportArgs,
+  QueryGeneratePermitHoldersReportArgs,
 } from '@lib/graphql/types';
 
 // Queries an Application by ID along with the associated permit, replacement, applicationProcessing, and applicant
@@ -173,4 +175,20 @@ export type GenerateApplicationsReportRequest = QueryGenerateApplicationsReportA
 // Generate applicants report query result
 export type GenerateApplicationsReportResponse = {
   generateApplicationsReport: GenerateApplicationsReportResult;
+};
+
+export const GENERATE_PERMIT_HOLDERS_REPORT_QUERY = gql`
+  query GeneratePermitHoldersReportQuery($input: GeneratePermitHoldersReportInput!) {
+    generatePermitHoldersReport(input: $input) {
+      ok
+    }
+  }
+`;
+
+// Generate permit holders report query arguments
+export type GeneratePermitHoldersReportRequest = QueryGeneratePermitHoldersReportArgs;
+
+// Generate permit holders report query result
+export type GeneratePermitHoldersReportResponse = {
+  generatePermitHoldersReport: GeneratePermitHoldersReportResult;
 };
