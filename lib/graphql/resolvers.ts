@@ -18,7 +18,7 @@ import { physicians, createPhysician, upsertPhysician } from '@lib/physicians/re
 import {
   application,
   applications,
-  createApplication,
+  createNewApplication,
   updateApplication,
   createRenewalApplication,
   createReplacementApplication,
@@ -84,7 +84,7 @@ const resolvers = {
     deleteEmployee: authorize(deleteEmployee, [Role.Admin]),
     createPhysician: authorize(createPhysician, [Role.Secretary]),
     upsertPhysician: authorize(upsertPhysician, [Role.Secretary]),
-    createApplication: authorize(createApplication, [Role.Secretary]),
+    createNewApplication: authorize(createNewApplication, [Role.Secretary]),
     createRenewalApplication: createRenewalApplication,
     createReplacementApplication: authorize(createReplacementApplication, [Role.Secretary]),
     updateApplication: authorize(updateApplication, [Role.Secretary]),

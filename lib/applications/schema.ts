@@ -1,4 +1,6 @@
-export default `
+import { gql } from '@apollo/client';
+
+export default gql`
   type Application {
     # Applicant information
     id: ID!
@@ -97,7 +99,7 @@ export default `
     createdAt: Date!
   }
 
-  input CreateApplicationInput {
+  input CreateNewApplicationInput {
     # Applicant information
     firstName: String!
     middleName: String!
@@ -176,7 +178,7 @@ export default `
     billingAddressSameAsHomeAddress: Boolean
   }
 
-  type CreateApplicationResult {
+  type CreateNewApplicationResult {
     ok: Boolean!
   }
 
@@ -221,9 +223,7 @@ export default `
 
     # Medical information
     disability: String
-    affectsMobility: Boolean
-    mobilityAidRequired: Boolean
-    cannotWalk100m: Boolean
+    patientEligibility: Eligibility
     # NOTE: Might need to change this to accept a single Aid object, and push to the aid array
     aid: [Aid!]
 

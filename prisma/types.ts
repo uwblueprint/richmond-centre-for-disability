@@ -99,7 +99,7 @@ export type UpsertPhysician = Pick<
 // Type of Medical Information to upsert in DB
 export type UpsertMedicalInformation = Pick<
   MedicalInformation,
-  'id' | 'disability' | 'affectsMobility' | 'mobilityAidRequired' | 'cannotWalk100m' | 'physicianId'
+  'id' | 'disability' | 'patientEligibility' | 'physicianId'
 >;
 
 // Type of Application Processing to upsert in DB

@@ -71,7 +71,7 @@ model Application {
   physicianAddressLine1            String                @map("physician_address_line_1") @db.VarChar(255)
   physicianAddressLine2            String?               @map("physician_address_line_2") @db.VarChar(255)
   physicianCity                    String                @map("physician_city") @db.VarChar(255)
-  physician_province               Province              @default(BC)
+  physicianProvince                Province              @default(BC) @map("physician_province")
   physicianPostalCode              String                @map("physician_postal_code") @db.Char(6)
   physicianNotes                   String?               @map("physician_notes")
   guardianFirstName                String?               @map("guardian_first_name") @db.VarChar(255)
@@ -82,7 +82,7 @@ model Application {
   guardianAddressLine1             String?               @map("guardian_address_line_1") @db.VarChar(255)
   guardianAddressLine2             String?               @map("guardian_address_line_2") @db.VarChar(255)
   guardianCity                     String?               @map("guardian_city") @db.VarChar(255)
-  guardian_province                Province?
+  guardianProvince                 Province?             @map("guardian_province")
   guardianPostalCode               String?               @map("guardian_postal_code") @db.Char(6)
   poaFormUrl                       String?               @map("poa_form_url") @db.VarChar(255)
   guardianNotes                    String?               @map("guardian_notes")
@@ -153,19 +153,17 @@ model Guardian {
 }
 
 model MedicalInformation {
-  id                  Int        @id @default(autoincrement())
-  disability          String     @db.VarChar(255)
-  affectsMobility     Boolean    @default(false) @map("affects_mobility")
-  mobilityAidRequired Boolean    @default(false) @map("mobility_aid_required")
-  cannotWalk100m      Boolean    @default(false) @map("cannot_walk_100m")
-  notes               String?
-  certificationDate   DateTime?  @map("certification_date") @db.Date
-  aid                 Aid[]
-  physicianId         Int        @map("physician_id")
-  createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime   @default(now()) @map("updated_at") @db.Timestamptz(6)
-  physician           Physician  @relation(fields: [physicianId], references: [id])
-  applicant           Applicant? @relation("applicantsTomedical_information")
+  id                 Int         @id @default(autoincrement())
+  disability         String      @db.VarChar(255)
+  patientEligibility Eligibility @map("patient_eligibility")
+  notes              String?
+  certificationDate  DateTime?   @map("certification_date") @db.Date
+  aid                Aid[]
+  physicianId        Int         @map("physician_id")
+  createdAt          DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  physician          Physician   @relation(fields: [physicianId], references: [id])
+  applicant          Applicant?  @relation("applicantsTomedical_information")
 
   @@map("medical_information")
 }

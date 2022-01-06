@@ -113,9 +113,7 @@ CREATE TABLE guardians (
 CREATE TABLE medical_information (
   id                       SERIAL PRIMARY KEY NOT NULL,
   disability               VARCHAR(255) NOT NULL,
-  affects_mobility         BOOLEAN NOT NULL DEFAULT false,
-  mobility_aid_required    BOOLEAN NOT NULL DEFAULT false,
-  cannot_walk_100m         BOOLEAN NOT NULL DEFAULT false,
+  patient_eligibility      Eligibility NOT NULL,
   notes                    TEXT,
   certification_date       DATE,
   aid                      Aid ARRAY,

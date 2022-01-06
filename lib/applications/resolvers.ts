@@ -12,7 +12,7 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { ApplicationsReportColumn, Eligibility, PaymentType } from '@lib/graphql/types'; // GraphQL types
+import { ApplicationsReportColumn, PaymentType } from '@lib/graphql/types'; // GraphQL types
 import { formatDate, formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 import { createObjectCsvWriter } from 'csv-writer';
 
@@ -148,144 +148,24 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
 };
 
 /**
- * Create an RCD application
+ * Create a new RCD application
  * @returns Status of operation (ok, error)
  */
-export const createApplication: Resolver = async (_, args, { prisma }) => {
-  const {
-    input: {
-      applicantId,
-      shopifyConfirmationNumber,
-      firstName,
-      middleName,
-      lastName,
-      dateOfBirth,
-      gender,
-      customGender,
-      email,
-      phone,
-      city,
-      addressLine1,
-      addressLine2,
-      postalCode,
-      rcdUserId,
-      isRenewal,
-      disability,
-      certificationDate,
-      patientEligibility,
-      description,
-      expiryDate,
-      permitType,
-      physicianName,
-      physicianMspNumber,
-      physicianPhone,
-      physicianAddressLine1,
-      physicianAddressLine2,
-      physicianCity,
-      physicianPostalCode,
-      guardianFirstName,
-      guardianMiddleName,
-      guardianLastName,
-      guardianPhone,
-      guardianRelationship,
-      guardianAddressLine1,
-      guardianAddressLine2,
-      guardianCity,
-      guardianPostalCode,
-      poaFormUrl,
-      usesAccessibleConvertedVan,
-      requiresWiderParkingSpace,
-      processingFee,
-      donationAmount,
-      paymentMethod,
-      shippingFullName,
-      shippingAddressLine1,
-      shippingAddressLine2,
-      shippingCity,
-      shippingProvince,
-      shippingPostalCode,
-      billingFullName,
-      billingAddressLine1,
-      billingAddressLine2,
-      billingCity,
-      billingProvince,
-      billingPostalCode,
-      shippingAddressSameAsHomeAddress,
-      billingAddressSameAsHomeAddress,
-    },
-  } = args;
+export const createNewApplication: Resolver = async (_, args, { prisma }) => {
+  const { input } = args;
+  const { shopifyConfirmationNumber } = input;
+  const { applicantId, ...rest } = input;
+
   let application;
   try {
     application = await prisma.application.create({
       data: {
-        shopifyConfirmationNumber,
-        firstName,
-        middleName,
-        lastName,
-        dateOfBirth,
-        gender,
-        customGender,
-        email,
-        phone,
-        city,
-        addressLine1,
-        addressLine2,
-        postalCode,
-        rcdUserId,
-        isRenewal,
-        disability,
-        certificationDate,
-        patientEligibility,
-        description,
-        expiryDate,
-        permitType,
-        physicianName,
-        physicianMspNumber,
-        physicianPhone,
-        physicianAddressLine1,
-        physicianAddressLine2,
-        physicianCity,
-        physicianPostalCode,
-        guardianFirstName,
-        guardianMiddleName,
-        guardianLastName,
-        guardianPhone,
-        guardianRelationship,
-        guardianAddressLine1,
-        guardianAddressLine2,
-        guardianCity,
-        guardianPostalCode,
-        poaFormUrl,
-        usesAccessibleConvertedVan,
-        requiresWiderParkingSpace,
-        processingFee,
-        donationAmount,
-        paymentMethod,
-        shippingFullName,
-        shippingAddressLine1,
-        shippingAddressLine2,
-        shippingCity,
-        shippingProvince,
-        shippingPostalCode,
-        billingFullName,
-        billingAddressLine1,
-        billingAddressLine2,
-        billingCity,
-        billingProvince,
-        billingPostalCode,
-        shippingAddressSameAsHomeAddress,
-        billingAddressSameAsHomeAddress,
+        ...rest,
         applicant: {
           connect: { id: applicantId },
         },
         applicationProcessing: {
           create: {},
-        },
-        renewal: {
-          create: {
-            usesAccessibleConvertedVan,
-            requiresWiderParkingSpace,
-          },
         },
       },
     });
@@ -475,11 +355,7 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         rcdUserId: rcdUserId || applicant.rcdUserId,
         isRenewal: true,
         receiveEmailUpdates: receiveEmailUpdates,
-        patientEligibility: applicant.medicalInformation.affectsMobility
-          ? Eligibility.AffectsMobility
-          : applicant.medicalInformation.cannotWalk100m
-          ? Eligibility.CannotWalk_100M
-          : Eligibility.MobilityAidRequired,
+        patientEligibility: applicant.medicalInformation.patientEligibility,
         certificationDate: applicant.medicalInformation.certificationDate,
         // TODO: Link with Shopify checkout
         shopifyConfirmationNumber,
@@ -629,7 +505,6 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
           physician: true,
         },
       },
-      applications: true,
     },
   });
 
@@ -668,11 +543,7 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
         processingFee: 26,
         paymentMethod,
         disability: applicant.medicalInformation.disability,
-        patientEligibility: applicant.medicalInformation.affectsMobility
-          ? Eligibility.AffectsMobility
-          : applicant.medicalInformation.cannotWalk100m
-          ? Eligibility.CannotWalk_100M
-          : Eligibility.MobilityAidRequired,
+        patientEligibility: applicant.medicalInformation.patientEligibility,
         certificationDate: applicant.medicalInformation.certificationDate,
         physicianName: physician.name,
         physicianMspNumber: physician.mspNumber,

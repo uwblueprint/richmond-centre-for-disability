@@ -81,11 +81,13 @@ export default function PhysicianAssessmentForm({
             {/* TODO: Revise DB schema to replace the 3 boolean columns to a single enum column */}
             <RadioGroup
               value={
-                physicianAssessmentInformation.patientEligibility == 'AFFECTS_MOBILITY'
+                physicianAssessmentInformation.patientEligibility === Eligibility.AffectsMobility
                   ? '0'
-                  : physicianAssessmentInformation.patientEligibility == 'CANNOT_WALK_100M'
+                  : physicianAssessmentInformation.patientEligibility ===
+                    Eligibility.CannotWalk_100M
                   ? '1'
-                  : physicianAssessmentInformation.patientEligibility == 'MOBILITY_AID_REQUIRED'
+                  : physicianAssessmentInformation.patientEligibility ===
+                    Eligibility.MobilityAidRequired
                   ? '2'
                   : '3'
               }
@@ -124,22 +126,20 @@ export default function PhysicianAssessmentForm({
             </RadioGroup>
           </FormControl>
 
-          {physicianAssessmentInformation.patientEligibility != 'AFFECTS_MOBILITY' &&
-            physicianAssessmentInformation.patientEligibility != 'CANNOT_WALK_100M' &&
-            physicianAssessmentInformation.patientEligibility != 'MOBILITY_AID_REQUIRED' && (
-              <FormControl isRequired>
-                <FormLabel>{'Description'}</FormLabel>
-                <Textarea
-                  value={physicianAssessmentInformation.patientEligibilityDescription || ''}
-                  onChange={event =>
-                    onChange({
-                      ...physicianAssessmentInformation,
-                      patientEligibilityDescription: event.target.value,
-                    })
-                  }
-                />
-              </FormControl>
-            )}
+          {physicianAssessmentInformation.patientEligibility === Eligibility.Other && (
+            <FormControl isRequired>
+              <FormLabel>{'Description'}</FormLabel>
+              <Textarea
+                value={physicianAssessmentInformation.patientEligibilityDescription || ''}
+                onChange={event =>
+                  onChange({
+                    ...physicianAssessmentInformation,
+                    patientEligibilityDescription: event.target.value,
+                  })
+                }
+              />
+            </FormControl>
+          )}
         </Stack>
       </Box>
 
