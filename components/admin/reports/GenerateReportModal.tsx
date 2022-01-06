@@ -24,9 +24,12 @@ import { useLazyQuery } from '@apollo/client';
 import {
   GenerateApplicationsReportRequest,
   GenerateApplicationsReportResponse,
+  GeneratePermitHoldersReportRequest,
+  GeneratePermitHoldersReportResponse,
   GENERATE_APPLICATIONS_REPORT_QUERY,
+  GENERATE_PERMIT_HOLDERS_REPORT_QUERY,
 } from '@tools/pages/admin/requests/queries';
-import { ApplicationsReportColumn } from '@lib/graphql/types';
+import { ApplicationsReportColumn, PermitHoldersReportColumn } from '@lib/graphql/types';
 
 type GenerateReportProps<T> = {
   readonly page: 'requests' | 'permitHolders';
@@ -47,15 +50,21 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
   const [endDate, setEndDate] = useState('');
   const [step, setStep] = useState(GenerateReportStep.SelectColumns);
 
-  const [selectedColumns, setSelectedColumns] = useState<Set<ApplicationsReportColumn>>(new Set());
+  const [selectedColumns, setSelectedColumns] = useState<
+    Set<ApplicationsReportColumn | PermitHoldersReportColumn>
+  >(new Set());
 
   const areAllColumnsSelected = useMemo(
-    () => Object.values(ApplicationsReportColumn).every(column => selectedColumns.has(column)),
+    () =>
+      Object.values(
+        page === 'requests' ? ApplicationsReportColumn : PermitHoldersReportColumn
+      ).every(column => selectedColumns.has(column)),
     [selectedColumns]
   );
 
   const handleSelectColumn =
-    (column: ApplicationsReportColumn) => (event: ChangeEvent<HTMLInputElement>) => {
+    (column: ApplicationsReportColumn | PermitHoldersReportColumn) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
       const updatedSelectedColumns = new Set([...selectedColumns]);
       event.target.checked
         ? updatedSelectedColumns.add(column)
@@ -64,19 +73,41 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
     };
 
   const handleSelectAllColumns = (event: ChangeEvent<HTMLInputElement>) => {
-    const updatedSelectedColumns = event.target.checked
-      ? new Set([
-          ApplicationsReportColumn.UserId,
-          ApplicationsReportColumn.ApplicantName,
-          ApplicationsReportColumn.ApplicantDateOfBirth,
-          ApplicationsReportColumn.AppNumber,
-          ApplicationsReportColumn.ApplicationDate,
-          ApplicationsReportColumn.PaymentMethod,
-          ApplicationsReportColumn.FeeAmount,
-          ApplicationsReportColumn.DonationAmount,
-          ApplicationsReportColumn.TotalAmount,
-        ])
-      : new Set([]);
+    let updatedSelectedColumns = new Set<ApplicationsReportColumn | PermitHoldersReportColumn>();
+
+    if (page === 'requests') {
+      updatedSelectedColumns = event.target.checked
+        ? new Set([
+            ApplicationsReportColumn.UserId,
+            ApplicationsReportColumn.ApplicantName,
+            ApplicationsReportColumn.ApplicantDateOfBirth,
+            ApplicationsReportColumn.AppNumber,
+            ApplicationsReportColumn.ApplicationDate,
+            ApplicationsReportColumn.PaymentMethod,
+            ApplicationsReportColumn.FeeAmount,
+            ApplicationsReportColumn.DonationAmount,
+            ApplicationsReportColumn.TotalAmount,
+          ])
+        : new Set([]);
+    } else {
+      updatedSelectedColumns = event.target.checked
+        ? new Set([
+            PermitHoldersReportColumn.UserId,
+            PermitHoldersReportColumn.ApplicantName,
+            PermitHoldersReportColumn.ApplicantDateOfBirth,
+            PermitHoldersReportColumn.HomeAddress,
+            PermitHoldersReportColumn.Email,
+            PermitHoldersReportColumn.PhoneNumber,
+            PermitHoldersReportColumn.GuardianPoaName,
+            PermitHoldersReportColumn.GuardianPoaRelation,
+            PermitHoldersReportColumn.GuardianPoaAddress,
+            PermitHoldersReportColumn.RecentAppNumber,
+            PermitHoldersReportColumn.RecentAppType,
+            PermitHoldersReportColumn.UserStatus,
+          ])
+        : new Set([]);
+    }
+
     setSelectedColumns(updatedSelectedColumns);
   };
 
@@ -84,27 +115,46 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
   const toast = useToast();
 
   // Export csv query
-  const [exportCSV, { loading }] = useLazyQuery<
-    GenerateApplicationsReportResponse,
-    GenerateApplicationsReportRequest
-  >(GENERATE_APPLICATIONS_REPORT_QUERY, {
-    onCompleted: data => {
-      if (data.generateApplicationsReport.ok) {
-        toast({
-          status: 'success',
-          description: `A CSV ${
-            page === 'permitHolders' ? 'permit holders' : 'requests'
-          } report has been successfully generated.`,
-        });
-      }
-    },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-      });
-    },
-  });
+  const [exportCSV, { loading }] =
+    page === 'requests'
+      ? useLazyQuery<GenerateApplicationsReportResponse, GenerateApplicationsReportRequest>(
+          GENERATE_APPLICATIONS_REPORT_QUERY,
+          {
+            onCompleted: data => {
+              if (data.generateApplicationsReport.ok) {
+                toast({
+                  status: 'success',
+                  description: `A CSV requests report has been successfully generated.`,
+                });
+              }
+            },
+            onError: error => {
+              toast({
+                status: 'error',
+                description: error.message,
+              });
+            },
+          }
+        )
+      : useLazyQuery<GeneratePermitHoldersReportResponse, GeneratePermitHoldersReportRequest>(
+          GENERATE_PERMIT_HOLDERS_REPORT_QUERY,
+          {
+            onCompleted: data => {
+              if (data.generatePermitHoldersReport.ok) {
+                toast({
+                  status: 'success',
+                  description: `A CSV permit holders report has been successfully generated.`,
+                });
+              }
+            },
+            onError: error => {
+              toast({
+                status: 'error',
+                description: error.message,
+              });
+            },
+          }
+        );
 
   /**
    * Handle CSV export
@@ -115,7 +165,7 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
         input: {
           startDate,
           endDate,
-          columns: [...selectedColumns],
+          columns: [...selectedColumns] as ApplicationsReportColumn[] & PermitHoldersReportColumn[],
         },
       },
     });
@@ -176,7 +226,7 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
               <Checkbox
                 paddingBottom="6px"
                 fontWeight="bold"
-                isChecked={page === 'requests' ? areAllColumnsSelected : false}
+                isChecked={areAllColumnsSelected}
                 onChange={handleSelectAllColumns}
               >
                 Select All
@@ -240,18 +290,78 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
                 </SimpleGrid>
               ) : (
                 <SimpleGrid columns={3} spacingX="0px" spacingY="6px">
-                  <Checkbox>User ID</Checkbox>
-                  <Checkbox>Applicant Name</Checkbox>
-                  <Checkbox>Applicant DoB</Checkbox>
-                  <Checkbox>Home Address</Checkbox>
-                  <Checkbox>Email</Checkbox>
-                  <Checkbox>Phone Number</Checkbox>
-                  <Checkbox>Guardian/POA Name</Checkbox>
-                  <Checkbox>Guardian/POA Relation</Checkbox>
-                  <Checkbox>Guardian/POA Address</Checkbox>
-                  <Checkbox>Recent APP Number</Checkbox>
-                  <Checkbox>Recent APP Type</Checkbox>
-                  <Checkbox>User Status</Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.UserId)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.UserId)}
+                  >
+                    User ID
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.ApplicantName)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.ApplicantName)}
+                  >
+                    Applicant Name
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.ApplicantDateOfBirth)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.ApplicantDateOfBirth)}
+                  >
+                    Applicant DoB
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.HomeAddress)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.HomeAddress)}
+                  >
+                    Home Address
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.Email)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.Email)}
+                  >
+                    Email
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.PhoneNumber)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.PhoneNumber)}
+                  >
+                    Phone Number
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.GuardianPoaName)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.GuardianPoaName)}
+                  >
+                    Guardian/POA Name
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.GuardianPoaRelation)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.GuardianPoaRelation)}
+                  >
+                    Guardian/POA Relation
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.GuardianPoaAddress)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.GuardianPoaAddress)}
+                  >
+                    Guardian/POA Address
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.RecentAppNumber)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.RecentAppNumber)}
+                  >
+                    Recent APP Number
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.RecentAppType)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.RecentAppType)}
+                  >
+                    Recent APP Type
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={selectedColumns.has(PermitHoldersReportColumn.UserStatus)}
+                    onChange={handleSelectColumn(PermitHoldersReportColumn.UserStatus)}
+                  >
+                    User Status
+                  </Checkbox>
                 </SimpleGrid>
               )}
             </Box>
@@ -339,18 +449,42 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
               </SimpleGrid>
             ) : (
               <SimpleGrid columns={3} spacingY="6px" spacingX="10px">
-                <ListItem fontSize="17px">User ID</ListItem>
-                <ListItem fontSize="17px">Applicant Name</ListItem>
-                <ListItem fontSize="17px">Applicant DoB</ListItem>
-                <ListItem fontSize="17px">Home Address</ListItem>
-                <ListItem fontSize="17px">Email</ListItem>
-                <ListItem fontSize="17px">Phone Number</ListItem>
-                <ListItem fontSize="17px">Guardian/POA Name</ListItem>
-                <ListItem fontSize="17px">Guardian/POA Relation</ListItem>
-                <ListItem fontSize="17px">Guardian/POA Address</ListItem>
-                <ListItem fontSize="17px">Recent APP Number</ListItem>
-                <ListItem fontSize="17px">Recent APP Type</ListItem>
-                <ListItem fontSize="17px">User Status</ListItem>
+                {selectedColumns.has(PermitHoldersReportColumn.UserId) && (
+                  <ListItem fontSize="17px">User ID</ListItem>
+                )}
+                {selectedColumns.has(PermitHoldersReportColumn.ApplicantName) && (
+                  <ListItem fontSize="17px">Applicant Name</ListItem>
+                )}
+                {selectedColumns.has(PermitHoldersReportColumn.ApplicantDateOfBirth) && (
+                  <ListItem fontSize="17px">Applicant DoB</ListItem>
+                )}
+                {selectedColumns.has(PermitHoldersReportColumn.HomeAddress) && (
+                  <ListItem fontSize="17px">Home Address</ListItem>
+                )}
+                {selectedColumns.has(PermitHoldersReportColumn.Email) && (
+                  <ListItem fontSize="17px">Email</ListItem>
+                )}
+                {selectedColumns.has(PermitHoldersReportColumn.PhoneNumber) && (
+                  <ListItem fontSize="17px">Phone Number</ListItem>
+                )}
+                {selectedColumns.has(PermitHoldersReportColumn.GuardianPoaName) && (
+                  <ListItem fontSize="17px">Guardian/POA Name</ListItem>
+                )}
+                {selectedColumns.has(PermitHoldersReportColumn.GuardianPoaRelation) && (
+                  <ListItem fontSize="17px">Guardian/POA Relation</ListItem>
+                )}
+                {selectedColumns.has(PermitHoldersReportColumn.GuardianPoaAddress) && (
+                  <ListItem fontSize="17px">Guardian/POA Address</ListItem>
+                )}
+                {selectedColumns.has(PermitHoldersReportColumn.RecentAppNumber) && (
+                  <ListItem fontSize="17px">Recent APP Number</ListItem>
+                )}
+                {selectedColumns.has(PermitHoldersReportColumn.RecentAppType) && (
+                  <ListItem fontSize="17px">Recent APP Type</ListItem>
+                )}
+                {selectedColumns.has(PermitHoldersReportColumn.UserStatus) && (
+                  <ListItem fontSize="17px">User Status</ListItem>
+                )}
               </SimpleGrid>
             )}
           </Box>
