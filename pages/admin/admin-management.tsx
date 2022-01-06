@@ -96,6 +96,7 @@ export default function AdminManagement() {
         toast({
           status: 'success',
           description: `${data.updateEmployee.employee.firstName} ${data.updateEmployee.employee.lastName} has been edited.`,
+          isClosable: true,
         });
         refetch();
       },
@@ -103,6 +104,7 @@ export default function AdminManagement() {
         toast({
           status: 'error',
           description: error.message,
+          isClosable: true,
         });
       },
     }
@@ -116,6 +118,7 @@ export default function AdminManagement() {
         toast({
           status: 'success',
           description: `${data.createEmployee.employee.firstName} ${data.createEmployee.employee.lastName} has been added.`,
+          isClosable: true,
         });
         refetch();
       },
@@ -123,6 +126,7 @@ export default function AdminManagement() {
         toast({
           status: 'error',
           description: error.message,
+          isClosable: true,
         });
       },
     }
@@ -297,6 +301,7 @@ export default function AdminManagement() {
       toast({
         status: 'error',
         description: error.message,
+        isClosable: true,
       });
     },
   });
@@ -310,6 +315,7 @@ export default function AdminManagement() {
           toast({
             status: 'success',
             description: `${data.deleteEmployee.employee.firstName} ${data.deleteEmployee.employee.lastName} has been deleted`,
+            isClosable: true,
           });
         }
       },

@@ -154,7 +154,7 @@ function Header() {
                       signOut();
                     }}
                   >
-                    Sign out
+                    Log out
                   </MenuItem>
                 </MenuList>
               </Menu>
