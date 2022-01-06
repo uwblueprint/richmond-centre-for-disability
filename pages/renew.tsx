@@ -406,7 +406,7 @@ export default function Renew() {
                     />
                     <FormHelperText>{`e.g. X0X 0X0`}</FormHelperText>
                   </FormControl>
-                  <FormControl marginBottom="24px">
+                  <FormControl isRequired marginBottom="24px">
                     <FormLabel>{`Phone Number`}</FormLabel>
                     <Input
                       type="tel"
