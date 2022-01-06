@@ -661,7 +661,7 @@ export const generateApplicationsReport: Resolver = async (_, args, { prisma }) 
     return {
       ...application,
       dateOfBirth: formatDate(application.dateOfBirth),
-      applicationDate: application.createdAt.toLocaleDateString('en-US', {
+      applicationDate: application.createdAt?.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
         day: '2-digit',
