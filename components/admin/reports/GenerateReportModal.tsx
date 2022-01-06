@@ -73,10 +73,8 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
     };
 
   const handleSelectAllColumns = (event: ChangeEvent<HTMLInputElement>) => {
-    let updatedSelectedColumns = new Set<ApplicationsReportColumn | PermitHoldersReportColumn>();
-
-    if (page === 'requests') {
-      updatedSelectedColumns = event.target.checked
+    const updatedSelectedColumns = event.target.checked
+      ? page === 'requests'
         ? new Set([
             ApplicationsReportColumn.UserId,
             ApplicationsReportColumn.ApplicantName,
@@ -88,10 +86,7 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
             ApplicationsReportColumn.DonationAmount,
             ApplicationsReportColumn.TotalAmount,
           ])
-        : new Set([]);
-    } else {
-      updatedSelectedColumns = event.target.checked
-        ? new Set([
+        : new Set([
             PermitHoldersReportColumn.UserId,
             PermitHoldersReportColumn.ApplicantName,
             PermitHoldersReportColumn.ApplicantDateOfBirth,
@@ -105,8 +100,7 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
             PermitHoldersReportColumn.RecentAppType,
             PermitHoldersReportColumn.UserStatus,
           ])
-        : new Set([]);
-    }
+      : new Set([]);
 
     setSelectedColumns(updatedSelectedColumns);
   };
