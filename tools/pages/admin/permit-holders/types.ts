@@ -41,12 +41,7 @@ export type PermitHolderAttachedFile = Pick<ApplicationProcessing, 'appNumber' |
 export type MedicalHistoryEntry = Pick<MedicalInformation, 'disability' | 'createdAt'> & {
   readonly applicantApplication: Pick<
     Application,
-    | 'disability'
-    | 'affectsMobility'
-    | 'mobilityAidRequired'
-    | 'cannotWalk100m'
-    | 'aid'
-    | 'createdAt'
+    'disability' | 'patientEligibility' | 'aid' | 'createdAt'
   >;
 };
 

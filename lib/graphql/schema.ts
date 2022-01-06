@@ -1,4 +1,6 @@
-export default `
+import { gql } from '@apollo/client';
+
+export default gql`
   type Query {
     meta: Meta!
     applicants(filter: ApplicantsFilter): QueryApplicantsResult
@@ -9,8 +11,12 @@ export default `
     applications(filter: ApplicationsFilter): QueryApplicationsResult
     application(id: ID!): Application
     permits: [Permit!]
-    generateApplicationsReport(input: GenerateApplicationsReportInput!): GenerateApplicationsReportResult
-    generatePermitHoldersReport(input: GeneratePermitHoldersReportInput!): GeneratePermitHoldersReportResult
+    generateApplicationsReport(
+      input: GenerateApplicationsReportInput!
+    ): GenerateApplicationsReportResult
+    generatePermitHoldersReport(
+      input: GeneratePermitHoldersReportInput!
+    ): GeneratePermitHoldersReportResult
   }
 
   type Mutation {
@@ -21,9 +27,11 @@ export default `
     deleteEmployee(id: ID!): DeleteEmployeeResult!
     createPhysician(input: CreatePhysicianInput!): CreatePhysicianResult!
     upsertPhysician(input: UpsertPhysicianInput!): UpsertPhysicianResult!
-    createApplication(input: CreateApplicationInput!): CreateApplicationResult!
+    createNewApplication(input: CreateNewApplicationInput!): CreateNewApplicationResult!
     createRenewalApplication(input: CreateRenewalApplicationInput!): CreateRenewalApplicationResult!
-    createReplacementApplication(input: CreateReplacementApplicationInput!): CreateReplacementApplicationResult!
+    createReplacementApplication(
+      input: CreateReplacementApplicationInput!
+    ): CreateReplacementApplicationResult!
     updateApplication(input: UpdateApplicationInput!): UpdateApplicationResult!
     createPermit(input: CreatePermitInput!): CreatePermitResult!
     updateMedicalInformation(input: UpdateMedicalInformationInput!): UpdateMedicalInformationResult!
@@ -147,5 +155,12 @@ export default `
     RECENT_APP_NUMBER
     RECENT_APP_TYPE
     USER_STATUS
+  }
+
+  enum Eligibility {
+    AFFECTS_MOBILITY
+    MOBILITY_AID_REQUIRED
+    CANNOT_WALK_100M
+    OTHER
   }
 `;

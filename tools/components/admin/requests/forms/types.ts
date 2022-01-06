@@ -65,7 +65,7 @@ export type DoctorInformation = Pick<
 // Physician Assessment Information Object
 export type PhysicianAssessmentInformation = Pick<
   Application,
-  'disability' | 'affectsMobility' | 'mobilityAidRequired' | 'cannotWalk100m' | 'permitType'
+  'disability' | 'patientEligibility' | 'permitType'
 > & {
   //TODO: Update DB to account for these columns
   physicianCertificationDate: string;

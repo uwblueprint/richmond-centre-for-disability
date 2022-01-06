@@ -189,17 +189,7 @@ export type GetPermitHolderResponse = {
     >;
   } & {
     applications: ReadonlyArray<
-      Pick<
-        Application,
-        | 'id'
-        | 'disability'
-        | 'affectsMobility'
-        | 'mobilityAidRequired'
-        | 'cannotWalk100m'
-        | 'aid'
-        | 'createdAt'
-        | 'notes'
-      >
+      Pick<Application, 'id' | 'disability' | 'patientEligibility' | 'aid' | 'createdAt' | 'notes'>
     >;
   };
 };
