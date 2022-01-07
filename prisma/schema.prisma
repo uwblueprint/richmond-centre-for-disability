@@ -217,7 +217,7 @@ model VerificationRequest {
 model ApplicationProcessing {
   id                Int               @id @default(autoincrement())
   status            ApplicationStatus @default(PENDING)
-  paymentStatus    PaymentStatus     @default(PENDING)
+  paymentStatus     PaymentStatus     @default(PENDING)
   appNumber         Int?              @unique @map("app_number")
   appHolepunched    Boolean           @default(false) @map("app_holepunched")
   walletCardCreated Boolean           @default(false) @map("wallet_card_created")
