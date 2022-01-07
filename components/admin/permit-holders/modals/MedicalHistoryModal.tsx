@@ -16,7 +16,7 @@ import {
   HStack,
 } from '@chakra-ui/react'; // Chakra UI
 import { ReactNode } from 'react'; // React
-import { Aid, Application } from '@lib/graphql/types'; // Application type & Aid enum
+import { Aid, Application, Eligibility } from '@lib/graphql/types'; // Application type & Aid enum
 import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 type MedicalHistoryModalProps = {
@@ -61,17 +61,17 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
             </Text>
           </ModalHeader>
           <ModalBody paddingTop="0px" paddingBottom="36px" paddingX="4px">
-            {(application.affectsMobility ||
-              application.mobilityAidRequired ||
-              application.cannotWalk100m) && (
+            {(application.patientEligibility === Eligibility.AffectsMobility ||
+              application.patientEligibility === Eligibility.MobilityAidRequired ||
+              application.patientEligibility === Eligibility.CannotWalk_100M) && (
               <HStack paddingBottom="22px" spacing="16px">
-                {application.affectsMobility && (
+                {application.patientEligibility === Eligibility.AffectsMobility && (
                   <Badge backgroundColor="background.informative">{'Affects Mobility'}</Badge>
                 )}
-                {application.mobilityAidRequired && (
+                {application.patientEligibility === Eligibility.MobilityAidRequired && (
                   <Badge backgroundColor="background.informative">{'Aid Required'}</Badge>
                 )}
-                {application.cannotWalk100m && (
+                {application.patientEligibility === Eligibility.CannotWalk_100M && (
                   <Badge backgroundColor="background.informative">{'Cannot walk > 100m'}</Badge>
                 )}
               </HStack>

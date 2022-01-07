@@ -223,6 +223,7 @@ export default function CreateRenewal() {
         toast({
           status: 'success',
           description: 'Renewal application has been submitted!',
+          isClosable: true,
         });
 
         router.push(`/admin/request/${data.createRenewalApplication.applicationId}`);
@@ -232,6 +233,7 @@ export default function CreateRenewal() {
       toast({
         status: 'error',
         description: error.message,
+        isClosable: true,
       });
     },
   });

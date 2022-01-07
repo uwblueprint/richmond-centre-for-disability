@@ -123,6 +123,7 @@ export default function Renew() {
         toast({
           status: 'success',
           description: 'Your application has been submitted!',
+          isClosable: true,
         });
         shopifyCheckout();
       }
@@ -131,6 +132,7 @@ export default function Renew() {
       toast({
         status: 'error',
         description: error.message,
+        isClosable: true,
       });
     },
   });
@@ -160,6 +162,7 @@ export default function Renew() {
         title: 'Identity verification failed',
         description: `You have not completed the identity verification step.
           Please complete the identity verification before filling out the renewal application form.`,
+        isClosable: true,
       });
       return;
     }
@@ -432,7 +435,7 @@ export default function Renew() {
                     />
                     <FormHelperText>{`e.g. X0X 0X0`}</FormHelperText>
                   </FormControl>
-                  <FormControl marginBottom="24px">
+                  <FormControl isRequired marginBottom="24px">
                     <FormLabel>{`Phone Number`}</FormLabel>
                     <Input
                       type="tel"

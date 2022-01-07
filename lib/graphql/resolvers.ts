@@ -12,12 +12,13 @@ import {
   createApplicant,
   updateApplicant,
   verifyIdentity,
+  generatePermitHoldersReport,
 } from '@lib/applicants/resolvers'; // Applicant resolvers
 import { physicians, createPhysician, upsertPhysician } from '@lib/physicians/resolvers'; // Physician resolvers
 import {
   application,
   applications,
-  createApplication,
+  createNewApplication,
   updateApplication,
   createRenewalApplication,
   createReplacementApplication,
@@ -73,6 +74,7 @@ const resolvers = {
     applicant: authorize(applicant, [Role.Secretary]),
     employee: authorize(employee, [Role.Admin]),
     generateApplicationsReport: authorize(generateApplicationsReport, [Role.Secretary]),
+    generatePermitHoldersReport: authorize(generatePermitHoldersReport, [Role.Secretary]),
   },
   Mutation: {
     createApplicant: authorize(createApplicant, [Role.Secretary]),
@@ -82,7 +84,7 @@ const resolvers = {
     deleteEmployee: authorize(deleteEmployee, [Role.Admin]),
     createPhysician: authorize(createPhysician, [Role.Secretary]),
     upsertPhysician: authorize(upsertPhysician, [Role.Secretary]),
-    createApplication: authorize(createApplication, [Role.Secretary]),
+    createNewApplication: authorize(createNewApplication, [Role.Secretary]),
     createRenewalApplication: createRenewalApplication,
     createReplacementApplication: authorize(createReplacementApplication, [Role.Secretary]),
     updateApplication: authorize(updateApplication, [Role.Secretary]),

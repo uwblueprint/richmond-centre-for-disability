@@ -48,47 +48,50 @@ model Application {
   customGender                     String?               @map("custom_gender") @db.VarChar(255)
   email                            String?               @db.VarChar(255)
   phone                            String                @db.VarChar(50)
-  province                         Province
   city                             String                @db.VarChar(255)
+  province                         Province              @default(BC)
   addressLine1                     String                @map("address_line_1") @db.VarChar(255)
   addressLine2                     String?               @map("address_line_2") @db.VarChar(255)
   postalCode                       String                @map("postal_code") @db.Char(6)
   notes                            String?
   rcdUserId                        Int?                  @map("rcd_user_id")
   isRenewal                        Boolean               @default(true) @map("is_renewal")
-  permitType                       PermitType            @default(PERMANENT) @map("permit_type")
   receiveEmailUpdates              Boolean               @default(false) @map("receive_email_updates")
-  poaFormUrl                       String?               @map("poa_form_url") @db.VarChar(255)
   applicantId                      Int?                  @map("applicant_id")
   disability                       String                @db.VarChar(255)
-  affectsMobility                  Boolean               @default(false) @map("affects_mobility")
-  mobilityAidRequired              Boolean               @default(false) @map("mobility_aid_required")
-  cannotWalk100m                   Boolean               @default(false) @map("cannot_walk_100m")
+  certificationDate                DateTime?             @map("certification_date") @db.Date
+  patientEligibility               Eligibility           @map("patient_eligibility")
+  description                      String?
+  expiryDate                       DateTime?             @map("expiry_date") @db.Date
+  permitType                       PermitType            @default(PERMANENT) @map("permit_type")
   aid                              Aid[]
   physicianName                    String                @map("physician_name") @db.VarChar(255)
   physicianMspNumber               Int                   @map("physician_msp_number")
+  physicianPhone                   String                @map("physician_phone") @db.VarChar(50)
   physicianAddressLine1            String                @map("physician_address_line_1") @db.VarChar(255)
   physicianAddressLine2            String?               @map("physician_address_line_2") @db.VarChar(255)
   physicianCity                    String                @map("physician_city") @db.VarChar(255)
-  physicianProvince                Province              @map("physician_province")
+  physicianProvince                Province              @default(BC) @map("physician_province")
   physicianPostalCode              String                @map("physician_postal_code") @db.Char(6)
-  physicianPhone                   String                @map("physician_phone") @db.VarChar(50)
   physicianNotes                   String?               @map("physician_notes")
-  processingFee                    Float                 @map("processing_fee")
-  donationAmount                   Float?                @map("donation_amount")
-  paymentMethod                    PaymentType           @map("payment_method")
-  shopifyConfirmationNumber        String                @unique @map("shopify_confirmation_number") @db.VarChar(255)
   guardianFirstName                String?               @map("guardian_first_name") @db.VarChar(255)
   guardianMiddleName               String?               @map("guardian_middle_name") @db.VarChar(255)
   guardianLastName                 String?               @map("guardian_last_name") @db.VarChar(255)
   guardianPhone                    String?               @map("guardian_phone") @db.VarChar(50)
-  guardianProvince                 Province?             @map("guardian_province")
-  guardianCity                     String?               @map("guardian_city") @db.VarChar(255)
+  guardianRelationship             String?               @map("guardian_relationship") @db.VarChar(50)
   guardianAddressLine1             String?               @map("guardian_address_line_1") @db.VarChar(255)
   guardianAddressLine2             String?               @map("guardian_address_line_2") @db.VarChar(255)
+  guardianCity                     String?               @map("guardian_city") @db.VarChar(255)
+  guardianProvince                 Province?             @map("guardian_province")
   guardianPostalCode               String?               @map("guardian_postal_code") @db.Char(6)
-  guardianRelationship             String?               @map("guardian_relationship") @db.VarChar(50)
+  poaFormUrl                       String?               @map("poa_form_url") @db.VarChar(255)
   guardianNotes                    String?               @map("guardian_notes")
+  usesAccessibleConvertedVan       Boolean?              @default(false) @map("uses_accessible_converted_van")
+  requiresWiderParkingSpace        Boolean?              @default(false) @map("requires_wider_parking_space")
+  processingFee                    Float                 @map("processing_fee")
+  donationAmount                   Float?                @map("donation_amount")
+  paymentMethod                    PaymentType           @map("payment_method")
+  shopifyConfirmationNumber        String                @unique @map("shopify_confirmation_number") @db.VarChar(255)
   shippingFullName                 String?               @map("shipping_full_name") @db.VarChar(255)
   shippingAddressLine1             String?               @map("shipping_address_line_1") @db.VarChar(255)
   shippingAddressLine2             String?               @map("shipping_address_line_2") @db.VarChar(255)
@@ -150,19 +153,17 @@ model Guardian {
 }
 
 model MedicalInformation {
-  id                  Int        @id @default(autoincrement())
-  disability          String     @db.VarChar(255)
-  affectsMobility     Boolean    @default(false) @map("affects_mobility")
-  mobilityAidRequired Boolean    @default(false) @map("mobility_aid_required")
-  cannotWalk100m      Boolean    @default(false) @map("cannot_walk_100m")
-  notes               String?
-  certificationDate   DateTime?  @map("certification_date") @db.Date
-  aid                 Aid[]
-  physicianId         Int        @map("physician_id")
-  createdAt           DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime   @default(now()) @map("updated_at") @db.Timestamptz(6)
-  physician           Physician  @relation(fields: [physicianId], references: [id])
-  applicant           Applicant? @relation("applicantsTomedical_information")
+  id                 Int         @id @default(autoincrement())
+  disability         String      @db.VarChar(255)
+  patientEligibility Eligibility @map("patient_eligibility")
+  notes              String?
+  certificationDate  DateTime?   @map("certification_date") @db.Date
+  aid                Aid[]
+  physicianId        Int         @map("physician_id")
+  createdAt          DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  physician          Physician   @relation(fields: [physicianId], references: [id])
+  applicant          Applicant?  @relation("applicantsTomedical_information")
 
   @@map("medical_information")
 }
@@ -362,4 +363,13 @@ enum PaymentStatus {
   COMPLETED
 
   @@map("paymentstatus")
+}
+
+enum Eligibility {
+  AFFECTS_MOBILITY
+  MOBILITY_AID_REQUIRED
+  CANNOT_WALK_100M
+  OTHER
+
+   @@map("eligibility")
 }

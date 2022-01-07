@@ -118,4 +118,15 @@ export default `
     IDENTITY_VERIFICATION_FAILED
     APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS
   }
+
+  input GeneratePermitHoldersReportInput {
+    startDate: Date!
+    endDate: Date!
+    columns: [PermitHoldersReportColumn!]!
+  }
+
+  # TODO: Return link to AWS S3 file
+  type GeneratePermitHoldersReportResult {
+    ok: Boolean!
+  }
 `;

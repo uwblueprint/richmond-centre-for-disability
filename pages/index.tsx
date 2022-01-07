@@ -28,8 +28,8 @@ export default function Landing() {
         </Text>
         <Text as="p" textStyle="display-small" align="left" mt="24px">
           Find the services you need related to your British Columbia accessible parking permit. You
-          may chose to use our online service or download a physical form and email, mail or drop it
-          off in person to RCD.{' '}
+          may choose to use our online service or download a physical form and email, mail or drop
+          it off in person to RCD.
         </Text>
       </GridItem>
       <GridItem colSpan={5} colStart={1} mt="28px" textAlign="left">

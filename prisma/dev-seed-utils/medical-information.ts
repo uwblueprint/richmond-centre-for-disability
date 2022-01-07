@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 // Relative paths required, path aliases throw error with seed command
 import prisma from '../index'; // Prisma client
+import { Eligibility } from '../../lib/graphql/types'; // GraphQL types
 import { UpsertMedicalInformation } from '../types'; // Seeding types
 
 // Seed data
@@ -8,25 +9,19 @@ const medicalInformationRecords = [
   {
     id: 1,
     disability: 'Fractured knee',
-    affectsMobility: true,
-    mobilityAidRequired: true,
-    cannotWalk100m: false,
+    patientEligibility: Eligibility.AffectsMobility,
     physicianId: 1,
   },
   {
     id: 2,
     disability: 'Sprained ankle',
-    affectsMobility: true,
-    mobilityAidRequired: false,
-    cannotWalk100m: false,
+    patientEligibility: Eligibility.MobilityAidRequired,
     physicianId: 2,
   },
   {
     id: 3,
     disability: 'Sprained ankle',
-    affectsMobility: true,
-    mobilityAidRequired: false,
-    cannotWalk100m: false,
+    patientEligibility: Eligibility.CannotWalk_100M,
     physicianId: 2,
   },
 ];

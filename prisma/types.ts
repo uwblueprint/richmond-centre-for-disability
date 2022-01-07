@@ -53,6 +53,7 @@ export type UpsertApplication = Pick<
   | 'id'
   | 'rcdUserId'
   | 'firstName'
+  | 'middleName'
   | 'lastName'
   | 'gender'
   | 'phone'
@@ -61,13 +62,16 @@ export type UpsertApplication = Pick<
   | 'addressLine1'
   | 'postalCode'
   | 'disability'
-  | 'aid'
   | 'physicianName'
+  | 'certificationDate'
+  | 'patientEligibility'
+  | 'aid'
+  | 'expiryDate'
   | 'physicianMspNumber'
   | 'physicianAddressLine1'
   | 'physicianCity'
-  | 'physicianProvince'
   | 'physicianPostalCode'
+  | 'physicianProvince'
   | 'physicianPhone'
   | 'processingFee'
   | 'paymentMethod'
@@ -95,7 +99,7 @@ export type UpsertPhysician = Pick<
 // Type of Medical Information to upsert in DB
 export type UpsertMedicalInformation = Pick<
   MedicalInformation,
-  'id' | 'disability' | 'affectsMobility' | 'mobilityAidRequired' | 'cannotWalk100m' | 'physicianId'
+  'id' | 'disability' | 'patientEligibility' | 'physicianId'
 >;
 
 // Type of Application Processing to upsert in DB

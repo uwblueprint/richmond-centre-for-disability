@@ -57,7 +57,13 @@ const COLUMNS: Column<any>[] = [
       return (
         <div>
           <Tooltip label={name} placement="top-start">
-            <Text maxWidth="280" whiteSpace="nowrap" textOverflow="ellipsis" overflow="hidden">
+            <Text
+              maxWidth="280"
+              whiteSpace="nowrap"
+              textOverflow="ellipsis"
+              overflow="hidden"
+              mb="4px"
+            >
               {name}
             </Text>
           </Tooltip>

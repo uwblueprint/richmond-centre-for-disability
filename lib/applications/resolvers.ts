@@ -148,21 +148,24 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
 };
 
 /**
- * Create an RCD application
+ * Create a new RCD application
  * @returns Status of operation (ok, error)
  */
-export const createApplication: Resolver = async (_, args, { prisma }) => {
-  const {
-    input: { applicantId, shopifyConfirmationNumber },
-  } = args;
+export const createNewApplication: Resolver = async (_, args, { prisma }) => {
+  const { input } = args;
+  const { shopifyConfirmationNumber } = input;
+  const { applicantId, ...rest } = input;
 
   let application;
   try {
     application = await prisma.application.create({
       data: {
-        ...args.input,
+        ...rest,
         applicant: {
           connect: { id: applicantId },
+        },
+        applicationProcessing: {
+          create: {},
         },
       },
     });
@@ -345,7 +348,6 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         customGender: applicant.customGender,
         email: applicantEmail,
         phone: updatedContactInfo && phone ? formatPhoneNumber(phone) : applicant.phone,
-        province: applicant.province,
         city: applicantCity,
         addressLine1: applicantAddressLine1,
         addressLine2: applicantAddressLine2,
@@ -353,6 +355,8 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
         rcdUserId: rcdUserId || applicant.rcdUserId,
         isRenewal: true,
         receiveEmailUpdates: receiveEmailUpdates,
+        patientEligibility: applicant.medicalInformation.patientEligibility,
+        certificationDate: applicant.medicalInformation.certificationDate,
         // TODO: Link with Shopify checkout
         shopifyConfirmationNumber,
         processingFee: 26,
@@ -369,7 +373,6 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
           ? formatPostalCode(physicianPostalCode)
           : physician.postalCode,
         physicianPhone: updatedPhysician ? physicianPhone : physician.phone,
-        physicianProvince: physician.province,
         shippingAddressSameAsHomeAddress,
         billingAddressSameAsHomeAddress,
         shippingFullName: shippingAddressSameAsHomeAddress
@@ -530,7 +533,6 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
         dateOfBirth: applicant.dateOfBirth,
         gender: applicant.gender,
         customGender: applicant.customGender,
-        province: applicant.province,
         addressLine1,
         addressLine2,
         city,
@@ -541,6 +543,8 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
         processingFee: 26,
         paymentMethod,
         disability: applicant.medicalInformation.disability,
+        patientEligibility: applicant.medicalInformation.patientEligibility,
+        certificationDate: applicant.medicalInformation.certificationDate,
         physicianName: physician.name,
         physicianMspNumber: physician.mspNumber,
         physicianAddressLine1: physician.addressLine1,
@@ -548,7 +552,6 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
         physicianCity: physician.city,
         physicianPostalCode: physician.postalCode,
         physicianPhone: physician.phone,
-        physicianProvince: physician.province,
         donationAmount,
         shippingAddressSameAsHomeAddress,
         shippingFullName,
@@ -615,6 +618,11 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
   };
 };
 
+/**
+ * Generates csv with applications' info, given a start date, end date, and values from
+ * ApplicationsReportColumn that the user would like to have on the generated csv
+ * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
+ */
 export const generateApplicationsReport: Resolver = async (_, args, { prisma }) => {
   const {
     input: { startDate, endDate, columns },
@@ -664,11 +672,9 @@ export const generateApplicationsReport: Resolver = async (_, args, { prisma }) 
         minute: 'numeric',
         timeZone: 'America/Vancouver',
       }),
-      applicantName:
-        application.firstName +
-        (application.middleName
-          ? ` ${application.middleName} ${application.lastName}`
-          : ` ${application.lastName}`),
+      applicantName: `${application.firstName}${
+        application.middleName ? ` ${application.middleName}` : ''
+      } ${application.lastName}`,
       totalAmount: (application.processingFee || 0) + (application?.donationAmount || 0),
       rcdPermitId: application.permit?.rcdPermitId,
     };

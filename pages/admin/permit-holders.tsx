@@ -219,7 +219,13 @@ export default function PermitHolders() {
         return (
           <>
             <Tooltip label={name} placement="top-start">
-              <Text maxWidth="180" whiteSpace="nowrap" textOverflow="ellipsis" overflow="hidden">
+              <Text
+                maxWidth="180"
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
+                overflow="hidden"
+                mb="4px"
+              >
                 {name}
               </Text>
             </Tooltip>

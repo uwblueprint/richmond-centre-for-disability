@@ -110,6 +110,7 @@ export default function PermitHolder({ id }: Props) {
       toast({
         status: 'error',
         description: error.message,
+        isClosable: true,
       });
     },
   });
@@ -123,6 +124,7 @@ export default function PermitHolder({ id }: Props) {
       toast({
         status: 'error',
         description: error.message,
+        isClosable: true,
       });
     },
   });
@@ -137,6 +139,7 @@ export default function PermitHolder({ id }: Props) {
         toast({
           status: 'success',
           description: "User's information has been edited.",
+          isClosable: true,
         });
       }
     },
@@ -144,6 +147,7 @@ export default function PermitHolder({ id }: Props) {
       toast({
         status: 'error',
         description: error.message,
+        isClosable: true,
       });
     },
     refetchQueries: ['GetPermitHolder'],
@@ -184,6 +188,7 @@ export default function PermitHolder({ id }: Props) {
         toast({
           status: 'success',
           description: "Doctor's information has been edited.",
+          isClosable: true,
         });
       }
 

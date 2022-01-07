@@ -2,9 +2,7 @@ export default `
   type MedicalInformation {
     id: ID!
     disability: String!
-    affectsMobility: Boolean!
-    mobilityAidRequired: Boolean!
-    cannotWalk100m: Boolean!
+    patientEligibility: Eligibility!
     notes: String
     certificationDate: Date
     aid: [Aid!]

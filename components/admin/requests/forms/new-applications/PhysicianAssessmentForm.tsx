@@ -11,7 +11,7 @@ import {
   Radio,
   Textarea,
 } from '@chakra-ui/react'; // Chakra UI
-import { PermitType } from '@lib/graphql/types';
+import { PermitType, Eligibility } from '@lib/graphql/types';
 import { PhysicianAssessmentInformation } from '@tools/components/admin/requests/forms/types';
 import { ChangeEventHandler } from 'react';
 
@@ -81,11 +81,13 @@ export default function PhysicianAssessmentForm({
             {/* TODO: Revise DB schema to replace the 3 boolean columns to a single enum column */}
             <RadioGroup
               value={
-                physicianAssessmentInformation.affectsMobility
+                physicianAssessmentInformation.patientEligibility === Eligibility.AffectsMobility
                   ? '0'
-                  : physicianAssessmentInformation.cannotWalk100m
+                  : physicianAssessmentInformation.patientEligibility ===
+                    Eligibility.CannotWalk_100M
                   ? '1'
-                  : physicianAssessmentInformation.mobilityAidRequired
+                  : physicianAssessmentInformation.patientEligibility ===
+                    Eligibility.MobilityAidRequired
                   ? '2'
                   : '3'
               }
@@ -93,9 +95,14 @@ export default function PhysicianAssessmentForm({
                 // handleChangedPatientEligibility
                 onChange({
                   ...physicianAssessmentInformation,
-                  affectsMobility: value === '0',
-                  cannotWalk100m: value === '1',
-                  mobilityAidRequired: value === '2',
+                  patientEligibility:
+                    value === '0'
+                      ? Eligibility.AffectsMobility
+                      : value === '1'
+                      ? Eligibility.CannotWalk_100M
+                      : value === '2'
+                      ? Eligibility.MobilityAidRequired
+                      : Eligibility.Other,
                   ...(value !== '3' && {
                     patientEligibilityDescription: undefined,
                   }),
@@ -119,22 +126,20 @@ export default function PhysicianAssessmentForm({
             </RadioGroup>
           </FormControl>
 
-          {!physicianAssessmentInformation.affectsMobility &&
-            !physicianAssessmentInformation.cannotWalk100m &&
-            !physicianAssessmentInformation.mobilityAidRequired && (
-              <FormControl isRequired>
-                <FormLabel>{'Description'}</FormLabel>
-                <Textarea
-                  value={physicianAssessmentInformation.patientEligibilityDescription || ''}
-                  onChange={event =>
-                    onChange({
-                      ...physicianAssessmentInformation,
-                      patientEligibilityDescription: event.target.value,
-                    })
-                  }
-                />
-              </FormControl>
-            )}
+          {physicianAssessmentInformation.patientEligibility === Eligibility.Other && (
+            <FormControl isRequired>
+              <FormLabel>{'Description'}</FormLabel>
+              <Textarea
+                value={physicianAssessmentInformation.patientEligibilityDescription || ''}
+                onChange={event =>
+                  onChange({
+                    ...physicianAssessmentInformation,
+                    patientEligibilityDescription: event.target.value,
+                  })
+                }
+              />
+            </FormControl>
+          )}
         </Stack>
       </Box>
 

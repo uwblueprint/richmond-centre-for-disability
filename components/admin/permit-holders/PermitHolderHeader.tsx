@@ -28,7 +28,7 @@ export default function PermitHolderHeader({ applicant }: PermitHolderHeaderProp
               </Wrap>
             )}
           </Flex>
-          <HStack spacing={3} marginTop={3}>
+          <HStack spacing={3} marginTop={1}>
             <Text textStyle="caption" as="p">
               ID: #{applicant.rcdUserId}
             </Text>

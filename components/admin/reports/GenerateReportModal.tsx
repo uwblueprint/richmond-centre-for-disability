@@ -95,6 +95,7 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
           description: `A CSV ${
             page === 'permitHolders' ? 'permit holders' : 'requests'
           } report has been successfully generated.`,
+          isClosable: true,
         });
       }
     },
@@ -102,6 +103,7 @@ export default function GenerateReportModal<T>(props: GenerateReportProps<T>) {
       toast({
         status: 'error',
         description: error.message,
+        isClosable: true,
       });
     },
   });
