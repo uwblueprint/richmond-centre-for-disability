@@ -79,11 +79,17 @@ CREATE TYPE ApplicationType as ENUM('NEW', 'RENEWAL', 'REPLACEMENT');
 -- Accessible converted van loading method enum
 CREATE TYPE AccessibleConvertedVanLoadingMethod as ENUM('SIDE_LOADING', 'END_LOADING');
 
- -- Reason for requiring a wider accessible parking space enum
+-- Reason for requiring a wider accessible parking space enum
 CREATE TYPE RequiresWiderParkingSpaceReason as ENUM(
   'HAS_ACCESSIBLE_VAN',
   'MEDICAL_REASONS',
   'OTHER'
+);
+
+-- Shopify payment status enum
+CREATE TYPE ShopifyPaymentStatus as ENUM(
+  'PENDING',
+  'RECEIVED'
 );
 
 -- Create employees table
@@ -251,8 +257,6 @@ CREATE TABLE applications (
   payment_method PaymentType NOT NULL,
   processing_fee FLOAT NOT NULL,
   donation_amount FLOAT,
-  paid_through_shopify BOOLEAN NOT NULL,
-  shopify_confirmation_number VARCHAR(255) UNIQUE,
 
   -- Shipping information
   shipping_address_same_as_home_address BOOLEAN NOT NULL,
@@ -343,6 +347,12 @@ CREATE TABLE renewals (
   requires_wider_parking_space BOOLEAN NOT NULL,
   requires_wider_parking_space_reason RequiresWiderParkingSpaceReason,
   other_requires_wider_parking_space_reason VARCHAR(255),
+
+  -- Payment information
+  paid_through_shopify BOOLEAN NOT NULL,
+  shopify_payment_status ShopifyPaymentStatus NOT NULL DEFAULT 'PENDING',
+  shopify_confirmation_number VARCHAR(255) UNIQUE,
+
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   applicant_id INTEGER NOT NULL,
