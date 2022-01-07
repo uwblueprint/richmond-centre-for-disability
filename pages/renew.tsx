@@ -89,13 +89,13 @@ export default function Renew() {
   const shopifyCheckout = async () => {
     /* Setup Shopify Checkout on success. */
     const client = Client.buildClient({
-      domain: 'poppy-hazel.myshopify.com',
-      storefrontAccessToken: '64b319dde0d72cf6491db234e9a6b3e4',
+      domain: process.env.SHOPIFY_DOMAIN as string,
+      storefrontAccessToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN as string,
     });
 
     // Product id can be found when viewing URL in Shopify admin (e.g poppy-hazel.myshopify.com/admin/products/6570386915350).
     // Shopify SDK only accepts encoded product id.
-    const productId = 'gid://shopify/Product/6570386915350';
+    const productId = `gid://shopify/Product/${process.env.SHOPIFY_PERMIT_PRODUCT_ID}`;
     const encodedId = Buffer.from(productId).toString('base64');
 
     // Fetching product and creating the cart are independent so both can run in parallel.
@@ -110,7 +110,7 @@ export default function Renew() {
     await client.checkout.addLineItems(cart.id, lineItemsToAdd);
 
     // Open checkout window.
-    window.location.href = cart.checkoutUrl;
+    window.location.href = cart.webUrl;
   };
 
   // Submit application mutation
