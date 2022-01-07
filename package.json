@@ -57,6 +57,7 @@
     "@graphql-codegen/typescript": "^1.22.0",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
+    "@types/shopify-buy": "^2.10.9",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
     "apollo": "^2.33.2",
