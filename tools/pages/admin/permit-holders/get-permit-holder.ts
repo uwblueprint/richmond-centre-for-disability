@@ -91,9 +91,7 @@ export const GET_PERMIT_HOLDER = gql`
       applications {
         id
         disability
-        affectsMobility
-        mobilityAidRequired
-        cannotWalk100m
+        patientEligibility
         aid
         createdAt
         notes
