@@ -126,7 +126,7 @@ CREATE TABLE physicians (
   city VARCHAR(255) NOT NULL,
   province Province NOT NULL DEFAULT 'BC',
   country VARCHAR(255) NOT NULL DEFAULT 'Canada',
-  postal_code CHAR(6) NOT NULL,
+  postal_code VARCHAR(6) NOT NULL,
   status PhysicianStatus NOT NULL DEFAULT 'ACTIVE',
   notes TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -137,7 +137,7 @@ CREATE TABLE physicians (
 
 -- Create guardians table
 CREATE TABLE guardians (
-  id INTEGER,
+  id SERIAL PRIMARY KEY,
   first_name VARCHAR(255) NOT NULL,
   middle_name VARCHAR(255),
   last_name VARCHAR(255) NOT NULL,
@@ -147,18 +147,16 @@ CREATE TABLE guardians (
   city VARCHAR(255) NOT NULL,
   province Province NOT NULL DEFAULT 'BC',
   country VARCHAR(255) NOT NULL DEFAULT 'Canada',
-  postal_code CHAR(6) NOT NULL,
+  postal_code VARCHAR(6) NOT NULL,
   relationship VARCHAR(255) NOT NULL,
   notes TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-  PRIMARY KEY(id)
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create medical information table
 CREATE TABLE medical_information (
-  id INTEGER,
+  id SERIAL PRIMARY KEY,
   disability VARCHAR(255) NOT NULL,
   disability_certification_date DATE NOT NULL,
   patient_condition PatientCondition NOT NULL,
@@ -169,7 +167,6 @@ CREATE TABLE medical_information (
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  PRIMARY KEY(id),
   FOREIGN KEY(physician_id) REFERENCES physicians(id)
 );
 
@@ -190,7 +187,7 @@ CREATE TABLE applicants (
   city VARCHAR(255) NOT NULL,
   province Province NOT NULL DEFAULT 'BC',
   country VARCHAR(255) NOT NULL DEFAULT 'Canada',
-  postal_code CHAR(6) NOT NULL,
+  postal_code VARCHAR(6) NOT NULL,
   rcd_user_id INTEGER UNIQUE,
   status ApplicantStatus NOT NULL DEFAULT 'ACTIVE',
   inactive_reason VARCHAR(255),
@@ -207,15 +204,15 @@ CREATE TABLE applicants (
 
 -- Create application processing table
 CREATE TABLE application_processing (
-  id INTEGER,
+  id SERIAL PRIMARY KEY,
   status ApplicationStatus NOT NULL DEFAULT 'PENDING',
   rejected_reason VARCHAR(255),
   app_number INTEGER UNIQUE,
   app_number_employee_id INTEGER,
   app_number_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   app_holepunched BOOLEAN NOT NULL DEFAULT false,
-  app_number_employee_id INTEGER,
-  app_number_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  app_holepunched_employee_id INTEGER,
+  app_holepunched_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   wallet_card_created BOOLEAN NOT NULL DEFAULT false,
   wallet_card_created_employee_id INTEGER,
   wallet_card_created_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -229,9 +226,7 @@ CREATE TABLE application_processing (
   app_mailed_employee_id INTEGER,
   app_mailed_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-  PRIMARY KEY(id)
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create applications table
@@ -248,7 +243,7 @@ CREATE TABLE applications (
   city VARCHAR(255) NOT NULL,
   province Province NOT NULL DEFAULT 'BC',
   country VARCHAR(255) NOT NULL DEFAULT 'Canada',
-  postal_code CHAR(6) NOT NULL,
+  postal_code VARCHAR(6) NOT NULL,
 
   -- Physician assessment
   permit_type PermitType NOT NULL DEFAULT 'PERMANENT',
@@ -266,7 +261,7 @@ CREATE TABLE applications (
   shipping_city VARCHAR(255),
   shipping_province Province,
   shipping_country VARCHAR(255),
-  shipping_postal_code CHAR(6),
+  shipping_postal_code VARCHAR(6),
 
   -- Billing information
   billing_address_same_as_home_address BOOLEAN NOT NULL,
@@ -276,7 +271,7 @@ CREATE TABLE applications (
   billing_city VARCHAR(255),
   billing_province Province,
   billing_country VARCHAR(255),
-  billing_postal_code CHAR(6),
+  billing_postal_code VARCHAR(6),
 
   type ApplicationType NOT NULL,
   notes TEXT,
@@ -339,7 +334,7 @@ CREATE TABLE renewals (
   physician_city VARCHAR(255) NOT NULL,
   physician_province Province NOT NULL DEFAULT 'BC',
   physician_country VARCHAR(255) NOT NULL DEFAULT 'Canada',
-  physician_postal_code CHAR(6) NOT NULL,
+  physician_postal_code VARCHAR(6) NOT NULL,
 
   -- Additional Information
   uses_accessible_converted_van BOOLEAN NOT NULL,
@@ -388,7 +383,7 @@ CREATE TABLE new_applications (
   physician_city VARCHAR(255) NOT NULL,
   physician_province Province NOT NULL DEFAULT 'BC',
   physician_country VARCHAR(255) NOT NULL DEFAULT 'Canada',
-  physician_postal_code CHAR(6) NOT NULL,
+  physician_postal_code VARCHAR(6) NOT NULL,
 
   -- Guardian information
   guardian_first_name VARCHAR(255) NOT NULL,
@@ -401,7 +396,7 @@ CREATE TABLE new_applications (
   guardian_city VARCHAR(255) NOT NULL,
   guardian_province Province NOT NULL DEFAULT 'BC',
   guardian_country VARCHAR(255) NOT NULL DEFAULT 'Canada',
-  guardian_postal_code CHAR(6) NOT NULL,
+  guardian_postal_code VARCHAR(6) NOT NULL,
   poa_form_url VARCHAR(255),
 
   -- Additional Information
