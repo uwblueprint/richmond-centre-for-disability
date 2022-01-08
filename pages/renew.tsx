@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'; // React
 import Link from 'next/link'; // Next Link
 import { useMutation } from '@apollo/client'; // Apollo Client
+import Client from 'shopify-buy';
 import {
   Flex,
   Box,
@@ -85,6 +86,33 @@ export default function Renew() {
       !doctorPostalCode ||
       !doctorPhoneNumber);
 
+  const shopifyCheckout = async () => {
+    /* Setup Shopify Checkout on success. */
+    const client = Client.buildClient({
+      domain: process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN as string,
+      storefrontAccessToken: process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN as string,
+    });
+
+    // Product id can be found when viewing URL in Shopify admin (e.g poppy-hazel.myshopify.com/admin/products/6570386915350).
+    // Shopify SDK only accepts encoded product id.
+    const productId = `gid://shopify/Product/${process.env.NEXT_PUBLIC_SHOPIFY_PERMIT_PRODUCT_ID}`;
+    const encodedId = Buffer.from(productId).toString('base64');
+
+    // Fetching product and creating the cart are independent so both can run in parallel.
+    const productPromise = client.product.fetch(encodedId);
+    const cartPromise = client.checkout.create();
+
+    // Wait for product and cart.
+    const [product, cart] = await Promise.all([productPromise, cartPromise]);
+
+    // Add product to cart.
+    const lineItemsToAdd = [{ variantId: product.variants[0].id, quantity: 1 }];
+    await client.checkout.addLineItems(cart.id, lineItemsToAdd);
+
+    // Open checkout window.
+    window.location.href = cart.webUrl;
+  };
+
   // Submit application mutation
   const [submitApplication, { loading }] = useMutation<
     CreateRenewalApplicationResponse,
@@ -94,9 +122,10 @@ export default function Renew() {
       if (data?.createRenewalApplication.ok) {
         toast({
           status: 'success',
-          description: 'Your application has been submitted!',
+          description: 'Redirecting to payment page...',
           isClosable: true,
         });
+        shopifyCheckout();
       }
     },
     onError: error => {
@@ -521,7 +550,6 @@ export default function Renew() {
             </Box>
             <Flex width="100%" justifyContent="flex-end">
               <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
-              {/* TODO: Replace with `Proceed to payment` button */}
               <Button
                 variant="solid"
                 onClick={handleSubmit}
@@ -533,12 +561,7 @@ export default function Renew() {
                   invalidContact ||
                   invalidDoctor
                 }
-              >{`Submit`}</Button>
-              {/* <Button
-                variant="solid"
-                onClick={nextStep}
-                disabled={!certified || invalidPersonalAddress || invalidContact || invalidDoctor}
-              >{`Proceed to payment`}</Button> */}
+              >{`Proceed to payment`}</Button>
             </Flex>
           </Step>
         </Steps>
