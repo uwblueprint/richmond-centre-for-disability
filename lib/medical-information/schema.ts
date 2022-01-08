@@ -1,4 +1,6 @@
-export default `
+import { gql } from '@apollo/client';
+
+export default gql`
   type MedicalInformation {
     id: ID!
     disability: String!
@@ -16,9 +18,7 @@ export default `
   # Fields to specify when creating a medical information record for an applicant
   input CreateMedicalInformationInput {
     disability: String!
-    affectsMobility: Boolean!
-    mobilityAidRequired: Boolean!
-    cannotWalk100m: Boolean!
+    patientEligibility: Eligibility!
     notes: String
     certificationDate: Date
     aid: [Aid!]
@@ -28,9 +28,7 @@ export default `
   input UpdateMedicalInformationInput {
     applicantId: Int!
     disability: String
-    affectsMobility: Boolean
-    mobilityAidRequired: Boolean
-    cannotWalk100m: Boolean
+    patientEligibility: Eligibility
     notes: String
     certificationDate: Date
     aid: [Aid!]

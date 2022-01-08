@@ -260,12 +260,9 @@ export type CreateGuardianInput = {
   notes?: Maybe<Scalars['String']>;
 };
 
-/** Fields to specify when creating a medical information record for an applicant */
 export type CreateMedicalInformationInput = {
   disability: Scalars['String'];
-  affectsMobility: Scalars['Boolean'];
-  mobilityAidRequired: Scalars['Boolean'];
-  cannotWalk100m: Scalars['Boolean'];
+  patientEligibility: Eligibility;
   notes?: Maybe<Scalars['String']>;
   certificationDate?: Maybe<Scalars['Date']>;
   aid?: Maybe<Array<Aid>>;
@@ -1008,9 +1005,7 @@ export type UpdateGuardianResult = {
 export type UpdateMedicalInformationInput = {
   applicantId: Scalars['Int'];
   disability?: Maybe<Scalars['String']>;
-  affectsMobility?: Maybe<Scalars['Boolean']>;
-  mobilityAidRequired?: Maybe<Scalars['Boolean']>;
-  cannotWalk100m?: Maybe<Scalars['Boolean']>;
+  patientEligibility?: Maybe<Eligibility>;
   notes?: Maybe<Scalars['String']>;
   certificationDate?: Maybe<Scalars['Date']>;
   aid?: Maybe<Array<Aid>>;

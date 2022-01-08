@@ -26,9 +26,7 @@ export const GET_APPLICATION_QUERY = gql`
       notes
 
       disability
-      affectsMobility
-      mobilityAidRequired
-      cannotWalk100m
+      patientEligibility
 
       physicianName
       physicianMspNumber
