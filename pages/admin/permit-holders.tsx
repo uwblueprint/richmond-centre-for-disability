@@ -33,7 +33,7 @@ import {
   GetPermitHoldersRequest,
   GetPermitHoldersResponse,
   PermitHolder,
-} from '@tools/pages/admin/permit-holders/get-permit-holders'; // Permit Holders GQL Query
+} from '@tools/admin/permit-holders/graphql/get-permit-holders'; // Permit Holders GQL Query
 import { DateUtils } from 'react-day-picker'; // Date Utils
 import DateRangePicker from '@components/DateRangePicker'; // Day Picker component
 import useDateRangePicker from '@tools/hooks/useDateRangePicker'; // Day Picker hook
@@ -42,10 +42,10 @@ import { Column } from 'react-table'; // Column type for table
 import useDebounce from '@tools/hooks/useDebounce'; // Debouncer
 import { useEffect } from 'react'; // React
 import { formatDate } from '@lib/utils/format'; // Date formatter util
-import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToInactiveModal'; // Set Permit Holder To Inactive modal
-import SetPermitHolderToActiveModal from '@components/admin/permit-holders/modals/SetPermitHolderToActive'; // Set Permit Holder To Active modal
-import { PermitHolderToUpdateStatus } from '@tools/pages/admin/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
-import GenerateReportModal from '@components/admin/reports/GenerateReportModal'; // Generate report modal
+import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/table/ConfirmSetInactiveModal'; // Set Permit Holder To Inactive modal
+import SetPermitHolderToActiveModal from '@components/admin/permit-holders/table/ConfirmSetActiveModal'; // Set Permit Holder To Active modal
+import { PermitHolderToUpdateStatus } from '@tools/admin/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
+import GenerateReportModal from '@components/admin/permit-holders/reports/GenerateModal'; // Generate report modal
 
 const PAGE_SIZE = 20;
 
@@ -497,7 +497,6 @@ export default function PermitHolders() {
       <GenerateReportModal
         isOpen={isGenerateReportModalOpen}
         onClose={onCloseGenerateReportModal}
-        page="permitHolders"
       />
     </Layout>
   );

@@ -29,7 +29,7 @@ import {
   VerifyIdentityRequest,
   VerifyIdentityResponse,
   getErrorMessage,
-} from '@tools/pages/applicant/verify-identity'; // Tools
+} from '@tools/applicant/verify-identity'; // Tools
 import Request from '@containers/Request'; // Request state
 import { formatDate } from '@lib/utils/format'; // Date formatter util
 

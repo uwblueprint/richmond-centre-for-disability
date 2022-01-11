@@ -3,41 +3,41 @@ import { getSession } from 'next-auth/client'; // Session management
 import { GridItem, Stack, useToast } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import { authorize } from '@tools/authorization'; // Page authorization
-import PermitHolderHeader from '@components/admin/permit-holders/PermitHolderHeader'; // Permit Holder header
-import DoctorInformationCard from '@components/admin/permit-holders/DoctorInformationCard'; // Doctor information card
-import PersonalInformationCard from '@components/admin/permit-holders/PersonalInformationCard'; // Personal information card
-import GuardianInformationCard from '@components/admin/permit-holders/GuardianInformationCard'; // Guardian Information card
-import AppHistoryCard from '@components/admin/permit-holders/AppHistoryCard'; // APP History card
-import AttachedFilesCard from '@components/admin/permit-holders/AttachedFilesCard'; // Attached Files card
-import MedicalHistoryCard from '@components/admin/permit-holders/MedicalHistoryCard'; // Medical History card
+import PermitHolderHeader from '@components/admin/permit-holders/Header'; // Permit Holder header
+import DoctorInformationCard from '@components/admin/permit-holders/doctor-information/Card'; // Doctor information card
+import PersonalInformationCard from '@components/admin/permit-holders/permit-holder-information/Card'; // Personal information card
+import GuardianInformationCard from '@components/admin/permit-holders/guardian-information/Card'; // Guardian Information card
+import AppHistoryCard from '@components/admin/permit-holders/app-history/Card'; // APP History card
+import AttachedFilesCard from '@components/admin/permit-holders/attached-files/Card'; // Attached Files card
+import MedicalHistoryCard from '@components/admin/permit-holders/medical-history/Card'; // Medical History card
 import {
   GET_PERMIT_HOLDER,
   GetPermitHolderRequest,
   GetPermitHolderResponse,
-} from '@tools/pages/admin/permit-holders/get-permit-holder'; // Permit holder query
+} from '@tools/admin/permit-holders/graphql/get-permit-holder'; // Permit holder query
 import { useMutation, useQuery } from '@apollo/client'; // Apollo
 import { useState } from 'react'; // React
 import {
   PermitData,
   MedicalHistoryEntry,
   PreviousPhysicianData,
-} from '@tools/pages/admin/permit-holders/types'; // Permit holder types
+} from '@tools/admin/permit-holders/types'; // Permit holder types
 import { Role, UpdateApplicantInput, UpsertPhysicianInput } from '@lib/graphql/types'; // GraphQL types
 import {
   UpsertPhysicianRequest,
   UpsertPhysicianResponse,
   UPSERT_PHYSICIAN_MUTATION,
-} from '@tools/pages/admin/permit-holders/upsert-physician'; // Upsert Physician types
+} from '@tools/admin/permit-holders/graphql/upsert-physician'; // Upsert Physician types
 import {
   UpdateApplicantRequest,
   UpdateApplicantResponse,
   UPDATE_APPLICANT_MUTATION,
-} from '@tools/pages/admin/permit-holders/update-applicant'; // Update applicant types
+} from '@tools/admin/permit-holders/graphql/update-applicant'; // Update applicant types
 import {
   UpdateMedicalInformationRequest,
   UpdateMedicalInformationResponse,
   UPDATE_MEDICAL_INFORMATION_MUTATION,
-} from '@tools/pages/admin/permit-holders/update-medical-information'; // Medical information types
+} from '@tools/admin/permit-holders/graphql/update-medical-information'; // Medical information types
 
 type Props = {
   readonly id: number;

@@ -29,7 +29,7 @@ import {
   CREATE_RENEWAL_APPLICATION_MUTATION,
   CreateRenewalApplicationRequest,
   CreateRenewalApplicationResponse,
-} from '@tools/pages/applicant/renew'; // Page tools
+} from '@tools/applicant/renew'; // Page tools
 import useSteps from '@tools/hooks/useSteps'; // Custom hook for managing steps state
 import Request from '@containers/Request'; // Request state
 

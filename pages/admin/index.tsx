@@ -34,13 +34,13 @@ import {
   GetApplicationsRequest,
   GetApplicationsResponse,
   GET_APPLICATIONS_QUERY,
-} from '@tools/pages/admin'; //Applications queries
+} from '@tools/admin/requests/graphql/get-applications'; //Applications queries
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
 import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //GraphQL types
 import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatDateVerbose } from '@lib/utils/format'; // Verbose date formatter util
-import GenerateReportModal from '@components/admin/reports/GenerateReportModal'; // Generate report modal
+import GenerateReportModal from '@components/admin/requests/reports/GenerateModal'; // Generate report modal
 // Map uppercase enum strings to lowercase
 const permitTypeString: Record<string, string> = {
   [PermitType.Permanent]: 'Permanent',
@@ -400,7 +400,6 @@ export default function Requests() {
       <GenerateReportModal
         isOpen={isGenerateReportModalOpen}
         onClose={onCloseGenerateReportModal}
-        page="requests"
       />
     </Layout>
   );

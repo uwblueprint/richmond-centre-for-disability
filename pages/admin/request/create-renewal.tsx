@@ -1,40 +1,38 @@
 import Layout from '@components/admin/Layout'; // Layout component
 import { Text, Box, Flex, Stack, Button, GridItem, useToast } from '@chakra-ui/react'; // Chakra UI
 import { SyntheticEvent, useState } from 'react'; // React
-import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm'; //Permit holder information form
-import {
-  DoctorInformation,
-  NewAndRenewalPermitHolderInformation,
-} from '@tools/components/admin/requests/forms/types'; //Permit holder information type
-import DoctorInformationForm from '@components/admin/requests/forms/DoctorInformationForm'; //Doctor information form
-import AdditionalQuestionsForm from '@components/admin/requests/forms/renewals/AdditionalQuestionsForm'; //Additional questions form
-import { AdditionalQuestions } from '@tools/components/admin/requests/forms/types'; //Additional questions type
-import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm'; //Payment details form
-import { PaymentDetails } from '@tools/components/admin/requests/forms/types'; //Payment details type
+import PermitHolderInformationForm from '@components/admin/requests/applicant-information/Form'; //Permit holder information form
+import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information'; //Permit holder information type
+import DoctorInformationForm from '@components/admin/requests/doctor-information/Form'; //Doctor information form
+import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form'; //Additional questions form
+import { AdditionalQuestions } from '@tools/admin/requests/additional-questions'; //Additional questions type
+import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
+import { PaymentInformation } from '@tools/admin/requests/payment-information';
 import { ApplicantStatus, Gender, PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
 import Link from 'next/link'; // Link
 import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
-import CancelCreateRequestModal from '@components/admin/requests/modals/CancelCreateRequestModal';
-import PermitHolderTypeahead from '@components/admin/permit-holders/PermitHolderTypeahead';
-import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders';
+import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
+import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
+import { PermitHolder } from '@tools/admin/permit-holders/graphql/get-permit-holders';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import {
   CreateRenewalApplicationRequest,
   CreateRenewalApplicationResponse,
   CREATE_RENEWAL_APPLICATION_MUTATION,
-} from '@tools/pages/applicant/renew';
-import { GET_APPLICANT_RENEWAL_QUERY } from '@tools/pages/admin/requests/queries';
+} from '@tools/applicant/renew';
 import {
+  GET_APPLICANT_RENEWAL_QUERY,
   GetApplicantRenewalRequest,
   GetApplicantRenewalResponse,
-  RequestFlowPageState,
-} from '@tools/pages/admin/requests/types';
+} from '@tools/admin/requests/graphql/create/get-renewal-applicant';
+import { RequestFlowPageState } from '@tools/admin/requests/types';
 import { useRouter } from 'next/router';
-import BackToSearchModal from '@components/admin/requests/modals/BackToSearchModal';
-import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
-import SelectedPermitHolderCard from '@components/admin/requests/SelectedPermitHolderCard';
+import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
+import { ApplicantData } from '@tools/admin/permit-holders/types';
+import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
+import { Physician } from '@tools/admin/requests/doctor-information';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -42,19 +40,18 @@ export default function CreateRenewal() {
   );
   const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
   const [applicantID, setApplicantID] = useState<number>();
-  const [permitHolderInformation, setPermitHolderInformation] =
-    useState<NewAndRenewalPermitHolderInformation>({
-      firstName: '',
-      lastName: '',
-      email: '',
-      receiveEmailUpdates: false,
-      phone: '',
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      postalCode: '',
-    });
-  const [doctorInformation, setDoctorInformation] = useState<DoctorInformation>({
+  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    receiveEmailUpdates: false,
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    postalCode: '',
+  });
+  const [doctorInformation, setDoctorInformation] = useState<Physician>({
     phone: '',
     addressLine1: '',
     addressLine2: '',
@@ -62,12 +59,13 @@ export default function CreateRenewal() {
     postalCode: '',
     name: '',
     mspNumber: 0, //TODO: change default value to undefined
+    province: Province.Bc,
   });
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalQuestions>({
     usesAccessibleConvertedVan: false,
     requiresWiderParkingSpace: false,
   });
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
+  const [paymentDetails, setPaymentDetails] = useState<PaymentInformation>({
     paymentMethod: PaymentType.Mastercard,
     donationAmount: 0,
     shippingAddressSameAsHomeAddress: false,
@@ -158,6 +156,7 @@ export default function CreateRenewal() {
       // set doctorInformation
       const physician = data.applicant.medicalInformation.physician;
       setDoctorInformation({
+        ...doctorInformation,
         phone: physician.phone,
         addressLine1: physician.addressLine1,
         addressLine2: physician.addressLine2,

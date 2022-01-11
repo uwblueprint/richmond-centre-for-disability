@@ -23,9 +23,9 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { AddIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import Pagination from '@components/Pagination'; // Pagination component
-import ConfirmDeleteAdminModal from '@components/admin/admin-management/modals/ConfirmDeleteAdminModal'; // Confirm Delete Admin modal
-import { UserToDelete } from '@tools/pages/admin/admin-management/types'; // Admin management types
-import AdminModal from '@components/admin/admin-management/modals/AdminModal'; // Admin modal component
+import ConfirmDeleteAdminModal from '@components/admin/admin-management/ConfirmDeleteAdminModal'; // Confirm Delete Admin modal
+import { UserToDelete } from '@tools/admin/admin-management/types'; // Admin management types
+import AdminModal from '@components/admin/admin-management/AdminModal'; // Admin modal component
 import { Employee, Role } from '@lib/graphql/types'; // GraphQL types
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
 import { useMutation, useQuery } from '@apollo/client'; //Apollo client
@@ -33,25 +33,25 @@ import {
   GetEmployeesResponse,
   GET_EMPLOYEES_QUERY,
   GetEmployeesRequest,
-} from '@tools/pages/admin/admin-management/get-employees'; //Employees query
-import { EmployeeData } from '@tools/pages/admin/admin-management/types'; // EmployeeData type
+} from '@tools/admin/admin-management/graphql/get-employees'; //Employees query
+import { EmployeeData } from '@tools/admin/admin-management/types'; // EmployeeData type
 import { Column } from 'react-table'; // Column type
 import {
   UpdateEmployeeRequest,
   UpdateEmployeeResponse,
   UPDATE_EMPLOYEE_MUTATION,
-} from '@tools/pages/admin/admin-management/update-employee'; // Update Employee Mutation
+} from '@tools/admin/admin-management/graphql/update-employee'; // Update Employee Mutation
 import {
   CreateNewEmployeeRequest,
   CreateNewEmployeeResponse,
   CREATE_EMPLOYEE_MUTATION,
-} from '@tools/pages/admin/admin-management/create-user';
+} from '@tools/admin/admin-management/graphql/create-employee';
 
 import {
   DeleteEmployeeRequest,
   DeleteEmployeeResponse,
   DELETE_EMPLOYEE_MUTATION,
-} from '@tools/pages/admin/admin-management/delete-employee'; // Delete Employee Mutation
+} from '@tools/admin/admin-management/graphql/delete-employee'; // Delete Employee Mutation
 
 // Max number of entries in a page
 const PAGE_SIZE = 20;
