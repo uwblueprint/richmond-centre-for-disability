@@ -1,3 +1,5 @@
+import { GraphQLResolveInfo } from 'graphql'; // GraphQL
+import { MergeInfo } from 'apollo-server-micro'; // Apollo server
 import { meta } from '@lib/meta/resolvers'; // Metadata resolvers
 import {
   employees,
@@ -29,7 +31,6 @@ import {
   updateApplicationProcessing,
   completeApplication,
 } from '@lib/application-processing/resolvers'; // Application processing resolvers
-import { IFieldResolver } from 'graphql-tools'; // GraphQL field resolver
 import { Context } from '@lib/context'; // Context type
 import { dateScalar } from '@lib/scalars'; // Custom date scalar implementation
 import { authorize } from '@lib/authorization'; // Authorization wrapper
@@ -58,8 +59,31 @@ import { medicalInformationPhysicianResolver } from '@lib/medical-information/fi
 import { updateGuardian } from '@lib/guardian/resolvers'; // Guardian resolvers
 import { applicationReplacementResolver } from '@lib/applications/field-resolvers'; // Application replacement resolver
 
-// Resolver type
-export type Resolver<P = undefined> = IFieldResolver<P, Context>;
+/**
+ * Resolver type
+ * A - Type of args (required)
+ */
+export type Resolver<A> = (
+  parent: undefined,
+  args: A,
+  context: Context,
+  info: GraphQLResolveInfo & {
+    mergeInfo: MergeInfo;
+  }
+) => any;
+
+/**
+ * Field resolver type
+ * P - Type of parent (required)
+ */
+export type FieldResolver<P> = (
+  parent: P,
+  args: undefined,
+  context: Context,
+  info: GraphQLResolveInfo & {
+    mergeInfo: MergeInfo;
+  }
+) => any;
 
 // authorize is a wrapper around graphQL resolvers that protects and restricts routes based on RCD employee roles.
 const resolvers = {

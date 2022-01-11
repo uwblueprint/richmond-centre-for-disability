@@ -54,7 +54,13 @@ applicant-facing application portal and an internal user/APP management portal.
 
 Duplicate `.env.sample` to `.env` and configure environment variables.
 
-To deploy your database schema, run the following:
+To deploy your database schema, run:
+
+```bash
+yarn reset-db YOUR_APP_NAME
+```
+
+or if that doesn't work, run the steps manually:
 
 ```bash
 # Drop all tables from current Heroku Postgres database

@@ -51,7 +51,6 @@ CREATE TYPE Gender as ENUM('MALE', 'FEMALE', 'OTHER');
 CREATE TYPE ApplicationStatus as ENUM(
   'PENDING',
   'IN_PROGRESS',
-  'APPROVED',
   'REJECTED',
   'COMPLETED'
 );
@@ -163,11 +162,11 @@ CREATE TABLE medical_information (
   mobility_aids MobilityAid ARRAY,
   other_patient_condition VARCHAR(255),
   notes TEXT,
-  physician_id INTEGER NOT NULL,
+  physician_msp_number INTEGER NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  FOREIGN KEY(physician_id) REFERENCES physicians(id)
+  FOREIGN KEY(physician_msp_number) REFERENCES physicians(msp_number)
 );
 
 -- Create applicants table
@@ -250,8 +249,11 @@ CREATE TABLE applications (
 
   -- Payment information
   payment_method PaymentType NOT NULL,
-  processing_fee FLOAT NOT NULL,
-  donation_amount FLOAT,
+  processing_fee MONEY NOT NULL,
+  donation_amount MONEY NOT NULL DEFAULT 0.00,
+  paid_through_shopify BOOLEAN NOT NULL DEFAULT false,
+  shopify_payment_status ShopifyPaymentStatus DEFAULT 'PENDING',
+  shopify_confirmation_number VARCHAR(255) UNIQUE,
 
   -- Shipping information
   shipping_address_same_as_home_address BOOLEAN NOT NULL,
@@ -342,11 +344,6 @@ CREATE TABLE renewals (
   requires_wider_parking_space BOOLEAN NOT NULL,
   requires_wider_parking_space_reason RequiresWiderParkingSpaceReason,
   other_requires_wider_parking_space_reason VARCHAR(255),
-
-  -- Payment information
-  paid_through_shopify BOOLEAN NOT NULL,
-  shopify_payment_status ShopifyPaymentStatus NOT NULL DEFAULT 'PENDING',
-  shopify_confirmation_number VARCHAR(255) UNIQUE,
 
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

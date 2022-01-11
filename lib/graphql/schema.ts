@@ -82,7 +82,7 @@ export default gql`
     INACTIVE
   }
 
-  enum Aid {
+  enum MobilityAid {
     CANE
     ELECTRIC_CHAIR
     MANUAL_CHAIR
@@ -103,9 +103,15 @@ export default gql`
 
   enum ApplicationStatus {
     PENDING
-    APPROVED
+    IN_PROGRESS
     REJECTED
     COMPLETED
+  }
+
+  enum PermitStatus {
+    EXPIRING
+    EXPIRED
+    ACTIVE
   }
 
   enum ReasonForReplacement {
@@ -114,23 +120,42 @@ export default gql`
     OTHER
   }
 
-  enum PermitStatus {
-    VALID
-    EXPIRED
-    EXPIRING_IN_THIRTY_DAYS
-  }
-
-  enum UserStatus {
-    ACTIVE
-    INACTIVE
-  }
-
   enum PermitType {
     PERMANENT
     TEMPORARY
   }
 
-  enum ApplicationsReportColumn {
+  enum PatientCondition {
+    AFFECTS_MOBILITY
+    MOBILITY_AID_REQUIRED
+    CANNOT_WALK_100M
+    OTHER
+  }
+
+  enum ApplicationType {
+    NEW
+    RENEWAL
+    REPLACEMENT
+  }
+
+  enum AccessibleConvertedVanLoadingMethod {
+    SIDE_LOADING
+    END_LOADING
+  }
+
+  enum RequiresWiderParkingSpaceReason {
+    HAS_ACCESSIBLE_VAN
+    MEDICAL_REASONS
+    OTHER
+  }
+
+  enum ShopifyPaymentStatus {
+    PENDING
+    RECEIVED
+  }
+
+  # Selectable columns in requests report
+  enum RequestsReportColumn {
     USER_ID
     APPLICANT_NAME
     APPLICANT_DATE_OF_BIRTH
@@ -142,6 +167,7 @@ export default gql`
     TOTAL_AMOUNT
   }
 
+  # Selectable columns in permit holders report
   enum PermitHoldersReportColumn {
     USER_ID
     APPLICANT_NAME
@@ -155,12 +181,5 @@ export default gql`
     RECENT_APP_NUMBER
     RECENT_APP_TYPE
     USER_STATUS
-  }
-
-  enum Eligibility {
-    AFFECTS_MOBILITY
-    MOBILITY_AID_REQUIRED
-    CANNOT_WALK_100M
-    OTHER
   }
 `;
