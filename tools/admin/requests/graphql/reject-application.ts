@@ -1,6 +1,8 @@
 import { gql } from '@apollo/client'; // GraphQL queries
 import { Scalars, UpdateApplicationProcessingResult, ApplicationStatus } from '@lib/graphql/types';
 
+// TODO: DEPRECATED REPLACE WITH rejectApplication
+
 export const REJECT_APPLICATION_MUTATION = gql`
   mutation rejectApplication($applicationId: ID!) {
     updateApplicationProcessing(input: {applicationId: $applicationId, status: ${ApplicationStatus.Rejected}}) {

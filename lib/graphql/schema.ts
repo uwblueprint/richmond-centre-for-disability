@@ -1,16 +1,24 @@
+/**
+ * Global GraphQL API schema
+ */
+
 import { gql } from '@apollo/client';
 
 export default gql`
   type Query {
-    meta: Meta!
-    applicants(filter: ApplicantsFilter): QueryApplicantsResult
+    # Applicants
+    applicants(filter: ApplicantsFilter): ApplicantsResult
     applicant(id: ID!): Applicant
-    employees(filter: EmployeesFilter): QueryEmployeesResult
-    employee(id: ID!): Employee
-    physicians: [Physician!]
-    applications(filter: ApplicationsFilter): QueryApplicationsResult
+
+    # Applications
+    applications(filter: ApplicationsFilter): ApplicationsResult
     application(id: ID!): Application
-    permits: [Permit!]
+
+    # Employees
+    employees(filter: EmployeesFilter): EmployeesResult
+    employee(id: ID!): Employee
+
+    # Reports
     generateApplicationsReport(
       input: GenerateApplicationsReportInput!
     ): GenerateApplicationsReportResult
@@ -20,30 +28,77 @@ export default gql`
   }
 
   type Mutation {
-    createApplicant(input: CreateApplicantInput!): CreateApplicantResult!
-    updateApplicant(input: UpdateApplicantInput!): UpdateApplicantResult!
-    createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
-    updateEmployee(input: UpdateEmployeeInput!): UpdateEmployeeResult!
-    deleteEmployee(id: ID!): DeleteEmployeeResult!
-    createPhysician(input: CreatePhysicianInput!): CreatePhysicianResult!
-    upsertPhysician(input: UpsertPhysicianInput!): UpsertPhysicianResult!
-    createNewApplication(input: CreateNewApplicationInput!): CreateNewApplicationResult!
+    # Applicants
+    updateApplicantGeneralInformation(
+      input: UpdateApplicantGeneralInformationInput!
+    ): UpdateApplicantGeneralInformationResult
+    updateApplicantDoctorInformation(
+      input: UpdateApplicantDoctorInformationInput!
+    ): UpdateApplicantDoctorInformationResult
+    updateApplicantGuardianInformation(
+      input: UpdateApplicantGuardianInformationInput!
+    ): UpdateApplicantGuardianInformationResult
+    verifyIdentity(input: VerifyIdentityInput!): VerifyIdentityResult!
+
+    # Applications
+    createNewApplication(input: CreateNewApplicationInput!): CreateNewApplicationResult
     createRenewalApplication(input: CreateRenewalApplicationInput!): CreateRenewalApplicationResult!
     createReplacementApplication(
       input: CreateReplacementApplicationInput!
     ): CreateReplacementApplicationResult!
-    updateApplication(input: UpdateApplicationInput!): UpdateApplicationResult!
-    createPermit(input: CreatePermitInput!): CreatePermitResult!
-    updateMedicalInformation(input: UpdateMedicalInformationInput!): UpdateMedicalInformationResult!
-    updateGuardian(input: UpdateGuardianInput!): UpdateGuardianResult!
-    updateApplicationProcessing(
-      input: UpdateApplicationProcessingInput!
-    ): UpdateApplicationProcessingResult!
-    completeApplication(applicationId: ID!): CompleteApplicationResult!
-    verifyIdentity(input: VerifyIdentityInput!): VerifyIdentityResult!
+    updateApplicationGeneralInformation(
+      input: UpdateApplicationGeneralInformationInput!
+    ): UpdateApplicationGeneralInformationResult
+    updateApplicationDoctorInformation(
+      input: UpdateApplicationDoctorInformationInput!
+    ): UpdateApplicationDoctorInformationResult
+    updateApplicationAdditionalInformation(
+      input: UpdateApplicationAdditionalInformationInput!
+    ): UpdateApplicationAdditionalInformationResult
+    updateApplicationPaymentInformation(
+      input: UpdateApplicationPaymentInformationInput!
+    ): UpdateApplicationPaymentInformationResult
+    updateApplicationReasonForReplacement(
+      input: UpdateApplicationReasonForReplacementInput!
+    ): UpdateApplicationReasonForReplacementResult
+    updateApplicationPhysicianAssessment(
+      input: UpdateApplicationPhysicianAssessmentInput!
+    ): UpdateApplicationPhysicianAssessmentResult
+
+    # Application processing
+    approveApplication(input: ApproveApplicationInput!): ApproveApplicationResult
+    rejectApplication(input: RejectApplicationInput!): RejectApplicationResult
+    completeApplication(input: CompleteApplicationInput!): CompleteApplicationResult
+    updateApplicationProcessingAssignAppNumber(
+      input: UpdateApplicationProcessingAssignAppNumberInput!
+    ): UpdateApplicationProcessingAssignAppNumberResult
+    updateApplicationProcessingHolepunchParkingPermit(
+      input: UpdateApplicationProcessingHolepunchParkingPermitInput!
+    ): UpdateApplicationProcessingHolepunchParkingPermitResult
+    updateApplicationProcessingCreateWalletCard(
+      input: UpdateApplicationProcessingCreateWalletCardInput!
+    ): UpdateApplicationProcessingCreateWalletCardResult
+    updateApplicationProcessingAssignInvoiceNumber(
+      input: UpdateApplicationProcessingAssignInvoiceNumberInput!
+    ): UpdateApplicationProcessingAssignInvoiceNumberResult
+    updateApplicationProcessingUploadDocuments(
+      input: UpdateApplicationProcessingUploadDocumentsInput!
+    ): UpdateApplicationProcessingUploadDocumentsResult
+    updateApplicationProcessingMailOut(
+      input: UpdateApplicationProcessingMailOutInput!
+    ): UpdateApplicationProcessingMailOutResult
+
+    # Employees
+    createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
+    updateEmployee(input: UpdateEmployeeInput!): UpdateEmployeeResult!
+    deleteEmployee(input: DeleteEmployeeInput!): DeleteEmployeeResult!
   }
 
+  # Scalars
+
   scalar Date
+
+  # Enums
 
   enum Role {
     ADMIN
@@ -146,34 +201,5 @@ export default gql`
   enum ShopifyPaymentStatus {
     PENDING
     RECEIVED
-  }
-
-  # Selectable columns in requests report
-  enum RequestsReportColumn {
-    USER_ID
-    APPLICANT_NAME
-    APPLICANT_DATE_OF_BIRTH
-    APP_NUMBER
-    APPLICATION_DATE
-    PAYMENT_METHOD
-    FEE_AMOUNT
-    DONATION_AMOUNT
-    TOTAL_AMOUNT
-  }
-
-  # Selectable columns in permit holders report
-  enum PermitHoldersReportColumn {
-    USER_ID
-    APPLICANT_NAME
-    APPLICANT_DATE_OF_BIRTH
-    HOME_ADDRESS
-    EMAIL
-    PHONE_NUMBER
-    GUARDIAN_POA_NAME
-    GUARDIAN_POA_RELATION
-    GUARDIAN_POA_ADDRESS
-    RECENT_APP_NUMBER
-    RECENT_APP_TYPE
-    USER_STATUS
   }
 `;

@@ -1,6 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql'; // GraphQL
 import { MergeInfo } from 'apollo-server-micro'; // Apollo server
-import { meta } from '@lib/meta/resolvers'; // Metadata resolvers
 import {
   employees,
   createEmployee,
@@ -88,7 +87,6 @@ export type FieldResolver<P> = (
 // authorize is a wrapper around graphQL resolvers that protects and restricts routes based on RCD employee roles.
 const resolvers = {
   Query: {
-    meta,
     applicants: authorize(applicants, [Role.Secretary]),
     employees: authorize(employees),
     physicians: authorize(physicians, [Role.Secretary]),

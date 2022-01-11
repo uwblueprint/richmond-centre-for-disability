@@ -1,65 +1,120 @@
+/**
+ * GraphQL schema for applicants
+ */
+
 import { gql } from '@apollo/client';
 
-// TODO: `guardian` should be optional in `CreateApplicantInput`
 export default gql`
-  # Applicant type
   type Applicant {
     id: ID!
+
+    # Personal
     firstName: String!
     middleName: String
     lastName: String!
     dateOfBirth: Date!
     gender: Gender!
     otherGender: String
+
+    # Contact
     phone: String!
     email: String
     receiveEmailUpdates: Boolean!
+
+    # Address
     addressLine1: String!
     addressLine2: String
     city: String!
     province: Province!
     country: String!
     postalCode: String!
+
     rcdUserId: Int
     status: ApplicantStatus!
+
     guardian: Guardian
     medicalInformation: MedicalInformation!
     # TODO: Medical history
     # TODO: File history
   }
 
-  type MedicalHistory {
-    applicationId: ID!
-    physician: Physician!
-  }
-
-  input UpdateApplicantInput {
+  # Update applicant general information
+  input UpdateApplicantGeneralInformationInput {
+    # Applicant ID
     id: ID!
-    firstName: String
+
+    # Personal
+    firstName: String!
     middleName: String
-    lastName: String
-    dateOfBirth: Date
-    gender: Gender
-    customGender: String
+    lastName: String!
+    dateOfBirth: Date!
+    gender: Gender!
+
+    # Contact
+    phone: String!
     email: String
-    phone: String
-    province: Province
-    city: String
-    addressLine1: String
+
+    # Address (omit Province, Country)
+    addressLine1: String!
     addressLine2: String
-    postalCode: String
-    inactiveReason: String
-    rcdUserId: Int
+    city: String!
+    postalCode: String!
   }
 
-  type UpdateApplicantResult {
+  type UpdateApplicantGeneralInformationResult {
     ok: Boolean!
   }
 
+  # Update applicant doctor information
+  input UpdateApplicantDoctorInformationInput {
+    # Applicant ID
+    id: ID!
+
+    # Personal
+    firstName: String!
+    lastName: String!
+    mspNumber: Int!
+    phone: String!
+
+    # Address
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    postalCode: String!
+  }
+
+  type UpdateApplicantDoctorInformationResult {
+    ok: Boolean!
+  }
+
+  # Update applicant guardian information
+  input UpdateApplicantGuardianInformationInput {
+    # Applicant ID
+    id: ID!
+
+    # Personal
+    firstName: String!
+    middleName: String
+    lastName: String!
+    phone: String!
+    relationship: String!
+
+    # Address (omit Province, Country)
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    postalCode: String!
+  }
+
+  type UpdateApplicantGuardianInformationResult {
+    ok: Boolean!
+  }
+
+  # Query many applicants
   input ApplicantsFilter {
     order: [[String!]!]
     permitStatus: PermitStatus
-    userStatus: UserStatus
+    userStatus: ApplicantStatus
     expiryDateRangeFrom: Date
     expiryDateRangeTo: Date
     search: String
@@ -67,11 +122,19 @@ export default gql`
     offset: Int
   }
 
-  type QueryApplicantsResult {
+  type ApplicantsResult {
     result: [Applicant!]!
     totalCount: Int!
   }
 
+  # Permit status enum for filtering applicants
+  enum PermitStatus {
+    ACTIVE
+    EXPIRING_SOON
+    EXPIRED
+  }
+
+  # ID verification for external applications
   input VerifyIdentityInput {
     userId: Int!
     phoneNumberSuffix: String!
@@ -83,17 +146,6 @@ export default gql`
     ok: Boolean!
     failureReason: VerifyIdentityFailureReason
     applicantId: Int
-  }
-
-  input GeneratePermitHoldersReportInput {
-    startDate: Date!
-    endDate: Date!
-    columns: [PermitHoldersReportColumn!]!
-  }
-
-  # TODO: Return link to AWS S3 file
-  type GeneratePermitHoldersReportResult {
-    ok: Boolean!
   }
 
   # Reason for ID verification failure

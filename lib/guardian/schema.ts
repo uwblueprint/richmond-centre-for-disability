@@ -1,50 +1,24 @@
-export default `
+/**
+ * GraphQL schema for guardians
+ */
+
+import { gql } from '@apollo/client';
+
+export default gql`
   type Guardian {
-    id: ID!
+    # General information
     firstName: String!
     middleName: String
     lastName: String!
+    phone: String!
+    relationship: String!
+
+    # Address
     addressLine1: String!
     addressLine2: String
     city: String!
     province: Province!
+    country: String!
     postalCode: String!
-    phone: String!
-    relationship: String!
-    notes: String
-  }
-
-  # Fields to specify when creating a guardian record for an applicant
-  input CreateGuardianInput {
-    firstName: String!
-    middleName: String
-    lastName: String!
-    addressLine1: String!
-    addressLine2: String
-    city: String!
-    province: Province!
-    postalCode: String!
-    phone: String!
-    relationship: String!
-    notes: String
-  }
-
-  input UpdateGuardianInput {
-    applicantId: Int!
-    firstName: String
-    middleName: String
-    lastName: String
-    addressLine1: String
-    addressLine2: String
-    city: String
-    province: Province
-    postalCode: String
-    phone: String
-    relationship: String
-    notes: String
-  }
-
-  type UpdateGuardianResult {
-    ok: Boolean!
   }
 `;

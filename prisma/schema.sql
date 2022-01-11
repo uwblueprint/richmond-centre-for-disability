@@ -298,7 +298,7 @@ CREATE TABLE permits (
 );
 
 -- Create replacements table (subset of applications)
-CREATE TABLE replacements (
+CREATE TABLE replacement_applications (
   application_id INTEGER,
 
   -- Reason for replacement
@@ -319,7 +319,7 @@ CREATE TABLE replacements (
 );
 
 -- Create renewals table (subset of applications)
-CREATE TABLE renewals (
+CREATE TABLE renewal_applications (
   application_id INTEGER,
   receive_email_updates BOOLEAN NOT NULL,
 
@@ -380,17 +380,17 @@ CREATE TABLE new_applications (
   physician_postal_code VARCHAR(6) NOT NULL,
 
   -- Guardian information
-  guardian_first_name VARCHAR(255) NOT NULL,
+  guardian_first_name VARCHAR(255),
   guardian_middle_name VARCHAR(255),
-  guardian_last_name VARCHAR(255) NOT NULL,
-  guardian_phone VARCHAR(50) NOT NULL,
-  guardian_relationship VARCHAR(50) NOT NULL,
-  guardian_address_line_1 VARCHAR(255) NOT NULL,
+  guardian_last_name VARCHAR(255),
+  guardian_phone VARCHAR(50),
+  guardian_relationship VARCHAR(50),
+  guardian_address_line_1 VARCHAR(255),
   guardian_address_line_2 VARCHAR(255),
-  guardian_city VARCHAR(255) NOT NULL,
-  guardian_province Province NOT NULL DEFAULT 'BC',
-  guardian_country VARCHAR(255) NOT NULL DEFAULT 'Canada',
-  guardian_postal_code VARCHAR(6) NOT NULL,
+  guardian_city VARCHAR(255),
+  guardian_province Province DEFAULT 'BC',
+  guardian_country VARCHAR(255) DEFAULT 'Canada',
+  guardian_postal_code VARCHAR(6),
   poa_form_url VARCHAR(255),
 
   -- Additional Information

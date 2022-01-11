@@ -8,86 +8,86 @@ datasource db {
 }
 
 model Applicant {
-  id                   Int                @id @default(autoincrement())
-  firstName            String             @map("first_name") @db.VarChar(255)
-  middleName           String?            @map("middle_name") @db.VarChar(255)
-  lastName             String             @map("last_name") @db.VarChar(255)
-  dateOfBirth          DateTime           @map("date_of_birth") @db.Date
-  gender               Gender
-  otherGender          String?            @map("other_gender") @db.VarChar(255)
-  phone                String             @db.VarChar(50)
-  email                String?            @db.VarChar(255)
-  receiveEmailUpdates  Boolean            @map("receive_email_updates")
-  addressLine1         String             @map("address_line_1") @db.VarChar(255)
-  addressLine2         String?            @map("address_line_2") @db.VarChar(255)
-  city                 String             @db.VarChar(255)
-  province             Province           @default(BC)
-  country              String             @default("Canada") @db.VarChar(255)
-  postalCode           String             @map("postal_code") @db.VarChar(6)
-  rcdUserId            Int?               @unique @map("rcd_user_id")
-  status               ApplicantStatus    @default(ACTIVE)
-  inactiveReason       String?            @map("inactive_reason") @db.VarChar(255)
-  acceptedTos          DateTime?          @map("accepted_tos") @db.Timestamptz(6)
-  notes                String?
-  guardianId           Int?               @unique @map("guardian_id")
-  medicalInformationId Int                @unique @map("medical_information_id")
-  createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt            DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  guardian             Guardian?          @relation("applicantsToguardians", fields: [guardianId], references: [id])
-  medicalInformation   MedicalInformation @relation("applicantsTomedical_information", fields: [medicalInformationId], references: [id])
-  permits              Permit[]
-  renewals             Renewal[]          @relation("applicantsTorenewals")
-  replacements         Replacement[]      @relation("applicantsToreplacements")
+  id                      Int                      @id @default(autoincrement())
+  firstName               String                   @map("first_name") @db.VarChar(255)
+  middleName              String?                  @map("middle_name") @db.VarChar(255)
+  lastName                String                   @map("last_name") @db.VarChar(255)
+  dateOfBirth             DateTime                 @map("date_of_birth") @db.Date
+  gender                  Gender
+  otherGender             String?                  @map("other_gender") @db.VarChar(255)
+  phone                   String                   @db.VarChar(50)
+  email                   String?                  @db.VarChar(255)
+  receiveEmailUpdates     Boolean                  @map("receive_email_updates")
+  addressLine1            String                   @map("address_line_1") @db.VarChar(255)
+  addressLine2            String?                  @map("address_line_2") @db.VarChar(255)
+  city                    String                   @db.VarChar(255)
+  province                Province                 @default(BC)
+  country                 String                   @default("Canada") @db.VarChar(255)
+  postalCode              String                   @map("postal_code") @db.VarChar(6)
+  rcdUserId               Int?                     @unique @map("rcd_user_id")
+  status                  ApplicantStatus          @default(ACTIVE)
+  inactiveReason          String?                  @map("inactive_reason") @db.VarChar(255)
+  acceptedTos             DateTime?                @map("accepted_tos") @db.Timestamptz(6)
+  notes                   String?
+  guardianId              Int?                     @unique @map("guardian_id")
+  medicalInformationId    Int                      @unique @map("medical_information_id")
+  createdAt               DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt               DateTime                 @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  guardian                Guardian?                @relation("applicantsToguardians", fields: [guardianId], references: [id])
+  medicalInformation      MedicalInformation       @relation("applicantsTomedical_information", fields: [medicalInformationId], references: [id])
+  permits                 Permit[]
+  renewalApplications     RenewalApplication[]     @relation("applicantsTorenewal_applications")
+  replacementApplications ReplacementApplication[] @relation("applicantsToreplacement_applications")
 
   @@map("applicants")
 }
 
 model Application {
-  id                               Int                   @id @default(autoincrement())
-  firstName                        String                @map("first_name") @db.VarChar(255)
-  middleName                       String?               @map("middle_name") @db.VarChar(255)
-  lastName                         String                @map("last_name") @db.VarChar(255)
-  phone                            String                @db.VarChar(50)
-  email                            String?               @db.VarChar(255)
-  addressLine1                     String                @map("address_line_1") @db.VarChar(255)
-  addressLine2                     String?               @map("address_line_2") @db.VarChar(255)
-  city                             String                @db.VarChar(255)
-  province                         Province              @default(BC)
-  country                          String                @default("Canada") @db.VarChar(255)
-  postalCode                       String                @map("postal_code") @db.VarChar(6)
-  permitType                       PermitType            @default(PERMANENT) @map("permit_type")
-  paymentMethod                    PaymentType           @map("payment_method")
-  processingFee                    Decimal               @map("processing_fee") @db.Money
-  donationAmount                   Decimal               @default(0.00) @map("donation_amount") @db.Money
-  paidThroughShopify               Boolean               @default(false) @map("paid_through_shopify")
-  shopifyPaymentStatus             shopifypaymentstatus? @default(PENDING) @map("shopify_payment_status")
-  shopifyConfirmationNumber        String?               @unique @map("shopify_confirmation_number") @db.VarChar(255)
-  shippingAddressSameAsHomeAddress Boolean               @map("shipping_address_same_as_home_address")
-  shippingFullName                 String?               @map("shipping_full_name") @db.VarChar(255)
-  shippingAddressLine1             String?               @map("shipping_address_line_1") @db.VarChar(255)
-  shippingAddressLine2             String?               @map("shipping_address_line_2") @db.VarChar(255)
-  shippingCity                     String?               @map("shipping_city") @db.VarChar(255)
-  shippingProvince                 Province?             @map("shipping_province")
-  shippingCountry                  String?               @map("shipping_country") @db.VarChar(255)
-  shippingPostalCode               String?               @map("shipping_postal_code") @db.VarChar(6)
-  billingAddressSameAsHomeAddress  Boolean               @map("billing_address_same_as_home_address")
-  billingFullName                  String?               @map("billing_full_name") @db.VarChar(255)
-  billingAddressLine1              String?               @map("billing_address_line_1") @db.VarChar(255)
-  billingAddressLine2              String?               @map("billing_address_line_2") @db.VarChar(255)
-  billingCity                      String?               @map("billing_city") @db.VarChar(255)
-  billingProvince                  Province?             @map("billing_province")
-  billingCountry                   String?               @map("billing_country") @db.VarChar(255)
-  billingPostalCode                String?               @map("billing_postal_code") @db.VarChar(6)
-  type                             applicationtype
+  id                               Int                     @id @default(autoincrement())
+  firstName                        String                  @map("first_name") @db.VarChar(255)
+  middleName                       String?                 @map("middle_name") @db.VarChar(255)
+  lastName                         String                  @map("last_name") @db.VarChar(255)
+  phone                            String                  @db.VarChar(50)
+  email                            String?                 @db.VarChar(255)
+  addressLine1                     String                  @map("address_line_1") @db.VarChar(255)
+  addressLine2                     String?                 @map("address_line_2") @db.VarChar(255)
+  city                             String                  @db.VarChar(255)
+  province                         Province                @default(BC)
+  country                          String                  @default("Canada") @db.VarChar(255)
+  postalCode                       String                  @map("postal_code") @db.VarChar(6)
+  permitType                       PermitType              @default(PERMANENT) @map("permit_type")
+  paymentMethod                    PaymentType             @map("payment_method")
+  processingFee                    Decimal                 @map("processing_fee") @db.Money
+  donationAmount                   Decimal                 @default(0.00) @map("donation_amount") @db.Money
+  paidThroughShopify               Boolean                 @default(false) @map("paid_through_shopify")
+  shopifyPaymentStatus             ShopifyPaymentStatus?   @default(PENDING) @map("shopify_payment_status")
+  shopifyConfirmationNumber        String?                 @unique @map("shopify_confirmation_number") @db.VarChar(255)
+  shippingAddressSameAsHomeAddress Boolean                 @map("shipping_address_same_as_home_address")
+  shippingFullName                 String?                 @map("shipping_full_name") @db.VarChar(255)
+  shippingAddressLine1             String?                 @map("shipping_address_line_1") @db.VarChar(255)
+  shippingAddressLine2             String?                 @map("shipping_address_line_2") @db.VarChar(255)
+  shippingCity                     String?                 @map("shipping_city") @db.VarChar(255)
+  shippingProvince                 Province?               @map("shipping_province")
+  shippingCountry                  String?                 @map("shipping_country") @db.VarChar(255)
+  shippingPostalCode               String?                 @map("shipping_postal_code") @db.VarChar(6)
+  billingAddressSameAsHomeAddress  Boolean                 @map("billing_address_same_as_home_address")
+  billingFullName                  String?                 @map("billing_full_name") @db.VarChar(255)
+  billingAddressLine1              String?                 @map("billing_address_line_1") @db.VarChar(255)
+  billingAddressLine2              String?                 @map("billing_address_line_2") @db.VarChar(255)
+  billingCity                      String?                 @map("billing_city") @db.VarChar(255)
+  billingProvince                  Province?               @map("billing_province")
+  billingCountry                   String?                 @map("billing_country") @db.VarChar(255)
+  billingPostalCode                String?                 @map("billing_postal_code") @db.VarChar(6)
+  type                             ApplicationType
   notes                            String?
-  applicationProcessingId          Int                   @unique @map("application_processing_id")
-  createdAt                        DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                        DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  applicationProcessing            ApplicationProcessing @relation("application_processingToapplications", fields: [applicationProcessingId], references: [id])
-  newApplication                   NewApplication?       @relation("applicationsTonew_applications")
+  applicationProcessingId          Int                     @unique @map("application_processing_id")
+  createdAt                        DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                        DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  applicationProcessing            ApplicationProcessing   @relation("application_processingToapplications", fields: [applicationProcessingId], references: [id])
+  newApplication                   NewApplication?         @relation("applicationsTonew_applications")
   permit                           Permit?
-  renewal                          Renewal?              @relation("applicationsTorenewals")
-  replacement                      Replacement?          @relation("applicationsToreplacements")
+  renewalApplication               RenewalApplication?     @relation("applicationsTorenewal_applications")
+  replacementApplications          ReplacementApplication? @relation("applicationsToreplacement_applications")
 
   @@map("applications")
 }
@@ -131,8 +131,8 @@ model MedicalInformation {
   id                          Int              @id @default(autoincrement())
   disability                  String           @db.VarChar(255)
   disabilityCertificationDate DateTime         @map("disability_certification_date") @db.Date
-  patientCondition            patientcondition @map("patient_condition")
-  mobilityAids                mobilityaid[]    @map("mobility_aids")
+  patientCondition            PatientCondition @map("patient_condition")
+  mobilityAids                MobilityAid[]    @map("mobility_aids")
   otherPatientCondition       String?          @map("other_patient_condition") @db.VarChar(255)
   notes                       String?
   physicianMspNumber          Int              @map("physician_msp_number")
@@ -219,51 +219,6 @@ model ApplicationProcessing {
   @@map("application_processing")
 }
 
-model Replacement {
-  applicationId           Int                  @id @map("application_id")
-  reason                  ReasonForReplacement
-  lostTimestamp           DateTime?            @map("lost_timestamp") @db.Timestamptz(6)
-  lostLocation            String?              @map("lost_location") @db.VarChar(255)
-  stolenPoliceFileNumber  Int?                 @map("stolen_police_file_number")
-  stolenJurisdiction      String?              @map("stolen_jurisdiction") @db.VarChar(255)
-  stolenPoliceOfficerName String?              @map("stolen_police_officer_name") @db.VarChar(255)
-  eventDescription        String?              @map("event_description")
-  createdAt               DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt               DateTime             @default(now()) @map("updated_at") @db.Timestamptz(6)
-  applicantId             Int                  @map("applicant_id")
-  applicant               Applicant            @relation("applicantsToreplacements", fields: [applicantId], references: [id])
-  application             Application          @relation("applicationsToreplacements", fields: [applicationId], references: [id])
-
-  @@map("replacements")
-}
-
-model Renewal {
-  applicationId                        Int                                  @id @map("application_id")
-  receiveEmailUpdates                  Boolean                              @map("receive_email_updates")
-  physicianFirstName                   String                               @map("physician_first_name") @db.VarChar(255)
-  physicianLastName                    String                               @map("physician_last_name") @db.VarChar(255)
-  physicianMspNumber                   Int                                  @map("physician_msp_number")
-  physicianPhone                       String                               @map("physician_phone") @db.VarChar(50)
-  physicianAddressLine1                String                               @map("physician_address_line_1") @db.VarChar(255)
-  physicianAddressLine2                String?                              @map("physician_address_line_2") @db.VarChar(255)
-  physicianCity                        String                               @map("physician_city") @db.VarChar(255)
-  physicianProvince                    Province                             @default(BC) @map("physician_province")
-  physicianCountry                     String                               @default("Canada") @map("physician_country") @db.VarChar(255)
-  physicianPostalCode                  String                               @map("physician_postal_code") @db.VarChar(6)
-  usesAccessibleConvertedVan           Boolean                              @map("uses_accessible_converted_van")
-  accessibleConvertedVanLoadingMethod  accessibleconvertedvanloadingmethod? @map("accessible_converted_van_loading_method")
-  requiresWiderParkingSpace            Boolean                              @map("requires_wider_parking_space")
-  requiresWiderParkingSpaceReason      requireswiderparkingspacereason?     @map("requires_wider_parking_space_reason")
-  otherRequiresWiderParkingSpaceReason String?                              @map("other_requires_wider_parking_space_reason") @db.VarChar(255)
-  createdAt                            DateTime                             @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                            DateTime                             @default(now()) @map("updated_at") @db.Timestamptz(6)
-  applicantId                          Int                                  @map("applicant_id")
-  applicant                            Applicant                            @relation("applicantsTorenewals", fields: [applicantId], references: [id])
-  application                          Application                          @relation("applicationsTorenewals", fields: [applicationId], references: [id])
-
-  @@map("renewals")
-}
-
 model NewApplication {
   application_id                       Int                                  @id
   dateOfBirth                          DateTime                             @map("date_of_birth") @db.Date
@@ -272,8 +227,8 @@ model NewApplication {
   receiveEmailUpdates                  Boolean                              @map("receive_email_updates")
   disability                           String                               @db.VarChar(255)
   disabilityCertificationDate          DateTime                             @map("disability_certification_date") @db.Date
-  patientCondition                     patientcondition                     @map("patient_condition")
-  mobilityAids                         mobilityaid[]                        @map("mobility_aids")
+  patientCondition                     PatientCondition                     @map("patient_condition")
+  mobilityAids                         MobilityAid[]                        @map("mobility_aids")
   otherPatientCondition                String?                              @map("other_patient_condition") @db.VarChar(255)
   temporaryPermitExpiry                DateTime?                            @map("temporary_permit_expiry") @db.Date
   physicianFirstName                   String                               @map("physician_first_name") @db.VarChar(255)
@@ -299,9 +254,9 @@ model NewApplication {
   guardianPostalCode                   String                               @map("guardian_postal_code") @db.VarChar(6)
   poaFormUrl                           String?                              @map("poa_form_url") @db.VarChar(255)
   usesAccessibleConvertedVan           Boolean                              @map("uses_accessible_converted_van")
-  accessibleConvertedVanLoadingMethod  accessibleconvertedvanloadingmethod? @map("accessible_converted_van_loading_method")
+  accessibleConvertedVanLoadingMethod  AccessibleConvertedVanLoadingMethod? @map("accessible_converted_van_loading_method")
   requiresWiderParkingSpace            Boolean                              @map("requires_wider_parking_space")
-  requiresWiderParkingSpaceReason      requireswiderparkingspacereason?     @map("requires_wider_parking_space_reason")
+  requiresWiderParkingSpaceReason      RequiresWiderParkingSpaceReason?     @map("requires_wider_parking_space_reason")
   otherRequiresWiderParkingSpaceReason String?                              @map("other_requires_wider_parking_space_reason") @db.VarChar(255)
   createdAt                            DateTime                             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                            DateTime                             @default(now()) @map("updated_at") @db.Timestamptz(6)
@@ -310,11 +265,52 @@ model NewApplication {
   @@map("new_applications")
 }
 
+model RenewalApplication {
+  applicationId                        Int                                  @id @map("application_id")
+  receiveEmailUpdates                  Boolean                              @map("receive_email_updates")
+  physicianFirstName                   String                               @map("physician_first_name") @db.VarChar(255)
+  physicianLastName                    String                               @map("physician_last_name") @db.VarChar(255)
+  physicianMspNumber                   Int                                  @map("physician_msp_number")
+  physicianPhone                       String                               @map("physician_phone") @db.VarChar(50)
+  physicianAddressLine1                String                               @map("physician_address_line_1") @db.VarChar(255)
+  physicianAddressLine2                String?                              @map("physician_address_line_2") @db.VarChar(255)
+  physicianCity                        String                               @map("physician_city") @db.VarChar(255)
+  physicianProvince                    Province                             @default(BC) @map("physician_province")
+  physicianCountry                     String                               @default("Canada") @map("physician_country") @db.VarChar(255)
+  physicianPostalCode                  String                               @map("physician_postal_code") @db.VarChar(6)
+  usesAccessibleConvertedVan           Boolean                              @map("uses_accessible_converted_van")
+  accessibleConvertedVanLoadingMethod  AccessibleConvertedVanLoadingMethod? @map("accessible_converted_van_loading_method")
+  requiresWiderParkingSpace            Boolean                              @map("requires_wider_parking_space")
+  requiresWiderParkingSpaceReason      RequiresWiderParkingSpaceReason?     @map("requires_wider_parking_space_reason")
+  otherRequiresWiderParkingSpaceReason String?                              @map("other_requires_wider_parking_space_reason") @db.VarChar(255)
+  createdAt                            DateTime                             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                            DateTime                             @default(now()) @map("updated_at") @db.Timestamptz(6)
+  applicantId                          Int                                  @map("applicant_id")
+  applicant                            Applicant                            @relation("applicantsTorenewal_applications", fields: [applicantId], references: [id])
+  application                          Application                          @relation("applicationsTorenewal_applications", fields: [applicationId], references: [id])
+}
+
+model ReplacementApplication {
+  applicationId           Int                  @id @map("application_id")
+  reason                  ReasonForReplacement
+  lostTimestamp           DateTime?            @map("lost_timestamp") @db.Timestamptz(6)
+  lostLocation            String?              @map("lost_location") @db.VarChar(255)
+  stolenPoliceFileNumber  Int?                 @map("stolen_police_file_number")
+  stolenJurisdiction      String?              @map("stolen_jurisdiction") @db.VarChar(255)
+  stolenPoliceOfficerName String?              @map("stolen_police_officer_name") @db.VarChar(255)
+  eventDescription        String?              @map("event_description")
+  createdAt               DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt               DateTime             @default(now()) @map("updated_at") @db.Timestamptz(6)
+  applicantId             Int                  @map("applicant_id")
+  applicant               Applicant            @relation("applicantsToreplacement_applications", fields: [applicantId], references: [id])
+  application             Application          @relation("applicationsToreplacement_applications", fields: [applicationId], references: [id])
+}
+
 enum ApplicantStatus {
   ACTIVE
   INACTIVE
 
-   @@map("applicantstatus")
+  @@map("applicantstatus")
 }
 
 enum Gender {
@@ -322,7 +318,7 @@ enum Gender {
   FEMALE
   OTHER
 
-   @@map("gender")
+  @@map("gender")
 }
 
 enum PaymentType {
@@ -334,14 +330,14 @@ enum PaymentType {
   DEBIT
   MONEY_ORDER
 
-   @@map("paymenttype")
+  @@map("paymenttype")
 }
 
 enum PhysicianStatus {
   ACTIVE
   INACTIVE
 
-   @@map("physicianstatus")
+  @@map("physicianstatus")
 }
 
 enum Province {
@@ -359,7 +355,7 @@ enum Province {
   NT
   YT
 
-   @@map("province")
+  @@map("province")
 }
 
 enum Role {
@@ -367,7 +363,7 @@ enum Role {
   ACCOUNTING
   SECRETARY
 
-   @@map("role")
+  @@map("role")
 }
 
 enum ApplicationStatus {
@@ -376,7 +372,7 @@ enum ApplicationStatus {
   REJECTED
   COMPLETED
 
-   @@map("applicationstatus")
+  @@map("applicationstatus")
 }
 
 enum ReasonForReplacement {
@@ -384,28 +380,28 @@ enum ReasonForReplacement {
   STOLEN
   OTHER
 
-   @@map("reasonforreplacement")
+  @@map("reasonforreplacement")
 }
 
 enum PermitType {
   PERMANENT
   TEMPORARY
 
-   @@map("permittype")
+  @@map("permittype")
 }
 
-enum accessibleconvertedvanloadingmethod {
+enum AccessibleConvertedVanLoadingMethod {
   SIDE_LOADING
   END_LOADING
 }
 
-enum applicationtype {
+enum ApplicationType {
   NEW
   RENEWAL
   REPLACEMENT
 }
 
-enum mobilityaid {
+enum MobilityAid {
   CANE
   ELECTRIC_CHAIR
   MANUAL_CHAIR
@@ -413,20 +409,20 @@ enum mobilityaid {
   WALKER
 }
 
-enum patientcondition {
+enum PatientCondition {
   AFFECTS_MOBILITY
   MOBILITY_AID_REQUIRED
   CANNOT_WALK_100M
   OTHER
 }
 
-enum requireswiderparkingspacereason {
+enum RequiresWiderParkingSpaceReason {
   HAS_ACCESSIBLE_VAN
   MEDICAL_REASONS
   OTHER
 }
 
-enum shopifypaymentstatus {
+enum ShopifyPaymentStatus {
   PENDING
   RECEIVED
 }

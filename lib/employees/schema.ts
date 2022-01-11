@@ -1,15 +1,16 @@
-export default `
+/**
+ * GraphQL schema for employees
+ */
+
+import { gql } from '@apollo/client';
+
+export default gql`
   type Employee {
     id: ID!
     firstName: String!
     lastName: String!
     email: String!
     role: Role!
-    active: Boolean!
-  }
-
-  input QueryEmployeeInput {
-    id: ID
   }
 
   input CreateEmployeeInput {
@@ -37,6 +38,10 @@ export default `
     employee: Employee!
   }
 
+  input DeleteEmployeeInput {
+    id: ID!
+  }
+
   type DeleteEmployeeResult {
     ok: Boolean!
     employee: Employee!
@@ -48,7 +53,7 @@ export default `
     offset: Int
   }
 
-  type QueryEmployeesResult {
+  type EmployeesResult {
     result: [Employee!]!
     totalCount: Int!
   }

@@ -1,6 +1,8 @@
 import { gql } from '@apollo/client'; // gql tag
 import { UpsertPhysicianResult, MutationUpsertPhysicianArgs } from '@lib/types'; // GraphQL types
 
+// TODO: DEPRECATE AND ABSTRACT AWAY WITHIN OTHER APIS
+
 // Upsert physician mutation
 export const UPSERT_PHYSICIAN_MUTATION = gql`
   mutation UpsertPhysician($input: UpsertPhysicianInput!) {

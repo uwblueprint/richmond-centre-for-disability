@@ -4,6 +4,8 @@ import {
   UpdateApplicationProcessingResult,
 } from '@lib/graphql/types';
 
+// TODO: DEPRECATED REPLACE WITH APPROPRIATE PROCESSING APIS
+
 export const UPDATE_APPLICATION_PROCESSING_MUTATION = gql`
   mutation updateApplicationProcessing($input: UpdateApplicationProcessingInput!) {
     updateApplicationProcessing(input: $input) {

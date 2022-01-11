@@ -2,6 +2,8 @@ import { Employee } from '@prisma/client';
 import { gql } from '@apollo/client'; // gql tag
 import { MutationDeleteEmployeeArgs } from '@lib/graphql/types'; // GraphQL types
 
+// TODO: FIX INPUT FORMAT OF DELETE EMPLOYEE
+
 /**
  * GQL query to delete employee
  */

@@ -1,6 +1,8 @@
 import { gql } from '@apollo/client'; // gql tag
 import { MutationUpdateApplicantArgs, UpdateApplicantResult } from '@lib/types'; // GraphQL types
 
+// TODO: Replace with modular design
+
 // Update applicant mutation
 export const UPDATE_APPLICANT_MUTATION = gql`
   mutation UpdateApplicant($input: UpdateApplicantInput!) {

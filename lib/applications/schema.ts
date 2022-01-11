@@ -1,144 +1,358 @@
+/**
+ * GraphQL schema for applications
+ */
+
 import { gql } from '@apollo/client';
 
 export default gql`
-  type Application {
-    # Applicant information
+  # Application interface
+  interface Application {
     id: ID!
+
+    # Personal information
     firstName: String!
-    middleName: String!
+    middleName: String
+    lastName: String!
+
+    # Contact information
+    phone: String!
+    email: String
+
+    # Address
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    province: Province!
+    country: String!
+    postalCode: String!
+
+    # Physician assessment
+    permitType: PermitType!
+
+    # Payment information
+    paymentMethod: PaymentType!
+    processingFee: Float!
+    donationAmount: Float
+    paidThroughShopify: Boolean!
+    shopifyPaymentStatus: ShopifyPaymentStatus
+    shopifyConfirmationNumber: String
+
+    # Shipping information
+    shippingAddressSameAsHomeAddress: Boolean!
+    shippingFullName: String
+    shippingAddressLine1: String
+    shippingAddressLine2: String
+    shippingCity: String
+    shippingProvince: Province
+    shippingCountry: String
+    shippingPostalCode: String
+
+    # Billing information
+    billingAddressSameAsHomeAddress: Boolean!
+    billingFullName: String
+    billingAddressLine1: String
+    billingAddressLine2: String
+    billingCity: String
+    billingProvince: Province
+    billingCountry: String
+    billingPostalCode: String
+
+    type: ApplicationType!
+
+    processing: ApplicationProcessing!
+
+    createdAt: Date!
+  }
+
+  type NewApplication implements Application {
+    id: ID!
+
+    # Personal information
+    firstName: String!
+    middleName: String
     lastName: String!
     dateOfBirth: Date!
     gender: Gender!
-    customGender: String
-    email: String
+    otherGender: String
+
+    # Contact information
     phone: String!
-    province: Province!
-    city: String!
+    email: String
+    receiveEmailUpdates: Boolean!
+
+    # Address
     addressLine1: String!
     addressLine2: String
+    city: String!
+    province: Province!
+    country: String!
     postalCode: String!
-    rcdUserId: Int
-    notes: String
-    isRenewal: Boolean!
-    receiveEmailUpdates: Boolean!
-    applicantId: Int
-    applicant: Applicant
 
-    # Medical information
+    # Physician assessment
     disability: String!
-    certificationDate: Date!
-    patientEligibility: Eligibility!
-    description: String
-    expiryDate: Date
+    disabilityCertificationDate: Date!
+    patientCondition: PatientCondition!
+    mobilityAids: [MobilityAid!]
+    otherPatientCondition: String
     permitType: PermitType!
-    aid: [Aid!]!
+    temporaryPermitExpiry: Date
 
-    #Physician Information
-    physicianName: String!
+    # Doctor information
+    physicianFirstName: String!
+    physicianLastName: String!
     physicianMspNumber: Int!
     physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
     physicianCity: String!
     physicianProvince: Province!
+    physicianCountry: String!
     physicianPostalCode: String!
-    physicianNotes: String
 
-    #Guardian
-    guardianFirstName: String
+    # Guardian information
+    guardianFirstName: String!
     guardianMiddleName: String
-    guardianLastName: String
-    guardianPhone: String
-    guardianRelationship: String
-    guardianAddressLine1: String
+    guardianLastName: String!
+    guardianPhone: String!
+    guardianRelationship: String!
+    guardianAddressLine1: String!
     guardianAddressLine2: String
-    guardianCity: String
-    guardianPostalCode: String
+    guardianCity: String!
+    guardianProvince: Province!
+    guardianCountry: String!
+    guardianPostalCode: String!
     poaFormUrl: String
-    guardianNotes: String
 
-    #Additional Information
+    # Additional information
     usesAccessibleConvertedVan: Boolean!
+    accessibleConvertedVanLoadingMethod: AccessibleConvertedVanLoadingMethod
     requiresWiderParkingSpace: Boolean!
+    requiresWiderParkingSpaceReason: RequiresWiderParkingSpaceReason
+    otherRequiresWiderParkingSpaceReason: String
 
-    #Payment Information
+    # Payment information
+    paymentMethod: PaymentType!
     processingFee: Float!
     donationAmount: Float
-    paymentMethod: PaymentType!
-    shopifyConfirmationNumber: String!
+    paidThroughShopify: Boolean!
+    shopifyPaymentStatus: ShopifyPaymentStatus
+    shopifyConfirmationNumber: String
+
+    # Shipping information
+    shippingAddressSameAsHomeAddress: Boolean!
     shippingFullName: String
     shippingAddressLine1: String
     shippingAddressLine2: String
     shippingCity: String
     shippingProvince: Province
-    # shippingCountry: String
+    shippingCountry: String
     shippingPostalCode: String
+
+    # Billing information
+    billingAddressSameAsHomeAddress: Boolean!
     billingFullName: String
     billingAddressLine1: String
     billingAddressLine2: String
     billingCity: String
     billingProvince: Province
-    # billingCountry: String
+    billingCountry: String
     billingPostalCode: String
+
+    type: ApplicationType!
+
+    processing: ApplicationProcessing!
+
+    createdAt: Date!
+  }
+
+  type RenewalApplication implements Application {
+    id: ID!
+
+    # Personal information
+    firstName: String!
+    middleName: String
+    lastName: String!
+
+    # Contact information
+    phone: String!
+    email: String
+    receiveEmailUpdates: Boolean!
+
+    # Address
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    province: Province!
+    country: String!
+    postalCode: String!
+
+    # Physician assessment
+    permitType: PermitType!
+
+    # Doctor information
+    physicianFirstName: String!
+    physicianLastName: String!
+    physicianMspNumber: Int!
+    physicianPhone: String!
+    physicianAddressLine1: String!
+    physicianAddressLine2: String
+    physicianCity: String!
+    physicianProvince: Province!
+    physicianCountry: String!
+    physicianPostalCode: String!
+
+    # Additional information
+    usesAccessibleConvertedVan: Boolean!
+    accessibleConvertedVanLoadingMethod: AccessibleConvertedVanLoadingMethod
+    requiresWiderParkingSpace: Boolean!
+    requiresWiderParkingSpaceReason: RequiresWiderParkingSpaceReason
+    otherRequiresWiderParkingSpaceReason: String
+
+    # Payment information
+    paymentMethod: PaymentType!
+    processingFee: Float!
+    donationAmount: Float
+    paidThroughShopify: Boolean!
+    shopifyPaymentStatus: ShopifyPaymentStatus
+    shopifyConfirmationNumber: String
+
+    # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
+    shippingFullName: String
+    shippingAddressLine1: String
+    shippingAddressLine2: String
+    shippingCity: String
+    shippingProvince: Province
+    shippingCountry: String
+    shippingPostalCode: String
+
+    # Billing information
     billingAddressSameAsHomeAddress: Boolean!
+    billingFullName: String
+    billingAddressLine1: String
+    billingAddressLine2: String
+    billingCity: String
+    billingProvince: Province
+    billingCountry: String
+    billingPostalCode: String
 
-    # Permit
-    permit: Permit
+    type: ApplicationType!
 
-    # Application Processing
-    applicationProcessing: ApplicationProcessing
+    processing: ApplicationProcessing!
+    applicant: Applicant!
 
-    # Replacement
-    replacement: Replacement
+    createdAt: Date!
+  }
 
-    # Renewal
-    renewal: Renewal
+  type ReplacementApplication implements Application {
+    id: ID!
 
-    # Misc
+    # Personal information
+    firstName: String!
+    middleName: String
+    lastName: String!
+
+    # Contact information
+    phone: String!
+    email: String
+
+    # Address
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    province: Province!
+    country: String!
+    postalCode: String!
+
+    # Physician assessment
+    permitType: PermitType!
+
+    # Payment information
+    paymentMethod: PaymentType!
+    processingFee: Float!
+    donationAmount: Float
+    paidThroughShopify: Boolean!
+    shopifyPaymentStatus: ShopifyPaymentStatus
+    shopifyConfirmationNumber: String
+
+    # Shipping information
+    shippingAddressSameAsHomeAddress: Boolean!
+    shippingFullName: String
+    shippingAddressLine1: String
+    shippingAddressLine2: String
+    shippingCity: String
+    shippingProvince: Province
+    shippingCountry: String
+    shippingPostalCode: String
+
+    # Billing information
+    billingAddressSameAsHomeAddress: Boolean!
+    billingFullName: String
+    billingAddressLine1: String
+    billingAddressLine2: String
+    billingCity: String
+    billingProvince: Province
+    billingCountry: String
+    billingPostalCode: String
+
+    # Reason for replacement
+    reason: ReasonForReplacement!
+    lostTimestamp: Date
+    lostLocation: String
+    stolenPoliceFileNumber: Int
+    stolenJurisdiction: String
+    stolenPoliceOfficerName: String
+    eventDescription: String
+
+    type: ApplicationType!
+
+    processing: ApplicationProcessing!
+    applicant: Applicant!
+
     createdAt: Date!
   }
 
   input CreateNewApplicationInput {
-    # Applicant information
+    # Personal information
     firstName: String!
-    middleName: String!
+    middleName: String
     lastName: String!
     dateOfBirth: Date!
     gender: Gender!
-    customGender: String
-    email: String
+    otherGender: String
+
+    # Contact information
     phone: String!
-    city: String!
-    notes: String
+    email: String
+    receiveEmailUpdates: Boolean!
+
+    # Address
     addressLine1: String!
     addressLine2: String
+    city: String!
     postalCode: String!
-    rcdUserId: Int
-    isRenewal: Boolean!
-    receiveEmailUpdates: Boolean!
-    applicantId: Int
 
-    # Medical information
+    # Physician assessment
     disability: String!
-    certificationDate: Date!
-    patientEligibility: Eligibility!
-    description: String
-    expiryDate: Date
+    disabilityCertificationDate: Date!
+    patientCondition: PatientCondition!
+    mobilityAids: [MobilityAid!]
+    otherPatientCondition: String
     permitType: PermitType!
-    aid: [Aid!]!
+    temporaryPermitExpiry: Date
 
-    #Physician Information
-    physicianName: String!
+    # Doctor information
+    physicianFirstName: String!
+    physicianLastName: String!
     physicianMspNumber: Int!
     physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
     physicianCity: String!
     physicianPostalCode: String!
-    physicianNotes: String
 
-    #Guardian
+    # Guardian information
+    omitGuardianPoa: Boolean! # Option to omit guardian/POA for some applicants (RCD-side)
     guardianFirstName: String
     guardianMiddleName: String
     guardianLastName: String
@@ -147,41 +361,177 @@ export default gql`
     guardianAddressLine1: String
     guardianAddressLine2: String
     guardianCity: String
-    guardianPostalCode: String
+    guardianPostalCode: String!
     poaFormUrl: String
-    guardianNotes: String
 
-    #Additional Information
+    # Additional information
     usesAccessibleConvertedVan: Boolean!
+    accessibleConvertedVanLoadingMethod: AccessibleConvertedVanLoadingMethod
     requiresWiderParkingSpace: Boolean!
+    requiresWiderParkingSpaceReason: RequiresWiderParkingSpaceReason
+    otherRequiresWiderParkingSpaceReason: String
 
-    #Payment Information
+    # Payment information
+    paymentMethod: PaymentType!
     processingFee: Float!
     donationAmount: Float
-    paymentMethod: PaymentType!
-    shopifyConfirmationNumber: String!
+    paidThroughShopify: Boolean!
+    shopifyPaymentStatus: ShopifyPaymentStatus
+    shopifyConfirmationNumber: String
+
+    # Shipping information
+    shippingAddressSameAsHomeAddress: Boolean!
     shippingFullName: String
     shippingAddressLine1: String
     shippingAddressLine2: String
     shippingCity: String
     shippingProvince: Province
-    # shippingCountry: String
+    shippingCountry: String
     shippingPostalCode: String
+
+    # Billing information
+    billingAddressSameAsHomeAddress: Boolean!
     billingFullName: String
     billingAddressLine1: String
     billingAddressLine2: String
     billingCity: String
     billingProvince: Province
-    # billingCountry: String
+    billingCountry: String
     billingPostalCode: String
-    shippingAddressSameAsHomeAddress: Boolean
-    billingAddressSameAsHomeAddress: Boolean
   }
 
   type CreateNewApplicationResult {
     ok: Boolean!
   }
 
+  input CreateRenewalApplicationInput {
+    # Personal information
+    firstName: String!
+    middleName: String
+    lastName: String!
+
+    # Contact information
+    phone: String!
+    email: String
+    receiveEmailUpdates: Boolean!
+
+    # Address
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    postalCode: String!
+
+    # Doctor information
+    physicianFirstName: String!
+    physicianLastName: String!
+    physicianMspNumber: Int!
+    physicianPhone: String!
+    physicianAddressLine1: String!
+    physicianAddressLine2: String
+    physicianCity: String!
+    physicianPostalCode: String!
+
+    # Additional information
+    usesAccessibleConvertedVan: Boolean!
+    accessibleConvertedVanLoadingMethod: AccessibleConvertedVanLoadingMethod
+    requiresWiderParkingSpace: Boolean!
+    requiresWiderParkingSpaceReason: RequiresWiderParkingSpaceReason
+    otherRequiresWiderParkingSpaceReason: String
+
+    # Payment information
+    paymentMethod: PaymentType!
+    processingFee: Float!
+    donationAmount: Float
+    paidThroughShopify: Boolean!
+    shopifyPaymentStatus: ShopifyPaymentStatus
+    shopifyConfirmationNumber: String
+
+    # Shipping information
+    shippingAddressSameAsHomeAddress: Boolean!
+    shippingFullName: String
+    shippingAddressLine1: String
+    shippingAddressLine2: String
+    shippingCity: String
+    shippingProvince: Province
+    shippingCountry: String
+    shippingPostalCode: String
+
+    # Billing information
+    billingAddressSameAsHomeAddress: Boolean!
+    billingFullName: String
+    billingAddressLine1: String
+    billingAddressLine2: String
+    billingCity: String
+    billingProvince: Province
+    billingCountry: String
+    billingPostalCode: String
+  }
+
+  type CreateRenewalApplicationResult {
+    ok: Boolean!
+    applicationId: Int
+  }
+
+  input CreateReplacementApplicationInput {
+    # Personal information
+    firstName: String!
+    middleName: String
+    lastName: String!
+
+    # Contact information
+    phone: String!
+    email: String
+
+    # Address
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    postalCode: String!
+
+    # Reason for replacement
+    reason: ReasonForReplacement!
+    lostTimestamp: Date
+    lostLocation: String
+    stolenPoliceFileNumber: Int
+    stolenJurisdiction: String
+    stolenPoliceOfficerName: String
+    eventDescription: String
+
+    # Payment information
+    paymentMethod: PaymentType!
+    processingFee: Float!
+    donationAmount: Float
+    paidThroughShopify: Boolean!
+    shopifyPaymentStatus: ShopifyPaymentStatus
+    shopifyConfirmationNumber: String
+
+    # Shipping information
+    shippingAddressSameAsHomeAddress: Boolean!
+    shippingFullName: String
+    shippingAddressLine1: String
+    shippingAddressLine2: String
+    shippingCity: String
+    shippingProvince: Province
+    shippingCountry: String
+    shippingPostalCode: String
+
+    # Billing information
+    billingAddressSameAsHomeAddress: Boolean!
+    billingFullName: String
+    billingAddressLine1: String
+    billingAddressLine2: String
+    billingCity: String
+    billingProvince: Province
+    billingCountry: String
+    billingPostalCode: String
+  }
+
+  type CreateReplacementApplicationResult {
+    ok: Boolean!
+    applicationId: Int!
+  }
+
+  # Query for many applications
   input ApplicationsFilter {
     order: [[String!]]
     permitType: PermitType
@@ -192,199 +542,138 @@ export default gql`
     offset: Int
   }
 
-  type QueryApplicationsResult {
+  type ApplicationsResult {
     result: [Application!]!
     totalCount: Int!
   }
 
-  input UpdateApplicationInput {
+  # Update general information section of application
+  input UpdateApplicationGeneralInformationInput {
+    # Application ID
     id: ID!
 
-    # Applicant information
-    firstName: String
-    middleName: String
-    lastName: String
-    dateOfBirth: Date
-    gender: Gender
-    customGender: String
-    email: String
-    phone: String
-    province: Province
-    city: String
-    addressLine1: String
-    addressLine2: String
-    postalCode: String
-    notes: String
-    rcdUserId: Int
-    isRenewal: Boolean
-    receiveEmailUpdates: Boolean
-    poaFormUrl: String
-    applicantId: Int
-
-    # Medical information
-    disability: String
-    patientEligibility: Eligibility
-    # NOTE: Might need to change this to accept a single Aid object, and push to the aid array
-    aid: [Aid!]
-
-    #Physician Information
-    physicianName: String
-    physicianMspNumber: Int
-    physicianAddressLine1: String
-    physicianAddressLine2: String
-    physicianCity: String
-    physicianProvince: Province
-    physicianPostalCode: String
-    physicianPhone: String
-    physicianNotes: String
-
-    # Payment Information
-    shippingFullName: String
-    shippingAddressLine1: String
-    shippingAddressLine2: String
-    shippingCity: String
-    shippingProvince: Province
-    # shippingCountry: String
-    shippingPostalCode: String
-    billingFullName: String
-    billingAddressLine1: String
-    billingAddressLine2: String
-    billingCity: String
-    billingProvince: Province
-    # billingCountry: String
-    billingPostalCode: String
-    shippingAddressSameAsHomeAddress: Boolean
-    billingAddressSameAsHomeAddress: Boolean
-    processingFee: Float
-    donationAmount: Float
-    paymentMethod: PaymentType
-    shopifyConfirmationNumber: String
-
-    # Guardian
-    guardianFirstName: String
-    guardianMiddleName: String
-    guardianLastName: String
-    guardianPhone: String
-    guardianProvince: Province
-    guardianCity: String
-    guardianAddressLine1: String
-    guardianAddressLine2: String
-    guardianPostalCode: String
-    guardianRelationship: String
-    guardianNotes: String
-  }
-
-  type UpdateApplicationResult {
-    ok: Boolean!
-  }
-
-  input CreateRenewalApplicationInput {
-    applicantId: Int!
-    updatedAddress: Boolean!
-    updatedContactInfo: Boolean!
-    updatedPhysician: Boolean!
-    usesAccessibleConvertedVan: Boolean!
-    requiresWiderParkingSpace: Boolean!
-    rcdUserId: Int
-    receiveEmailUpdates: Boolean!
-
-    # Personal address info (must be provided if updatedAddress === true)
-    firstName: String
-    lastName: String
-    addressLine1: String
-    addressLine2: String
-    city: String
-    postalCode: String
-
-    # Contact info (at least one must be provided if updatedContactInfo === true)
-    phone: String
-    email: String
-
-    # Doctor info (must be provided if updatedDoctor === true)
-    physicianName: String
-    physicianMspNumber: Int
-    physicianAddressLine1: String
-    physicianAddressLine2: String
-    physicianCity: String
-    physicianPostalCode: String
-    physicianPhone: String
-
-    # Payment information
-    shippingFullName: String
-    shippingAddressLine1: String
-    shippingAddressLine2: String
-    shippingCity: String
-    shippingProvince: Province
-    shippingPostalCode: String
-
-    billingFullName: String
-    billingAddressLine1: String
-    billingAddressLine2: String
-    billingCity: String
-    billingProvince: Province
-    billingPostalCode: String
-    shippingAddressSameAsHomeAddress: Boolean
-    billingAddressSameAsHomeAddress: Boolean
-    donationAmount: Float
-    paymentMethod: PaymentType
-  }
-
-  type CreateRenewalApplicationResult {
-    ok: Boolean!
-    applicationId: Int
-  }
-
-  input CreateReplacementApplicationInput {
-    applicantId: Int!
-
-    # Permit Holder Information
+    # Personal information
     firstName: String!
+    middleName: String
     lastName: String!
+
+    # Contact information
     phone: String!
     email: String
+
+    # Address
     addressLine1: String!
     addressLine2: String
     city: String!
     postalCode: String!
+  }
 
-    # Replacement Information
-    reason: ReasonForReplacement!
-    lostTimestamp: Date
-    lostLocation: String
-    description: String
+  type UpdateApplicationGeneralInformationResult {
+    ok: Boolean!
+  }
 
-    # Payment Information
+  # Update doctor information section of application
+  input UpdateApplicationDoctorInformationInput {
+    # Application ID
+    id: ID!
+
+    firstName: String!
+    lastName: String!
+    mspNumber: Int!
+    phone: String!
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    postalCode: String!
+  }
+
+  type UpdateApplicationDoctorInformationResult {
+    ok: Boolean!
+  }
+
+  # Update additional information section of application
+  input UpdateApplicationAdditionalInformationInput {
+    # Application ID
+    id: ID!
+
+    usesAccessibleConvertedVan: Boolean!
+    accessibleConvertedVanLoadingMethod: AccessibleConvertedVanLoadingMethod
+    requiresWiderParkingSpace: Boolean!
+    requiresWiderParkingSpaceReason: RequiresWiderParkingSpaceReason
+    otherRequiresWiderParkingSpaceReason: String
+  }
+
+  type UpdateApplicationAdditionalInformationResult {
+    ok: Boolean!
+  }
+
+  # Update payment information section of application
+  input UpdateApplicationPaymentInformationInput {
+    # Application ID
+    id: ID!
+
+    # Payment information (omit processing fee)
     paymentMethod: PaymentType!
     donationAmount: Float
+
+    # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
     shippingFullName: String
     shippingAddressLine1: String
     shippingAddressLine2: String
     shippingCity: String
     shippingProvince: Province
+    shippingCountry: String
     shippingPostalCode: String
+
+    # Billing information
     billingAddressSameAsHomeAddress: Boolean!
     billingFullName: String
     billingAddressLine1: String
     billingAddressLine2: String
     billingCity: String
     billingProvince: Province
+    billingCountry: String
     billingPostalCode: String
   }
 
-  type CreateReplacementApplicationResult {
+  type UpdateApplicationPaymentInformationResult {
     ok: Boolean!
-    applicationId: Int!
   }
 
-  input GenerateApplicationsReportInput {
-    startDate: Date!
-    endDate: Date!
-    columns: [ApplicationsReportColumn!]!
+  # Update reason for replacement section of application
+  input UpdateApplicationReasonForReplacementInput {
+    # Application ID
+    id: ID!
+
+    reason: ReasonForReplacement!
+    lostTimestamp: Date
+    lostLocation: String
+    stolenPoliceFileNumber: Int
+    stolenJurisdiction: String
+    stolenPoliceOfficerName: String
+    eventDescription: String
   }
 
-  # TODO: Return link to AWS S3 file
-  type GenerateApplicationsReportResult {
+  type UpdateApplicationReasonForReplacementResult {
+    ok: Boolean!
+  }
+
+  # Update physician assessment section of application
+  input UpdateApplicationPhysicianAssessmentInput {
+    # Application ID
+    id: ID!
+
+    # Physician assessment (omit permit type)
+    disability: String!
+    disabilityCertificationDate: Date!
+    patientCondition: PatientCondition!
+    mobilityAids: [MobilityAid!]
+    otherPatientCondition: String
+    temporaryPermitExpiry: Date
+  }
+
+  type UpdateApplicationPhysicianAssessmentResult {
     ok: Boolean!
   }
 `;
