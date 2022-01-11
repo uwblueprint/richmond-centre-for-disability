@@ -231,7 +231,7 @@ CREATE TABLE applications (
   processing_fee                 FLOAT NOT NULL,
   donation_amount                FLOAT,
   payment_method                 PaymentType NOT NULL,
-  shopify_confirmation_number    VARCHAR(255) UNIQUE NOT NULL,
+  shopify_confirmation_number    VARCHAR(255) UNIQUE,
   -- Billing and shipping information
   shipping_full_name                       VARCHAR(255),
   shipping_address_line_1                  VARCHAR(255),

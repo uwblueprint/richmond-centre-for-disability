@@ -91,7 +91,7 @@ model Application {
   processingFee                    Float                 @map("processing_fee")
   donationAmount                   Float?                @map("donation_amount")
   paymentMethod                    PaymentType           @map("payment_method")
-  shopifyConfirmationNumber        String                @unique @map("shopify_confirmation_number") @db.VarChar(255)
+  shopifyConfirmationNumber        String?               @unique @map("shopify_confirmation_number") @db.VarChar(255)
   shippingFullName                 String?               @map("shipping_full_name") @db.VarChar(255)
   shippingAddressLine1             String?               @map("shipping_address_line_1") @db.VarChar(255)
   shippingAddressLine2             String?               @map("shipping_address_line_2") @db.VarChar(255)
@@ -217,7 +217,7 @@ model VerificationRequest {
 model ApplicationProcessing {
   id                Int               @id @default(autoincrement())
   status            ApplicationStatus @default(PENDING)
-  paymentStatus     PaymentStatus     @default(PENDING)
+  paymentStatus     PaymentStatus     @default(PENDING) @map("payment_status")
   appNumber         Int?              @unique @map("app_number")
   appHolepunched    Boolean           @default(false) @map("app_holepunched")
   walletCardCreated Boolean           @default(false) @map("wallet_card_created")
@@ -362,7 +362,7 @@ enum PaymentStatus {
   PENDING
   COMPLETED
 
-  @@map("paymentstatus")
+   @@map("paymentstatus")
 }
 
 enum Eligibility {
