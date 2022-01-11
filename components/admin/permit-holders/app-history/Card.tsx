@@ -4,7 +4,7 @@ import Table from '@components/Table'; // Table component
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Request status badge component
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import { Column } from 'react-table'; // React Table
-import { PermitData } from '@tools/pages/admin/permit-holders/types'; // Permit Data Types
+import { PermitData } from '@tools/admin/permit-holders/types'; // Permit Data Types
 import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 const COLUMNS: Column<any>[] = [

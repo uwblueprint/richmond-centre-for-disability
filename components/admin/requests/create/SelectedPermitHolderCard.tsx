@@ -14,7 +14,7 @@ import {
   Spinner,
   Center,
 } from '@chakra-ui/react'; // Chakra UI
-import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
+import { ApplicantData } from '@tools/admin/permit-holders/types'; // Applicant data type
 import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 type SelectedPermitHolderCardProps = {

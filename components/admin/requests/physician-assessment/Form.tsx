@@ -12,7 +12,7 @@ import {
   Textarea,
 } from '@chakra-ui/react'; // Chakra UI
 import { PermitType, Eligibility } from '@lib/graphql/types';
-import { PhysicianAssessment } from '@tools/components/admin/requests/physician-assessment';
+import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment';
 import { ChangeEventHandler } from 'react';
 
 type PhysicianAssessmentFormProps = {

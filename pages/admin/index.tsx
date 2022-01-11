@@ -34,7 +34,7 @@ import {
   GetApplicationsRequest,
   GetApplicationsResponse,
   GET_APPLICATIONS_QUERY,
-} from '@tools/pages/admin/requests/get-applications'; //Applications queries
+} from '@tools/admin/requests/graphql/get-applications'; //Applications queries
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
 import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //GraphQL types
 import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook

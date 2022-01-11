@@ -3,7 +3,7 @@ import { Box, Flex, Table as ChakraTable, Th, Td, Thead, Tbody, Tr } from '@chak
 import { ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import { useTable, useSortBy, Column } from 'react-table'; // React Table
 import { SortOptions } from '@tools/types'; // Sorting types
-import { getSortOptions } from '@tools/components/admin/table'; // Get the sort options from the React Table sortBy state
+import { getSortOptions } from '@tools/admin/table'; // Get the sort options from the React Table sortBy state
 
 // Table Props
 type Props = {

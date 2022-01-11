@@ -19,13 +19,13 @@ import {
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { DownloadIcon } from '@chakra-ui/icons';
-import { APPLICATIONS_COLUMNS, GenerateReportStep } from '@tools/components/admin/reports'; //GenerateReportStep enum
+import { APPLICATIONS_COLUMNS, GenerateReportStep } from '@tools/admin/reports'; //GenerateReportStep enum
 import { useLazyQuery } from '@apollo/client';
 import {
   GENERATE_APPLICATIONS_REPORT_QUERY,
   GenerateApplicationsReportRequest,
   GenerateApplicationsReportResponse,
-} from '@tools/pages/admin/requests/generate-report';
+} from '@tools/admin/requests/graphql/generate-report';
 import { ApplicationsReportColumn } from '@lib/graphql/types';
 
 type Props = {

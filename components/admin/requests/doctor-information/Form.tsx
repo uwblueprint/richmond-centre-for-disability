@@ -8,7 +8,7 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { Physician } from '@tools/components/admin/requests/doctor-information';
+import { Physician } from '@tools/admin/requests/doctor-information';
 
 type DoctorInformationFormProps = {
   readonly doctorInformation: Physician;

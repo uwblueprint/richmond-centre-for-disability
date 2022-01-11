@@ -2,8 +2,8 @@ import { Box, Text, Divider, VStack, Button, Flex } from '@chakra-ui/react'; // 
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import EditDoctorInformationModal from '@components/admin/requests/doctor-information/EditModal'; // Edit doctor information modal component
 import PreviousDoctorsModal from '@components/admin/permit-holders/doctor-information/PreviousDoctorsModal'; // Previous Doctors' Information Modal
-import { PreviousPhysicianData } from '@tools/pages/admin/permit-holders/types';
-import { Physician } from '@tools/components/admin/requests/doctor-information';
+import { PreviousPhysicianData } from '@tools/admin/permit-holders/types';
+import { Physician } from '@tools/admin/requests/doctor-information';
 
 type DoctorInformationProps = {
   readonly physician: Physician;

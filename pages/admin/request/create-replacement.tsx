@@ -16,32 +16,32 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import PermitHolderInformationForm from '@components/admin/requests/applicant-information/Form'; //Permit holder information form
-import { PermitHolderInformation } from '@tools/components/admin/requests/permit-holder-information';
-import { PaymentInformation } from '@tools/components/admin/requests/payment-information';
+import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
+import { PaymentInformation } from '@tools/admin/requests/payment-information';
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
 import { ApplicantStatus, Gender, PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
-import { ReasonForReplacement } from '@tools/components/admin/requests/reason-for-replacement';
+import { ReasonForReplacement } from '@tools/admin/requests/reason-for-replacement';
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
 import ReasonForReplacementForm from '@components/admin/requests/reason-for-replacement/Form';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
-import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders'; // Permit holders GQL query}
+import { PermitHolder } from '@tools/admin/permit-holders/graphql/get-permit-holders'; // Permit holders GQL query}
 import { useLazyQuery, useMutation } from '@apollo/client';
 import {
   GET_APPLICANT_REPLACEMENT_QUERY,
   GetApplicantReplacementRequest,
   GetApplicantReplacementResponse,
-} from '@tools/pages/admin/requests/create/get-replacement-applicant';
-import { RequestFlowPageState } from '@tools/pages/admin/requests/types';
+} from '@tools/admin/requests/graphql/create/get-replacement-applicant';
+import { RequestFlowPageState } from '@tools/admin/requests/types';
 import {
   CREATE_REPLACEMENT_APPLICATION_MUTATION,
   CreateReplacementApplicationRequest,
   CreateReplacementApplicationResponse,
-} from '@tools/pages/applicant/replacements';
+} from '@tools/applicant/replacements';
 import { useRouter } from 'next/router'; // Router
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
-import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
+import { ApplicantData } from '@tools/admin/permit-holders/types';
 
 export default function CreateReplacement() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(

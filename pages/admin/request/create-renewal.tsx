@@ -2,12 +2,12 @@ import Layout from '@components/admin/Layout'; // Layout component
 import { Text, Box, Flex, Stack, Button, GridItem, useToast } from '@chakra-ui/react'; // Chakra UI
 import { SyntheticEvent, useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/applicant-information/Form'; //Permit holder information form
-import { PermitHolderInformation } from '@tools/components/admin/requests/permit-holder-information'; //Permit holder information type
+import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information'; //Permit holder information type
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form'; //Doctor information form
 import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form'; //Additional questions form
-import { AdditionalQuestions } from '@tools/components/admin/requests/additional-questions'; //Additional questions type
+import { AdditionalQuestions } from '@tools/admin/requests/additional-questions'; //Additional questions type
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
-import { PaymentInformation } from '@tools/components/admin/requests/payment-information';
+import { PaymentInformation } from '@tools/admin/requests/payment-information';
 import { ApplicantStatus, Gender, PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
 import Link from 'next/link'; // Link
 import { authorize } from '@tools/authorization';
@@ -15,24 +15,24 @@ import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
-import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders';
+import { PermitHolder } from '@tools/admin/permit-holders/graphql/get-permit-holders';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import {
   CreateRenewalApplicationRequest,
   CreateRenewalApplicationResponse,
   CREATE_RENEWAL_APPLICATION_MUTATION,
-} from '@tools/pages/applicant/renew';
+} from '@tools/applicant/renew';
 import {
   GET_APPLICANT_RENEWAL_QUERY,
   GetApplicantRenewalRequest,
   GetApplicantRenewalResponse,
-} from '@tools/pages/admin/requests/create/get-renewal-applicant';
-import { RequestFlowPageState } from '@tools/pages/admin/requests/types';
+} from '@tools/admin/requests/graphql/create/get-renewal-applicant';
+import { RequestFlowPageState } from '@tools/admin/requests/types';
 import { useRouter } from 'next/router';
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
-import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
+import { ApplicantData } from '@tools/admin/permit-holders/types';
 import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
-import { Physician } from '@tools/components/admin/requests/doctor-information';
+import { Physician } from '@tools/admin/requests/doctor-information';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(

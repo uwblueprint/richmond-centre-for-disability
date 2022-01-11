@@ -14,32 +14,32 @@ import {
   GET_APPLICATION_QUERY,
   GetApplicationRequest,
   GetApplicationResponse,
-} from '@tools/pages/admin/requests/get-application'; // Request page GraphQL queries
+} from '@tools/admin/requests/graphql/get-application'; // Request page GraphQL queries
 import {
   UPDATE_APPLICATION_MUTATION,
   UpdateApplicationRequest,
   UpdateApplicationResponse,
-} from '@tools/pages/admin/requests/update-application';
+} from '@tools/admin/requests/graphql/update-application';
 import {
   APPROVE_APPLICATION_MUTATION,
   ApproveApplicationRequest,
   ApproveApplicationResponse,
-} from '@tools/pages/admin/requests/approve-application';
+} from '@tools/admin/requests/graphql/approve-application';
 import {
   REJECT_APPLICATION_MUTATION,
   RejectApplicationRequest,
   RejectApplicationResponse,
-} from '@tools/pages/admin/requests/reject-application';
+} from '@tools/admin/requests/graphql/reject-application';
 import {
   COMPLETE_APPLICATION_MUTATION,
   CompleteApplicationRequest,
   CompleteApplicationResponse,
-} from '@tools/pages/admin/requests/complete-application';
+} from '@tools/admin/requests/graphql/complete-application';
 import {
   UPDATE_APPLICATION_PROCESSING_MUTATION,
   UpdateApplicationProcessingRequest,
   UpdateApplicationProcessingResponse,
-} from '@tools/pages/admin/requests/update-application-processing';
+} from '@tools/admin/requests/graphql/update-application-processing';
 
 type Props = {
   readonly id: number;

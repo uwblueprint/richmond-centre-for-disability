@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
 import { formatDate } from '@lib/utils/format'; // Date formatter util
-import { ReasonForReplacement } from '@tools/components/admin/requests/reason-for-replacement'; // Reason For Replacement Type
+import { ReasonForReplacement } from '@tools/admin/requests/reason-for-replacement'; // Reason For Replacement Type
 
 type ReasonForReplacementProps = {
   readonly reasonForReplacement: ReasonForReplacement;

@@ -11,7 +11,7 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { PaymentInformation } from '@tools/components/admin/requests/payment-information';
+import { PaymentInformation } from '@tools/admin/requests/payment-information';
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
 
 type EditPaymentDetailsModalProps = {

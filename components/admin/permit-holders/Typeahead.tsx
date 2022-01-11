@@ -7,7 +7,7 @@ import {
   GetPermitHoldersResponse,
   GET_PERMIT_HOLDERS_QUERY,
   PermitHolder,
-} from '@tools/pages/admin/permit-holders/get-permit-holders'; // Permit holders GQL query
+} from '@tools/admin/permit-holders/graphql/get-permit-holders'; // Permit holders GQL query
 import { useState } from 'react'; // React
 
 // Permit Holder Typeahead props

@@ -14,30 +14,30 @@ import {
   GET_PERMIT_HOLDER,
   GetPermitHolderRequest,
   GetPermitHolderResponse,
-} from '@tools/pages/admin/permit-holders/get-permit-holder'; // Permit holder query
+} from '@tools/admin/permit-holders/graphql/get-permit-holder'; // Permit holder query
 import { useMutation, useQuery } from '@apollo/client'; // Apollo
 import { useState } from 'react'; // React
 import {
   PermitData,
   MedicalHistoryEntry,
   PreviousPhysicianData,
-} from '@tools/pages/admin/permit-holders/types'; // Permit holder types
+} from '@tools/admin/permit-holders/types'; // Permit holder types
 import { Role, UpdateApplicantInput, UpsertPhysicianInput } from '@lib/graphql/types'; // GraphQL types
 import {
   UpsertPhysicianRequest,
   UpsertPhysicianResponse,
   UPSERT_PHYSICIAN_MUTATION,
-} from '@tools/pages/admin/permit-holders/upsert-physician'; // Upsert Physician types
+} from '@tools/admin/permit-holders/graphql/upsert-physician'; // Upsert Physician types
 import {
   UpdateApplicantRequest,
   UpdateApplicantResponse,
   UPDATE_APPLICANT_MUTATION,
-} from '@tools/pages/admin/permit-holders/update-applicant'; // Update applicant types
+} from '@tools/admin/permit-holders/graphql/update-applicant'; // Update applicant types
 import {
   UpdateMedicalInformationRequest,
   UpdateMedicalInformationResponse,
   UPDATE_MEDICAL_INFORMATION_MUTATION,
-} from '@tools/pages/admin/permit-holders/update-medical-information'; // Medical information types
+} from '@tools/admin/permit-holders/graphql/update-medical-information'; // Medical information types
 
 type Props = {
   readonly id: number;

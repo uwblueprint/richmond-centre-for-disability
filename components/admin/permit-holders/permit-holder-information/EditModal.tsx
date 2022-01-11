@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, ReactNode, SyntheticEvent } from 'react'; // React
 import { Gender, UpdateApplicantInput } from '@lib/graphql/types'; // Gender Enum
-import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
+import { ApplicantData } from '@tools/admin/permit-holders/types'; // Applicant data type
 import { formatDate } from '@lib/utils/format'; // Date formatter util
 
 type EditUserInformationModalProps = {

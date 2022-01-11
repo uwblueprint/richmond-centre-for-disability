@@ -1,5 +1,5 @@
 import { FormControl, FormLabel, Stack, Radio, RadioGroup } from '@chakra-ui/react'; // Chakra UI
-import { AdditionalQuestions } from '@tools/components/admin/requests/additional-questions'; // AdditionalQuestions type
+import { AdditionalQuestions } from '@tools/admin/requests/additional-questions'; // AdditionalQuestions type
 
 type AdditionalQuestionsFormProps = {
   data: AdditionalQuestions;

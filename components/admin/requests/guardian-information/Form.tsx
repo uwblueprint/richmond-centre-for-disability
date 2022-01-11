@@ -10,7 +10,7 @@ import {
   Button,
 } from '@chakra-ui/react'; // Chakra UI
 import { AttachmentIcon } from '@chakra-ui/icons';
-import { GuardianInformation } from '@tools/components/admin/requests/guardian-information';
+import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 import { ChangeEventHandler } from 'react';
 
 type GuardianInformationFormProps = {

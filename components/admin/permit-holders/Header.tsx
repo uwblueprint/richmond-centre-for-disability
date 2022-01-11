@@ -1,7 +1,7 @@
 import { Badge, Box, Flex, HStack, Text, Wrap } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import Link from 'next/link'; // Link
-import { ApplicantData } from '@tools/pages/admin/permit-holders/types'; // Applicant data type
+import { ApplicantData } from '@tools/admin/permit-holders/types'; // Applicant data type
 
 type PermitHolderHeaderProps = {
   readonly applicant: ApplicantData;

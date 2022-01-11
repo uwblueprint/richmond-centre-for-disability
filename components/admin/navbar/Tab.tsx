@@ -1,7 +1,7 @@
 import Link from 'next/link'; // Link component
 import { useRouter } from 'next/router'; // Routing
 import { Tab as ChakraTab } from '@chakra-ui/react'; // Chakra UI
-import { InternalPagePath } from '@tools/components/admin/layout'; // Internal page path
+import { InternalPagePath } from '@tools/admin/layout'; // Internal page path
 
 type Props = {
   path: InternalPagePath;

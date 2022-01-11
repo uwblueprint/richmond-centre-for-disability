@@ -2,7 +2,7 @@ import { Box, Text, Divider, SimpleGrid, Button } from '@chakra-ui/react'; // Ch
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import EditDoctorInformationModal from '@components/admin/requests/doctor-information/EditModal'; // Edit modal
 import { UpdateApplicationInput } from '@lib/graphql/types'; // GraphQL types
-import { Physician } from '@tools/components/admin/requests/doctor-information'; // Physician type
+import { Physician } from '@tools/admin/requests/doctor-information'; // Physician type
 
 type DoctorInformationProps = {
   readonly physician: Physician;

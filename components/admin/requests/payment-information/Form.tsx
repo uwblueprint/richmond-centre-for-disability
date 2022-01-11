@@ -1,4 +1,4 @@
-import { PaymentInformation } from '@tools/components/admin/requests/payment-information';
+import { PaymentInformation } from '@tools/admin/requests/payment-information';
 import {
   FormControl,
   FormLabel,

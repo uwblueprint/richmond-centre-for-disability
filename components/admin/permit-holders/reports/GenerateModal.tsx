@@ -19,13 +19,13 @@ import {
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { DownloadIcon } from '@chakra-ui/icons';
-import { GenerateReportStep, PERMIT_HOLDERS_COLUMNS } from '@tools/components/admin/reports'; //GenerateReportStep enum
+import { GenerateReportStep, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports'; //GenerateReportStep enum
 import { useLazyQuery } from '@apollo/client';
 import {
   GENERATE_PERMIT_HOLDERS_REPORT_QUERY,
   GeneratePermitHoldersReportRequest,
   GeneratePermitHoldersReportResponse,
-} from '@tools/pages/admin/permit-holders/generate-report';
+} from '@tools/admin/permit-holders/graphql/generate-report';
 import { PermitHoldersReportColumn } from '@lib/graphql/types';
 
 type Props = {

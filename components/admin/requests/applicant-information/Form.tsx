@@ -9,7 +9,7 @@ import {
   Divider,
   Checkbox,
 } from '@chakra-ui/react'; // Chakra UI
-import { PermitHolderInformation } from '@tools/components/admin/requests/permit-holder-information';
+import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
 import { ChangeEventHandler } from 'react';
 
 /**

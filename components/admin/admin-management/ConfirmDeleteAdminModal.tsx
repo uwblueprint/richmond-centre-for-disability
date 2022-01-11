@@ -8,7 +8,7 @@ import {
   AlertDialogFooter,
   Button,
 } from '@chakra-ui/react'; // Chakra UI
-import { UserToDelete } from '@tools/pages/admin/admin-management/types'; // Admin management types
+import { UserToDelete } from '@tools/admin/admin-management/types'; // Admin management types
 
 // Props
 type Props = {

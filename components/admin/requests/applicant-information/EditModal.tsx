@@ -11,7 +11,7 @@ import {
   Box,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
-import { PermitHolderInformation } from '@tools/components/admin/requests/permit-holder-information';
+import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
 import PermitHolderInformationForm from '@components/admin/requests/applicant-information/Form';
 
 /**

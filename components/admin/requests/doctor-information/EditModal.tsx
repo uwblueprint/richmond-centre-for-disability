@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, SyntheticEvent, ReactNode, useEffect } from 'react'; // React
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form';
-import { Physician } from '@tools/components/admin/requests/doctor-information'; // GraphQL types
+import { Physician } from '@tools/admin/requests/doctor-information'; // GraphQL types
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;

@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
 import ReasonForReplacementForm from '@components/admin/requests/reason-for-replacement/Form'; // ReasonForReplacement form fields
-import { ReasonForReplacement } from '@tools/components/admin/requests/reason-for-replacement';
+import { ReasonForReplacement } from '@tools/admin/requests/reason-for-replacement';
 
 type EditReasonForReplacementModalProps = {
   readonly reasonForReplacement: ReasonForReplacement;

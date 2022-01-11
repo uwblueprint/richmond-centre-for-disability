@@ -4,8 +4,8 @@ import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card 
 import EditPermitHolderInformationModal from '@components/admin/requests/applicant-information/EditModal'; // Edit modal
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Request status badge
 import { UpdateApplicationInput } from '@lib/graphql/types'; // GraphQL Types
-import { PersonalInformationCardApplicant } from '@tools/components/admin/requests/personal-information'; // Applicant type
-import { getPermitExpiryStatus } from '@tools/components/admin/request-status-badge'; // Get variant of RequestStatusBadge
+import { PersonalInformationCardApplicant } from '@tools/admin/requests/personal-information'; // Applicant type
+import { getPermitExpiryStatus } from '@tools/admin/request-status-badge'; // Get variant of RequestStatusBadge
 
 type Props = {
   readonly applicant: PersonalInformationCardApplicant;
