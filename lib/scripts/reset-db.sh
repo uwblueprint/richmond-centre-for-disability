@@ -9,4 +9,4 @@
 
 echo "Seeding DB $1. Ensure that you are logged into Heroku"
 
-heroku pg:reset -a $1 --confirm $1 && heroku pg:psql -a $1 -f prisma/schema.sql && npx prisma introspect && npx prisma generate && npx prisma db seed --preview-feature
+heroku pg:reset -a $1 --confirm $1 && heroku pg:psql -a $1 -f prisma/schema.sql && npx prisma db pull && npx prisma generate && npx prisma db seed --preview-feature

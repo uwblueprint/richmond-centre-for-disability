@@ -1,5 +1,8 @@
+import { gql } from '@apollo/client';
+
 // TODO: `guardian` should be optional in `CreateApplicantInput`
-export default `
+export default gql`
+  # Applicant type
   type Applicant {
     id: ID!
     firstName: String!
@@ -7,54 +10,22 @@ export default `
     lastName: String!
     dateOfBirth: Date!
     gender: Gender!
-    customGender: String
-    email: String
+    otherGender: String
     phone: String!
-    province: Province!
-    city: String!
+    email: String
+    receiveEmailUpdates: Boolean!
     addressLine1: String!
     addressLine2: String
+    city: String!
+    province: Province!
+    country: String!
     postalCode: String!
     rcdUserId: Int
-    acceptedTos: Date
-    status: ApplicantStatus
-    inactiveReason: String
-    activePermit: Permit
-    applications: [Application!]
-    guardianId: Int
+    status: ApplicantStatus!
     guardian: Guardian
-    medicalInformationId: Int!
     medicalInformation: MedicalInformation!
-    permits: [Permit!]!
-    medicalHistory: [MedicalHistory!]
-    mostRecentPermit: Permit!
-    mostRecentRenewal: Application
-    mostRecentApplication: Application
-    fileHistory: [ApplicationFileAttachments!]!
-  }
-
-  input CreateApplicantInput {
-    firstName: String!
-    middleName: String
-    lastName: String!
-    dateOfBirth: Date!
-    gender: Gender!
-    customGender: String
-    email: String
-    phone: String!
-    province: Province!
-    city: String!
-    addressLine1: String!
-    addressLine2: String
-    postalCode: String!
-    rcdUserId: Int
-    acceptedTos: Date
-    medicalInformation: CreateMedicalInformationInput!
-    guardian: CreateGuardianInput!
-  }
-
-  type CreateApplicantResult {
-    ok: Boolean!
+    # TODO: Medical history
+    # TODO: File history
   }
 
   type MedicalHistory {
@@ -114,11 +85,6 @@ export default `
     applicantId: Int
   }
 
-  enum VerifyIdentityFailureReason {
-    IDENTITY_VERIFICATION_FAILED
-    APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS
-  }
-
   input GeneratePermitHoldersReportInput {
     startDate: Date!
     endDate: Date!
@@ -128,5 +94,11 @@ export default `
   # TODO: Return link to AWS S3 file
   type GeneratePermitHoldersReportResult {
     ok: Boolean!
+  }
+
+  # Reason for ID verification failure
+  enum VerifyIdentityFailureReason {
+    IDENTITY_VERIFICATION_FAILED
+    APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS
   }
 `;

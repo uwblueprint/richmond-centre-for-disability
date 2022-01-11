@@ -1,4 +1,6 @@
-export default `
+import { gql } from '@apollo/client';
+
+export default gql`
   type ApplicationProcessing {
     id: ID!
     status: ApplicationStatus!

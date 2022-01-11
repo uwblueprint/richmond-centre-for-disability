@@ -108,12 +108,6 @@ export default gql`
     COMPLETED
   }
 
-  enum PermitStatus {
-    EXPIRING
-    EXPIRED
-    ACTIVE
-  }
-
   enum ReasonForReplacement {
     LOST
     STOLEN

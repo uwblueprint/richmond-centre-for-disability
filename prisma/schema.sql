@@ -55,9 +55,6 @@ CREATE TYPE ApplicationStatus as ENUM(
   'COMPLETED'
 );
 
--- Create permit status enum
-CREATE TYPE PermitStatus as ENUM('EXPIRING', 'EXPIRED', 'ACTIVE');
-
 -- Create reason for replacement enum
 CREATE TYPE ReasonForReplacement as ENUM('LOST', 'STOLEN', 'OTHER');
 
