@@ -7,7 +7,7 @@ import { gql } from '@apollo/client';
 export default gql`
   # Application interface
   interface Application {
-    id: ID!
+    id: Int!
 
     # Personal information
     firstName: String!
@@ -31,8 +31,8 @@ export default gql`
 
     # Payment information
     paymentMethod: PaymentType!
-    processingFee: Float!
-    donationAmount: Float
+    processingFee: String! # Return monetary value as string
+    donationAmount: String # Return monetary value as string
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
@@ -65,7 +65,7 @@ export default gql`
   }
 
   type NewApplication implements Application {
-    id: ID!
+    id: Int!
 
     # Personal information
     firstName: String!
@@ -132,8 +132,8 @@ export default gql`
 
     # Payment information
     paymentMethod: PaymentType!
-    processingFee: Float!
-    donationAmount: Float
+    processingFee: String! # Return monetary value as string
+    donationAmount: String # Return monetary value as string
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
@@ -166,7 +166,7 @@ export default gql`
   }
 
   type RenewalApplication implements Application {
-    id: ID!
+    id: Int!
 
     # Personal information
     firstName: String!
@@ -210,8 +210,8 @@ export default gql`
 
     # Payment information
     paymentMethod: PaymentType!
-    processingFee: Float!
-    donationAmount: Float
+    processingFee: String! # Return monetary value as string
+    donationAmount: String # Return monetary value as string
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
@@ -245,7 +245,7 @@ export default gql`
   }
 
   type ReplacementApplication implements Application {
-    id: ID!
+    id: Int!
 
     # Personal information
     firstName: String!
@@ -269,8 +269,8 @@ export default gql`
 
     # Payment information
     paymentMethod: PaymentType!
-    processingFee: Float!
-    donationAmount: Float
+    processingFee: String! # Return monetary value as string
+    donationAmount: String # Return monetary value as string
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
@@ -338,7 +338,6 @@ export default gql`
     patientCondition: PatientCondition!
     mobilityAids: [MobilityAid!]
     otherPatientCondition: String
-    permitType: PermitType!
     temporaryPermitExpiry: Date
 
     # Doctor information
@@ -371,10 +370,9 @@ export default gql`
     requiresWiderParkingSpaceReason: RequiresWiderParkingSpaceReason
     otherRequiresWiderParkingSpaceReason: String
 
-    # Payment information
+    # Payment information (omit processing fee)
     paymentMethod: PaymentType!
-    processingFee: Float!
-    donationAmount: Float
+    donationAmount: String # Input monetary value as string
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
@@ -440,8 +438,7 @@ export default gql`
 
     # Payment information
     paymentMethod: PaymentType!
-    processingFee: Float!
-    donationAmount: Float
+    donationAmount: String # Input monetary value as string
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
@@ -465,11 +462,53 @@ export default gql`
     billingProvince: Province
     billingCountry: String
     billingPostalCode: String
+
+    applicantId: Int!
   }
 
   type CreateRenewalApplicationResult {
     ok: Boolean!
-    applicationId: Int
+  }
+
+  # Renewal application being created from applicant-facing form
+  input CreateExternalRenewalApplicationInput {
+    # Address
+    updatedAddress: Boolean!
+    addressLine1: String
+    addressLine2: String
+    city: String
+    postalCode: String
+
+    # Contact information
+    updatedContactInfo: Boolean!
+    phone: String
+    email: String
+    receiveEmailUpdates: Boolean!
+
+    # Doctor information
+    updatedPhysician: String!
+    physicianFirstName: String
+    physicianLastName: String
+    physicianMspNumber: Int
+    physicianPhone: String
+    physicianAddressLine1: String
+    physicianAddressLine2: String
+    physicianCity: String
+    physicianPostalCode: String
+
+    # Additional information
+    usesAccessibleConvertedVan: Boolean!
+    accessibleConvertedVanLoadingMethod: AccessibleConvertedVanLoadingMethod
+    requiresWiderParkingSpace: Boolean!
+    requiresWiderParkingSpaceReason: RequiresWiderParkingSpaceReason
+    otherRequiresWiderParkingSpaceReason: String
+
+    applicantId: Int!
+  }
+
+  type CreateExternalRenewalApplicationResult {
+    ok: Boolean!
+    applicationId: Int!
   }
 
   input CreateReplacementApplicationInput {
@@ -497,10 +536,9 @@ export default gql`
     stolenPoliceOfficerName: String
     eventDescription: String
 
-    # Payment information
+    # Payment information (omit processing fee)
     paymentMethod: PaymentType!
-    processingFee: Float!
-    donationAmount: Float
+    donationAmount: String # Input monetary value as string
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
@@ -524,16 +562,17 @@ export default gql`
     billingProvince: Province
     billingCountry: String
     billingPostalCode: String
+
+    applicantId: Int!
   }
 
   type CreateReplacementApplicationResult {
     ok: Boolean!
-    applicationId: Int!
   }
 
   # Query for many applications
   input ApplicationsFilter {
-    order: [[String!]]
+    order: [[String!]!]
     permitType: PermitType
     requestType: String
     status: ApplicationStatus
@@ -550,7 +589,7 @@ export default gql`
   # Update general information section of application
   input UpdateApplicationGeneralInformationInput {
     # Application ID
-    id: ID!
+    id: Int!
 
     # Personal information
     firstName: String!
@@ -575,7 +614,7 @@ export default gql`
   # Update doctor information section of application
   input UpdateApplicationDoctorInformationInput {
     # Application ID
-    id: ID!
+    id: Int!
 
     firstName: String!
     lastName: String!
@@ -594,7 +633,7 @@ export default gql`
   # Update additional information section of application
   input UpdateApplicationAdditionalInformationInput {
     # Application ID
-    id: ID!
+    id: Int!
 
     usesAccessibleConvertedVan: Boolean!
     accessibleConvertedVanLoadingMethod: AccessibleConvertedVanLoadingMethod
@@ -610,7 +649,7 @@ export default gql`
   # Update payment information section of application
   input UpdateApplicationPaymentInformationInput {
     # Application ID
-    id: ID!
+    id: Int!
 
     # Payment information (omit processing fee)
     paymentMethod: PaymentType!
@@ -644,7 +683,7 @@ export default gql`
   # Update reason for replacement section of application
   input UpdateApplicationReasonForReplacementInput {
     # Application ID
-    id: ID!
+    id: Int!
 
     reason: ReasonForReplacement!
     lostTimestamp: Date
@@ -662,7 +701,7 @@ export default gql`
   # Update physician assessment section of application
   input UpdateApplicationPhysicianAssessmentInput {
     # Application ID
-    id: ID!
+    id: Int!
 
     # Physician assessment (omit permit type)
     disability: String!

@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client'; // gql tag
-import { UpsertPhysicianResult, MutationUpsertPhysicianArgs } from '@lib/types'; // GraphQL types
+import { UpsertPhysicianResult, MutationUpsertPhysicianArgs } from '@lib/graphql/types'; // GraphQL types
 
 // TODO: DEPRECATE AND ABSTRACT AWAY WITHIN OTHER APIS
 

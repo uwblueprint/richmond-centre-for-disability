@@ -4,7 +4,7 @@ import { Scalars, UpdateApplicationProcessingResult, ApplicationStatus } from '@
 // TODO: DEPRECATED REPLACE WITH approveApplication
 
 export const APPROVE_APPLICATION_MUTATION = gql`
-  mutation approveApplication($applicationId: ID!) {
+  mutation approveApplication($applicationId: Int!) {
     updateApplicationProcessing(input: {applicationId: $applicationId, status: ${ApplicationStatus.Approved}}) {
       ok
     }

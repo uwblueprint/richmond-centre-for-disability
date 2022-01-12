@@ -1,5 +1,5 @@
-import { Resolver } from '@lib/resolvers'; // Resolver type
-import { Permit } from '@lib/types'; // Permit type
+import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
+import { Permit } from '@lib/graphql/types'; // Permit type
 
 /**
  * Field resolver to fetch the applicant that the permit belongs to

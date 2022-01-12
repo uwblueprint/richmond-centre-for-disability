@@ -3,7 +3,7 @@ import { Applicant, Application, Physician, Renewal } from '@lib/graphql/types';
 
 /** Query applicant for create renewal flow */
 export const GET_APPLICANT_RENEWAL_QUERY = gql`
-  query getApplicantRenewal($id: ID!) {
+  query getApplicantRenewal($id: Int!) {
     applicant(id: $id) {
       firstName
       lastName

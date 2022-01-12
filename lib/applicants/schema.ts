@@ -6,7 +6,7 @@ import { gql } from '@apollo/client';
 
 export default gql`
   type Applicant {
-    id: ID!
+    id: Int!
 
     # Personal
     firstName: String!
@@ -41,7 +41,7 @@ export default gql`
   # Update applicant general information
   input UpdateApplicantGeneralInformationInput {
     # Applicant ID
-    id: ID!
+    id: Int!
 
     # Personal
     firstName: String!
@@ -68,7 +68,7 @@ export default gql`
   # Update applicant doctor information
   input UpdateApplicantDoctorInformationInput {
     # Applicant ID
-    id: ID!
+    id: Int!
 
     # Personal
     firstName: String!
@@ -90,7 +90,7 @@ export default gql`
   # Update applicant guardian information
   input UpdateApplicantGuardianInformationInput {
     # Applicant ID
-    id: ID!
+    id: Int!
 
     # Personal
     firstName: String!
@@ -130,7 +130,7 @@ export default gql`
   # Permit status enum for filtering applicants
   enum PermitStatus {
     ACTIVE
-    EXPIRING_SOON
+    EXPIRING
     EXPIRED
   }
 

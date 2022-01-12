@@ -10,7 +10,7 @@ import {
 } from '@lib/graphql/types'; // GraphQL types
 
 export const GET_PERMIT_HOLDER = gql`
-  query GetPermitHolder($id: ID!) {
+  query GetPermitHolder($id: Int!) {
     applicant(id: $id) {
       id
       rcdUserId

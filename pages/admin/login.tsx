@@ -16,7 +16,7 @@ import {
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
 
-import { Role } from '@lib/types'; // Role enum
+import { Role } from '@lib/graphql/types'; // Role enum
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
 
 export default function Login() {

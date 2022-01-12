@@ -6,7 +6,7 @@ import { gql } from '@apollo/client';
 
 export default gql`
   type Permit {
-    rcdPermitId: ID!
+    rcdPermitId: Int!
     type: PermitType!
     expiryDate: Date!
     active: Boolean!

@@ -7,7 +7,7 @@ import { gql } from '@apollo/client';
 export default gql`
   type Physician {
     # General information
-    mspNumber: ID!
+    mspNumber: Int!
     firstName: String!
     lastName: String!
     phone: String!

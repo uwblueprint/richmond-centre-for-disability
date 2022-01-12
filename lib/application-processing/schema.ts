@@ -9,29 +9,29 @@ export default gql`
     status: ApplicationStatus!
     rejectedReason: String
     appNumber: Int
-    appNumberEmployeeId: ID
+    appNumberEmployeeId: Int
     appNumberUpdatedAt: Date
     appHolepunched: Boolean!
-    appHolepunchedEmployeeId: ID
+    appHolepunchedEmployeeId: Int
     appHolepunchedUpdatedAt: Date
     walletCardCreated: Boolean!
-    walletCardCreatedEmployeeId: ID
+    walletCardCreatedEmployeeId: Int
     walletCardCreatedUpdatedAt: Date
     invoiceNumber: Int
-    invoiceNumberEmployeeId: ID
+    invoiceNumberEmployeeId: Int
     invoiceNumberUpdatedAt: Date
     documentsUrl: String
-    documentsUrlEmployeeId: ID
+    documentsUrlEmployeeId: Int
     documentsUrlUpdatedAt: Date
     appMailed: Boolean!
-    appMailedEmployeeId: ID
+    appMailedEmployeeId: Int
     appMailedUpdatedAt: Date
   }
 
   # Approve application
   input ApproveApplicationInput {
     # Application ID
-    id: ID!
+    id: Int!
   }
 
   type ApproveApplicationResult {
@@ -41,7 +41,7 @@ export default gql`
   # Reject application
   input RejectApplicationInput {
     # Application ID
-    id: ID!
+    id: Int!
 
     # Reason for rejection
     reason: String!
@@ -54,7 +54,7 @@ export default gql`
   # Complete application
   input CompleteApplicationInput {
     # Application ID
-    id: ID!
+    id: Int!
   }
 
   type CompleteApplicationResult {
@@ -63,7 +63,7 @@ export default gql`
 
   # Assign APP number to application
   input UpdateApplicationProcessingAssignAppNumberInput {
-    applicationId: ID!
+    applicationId: Int!
 
     appNumber: Int
   }
@@ -74,7 +74,7 @@ export default gql`
 
   # Holepunch permit card
   input UpdateApplicationProcessingHolepunchParkingPermitInput {
-    applicationId: ID!
+    applicationId: Int!
 
     appHolepunched: Boolean!
   }
@@ -85,7 +85,7 @@ export default gql`
 
   # Create wallet card to mail to applicant
   input UpdateApplicationProcessingCreateWalletCardInput {
-    applicationId: ID!
+    applicationId: Int!
 
     walletCardCreated: Boolean!
   }
@@ -96,7 +96,7 @@ export default gql`
 
   # Assign invoice number to application
   input UpdateApplicationProcessingAssignInvoiceNumberInput {
-    applicationId: ID!
+    applicationId: Int!
 
     invoiceNumber: Int
   }
@@ -107,7 +107,7 @@ export default gql`
 
   # Upload scans of application documents
   input UpdateApplicationProcessingUploadDocumentsInput {
-    applicationId: ID!
+    applicationId: Int!
 
     documentsUrl: String # TODO: Investigate FE vs BE file upload to AWS
   }
@@ -118,7 +118,7 @@ export default gql`
 
   # Mail application to applicant
   input UpdateApplicationProcessingMailOutInput {
-    applicationId: ID!
+    applicationId: Int!
 
     appMailed: Boolean!
   }
@@ -128,7 +128,7 @@ export default gql`
   }
 
   # input UpdateApplicationProcessingInput {
-  #   applicationId: ID!
+  #   applicationId: Int!
   #   status: ApplicationStatus
   #   appNumber: Int
   #   appHolepunched: Boolean

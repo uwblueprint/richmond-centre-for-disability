@@ -6,7 +6,7 @@ import { gql } from '@apollo/client';
 
 export default gql`
   type Employee {
-    id: ID!
+    id: Int!
     firstName: String!
     lastName: String!
     email: String!
@@ -26,7 +26,7 @@ export default gql`
   }
 
   input UpdateEmployeeInput {
-    id: ID!
+    id: Int!
     firstName: String!
     lastName: String!
     email: String!
@@ -39,7 +39,7 @@ export default gql`
   }
 
   input DeleteEmployeeInput {
-    id: ID!
+    id: Int!
   }
 
   type DeleteEmployeeResult {

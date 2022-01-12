@@ -35,6 +35,7 @@ model Applicant {
   updatedAt               DateTime                 @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   guardian                Guardian?                @relation("applicantsToguardians", fields: [guardianId], references: [id])
   medicalInformation      MedicalInformation       @relation("applicantsTomedical_information", fields: [medicalInformationId], references: [id])
+  newApplications         NewApplication[]         @relation("applicantsTonew_applications")
   permits                 Permit[]
   renewalApplications     RenewalApplication[]     @relation("applicantsTorenewal_applications")
   replacementApplications ReplacementApplication[] @relation("applicantsToreplacement_applications")
@@ -87,7 +88,7 @@ model Application {
   newApplication                   NewApplication?         @relation("applicationsTonew_applications")
   permit                           Permit?
   renewalApplication               RenewalApplication?     @relation("applicationsTorenewal_applications")
-  replacementApplications          ReplacementApplication? @relation("applicationsToreplacement_applications")
+  replacementApplication           ReplacementApplication? @relation("applicationsToreplacement_applications")
 
   @@map("applications")
 }
@@ -220,7 +221,7 @@ model ApplicationProcessing {
 }
 
 model NewApplication {
-  application_id                       Int                                  @id
+  applicationId                        Int                                  @id @map("application_id")
   dateOfBirth                          DateTime                             @map("date_of_birth") @db.Date
   gender                               Gender
   otherGender                          String?                              @map("other_gender") @db.VarChar(255)
@@ -241,17 +242,17 @@ model NewApplication {
   physicianProvince                    Province                             @default(BC) @map("physician_province")
   physicianCountry                     String                               @default("Canada") @map("physician_country") @db.VarChar(255)
   physicianPostalCode                  String                               @map("physician_postal_code") @db.VarChar(6)
-  guardianFirstName                    String                               @map("guardian_first_name") @db.VarChar(255)
+  guardianFirstName                    String?                              @map("guardian_first_name") @db.VarChar(255)
   guardianMiddleName                   String?                              @map("guardian_middle_name") @db.VarChar(255)
-  guardianLastName                     String                               @map("guardian_last_name") @db.VarChar(255)
-  guardianPhone                        String                               @map("guardian_phone") @db.VarChar(50)
-  guardianRelationship                 String                               @map("guardian_relationship") @db.VarChar(50)
-  guardianAddressLine1                 String                               @map("guardian_address_line_1") @db.VarChar(255)
+  guardianLastName                     String?                              @map("guardian_last_name") @db.VarChar(255)
+  guardianPhone                        String?                              @map("guardian_phone") @db.VarChar(50)
+  guardianRelationship                 String?                              @map("guardian_relationship") @db.VarChar(50)
+  guardianAddressLine1                 String?                              @map("guardian_address_line_1") @db.VarChar(255)
   guardianAddressLine2                 String?                              @map("guardian_address_line_2") @db.VarChar(255)
-  guardianCity                         String                               @map("guardian_city") @db.VarChar(255)
-  guardianProvince                     Province                             @default(BC) @map("guardian_province")
-  guardianCountry                      String                               @default("Canada") @map("guardian_country") @db.VarChar(255)
-  guardianPostalCode                   String                               @map("guardian_postal_code") @db.VarChar(6)
+  guardianCity                         String?                              @map("guardian_city") @db.VarChar(255)
+  guardianProvince                     Province?                            @default(BC) @map("guardian_province")
+  guardianCountry                      String?                              @default("Canada") @map("guardian_country") @db.VarChar(255)
+  guardianPostalCode                   String?                              @map("guardian_postal_code") @db.VarChar(6)
   poaFormUrl                           String?                              @map("poa_form_url") @db.VarChar(255)
   usesAccessibleConvertedVan           Boolean                              @map("uses_accessible_converted_van")
   accessibleConvertedVanLoadingMethod  AccessibleConvertedVanLoadingMethod? @map("accessible_converted_van_loading_method")
@@ -260,7 +261,9 @@ model NewApplication {
   otherRequiresWiderParkingSpaceReason String?                              @map("other_requires_wider_parking_space_reason") @db.VarChar(255)
   createdAt                            DateTime                             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                            DateTime                             @default(now()) @map("updated_at") @db.Timestamptz(6)
-  application                          Application                          @relation("applicationsTonew_applications", fields: [application_id], references: [id])
+  applicantId                          Int?                                 @map("applicant_id")
+  applicant                            Applicant?                           @relation("applicantsTonew_applications", fields: [applicantId], references: [id])
+  application                          Application                          @relation("applicationsTonew_applications", fields: [applicationId], references: [id])
 
   @@map("new_applications")
 }
@@ -288,6 +291,8 @@ model RenewalApplication {
   applicantId                          Int                                  @map("applicant_id")
   applicant                            Applicant                            @relation("applicantsTorenewal_applications", fields: [applicantId], references: [id])
   application                          Application                          @relation("applicationsTorenewal_applications", fields: [applicationId], references: [id])
+
+  @@map("renewal_applications")
 }
 
 model ReplacementApplication {
@@ -304,6 +309,8 @@ model ReplacementApplication {
   applicantId             Int                  @map("applicant_id")
   applicant               Applicant            @relation("applicantsToreplacement_applications", fields: [applicantId], references: [id])
   application             Application          @relation("applicationsToreplacement_applications", fields: [applicationId], references: [id])
+
+  @@map("replacement_applications")
 }
 
 enum ApplicantStatus {
@@ -329,6 +336,7 @@ enum PaymentType {
   CHEQUE
   DEBIT
   MONEY_ORDER
+  SHOPIFY
 
   @@map("paymenttype")
 }
@@ -393,12 +401,16 @@ enum PermitType {
 enum AccessibleConvertedVanLoadingMethod {
   SIDE_LOADING
   END_LOADING
+
+  @@map("accessibleconvertedvanloadingmethod")
 }
 
 enum ApplicationType {
   NEW
   RENEWAL
   REPLACEMENT
+
+  @@map("applicationtype")
 }
 
 enum MobilityAid {
@@ -407,6 +419,8 @@ enum MobilityAid {
   MANUAL_CHAIR
   SCOOTER
   WALKER
+
+  @@map("mobilityaid")
 }
 
 enum PatientCondition {
@@ -414,15 +428,21 @@ enum PatientCondition {
   MOBILITY_AID_REQUIRED
   CANNOT_WALK_100M
   OTHER
+
+  @@map("patientcondition")
 }
 
 enum RequiresWiderParkingSpaceReason {
   HAS_ACCESSIBLE_VAN
   MEDICAL_REASONS
   OTHER
+
+  @@map("requireswiderparkingspacereason")
 }
 
 enum ShopifyPaymentStatus {
   PENDING
   RECEIVED
+
+  @@map("shopifypaymentstatus")
 }

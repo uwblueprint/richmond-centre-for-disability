@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'; // GraphQL queries
 import { Scalars, CompleteApplicationResult } from '@lib/graphql/types';
 
 export const COMPLETE_APPLICATION_MUTATION = gql`
-  mutation completeApplication($applicationId: ID!) {
+  mutation completeApplication($applicationId: Int!) {
     completeApplication(applicationId: $applicationId) {
       ok
     }

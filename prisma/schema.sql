@@ -26,7 +26,8 @@ CREATE TYPE PaymentType as ENUM(
   'CASH',
   'CHEQUE',
   'DEBIT',
-  'MONEY_ORDER'
+  'MONEY_ORDER',
+  'SHOPIFY'
 );
 
 -- Create applicant status enum
@@ -399,9 +400,12 @@ CREATE TABLE new_applications (
   requires_wider_parking_space BOOLEAN NOT NULL,
   requires_wider_parking_space_reason RequiresWiderParkingSpaceReason,
   other_requires_wider_parking_space_reason VARCHAR(255),
+
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  applicant_id INTEGER,
 
   PRIMARY KEY(application_id),
-  FOREIGN KEY(application_id) REFERENCES applications(id)
+  FOREIGN KEY(application_id) REFERENCES applications(id),
+  FOREIGN KEY(applicant_id) REFERENCES applicants(id)
 );

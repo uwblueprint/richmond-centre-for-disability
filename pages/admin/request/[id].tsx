@@ -7,7 +7,7 @@ import DoctorInformationCard from '@components/admin/requests/doctor-information
 import PaymentInformationCard from '@components/admin/requests/payment-information/Card'; // Payment information card
 import PersonalInformationCard from '@components/admin/requests/applicant-information/Card'; // Personal information card
 import ProcessingTasksCard from '@components/admin/requests/processing/TasksCard'; // Processing tasks card
-import { Role, ApplicationStatus, UpdateApplicationInput } from '@lib/types'; // Enum types
+import { Role, ApplicationStatus, UpdateApplicationInput } from '@lib/graphql/types'; // Enum types
 import { authorize } from '@tools/authorization'; // Page authorization
 import { useQuery, useMutation } from '@apollo/client'; // Apollo Client hooks
 import {

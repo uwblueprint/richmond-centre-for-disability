@@ -68,3 +68,13 @@ export const formatDateVerbose = (date: Date): string => {
 
   return formattedDate;
 };
+
+/**
+ * Format first name, middle name, and last name into a single string for full name
+ * @example formatFullName('John', undefined, 'Kennedy') => 'John Kennedy'
+ * @param args Components of name to be concatenated
+ * @returns {string} Formatted full name
+ */
+export const formatFullName = (...args: Array<string | null | undefined>): string => {
+  return args.filter(arg => !!arg).join(' ');
+};

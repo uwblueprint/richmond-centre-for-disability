@@ -3,7 +3,7 @@ import {
   MutationVerifyIdentityArgs,
   VerifyIdentityFailureReason,
   VerifyIdentityResult,
-} from '@lib/types'; // GraphQL types
+} from '@lib/graphql/types'; // GraphQL types
 
 /**
  * Get the error message to render in the Alert component given the reason for identity

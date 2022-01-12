@@ -8,15 +8,15 @@ export default gql`
   type Query {
     # Applicants
     applicants(filter: ApplicantsFilter): ApplicantsResult
-    applicant(id: ID!): Applicant
+    applicant(id: Int!): Applicant
 
     # Applications
     applications(filter: ApplicationsFilter): ApplicationsResult
-    application(id: ID!): Application
+    application(id: Int!): Application
 
     # Employees
     employees(filter: EmployeesFilter): EmployeesResult
-    employee(id: ID!): Employee
+    employee(id: Int!): Employee
 
     # Reports
     generateApplicationsReport(
@@ -42,10 +42,13 @@ export default gql`
 
     # Applications
     createNewApplication(input: CreateNewApplicationInput!): CreateNewApplicationResult
-    createRenewalApplication(input: CreateRenewalApplicationInput!): CreateRenewalApplicationResult!
+    createRenewalApplication(input: CreateRenewalApplicationInput!): CreateRenewalApplicationResult
+    createExternalRenewalApplication(
+      input: CreateExternalRenewalApplicationInput!
+    ): CreateExternalRenewalApplicationResult!
     createReplacementApplication(
       input: CreateReplacementApplicationInput!
-    ): CreateReplacementApplicationResult!
+    ): CreateReplacementApplicationResult
     updateApplicationGeneralInformation(
       input: UpdateApplicationGeneralInformationInput!
     ): UpdateApplicationGeneralInformationResult
@@ -130,6 +133,7 @@ export default gql`
     CHEQUE
     DEBIT
     MONEY_ORDER
+    SHOPIFY
   }
 
   enum ApplicantStatus {

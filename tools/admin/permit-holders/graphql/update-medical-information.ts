@@ -1,5 +1,8 @@
 import { gql } from '@apollo/client'; // gql tag
-import { MutationUpdateMedicalInformationArgs, UpdateMedicalInformationResult } from '@lib/types'; // GraphQL types
+import {
+  MutationUpdateMedicalInformationArgs,
+  UpdateMedicalInformationResult,
+} from '@lib/graphql/types'; // GraphQL types
 
 // TODO: FIX AND REPLACE WITH UPDATE PHYSICIAN
 

@@ -1,5 +1,5 @@
-import { Resolver } from '@lib/resolvers'; // Resolver type
-import { MedicalInformation } from '@lib/types'; // MedicalInformation type
+import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
+import { MedicalInformation } from '@lib/graphql/types'; // MedicalInformation type
 
 /**
  * Field resolver to fetch the physician associated with a medical information object

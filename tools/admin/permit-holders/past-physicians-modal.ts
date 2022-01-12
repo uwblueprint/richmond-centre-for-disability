@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import { Physician } from '@lib/graphql/types';
 
 export const GET_APPLICANT_PHYSICIANS_QUERY = gql`
-  query GetApplicantPhysiciansQuery($id: ID!) {
+  query GetApplicantPhysiciansQuery($id: Int!) {
     applicant(id: $id) {
       medicalHistory {
         physician {

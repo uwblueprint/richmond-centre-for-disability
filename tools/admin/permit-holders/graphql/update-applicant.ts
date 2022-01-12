@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client'; // gql tag
-import { MutationUpdateApplicantArgs, UpdateApplicantResult } from '@lib/types'; // GraphQL types
+import { MutationUpdateApplicantArgs, UpdateApplicantResult } from '@lib/graphql/types'; // GraphQL types
 
 // TODO: Replace with modular design
 

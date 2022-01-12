@@ -1,5 +1,5 @@
 import { Session } from 'next-auth'; // Session type
-import { Role } from '@lib/types'; // Role enum
+import { Role } from '@lib/graphql/types'; // Role enum
 
 /**
  * Verifies that a user has one of the required roles to access a page

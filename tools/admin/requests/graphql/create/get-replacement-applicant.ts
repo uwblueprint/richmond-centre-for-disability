@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import { Applicant, Application } from '@lib/graphql/types';
 
 export const GET_APPLICANT_REPLACEMENT_QUERY = gql`
-  query getApplicant($id: ID!) {
+  query getApplicant($id: Int!) {
     applicant(id: $id) {
       firstName
       lastName
