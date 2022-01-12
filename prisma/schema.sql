@@ -223,7 +223,14 @@ CREATE TABLE application_processing (
   app_mailed_employee_id INTEGER,
   app_mailed_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY(app_number_employee_id) REFERENCES employees(id),
+  FOREIGN KEY(app_holepunched_employee_id) REFERENCES employees(id),
+  FOREIGN KEY(wallet_card_created_employee_id) REFERENCES employees(id),
+  FOREIGN KEY(invoice_number_employee_id) REFERENCES employees(id),
+  FOREIGN KEY(documents_url_employee_id) REFERENCES employees(id),
+  FOREIGN KEY(app_mailed_employee_id) REFERENCES employees(id)
 );
 
 -- Create applications table

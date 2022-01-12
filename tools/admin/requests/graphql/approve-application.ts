@@ -5,7 +5,7 @@ import { Scalars, UpdateApplicationProcessingResult, ApplicationStatus } from '@
 
 export const APPROVE_APPLICATION_MUTATION = gql`
   mutation approveApplication($applicationId: Int!) {
-    updateApplicationProcessing(input: {applicationId: $applicationId, status: ${ApplicationStatus.Approved}}) {
+    approveApplication(input: {applicationId: $applicationId, status: ${ApplicationStatus.Approved}}) {
       ok
     }
   }
@@ -18,5 +18,5 @@ export type ApproveApplicationRequest = {
 
 // Approve application response type
 export type ApproveApplicationResponse = {
-  updateApplicationProcessing: UpdateApplicationProcessingResult;
+  approveApplication: UpdateApplicationProcessingResult;
 };

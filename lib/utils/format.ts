@@ -1,3 +1,5 @@
+import { Province } from '@lib/graphql/types';
+
 /**
  * Format North American phone number by removing all non-numeric characters.
  * @param {string} phone phone number to be formatted
@@ -77,4 +79,29 @@ export const formatDateVerbose = (date: Date): string => {
  */
 export const formatFullName = (...args: Array<string | null | undefined>): string => {
   return args.filter(arg => !!arg).join(' ');
+};
+
+/**
+ * Format Canadian address. Province and country can be omitted
+ * @param addressLine1 Address line 1
+ * @param addressLine2 Address line 2
+ * @param city City
+ * @param postalCode Postal code
+ * @param province Province (optional)
+ * @param country Country (optional)
+ * @returns Formatted Canadian address
+ */
+export const formatAddress = (
+  addressLine1: string,
+  addressLine2: string | null,
+  city: string,
+  postalCode: string,
+  province?: Province,
+  country?: string
+): string => {
+  return `${addressLine2 ? `${addressLine2} - ${addressLine1}` : addressLine1}
+${province ? `${city} ${province}` : city}
+${country || ''}
+${postalCode}
+  `;
 };

@@ -22,7 +22,6 @@ import {
   createRenewalApplication,
   createExternalRenewalApplication,
   createReplacementApplication,
-  generateApplicationsReport,
   updateApplicationGeneralInformation,
   updateApplicationDoctorInformation,
   updateApplicationAdditionalInformation,
@@ -31,8 +30,15 @@ import {
   updateApplicationPhysicianAssessment,
 } from '@lib/applications/resolvers'; // Application resolvers
 import {
-  updateApplicationProcessing,
+  approveApplication,
+  rejectApplication,
   completeApplication,
+  updateApplicationProcessingAssignAppNumber,
+  updateApplicationProcessingHolepunchParkingPermit,
+  updateApplicationProcessingCreateWalletCard,
+  updateApplicationProcessingAssignInvoiceNumber,
+  updateApplicationProcessingUploadDocuments,
+  updateApplicationProcessingMailOut,
 } from '@lib/application-processing/resolvers'; // Application processing resolvers
 import { Context } from '@lib/graphql/context'; // Context type
 import { dateScalar } from '@lib/graphql/scalars'; // Custom date scalar implementation
@@ -60,7 +66,7 @@ import { updateMedicalInformation } from '@lib/medical-information/resolvers'; /
 import { medicalInformationPhysicianResolver } from '@lib/medical-information/field-resolvers'; // Medical information field resolvers
 import { updateGuardian } from '@lib/guardian/resolvers'; // Guardian resolvers
 import { applicationReplacementResolver } from '@lib/applications/field-resolvers'; // Application replacement resolver
-import { generatePermitHoldersReport } from '@lib/reports/resolvers';
+import { generatePermitHoldersReport, generateApplicationsReport } from '@lib/reports/resolvers';
 
 /**
  * Resolver return type - accounts for extra fields
@@ -152,7 +158,32 @@ const resolvers = {
     ]),
 
     // Application processing
+    approveApplication: authorize(approveApplication, ['SECRETARY']),
+    rejectApplication: authorize(rejectApplication, ['SECRETARY']),
     completeApplication: authorize(completeApplication, ['SECRETARY']),
+    updateApplicationProcessingAssignAppNumber: authorize(
+      updateApplicationProcessingAssignAppNumber,
+      ['SECRETARY']
+    ),
+    updateApplicationProcessingHolepunchParkingPermit: authorize(
+      updateApplicationProcessingHolepunchParkingPermit,
+      ['SECRETARY']
+    ),
+    updateApplicationProcessingCreateWalletCard: authorize(
+      updateApplicationProcessingCreateWalletCard,
+      ['SECRETARY']
+    ),
+    updateApplicationProcessingAssignInvoiceNumber: authorize(
+      updateApplicationProcessingAssignInvoiceNumber,
+      ['SECRETARY']
+    ),
+    updateApplicationProcessingUploadDocuments: authorize(
+      updateApplicationProcessingUploadDocuments,
+      ['SECRETARY']
+    ),
+    updateApplicationProcessingMailOut: authorize(updateApplicationProcessingMailOut, [
+      'SECRETARY',
+    ]),
 
     // Employees
     createEmployee: authorize(createEmployee),

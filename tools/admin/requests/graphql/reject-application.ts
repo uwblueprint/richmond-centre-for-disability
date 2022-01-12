@@ -5,7 +5,7 @@ import { Scalars, UpdateApplicationProcessingResult, ApplicationStatus } from '@
 
 export const REJECT_APPLICATION_MUTATION = gql`
   mutation rejectApplication($applicationId: Int!) {
-    updateApplicationProcessing(input: {applicationId: $applicationId, status: ${ApplicationStatus.Rejected}}) {
+    rejectApplication(input: {applicationId: $applicationId, status: ${ApplicationStatus.Rejected}}) {
       ok
     }
   }
@@ -18,5 +18,5 @@ export type RejectApplicationRequest = {
 
 // Reject application response type
 export type RejectApplicationResponse = {
-  updateApplicationProcessing: UpdateApplicationProcessingResult;
+  rejectApplication: UpdateApplicationProcessingResult;
 };

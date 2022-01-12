@@ -3,20 +3,23 @@ import { Resolver } from '@lib/graphql/resolvers';
 import {
   QueryGeneratePermitHoldersReportArgs,
   PermitHoldersReportColumn,
+  GeneratePermitHoldersReportResult,
+  QueryGenerateApplicationsReportArgs,
+  GenerateApplicationsReportResult,
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
-import { formatDate } from '@lib/utils/format'; // Formatting utils
+import { formatAddress, formatDate, formatFullName } from '@lib/utils/format'; // Formatting utils
+import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
 
 /**
  * Generates csv with permit holders' info, given a start date, end date, and values from
  * PermitHoldersReportColumn that the user would like to have on the generated csv
  * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
  */
-export const generatePermitHoldersReport: Resolver<QueryGeneratePermitHoldersReportArgs> = async (
-  _,
-  args,
-  { prisma }
-) => {
+export const generatePermitHoldersReport: Resolver<
+  QueryGeneratePermitHoldersReportArgs,
+  GeneratePermitHoldersReportResult
+> = async (_, args, { prisma }) => {
   const {
     input: { startDate, endDate, columns },
   } = args;
@@ -69,93 +72,54 @@ export const generatePermitHoldersReport: Resolver<QueryGeneratePermitHoldersRep
         take: 1,
         select: {
           rcdPermitId: true,
-          // TODO: Update permit table to include permit type
-          // TODO: Once updated, fetch permitType from latest permit
-          // permitType: true,
-        },
-      },
-      // Fetches permitType from latest application
-      // TODO: Update permit table to include permit type
-      // TODO: Once updated, fetch field from latest permit instead and remove following code
-      applications: {
-        orderBy: {
-          createdAt: SortOrder.DESC,
-        },
-        take: 1,
-        select: {
-          permitType: true,
+          type: true,
         },
       },
     },
   });
 
   // Formats fields and adds properties to allow for csv writing
-  const csvApplicants = applicants.map(applicant => {
-    return {
-      ...applicant,
-      dateOfBirth: formatDate(applicant.dateOfBirth),
-      applicantName: `${applicant.firstName}${
-        applicant.middleName ? ` ${applicant.middleName}` : ''
-      } ${applicant.lastName}`,
-      rcdPermitId: applicant.permits[0].rcdPermitId,
-      permitType: applicant.applications[0].permitType,
-      homeAddress: `${applicant.addressLine1},${
-        applicant.addressLine2 ? ` ${applicant.addressLine2},` : ''
-      } ${applicant.city}, ${applicant.province} ${applicant.postalCode}`,
-      guardianRelationship: applicant.guardian?.relationship,
-      guardianPOAName: applicant.guardian
-        ? `${applicant.guardian.firstName}${
-            applicant.guardian?.middleName ? ` ${applicant.guardian.middleName}` : ''
-          } ${applicant.guardian.lastName}`
-        : '',
-      guardianPOAAdress: applicant.guardian
-        ? `${applicant.guardian.addressLine1}${
-            applicant.guardian.addressLine2 ? ` ${applicant.guardian.addressLine2},` : ''
-          } ${applicant.guardian.city}, ${applicant.guardian.province} ${
-            applicant.guardian.postalCode
-          }`
-        : '',
-    };
-  });
+  const csvApplicants = applicants.map(
+    ({
+      firstName,
+      middleName,
+      lastName,
+      dateOfBirth,
+      addressLine1,
+      addressLine2,
+      city,
+      province,
+      postalCode,
+      guardian,
+      permits,
+      ...applicant
+    }) => {
+      return {
+        ...applicant,
+        dateOfBirth: formatDate(dateOfBirth),
+        applicantName: formatFullName(firstName, middleName, lastName),
+        rcdPermitId: permits[0].rcdPermitId,
+        permitType: permits[0].type,
+        homeAddress: formatAddress(addressLine1, addressLine2, city, postalCode, province),
+        guardianRelationship: guardian?.relationship,
+        guardianPOAName:
+          guardian && formatFullName(guardian.firstName, guardian.middleName, guardian.lastName),
+        guardianPOAAddress:
+          guardian &&
+          formatAddress(
+            guardian.addressLine1,
+            guardian.addressLine2,
+            guardian.city,
+            guardian.postalCode,
+            guardian.province
+          ),
+      };
+    }
+  );
 
-  const csvHeaders = [];
-
-  if (columnsSet.has(PermitHoldersReportColumn.UserId)) {
-    csvHeaders.push({ id: 'rcdUserId', title: 'User ID' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.ApplicantName)) {
-    csvHeaders.push({ id: 'applicantName', title: 'Applicant Name' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.ApplicantDateOfBirth)) {
-    csvHeaders.push({ id: 'dateOfBirth', title: 'Applicant DoB' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.HomeAddress)) {
-    csvHeaders.push({ id: 'homeAddress', title: 'Home Address' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.Email)) {
-    csvHeaders.push({ id: 'email', title: 'Email' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.PhoneNumber)) {
-    csvHeaders.push({ id: 'phone', title: 'Phone Number' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaName)) {
-    csvHeaders.push({ id: 'guardianPOAName', title: 'Guardian/POA Name' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaRelation)) {
-    csvHeaders.push({ id: 'guardianRelationship', title: 'Guardian/POA Relation' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaAddress)) {
-    csvHeaders.push({ id: 'guardianPOAAdress', title: 'Guardian/POA Address' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.RecentAppNumber)) {
-    csvHeaders.push({ id: 'rcdPermitId', title: 'Recent APP Number' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.RecentAppType)) {
-    csvHeaders.push({ id: 'permitType', title: 'Recent APP Type' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.UserStatus)) {
-    csvHeaders.push({ id: 'status', title: 'User Status' });
-  }
+  const csvHeaders = PERMIT_HOLDERS_COLUMNS.filter(({ value }) => columnsSet.has(value)).map(
+    ({ name, reportColumnId }) => ({ id: reportColumnId, title: name })
+  );
 
   const csvWriter = createObjectCsvWriter({
     path: 'temp/file-permit-holders.csv',
@@ -174,7 +138,10 @@ export const generatePermitHoldersReport: Resolver<QueryGeneratePermitHoldersRep
  * ApplicationsReportColumn that the user would like to have on the generated csv
  * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
  */
-export const generateApplicationsReport: Resolver = async (_, args, { prisma }) => {
+export const generateApplicationsReport: Resolver<
+  QueryGenerateApplicationsReportArgs,
+  GenerateApplicationsReportResult
+> = async (_, args, { prisma }) => {
   const {
     input: { startDate, endDate, columns },
   } = args;
@@ -189,19 +156,37 @@ export const generateApplicationsReport: Resolver = async (_, args, { prisma }) 
       },
     },
     select: {
-      rcdUserId: columnsSet.has(ApplicationsReportColumn.UserId),
-      firstName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
-      middleName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
-      lastName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
-      dateOfBirth: columnsSet.has(ApplicationsReportColumn.ApplicantDateOfBirth),
-      createdAt: columnsSet.has(ApplicationsReportColumn.ApplicationDate),
-      paymentMethod: columnsSet.has(ApplicationsReportColumn.PaymentMethod),
-      processingFee:
-        columnsSet.has(ApplicationsReportColumn.FeeAmount) ||
-        columnsSet.has(ApplicationsReportColumn.TotalAmount),
-      donationAmount:
-        columnsSet.has(ApplicationsReportColumn.DonationAmount) ||
-        columnsSet.has(ApplicationsReportColumn.TotalAmount),
+      firstName: true,
+      middleName: true,
+      lastName: true,
+      type: true,
+      createdAt: true,
+      paymentMethod: true,
+      processingFee: true,
+      donationAmount: true,
+      newApplication: {
+        select: {
+          dateOfBirth: true,
+        },
+      },
+      renewalApplication: {
+        select: {
+          applicant: {
+            select: {
+              dateOfBirth: true,
+            },
+          },
+        },
+      },
+      replacementApplication: {
+        select: {
+          applicant: {
+            select: {
+              dateOfBirth: true,
+            },
+          },
+        },
+      },
       permit: {
         select: {
           rcdPermitId: true,
@@ -211,55 +196,57 @@ export const generateApplicationsReport: Resolver = async (_, args, { prisma }) 
   });
 
   // Formats the date fields and adds totalAmount, applicantName and rcdPermitId properties to allow for csv writing
-  const csvApplications = applications.map(application => {
-    return {
-      ...application,
-      dateOfBirth: formatDate(application.dateOfBirth),
-      applicationDate: application.createdAt.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: 'numeric',
-        timeZone: 'America/Vancouver',
-      }),
-      applicantName: `${application.firstName}${
-        application.middleName ? ` ${application.middleName}` : ''
-      } ${application.lastName}`,
-      totalAmount: (application.processingFee || 0) + (application?.donationAmount || 0),
-      rcdPermitId: application.permit?.rcdPermitId,
-    };
-  });
+  const csvApplications = applications.map(
+    ({
+      firstName,
+      middleName,
+      lastName,
+      type,
+      createdAt,
+      processingFee,
+      donationAmount,
+      newApplication,
+      renewalApplication,
+      replacementApplication,
+      permit,
+      ...application
+    }) => {
+      let dateOfBirth: Date | null;
+      switch (type) {
+        case 'NEW':
+          dateOfBirth = newApplication?.dateOfBirth || null;
+          break;
+        case 'RENEWAL':
+          dateOfBirth = renewalApplication?.applicant.dateOfBirth || null;
+          break;
+        case 'REPLACEMENT':
+          dateOfBirth = replacementApplication?.applicant.dateOfBirth || null;
+          break;
+        default:
+          dateOfBirth = null;
+      }
 
-  const csvHeaders = [];
+      return {
+        ...application,
+        dateOfBirth: dateOfBirth && formatDate(dateOfBirth),
+        applicationDate: createdAt.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: 'numeric',
+          timeZone: 'America/Vancouver',
+        }),
+        applicantName: formatFullName(firstName, middleName, lastName),
+        totalAmount: processingFee.plus(donationAmount),
+        rcdPermitId: permit?.rcdPermitId,
+      };
+    }
+  );
 
-  if (columnsSet.has(ApplicationsReportColumn.UserId)) {
-    csvHeaders.push({ id: 'rcdUserId', title: 'User ID' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.ApplicantName)) {
-    csvHeaders.push({ id: 'applicantName', title: 'Applicant Name' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.ApplicantDateOfBirth)) {
-    csvHeaders.push({ id: 'dateOfBirth', title: 'Applicant DoB' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.AppNumber)) {
-    csvHeaders.push({ id: 'rcdPermitId', title: 'APP Number' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.ApplicationDate)) {
-    csvHeaders.push({ id: 'applicationDate', title: 'Application Date' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.PaymentMethod)) {
-    csvHeaders.push({ id: 'paymentMethod', title: 'Payment Method' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.FeeAmount)) {
-    csvHeaders.push({ id: 'processingFee', title: 'Fee Amount' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.DonationAmount)) {
-    csvHeaders.push({ id: 'donationAmount', title: 'Donation Amount' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.TotalAmount)) {
-    csvHeaders.push({ id: 'totalAmount', title: 'Total Amount' });
-  }
+  const csvHeaders = APPLICATIONS_COLUMNS.filter(({ value }) => columnsSet.has(value)).map(
+    ({ name, reportColumnId }) => ({ id: reportColumnId, title: name })
+  );
 
   const csvWriter = createObjectCsvWriter({
     path: 'temp/file.csv',
