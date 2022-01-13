@@ -2,7 +2,6 @@ import { createObjectCsvWriter } from 'csv-writer';
 import { Resolver } from '@lib/graphql/resolvers';
 import {
   QueryGeneratePermitHoldersReportArgs,
-  PermitHoldersReportColumn,
   GeneratePermitHoldersReportResult,
   QueryGenerateApplicationsReportArgs,
   GenerateApplicationsReportResult,
@@ -164,27 +163,14 @@ export const generateApplicationsReport: Resolver<
       paymentMethod: true,
       processingFee: true,
       donationAmount: true,
-      newApplication: {
+      applicant: {
         select: {
           dateOfBirth: true,
         },
       },
-      renewalApplication: {
+      newApplication: {
         select: {
-          applicant: {
-            select: {
-              dateOfBirth: true,
-            },
-          },
-        },
-      },
-      replacementApplication: {
-        select: {
-          applicant: {
-            select: {
-              dateOfBirth: true,
-            },
-          },
+          dateOfBirth: true,
         },
       },
       permit: {
@@ -205,9 +191,8 @@ export const generateApplicationsReport: Resolver<
       createdAt,
       processingFee,
       donationAmount,
+      applicant,
       newApplication,
-      renewalApplication,
-      replacementApplication,
       permit,
       ...application
     }) => {
@@ -217,10 +202,8 @@ export const generateApplicationsReport: Resolver<
           dateOfBirth = newApplication?.dateOfBirth || null;
           break;
         case 'RENEWAL':
-          dateOfBirth = renewalApplication?.applicant.dateOfBirth || null;
-          break;
         case 'REPLACEMENT':
-          dateOfBirth = replacementApplication?.applicant.dateOfBirth || null;
+          dateOfBirth = applicant?.dateOfBirth || null;
           break;
         default:
           dateOfBirth = null;

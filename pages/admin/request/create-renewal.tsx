@@ -8,7 +8,6 @@ import AdditionalQuestionsForm from '@components/admin/requests/additional-quest
 import { AdditionalQuestions } from '@tools/admin/requests/additional-questions'; //Additional questions type
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
 import { PaymentInformation } from '@tools/admin/requests/payment-information';
-import { ApplicantStatus, Gender, PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
 import Link from 'next/link'; // Link
 import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
@@ -553,7 +552,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
 
   // Only secretaries and admins can access APP requests
-  if (authorize(session, [Role.Secretary])) {
+  if (authorize(session, ['SECRETARY'])) {
     return {
       props: {},
     };

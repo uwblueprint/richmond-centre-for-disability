@@ -22,7 +22,7 @@ import {
   MedicalHistoryEntry,
   PreviousPhysicianData,
 } from '@tools/admin/permit-holders/types'; // Permit holder types
-import { Role, UpdateApplicantInput, UpsertPhysicianInput } from '@lib/graphql/types'; // GraphQL types
+import { UpdateApplicantInput, UpsertPhysicianInput } from '@lib/graphql/types'; // GraphQL types
 import {
   UpsertPhysicianRequest,
   UpsertPhysicianResponse,
@@ -245,7 +245,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
 
   // Only secretaries and admins can access permit holder information
-  if (authorize(session, [Role.Secretary])) {
+  if (authorize(session, ['SECRETARY'])) {
     const id = context?.params?.id;
 
     return {

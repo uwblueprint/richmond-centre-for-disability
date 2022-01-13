@@ -14,7 +14,7 @@ export const authorize = (session: Session | null, rolesAllowed?: ReadonlyArray<
   }
 
   // Admins have access to all pages
-  if (session.role === Role.Admin) {
+  if (session.role === 'ADMIN') {
     return true;
   }
 

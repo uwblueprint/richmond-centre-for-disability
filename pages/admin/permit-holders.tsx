@@ -23,7 +23,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/admin/Layout'; // Layout component
-import { Permit, PermitStatus, Role, UserStatus } from '@lib/graphql/types'; // Types
+import { Permit, PermitStatus, UserStatus } from '@lib/graphql/types'; // Types
 import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/Table'; // Table component
 import Pagination from '@components/Pagination'; // Pagination component
@@ -506,7 +506,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
 
   // Only secretaries and admins can access permit holder information
-  if (authorize(session, [Role.Secretary])) {
+  if (authorize(session, ['SECRETARY'])) {
     return {
       props: {},
     };

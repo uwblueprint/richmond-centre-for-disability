@@ -6,14 +6,16 @@ import { SortOptions } from '@tools/types'; // Sorting types
 import { getSortOptions } from '@tools/admin/table'; // Get the sort options from the React Table sortBy state
 
 // Table Props
-type Props = {
-  readonly columns: Array<Column<any>>; // Depends on shape of data
-  readonly data: Array<any>; // Depends on shape of data
+// Allow `object` type for react-table type compliance
+// eslint-disable-next-line @typescript-eslint/ban-types
+type Props<T extends object> = {
+  readonly columns: Array<Column<T>>; // Depends on shape of data
+  readonly data: Array<T>; // Depends on shape of data
   readonly onChangeSortOrder?: (sort: SortOptions) => unknown; // Callback after changing sorting
-  readonly onRowClick?: (row: any) => unknown;
+  readonly onRowClick?: (row: T) => unknown;
 };
 
-export default function Table(props: Props) {
+export default function Table<T>(props: Props<T>) {
   const { columns, data, onChangeSortOrder, onRowClick } = props;
 
   // Table rendering functions

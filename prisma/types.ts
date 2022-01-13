@@ -6,7 +6,7 @@ import {
   MedicalInformation,
   Permit,
   Physician,
-} from '@lib/graphql/types'; // GraphQL types
+} from '@prisma/client'; // GraphQL types
 
 // Type of Applicant to upsert in DB
 export type UpsertApplicant = Pick<
@@ -51,11 +51,9 @@ export type UpsertGuardian = Pick<
 export type UpsertApplication = Pick<
   Application,
   | 'id'
-  | 'rcdUserId'
   | 'firstName'
   | 'middleName'
   | 'lastName'
-  | 'gender'
   | 'phone'
   | 'province'
   | 'city'
@@ -110,7 +108,7 @@ export type UpsertApplicationProcessing = Pick<
   | 'appHolepunched'
   | 'walletCardCreated'
   | 'invoiceNumber'
-  | 'documentUrls'
+  | 'documentsUrl'
   | 'appMailed'
 > & {
   id: number;

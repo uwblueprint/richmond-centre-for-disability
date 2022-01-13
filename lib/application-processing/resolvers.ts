@@ -263,6 +263,7 @@ export const completeApplication: Resolver<
           type: permitType,
           expiryDate,
           // Create a new applicant record
+          // ? How to set rcdUserId?
           applicant: {
             create: {
               firstName,
@@ -281,9 +282,9 @@ export const completeApplication: Resolver<
               country,
               postalCode,
               // Connect application to newly created applicant
-              newApplications: {
+              applications: {
                 connect: {
-                  applicationId: id,
+                  id,
                 },
               },
               medicalInformation: {

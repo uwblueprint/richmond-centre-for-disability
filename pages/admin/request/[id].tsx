@@ -7,7 +7,7 @@ import DoctorInformationCard from '@components/admin/requests/doctor-information
 import PaymentInformationCard from '@components/admin/requests/payment-information/Card'; // Payment information card
 import PersonalInformationCard from '@components/admin/requests/applicant-information/Card'; // Personal information card
 import ProcessingTasksCard from '@components/admin/requests/processing/TasksCard'; // Processing tasks card
-import { Role, ApplicationStatus, UpdateApplicationInput } from '@lib/graphql/types'; // Enum types
+import { UpdateApplicationInput } from '@lib/graphql/types'; // Enum types
 import { authorize } from '@tools/authorization'; // Page authorization
 import { useQuery, useMutation } from '@apollo/client'; // Apollo Client hooks
 import {
@@ -310,7 +310,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
 
   // Only secretaries and admins can access application information
-  if (authorize(session, [Role.Secretary])) {
+  if (authorize(session, ['SECRETARY'])) {
     const id = context?.params?.id;
 
     return {

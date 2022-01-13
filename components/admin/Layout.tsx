@@ -106,7 +106,7 @@ function Header() {
             <>
               <Tabs height="100%" index={getTabIndex(pathname, session.role as Role)}>
                 <TabList height="100%" borderBottomColor="transparent">
-                  {authorize(session, [Role.Secretary]) && (
+                  {authorize(session, ['SECRETARY']) && (
                     <>
                       <Tab
                         path={InternalPagePath.Requests}
@@ -122,7 +122,7 @@ function Header() {
                       </Tab>
                     </>
                   )}
-                  {authorize(session, [Role.Accounting]) && (
+                  {authorize(session, ['ACCOUNTING']) && (
                     <Tab path={InternalPagePath.Reports}>Reports</Tab>
                   )}
                   {authorize(session, []) && (
