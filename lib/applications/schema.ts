@@ -17,6 +17,7 @@ export default gql`
     # Contact information
     phone: String!
     email: String
+    receiveEmailUpdates: Boolean!
 
     # Address
     addressLine1: String!
@@ -257,6 +258,7 @@ export default gql`
     # Contact information
     phone: String!
     email: String
+    receiveEmailUpdates: Boolean!
 
     # Address
     addressLine1: String!
@@ -362,7 +364,7 @@ export default gql`
     guardianAddressLine1: String
     guardianAddressLine2: String
     guardianCity: String
-    guardianPostalCode: String!
+    guardianPostalCode: String
     poaFormUrl: String
 
     # Additional information
@@ -374,10 +376,8 @@ export default gql`
 
     # Payment information (omit processing fee)
     paymentMethod: PaymentType!
-    donationAmount: String # Input monetary value as string
-    paidThroughShopify: Boolean!
-    shopifyPaymentStatus: ShopifyPaymentStatus
-    shopifyConfirmationNumber: String
+    # Input monetary value as string
+    donationAmount: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -540,10 +540,8 @@ export default gql`
 
     # Payment information (omit processing fee)
     paymentMethod: PaymentType!
-    donationAmount: String # Input monetary value as string
-    paidThroughShopify: Boolean!
-    shopifyPaymentStatus: ShopifyPaymentStatus
-    shopifyConfirmationNumber: String
+    # Input monetary value as string
+    donationAmount: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -576,7 +574,7 @@ export default gql`
   input ApplicationsFilter {
     order: [[String!]!]
     permitType: PermitType
-    requestType: String
+    requestType: ApplicationType
     status: ApplicationStatus
     search: String
     limit: Int
@@ -601,6 +599,7 @@ export default gql`
     # Contact information
     phone: String!
     email: String
+    receiveEmailUpdates: Boolean
 
     # Address
     addressLine1: String!

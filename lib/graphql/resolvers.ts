@@ -200,6 +200,21 @@ const resolvers = {
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
   },
+  NewApplication: {
+    __resolveType: __resolveApplicationType,
+    applicant: applicationApplicantResolver,
+    processing: applicationProcessingResolver,
+  },
+  RenewalApplication: {
+    __resolveType: __resolveApplicationType,
+    applicant: applicationApplicantResolver,
+    processing: applicationProcessingResolver,
+  },
+  ReplacementApplication: {
+    __resolveType: __resolveApplicationType,
+    applicant: applicationApplicantResolver,
+    processing: applicationProcessingResolver,
+  },
   MedicalInformation: {
     physician: medicalInformationPhysicianResolver,
   },

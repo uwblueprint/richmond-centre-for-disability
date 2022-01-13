@@ -1,7 +1,7 @@
 import Layout from '@components/admin/Layout'; // Layout component
 import { Text, Box, Flex, Stack, Button, GridItem, useToast } from '@chakra-ui/react'; // Chakra UI
 import { SyntheticEvent, useState } from 'react'; // React
-import PermitHolderInformationForm from '@components/admin/requests/applicant-information/Form'; //Permit holder information form
+import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
 import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information'; //Permit holder information type
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form'; //Doctor information form
 import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form'; //Additional questions form

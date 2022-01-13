@@ -77,6 +77,7 @@ export type Application = {
   lastName: Scalars['String'];
   phone: Scalars['String'];
   email: Maybe<Scalars['String']>;
+  receiveEmailUpdates: Scalars['Boolean'];
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
@@ -150,7 +151,7 @@ export type ApplicationType =
 export type ApplicationsFilter = {
   order: Maybe<Array<Array<Scalars['String']>>>;
   permitType: Maybe<PermitType>;
-  requestType: Maybe<Scalars['String']>;
+  requestType: Maybe<ApplicationType>;
   status: Maybe<ApplicationStatus>;
   search: Maybe<Scalars['String']>;
   limit: Maybe<Scalars['Int']>;
@@ -275,7 +276,7 @@ export type CreateNewApplicationInput = {
   guardianAddressLine1: Maybe<Scalars['String']>;
   guardianAddressLine2: Maybe<Scalars['String']>;
   guardianCity: Maybe<Scalars['String']>;
-  guardianPostalCode: Scalars['String'];
+  guardianPostalCode: Maybe<Scalars['String']>;
   poaFormUrl: Maybe<Scalars['String']>;
   usesAccessibleConvertedVan: Scalars['Boolean'];
   accessibleConvertedVanLoadingMethod: Maybe<AccessibleConvertedVanLoadingMethod>;
@@ -284,9 +285,6 @@ export type CreateNewApplicationInput = {
   otherRequiresWiderParkingSpaceReason: Maybe<Scalars['String']>;
   paymentMethod: PaymentType;
   donationAmount: Maybe<Scalars['String']>;
-  paidThroughShopify: Scalars['Boolean'];
-  shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
-  shopifyConfirmationNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;
@@ -382,9 +380,6 @@ export type CreateReplacementApplicationInput = {
   eventDescription: Maybe<Scalars['String']>;
   paymentMethod: PaymentType;
   donationAmount: Maybe<Scalars['String']>;
-  paidThroughShopify: Scalars['Boolean'];
-  shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
-  shopifyConfirmationNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;
@@ -968,6 +963,7 @@ export type ReplacementApplication = Application & {
   lastName: Scalars['String'];
   phone: Scalars['String'];
   email: Maybe<Scalars['String']>;
+  receiveEmailUpdates: Scalars['Boolean'];
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
@@ -1136,6 +1132,7 @@ export type UpdateApplicationGeneralInformationInput = {
   lastName: Scalars['String'];
   phone: Scalars['String'];
   email: Maybe<Scalars['String']>;
+  receiveEmailUpdates: Maybe<Scalars['Boolean']>;
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];

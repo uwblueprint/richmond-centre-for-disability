@@ -512,12 +512,13 @@ export const completeApplication: Resolver<
 export const updateApplicationProcessingAssignAppNumber: Resolver<
   MutationUpdateApplicationProcessingAssignAppNumberArgs,
   UpdateApplicationProcessingAssignAppNumberResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, context) => {
   // TODO: Validation
   const { input } = args;
+  const { prisma } = context;
   const { applicationId, appNumber } = input;
 
-  const session = await getSession();
+  const session = await getSession(context);
   if (!session) {
     // TODO: Create error
     throw new ApolloError('Not authenticated');
@@ -559,12 +560,13 @@ export const updateApplicationProcessingAssignAppNumber: Resolver<
 export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
   MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
   UpdateApplicationProcessingHolepunchParkingPermitResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, context) => {
   // TODO: Validation
   const { input } = args;
+  const { prisma } = context;
   const { applicationId, appHolepunched } = input;
 
-  const session = await getSession();
+  const session = await getSession(context);
   if (!session) {
     // TODO: Create error
     throw new ApolloError('Not authenticated');
@@ -606,12 +608,13 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
 export const updateApplicationProcessingCreateWalletCard: Resolver<
   MutationUpdateApplicationProcessingCreateWalletCardArgs,
   UpdateApplicationProcessingCreateWalletCardResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, context) => {
   // TODO: Validation
   const { input } = args;
+  const { prisma } = context;
   const { applicationId, walletCardCreated } = input;
 
-  const session = await getSession();
+  const session = await getSession(context);
   if (!session) {
     // TODO: Create error
     throw new ApolloError('Not authenticated');
@@ -653,12 +656,13 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
 export const updateApplicationProcessingAssignInvoiceNumber: Resolver<
   MutationUpdateApplicationProcessingAssignInvoiceNumberArgs,
   UpdateApplicationProcessingAssignInvoiceNumberResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, context) => {
   // TODO: Validation
   const { input } = args;
+  const { prisma } = context;
   const { applicationId, invoiceNumber } = input;
 
-  const session = await getSession();
+  const session = await getSession(context);
   if (!session) {
     // TODO: Create error
     throw new ApolloError('Not authenticated');
@@ -700,12 +704,13 @@ export const updateApplicationProcessingAssignInvoiceNumber: Resolver<
 export const updateApplicationProcessingUploadDocuments: Resolver<
   MutationUpdateApplicationProcessingUploadDocumentsArgs,
   UpdateApplicationProcessingUploadDocumentsResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, context) => {
   // TODO: Validation
   const { input } = args;
+  const { prisma } = context;
   const { applicationId, documentsUrl } = input;
 
-  const session = await getSession();
+  const session = await getSession(context);
   if (!session) {
     // TODO: Create error
     throw new ApolloError('Not authenticated');
@@ -747,12 +752,13 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
 export const updateApplicationProcessingMailOut: Resolver<
   MutationUpdateApplicationProcessingMailOutArgs,
   UpdateApplicationProcessingMailOutResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, context) => {
   // TODO: Validation
   const { input } = args;
+  const { prisma } = context;
   const { applicationId, appMailed } = input;
 
-  const session = await getSession();
+  const session = await getSession(context);
   if (!session) {
     // TODO: Create error
     throw new ApolloError('Not authenticated');

@@ -5,7 +5,7 @@ import Layout from '@components/admin/Layout'; // Layout component
 import RequestHeader from '@components/admin/requests/Header'; // Request header
 import DoctorInformationCard from '@components/admin/requests/doctor-information/Card'; // Doctor information card
 import PaymentInformationCard from '@components/admin/requests/payment-information/Card'; // Payment information card
-import PersonalInformationCard from '@components/admin/requests/applicant-information/Card'; // Personal information card
+import PersonalInformationCard from '@components/admin/requests/permit-holder-information/Card'; // Personal information card
 import ProcessingTasksCard from '@components/admin/requests/processing/TasksCard'; // Processing tasks card
 import { UpdateApplicationInput } from '@lib/graphql/types'; // Enum types
 import { authorize } from '@tools/authorization'; // Page authorization
@@ -14,27 +14,13 @@ import {
   GET_APPLICATION_QUERY,
   GetApplicationRequest,
   GetApplicationResponse,
-} from '@tools/admin/requests/graphql/get-application'; // Request page GraphQL queries
+} from '@tools/admin/requests/view-request'; // Request page GraphQL queries
 import {
   UPDATE_APPLICATION_MUTATION,
   UpdateApplicationRequest,
   UpdateApplicationResponse,
 } from '@tools/admin/requests/graphql/update-application';
-import {
-  APPROVE_APPLICATION_MUTATION,
-  ApproveApplicationRequest,
-  ApproveApplicationResponse,
-} from '@tools/admin/requests/graphql/approve-application';
-import {
-  REJECT_APPLICATION_MUTATION,
-  RejectApplicationRequest,
-  RejectApplicationResponse,
-} from '@tools/admin/requests/graphql/reject-application';
-import {
-  COMPLETE_APPLICATION_MUTATION,
-  CompleteApplicationRequest,
-  CompleteApplicationResponse,
-} from '@tools/admin/requests/graphql/complete-application';
+
 import {
   UPDATE_APPLICATION_PROCESSING_MUTATION,
   UpdateApplicationProcessingRequest,
@@ -42,14 +28,16 @@ import {
 } from '@tools/admin/requests/graphql/update-application-processing';
 
 type Props = {
-  readonly id: number;
+  readonly id: string;
 };
 
 /**
  * View Request page
  * @param id Request ID
  */
-export default function Request({ id }: Props) {
+export default function Request({ id: idString }: Props) {
+  const id = parseInt(idString);
+
   // Get request data query
   const { data } = useQuery<GetApplicationResponse, GetApplicationRequest>(GET_APPLICATION_QUERY, {
     variables: { id },
@@ -63,30 +51,6 @@ export default function Request({ id }: Props) {
     }
   );
 
-  // Approve application mutation
-  const [approveApplication] = useMutation<ApproveApplicationResponse, ApproveApplicationRequest>(
-    APPROVE_APPLICATION_MUTATION,
-    {
-      refetchQueries: ['GetApplication'],
-    }
-  );
-
-  // Reject application mutation
-  const [rejectApplication] = useMutation<RejectApplicationResponse, RejectApplicationRequest>(
-    REJECT_APPLICATION_MUTATION,
-    {
-      refetchQueries: ['GetApplication'],
-    }
-  );
-
-  // Complete application mutation
-  const [completeApplication] = useMutation<
-    CompleteApplicationResponse,
-    CompleteApplicationRequest
-  >(COMPLETE_APPLICATION_MUTATION, {
-    refetchQueries: ['GetApplication'],
-  });
-
   // Update application processing mutation
   const [updateApplicationProcessing] = useMutation<
     UpdateApplicationProcessingResponse,
@@ -98,71 +62,57 @@ export default function Request({ id }: Props) {
   // If application is not retrieved or applicantId is not defined, do not render page
   // ! This works for renewal applications only, since they must have applicantId defined
   // TODO: Modify logic to handle new applications
-  if (!data?.application || data.application.applicantId === null) {
+  if (!data?.application) {
     return null;
   }
 
   const {
-    id: applicationId,
-    applicantId,
-    rcdUserId,
     firstName,
     middleName,
     lastName,
-    email,
-    receiveEmailUpdates,
     phone,
-    province,
-    city,
+    email,
     addressLine1,
     addressLine2,
+    city,
+    province,
+    country,
     postalCode,
-
-    physicianName,
-    physicianMspNumber,
-    physicianAddressLine1,
-    physicianAddressLine2,
-    physicianCity,
-    physicianProvince,
-    physicianPostalCode,
-    physicianPhone,
-    physicianNotes,
-
+    permitType,
+    paymentMethod,
+    processingFee,
+    donationAmount,
+    paidThroughShopify,
+    shopifyPaymentStatus,
+    shopifyConfirmationNumber,
     shippingAddressSameAsHomeAddress,
-    billingAddressSameAsHomeAddress,
     shippingFullName,
     shippingAddressLine1,
     shippingAddressLine2,
     shippingCity,
     shippingProvince,
+    shippingCountry,
     shippingPostalCode,
+    billingAddressSameAsHomeAddress,
     billingFullName,
     billingAddressLine1,
     billingAddressLine2,
     billingCity,
     billingProvince,
+    billingCountry,
     billingPostalCode,
-
-    donationAmount,
-    paymentMethod,
-
+    type,
     createdAt,
-
-    applicationProcessing,
-    applicant: {
-      mostRecentPermit: { rcdPermitId, expiryDate },
-    },
+    processing: { status },
   } = data.application;
 
   // Applicant data for Personal Information Card
   const applicantData = {
-    id: applicantId,
+    id,
     firstName,
     middleName,
     lastName,
-    rcdUserId,
     email,
-    receiveEmailUpdates,
     phone,
     addressLine1,
     addressLine2,
@@ -170,70 +120,49 @@ export default function Request({ id }: Props) {
     province,
     postalCode,
     // TODO: Integrate with most recent APP API
-    mostRecentAppNumber: rcdPermitId,
-    mostRecentAppExpiryDate: new Date(expiryDate),
+    // mostRecentAppNumber: rcdPermitId,
+    // mostRecentAppExpiryDate: new Date(expiryDate),
   };
 
-  // Physician data for Doctor Information Card
-  const physicianData = {
-    name: physicianName,
-    mspNumber: physicianMspNumber,
-    addressLine1: physicianAddressLine1,
-    addressLine2: physicianAddressLine2,
-    city: physicianCity,
-    province: physicianProvince,
-    postalCode: physicianPostalCode,
-    phone: physicianPhone,
-    notes: physicianNotes,
-  };
+  // // Physician data for Doctor Information Card
+  // const physicianData = {
+  //   name: physicianName,
+  //   mspNumber: physicianMspNumber,
+  //   addressLine1: physicianAddressLine1,
+  //   addressLine2: physicianAddressLine2,
+  //   city: physicianCity,
+  //   province: physicianProvince,
+  //   postalCode: physicianPostalCode,
+  //   phone: physicianPhone,
+  //   notes: physicianNotes,
+  // };
 
-  // Payment data
-  const paymentInformation = {
-    paymentMethod,
-    donationAmount,
-    shippingAddressSameAsHomeAddress,
-    shippingFullName,
-    shippingAddressLine1,
-    shippingAddressLine2,
-    shippingCity,
-    shippingProvince,
-    shippingPostalCode,
-    billingAddressSameAsHomeAddress,
-    billingFullName,
-    billingAddressLine1,
-    billingAddressLine2,
-    billingCity,
-    billingProvince,
-    billingPostalCode,
-  };
-
-  /**
-   * Approve application handler
-   */
-  const handleApproveApplication = () => {
-    approveApplication({ variables: { applicationId } });
-  };
-
-  /**
-   * Reject application handler
-   */
-  const handleRejectApplication = () => {
-    rejectApplication({ variables: { applicationId } });
-  };
-
-  /**
-   * Complete application handler
-   */
-  const handleCompleteApplication = () => {
-    completeApplication({ variables: { applicationId } });
-  };
+  // // Payment data
+  // const paymentInformation = {
+  //   paymentMethod,
+  //   donationAmount,
+  //   shippingAddressSameAsHomeAddress,
+  //   shippingFullName,
+  //   shippingAddressLine1,
+  //   shippingAddressLine2,
+  //   shippingCity,
+  //   shippingProvince,
+  //   shippingPostalCode,
+  //   billingAddressSameAsHomeAddress,
+  //   billingFullName,
+  //   billingAddressLine1,
+  //   billingAddressLine2,
+  //   billingCity,
+  //   billingProvince,
+  //   billingPostalCode,
+  // };
 
   /**
    * Update application handler
    * @param applicationData Updated application data
    */
   const handleUpdateApplication = (applicationData: Omit<UpdateApplicationInput, 'id'>) => {
-    updateApplication({ variables: { input: { id: applicationId, ...applicationData } } });
+    updateApplication({ variables: { input: { id, ...applicationData } } });
   };
 
   /**
@@ -244,7 +173,7 @@ export default function Request({ id }: Props) {
     updateApplicationProcessing({
       variables: {
         input: {
-          applicationId,
+          applicationId: id,
           ...args,
         },
       },
@@ -252,40 +181,32 @@ export default function Request({ id }: Props) {
   };
 
   // Whether all application processing steps are completed
-  const allStepsCompleted =
-    applicationProcessing !== null &&
-    !!(
-      applicationProcessing.appNumber !== null &&
-      applicationProcessing.appHolepunched &&
-      applicationProcessing.walletCardCreated &&
-      applicationProcessing.invoiceNumber !== null &&
-      applicationProcessing.documentUrls?.length &&
-      applicationProcessing.appMailed
-    );
+  // const allStepsCompleted =
+  //   applicationProcessing !== null &&
+  //   !!(
+  //     applicationProcessing.appNumber !== null &&
+  //     applicationProcessing.appHolepunched &&
+  //     applicationProcessing.walletCardCreated &&
+  //     applicationProcessing.invoiceNumber !== null &&
+  //     applicationProcessing.documentUrls?.length &&
+  //     applicationProcessing.appMailed
+  //   );
 
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3}>
         <RequestHeader
-          applicationStatus={
-            applicationProcessing === null ? undefined : applicationProcessing.status
-          }
-          applicationType="renewal" // TODO: Allow for replacement type in later ticket.
+          applicationId={id}
+          applicationStatus={status}
+          applicationType={type}
           createdAt={new Date(createdAt)}
-          allStepsCompleted={allStepsCompleted}
-          onApprove={handleApproveApplication}
-          onReject={handleRejectApplication}
-          onComplete={handleCompleteApplication}
+          allStepsCompleted={false}
         />
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
-        <PersonalInformationCard
-          applicant={applicantData}
-          isRenewal={data.application.isRenewal}
-          onSave={handleUpdateApplication}
-        />
+        <PersonalInformationCard applicationId={id} />
       </GridItem>
-      <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
+      {/* <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>
           {applicationProcessing !== null &&
           applicationProcessing.status === ApplicationStatus.Approved ? (
@@ -301,7 +222,7 @@ export default function Request({ id }: Props) {
             onSave={handleUpdateApplication}
           />
         </Stack>
-      </GridItem>
+      </GridItem> */}
     </Layout>
   );
 }

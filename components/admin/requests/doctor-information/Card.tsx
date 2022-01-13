@@ -1,10 +1,10 @@
 import { Box, Text, Divider, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import EditDoctorInformationModal from '@components/admin/requests/doctor-information/EditModal'; // Edit modal
-import { UpdateApplicationInput } from '@lib/graphql/types'; // GraphQL types
 import { Physician } from '@tools/admin/requests/doctor-information'; // Physician type
+import { FC } from 'react';
 
-type DoctorInformationProps = {
+type Props = {
   readonly physician: Physician;
   readonly isUpdated?: boolean;
   readonly onSave: (
@@ -21,7 +21,7 @@ type DoctorInformationProps = {
   ) => void;
 };
 
-export default function DoctorInformationCard(props: DoctorInformationProps) {
+const DoctorInformationCard: FC<Props> = props => {
   const { physician, isUpdated, onSave } = props;
 
   /**
@@ -68,7 +68,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       </SimpleGrid>
     </PermitHolderInfoCard>
   );
-}
+};
 
 type InfoSectionProps = {
   readonly title: string;
@@ -102,3 +102,5 @@ function InfoSection({ title, children }: InfoSectionProps) {
     </>
   );
 }
+
+export default DoctorInformationCard;

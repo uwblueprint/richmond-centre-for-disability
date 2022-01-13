@@ -30,7 +30,12 @@ export const applicationApplicantResolver: FieldResolver<
   Application,
   Omit<
     Applicant,
-    'mostRecentPermit' | 'permits' | 'completedApplications' | 'guardian' | 'medicalInformation'
+    | 'mostRecentPermit'
+    | 'activePermit'
+    | 'permits'
+    | 'completedApplications'
+    | 'guardian'
+    | 'medicalInformation'
   >
 > = async (parent, _args, { prisma }) => {
   return await prisma.application.findUnique({ where: { id: parent.id } }).applicant();
@@ -40,9 +45,10 @@ export const applicationApplicantResolver: FieldResolver<
  * Fetch processing data of application
  * @returns Application processing object
  */
-export const applicationProcessingResolver: FieldResolver<Application, ApplicationProcessing> =
-  async (parent, _args, { prisma }) => {
-    return await prisma.application
-      .findUnique({ where: { id: parent.id } })
-      .applicationProcessing();
-  };
+export const applicationProcessingResolver: FieldResolver<Application, ApplicationProcessing> = (
+  parent,
+  _args,
+  { prisma }
+) => {
+  return prisma.application.findUnique({ where: { id: parent.id } }).applicationProcessing();
+};

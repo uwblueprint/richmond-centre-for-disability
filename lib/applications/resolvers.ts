@@ -27,8 +27,11 @@ import {
   MutationUpdateApplicationPaymentInformationArgs,
   MutationUpdateApplicationPhysicianAssessmentArgs,
   MutationUpdateApplicationReasonForReplacementArgs,
+  NewApplication,
   QueryApplicationArgs,
   QueryApplicationsArgs,
+  RenewalApplication,
+  ReplacementApplication,
   UpdateApplicationAdditionalInformationResult,
   UpdateApplicationDoctorInformationResult,
   UpdateApplicationGeneralInformationResult,
@@ -36,6 +39,7 @@ import {
   UpdateApplicationPhysicianAssessmentResult,
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
+import { flattenApplication } from '@lib/applications/utils';
 
 /**
  * Query an application by ID
@@ -43,21 +47,23 @@ import {
  */
 export const application: Resolver<
   QueryApplicationArgs,
-  Omit<Application, 'processing' | 'applicant'>
+  Omit<NewApplication | RenewalApplication | ReplacementApplication, 'processing' | 'applicant'>
 > = async (_parent, args, { prisma }) => {
   const { id } = args;
-  const application = await prisma.application.findUnique({ where: { id } });
+  const application = await prisma.application.findUnique({
+    where: { id },
+    include: {
+      newApplication: true,
+      renewalApplication: true,
+      replacementApplication: true,
+    },
+  });
 
   if (application === null) {
     return application;
   }
 
-  const { processingFee, donationAmount, ...rest } = application;
-  return {
-    ...rest,
-    processingFee: processingFee.toString(),
-    donationAmount: donationAmount.toString(),
-  };
+  return flattenApplication(application);
 };
 
 /**
@@ -153,12 +159,14 @@ export const applications: Resolver<
     }
 
     where = {
-      rcdUserId: rcdUserIDSearch,
-      applicationProcessing: {
-        status: status,
+      applicant: {
+        rcdUserId: rcdUserIDSearch,
       },
-      isRenewal: requestType ? requestType === 'Renewal' : undefined,
-      permitType: permitType,
+      applicationProcessing: {
+        status: status || undefined,
+      },
+      type: requestType || undefined,
+      permitType: permitType || undefined,
       ...nameFilters,
     };
   }
@@ -176,14 +184,12 @@ export const applications: Resolver<
       orderBy: orderBy,
       where,
       include: {
-        applicationProcessing: true,
+        newApplication: true,
+        renewalApplication: true,
+        replacementApplication: true,
       },
     })
-  ).map(({ processingFee, donationAmount, ...application }) => ({
-    ...application,
-    processingFee: processingFee.toString(),
-    donationAmount: donationAmount.toString(),
-  }));
+  ).map(flattenApplication);
 
   return {
     result: applications,
@@ -205,7 +211,6 @@ export const createNewApplication: Resolver<
     dateOfBirth,
     gender,
     otherGender,
-    receiveEmailUpdates,
     disability,
     disabilityCertificationDate,
     patientCondition,
@@ -257,7 +262,6 @@ export const createNewApplication: Resolver<
             dateOfBirth,
             gender,
             otherGender,
-            receiveEmailUpdates,
             disability,
             disabilityCertificationDate,
             patientCondition,
@@ -329,7 +333,6 @@ export const createRenewalApplication: Resolver<
   const { input } = args;
   const {
     applicantId,
-    receiveEmailUpdates,
     physicianFirstName,
     physicianLastName,
     physicianMspNumber,
@@ -359,9 +362,11 @@ export const createRenewalApplication: Resolver<
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
         ...data,
+        applicant: {
+          connect: { id: applicantId },
+        },
         renewalApplication: {
           create: {
-            receiveEmailUpdates,
             physicianFirstName,
             physicianLastName,
             physicianMspNumber,
@@ -375,9 +380,6 @@ export const createRenewalApplication: Resolver<
             requiresWiderParkingSpace,
             requiresWiderParkingSpaceReason,
             otherRequiresWiderParkingSpaceReason,
-            applicant: {
-              connect: { id: applicantId },
-            },
           },
         },
         applicationProcessing: { create: {} },
@@ -487,6 +489,9 @@ export const createExternalRenewalApplication: Resolver<
         lastName: applicant.lastName,
         phone: updatedContactInfo && phone ? formatPhoneNumber(phone) : applicant.phone,
         email: updatedContactInfo ? email || null : applicant.email,
+        receiveEmailUpdates: updatedContactInfo
+          ? receiveEmailUpdates
+          : applicant.receiveEmailUpdates,
         addressLine1: updatedAddress && addressLine1 ? addressLine1 : applicant.addressLine1,
         addressLine2: updatedAddress ? addressLine2 : applicant.addressLine2,
         city: updatedAddress && city ? city : applicant.city,
@@ -520,11 +525,11 @@ export const createExternalRenewalApplication: Resolver<
         billingProvince: applicant.province,
         billingCountry: applicant.country,
         billingPostalCode: applicant.postalCode,
+        applicant: {
+          connect: { id: applicantId },
+        },
         renewalApplication: {
           create: {
-            receiveEmailUpdates: updatedContactInfo
-              ? receiveEmailUpdates
-              : applicant.receiveEmailUpdates,
             physicianFirstName:
               updatedPhysician && physicianFirstName ? physicianFirstName : physician.firstName,
             physicianLastName:
@@ -545,9 +550,6 @@ export const createExternalRenewalApplication: Resolver<
             requiresWiderParkingSpace,
             requiresWiderParkingSpaceReason,
             otherRequiresWiderParkingSpaceReason,
-            applicant: {
-              connect: { id: applicantId },
-            },
           },
         },
         applicationProcessing: {
@@ -629,6 +631,9 @@ export const createReplacementApplication: Resolver<
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
         ...data,
+        applicant: {
+          connect: { id: applicantId },
+        },
         replacementApplication: {
           create: {
             reason,
@@ -638,9 +643,6 @@ export const createReplacementApplication: Resolver<
             stolenJurisdiction,
             stolenPoliceOfficerName,
             eventDescription,
-            applicant: {
-              connect: { id: applicantId },
-            },
           },
         },
         applicationProcessing: {
@@ -684,13 +686,17 @@ export const updateApplicationGeneralInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   // TODO: Validation
   const { input } = args;
-  const { id, ...data } = input;
+  const { id, receiveEmailUpdates, ...data } = input;
 
   let updatedApplication;
   try {
     updatedApplication = await prisma.application.update({
       where: { id },
-      data,
+      data: {
+        // Only set to `undefined` if `receiveEmailUpdates` is null
+        receiveEmailUpdates: receiveEmailUpdates ?? undefined,
+        ...data,
+      },
     });
   } catch {
     // TODO: Error handling

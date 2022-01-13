@@ -15,16 +15,26 @@ import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Reques
 import ApproveRequestModal from '@components/admin/requests/processing/ApproveRequestModal'; // Approve button + modal
 import RejectRequestModal from '@components/admin/requests/processing/RejectRequestModal'; // Reject button + modal
 import CompleteRequestModal from '@components/admin/requests/processing/CompleteModal'; // Mark as complete button + modal
-import { ApplicationStatus } from '@lib/graphql/types'; // Types
+import { ApplicationStatus, ApplicationType } from '@lib/graphql/types'; // Types
+import {
+  APPROVE_APPLICATION_MUTATION,
+  ApproveApplicationRequest,
+  ApproveApplicationResponse,
+  REJECT_APPLICATION_MUTATION,
+  RejectApplicationRequest,
+  RejectApplicationResponse,
+  COMPLETE_APPLICATION_MUTATION,
+  CompleteApplicationRequest,
+  CompleteApplicationResponse,
+} from '@tools/admin/requests/request-header';
+import { useMutation } from '@apollo/client';
 
 type RequestHeaderProps = {
+  readonly applicationId: number;
   readonly applicationStatus?: ApplicationStatus;
-  readonly applicationType: 'renewal' | 'replacement';
+  readonly applicationType: ApplicationType;
   readonly createdAt: Date;
   readonly allStepsCompleted: boolean;
-  readonly onApprove: () => void;
-  readonly onReject: () => void;
-  readonly onComplete: () => void;
 };
 
 /**
@@ -32,41 +42,82 @@ type RequestHeaderProps = {
  * @param applicationStatus Status of application
  * @param createdAt Date of application creation
  * @param allStepsCompleted Whether all processing tasks are complete
- * @param onApprove Callback for handling application approval
- * @param onReject Callback for handling application rejection
- * @param onComplete Callback for handling application completion
  */
 export default function RequestHeader({
+  applicationId,
   applicationStatus,
   createdAt,
   allStepsCompleted,
   applicationType,
-  onApprove,
-  onReject,
-  onComplete,
 }: RequestHeaderProps) {
+  // Approve application mutation
+  const [approveApplication] = useMutation<ApproveApplicationResponse, ApproveApplicationRequest>(
+    APPROVE_APPLICATION_MUTATION,
+    {
+      refetchQueries: ['GetApplication'],
+    }
+  );
+
+  // Reject application mutation
+  const [rejectApplication] = useMutation<RejectApplicationResponse, RejectApplicationRequest>(
+    REJECT_APPLICATION_MUTATION,
+    {
+      refetchQueries: ['GetApplication'],
+    }
+  );
+
+  // Complete application mutation
+  const [completeApplication] = useMutation<
+    CompleteApplicationResponse,
+    CompleteApplicationRequest
+  >(COMPLETE_APPLICATION_MUTATION, {
+    refetchQueries: ['GetApplication'],
+  });
+
+  /**
+   * Approve application handler
+   */
+  const handleApproveApplication = () => {
+    approveApplication({ variables: { input: { id: applicationId } } });
+  };
+
+  /**
+   * Reject application handler
+   */
+  // TODO: Replace placeholder reason
+  const handleRejectApplication = (reason = 'placeholder') => {
+    rejectApplication({ variables: { input: { id: applicationId, reason } } });
+  };
+
+  /**
+   * Complete application handler
+   */
+  const handleCompleteApplication = () => {
+    completeApplication({ variables: { input: { id: applicationId } } });
+  };
+
   /**
    * Returns the appropriate header button(s) to be displayed depending on the current application status
    * @returns Rendered button component(s) or null.
    */
   const _renderActionButtons = () => {
     switch (applicationStatus) {
-      case ApplicationStatus.Pending:
+      case 'PENDING':
         return (
           <HStack spacing={3}>
-            <RejectRequestModal onReject={onReject}>
+            <RejectRequestModal onReject={handleRejectApplication}>
               <Button bg="secondary.critical" _hover={{ bg: 'secondary.criticalHover' }}>
                 Reject
               </Button>
             </RejectRequestModal>
-            <ApproveRequestModal onApprove={onApprove}>
+            <ApproveRequestModal onApprove={handleApproveApplication}>
               <Button>Approve</Button>
             </ApproveRequestModal>
           </HStack>
         );
-      case ApplicationStatus.Approved:
+      case 'IN_PROGRESS':
         return (
-          <CompleteRequestModal onComplete={onComplete}>
+          <CompleteRequestModal onComplete={handleCompleteApplication}>
             <Button disabled={!allStepsCompleted}>Mark as complete</Button>
           </CompleteRequestModal>
         );
@@ -80,10 +131,7 @@ export default function RequestHeader({
 ]   * @returns Rendered 'More Actions' dropdown component or null
    */
   const _renderMoreActionsDropdown = () => {
-    if (
-      applicationStatus === ApplicationStatus.Approved ||
-      applicationStatus === ApplicationStatus.Rejected
-    ) {
+    if (applicationStatus === 'IN_PROGRESS' || applicationStatus === 'REJECTED') {
       return (
         <Menu>
           <MenuButton
@@ -97,12 +145,12 @@ export default function RequestHeader({
             <Text textStyle="caption">More Actions</Text>
           </MenuButton>
           <MenuList>
-            {applicationStatus === ApplicationStatus.Approved ? (
-              <RejectRequestModal onReject={onReject}>
+            {applicationStatus === 'IN_PROGRESS' ? (
+              <RejectRequestModal onReject={handleRejectApplication}>
                 <MenuItem>Reject request</MenuItem>
               </RejectRequestModal>
             ) : (
-              <ApproveRequestModal onApprove={onApprove}>
+              <ApproveRequestModal onApprove={handleApproveApplication}>
                 <MenuItem>Approve request</MenuItem>
               </ApproveRequestModal>
             )}
@@ -124,8 +172,8 @@ export default function RequestHeader({
       <Flex marginTop={5} alignItems="center">
         <Box>
           <Flex alignItems="center">
-            <Text textStyle="display-large" as="h1" marginRight={3}>
-              {applicationType === 'renewal' ? `Renewal Request` : `Replacement Request`}
+            <Text textStyle="display-large" as="h1" marginRight={3} textTransform="capitalize">
+              {`${applicationType.toLowerCase()} Request`}
             </Text>
             {applicationStatus && <RequestStatusBadge variant={applicationStatus} />}
           </Flex>

@@ -15,7 +15,7 @@ import {
   Spacer,
 } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
-import PermitHolderInformationForm from '@components/admin/requests/applicant-information/Form'; //Permit holder information form
+import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
 import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
 import { PaymentInformation } from '@tools/admin/requests/payment-information';
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
@@ -70,13 +70,13 @@ export default function CreateReplacement() {
     rcdUserId: 0,
     id: 0,
     dateOfBirth: '',
-    status: ApplicantStatus.Active,
-    gender: Gender.Other,
-    province: Province.On,
+    status: 'ACTIVE',
+    gender: 'OTHER',
+    province: 'BC',
   });
 
   const [reasonDetails, setReason] = useState<ReasonForReplacement>({
-    reason: ReasonForReplacementEnum.Other,
+    reason: 'OTHER',
     lostTimestamp: null,
     lostLocation: null,
     description: null,
@@ -86,21 +86,21 @@ export default function CreateReplacement() {
   });
 
   const [paymentDetails, setPaymentDetails] = useState<PaymentInformation>({
-    paymentMethod: PaymentType.Mastercard,
-    donationAmount: 25,
+    paymentMethod: 'MASTERCARD',
+    donationAmount: '26.00',
     shippingAddressSameAsHomeAddress: false,
     shippingFullName: '',
     shippingAddressLine1: '',
     shippingAddressLine2: '',
     shippingCity: '',
-    shippingProvince: Province.Bc,
+    shippingProvince: 'BC',
     shippingPostalCode: '',
     billingAddressSameAsHomeAddress: false,
     billingFullName: '',
     billingAddressLine1: '',
     billingAddressLine2: '',
     billingCity: '',
-    billingProvince: Province.Bc,
+    billingProvince: 'BC',
     billingPostalCode: '',
   });
 

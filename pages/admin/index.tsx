@@ -89,7 +89,7 @@ const COLUMNS: Column<ApplicationRow>[] = [
     maxWidth: 180,
     width: 180,
     Cell: ({ value }: { value: string }) => {
-      return <Text textTransform="capitalize">{value}</Text>;
+      return <Text textTransform="capitalize">{value.toLowerCase()}</Text>;
     },
   },
   {
@@ -99,7 +99,7 @@ const COLUMNS: Column<ApplicationRow>[] = [
     maxWidth: 180,
     width: 180,
     Cell: ({ value }) => {
-      return <Text textTransform="capitalize">{value}</Text>;
+      return <Text textTransform="capitalize">{value.toLowerCase()}</Text>;
     },
   },
   {
@@ -164,8 +164,6 @@ const Requests: NextPage = () => {
         limit: PAGE_SIZE,
       },
     },
-    // ? Is this necessary?
-    // fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
     onCompleted: ({ applications: { result, totalCount } }) => {
       setRequestsData(
@@ -176,7 +174,7 @@ const Requests: NextPage = () => {
             middleName,
             lastName,
             createdAt,
-            applicant: { rcdUserId },
+            applicant,
             processing: { status },
             ...application
           }) => ({
@@ -185,7 +183,7 @@ const Requests: NextPage = () => {
               firstName,
               middleName,
               lastName,
-              rcdUserId,
+              rcdUserId: applicant?.rcdUserId || null,
             },
             dateReceived: createdAt,
             status,

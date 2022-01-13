@@ -48,6 +48,7 @@ model Application {
   lastName                         String                  @map("last_name") @db.VarChar(255)
   phone                            String                  @db.VarChar(50)
   email                            String?                 @db.VarChar(255)
+  receiveEmailUpdates              Boolean                 @default(false) @map("receive_email_updates")
   addressLine1                     String                  @map("address_line_1") @db.VarChar(255)
   addressLine2                     String?                 @map("address_line_2") @db.VarChar(255)
   city                             String                  @db.VarChar(255)
@@ -237,7 +238,6 @@ model NewApplication {
   dateOfBirth                          DateTime                             @map("date_of_birth") @db.Date
   gender                               Gender
   otherGender                          String?                              @map("other_gender") @db.VarChar(255)
-  receiveEmailUpdates                  Boolean                              @map("receive_email_updates")
   disability                           String                               @db.VarChar(255)
   disabilityCertificationDate          DateTime                             @map("disability_certification_date") @db.Date
   patientCondition                     PatientCondition                     @map("patient_condition")
@@ -280,7 +280,6 @@ model NewApplication {
 
 model RenewalApplication {
   applicationId                        Int                                  @id @map("application_id")
-  receiveEmailUpdates                  Boolean                              @map("receive_email_updates")
   physicianFirstName                   String                               @map("physician_first_name") @db.VarChar(255)
   physicianLastName                    String                               @map("physician_last_name") @db.VarChar(255)
   physicianMspNumber                   Int                                  @map("physician_msp_number")

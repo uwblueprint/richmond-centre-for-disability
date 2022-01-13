@@ -11,17 +11,18 @@ import {
   Box,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
-import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
-import PermitHolderInformationForm from '@components/admin/requests/applicant-information/Form';
+import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
+import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form';
+import { ApplicationType } from '@lib/graphql/types';
 
 /**
  * Props for Edit Permit Information Modal
  */
 type EditPermitHolderInformationModalProps = {
   children: ReactNode;
-  readonly type: 'new' | 'renewal' | 'replacement';
-  readonly permitHolderInformation: PermitHolderInformation;
-  readonly onSave: (applicationData: PermitHolderInformation) => void;
+  readonly type: ApplicationType;
+  readonly permitHolderInformation: PermitHolderFormData;
+  readonly onSave: (applicationData: PermitHolderFormData) => void;
 };
 
 export default function EditPermitHolderInformationModal({
@@ -48,7 +49,7 @@ export default function EditPermitHolderInformationModal({
   };
 
   const handleChange = (updatedData: PermitHolderInformation) => {
-    if (type === 'replacement') {
+    if (type === 'REPLACEMENT') {
       setPermitHolderInformation({
         ...permitHolderInformation,
         ...updatedData,

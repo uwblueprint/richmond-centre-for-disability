@@ -51,7 +51,7 @@ export type GetApplicationsResponse = {
         Application,
         'id' | 'firstName' | 'middleName' | 'lastName' | 'type' | 'permitType' | 'createdAt'
       > & {
-        applicant: Pick<Applicant, 'rcdUserId'>;
+        applicant: Pick<Applicant, 'rcdUserId'> | null;
         processing: Pick<ApplicationProcessing, 'status'>;
       }
     >;

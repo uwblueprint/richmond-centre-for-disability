@@ -83,11 +83,18 @@ function Header() {
     <Flex
       height="80px"
       width="100%"
+      justify="center"
       backgroundColor="background.grey"
       borderBottom="1px solid"
       borderBottomColor="border.secondary"
     >
-      <Flex height="100%" width="100%" justifyContent="space-between" marginX="80px">
+      <Flex
+        height="100%"
+        width="100%"
+        maxWidth="1280px"
+        justifyContent="space-between"
+        marginX="80px"
+      >
         <Flex alignItems="center">
           <Box marginRight="12px">
             <Image src="/assets/logo.svg" alt="RCD Logo" height={48} width={31} priority />
@@ -169,7 +176,7 @@ function Header() {
 // Footer
 function Footer() {
   return (
-    <Center width="100%" flexDirection="column" paddingBottom={4}>
+    <Center width="100%" maxWidth="1280px" flexDirection="column" paddingBottom={4}>
       <Text textStyle="caption">&copy; 2021 Richmond Centre for Disability. v0.0.1.</Text>
       <Text textStyle="caption">
         A project by{' '}
@@ -200,6 +207,7 @@ function InternalGrid({
     <Grid
       flexGrow={1}
       width="100%"
+      maxWidth="1280px"
       marginX={isContent ? '80px' : undefined}
       templateColumns="repeat(12, 1fr)"
       gap="20px"

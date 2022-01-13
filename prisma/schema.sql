@@ -242,6 +242,7 @@ CREATE TABLE applications (
   last_name VARCHAR(255) NOT NULL,
   phone VARCHAR(50) NOT NULL,
   email VARCHAR(255),
+  receive_email_updates BOOLEAN NOT NULL DEFAULT false,
   address_line_1 VARCHAR(255) NOT NULL,
   address_line_2 VARCHAR(255),
   city VARCHAR(255) NOT NULL,
@@ -329,7 +330,6 @@ CREATE TABLE replacement_applications (
 -- Create renewals table (subset of applications)
 CREATE TABLE renewal_applications (
   application_id INTEGER,
-  receive_email_updates BOOLEAN NOT NULL,
 
   -- Physician information
   physician_first_name VARCHAR(255) NOT NULL,
@@ -363,7 +363,6 @@ CREATE TABLE new_applications (
   date_of_birth DATE NOT NULL,
   gender Gender NOT NULL,
   other_gender VARCHAR(255),
-  receive_email_updates BOOLEAN NOT NULL,
 
   -- Physician assessment
   disability VARCHAR(255) NOT NULL,
