@@ -282,10 +282,12 @@ CREATE TABLE applications (
 
   type ApplicationType NOT NULL,
   notes TEXT,
+  applicant_id INTEGER,
   application_processing_id INTEGER UNIQUE NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+  FOREIGN KEY(applicant_id) REFERENCES applicants(id),
   FOREIGN KEY(application_processing_id) REFERENCES application_processing(id)
 );
 
@@ -319,11 +321,9 @@ CREATE TABLE replacement_applications (
   event_description TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  applicant_id INTEGER NOT NULL,
 
   PRIMARY KEY(application_id),
-  FOREIGN KEY(application_id) REFERENCES applications(id),
-  FOREIGN KEY(applicant_id) REFERENCES applicants(id)
+  FOREIGN KEY(application_id) REFERENCES applications(id)
 );
 
 -- Create renewals table (subset of applications)
@@ -352,11 +352,9 @@ CREATE TABLE renewal_applications (
 
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  applicant_id INTEGER NOT NULL,
 
   PRIMARY KEY(application_id),
-  FOREIGN KEY(application_id) REFERENCES applications(id),
-  FOREIGN KEY(applicant_id) REFERENCES applicants(id)
+  FOREIGN KEY(application_id) REFERENCES applications(id)
 );
 
 -- Create new applications table (subset of applications)
@@ -410,9 +408,7 @@ CREATE TABLE new_applications (
 
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  applicant_id INTEGER,
 
   PRIMARY KEY(application_id),
-  FOREIGN KEY(application_id) REFERENCES applications(id),
-  FOREIGN KEY(applicant_id) REFERENCES applicants(id)
+  FOREIGN KEY(application_id) REFERENCES applications(id)
 );

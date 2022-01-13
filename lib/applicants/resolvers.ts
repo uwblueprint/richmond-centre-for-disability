@@ -4,12 +4,16 @@ import { InvalidPhoneNumberSuffixLengthError } from '@lib/applicants/errors'; //
 import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
 import {
   Applicant,
+  MutationSetApplicantAsActiveArgs,
+  MutationSetApplicantAsInactiveArgs,
   MutationUpdateApplicantDoctorInformationArgs,
   MutationUpdateApplicantGeneralInformationArgs,
   MutationUpdateApplicantGuardianInformationArgs,
   MutationVerifyIdentityArgs,
   QueryApplicantArgs,
   QueryApplicantsArgs,
+  SetApplicantAsActiveResult,
+  SetApplicantAsInactiveResult,
   UpdateApplicantDoctorInformationResult,
   UpdateApplicantGeneralInformationResult,
   UpdateApplicantGuardianInformationResult,
@@ -288,6 +292,70 @@ export const updateApplicantGuardianInformation: Resolver<
 
   if (!updatedApplicant) {
     throw new ApolloError("Applicant's guardian was unable to be updated");
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Set applicant status to ACTIVE
+ * @returns Status of the operation (ok)
+ */
+export const setApplicantAsActive: Resolver<
+  MutationSetApplicantAsActiveArgs,
+  SetApplicantAsActiveResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id } = input;
+
+  let updatedApplicant;
+  try {
+    updatedApplicant = await prisma.applicant.update({
+      where: { id },
+      data: {
+        status: 'ACTIVE',
+        inactiveReason: null,
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicant) {
+    throw new ApolloError('Unable to set applicant status to active');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Set applicant status to INACTIVE
+ * @returns Status of the operation (ok)
+ */
+export const setApplicantAsInactive: Resolver<
+  MutationSetApplicantAsInactiveArgs,
+  SetApplicantAsInactiveResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, reason } = input;
+
+  let updatedApplicant;
+  try {
+    updatedApplicant = await prisma.applicant.update({
+      where: { id },
+      data: {
+        status: 'INACTIVE',
+        inactiveReason: reason,
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicant) {
+    throw new ApolloError('Unable to set applicant status to inactive');
   }
 
   return { ok: true };

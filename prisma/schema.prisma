@@ -8,37 +8,35 @@ datasource db {
 }
 
 model Applicant {
-  id                      Int                      @id @default(autoincrement())
-  firstName               String                   @map("first_name") @db.VarChar(255)
-  middleName              String?                  @map("middle_name") @db.VarChar(255)
-  lastName                String                   @map("last_name") @db.VarChar(255)
-  dateOfBirth             DateTime                 @map("date_of_birth") @db.Date
-  gender                  Gender
-  otherGender             String?                  @map("other_gender") @db.VarChar(255)
-  phone                   String                   @db.VarChar(50)
-  email                   String?                  @db.VarChar(255)
-  receiveEmailUpdates     Boolean                  @map("receive_email_updates")
-  addressLine1            String                   @map("address_line_1") @db.VarChar(255)
-  addressLine2            String?                  @map("address_line_2") @db.VarChar(255)
-  city                    String                   @db.VarChar(255)
-  province                Province                 @default(BC)
-  country                 String                   @default("Canada") @db.VarChar(255)
-  postalCode              String                   @map("postal_code") @db.VarChar(6)
-  rcdUserId               Int?                     @unique @map("rcd_user_id")
-  status                  ApplicantStatus          @default(ACTIVE)
-  inactiveReason          String?                  @map("inactive_reason") @db.VarChar(255)
-  acceptedTos             DateTime?                @map("accepted_tos") @db.Timestamptz(6)
-  notes                   String?
-  guardianId              Int?                     @unique @map("guardian_id")
-  medicalInformationId    Int                      @unique @map("medical_information_id")
-  createdAt               DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt               DateTime                 @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  guardian                Guardian?                @relation("applicantsToguardians", fields: [guardianId], references: [id])
-  medicalInformation      MedicalInformation       @relation("applicantsTomedical_information", fields: [medicalInformationId], references: [id])
-  newApplications         NewApplication[]         @relation("applicantsTonew_applications")
-  permits                 Permit[]
-  renewalApplications     RenewalApplication[]     @relation("applicantsTorenewal_applications")
-  replacementApplications ReplacementApplication[] @relation("applicantsToreplacement_applications")
+  id                   Int                @id @default(autoincrement())
+  firstName            String             @map("first_name") @db.VarChar(255)
+  middleName           String?            @map("middle_name") @db.VarChar(255)
+  lastName             String             @map("last_name") @db.VarChar(255)
+  dateOfBirth          DateTime           @map("date_of_birth") @db.Date
+  gender               Gender
+  otherGender          String?            @map("other_gender") @db.VarChar(255)
+  phone                String             @db.VarChar(50)
+  email                String?            @db.VarChar(255)
+  receiveEmailUpdates  Boolean            @map("receive_email_updates")
+  addressLine1         String             @map("address_line_1") @db.VarChar(255)
+  addressLine2         String?            @map("address_line_2") @db.VarChar(255)
+  city                 String             @db.VarChar(255)
+  province             Province           @default(BC)
+  country              String             @default("Canada") @db.VarChar(255)
+  postalCode           String             @map("postal_code") @db.VarChar(6)
+  rcdUserId            Int?               @unique @map("rcd_user_id")
+  status               ApplicantStatus    @default(ACTIVE)
+  inactiveReason       String?            @map("inactive_reason") @db.VarChar(255)
+  acceptedTos          DateTime?          @map("accepted_tos") @db.Timestamptz(6)
+  notes                String?
+  guardianId           Int?               @unique @map("guardian_id")
+  medicalInformationId Int                @unique @map("medical_information_id")
+  createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  guardian             Guardian?          @relation("applicantsToguardians", fields: [guardianId], references: [id])
+  medicalInformation   MedicalInformation @relation("applicantsTomedical_information", fields: [medicalInformationId], references: [id])
+  applications         Application[]      @relation("applicantsToapplications")
+  permits              Permit[]
 
   @@map("applicants")
 }
@@ -81,9 +79,11 @@ model Application {
   billingPostalCode                String?                 @map("billing_postal_code") @db.VarChar(6)
   type                             ApplicationType
   notes                            String?
+  applicantId                      Int?                    @map("applicant_id")
   applicationProcessingId          Int                     @unique @map("application_processing_id")
   createdAt                        DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                        DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  applicant                        Applicant?              @relation("applicantsToapplications", fields: [applicantId], references: [id])
   applicationProcessing            ApplicationProcessing   @relation("application_processingToapplications", fields: [applicationProcessingId], references: [id])
   newApplication                   NewApplication?         @relation("applicationsTonew_applications")
   permit                           Permit?
@@ -273,8 +273,6 @@ model NewApplication {
   otherRequiresWiderParkingSpaceReason String?                              @map("other_requires_wider_parking_space_reason") @db.VarChar(255)
   createdAt                            DateTime                             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                            DateTime                             @default(now()) @map("updated_at") @db.Timestamptz(6)
-  applicantId                          Int?                                 @map("applicant_id")
-  applicant                            Applicant?                           @relation("applicantsTonew_applications", fields: [applicantId], references: [id])
   application                          Application                          @relation("applicationsTonew_applications", fields: [applicationId], references: [id])
 
   @@map("new_applications")
@@ -300,8 +298,6 @@ model RenewalApplication {
   otherRequiresWiderParkingSpaceReason String?                              @map("other_requires_wider_parking_space_reason") @db.VarChar(255)
   createdAt                            DateTime                             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                            DateTime                             @default(now()) @map("updated_at") @db.Timestamptz(6)
-  applicantId                          Int                                  @map("applicant_id")
-  applicant                            Applicant                            @relation("applicantsTorenewal_applications", fields: [applicantId], references: [id])
   application                          Application                          @relation("applicationsTorenewal_applications", fields: [applicationId], references: [id])
 
   @@map("renewal_applications")
@@ -318,8 +314,6 @@ model ReplacementApplication {
   eventDescription        String?              @map("event_description")
   createdAt               DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt               DateTime             @default(now()) @map("updated_at") @db.Timestamptz(6)
-  applicantId             Int                  @map("applicant_id")
-  applicant               Applicant            @relation("applicantsToreplacement_applications", fields: [applicantId], references: [id])
   application             Application          @relation("applicationsToreplacement_applications", fields: [applicationId], references: [id])
 
   @@map("replacement_applications")

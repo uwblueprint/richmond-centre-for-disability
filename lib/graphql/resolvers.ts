@@ -13,6 +13,8 @@ import {
   updateApplicantGeneralInformation,
   updateApplicantDoctorInformation,
   updateApplicantGuardianInformation,
+  setApplicantAsActive,
+  setApplicantAsInactive,
   verifyIdentity,
 } from '@lib/applicants/resolvers'; // Applicant resolvers
 import {
@@ -44,28 +46,19 @@ import { Context } from '@lib/graphql/context'; // Context type
 import { dateScalar } from '@lib/graphql/scalars'; // Custom date scalar implementation
 import { authorize } from '@lib/graphql/authorization'; // Authorization wrapper
 import {
-  applicantApplicationsResolver,
-  applicantPermitsResolver,
-  applicantGuardianResolver,
-  applicantMedicalInformationResolver,
-  applicantMedicalHistoryResolver,
   applicantMostRecentPermitResolver,
   applicantActivePermitResolver,
-  applicantFileHistoryResolver,
-  applicantMostRecentRenewalApplicationResolver,
-  applicantMostRecentApplicationResolver,
+  applicantPermitsResolver,
+  applicantCompletedApplicationsResolver,
+  applicantGuardianResolver,
+  applicantMedicalInformationResolver,
 } from '@lib/applicants/field-resolvers'; // Applicant field resolvers
 import {
+  __resolveApplicationType,
   applicationApplicantResolver,
-  applicationPermitResolver,
-  applicationApplicationProcessingResolver,
-  applicationRenewalResolver,
+  applicationProcessingResolver,
 } from '@lib/applications/field-resolvers'; // Application field resolvers
-import { permitApplicantResolver, permitApplicationResolver } from '@lib/permits/field-resolvers'; // Permit field resolvers
-import { updateMedicalInformation } from '@lib/medical-information/resolvers'; // Medical information resolvers
-import { medicalInformationPhysicianResolver } from '@lib/medical-information/field-resolvers'; // Medical information field resolvers
-import { updateGuardian } from '@lib/guardian/resolvers'; // Guardian resolvers
-import { applicationReplacementResolver } from '@lib/applications/field-resolvers'; // Application replacement resolver
+import { medicalInformationPhysicianResolver } from '@lib/medical-information/field-resolvers';
 import { generatePermitHoldersReport, generateApplicationsReport } from '@lib/reports/resolvers';
 
 /**
@@ -73,6 +66,7 @@ import { generatePermitHoldersReport, generateApplicationsReport } from '@lib/re
  * R - Return object
  */
 export type ResolverResult<R> =
+  | R
   | (R & Record<string, unknown>) // Return object without ID field
   | (R & Record<string, unknown> & { id: number })
   | null; // Return object with ID field
@@ -131,6 +125,8 @@ const resolvers = {
     updateApplicantGuardianInformation: authorize(updateApplicantGuardianInformation, [
       'SECRETARY',
     ]),
+    setApplicantAsActive: authorize(setApplicantAsActive, ['SECRETARY']),
+    setApplicantAsInactive: authorize(setApplicantAsInactive, ['SECRETARY']),
     verifyIdentity,
 
     // Applications
@@ -192,30 +188,20 @@ const resolvers = {
   },
   Date: dateScalar,
   Applicant: {
-    // applications: applicantApplicationsResolver,
-    // permits: applicantPermitsResolver,
-    // guardian: applicantGuardianResolver,
-    // medicalInformation: applicantMedicalInformationResolver,
-    // medicalHistory: applicantMedicalHistoryResolver,
-    // mostRecentPermit: applicantMostRecentPermitResolver,
-    // activePermit: applicantActivePermitResolver,
-    // fileHistory: applicantFileHistoryResolver,
-    // mostRecentRenewal: applicantMostRecentRenewalApplicationResolver,
-    // mostRecentApplication: applicantMostRecentApplicationResolver,
+    mostRecentPermit: applicantMostRecentPermitResolver,
+    activePermit: applicantActivePermitResolver,
+    permits: applicantPermitsResolver,
+    completedApplications: applicantCompletedApplicationsResolver,
+    guardian: applicantGuardianResolver,
+    medicalInformation: applicantMedicalInformationResolver,
   },
   Application: {
-    // applicant: applicationApplicantResolver,
-    // permit: applicationPermitResolver,
-    // applicationProcessing: applicationApplicationProcessingResolver,
-    // replacement: applicationReplacementResolver,
-    // renewal: applicationRenewalResolver,
+    __resolveType: __resolveApplicationType,
+    applicant: applicationApplicantResolver,
+    processing: applicationProcessingResolver,
   },
   MedicalInformation: {
-    // physician: medicalInformationPhysicianResolver,
-  },
-  Permit: {
-    // applicant: permitApplicantResolver,
-    // application: permitApplicationResolver,
+    physician: medicalInformationPhysicianResolver,
   },
 };
 

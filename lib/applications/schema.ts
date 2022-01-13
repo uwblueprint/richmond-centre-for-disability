@@ -60,6 +60,7 @@ export default gql`
     type: ApplicationType!
 
     processing: ApplicationProcessing!
+    applicant: Applicant
 
     createdAt: Date!
   }
@@ -161,6 +162,7 @@ export default gql`
     type: ApplicationType!
 
     processing: ApplicationProcessing!
+    applicant: Applicant
 
     createdAt: Date!
   }

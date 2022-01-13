@@ -38,6 +38,8 @@ export default gql`
     updateApplicantGuardianInformation(
       input: UpdateApplicantGuardianInformationInput!
     ): UpdateApplicantGuardianInformationResult
+    setApplicantAsActive(input: SetApplicantAsActiveInput!): SetApplicantAsActiveResult
+    setApplicantAsInactive(input: SetApplicantAsInactiveInput!): SetApplicantAsInactiveResult
     verifyIdentity(input: VerifyIdentityInput!): VerifyIdentityResult!
 
     # Applications

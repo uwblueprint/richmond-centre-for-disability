@@ -41,6 +41,10 @@ export type Applicant = {
   postalCode: Scalars['String'];
   rcdUserId: Maybe<Scalars['Int']>;
   status: ApplicantStatus;
+  mostRecentPermit: Maybe<Permit>;
+  activePermit: Maybe<Permit>;
+  permits: Array<Permit>;
+  completedApplications: Array<Application>;
   guardian: Maybe<Guardian>;
   medicalInformation: MedicalInformation;
 };
@@ -104,6 +108,7 @@ export type Application = {
   billingPostalCode: Maybe<Scalars['String']>;
   type: ApplicationType;
   processing: ApplicationProcessing;
+  applicant: Maybe<Applicant>;
   createdAt: Scalars['Date'];
 };
 
@@ -480,11 +485,13 @@ export type Guardian = {
 
 export type MedicalInformation = {
   __typename?: 'MedicalInformation';
+  id: Scalars['Int'];
   disability: Scalars['String'];
   disabilityCertificationDate: Scalars['Date'];
   patientCondition: PatientCondition;
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherPatientCondition: Maybe<Scalars['String']>;
+  physician: Physician;
 };
 
 export type MobilityAid =
@@ -499,6 +506,8 @@ export type Mutation = {
   updateApplicantGeneralInformation: Maybe<UpdateApplicantGeneralInformationResult>;
   updateApplicantDoctorInformation: Maybe<UpdateApplicantDoctorInformationResult>;
   updateApplicantGuardianInformation: Maybe<UpdateApplicantGuardianInformationResult>;
+  setApplicantAsActive: Maybe<SetApplicantAsActiveResult>;
+  setApplicantAsInactive: Maybe<SetApplicantAsInactiveResult>;
   verifyIdentity: VerifyIdentityResult;
   createNewApplication: Maybe<CreateNewApplicationResult>;
   createRenewalApplication: Maybe<CreateRenewalApplicationResult>;
@@ -537,6 +546,16 @@ export type MutationUpdateApplicantDoctorInformationArgs = {
 
 export type MutationUpdateApplicantGuardianInformationArgs = {
   input: UpdateApplicantGuardianInformationInput;
+};
+
+
+export type MutationSetApplicantAsActiveArgs = {
+  input: SetApplicantAsActiveInput;
+};
+
+
+export type MutationSetApplicantAsInactiveArgs = {
+  input: SetApplicantAsInactiveInput;
 };
 
 
@@ -730,6 +749,7 @@ export type NewApplication = Application & {
   billingPostalCode: Maybe<Scalars['String']>;
   type: ApplicationType;
   processing: ApplicationProcessing;
+  applicant: Maybe<Applicant>;
   createdAt: Scalars['Date'];
 };
 
@@ -999,6 +1019,25 @@ export type Role =
   | 'ADMIN'
   | 'ACCOUNTING'
   | 'SECRETARY';
+
+export type SetApplicantAsActiveInput = {
+  id: Scalars['Int'];
+};
+
+export type SetApplicantAsActiveResult = {
+  __typename?: 'SetApplicantAsActiveResult';
+  ok: Scalars['Boolean'];
+};
+
+export type SetApplicantAsInactiveInput = {
+  id: Scalars['Int'];
+  reason: Scalars['String'];
+};
+
+export type SetApplicantAsInactiveResult = {
+  __typename?: 'SetApplicantAsInactiveResult';
+  ok: Scalars['Boolean'];
+};
 
 export type ShopifyPaymentStatus =
   | 'PENDING'

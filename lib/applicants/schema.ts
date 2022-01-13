@@ -32,10 +32,12 @@ export default gql`
     rcdUserId: Int
     status: ApplicantStatus!
 
+    mostRecentPermit: Permit
+    activePermit: Permit
+    permits: [Permit!]!
+    completedApplications: [Application!]!
     guardian: Guardian
     medicalInformation: MedicalInformation!
-    # TODO: Medical history
-    # TODO: File history
   }
 
   # Update applicant general information
@@ -107,6 +109,28 @@ export default gql`
   }
 
   type UpdateApplicantGuardianInformationResult {
+    ok: Boolean!
+  }
+
+  # Set applicant as active
+  input SetApplicantAsActiveInput {
+    # Applicant ID
+    id: Int!
+  }
+
+  type SetApplicantAsActiveResult {
+    ok: Boolean!
+  }
+
+  # Set applicant as inactive
+  input SetApplicantAsInactiveInput {
+    # Applicant ID
+    id: Int!
+
+    reason: String!
+  }
+
+  type SetApplicantAsInactiveResult {
     ok: Boolean!
   }
 

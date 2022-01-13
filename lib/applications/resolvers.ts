@@ -41,11 +41,10 @@ import {
  * Query an application by ID
  * @returns Application with given ID
  */
-export const application: Resolver<QueryApplicationArgs, Omit<Application, 'processing'>> = async (
-  _parent,
-  args,
-  { prisma }
-) => {
+export const application: Resolver<
+  QueryApplicationArgs,
+  Omit<Application, 'processing' | 'applicant'>
+> = async (_parent, args, { prisma }) => {
   const { id } = args;
   const application = await prisma.application.findUnique({ where: { id } });
 
@@ -82,7 +81,7 @@ export const application: Resolver<QueryApplicationArgs, Omit<Application, 'proc
  */
 export const applications: Resolver<
   QueryApplicationsArgs,
-  { result: Array<Omit<Application, 'processing'>>; totalCount: number }
+  { result: Array<Omit<Application, 'processing' | 'applicant'>>; totalCount: number }
 > = async (_parent, { filter }, { prisma }) => {
   let where = {};
   let orderBy = undefined;
