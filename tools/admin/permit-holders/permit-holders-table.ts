@@ -1,25 +1,43 @@
 import { gql } from '@apollo/client'; // gql tag
-import { ApplicantsFilter, Applicant, ApplicantStatus } from '@lib/graphql/types';
+import {
+  ApplicantsFilter,
+  Applicant,
+  Permit,
+  PermitStatus,
+  ApplicantStatus,
+} from '@lib/graphql/types';
+
+/** Array of permit statuses */
+export const PERMIT_STATUSES: Array<{ name: string; value: PermitStatus }> = [
+  { name: 'Active', value: 'ACTIVE' },
+  { name: 'Expiring soon', value: 'EXPIRING' },
+  { name: 'Expired', value: 'EXPIRED' },
+];
+
+/** Array of user (applicant) statuses */
+export const USER_STATUSES: Array<{ name: string; value: ApplicantStatus }> = [
+  { name: 'Active', value: 'ACTIVE' },
+  { name: 'Inactive', value: 'INACTIVE' },
+];
 
 /** Row in permit holders table */
-export type PermitHolderRow = {
+export type PermitHolderRow = Pick<
+  Applicant,
+  'id' | 'dateOfBirth' | 'email' | 'phone' | 'status'
+> & {
   name: {
     firstName: string;
     middleName: string | null;
     lastName: string;
     rcdUserId: number | null;
   };
-  dateOfBirth: Date;
   homeAddress: {
     addressLine1: string;
-    addressLine2: string;
+    addressLine2: string | null;
     city: string;
     postalCode: string;
   };
-  email: string;
-  phone: string;
-  mostRecentPermit: number;
-  status: ApplicantStatus;
+  mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'>;
 };
 
 export const GET_PERMIT_HOLDERS_QUERY = gql`
@@ -32,6 +50,7 @@ export const GET_PERMIT_HOLDERS_QUERY = gql`
         lastName
         dateOfBirth
         addressLine1
+        addressLine2
         city
         postalCode
         email
@@ -60,14 +79,16 @@ export type PermitHolder = Pick<
   | 'lastName'
   | 'dateOfBirth'
   | 'addressLine1'
+  | 'addressLine2'
   | 'city'
   | 'postalCode'
   | 'email'
   | 'phone'
-  | 'mostRecentPermit'
   | 'status'
   | 'rcdUserId'
->;
+> & {
+  mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'>;
+};
 
 export type GetPermitHoldersResponse = {
   applicants: {

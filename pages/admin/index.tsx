@@ -294,7 +294,7 @@ const Requests: NextPage = () => {
                     Permit type:{' '}
                   </Text>
                   <Text as="span" textStyle="button-regular" textTransform="capitalize">
-                    {permitTypeFilter || 'All'}
+                    {permitTypeFilter?.toLowerCase() || 'All'}
                   </Text>
                 </MenuButton>
                 <MenuList>
@@ -335,8 +335,8 @@ const Requests: NextPage = () => {
                   <Text as="span" textStyle="button-semibold">
                     Request type:{' '}
                   </Text>
-                  <Text as="span" textStyle="button-regular">
-                    {requestTypeFilter || 'All'}
+                  <Text as="span" textStyle="button-regular" textTransform="capitalize">
+                    {requestTypeFilter?.toLowerCase() || 'All'}
                   </Text>
                 </MenuButton>
                 <MenuList>

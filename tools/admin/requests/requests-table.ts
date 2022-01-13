@@ -4,13 +4,11 @@ import {
   Application,
   ApplicationProcessing,
   ApplicationStatus,
-  ApplicationType,
-  PermitType,
   QueryApplicationsArgs,
 } from '@lib/graphql/types'; //GraphQL types
 
 /** Application row data */
-export type ApplicationRow = {
+export type ApplicationRow = Pick<Application, 'id' | 'type' | 'permitType'> & {
   name: {
     firstName: string;
     middleName: string | null;
@@ -18,8 +16,6 @@ export type ApplicationRow = {
     rcdUserId: number | null;
   };
   dateReceived: Date;
-  type: ApplicationType;
-  permitType: PermitType;
   status: ApplicationStatus;
 };
 
