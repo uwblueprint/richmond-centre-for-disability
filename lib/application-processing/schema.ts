@@ -4,6 +4,7 @@
 
 import { gql } from '@apollo/client';
 
+// TODO: Add nested resolver support for employees
 export default gql`
   type ApplicationProcessing {
     status: ApplicationStatus!
@@ -126,25 +127,4 @@ export default gql`
   type UpdateApplicationProcessingMailOutResult {
     ok: Boolean!
   }
-
-  # input UpdateApplicationProcessingInput {
-  #   applicationId: Int!
-  #   status: ApplicationStatus
-  #   appNumber: Int
-  #   appHolepunched: Boolean
-  #   walletCardCreated: Boolean
-  #   invoiceNumber: Int
-  #   documentUrl: String
-  #   appMailed: Boolean
-  # }
-
-  # type UpdateApplicationProcessingResult {
-  #   ok: Boolean!
-  # }
-
-  # type ApplicationFileAttachments {
-  #   documentUrls: [String!]
-  #   appNumber: Int
-  #   createdAt: Date!
-  # }
 `;

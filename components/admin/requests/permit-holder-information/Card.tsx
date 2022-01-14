@@ -1,12 +1,13 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { Box, HStack, VStack, Text, Divider, Button } from '@chakra-ui/react'; // Chakra UI
+import { HStack, VStack, Text, Divider, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
 import EditPermitHolderInformationModal from '@components/admin/requests/permit-holder-information/EditModal'; // Edit modal
 import {
   GetApplicantInformationRequest,
   GetApplicantInformationResponse,
   GET_APPLICANT_INFORMATION,
+  PermitHolderCardData,
   PermitHolderFormData,
   UpdatePermitHolderInformationRequest,
   UpdatePermitHolderInformationResponse,
@@ -16,6 +17,7 @@ import { getPermitExpiryStatus } from '@lib/utils/permit-expiry'; // Get variant
 import { formatDateYYYYMMDD, formatFullName } from '@lib/utils/format';
 import PermitHolderStatusBadge from '@components/admin/PermitHolderStatusBadge';
 import Updated from '@components/admin/Updated';
+import Address from '@components/admin/Address';
 
 type Props = {
   readonly applicationId: number;
@@ -27,25 +29,35 @@ type Props = {
 
 /**
  * Personal information card for View Request page
- * @param applicant Applicant data
+ * @param applicationId Application ID
  * @param contactInfoUpdated Whether contact information was updated
  * @param addressInfoUpdated Whether address information was updated
- * @param onSave Callback function on save
  */
 const Card: FC<Props> = props => {
   const { applicationId, contactInfoUpdated, addressInfoUpdated } = props;
 
-  const { data, refetch } = useQuery<
-    GetApplicantInformationResponse,
-    GetApplicantInformationRequest
-  >(GET_APPLICANT_INFORMATION, { variables: { id: applicationId } });
+  const [permitHolderInformation, setPermitHolderInformation] =
+    useState<PermitHolderCardData | null>(null);
+
+  const { refetch } = useQuery<GetApplicantInformationResponse, GetApplicantInformationRequest>(
+    GET_APPLICANT_INFORMATION,
+    {
+      variables: { id: applicationId },
+      onCompleted: data => {
+        if (data) {
+          setPermitHolderInformation(data.application);
+        }
+      },
+      notifyOnNetworkStatusChange: true,
+    }
+  );
 
   const [updatePermitHolderInformation] = useMutation<
     UpdatePermitHolderInformationResponse,
     UpdatePermitHolderInformationRequest
   >(UPDATE_PERMIT_HOLDER_INFORMATION);
 
-  if (!data?.application) {
+  if (!permitHolderInformation) {
     return null;
   }
 
@@ -55,7 +67,6 @@ const Card: FC<Props> = props => {
     refetch();
   };
 
-  const { application } = data;
   const {
     type,
     firstName,
@@ -70,14 +81,18 @@ const Card: FC<Props> = props => {
     province,
     country,
     postalCode,
-  } = application;
+  } = permitHolderInformation;
 
   // Personal information card header
   const Header =
     type === 'NEW' ? (
       formatFullName(firstName, middleName, lastName)
     ) : (
-      <a href={`/admin/permit-holder/${application.applicant.id}`} target="_blank" rel="noreferrer">
+      <a
+        href={`/admin/permit-holder/${permitHolderInformation.applicant.id}`}
+        target="_blank"
+        rel="noreferrer"
+      >
         <Text as="h5" variant="link" textStyle="display-small-semibold">
           {formatFullName(firstName, middleName, lastName)}
         </Text>
@@ -114,31 +129,33 @@ const Card: FC<Props> = props => {
         {/* Permit holder information */}
         <VStack spacing="12px" align="left">
           <Text as="p" textStyle="body-regular">
-            User ID: {type === 'NEW' ? 'N/A' : application.applicant.rcdUserId}
+            User ID: {type === 'NEW' ? 'N/A' : permitHolderInformation.applicant.rcdUserId}
           </Text>
           <VStack align="left">
             <HStack spacing="12px">
               <Text as="p" textStyle="body-regular">
                 Most recent APP:{' '}
-                {type !== 'NEW' && application.applicant.mostRecentPermit
-                  ? `#${application.applicant.mostRecentPermit.rcdPermitId}`
+                {type !== 'NEW' && permitHolderInformation.applicant.mostRecentPermit
+                  ? `#${permitHolderInformation.applicant.mostRecentPermit.rcdPermitId}`
                   : 'N/A'}
               </Text>
-              {type !== 'NEW' && application.applicant.mostRecentPermit && (
+              {type !== 'NEW' && permitHolderInformation.applicant.mostRecentPermit && (
                 <PermitHolderStatusBadge
                   variant={
-                    getPermitExpiryStatus(application.applicant.mostRecentPermit.expiryDate) ===
-                    'EXPIRED'
+                    getPermitExpiryStatus(
+                      permitHolderInformation.applicant.mostRecentPermit.expiryDate
+                    ) === 'EXPIRED'
                       ? 'INACTIVE'
                       : 'ACTIVE'
                   }
                 />
               )}
             </HStack>
-            {type !== 'NEW' && application.applicant.mostRecentPermit && (
+            {type !== 'NEW' && permitHolderInformation.applicant.mostRecentPermit && (
               // TODO: Fix text styles to avoid !important
               <Text as="p" textStyle="xsmall" margin="0 !important" color="secondary">
-                Expiring {application.applicant.mostRecentPermit.expiryDate.toDateString()}
+                Expiring{' '}
+                {permitHolderInformation.applicant.mostRecentPermit.expiryDate.toDateString()}
               </Text>
             )}
           </VStack>
@@ -152,18 +169,20 @@ const Card: FC<Props> = props => {
           <Text as="p" textStyle="body-regular">
             Date of Birth:{' '}
             {formatDateYYYYMMDD(
-              type === 'NEW' ? application.dateOfBirth : application.applicant.dateOfBirth
+              type === 'NEW'
+                ? permitHolderInformation.dateOfBirth
+                : permitHolderInformation.applicant.dateOfBirth
             ) || 'N/A'}
           </Text>
           <Text as="p" textStyle="body-regular">
             Gender:{' '}
             {type === 'NEW'
-              ? application.gender === 'OTHER'
-                ? application.otherGender
-                : application.gender
-              : application.applicant.gender === 'OTHER'
-              ? application.applicant.otherGender
-              : application.applicant.gender}
+              ? permitHolderInformation.gender === 'OTHER'
+                ? permitHolderInformation.otherGender
+                : permitHolderInformation.gender
+              : permitHolderInformation.applicant.gender === 'OTHER'
+              ? permitHolderInformation.applicant.otherGender
+              : permitHolderInformation.applicant.gender}
           </Text>
         </VStack>
         <Divider />
@@ -191,20 +210,7 @@ const Card: FC<Props> = props => {
           <Text as="h4" textStyle="body-bold">
             Home Address {addressInfoUpdated && <Updated />}
           </Text>
-          <Box>
-            <Text as="p" textStyle="body-regular">
-              {addressLine2 ? `${addressLine2} - ${addressLine1}` : addressLine1}
-            </Text>
-            <Text as="p" textStyle="body-regular">
-              {city} {province}
-            </Text>
-            <Text as="p" textStyle="body-regular">
-              {country}
-            </Text>
-            <Text as="p" textStyle="body-regular">
-              {postalCode}
-            </Text>
-          </Box>
+          <Address address={{ addressLine1, addressLine2, city, province, country, postalCode }} />
         </VStack>
       </VStack>
     </PermitHolderInfoCard>

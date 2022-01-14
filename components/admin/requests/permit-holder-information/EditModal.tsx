@@ -48,7 +48,7 @@ export default function EditPermitHolderInformationModal({
     onClose();
   };
 
-  const handleChange = (updatedData: PermitHolderInformation) => {
+  const handleChange = (updatedData: PermitHolderFormData) => {
     if (type === 'REPLACEMENT') {
       setPermitHolderInformation({
         ...permitHolderInformation,

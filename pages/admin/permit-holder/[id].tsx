@@ -150,7 +150,7 @@ export default function PermitHolder({ id }: Props) {
         isClosable: true,
       });
     },
-    refetchQueries: ['GetPermitHolder'],
+    // refetchQueries: ['GetPermitHolder'],
   });
 
   /**

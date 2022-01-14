@@ -17,7 +17,7 @@ import {
 import Layout from '@components/admin/Layout'; // Layout component
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
 import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
-import { PaymentInformation } from '@tools/admin/requests/payment-information';
+import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
 import { ReasonForReplacement } from '@tools/admin/requests/reason-for-replacement';
 import ReasonForReplacementForm from '@components/admin/requests/reason-for-replacement/Form';
@@ -85,7 +85,7 @@ export default function CreateReplacement() {
     stolenPoliceOfficerName: null,
   });
 
-  const [paymentDetails, setPaymentDetails] = useState<PaymentInformation>({
+  const [paymentDetails, setPaymentDetails] = useState<PaymentInformationFormData>({
     paymentMethod: 'MASTERCARD',
     donationAmount: '26.00',
     shippingAddressSameAsHomeAddress: false,

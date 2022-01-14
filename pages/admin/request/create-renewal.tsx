@@ -7,7 +7,7 @@ import DoctorInformationForm from '@components/admin/requests/doctor-information
 import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form'; //Additional questions form
 import { AdditionalQuestions } from '@tools/admin/requests/additional-questions'; //Additional questions type
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
-import { PaymentInformation } from '@tools/admin/requests/payment-information';
+import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import Link from 'next/link'; // Link
 import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
@@ -31,7 +31,7 @@ import { useRouter } from 'next/router';
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import { ApplicantData } from '@tools/admin/permit-holders/types';
 import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
-import { Physician } from '@tools/admin/requests/doctor-information';
+import { DoctorFormData } from '@tools/admin/requests/doctor-information';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -50,7 +50,7 @@ export default function CreateRenewal() {
     city: '',
     postalCode: '',
   });
-  const [doctorInformation, setDoctorInformation] = useState<Physician>({
+  const [doctorInformation, setDoctorInformation] = useState<DoctorFormData>({
     phone: '',
     addressLine1: '',
     addressLine2: '',
@@ -64,7 +64,7 @@ export default function CreateRenewal() {
     usesAccessibleConvertedVan: false,
     requiresWiderParkingSpace: false,
   });
-  const [paymentDetails, setPaymentDetails] = useState<PaymentInformation>({
+  const [paymentDetails, setPaymentDetails] = useState<PaymentInformationFormData>({
     paymentMethod: PaymentType.Mastercard,
     donationAmount: 0,
     shippingAddressSameAsHomeAddress: false,

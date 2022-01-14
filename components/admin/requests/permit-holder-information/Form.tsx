@@ -9,16 +9,17 @@ import {
   Divider,
   Checkbox,
 } from '@chakra-ui/react'; // Chakra UI
-import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
+import { ApplicationType } from '@lib/graphql/types';
+import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { ChangeEventHandler } from 'react';
 
 /**
  * PermitHolderInformationFormProps props for allowing users to edit permit holder information.
  */
 type PermitHolderInformationFormProps = {
-  readonly type: 'new' | 'renewal' | 'replacement';
-  readonly permitHolderInformation: PermitHolderInformation;
-  readonly onChange: (updatedData: PermitHolderInformation) => void;
+  readonly type: ApplicationType;
+  readonly permitHolderInformation: PermitHolderFormData;
+  readonly onChange: (updatedData: PermitHolderFormData) => void;
 };
 
 /**
@@ -30,7 +31,7 @@ type PermitHolderInformationFormProps = {
  */
 export default function PermitHolderInformationForm(props: PermitHolderInformationFormProps) {
   const handleChange =
-    (field: keyof PermitHolderInformation): ChangeEventHandler<HTMLInputElement> =>
+    (field: keyof PermitHolderFormData): ChangeEventHandler<HTMLInputElement> =>
     event => {
       const updatedFieldValue =
         event.target.type === 'checkbox' ? event.target.checked : event.target.value;
@@ -100,7 +101,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
           </FormControl>
         </Stack>
 
-        {props.type !== 'replacement' && (
+        {props.type !== 'REPLACEMENT' && (
           <FormControl>
             <Checkbox
               paddingTop="24px"

@@ -33,30 +33,30 @@ export default gql`
     # Payment information
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
-    donationAmount: String # Return monetary value as string
+    donationAmount: String! # Return monetary value as string
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
-    shippingFullName: String
-    shippingAddressLine1: String
+    shippingFullName: String!
+    shippingAddressLine1: String!
     shippingAddressLine2: String
-    shippingCity: String
-    shippingProvince: Province
-    shippingCountry: String
-    shippingPostalCode: String
+    shippingCity: String!
+    shippingProvince: Province!
+    shippingCountry: String!
+    shippingPostalCode: String!
 
     # Billing information
     billingAddressSameAsHomeAddress: Boolean!
-    billingFullName: String
-    billingAddressLine1: String
+    billingFullName: String!
+    billingAddressLine1: String!
     billingAddressLine2: String
-    billingCity: String
-    billingProvince: Province
-    billingCountry: String
-    billingPostalCode: String
+    billingCity: String!
+    billingProvince: Province!
+    billingCountry: String!
+    billingPostalCode: String!
 
     type: ApplicationType!
 
@@ -135,30 +135,30 @@ export default gql`
     # Payment information
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
-    donationAmount: String # Return monetary value as string
+    donationAmount: String! # Return monetary value as string
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
-    shippingFullName: String
-    shippingAddressLine1: String
+    shippingFullName: String!
+    shippingAddressLine1: String!
     shippingAddressLine2: String
-    shippingCity: String
-    shippingProvince: Province
-    shippingCountry: String
-    shippingPostalCode: String
+    shippingCity: String!
+    shippingProvince: Province!
+    shippingCountry: String!
+    shippingPostalCode: String!
 
     # Billing information
     billingAddressSameAsHomeAddress: Boolean!
-    billingFullName: String
-    billingAddressLine1: String
+    billingFullName: String!
+    billingAddressLine1: String!
     billingAddressLine2: String
-    billingCity: String
-    billingProvince: Province
-    billingCountry: String
-    billingPostalCode: String
+    billingCity: String!
+    billingProvince: Province!
+    billingCountry: String!
+    billingPostalCode: String!
 
     type: ApplicationType!
 
@@ -214,30 +214,30 @@ export default gql`
     # Payment information
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
-    donationAmount: String # Return monetary value as string
+    donationAmount: String! # Return monetary value as string
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
-    shippingFullName: String
-    shippingAddressLine1: String
+    shippingFullName: String!
+    shippingAddressLine1: String!
     shippingAddressLine2: String
-    shippingCity: String
-    shippingProvince: Province
-    shippingCountry: String
-    shippingPostalCode: String
+    shippingCity: String!
+    shippingProvince: Province!
+    shippingCountry: String!
+    shippingPostalCode: String!
 
     # Billing information
     billingAddressSameAsHomeAddress: Boolean!
-    billingFullName: String
-    billingAddressLine1: String
+    billingFullName: String!
+    billingAddressLine1: String!
     billingAddressLine2: String
-    billingCity: String
-    billingProvince: Province
-    billingCountry: String
-    billingPostalCode: String
+    billingCity: String!
+    billingProvince: Province!
+    billingCountry: String!
+    billingPostalCode: String!
 
     type: ApplicationType!
 
@@ -274,30 +274,30 @@ export default gql`
     # Payment information
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
-    donationAmount: String # Return monetary value as string
+    donationAmount: String! # Return monetary value as string
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
-    shippingFullName: String
-    shippingAddressLine1: String
+    shippingFullName: String!
+    shippingAddressLine1: String!
     shippingAddressLine2: String
-    shippingCity: String
-    shippingProvince: Province
-    shippingCountry: String
-    shippingPostalCode: String
+    shippingCity: String!
+    shippingProvince: Province!
+    shippingCountry: String!
+    shippingPostalCode: String!
 
     # Billing information
     billingAddressSameAsHomeAddress: Boolean!
-    billingFullName: String
-    billingAddressLine1: String
+    billingFullName: String!
+    billingAddressLine1: String!
     billingAddressLine2: String
-    billingCity: String
-    billingProvince: Province
-    billingCountry: String
-    billingPostalCode: String
+    billingCity: String!
+    billingProvince: Province!
+    billingCountry: String!
+    billingPostalCode: String!
 
     # Reason for replacement
     reason: ReasonForReplacement!
@@ -654,7 +654,7 @@ export default gql`
 
     # Payment information (omit processing fee)
     paymentMethod: PaymentType!
-    donationAmount: Float
+    donationAmount: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!

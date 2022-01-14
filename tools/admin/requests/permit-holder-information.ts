@@ -7,7 +7,6 @@ import {
   QueryApplicationArgs,
   MutationUpdateApplicationGeneralInformationArgs,
   UpdateApplicationGeneralInformationResult,
-  Gender,
 } from '@lib/graphql/types'; // Applicant type
 
 /** Permit holder information for forms */
@@ -25,11 +24,45 @@ export type PermitHolderFormData = Pick<
   | 'postalCode'
 >;
 
+/** Permit holder information for cards */
+export type PermitHolderCardData = Pick<
+  Application,
+  | 'firstName'
+  | 'middleName'
+  | 'lastName'
+  | 'receiveEmailUpdates'
+  | 'phone'
+  | 'email'
+  | 'addressLine1'
+  | 'addressLine2'
+  | 'city'
+  | 'province'
+  | 'country'
+  | 'postalCode'
+> &
+  (
+    | // New application
+    ({ type: 'NEW'; applicant: null } & Partial<
+        Pick<NewApplication, 'dateOfBirth' | 'gender' | 'otherGender' | 'receiveEmailUpdates'>
+      >)
+    // Renewal/replacement application
+    | {
+        type: 'RENEWAL' | 'REPLACEMENT';
+        applicant: Pick<
+          Applicant,
+          'id' | 'rcdUserId' | 'dateOfBirth' | 'gender' | 'otherGender'
+        > & {
+          mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'> | null;
+        };
+      }
+  );
+
 /** Get the applicant information of an application */
 export const GET_APPLICANT_INFORMATION = gql`
   query GetApplicantInformation($id: Int!) {
     application(id: $id) {
       __typename
+      id
       type
       firstName
       middleName
@@ -66,42 +99,14 @@ export const GET_APPLICANT_INFORMATION = gql`
 export type GetApplicantInformationRequest = QueryApplicationArgs;
 
 export type GetApplicantInformationResponse = {
-  application: Pick<
-    Application,
-    | 'firstName'
-    | 'middleName'
-    | 'lastName'
-    | 'receiveEmailUpdates'
-    | 'phone'
-    | 'email'
-    | 'addressLine1'
-    | 'addressLine2'
-    | 'city'
-    | 'province'
-    | 'country'
-    | 'postalCode'
-  > &
-    (
-      | // New application
-      ({ type: 'NEW'; applicant: null } & Partial<
-          Pick<NewApplication, 'dateOfBirth' | 'gender' | 'otherGender' | 'receiveEmailUpdates'>
-        >)
-      // Renewal/replacement application
-      | {
-          type: 'RENEWAL' | 'REPLACEMENT';
-          applicant: Pick<
-            Applicant,
-            'id' | 'rcdUserId' | 'dateOfBirth' | 'gender' | 'otherGender'
-          > & {
-            mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'> | null;
-          };
-        }
-    );
+  application: PermitHolderCardData;
 };
 
 /** Update permit holder information of application */
 export const UPDATE_PERMIT_HOLDER_INFORMATION = gql`
-  mutation UpdatePermitHolderInformation($input: UpdateApplicationGeneralInformationInput!) {
+  mutation UpdateApplicationPermitHolderInformation(
+    $input: UpdateApplicationGeneralInformationInput!
+  ) {
     updateApplicationGeneralInformation(input: $input) {
       ok
     }

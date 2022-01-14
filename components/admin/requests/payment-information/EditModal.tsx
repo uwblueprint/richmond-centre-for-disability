@@ -11,12 +11,12 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { PaymentInformation } from '@tools/admin/requests/payment-information';
+import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
 
 type EditPaymentDetailsModalProps = {
   readonly children: ReactNode;
-  readonly paymentInformation: PaymentInformation;
+  readonly paymentInformation: PaymentInformationFormData;
   readonly onSave: (applicationData: any) => void;
 };
 
@@ -26,7 +26,7 @@ export default function EditPaymentDetailsModal({
   onSave,
 }: EditPaymentDetailsModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [paymentInformation, setPaymentInformation] = useState<PaymentInformation>(
+  const [paymentInformation, setPaymentInformation] = useState<PaymentInformationFormData>(
     currentPaymentInformation || {
       paymentMethod: undefined,
       donationAmount: null,

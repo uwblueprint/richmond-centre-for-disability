@@ -719,20 +719,70 @@ export const updateApplicationDoctorInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   // TODO: Validation
   const { input } = args;
-  const { id, ...data } = input;
+  const {
+    id,
+    firstName: physicianFirstName,
+    lastName: physicianLastName,
+    mspNumber: physicianMspNumber,
+    phone: physicianPhone,
+    addressLine1: physicianAddressLine1,
+    addressLine2: physicianAddressLine2,
+    city: physicianCity,
+    postalCode: physicianPostalCode,
+  } = input;
+
+  const application = await prisma.application.findUnique({
+    where: { id },
+    select: { type: true },
+  });
+
+  if (!application) {
+    throw new ApolloError('Application not found');
+  }
+
+  const { type } = application;
 
   let updatedApplication;
   try {
     updatedApplication = await prisma.application.update({
       where: { id },
-      data,
+      data: {
+        ...(type === 'NEW' && {
+          newApplication: {
+            update: {
+              physicianFirstName,
+              physicianLastName,
+              physicianMspNumber,
+              physicianPhone,
+              physicianAddressLine1,
+              physicianAddressLine2,
+              physicianCity,
+              physicianPostalCode,
+            },
+          },
+        }),
+        ...(type === 'RENEWAL' && {
+          renewalApplication: {
+            update: {
+              physicianFirstName,
+              physicianLastName,
+              physicianMspNumber,
+              physicianPhone,
+              physicianAddressLine1,
+              physicianAddressLine2,
+              physicianCity,
+              physicianPostalCode,
+            },
+          },
+        }),
+      },
     });
   } catch {
     // TODO: Error handling
   }
 
   if (!updatedApplication) {
-    throw new ApolloError('Application general information was unable to be created');
+    throw new ApolloError('Application doctor information was unable to be created');
   }
 
   return { ok: true };
@@ -790,7 +840,7 @@ export const updateApplicationAdditionalInformation: Resolver<
   }
 
   if (!updatedApplication) {
-    throw new ApolloError('Application general information was unable to be created');
+    throw new ApolloError('Application additional information was unable to be created');
   }
 
   return { ok: true };
@@ -822,7 +872,7 @@ export const updateApplicationPaymentInformation: Resolver<
   }
 
   if (!updatedApplication) {
-    throw new ApolloError('Application general information was unable to be created');
+    throw new ApolloError('Application payment information was unable to be updated');
   }
 
   return { ok: true };
@@ -855,7 +905,7 @@ export const updateApplicationReasonForReplacement: Resolver<
   }
 
   if (!updatedApplication) {
-    throw new ApolloError('Application general information was unable to be created');
+    throw new ApolloError('Application reason for replacement was unable to be created');
   }
 
   return { ok: true };
@@ -891,7 +941,7 @@ export const updateApplicationPhysicianAssessment: Resolver<
   }
 
   if (!updatedApplication) {
-    throw new ApolloError('Application general information was unable to be created');
+    throw new ApolloError('Application physician assessment was unable to be created');
   }
 
   return { ok: true };

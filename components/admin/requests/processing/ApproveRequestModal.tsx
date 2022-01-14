@@ -1,3 +1,5 @@
+import { ReactNode } from 'react'; // React JSX Type
+import { useMutation } from '@apollo/client';
 import {
   useDisclosure,
   Modal,
@@ -10,15 +12,35 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { ReactNode } from 'react'; // React JSX Type
+import {
+  ApproveApplicationRequest,
+  ApproveApplicationResponse,
+  APPROVE_APPLICATION_MUTATION,
+} from '@tools/admin/requests/approve-request-modal';
 
 type ApproveRequestModalProps = {
-  readonly onApprove: () => void;
+  readonly applicationId: number;
   readonly children: ReactNode;
 };
 
-export default function ApproveRequestModal({ onApprove, children }: ApproveRequestModalProps) {
+export default function ApproveRequestModal({ applicationId, children }: ApproveRequestModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  // Approve application mutation
+  const [approveApplication] = useMutation<ApproveApplicationResponse, ApproveApplicationRequest>(
+    APPROVE_APPLICATION_MUTATION,
+    {
+      refetchQueries: ['GetApplication'],
+    }
+  );
+
+  /**
+   * Approve application handler
+   */
+  const handleApproveApplication = () => {
+    approveApplication({ variables: { input: { id: applicationId } } });
+  };
+
   return (
     <>
       <Box onClick={onOpen}>{children}</Box>
@@ -46,7 +68,7 @@ export default function ApproveRequestModal({ onApprove, children }: ApproveRequ
             </Button>
             <Button
               onClick={() => {
-                onApprove();
+                handleApproveApplication();
                 onClose();
               }}
             >

@@ -1,3 +1,5 @@
+import { ReactNode } from 'react'; // React JSX Type
+import { useMutation } from '@apollo/client';
 import {
   useDisclosure,
   Modal,
@@ -10,15 +12,36 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { ReactNode } from 'react'; // React JSX Type
+import {
+  REJECT_APPLICATION_MUTATION,
+  RejectApplicationRequest,
+  RejectApplicationResponse,
+} from '@tools/admin/requests/reject-request-modal';
 
 type RejectRequestModalProps = {
-  readonly onReject: () => void;
+  readonly applicationId: number;
   readonly children: ReactNode;
 };
 
-export default function RejectRequestModal({ onReject, children }: RejectRequestModalProps) {
+export default function RejectRequestModal({ applicationId, children }: RejectRequestModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  // Reject application mutation
+  const [rejectApplication] = useMutation<RejectApplicationResponse, RejectApplicationRequest>(
+    REJECT_APPLICATION_MUTATION,
+    { refetchQueries: ['GetApplication'] }
+  );
+
+  /**
+   * Reject application handler
+   */
+  // TODO: Replace placeholder reason
+  const handleRejectApplication = () => {
+    rejectApplication({
+      variables: { input: { id: applicationId, reason: 'placeholder reason' } },
+    });
+  };
+
   return (
     <>
       <Box onClick={onOpen}>{children}</Box>
@@ -32,6 +55,7 @@ export default function RejectRequestModal({ onReject, children }: RejectRequest
               Are you sure you want to reject this request? Any information updated by the permit
               holder will not be accepted either.
             </Text>
+            {/* TODO: Reason textarea field */}
           </ModalBody>
 
           <ModalFooter>
@@ -46,7 +70,7 @@ export default function RejectRequestModal({ onReject, children }: RejectRequest
             </Button>
             <Button
               onClick={() => {
-                onReject();
+                handleRejectApplication();
                 onClose();
               }}
               bg="secondary.critical"

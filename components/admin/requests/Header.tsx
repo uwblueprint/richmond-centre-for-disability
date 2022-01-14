@@ -15,19 +15,7 @@ import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Reques
 import ApproveRequestModal from '@components/admin/requests/processing/ApproveRequestModal'; // Approve button + modal
 import RejectRequestModal from '@components/admin/requests/processing/RejectRequestModal'; // Reject button + modal
 import CompleteRequestModal from '@components/admin/requests/processing/CompleteModal'; // Mark as complete button + modal
-import { ApplicationStatus, ApplicationType } from '@lib/graphql/types'; // Types
-import {
-  APPROVE_APPLICATION_MUTATION,
-  ApproveApplicationRequest,
-  ApproveApplicationResponse,
-  REJECT_APPLICATION_MUTATION,
-  RejectApplicationRequest,
-  RejectApplicationResponse,
-  COMPLETE_APPLICATION_MUTATION,
-  CompleteApplicationRequest,
-  CompleteApplicationResponse,
-} from '@tools/admin/requests/request-header';
-import { useMutation } from '@apollo/client';
+import { ApplicationStatus, ApplicationType } from '@lib/graphql/types';
 
 type RequestHeaderProps = {
   readonly applicationId: number;
@@ -50,52 +38,6 @@ export default function RequestHeader({
   allStepsCompleted,
   applicationType,
 }: RequestHeaderProps) {
-  // Approve application mutation
-  const [approveApplication] = useMutation<ApproveApplicationResponse, ApproveApplicationRequest>(
-    APPROVE_APPLICATION_MUTATION,
-    {
-      refetchQueries: ['GetApplication'],
-    }
-  );
-
-  // Reject application mutation
-  const [rejectApplication] = useMutation<RejectApplicationResponse, RejectApplicationRequest>(
-    REJECT_APPLICATION_MUTATION,
-    {
-      refetchQueries: ['GetApplication'],
-    }
-  );
-
-  // Complete application mutation
-  const [completeApplication] = useMutation<
-    CompleteApplicationResponse,
-    CompleteApplicationRequest
-  >(COMPLETE_APPLICATION_MUTATION, {
-    refetchQueries: ['GetApplication'],
-  });
-
-  /**
-   * Approve application handler
-   */
-  const handleApproveApplication = () => {
-    approveApplication({ variables: { input: { id: applicationId } } });
-  };
-
-  /**
-   * Reject application handler
-   */
-  // TODO: Replace placeholder reason
-  const handleRejectApplication = (reason = 'placeholder') => {
-    rejectApplication({ variables: { input: { id: applicationId, reason } } });
-  };
-
-  /**
-   * Complete application handler
-   */
-  const handleCompleteApplication = () => {
-    completeApplication({ variables: { input: { id: applicationId } } });
-  };
-
   /**
    * Returns the appropriate header button(s) to be displayed depending on the current application status
    * @returns Rendered button component(s) or null.
@@ -105,19 +47,19 @@ export default function RequestHeader({
       case 'PENDING':
         return (
           <HStack spacing={3}>
-            <RejectRequestModal onReject={handleRejectApplication}>
+            <RejectRequestModal applicationId={applicationId}>
               <Button bg="secondary.critical" _hover={{ bg: 'secondary.criticalHover' }}>
                 Reject
               </Button>
             </RejectRequestModal>
-            <ApproveRequestModal onApprove={handleApproveApplication}>
+            <ApproveRequestModal applicationId={applicationId}>
               <Button>Approve</Button>
             </ApproveRequestModal>
           </HStack>
         );
       case 'IN_PROGRESS':
         return (
-          <CompleteRequestModal onComplete={handleCompleteApplication}>
+          <CompleteRequestModal applicationId={applicationId}>
             <Button disabled={!allStepsCompleted}>Mark as complete</Button>
           </CompleteRequestModal>
         );
@@ -146,11 +88,11 @@ export default function RequestHeader({
           </MenuButton>
           <MenuList>
             {applicationStatus === 'IN_PROGRESS' ? (
-              <RejectRequestModal onReject={handleRejectApplication}>
+              <RejectRequestModal applicationId={applicationId}>
                 <MenuItem>Reject request</MenuItem>
               </RejectRequestModal>
             ) : (
-              <ApproveRequestModal onApprove={handleApproveApplication}>
+              <ApproveRequestModal applicationId={applicationId}>
                 <MenuItem>Approve request</MenuItem>
               </ApproveRequestModal>
             )}
