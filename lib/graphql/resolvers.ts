@@ -60,6 +60,7 @@ import {
 } from '@lib/applications/field-resolvers'; // Application field resolvers
 import { medicalInformationPhysicianResolver } from '@lib/medical-information/field-resolvers';
 import { generatePermitHoldersReport, generateApplicationsReport } from '@lib/reports/resolvers';
+import { permitApplicationResolver } from '@lib/permits/field-resolvers';
 
 /**
  * Resolver return type - accounts for extra fields
@@ -217,6 +218,9 @@ const resolvers = {
   },
   MedicalInformation: {
     physician: medicalInformationPhysicianResolver,
+  },
+  Permit: {
+    application: permitApplicationResolver,
   },
 };
 

@@ -35,6 +35,7 @@ import {
   PermitHolderRow,
   PERMIT_STATUSES,
   USER_STATUSES,
+  PermitHolderToUpdateStatus,
 } from '@tools/admin/permit-holders/permit-holders-table';
 import DateRangePicker from '@components/DateRangePicker'; // Day Picker component
 import useDateRangePicker from '@tools/hooks/useDateRangePicker'; // Day Picker hook
@@ -45,7 +46,6 @@ import { useEffect } from 'react'; // React
 import { formatDate, formatFullName } from '@lib/utils/format'; // Date formatter util
 import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/table/ConfirmSetInactiveModal'; // Set Permit Holder To Inactive modal
 import SetPermitHolderToActiveModal from '@components/admin/permit-holders/table/ConfirmSetActiveModal'; // Set Permit Holder To Active modal
-import { PermitHolderToUpdateStatus } from '@tools/admin/permit-holders/types'; // Type for data required in Set Permit Holder Status modal
 import GenerateReportModal from '@components/admin/permit-holders/reports/GenerateModal'; // Generate report modal
 import { getPermitExpiryStatus } from '@lib/utils/permit-expiry';
 import FilterMenuSelectedText from '@components/admin/permit-holders/table/FilterMenuSelectedText';
@@ -224,7 +224,7 @@ const PermitHolders: NextPage = () => {
         width: 140,
         maxWidth: 140,
         Cell: ({ value: { expiryDate, rcdPermitId } }) => {
-          const permitStatus = getPermitExpiryStatus(expiryDate);
+          const permitStatus = getPermitExpiryStatus(new Date(expiryDate));
           return (
             <Flex>
               <Text as="span" mr="9px">

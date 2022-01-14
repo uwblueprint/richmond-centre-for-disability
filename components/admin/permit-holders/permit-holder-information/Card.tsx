@@ -1,6 +1,5 @@
+import { useState } from 'react';
 import {
-  Box,
-  HStack,
   VStack,
   Text,
   Divider,
@@ -8,21 +7,88 @@ import {
   Button,
   Tooltip,
   useClipboard,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import EditUserInformationModal from '@components/admin/permit-holders/permit-holder-information/EditModal'; // Edit User Information Modal
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
-import { ApplicantData } from '@tools/admin/permit-holders/types'; // Applicant data type
-import { UpdateApplicantInput } from '@lib/graphql/types';
-import { formatDate } from '@lib/utils/format'; // Date formatter util
+import { formatDateYYYYMMDD } from '@lib/utils/format'; // Date formatter util
+import {
+  ApplicantCardData,
+  ApplicantFormData,
+  GetApplicantRequest,
+  GetApplicantResponse,
+  GET_APPLICANT_QUERY,
+  UpdateApplicantGeneralInformationRequest,
+  UpdateApplicantGeneralInformationResponse,
+  UPDATE_APPLICANT_GENERAL_INFORMATION_MUTATION,
+} from '@tools/admin/permit-holders/permit-holder-information';
+import { useMutation, useQuery } from '@apollo/client';
+import Address from '@components/admin/Address';
 
 type PersonalInformationProps = {
-  readonly applicant: ApplicantData;
-  readonly onSave: (applicationData: UpdateApplicantInput) => void;
+  readonly applicantId: number;
 };
 
-export default function PersonalInformationCard(props: PersonalInformationProps) {
-  const { applicant, onSave } = props;
-  const { hasCopied, onCopy } = useClipboard(applicant?.email ? applicant?.email : '');
+export default function PermitHolderInformationCard(props: PersonalInformationProps) {
+  const { applicantId } = props;
+
+  const toast = useToast();
+
+  const [permitHolderInformation, setPermitHolderInformation] =
+    useState<ApplicantCardData | null>(null);
+
+  const { refetch } = useQuery<GetApplicantResponse, GetApplicantRequest>(GET_APPLICANT_QUERY, {
+    variables: { id: applicantId },
+    onCompleted: data => {
+      if (data) {
+        setPermitHolderInformation(data.applicant);
+      }
+    },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const [updateGeneralInformation] = useMutation<
+    UpdateApplicantGeneralInformationResponse,
+    UpdateApplicantGeneralInformationRequest
+  >(UPDATE_APPLICANT_GENERAL_INFORMATION_MUTATION, {
+    onCompleted: data => {
+      if (data.updateApplicantGeneralInformation.ok) {
+        toast({
+          status: 'success',
+          description: "User's information has been edited.",
+          isClosable: true,
+        });
+      }
+    },
+  });
+  const handleSave = async (data: ApplicantFormData) => {
+    await updateGeneralInformation({ variables: { input: { id: applicantId, ...data } } });
+    refetch();
+  };
+
+  const { hasCopied, onCopy } = useClipboard(permitHolderInformation?.email || '');
+
+  if (!permitHolderInformation) {
+    return null;
+  }
+
+  const {
+    firstName,
+    middleName,
+    lastName,
+    dateOfBirth,
+    gender,
+    otherGender,
+    phone,
+    email,
+    receiveEmailUpdates,
+    addressLine1,
+    addressLine2,
+    city,
+    province,
+    country,
+    postalCode,
+  } = permitHolderInformation;
 
   return (
     <PermitHolderInfoCard
@@ -33,37 +99,48 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
         </Text>
       }
       editModal={
-        <EditUserInformationModal applicant={applicant} onSave={onSave}>
+        <EditUserInformationModal
+          applicant={{
+            firstName,
+            middleName,
+            lastName,
+            dateOfBirth,
+            gender,
+            phone,
+            email,
+            addressLine1,
+            addressLine2,
+            city,
+            postalCode,
+          }}
+          onSave={handleSave}
+        >
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
         </EditUserInformationModal>
       }
     >
-      <VStack spacing="12px" align="left">
-        <Box>
+      <VStack width="100%" spacing="24px" align="stretch">
+        {/* Personal information */}
+        <VStack spacing="12px" align="left">
           <Text as="p" textStyle="body-regular">
-            Date of Birth: {formatDate(applicant.dateOfBirth)}
+            Date of Birth: {formatDateYYYYMMDD(new Date(dateOfBirth))}
           </Text>
-        </Box>
-        <Box>
           <Text as="p" textStyle="body-regular">
-            Gender: {applicant.gender.toLowerCase().replace(/^\w/, c => c.toUpperCase())}
+            Gender: {gender === 'OTHER' ? otherGender : gender}
           </Text>
-        </Box>
-      </VStack>
+        </VStack>
 
-      <Divider mt="24px" />
+        <Divider />
 
-      <VStack spacing="12px" pt="24px" align="left">
-        <HStack spacing="12px">
-          <Box>
-            <Text as="h4" textStyle="body-bold">
-              Contact Information
-            </Text>
-          </Box>
-        </HStack>
-        <Box>
+        <VStack spacing="12px" align="left">
+          <Text as="h4" textStyle="body-bold">
+            Contact Information
+          </Text>
+          <Text as="p" textStyle="body-regular">
+            {phone}
+          </Text>
           <Tooltip
             hasArrow
             closeOnClick={false}
@@ -78,44 +155,22 @@ export default function PersonalInformationCard(props: PersonalInformationProps)
               textDecoration="underline"
               onClick={onCopy}
             >
-              {applicant.email}
+              {email}
             </Link>
           </Tooltip>
-        </Box>
-        <Box>
           <Text as="p" textStyle="body-regular">
-            {applicant.phone}
+            Renewal updates through email: <b>{receiveEmailUpdates ? 'Yes' : 'No'}</b>
           </Text>
-        </Box>
-      </VStack>
+        </VStack>
 
-      <Divider mt="24px" />
+        <Divider />
 
-      <VStack spacing="12px" pt="24px" align="left">
-        <HStack spacing="12px">
-          <Box>
-            <Text as="h4" textStyle="body-bold">
-              Home Address
-            </Text>
-          </Box>
-        </HStack>
-        <Box>
-          <Text as="p" textStyle="body-regular">
-            {applicant.addressLine1}
+        <VStack spacing="12px" align="left">
+          <Text as="h4" textStyle="body-bold">
+            Home Address
           </Text>
-          <Text as="p" textStyle="body-regular">
-            {applicant.addressLine2}
-          </Text>
-          <Text as="p" textStyle="body-regular">
-            {applicant.city} {applicant.province}
-          </Text>
-          <Text as="p" textStyle="body-regular">
-            Canada
-          </Text>
-          <Text as="p" textStyle="body-regular">
-            {applicant.postalCode}
-          </Text>
-        </Box>
+          <Address address={{ addressLine1, addressLine2, city, province, country, postalCode }} />
+        </VStack>
       </VStack>
     </PermitHolderInfoCard>
   );

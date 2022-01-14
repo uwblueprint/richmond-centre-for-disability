@@ -1,15 +1,25 @@
-import { Box, Text, Divider, VStack, Button, Flex } from '@chakra-ui/react'; // Chakra UI
+import { Text, Divider, VStack, Button, Flex, useToast } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import EditDoctorInformationModal from '@components/admin/requests/doctor-information/EditModal'; // Edit doctor information modal component
 import PreviousDoctorsModal from '@components/admin/permit-holders/doctor-information/PreviousDoctorsModal'; // Previous Doctors' Information Modal
-import { PreviousPhysicianData } from '@tools/admin/permit-holders/types';
-import { Physician } from '@tools/admin/requests/doctor-information';
+import { useMutation, useQuery } from '@apollo/client';
+import {
+  DoctorFormData,
+  GetDoctorInformationRequest,
+  GetDoctorInformationResponse,
+  GET_DOCTOR_INFORMATION,
+  PreviousDoctorRow,
+  UpdateDoctorInformationRequest,
+  UpdateDoctorInformationResponse,
+  UPDATE_DOCTOR_INFORMATION,
+} from '@tools/admin/permit-holders/doctor-information';
+import { formatFullName } from '@lib/utils/format';
+import Address from '@components/admin/Address';
+import { useMemo } from 'react';
 
 type DoctorInformationProps = {
-  readonly physician: Physician;
+  readonly applicantId: number;
   readonly isUpdated?: boolean;
-  readonly previousPhysicianData: PreviousPhysicianData[];
-  readonly onSave: (physicianData: Physician) => void;
 };
 
 /**
@@ -18,76 +28,135 @@ type DoctorInformationProps = {
  * @returns doctor information card.
  */
 export default function DoctorInformationCard(props: DoctorInformationProps) {
-  const { physician, isUpdated, previousPhysicianData, onSave } = props;
+  const { applicantId, isUpdated } = props;
+
+  const toast = useToast();
+
+  const { data, refetch } = useQuery<GetDoctorInformationResponse, GetDoctorInformationRequest>(
+    GET_DOCTOR_INFORMATION,
+    {
+      variables: { id: applicantId },
+    }
+  );
+
+  const [updateDoctorInformation] = useMutation<
+    UpdateDoctorInformationResponse,
+    UpdateDoctorInformationRequest
+  >(UPDATE_DOCTOR_INFORMATION, {
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+        isClosable: true,
+      });
+    },
+  });
+  const handleSave = async (data: DoctorFormData) => {
+    await updateDoctorInformation({ variables: { input: { id: applicantId, ...data } } });
+    refetch();
+  };
+
+  /** Previous doctors data */
+  const previousDoctors = useMemo<PreviousDoctorRow[]>(() => {
+    if (!data?.applicant.completedApplications) {
+      return [];
+    }
+
+    // Need type declaration as TS could not infer type
+    const filteredApplications = data.applicant.completedApplications.filter(
+      ({ type }) => type !== 'REPLACEMENT'
+    ) as Array<{
+      id: number;
+      type: 'NEW' | 'RENEWAL';
+      physicianFirstName: string;
+      physicianLastName: string;
+      physicianPhone: string;
+      physicianMspNumber: number;
+    }>;
+
+    return filteredApplications.map(
+      ({ physicianFirstName, physicianLastName, physicianPhone, physicianMspNumber, id }) => ({
+        name: {
+          firstName: physicianFirstName,
+          lastName: physicianLastName,
+        },
+        phone: physicianPhone,
+        mspNumber: physicianMspNumber,
+        applicationId: id,
+      })
+    );
+  }, [data]);
+
+  if (!data?.applicant.medicalInformation.physician) {
+    return null;
+  }
+
+  const {
+    firstName,
+    lastName,
+    mspNumber,
+    phone,
+    addressLine1,
+    addressLine2,
+    city,
+    province,
+    country,
+    postalCode,
+  } = data.applicant.medicalInformation.physician;
 
   return (
     <PermitHolderInfoCard
       colSpan={7}
       header={`Doctor's Information`}
       updated={isUpdated}
+      divider
       editModal={
-        <EditDoctorInformationModal doctorInformation={physician} onSave={onSave}>
+        <EditDoctorInformationModal
+          doctorInformation={{
+            firstName,
+            lastName,
+            mspNumber,
+            phone,
+            addressLine1,
+            addressLine2,
+            city,
+            postalCode,
+          }}
+          onSave={handleSave}
+        >
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>
           </Button>
         </EditDoctorInformationModal>
       }
     >
-      <Divider mt="24px" />
-
-      <VStack spacing="12px" align="left" paddingTop="24px">
-        <Box>
-          <Text as="p" textStyle="body-regular">
-            {physician.name}
+      <VStack width="100%" spacing="24px" align="stretch">
+        <VStack spacing="12px" align="left">
+          <Text as="p" textStyle="body-regular" textAlign="left">
+            {formatFullName(firstName, lastName)}
           </Text>
-        </Box>
-        <Box>
-          <Text as="p" textStyle="body-regular">
-            {`MSP Number: ${physician.mspNumber}`}
+          <Text as="p" textStyle="body-regular" textAlign="left">
+            {`MSP Number: ${mspNumber}`}
           </Text>
-        </Box>
-        <Box>
-          <Text as="p" textStyle="body-regular">
-            {`Phone: ${physician.phone}`}
+          <Text as="p" textStyle="body-regular" textAlign="left">
+            {`Phone: ${phone}`}
           </Text>
-        </Box>
-      </VStack>
-
-      <Divider mt="24px" />
-
-      <VStack spacing="12px" pt="24px" align="left">
-        <Box>
+        </VStack>
+        <Divider />
+        <VStack spacing="12px" align="left">
           <Text as="h4" textStyle="body-bold">
             Address
           </Text>
-        </Box>
-        <Box>
-          <Text as="p" textStyle="body-regular">
-            {physician.addressLine1}
-          </Text>
-          <Text as="p" textStyle="body-regular">
-            {physician.addressLine2 || ''}
-          </Text>
-          <Text as="p" textStyle="body-regular">
-            {`${physician.city}`}
-          </Text>
-          <Text as="p" textStyle="body-regular">
-            {`Canada`}
-          </Text>
-          <Text as="p" textStyle="body-regular">
-            {physician.postalCode}
-          </Text>
-        </Box>
+          <Address address={{ addressLine1, addressLine2, city, province, country, postalCode }} />
+        </VStack>
       </VStack>
 
       <Flex w="100%" justifyContent="flex-end" paddingTop="8px">
-        {previousPhysicianData.length > 0 && (
-          <PreviousDoctorsModal previousPhysicianData={previousPhysicianData}>
-            <Button color="primary" variant="ghost" textDecoration="underline">
-              <Text textStyle="body-bold">{'View previous doctors'}</Text>
-            </Button>
-          </PreviousDoctorsModal>
-        )}
+        <PreviousDoctorsModal previousPhysicianData={previousDoctors}>
+          <Button color="primary" variant="ghost" textDecoration="underline">
+            <Text textStyle="body-bold">{'View previous doctors'}</Text>
+          </Button>
+        </PreviousDoctorsModal>
       </Flex>
     </PermitHolderInfoCard>
   );

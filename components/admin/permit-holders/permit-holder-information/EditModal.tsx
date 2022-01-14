@@ -18,14 +18,14 @@ import {
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, ReactNode, SyntheticEvent } from 'react'; // React
-import { Gender, UpdateApplicantInput } from '@lib/graphql/types'; // Gender Enum
-import { ApplicantData } from '@tools/admin/permit-holders/types'; // Applicant data type
+import { Gender } from '@lib/graphql/types'; // Gender Enum
 import { formatDate } from '@lib/utils/format'; // Date formatter util
+import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 
 type EditUserInformationModalProps = {
-  applicant: ApplicantData;
+  applicant: ApplicantFormData;
   children: ReactNode;
-  readonly onSave: (applicationData: UpdateApplicantInput) => void;
+  readonly onSave: (applicationData: ApplicantFormData) => void;
 };
 
 export default function EditUserInformationModal({
@@ -37,9 +37,10 @@ export default function EditUserInformationModal({
 
   // Personal information state
   const [firstName, setFirstName] = useState('');
+  const [middleName, setMiddleName] = useState<string | null>('');
   const [lastName, setLastName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState(formatDate(new Date(), true));
-  const [gender, setGender] = useState<Gender | undefined>();
+  const [gender, setGender] = useState<Gender>(applicant.gender);
 
   // Contact information state
   const [email, setEmail] = useState<string | null>('');
@@ -57,6 +58,7 @@ export default function EditUserInformationModal({
 
   useEffect(() => {
     setFirstName(applicant.firstName);
+    setMiddleName(applicant.middleName);
     setLastName(applicant.lastName);
     setDateOfBirth(formatDate(applicant.dateOfBirth, true));
     setGender(applicant.gender);
@@ -75,8 +77,8 @@ export default function EditUserInformationModal({
     setLoading(true);
     event.preventDefault();
     await onSave({
-      id: applicant.id,
       firstName,
+      middleName,
       lastName,
       dateOfBirth,
       gender,
@@ -121,6 +123,14 @@ export default function EditUserInformationModal({
                     <Input value={firstName} onChange={event => setFirstName(event.target.value)} />
                   </FormControl>
 
+                  <FormControl>
+                    <FormLabel>{'Middle name'}</FormLabel>
+                    <Input
+                      value={middleName || ''}
+                      onChange={event => setMiddleName(event.target.value)}
+                    />
+                  </FormControl>
+
                   <FormControl isRequired>
                     <FormLabel>{'Last name'}</FormLabel>
                     <Input value={lastName} onChange={event => setLastName(event.target.value)} />
@@ -144,9 +154,9 @@ export default function EditUserInformationModal({
                       value={gender}
                       onChange={event => setGender(event.target.value as Gender)}
                     >
-                      <option value={Gender.Male}>{'Male'}</option>
-                      <option value={Gender.Female}>{'Female'}</option>
-                      <option value={Gender.Other}>{'Other'}</option>
+                      <option value={'MALE'}>{'Male'}</option>
+                      <option value={'FEMALE'}>{'Female'}</option>
+                      <option value={'OTHER'}>{'Other'}</option>
                     </Select>
                   </FormControl>
                 </Stack>
@@ -175,6 +185,16 @@ export default function EditUserInformationModal({
                         setEmail(event.target.value === '' ? null : event.target.value)
                       }
                     />
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel>{'Phone number'}</FormLabel>
+                    <Input
+                      value={phoneNumber}
+                      onChange={event => setPhoneNumber(event.target.value)}
+                      type="tel"
+                    />
+                    <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
                   </FormControl>
 
                   <FormControl isRequired>

@@ -1,51 +1,45 @@
-import { Box, Text, Divider } from '@chakra-ui/react'; // Chakra UI
+import { Box, Text } from '@chakra-ui/react'; // Chakra UI
 import Link from 'next/link'; //Next.js Link
 import Table from '@components/Table'; // Table component
-import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Request status badge component
+import PermitStatusBadge from '@components/admin/PermitStatusBadge'; // Request status badge component
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import { Column } from 'react-table'; // React Table
-import { PermitData } from '@tools/admin/permit-holders/types'; // Permit Data Types
-import { formatDate } from '@lib/utils/format'; // Date formatter util
+import { formatDateYYYYMMDD } from '@lib/utils/format'; // Date formatter util
+import {
+  AppHistoryRow,
+  GetAppHistoryRequest,
+  GetAppHistoryResponse,
+  GET_APP_HISTORY,
+} from '@tools/admin/permit-holders/app-history';
+import { useQuery } from '@apollo/client';
+import { useMemo } from 'react';
+import { getPermitExpiryStatus } from '@lib/utils/permit-expiry';
 
-const COLUMNS: Column<any>[] = [
+const COLUMNS: Column<AppHistoryRow>[] = [
   {
     Header: 'Permit #',
     accessor: 'rcdPermitId',
     disableSortBy: true,
     maxWidth: 140,
-    Cell: ({ value }) => {
-      return (
-        <>
-          <Text as="p">{`#${value}`}</Text>
-        </>
-      );
-    },
+    Cell: ({ value }) => <Text as="p">{`#${value}`}</Text>,
   },
   {
     Header: 'Request Type',
-    accessor: 'isRenewal',
+    accessor: 'requestType',
     disableSortBy: true,
     maxWidth: 140,
-    Cell: ({ value }) => {
-      return (
-        <>
-          <Text as="p">{value ? `Renewal` : `Replacement`}</Text>
-        </>
-      );
-    },
+    Cell: ({ value }) => <Text as="p">{value}</Text>,
   },
   {
     Header: 'Status',
     accessor: 'status',
     disableSortBy: true,
     maxWidth: 195,
-    Cell: ({ value }) => {
-      return (
-        <Box pr="10px">
-          <RequestStatusBadge variant={value} />
-        </Box>
-      );
-    },
+    Cell: ({ value }) => (
+      <Box pr="10px">
+        <PermitStatusBadge variant={getPermitExpiryStatus(new Date(value))} />
+      </Box>
+    ),
   },
   {
     Header: 'Expiry Date',
@@ -53,35 +47,50 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     maxWidth: 140,
     Cell: ({ value }) => {
-      return <Text>{formatDate(value)}</Text>;
+      return <Text>{formatDateYYYYMMDD(value)}</Text>;
     },
   },
   {
     accessor: 'applicationId',
     disableSortBy: true,
     maxWidth: 140,
-    Cell: ({ value }) => {
-      return (
-        <Link href={`/admin/request/${value}`} passHref>
-          <Text textStyle="body-regular" textColor="primary" as="a">
-            View APP
-          </Text>
-        </Link>
-      );
-    },
+    Cell: ({ value }) => (
+      <Link href={`/admin/request/${value}`} passHref>
+        <Text textStyle="body-regular" textColor="primary" as="a">
+          View APP
+        </Text>
+      </Link>
+    ),
   },
 ];
 
 type AppHistoryProps = {
-  readonly permits: PermitData[];
+  readonly applicantId: number;
 };
 
-export default function AppHistoryCard({ permits }: AppHistoryProps) {
+export default function AppHistoryCard({ applicantId }: AppHistoryProps) {
+  const { data } = useQuery<GetAppHistoryResponse, GetAppHistoryRequest>(GET_APP_HISTORY, {
+    variables: { id: applicantId },
+  });
+
+  const appHistory = useMemo<Array<AppHistoryRow>>(
+    () =>
+      data?.applicant.permits
+        ? data.applicant.permits.map(({ expiryDate, rcdPermitId, application }) => ({
+            rcdPermitId,
+            requestType: application.type,
+            status: getPermitExpiryStatus(new Date(expiryDate)),
+            expiryDate,
+            applicationId: application.id,
+          }))
+        : [],
+    [data]
+  );
+
   return (
-    <PermitHolderInfoCard header={`APP History`} alignGridItems="normal">
-      <Divider mt="24px" />
-      <Box padding="20px 24px">
-        <Table columns={COLUMNS} data={permits} />
+    <PermitHolderInfoCard header={`APP History`} alignGridItems="normal" divider>
+      <Box padding="0 24px 20px">
+        <Table columns={COLUMNS} data={appHistory} />
       </Box>
     </PermitHolderInfoCard>
   );

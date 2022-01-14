@@ -91,7 +91,7 @@ function Header() {
       <Flex
         height="100%"
         width="100%"
-        maxWidth="1280px"
+        maxWidth="1440px"
         justifyContent="space-between"
         marginX="80px"
       >
@@ -176,7 +176,7 @@ function Header() {
 // Footer
 function Footer() {
   return (
-    <Center width="100%" maxWidth="1280px" flexDirection="column" paddingBottom={4}>
+    <Center width="100%" maxWidth="1440px" flexDirection="column" paddingBottom={4}>
       <Text textStyle="caption">&copy; 2021 Richmond Centre for Disability. v0.0.1.</Text>
       <Text textStyle="caption">
         A project by{' '}
@@ -207,7 +207,7 @@ function InternalGrid({
     <Grid
       flexGrow={1}
       width="100%"
-      maxWidth="1280px"
+      maxWidth="1440px"
       marginX={isContent ? '80px' : undefined}
       templateColumns="repeat(12, 1fr)"
       gap="20px"

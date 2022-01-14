@@ -43,7 +43,20 @@ import { SortOrder } from '@tools/types'; // Sorting Type
  */
 export const applicants: Resolver<
   QueryApplicantsArgs,
-  { result: Array<Omit<Applicant, 'guardian' | 'medicalInformation'>>; totalCount: number }
+  {
+    result: Array<
+      Omit<
+        Applicant,
+        | 'mostRecentPermit'
+        | 'activePermit'
+        | 'permits'
+        | 'guardian'
+        | 'medicalInformation'
+        | 'completedApplications'
+      >
+    >;
+    totalCount: number;
+  }
 > = async (_parent, { filter }, { prisma }) => {
   // Create default filter
   let where = {};
@@ -145,7 +158,7 @@ export const applicants: Resolver<
     // Update default filter since there were filter arguments
     where = {
       rcdUserId: rcdUserIDSearch,
-      status: userStatus,
+      status: userStatus || undefined,
       permits: permitFilter,
       ...nameFilters,
     };
@@ -188,7 +201,15 @@ export const applicants: Resolver<
  */
 export const applicant: Resolver<
   QueryApplicantArgs,
-  Omit<Applicant, 'guardian' | 'medicalInformation'>
+  Omit<
+    Applicant,
+    | 'mostRecentPermit'
+    | 'activePermit'
+    | 'permits'
+    | 'guardian'
+    | 'medicalInformation'
+    | 'completedApplications'
+  >
 > = async (_parent, args, { prisma }) => {
   const { id } = args;
   const applicant = await prisma.applicant.findUnique({
@@ -238,17 +259,20 @@ export const updateApplicantDoctorInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   // TODO: Validation
   const { input } = args;
-  const { id, ...data } = input;
+  const { id, mspNumber, ...data } = input;
 
   let updatedApplicant;
   try {
-    await prisma.applicant.update({
+    updatedApplicant = await prisma.applicant.update({
       where: { id },
       data: {
         medicalInformation: {
           update: {
             physician: {
-              update: data,
+              upsert: {
+                create: { mspNumber, ...data },
+                update: data,
+              },
             },
           },
         },

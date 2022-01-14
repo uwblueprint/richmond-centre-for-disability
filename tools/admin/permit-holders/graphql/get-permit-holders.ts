@@ -22,6 +22,7 @@ export type PermitHolderRow = {
   status: ApplicantStatus;
 };
 
+// TODO: Deprecate
 export const GET_PERMIT_HOLDERS_QUERY = gql`
   query FilterPermitHoldersQuery($filter: ApplicantsFilter) {
     applicants(filter: $filter) {

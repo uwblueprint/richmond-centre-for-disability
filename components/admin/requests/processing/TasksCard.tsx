@@ -41,7 +41,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     GetApplicationProcessingRequest
   >(GET_APPLICATION_PROCESSING, {
     variables: { id: applicationId },
-    notifyOnNetworkStatusChange: true,
   });
 
   const [assignAppNumber] = useMutation<AssignAppNumberResponse, AssignAppNumberRequest>(

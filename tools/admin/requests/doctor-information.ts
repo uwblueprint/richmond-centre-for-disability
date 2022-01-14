@@ -2,7 +2,6 @@ import { gql } from '@apollo/client';
 import {
   MutationUpdateApplicationDoctorInformationArgs,
   NewApplication,
-  Physician as _Physician,
   QueryApplicationArgs,
   RenewalApplication,
   UpdateApplicationDoctorInformationResult,
@@ -33,23 +32,6 @@ export type DoctorCardData = Pick<
   | 'physicianProvince'
   | 'physicianCountry'
   | 'physicianPostalCode'
->;
-
-/**
- * Physician in Doctor information forms
- * TODO: Deprecate
- */
-export type Physician = Pick<
-  _Physician,
-  | 'firstName'
-  | 'lastName'
-  | 'mspNumber'
-  | 'phone'
-  | 'addressLine1'
-  | 'addressLine2'
-  | 'city'
-  | 'province'
-  | 'postalCode'
 >;
 
 /**

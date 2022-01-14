@@ -40,6 +40,14 @@ export type PermitHolderRow = Pick<
   mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'>;
 };
 
+/**
+ * Type for data required in Set Permit Holder Status modal
+ */
+export type PermitHolderToUpdateStatus = {
+  readonly id: number;
+  readonly status: ApplicantStatus;
+};
+
 export const GET_PERMIT_HOLDERS_QUERY = gql`
   query FilterPermitHoldersQuery($filter: ApplicantsFilter) {
     applicants(filter: $filter) {

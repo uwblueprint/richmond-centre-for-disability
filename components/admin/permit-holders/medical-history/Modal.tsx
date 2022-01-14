@@ -13,22 +13,23 @@ import {
   ListItem,
   UnorderedList,
   Badge,
-  HStack,
 } from '@chakra-ui/react'; // Chakra UI
 import { ReactNode } from 'react'; // React
-import { Aid, Application, Eligibility } from '@lib/graphql/types'; // Application type & Aid enum
+import { MobilityAid } from '@lib/graphql/types'; // Application type & Aid enum
 import { formatDate } from '@lib/utils/format'; // Date formatter util
+import { MedicalHistoryRow } from '@tools/admin/permit-holders/medical-history';
 
 type MedicalHistoryModalProps = {
-  application: Application;
+  details: MedicalHistoryRow['details'];
   children: ReactNode;
 };
 
 export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
-  const { application, children } = props;
+  const { details, children } = props;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const _renderAidsList = (aids: Aid[]): JSX.Element => {
+
+  const _renderAidsList = (aids: MobilityAid[]): JSX.Element => {
     return (
       <UnorderedList paddingLeft="15px">
         {aids?.map(aid => (
@@ -42,6 +43,9 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
       </UnorderedList>
     );
   };
+
+  const { disability, disabilityCertificationDate, patientCondition, mobilityAids, notes } =
+    details;
 
   return (
     <>
@@ -57,44 +61,27 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
             paddingX="4px"
           >
             <Text as="h2" textStyle="display-medium-bold">
-              {`${application.disability} (${formatDate(application.createdAt)})`}
+              {`${disability} (${formatDate(disabilityCertificationDate)})`}
             </Text>
           </ModalHeader>
           <ModalBody paddingTop="0px" paddingBottom="36px" paddingX="4px">
-            {(application.patientEligibility === Eligibility.AffectsMobility ||
-              application.patientEligibility === Eligibility.MobilityAidRequired ||
-              application.patientEligibility === Eligibility.CannotWalk_100M) && (
-              <HStack paddingBottom="22px" spacing="16px">
-                {application.patientEligibility === Eligibility.AffectsMobility && (
-                  <Badge backgroundColor="background.informative">{'Affects Mobility'}</Badge>
-                )}
-                {application.patientEligibility === Eligibility.MobilityAidRequired && (
-                  <Badge backgroundColor="background.informative">{'Aid Required'}</Badge>
-                )}
-                {application.patientEligibility === Eligibility.CannotWalk_100M && (
-                  <Badge backgroundColor="background.informative">{'Cannot walk > 100m'}</Badge>
-                )}
-              </HStack>
-            )}
-
-            <Divider />
-
-            {application.aid && (
-              <Box paddingTop="24px">
-                <Text as="h3" textStyle="heading" paddingBottom="20px">
-                  {'Mobility Aids:'}
-                </Text>
-                {_renderAidsList(application.aid)}
-              </Box>
-            )}
-
-            {application.notes && (
+            <Badge display="inline-block" backgroundColor="background.informative">
+              {patientCondition}
+            </Badge>
+            <Divider my="24px" />
+            <Box>
+              <Text as="h3" textStyle="heading" paddingBottom="20px">
+                {'Mobility Aids:'}
+              </Text>
+              {_renderAidsList(mobilityAids)}
+            </Box>
+            {notes && (
               <Box paddingTop="32px">
                 <Text as="h3" textStyle="heading" paddingBottom="20px">
                   {'Notes: '}
                 </Text>
                 <Text as="p" textStyle="body-regular">
-                  {application.notes}
+                  {notes}
                 </Text>
               </Box>
             )}

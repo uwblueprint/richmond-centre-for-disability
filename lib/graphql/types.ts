@@ -770,6 +770,7 @@ export type Permit = {
   type: PermitType;
   expiryDate: Scalars['Date'];
   active: Scalars['Boolean'];
+  application: Application;
 };
 
 export type PermitHoldersReportColumn =
