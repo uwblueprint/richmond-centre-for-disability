@@ -16,152 +16,126 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
-import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
+import {
+  GetSelectedApplicantRequest,
+  GetSelectedApplicantResponse,
+  GET_SELECTED_APPLICANT_QUERY,
+} from '@tools/admin/requests/permit-holder-information';
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
-import { ReasonForReplacement } from '@tools/admin/requests/reason-for-replacement';
+import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-replacement';
 import ReasonForReplacementForm from '@components/admin/requests/reason-for-replacement/Form';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
-import { PermitHolder } from '@tools/admin/permit-holders/graphql/get-permit-holders'; // Permit holders GQL query}
 import { useLazyQuery, useMutation } from '@apollo/client';
-import {
-  GET_APPLICANT_REPLACEMENT_QUERY,
-  GetApplicantReplacementRequest,
-  GetApplicantReplacementResponse,
-} from '@tools/admin/requests/graphql/create/get-replacement-applicant';
 import { RequestFlowPageState } from '@tools/admin/requests/types';
 import {
   CREATE_REPLACEMENT_APPLICATION_MUTATION,
   CreateReplacementApplicationRequest,
   CreateReplacementApplicationResponse,
-} from '@tools/applicant/replacements';
+} from '@tools/admin/requests/create-replacement';
 import { useRouter } from 'next/router'; // Router
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
-import { ApplicantData } from '@tools/admin/permit-holders/types';
+import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
+import { PaymentType } from '@lib/graphql/types';
 
 export default function CreateReplacement() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
     RequestFlowPageState.SelectingPermitHolderPage
   );
-  const [applicantId, setApplicantID] = useState<number | undefined>(undefined);
-  const [permitHolderID, setPermitHolderID] = useState<number | undefined>(undefined);
-  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
+  const [applicantId, setApplicantId] = useState<number | null>(null);
+
+  /** Permit holder information section */
+  const [permitHolderInformation, setPermitHolderInformation] = useState<
+    Omit<ApplicantFormData, 'dateOfBirth' | 'gender'>
+  >({
     firstName: '',
+    middleName: null,
     lastName: '',
     email: '',
     phone: '',
     addressLine1: '',
-    addressLine2: '',
+    addressLine2: null,
     city: '',
     postalCode: '',
-    receiveEmailUpdates: false,
-  });
-  const [personalInformationCard, setPermitInformationCard] = useState<ApplicantData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    postalCode: '',
-    rcdUserId: 0,
-    id: 0,
-    dateOfBirth: '',
-    status: 'ACTIVE',
-    gender: 'OTHER',
-    province: 'BC',
   });
 
-  const [reasonDetails, setReason] = useState<ReasonForReplacement>({
-    reason: 'OTHER',
+  /** Reason for replacement section */
+  const [reasonForReplacement, setReasonForReplacement] = useState<ReasonForReplacementFormData>({
+    reason: null,
     lostTimestamp: null,
     lostLocation: null,
-    description: null,
     stolenJurisdiction: null,
-    stolenPoliceFileNumber: null,
     stolenPoliceOfficerName: null,
+    stolenPoliceFileNumber: null,
+    eventDescription: null,
   });
 
-  const [paymentDetails, setPaymentDetails] = useState<PaymentInformationFormData>({
-    paymentMethod: 'MASTERCARD',
-    donationAmount: '26.00',
+  /** Payment information section */
+  const [paymentInformation, setPaymentInformation] = useState<
+    PaymentInformationFormData & { paymentMethod: PaymentType | null }
+  >({
+    paymentMethod: null,
+    donationAmount: '',
     shippingAddressSameAsHomeAddress: false,
     shippingFullName: '',
     shippingAddressLine1: '',
-    shippingAddressLine2: '',
+    shippingAddressLine2: null,
     shippingCity: '',
     shippingProvince: 'BC',
+    shippingCountry: '',
     shippingPostalCode: '',
     billingAddressSameAsHomeAddress: false,
     billingFullName: '',
     billingAddressLine1: '',
-    billingAddressLine2: '',
+    billingAddressLine2: null,
     billingCity: '',
     billingProvince: 'BC',
+    billingCountry: '',
     billingPostalCode: '',
   });
 
   const toast = useToast();
   const router = useRouter();
 
-  const [getApplicant, { loading: getApplicantLoading }] = useLazyQuery<
-    GetApplicantReplacementResponse,
-    GetApplicantReplacementRequest
-  >(GET_APPLICANT_REPLACEMENT_QUERY, {
-    onCompleted: ({ applicant }) => {
-      setPermitHolderInformation({
-        firstName: applicant.firstName,
-        lastName: applicant.lastName,
-        email: applicant.email,
-        phone: applicant.phone,
-        addressLine1: applicant.addressLine1,
-        addressLine2: applicant.addressLine2,
-        city: applicant.city,
-        postalCode: applicant.postalCode,
-        receiveEmailUpdates: false,
-      });
-
-      const lastApplication = applicant.mostRecentApplication;
-      if (lastApplication) {
-        setPaymentDetails({
-          ...paymentDetails,
-          shippingAddressSameAsHomeAddress: lastApplication.shippingAddressSameAsHomeAddress,
-          shippingFullName: lastApplication.shippingFullName,
-          shippingAddressLine1: lastApplication.shippingAddressLine1,
-          shippingAddressLine2: lastApplication.shippingAddressLine2,
-          shippingCity: lastApplication.shippingCity,
-          shippingProvince: lastApplication.shippingProvince,
-          shippingPostalCode: lastApplication.shippingPostalCode,
-        });
-      }
-      setPermitInformationCard({
-        id: +applicant.id,
-        rcdUserId: applicant.rcdUserId || 0,
-        firstName: applicant.firstName,
-        lastName: applicant.lastName,
-        gender: applicant.gender,
-        dateOfBirth: applicant.dateOfBirth,
-        email: applicant.email,
-        phone: applicant.phone,
-        province: applicant.province,
-        city: applicant.city,
-        addressLine1: applicant.addressLine1,
-        addressLine2: applicant.addressLine2,
-        status: applicant.status,
-        postalCode: applicant.postalCode,
-      });
-      setPermitHolderID(applicant.rcdUserId || 0);
-      setApplicantID(+applicant.id);
-    },
-  });
-
-  const handleSelectPermitHolder = (permitHolder: PermitHolder | undefined) => {
-    if (permitHolder && permitHolder.id) {
-      getApplicant({ variables: { id: permitHolder.id } });
+  // Get applicant autofill information
+  const [getApplicant] = useLazyQuery<GetSelectedApplicantResponse, GetSelectedApplicantRequest>(
+    GET_SELECTED_APPLICANT_QUERY,
+    {
+      onCompleted: data => {
+        if (data) {
+          const {
+            firstName,
+            middleName,
+            lastName,
+            email,
+            phone,
+            addressLine1,
+            addressLine2,
+            city,
+            postalCode,
+          } = data.applicant;
+          setPermitHolderInformation({
+            firstName,
+            middleName,
+            lastName,
+            email,
+            phone,
+            addressLine1,
+            addressLine2,
+            city,
+            postalCode,
+          });
+        }
+      },
     }
+  );
+
+  /** Update selected permit holder data on selecting option */
+  const handleSelectPermitHolder = (applicantId: number) => {
+    setApplicantId(applicantId);
+    getApplicant({ variables: { id: applicantId } });
   };
 
   // Submit application mutation
@@ -170,13 +144,19 @@ export default function CreateReplacement() {
     CreateReplacementApplicationRequest
   >(CREATE_REPLACEMENT_APPLICATION_MUTATION, {
     onCompleted: data => {
-      if (data.createReplacementApplication.ok) {
-        toast({
-          status: 'success',
-          description: 'Your application has been submitted!',
-          isClosable: true,
-        });
-        router.push(`/admin/request/${data.createReplacementApplication.applicationId}`);
+      if (data) {
+        const { ok, applicationId } = data.createReplacementApplication;
+        if (ok) {
+          toast({
+            status: 'success',
+            description: 'Your application has been submitted!',
+            isClosable: true,
+          });
+
+          if (applicationId) {
+            router.push(`/admin/request/${data.createReplacementApplication.applicationId}`);
+          }
+        }
       }
     },
     onError: error => {
@@ -188,9 +168,10 @@ export default function CreateReplacement() {
     },
   });
 
+  /** Handle replacement application submission */
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    if (applicantId === undefined) {
+    if (applicantId === null) {
       toast({
         status: 'error',
         description: 'You must select a permit holder for a Replacement Request.',
@@ -198,38 +179,26 @@ export default function CreateReplacement() {
       });
       return;
     }
+
+    if (reasonForReplacement.reason === null) {
+      toast({ status: 'error', description: 'Missing reason for replacement', isClosable: true });
+      return;
+    }
+
+    if (paymentInformation.paymentMethod === null) {
+      toast({ status: 'error', description: 'Missing payment method', isClosable: true });
+      return;
+    }
+
     await submitReplacementApplication({
       variables: {
         input: {
           applicantId,
-          firstName: permitHolderInformation.firstName,
-          lastName: permitHolderInformation.lastName,
-          phone: permitHolderInformation.phone,
-          email: permitHolderInformation.email,
-          addressLine1: permitHolderInformation.addressLine1,
-          addressLine2: permitHolderInformation.addressLine2,
-          city: permitHolderInformation.city,
-          postalCode: permitHolderInformation.postalCode,
-          reason: reasonDetails.reason,
-          lostTimestamp: reasonDetails.lostTimestamp,
-          lostLocation: reasonDetails.lostLocation || '',
-          description: reasonDetails.description || '',
-          paymentMethod: paymentDetails.paymentMethod,
-          donationAmount: paymentDetails.donationAmount,
-          shippingAddressSameAsHomeAddress: paymentDetails.shippingAddressSameAsHomeAddress,
-          shippingFullName: paymentDetails.shippingFullName,
-          shippingAddressLine1: paymentDetails.shippingAddressLine1,
-          shippingAddressLine2: paymentDetails.shippingAddressLine2,
-          shippingCity: paymentDetails.shippingCity,
-          shippingProvince: paymentDetails.shippingProvince,
-          shippingPostalCode: paymentDetails.shippingPostalCode,
-          billingAddressSameAsHomeAddress: paymentDetails.billingAddressSameAsHomeAddress,
-          billingFullName: paymentDetails.billingFullName,
-          billingAddressLine1: paymentDetails.billingAddressLine1,
-          billingAddressLine2: paymentDetails.billingAddressLine2,
-          billingCity: paymentDetails.billingCity,
-          billingProvince: paymentDetails.billingProvince,
-          billingPostalCode: paymentDetails.billingPostalCode,
+          ...permitHolderInformation,
+          ...reasonForReplacement,
+          reason: reasonForReplacement.reason,
+          ...paymentInformation,
+          paymentMethod: paymentInformation.paymentMethod,
         },
       },
     });
@@ -241,12 +210,12 @@ export default function CreateReplacement() {
         <Flex>
           <Text textStyle="display-large">
             {`New Replacement Request`}
-            {applicantId !== undefined && (
+            {applicantId && (
               <>
                 {` (User ID: `}
                 <Box as="span" color="primary">
                   <Link href={`/admin/permit-holder/${applicantId}`}>
-                    <a>{permitHolderID}</a>
+                    <a>{applicantId}</a>
                   </Link>
                 </Box>
                 {`)`}
@@ -274,146 +243,142 @@ export default function CreateReplacement() {
               </Box>
             </GridItem>
             <GridItem paddingTop="32px">
-              {(applicantId !== undefined || getApplicantLoading) && (
-                <SelectedPermitHolderCard
-                  applicant={personalInformationCard}
-                  loading={getApplicantLoading}
-                />
-              )}
+              {applicantId && <SelectedPermitHolderCard applicantId={applicantId} />}
             </GridItem>
           </>
         )}
 
-        {applicantId !== undefined &&
-          currentPageState == RequestFlowPageState.SubmittingRequestPage && (
-            <form onSubmit={handleSubmit}>
-              {/* Permit Holder Information Form */}
-              <GridItem paddingTop="32px">
-                <Box
-                  border="1px solid"
-                  borderColor="border.secondary"
-                  borderRadius="12px"
-                  bgColor="white"
-                  paddingTop="32px"
-                  paddingBottom="40px"
-                  paddingX="40px"
-                  align="left"
-                >
-                  <Text textStyle="display-small-semibold" paddingBottom="20px">
-                    {`Permit Holder's Information`}
-                  </Text>
-                  <PermitHolderInformationForm
-                    type="replacement"
-                    permitHolderInformation={permitHolderInformation}
-                    onChange={setPermitHolderInformation}
-                  />
-                </Box>
-              </GridItem>
-              {/* Reason For Replacement Form */}
-              <GridItem paddingTop="32px">
-                <Box
-                  border="1px solid"
-                  borderColor="border.secondary"
-                  borderRadius="12px"
-                  bgColor="white"
-                  paddingTop="32px"
-                  paddingBottom="40px"
-                  paddingX="40px"
-                  align="left"
-                >
-                  <Text textStyle="display-small-semibold" paddingBottom="20px">
-                    {`Reason for Replacement`}
-                  </Text>
-                  <ReasonForReplacementForm
-                    reasonForReplacement={reasonDetails}
-                    onChange={setReason}
-                  />
-                </Box>
-              </GridItem>
-              {/* Payment Details Form */}
-              <GridItem paddingTop="32px" paddingBottom="68px">
-                <Box
-                  border="1px solid"
-                  borderColor="border.secondary"
-                  borderRadius="12px"
-                  bgColor="white"
-                  paddingTop="32px"
-                  paddingBottom="40px"
-                  paddingX="40px"
-                  align="left"
-                >
-                  <Text textStyle="display-small-semibold" paddingBottom="20px">
-                    {`Payment, Shipping, and Billing Information`}
-                  </Text>
-                  <PaymentDetailsForm
-                    paymentInformation={paymentDetails}
-                    onChange={setPaymentDetails}
-                  />
-                </Box>
-              </GridItem>
-              {/* Footer */}
+        {applicantId && currentPageState == RequestFlowPageState.SubmittingRequestPage && (
+          <form onSubmit={handleSubmit}>
+            {/* Permit Holder Information Form */}
+            <GridItem paddingTop="32px">
               <Box
-                position="fixed"
-                left="0"
-                bottom="0"
-                right="0"
-                paddingY="20px"
-                paddingX="188px"
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
                 bgColor="white"
-                boxShadow="dark-lg"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
               >
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box>
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Permit Holder's Information`}
+                </Text>
+                <PermitHolderInformationForm
+                  type="REPLACEMENT"
+                  permitHolderInformation={{
+                    receiveEmailUpdates: false,
+                    ...permitHolderInformation,
+                  }}
+                  onChange={setPermitHolderInformation}
+                />
+              </Box>
+            </GridItem>
+            {/* Reason For Replacement Form */}
+            <GridItem paddingTop="32px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Reason for Replacement`}
+                </Text>
+                <ReasonForReplacementForm
+                  reasonForReplacement={reasonForReplacement}
+                  onChange={setReasonForReplacement}
+                />
+              </Box>
+            </GridItem>
+            {/* Payment Details Form */}
+            <GridItem paddingTop="32px" paddingBottom="68px">
+              <Box
+                border="1px solid"
+                borderColor="border.secondary"
+                borderRadius="12px"
+                bgColor="white"
+                paddingTop="32px"
+                paddingBottom="40px"
+                paddingX="40px"
+                align="left"
+              >
+                <Text textStyle="display-small-semibold" paddingBottom="20px">
+                  {`Payment, Shipping, and Billing Information`}
+                </Text>
+                <PaymentDetailsForm
+                  paymentInformation={paymentInformation}
+                  onChange={setPaymentInformation}
+                />
+              </Box>
+            </GridItem>
+            {/* Footer */}
+            <Box
+              position="fixed"
+              left="0"
+              bottom="0"
+              right="0"
+              paddingY="20px"
+              paddingX="188px"
+              bgColor="white"
+              boxShadow="dark-lg"
+            >
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Button
+                    bg="background.gray"
+                    _hover={{ bg: 'background.grayHover' }}
+                    marginRight="20px"
+                    height="48px"
+                    width="180px"
+                    isDisabled={submitRequestLoading}
+                  >
+                    <BackToSearchModal
+                      onGoBack={() => {
+                        setApplicantId(null);
+                        setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
+                      }}
+                    >
+                      <Text textStyle="button-semibold" color="text.default">
+                        Back to search
+                      </Text>
+                    </BackToSearchModal>
+                  </Button>
+                </Box>
+                <Box>
+                  <Stack direction="row" justifyContent="space-between">
+                    <CancelCreateRequestModal type="replacement">
+                      <Button
+                        bg="secondary.critical"
+                        _hover={{ bg: 'secondary.criticalHover' }}
+                        marginRight="20px"
+                        height="48px"
+                        width="188px"
+                        isDisabled={submitRequestLoading}
+                      >
+                        <Text textStyle="button-semibold">Discard request</Text>
+                      </Button>
+                    </CancelCreateRequestModal>
                     <Button
-                      bg="background.gray"
-                      _hover={{ bg: 'background.grayHover' }}
-                      marginRight="20px"
+                      bg="primary"
                       height="48px"
                       width="180px"
-                      isDisabled={submitRequestLoading}
+                      type="submit"
+                      isLoading={submitRequestLoading}
                     >
-                      <BackToSearchModal
-                        onGoBack={() => {
-                          setApplicantID(undefined);
-                          setPermitHolderID(undefined);
-                          setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
-                        }}
-                      >
-                        <Text textStyle="button-semibold" color="text.default">
-                          Back to search
-                        </Text>
-                      </BackToSearchModal>
+                      <Text textStyle="button-semibold">Create request</Text>
                     </Button>
-                  </Box>
-                  <Box>
-                    <Stack direction="row" justifyContent="space-between">
-                      <CancelCreateRequestModal type="replacement">
-                        <Button
-                          bg="secondary.critical"
-                          _hover={{ bg: 'secondary.criticalHover' }}
-                          marginRight="20px"
-                          height="48px"
-                          width="188px"
-                          isDisabled={submitRequestLoading}
-                        >
-                          <Text textStyle="button-semibold">Discard request</Text>
-                        </Button>
-                      </CancelCreateRequestModal>
-                      <Button
-                        bg="primary"
-                        height="48px"
-                        width="180px"
-                        type="submit"
-                        isLoading={submitRequestLoading}
-                      >
-                        <Text textStyle="button-semibold">Create request</Text>
-                      </Button>
-                    </Stack>
-                  </Box>
-                </Stack>
-              </Box>
-            </form>
-          )}
+                  </Stack>
+                </Box>
+              </Stack>
+            </Box>
+          </form>
+        )}
         {/* Footer on Permit Search*/}
         {currentPageState == RequestFlowPageState.SelectingPermitHolderPage && (
           <Box

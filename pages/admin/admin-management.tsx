@@ -327,7 +327,9 @@ export default function AdminManagement() {
     if (userToDelete) {
       await deleteEmployee({
         variables: {
-          id: userToDelete?.id,
+          input: {
+            id: userToDelete.id,
+          },
         },
       });
     }

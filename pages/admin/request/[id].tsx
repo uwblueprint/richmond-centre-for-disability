@@ -14,6 +14,7 @@ import {
   GetApplicationRequest,
   GetApplicationResponse,
 } from '@tools/admin/requests/view-request'; // Request page GraphQL queries
+import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
 
 type Props = {
   readonly id: string;
@@ -73,12 +74,13 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
       <GridItem colStart={1} colSpan={5} textAlign="left">
         <VStack width="100%" spacing="20px" align="stretch">
           <PersonalInformationCard applicationId={id} />
-          <DoctorInformationCard applicationId={id} />
+          {type !== 'REPLACEMENT' && <DoctorInformationCard applicationId={id} />}
         </VStack>
       </GridItem>
       <GridItem colStart={6} colSpan={7}>
         <VStack width="100%" spacing="20px" align="stretch">
           {status === 'IN_PROGRESS' && <ProcessingTasksCard applicationId={id} />}
+          {type === 'REPLACEMENT' && <ReasonForReplacementCard applicationId={id} />}
           <PaymentInformationCard applicationId={id} />
         </VStack>
       </GridItem>

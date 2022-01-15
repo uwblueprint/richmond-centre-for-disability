@@ -52,7 +52,14 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
     },
   });
   const handleSave = async (data: DoctorFormData) => {
-    await updateDoctorInformation({ variables: { input: { id: applicantId, ...data } } });
+    if (!data.mspNumber) {
+      // TODO: Improve error handling
+      return;
+    }
+
+    await updateDoctorInformation({
+      variables: { input: { id: applicantId, ...data, mspNumber: data.mspNumber } },
+    });
     refetch();
   };
 

@@ -75,8 +75,8 @@ export default function GuardianInformationForm({
           <FormControl isRequired>
             <FormLabel>{'Relationship to applicant'}</FormLabel>
             <Input
-              value={guardianInformation.guardianRelationship}
-              onChange={handleChange('guardianRelationship')}
+              value={guardianInformation.relationship}
+              onChange={handleChange('relationship')}
             />
           </FormControl>
         </Stack>

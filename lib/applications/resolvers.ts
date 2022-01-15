@@ -393,7 +393,7 @@ export const createRenewalApplication: Resolver<
     throw new ApolloError('Renewal application was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, applicationId: createdRenewalApplication.id };
 };
 
 /**
@@ -673,6 +673,7 @@ export const createReplacementApplication: Resolver<
 
   return {
     ok: true,
+    applicationId: application.id,
   };
 };
 

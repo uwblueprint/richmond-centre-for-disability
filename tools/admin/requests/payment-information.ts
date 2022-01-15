@@ -2,6 +2,7 @@ import { gql } from '@apollo/client';
 import {
   Application,
   MutationUpdateApplicationPaymentInformationArgs,
+  PaymentType,
   QueryApplicationArgs,
   UpdateApplicationPaymentInformationResult,
 } from '@lib/graphql/types'; // Applicant type
@@ -9,8 +10,6 @@ import {
 /** Payment information for forms */
 export type PaymentInformationFormData = Pick<
   Application,
-  | 'paymentMethod'
-  | 'processingFee'
   | 'donationAmount'
   | 'shippingAddressSameAsHomeAddress'
   | 'shippingFullName'
@@ -28,7 +27,7 @@ export type PaymentInformationFormData = Pick<
   | 'billingProvince'
   | 'billingCountry'
   | 'billingPostalCode'
->;
+> & { paymentMethod: PaymentType | null };
 
 /** Payment information for cards */
 export type PaymentInformationCardData = Pick<

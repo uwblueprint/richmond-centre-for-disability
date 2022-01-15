@@ -215,7 +215,7 @@ export type CreateExternalRenewalApplicationInput = {
   phone: Maybe<Scalars['String']>;
   email: Maybe<Scalars['String']>;
   receiveEmailUpdates: Scalars['Boolean'];
-  updatedPhysician: Scalars['String'];
+  updatedPhysician: Scalars['Boolean'];
   physicianFirstName: Maybe<Scalars['String']>;
   physicianLastName: Maybe<Scalars['String']>;
   physicianMspNumber: Maybe<Scalars['Int']>;
@@ -358,6 +358,7 @@ export type CreateRenewalApplicationInput = {
 export type CreateRenewalApplicationResult = {
   __typename?: 'CreateRenewalApplicationResult';
   ok: Scalars['Boolean'];
+  applicationId: Maybe<Scalars['Int']>;
 };
 
 export type CreateReplacementApplicationInput = {
@@ -401,6 +402,7 @@ export type CreateReplacementApplicationInput = {
 export type CreateReplacementApplicationResult = {
   __typename?: 'CreateReplacementApplicationResult';
   ok: Scalars['Boolean'];
+  applicationId: Maybe<Scalars['Int']>;
 };
 
 

@@ -7,6 +7,7 @@ import {
   QueryApplicationArgs,
   MutationUpdateApplicationGeneralInformationArgs,
   UpdateApplicationGeneralInformationResult,
+  QueryApplicantArgs,
 } from '@lib/graphql/types'; // Applicant type
 
 /** Permit holder information for forms */
@@ -113,4 +114,50 @@ export type UpdatePermitHolderInformationRequest = MutationUpdateApplicationGene
 
 export type UpdatePermitHolderInformationResponse = {
   updateApplicationGeneralInformation: UpdateApplicationGeneralInformationResult;
+};
+
+/** Get permit holder information for selected permit holder preview card */
+export const GET_SELECTED_APPLICANT_QUERY = gql`
+  query GetSelectedApplicant($id: Int!) {
+    applicant(id: $id) {
+      firstName
+      middleName
+      lastName
+      status
+      dateOfBirth
+      gender
+      otherGender
+      phone
+      email
+      addressLine1
+      addressLine2
+      city
+      province
+      country
+      postalCode
+    }
+  }
+`;
+
+export type GetSelectedApplicantRequest = QueryApplicantArgs;
+
+export type GetSelectedApplicantResponse = {
+  applicant: Pick<
+    Applicant,
+    | 'firstName'
+    | 'middleName'
+    | 'lastName'
+    | 'status'
+    | 'dateOfBirth'
+    | 'gender'
+    | 'otherGender'
+    | 'phone'
+    | 'email'
+    | 'addressLine1'
+    | 'addressLine2'
+    | 'city'
+    | 'province'
+    | 'country'
+    | 'postalCode'
+  >;
 };

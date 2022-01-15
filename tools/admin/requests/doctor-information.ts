@@ -11,7 +11,7 @@ import {
 export type DoctorFormData = {
   firstName: string;
   lastName: string;
-  mspNumber: number;
+  mspNumber: number | null;
   phone: string;
   addressLine1: string;
   addressLine2: string | null;

@@ -470,6 +470,7 @@ export default gql`
 
   type CreateRenewalApplicationResult {
     ok: Boolean!
+    applicationId: Int
   }
 
   # Renewal application being created from applicant-facing form
@@ -488,7 +489,7 @@ export default gql`
     receiveEmailUpdates: Boolean!
 
     # Doctor information
-    updatedPhysician: String!
+    updatedPhysician: Boolean!
     physicianFirstName: String
     physicianLastName: String
     physicianMspNumber: Int
@@ -568,6 +569,7 @@ export default gql`
 
   type CreateReplacementApplicationResult {
     ok: Boolean!
+    applicationId: Int
   }
 
   # Query for many applications

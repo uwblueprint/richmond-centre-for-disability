@@ -4,7 +4,7 @@ import {
   MutationCreateReplacementApplicationArgs,
 } from '@lib/graphql/types'; // GraphQL types
 
-// Create replacement application mutation
+/** Create replacement application mutation */
 export const CREATE_REPLACEMENT_APPLICATION_MUTATION = gql`
   mutation CreateReplacementApplicationMutation($input: CreateReplacementApplicationInput!) {
     createReplacementApplication(input: $input) {

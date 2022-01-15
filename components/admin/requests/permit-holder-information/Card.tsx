@@ -143,7 +143,7 @@ const Card: FC<Props> = props => {
                 <PermitHolderStatusBadge
                   variant={
                     getPermitExpiryStatus(
-                      permitHolderInformation.applicant.mostRecentPermit.expiryDate
+                      new Date(permitHolderInformation.applicant.mostRecentPermit.expiryDate)
                     ) === 'EXPIRED'
                       ? 'INACTIVE'
                       : 'ACTIVE'
@@ -155,7 +155,9 @@ const Card: FC<Props> = props => {
               // TODO: Fix text styles to avoid !important
               <Text as="p" textStyle="xsmall" margin="0 !important" color="secondary">
                 Expiring{' '}
-                {permitHolderInformation.applicant.mostRecentPermit.expiryDate.toDateString()}
+                {new Date(
+                  permitHolderInformation.applicant.mostRecentPermit.expiryDate
+                ).toDateString()}
               </Text>
             )}
           </VStack>

@@ -8,15 +8,8 @@ import {
 /** Doctor information in doctor information form */
 export type DoctorFormData = Pick<
   Physician,
-  | 'firstName'
-  | 'lastName'
-  | 'mspNumber'
-  | 'phone'
-  | 'addressLine1'
-  | 'addressLine2'
-  | 'city'
-  | 'postalCode'
->;
+  'firstName' | 'lastName' | 'phone' | 'addressLine1' | 'addressLine2' | 'city' | 'postalCode'
+> & { mspNumber: number | null };
 
 /** Doctor information in doctor information card */
 export type DoctorCardData = Pick<

@@ -14,9 +14,9 @@ import {
 export const getErrorMessage = (failureReason: VerifyIdentityFailureReason): string => {
   // TODO: Replace with i18n translation keys
   switch (failureReason) {
-    case VerifyIdentityFailureReason.IdentityVerificationFailed:
+    case 'IDENTITY_VERIFICATION_FAILED':
       return 'We did not find any user records matching the information you entered. Please try again.';
-    case VerifyIdentityFailureReason.AppDoesNotExpireWithin_30Days:
+    case 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS':
       return `Your current permit expiry date is too far away to request a renewal.
       Please check back when your permit is expiring within 30 days or less.`;
     default:

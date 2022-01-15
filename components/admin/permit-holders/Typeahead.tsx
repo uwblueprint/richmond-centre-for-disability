@@ -1,18 +1,18 @@
 import { useQuery } from '@apollo/client'; // Apollo
 import { Text } from '@chakra-ui/react'; //Chakra UI
 import Typeahead from '@components/Typeahead'; // Typeahead component
-import { formatDateYYYYMMDD } from '@lib/utils/format'; // Date formatter util
+import { formatDateYYYYMMDD, formatFullName } from '@lib/utils/format'; // Date formatter util
 import {
-  GetPermitHoldersRequest,
-  GetPermitHoldersResponse,
-  GET_PERMIT_HOLDERS_QUERY,
-  PermitHolder,
-} from '@tools/admin/permit-holders/graphql/get-permit-holders'; // Permit holders GQL query
+  PermitHolderResult,
+  SearchPermitHoldersRequest,
+  SearchPermitHoldersResponse,
+  SEARCH_PERMIT_HOLDERS,
+} from '@tools/admin/permit-holders/typeahead';
 import { useState } from 'react'; // React
 
 // Permit Holder Typeahead props
 type Props = {
-  onSelect: (selected: PermitHolder | undefined) => void; // handle selected permit holder
+  onSelect: (applicantId: number) => void; // handle selected permit holder
 };
 
 /**
@@ -21,52 +21,51 @@ type Props = {
  */
 export default function PermitHolderTypeahead(props: Props) {
   const { onSelect } = props;
-  const [isTypeaheadLoading, setIsTypeaheadLoading] = useState(false);
-  const [permitHolderResults, setPermitHolderResults] = useState<PermitHolder[]>([]);
   const [searchString, setSearchString] = useState('');
 
   // permit holders query
-  useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(GET_PERMIT_HOLDERS_QUERY, {
-    variables: {
-      filter: {
-        search: searchString,
+  const { data, loading } = useQuery<SearchPermitHoldersResponse, SearchPermitHoldersRequest>(
+    SEARCH_PERMIT_HOLDERS,
+    {
+      variables: {
+        filter: {
+          search: searchString,
+        },
       },
-    },
-    onCompleted: ({ applicants: { result } }) => {
-      setPermitHolderResults(
-        result.map(record => ({
-          ...record,
-        }))
-      );
+    }
+  );
 
-      setIsTypeaheadLoading(false);
-    },
-  });
-
-  const handleSearch = (query: string) => {
-    setIsTypeaheadLoading(true);
-    setSearchString(query);
+  /** Handle selecting permit holder */
+  const handleSelect = (data: PermitHolderResult | undefined) => {
+    if (data) {
+      onSelect(data.id);
+    }
   };
 
   return (
     <Typeahead
-      isLoading={isTypeaheadLoading}
-      onSearch={handleSearch}
-      renderMenuItemChildren={(option: PermitHolder) => {
+      isLoading={loading}
+      onSearch={setSearchString}
+      renderMenuItemChildren={({
+        firstName,
+        middleName,
+        lastName,
+        dateOfBirth,
+      }: PermitHolderResult) => {
         return (
           <>
             <Text textStyle="body-regular" mt="8px" mb="4px" ml="4px">
-              {option.firstName} {option.lastName}
+              {formatFullName(firstName, middleName, lastName)}
             </Text>
             <Text textStyle="caption" textColor="text.secondary" mb="8px" ml="4px">
-              Date of Birth: {formatDateYYYYMMDD(option.dateOfBirth)}
+              Date of Birth: {formatDateYYYYMMDD(dateOfBirth)}
             </Text>
           </>
         );
       }}
-      labelKey={(option: PermitHolder) => `${option.firstName} ${option.lastName}`}
-      results={permitHolderResults}
-      onSelect={onSelect}
+      labelKey={(option: PermitHolderResult) => `${option.firstName} ${option.lastName}`}
+      results={data?.applicants.result || []}
+      onSelect={handleSelect}
       placeholder="Search by user ID, first name or last name"
     />
   );

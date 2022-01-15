@@ -81,7 +81,7 @@ export default function PaymentDetailsForm({
                     paymentMethod: value as PaymentType,
                   })
                 }
-                value={paymentMethod}
+                value={paymentMethod || undefined}
               >
                 <Stack>
                   <Radio value={'MASTERCARD' as PaymentType}>{'Mastercard'}</Radio>

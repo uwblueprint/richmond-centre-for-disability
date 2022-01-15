@@ -11,7 +11,7 @@ import {
   Radio,
   Textarea,
 } from '@chakra-ui/react'; // Chakra UI
-import { PermitType, Eligibility } from '@lib/graphql/types';
+import { PatientCondition, PermitType } from '@lib/graphql/types';
 import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment';
 import { ChangeEventHandler } from 'react';
 
@@ -77,51 +77,33 @@ export default function PhysicianAssessmentForm({
             <FormLabel>{'Please select the condition'}</FormLabel>
             {/* TODO: Revise DB schema to replace the 3 boolean columns to a single enum column */}
             <RadioGroup
-              value={
-                physicianAssessment.patientEligibility === Eligibility.AffectsMobility
-                  ? '0'
-                  : physicianAssessment.patientEligibility === Eligibility.CannotWalk_100M
-                  ? '1'
-                  : physicianAssessment.patientEligibility === Eligibility.MobilityAidRequired
-                  ? '2'
-                  : '3'
-              }
+              value={physicianAssessment.patientCondition}
               onChange={value => {
                 // handleChangedPatientEligibility
                 onChange({
                   ...physicianAssessment,
-                  patientEligibility:
-                    value === '0'
-                      ? Eligibility.AffectsMobility
-                      : value === '1'
-                      ? Eligibility.CannotWalk_100M
-                      : value === '2'
-                      ? Eligibility.MobilityAidRequired
-                      : Eligibility.Other,
-                  ...(value !== '3' && {
-                    patientEligibilityDescription: undefined,
-                  }),
+                  patientCondition: value as PatientCondition,
                 });
               }}
             >
               <Stack>
-                <Radio value={'0'}>
+                <Radio value={'AFFECTS_MOBILITY'}>
                   {
                     'Applicant has a disability that affects mobility and the ability to walk specifically'
                   }
                 </Radio>
-                <Radio value={'1'}>
+                <Radio value={'CANNOT_WALK_100M'}>
                   {'Applicant can NOT walk 100 meters without risk to health'}
                 </Radio>
-                <Radio value={'2'}>
+                <Radio value={'MOBILITY_AID_REQUIRED'}>
                   {'Applicant requires the use of a mobiliy aid in order to travel any distance'}
                 </Radio>
-                <Radio value={'3'}>{'Other'}</Radio>
+                <Radio value={'OTHER'}>{'Other'}</Radio>
               </Stack>
             </RadioGroup>
           </FormControl>
 
-          {physicianAssessment.patientEligibility === Eligibility.Other && (
+          {physicianAssessment.patientCondition === 'OTHER' && (
             <FormControl isRequired>
               <FormLabel>{'Description'}</FormLabel>
               <Textarea
@@ -150,21 +132,21 @@ export default function PhysicianAssessmentForm({
         <FormControl isRequired paddingBottom="24px">
           <FormLabel>{'This patient is experiencing a mobility impairment which is'}</FormLabel>
           <RadioGroup
-            value={physicianAssessment.permitType === PermitType.Permanent ? '0' : '1'}
+            value={physicianAssessment.permitType}
             onChange={value =>
               onChange({
                 ...physicianAssessment,
-                permitType: value === '0' ? PermitType.Permanent : PermitType.Temporary,
+                permitType: value as PermitType,
               })
             }
           >
             <Stack>
-              <Radio value={'0'}>{'Permanent'}</Radio>
-              <Radio value={'1'}>{'Temporary'}</Radio>
+              <Radio value={'PERMANENT'}>{'Permanent'}</Radio>
+              <Radio value={'TEMPORARY'}>{'Temporary'}</Radio>
             </Stack>
           </RadioGroup>
         </FormControl>
-        {physicianAssessment.permitType === PermitType.Temporary && (
+        {physicianAssessment.permitType === 'TEMPORARY' && (
           <FormControl isRequired>
             <FormLabel>{'Temporary permit will expire on'}</FormLabel>
             <Input
