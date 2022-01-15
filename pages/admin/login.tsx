@@ -16,7 +16,6 @@ import {
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
 
-import { Role } from '@lib/types'; // Role enum
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
 
 export default function Login() {
@@ -151,7 +150,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   // If user is authenticated, redirect to appropriate page
   if (session) {
     // If user is accounting, redirect to reports
-    if (session.role === Role.Accounting) {
+    if (session.role === 'ACCOUNTING') {
       return {
         redirect: {
           destination: '/admin/reports',

@@ -49,7 +49,7 @@ export default function GenerateReportModal(props: Props) {
   const [selectedColumns, setSelectedColumns] = useState<Set<ApplicationsReportColumn>>(new Set());
 
   const areAllColumnsSelected = useMemo(
-    () => Object.values(ApplicationsReportColumn).every(column => selectedColumns.has(column)),
+    () => APPLICATIONS_COLUMNS.every(({ value }) => selectedColumns.has(value)),
     [selectedColumns]
   );
 
@@ -64,7 +64,7 @@ export default function GenerateReportModal(props: Props) {
 
   const handleSelectAllColumns = (event: ChangeEvent<HTMLInputElement>) => {
     const updatedSelectedColumns = event.target.checked
-      ? new Set(Object.values(ApplicationsReportColumn))
+      ? new Set(APPLICATIONS_COLUMNS.map(({ value }) => value))
       : new Set([]);
     setSelectedColumns(updatedSelectedColumns);
   };

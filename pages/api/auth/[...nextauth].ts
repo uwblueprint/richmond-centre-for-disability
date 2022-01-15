@@ -4,6 +4,7 @@ import Adapters from 'next-auth/adapters'; // Next Auth adapters
 import prisma from '@prisma/index'; // Prisma client
 import sendVerificationRequest from '@lib/auth/sendVerificationRequest'; // Send verification email
 import { VerifySignInError } from '@lib/auth/errors'; // Error raised when failing to verify signin
+import { Role } from '@lib/graphql/types';
 
 /**
  * Database config for Next Auth
@@ -63,10 +64,10 @@ export default NextAuth({
   },
   callbacks: {
     session: async (session, user) => {
-      session.role = user.role;
-      session.id = user.id;
-      session.firstName = user.firstName;
-      session.lastName = user.lastName;
+      session.role = user.role as Role;
+      session.id = user.id as number;
+      session.firstName = user.firstName as string;
+      session.lastName = user.lastName as string;
 
       return Promise.resolve(session);
     },

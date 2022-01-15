@@ -1,33 +1,111 @@
+import { useQuery, useMutation } from '@apollo/client';
 import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/processing/AssignNumberModal'; // AssignNumber Modal component
 import ProcessingTaskStep from '@components/admin/requests/processing/TaskStep'; // Processing Task Step
-import { ApplicationProcessing } from '@lib/types'; // Types
+import {
+  AssignAppNumberRequest,
+  AssignAppNumberResponse,
+  AssignInvoiceNumberRequest,
+  AssignInvoiceNumberResponse,
+  ASSIGN_APP_NUMBER_MUTATION,
+  ASSIGN_INVOICE_NUMBER_MUTATION,
+  CreateWalletCardRequest,
+  CreateWalletCardResponse,
+  CREATE_WALLET_CARD_MUTATION,
+  GetApplicationProcessingRequest,
+  GetApplicationProcessingResponse,
+  GET_APPLICATION_PROCESSING,
+  HolepunchParkingPermitRequest,
+  HolepunchParkingPermitResponse,
+  HOLEPUNCH_APP_MUTATION,
+  MailOutRequest,
+  MailOutResponse,
+  MAIL_OUT_APP_MUTATION,
+  UploadDocumentsRequest,
+  UploadDocumentsResponse,
+  UPLOAD_DOCUMENTS_MUTATION,
+} from '@tools/admin/requests/processing-tasks-card';
 
 type ProcessingTasksCardProps = {
-  readonly applicationProcessing: Pick<
-    ApplicationProcessing,
-    | 'appNumber'
-    | 'appHolepunched'
-    | 'walletCardCreated'
-    | 'invoiceNumber'
-    | 'documentUrls'
-    | 'appMailed'
-  >;
-  readonly onTaskUpdate: (args: Record<string, any>) => void;
+  readonly applicationId: number;
 };
 
 /**
  * Card containing task processing in View Request page (after approval)
- * @param applicationProcessing Application processing data
- * @param onTaskUpdate Callback function for handling task update
+ * @param applicationId Application ID
  */
-export default function ProcessingTasksCard({
-  applicationProcessing,
-  onTaskUpdate,
-}: ProcessingTasksCardProps) {
-  const { appNumber, appHolepunched, walletCardCreated, invoiceNumber, documentUrls, appMailed } =
-    applicationProcessing;
+export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCardProps) {
+  const { data, refetch } = useQuery<
+    GetApplicationProcessingResponse,
+    GetApplicationProcessingRequest
+  >(GET_APPLICATION_PROCESSING, {
+    variables: { id: applicationId },
+  });
+
+  const [assignAppNumber] = useMutation<AssignAppNumberResponse, AssignAppNumberRequest>(
+    ASSIGN_APP_NUMBER_MUTATION
+  );
+  const handleAssignAppNumber = async (appNumber: number) => {
+    await assignAppNumber({ variables: { input: { applicationId, appNumber } } });
+    refetch();
+  };
+
+  const [holepunchParkingPermit] =
+    useMutation<HolepunchParkingPermitResponse, HolepunchParkingPermitRequest>(
+      HOLEPUNCH_APP_MUTATION
+    );
+  const handleHolepunchParkingPermit = async (appHolepunched: boolean) => {
+    await holepunchParkingPermit({ variables: { input: { applicationId, appHolepunched } } });
+    refetch();
+  };
+
+  const [createWalletCard] = useMutation<CreateWalletCardResponse, CreateWalletCardRequest>(
+    CREATE_WALLET_CARD_MUTATION
+  );
+  const handleCreateWalletCard = async (walletCardCreated: boolean) => {
+    await createWalletCard({ variables: { input: { applicationId, walletCardCreated } } });
+    refetch();
+  };
+
+  const [assignInvoiceNumber] = useMutation<
+    AssignInvoiceNumberResponse,
+    AssignInvoiceNumberRequest
+  >(ASSIGN_INVOICE_NUMBER_MUTATION);
+  const handleAssignInvoiceNumber = async (invoiceNumber: number) => {
+    await assignInvoiceNumber({ variables: { input: { applicationId, invoiceNumber } } });
+    refetch();
+  };
+
+  const [uploadDocuments] =
+    useMutation<UploadDocumentsResponse, UploadDocumentsRequest>(UPLOAD_DOCUMENTS_MUTATION);
+  const handleUploadDocuments = async (documentsUrl: string) => {
+    await uploadDocuments({ variables: { input: { applicationId, documentsUrl } } });
+    refetch();
+  };
+
+  const [mailOut] = useMutation<MailOutResponse, MailOutRequest>(MAIL_OUT_APP_MUTATION);
+  const handleMailOut = async (appMailed: boolean) => {
+    await mailOut({ variables: { input: { applicationId, appMailed } } });
+    refetch();
+  };
+
+  if (!data?.application.processing) {
+    return null;
+  }
+
+  const {
+    application: {
+      processing: {
+        appNumber,
+        appHolepunched,
+        walletCardCreated,
+        invoiceNumber,
+        documentsUrl,
+        appMailed,
+      },
+    },
+  } = data;
 
   return (
     <PermitHolderInfoCard colSpan={7} header={`Processing Tasks`}>
@@ -42,7 +120,7 @@ export default function ProcessingTasksCard({
           <AssignNumberModal
             modalTitle="Assign New APP Number"
             fieldName="New APP number"
-            onAssign={updatedAppNumber => onTaskUpdate({ appNumber: updatedAppNumber })}
+            onAssign={handleAssignAppNumber}
           >
             {appNumber === null ? (
               <Button
@@ -74,7 +152,7 @@ export default function ProcessingTasksCard({
             <Button
               variant="ghost"
               textDecoration="underline black"
-              onClick={() => onTaskUpdate({ appHolepunched: false })}
+              onClick={() => handleHolepunchParkingPermit(false)}
             >
               <Text textStyle="caption" color="black">
                 Undo
@@ -87,7 +165,7 @@ export default function ProcessingTasksCard({
               bg="background.gray"
               _hover={{ bg: 'background.grayHover' }}
               color="black"
-              onClick={() => onTaskUpdate({ appHolepunched: true })}
+              onClick={() => handleHolepunchParkingPermit(true)}
             >
               <Text textStyle="xsmall-medium">Mark as complete</Text>
             </Button>
@@ -104,7 +182,7 @@ export default function ProcessingTasksCard({
             <Button
               variant="ghost"
               textDecoration="underline black"
-              onClick={() => onTaskUpdate({ walletCardCreated: false })}
+              onClick={() => handleCreateWalletCard(false)}
             >
               <Text textStyle="caption" color="black">
                 Undo
@@ -117,7 +195,7 @@ export default function ProcessingTasksCard({
               bg="background.gray"
               _hover={{ bg: 'background.grayHover' }}
               color="black"
-              onClick={() => onTaskUpdate({ walletCardCreated: true })}
+              onClick={() => handleCreateWalletCard(true)}
             >
               <Text textStyle="xsmall-medium">Mark as complete</Text>
             </Button>
@@ -133,7 +211,7 @@ export default function ProcessingTasksCard({
           <AssignNumberModal
             modalTitle="Assign Invoice Number"
             fieldName="Invoice number"
-            onAssign={updatedInvoiceNumber => onTaskUpdate({ invoiceNumber: updatedInvoiceNumber })}
+            onAssign={handleAssignInvoiceNumber}
           >
             {invoiceNumber === null ? (
               <Button
@@ -159,7 +237,7 @@ export default function ProcessingTasksCard({
           id={5}
           label="Upload document"
           description="Scan all documents and upload as PDF (5MB limit)"
-          isCompleted={!!documentUrls && documentUrls.length > 0}
+          isCompleted={!!documentsUrl}
         >
           <Button
             marginLeft="auto"
@@ -168,7 +246,7 @@ export default function ProcessingTasksCard({
             _hover={{ bg: 'background.grayHover' }}
             color="black"
             // TODO: Add document uploading functionality
-            onClick={() => onTaskUpdate({ documentUrl: 'documentUrl' })}
+            onClick={() => handleUploadDocuments('placeholder url')}
           >
             <Text textStyle="xsmall-medium">Choose document</Text>
           </Button>
@@ -184,7 +262,7 @@ export default function ProcessingTasksCard({
             <Button
               variant="ghost"
               textDecoration="underline black"
-              onClick={() => onTaskUpdate({ appMailed: false })}
+              onClick={() => handleMailOut(false)}
             >
               <Text textStyle="caption" color="black">
                 Undo
@@ -197,7 +275,7 @@ export default function ProcessingTasksCard({
               bg="background.gray"
               _hover={{ bg: 'background.grayHover' }}
               color="black"
-              onClick={() => onTaskUpdate({ appMailed: true })}
+              onClick={() => handleMailOut(true)}
             >
               <Text textStyle="xsmall-medium">Mark as complete</Text>
             </Button>

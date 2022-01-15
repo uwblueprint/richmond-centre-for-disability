@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import { Applicant, Application } from '@lib/graphql/types';
 
 export const GET_APPLICANT_REPLACEMENT_QUERY = gql`
-  query getApplicant($id: ID!) {
+  query getApplicantReplacement($id: Int!) {
     applicant(id: $id) {
       firstName
       lastName
@@ -13,7 +13,6 @@ export const GET_APPLICANT_REPLACEMENT_QUERY = gql`
       city
       postalCode
       id
-      rcdUserId
       dateOfBirth
       status
       gender
@@ -50,7 +49,6 @@ export type GetApplicantReplacementResponse = {
     | 'addressLine2'
     | 'city'
     | 'postalCode'
-    | 'rcdUserId'
     | 'id'
     | 'dateOfBirth'
     | 'status'

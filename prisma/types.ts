@@ -1,117 +1,176 @@
 import {
   Applicant,
   Application,
-  ApplicationProcessing,
   Guardian,
   MedicalInformation,
-  Permit,
+  NewApplication,
   Physician,
-} from '@lib/graphql/types'; // GraphQL types
+  RenewalApplication,
+  ReplacementApplication,
+} from '@prisma/client'; // GraphQL types
 
 // Type of Applicant to upsert in DB
 export type UpsertApplicant = Pick<
   Applicant,
   | 'id'
-  | 'rcdUserId'
   | 'firstName'
+  | 'middleName'
   | 'lastName'
-  | 'email'
+  | 'dateOfBirth'
   | 'gender'
   | 'phone'
+  | 'email'
+  | 'receiveEmailUpdates'
   | 'province'
   | 'city'
   | 'addressLine1'
   | 'postalCode'
-  | 'guardianId'
-  | 'medicalInformationId'
   | 'status'
->;
-
-// Type of Permit to upsert in DB
-export type UpsertPermit = Pick<
-  Permit,
-  'rcdPermitId' | 'applicantId' | 'applicationId' | 'expiryDate' | 'active'
->;
-
-// Type of Guardian to upsert in DB
-export type UpsertGuardian = Pick<
-  Guardian,
-  | 'id'
-  | 'firstName'
-  | 'lastName'
-  | 'phone'
-  | 'province'
-  | 'city'
-  | 'addressLine1'
-  | 'postalCode'
-  | 'relationship'
->;
+> & {
+  readonly medicalInformation: Pick<
+    MedicalInformation,
+    | 'disability'
+    | 'disabilityCertificationDate'
+    | 'patientCondition'
+    | 'mobilityAids'
+    | 'otherPatientCondition'
+  > & {
+    readonly physician: Pick<
+      Physician,
+      | 'mspNumber'
+      | 'firstName'
+      | 'lastName'
+      | 'phone'
+      | 'addressLine1'
+      | 'addressLine2'
+      | 'city'
+      | 'postalCode'
+    >;
+  };
+  readonly guardian?: Pick<
+    Guardian,
+    | 'firstName'
+    | 'middleName'
+    | 'lastName'
+    | 'phone'
+    | 'addressLine1'
+    | 'addressLine2'
+    | 'city'
+    | 'postalCode'
+    | 'relationship'
+  >;
+};
 
 // Type of Application to upsert in DB
 export type UpsertApplication = Pick<
   Application,
   | 'id'
-  | 'rcdUserId'
   | 'firstName'
   | 'middleName'
   | 'lastName'
-  | 'gender'
   | 'phone'
-  | 'province'
-  | 'city'
-  | 'addressLine1'
-  | 'postalCode'
-  | 'disability'
-  | 'physicianName'
-  | 'certificationDate'
-  | 'patientEligibility'
-  | 'aid'
-  | 'expiryDate'
-  | 'physicianMspNumber'
-  | 'physicianAddressLine1'
-  | 'physicianCity'
-  | 'physicianPostalCode'
-  | 'physicianProvince'
-  | 'physicianPhone'
-  | 'processingFee'
-  | 'paymentMethod'
-  | 'shopifyConfirmationNumber'
-  | 'applicantId'
   | 'email'
+  | 'receiveEmailUpdates'
+  | 'addressLine1'
+  | 'addressLine2'
+  | 'city'
+  | 'postalCode'
+  | 'permitType'
+  | 'paymentMethod'
+  | 'processingFee'
+  | 'donationAmount'
+  | 'shippingAddressSameAsHomeAddress'
   | 'shippingFullName'
   | 'shippingAddressLine1'
+  | 'shippingAddressLine2'
   | 'shippingCity'
   | 'shippingProvince'
+  | 'shippingCountry'
   | 'shippingPostalCode'
+  | 'billingAddressSameAsHomeAddress'
   | 'billingFullName'
-> & {
-  applicationProcessingId: number;
-};
-
-// Type of Physician to upsert in DB
-export type UpsertPhysician = Pick<
-  Physician,
-  'name' | 'mspNumber' | 'addressLine1' | 'city' | 'province' | 'postalCode' | 'phone' | 'status'
-> & {
-  id: number;
-};
-
-// Type of Medical Information to upsert in DB
-export type UpsertMedicalInformation = Pick<
-  MedicalInformation,
-  'id' | 'disability' | 'patientEligibility' | 'physicianId'
->;
-
-// Type of Application Processing to upsert in DB
-export type UpsertApplicationProcessing = Pick<
-  ApplicationProcessing,
-  | 'status'
-  | 'appNumber'
-  | 'appHolepunched'
-  | 'walletCardCreated'
-  | 'invoiceNumber'
-  | 'documentUrls'
-  | 'appMailed'
-> & {
-  id: number;
-};
+  | 'billingAddressLine1'
+  | 'billingAddressLine2'
+  | 'billingCity'
+  | 'billingProvince'
+  | 'billingCountry'
+  | 'billingPostalCode'
+  | 'billingFullName'
+  | 'applicantId'
+> &
+  (
+    | {
+        type: 'NEW';
+        newApplication: Pick<
+          NewApplication,
+          | 'dateOfBirth'
+          | 'gender'
+          | 'disability'
+          | 'disabilityCertificationDate'
+          | 'patientCondition'
+          | 'mobilityAids'
+          | 'otherPatientCondition'
+          | 'temporaryPermitExpiry'
+          | 'physicianFirstName'
+          | 'physicianLastName'
+          | 'physicianMspNumber'
+          | 'physicianPhone'
+          | 'physicianAddressLine1'
+          | 'physicianAddressLine2'
+          | 'physicianCity'
+          | 'physicianPostalCode'
+          | 'guardianFirstName'
+          | 'guardianMiddleName'
+          | 'guardianLastName'
+          | 'guardianPhone'
+          | 'guardianRelationship'
+          | 'guardianAddressLine1'
+          | 'guardianAddressLine2'
+          | 'guardianCity'
+          | 'guardianPostalCode'
+          | 'usesAccessibleConvertedVan'
+          | 'accessibleConvertedVanLoadingMethod'
+          | 'requiresWiderParkingSpace'
+          | 'requiresWiderParkingSpaceReason'
+          | 'otherRequiresWiderParkingSpaceReason'
+        >;
+        renewalApplication: undefined;
+        replacementApplication: undefined;
+      }
+    | {
+        type: 'RENEWAL';
+        newApplication: undefined;
+        renewalApplication: Pick<
+          RenewalApplication,
+          | 'physicianFirstName'
+          | 'physicianLastName'
+          | 'physicianMspNumber'
+          | 'physicianPhone'
+          | 'physicianAddressLine1'
+          | 'physicianAddressLine2'
+          | 'physicianCity'
+          | 'physicianPostalCode'
+          | 'usesAccessibleConvertedVan'
+          | 'accessibleConvertedVanLoadingMethod'
+          | 'requiresWiderParkingSpace'
+          | 'requiresWiderParkingSpaceReason'
+          | 'otherRequiresWiderParkingSpaceReason'
+        >;
+        replacementApplication: undefined;
+      }
+    | {
+        type: 'REPLACEMENT';
+        newApplication: undefined;
+        renewalApplication: undefined;
+        replacementApplication: Pick<
+          ReplacementApplication,
+          | 'reason'
+          | 'lostTimestamp'
+          | 'lostLocation'
+          | 'stolenPoliceFileNumber'
+          | 'stolenJurisdiction'
+          | 'stolenPoliceOfficerName'
+          | 'eventDescription'
+        >;
+      }
+  );

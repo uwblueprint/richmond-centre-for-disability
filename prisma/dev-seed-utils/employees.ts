@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 // Relative paths required, path aliases throw error with seed command
 import prisma from '../index'; // Prisma client
-import { Role } from '../../lib/graphql/types'; // GraphQL types
 
 // Seed data
 const employees = [
@@ -31,14 +30,14 @@ const employees = [
     email: 'emiliomena+employee@uwblueprint.org',
   },
   {
-    firstName: 'Jeffrey',
-    lastName: 'Zhang',
-    email: 'jeffreyzhang+employee@uwblueprint.org',
-  },
-  {
     firstName: 'Anish',
     lastName: 'Aggarwal',
     email: 'anishaggarwal+employee@uwblueprint.org',
+  },
+  {
+    firstName: 'Bonnie',
+    lastName: 'Chin',
+    email: 'bonniechin+employee@uwblueprint.org',
   },
   {
     firstName: 'Andy',
@@ -71,12 +70,12 @@ export default async function employeeUpsert(): Promise<void> {
     const employeeUpsert = await prisma.employee.upsert({
       where: { email: employee.email },
       update: {
-        role: Role.Admin,
+        role: 'ADMIN',
         firstName: employee.firstName,
         lastName: employee.lastName,
       },
       create: {
-        role: Role.Admin,
+        role: 'ADMIN',
         email: employee.email,
         firstName: employee.firstName,
         lastName: employee.lastName,

@@ -11,10 +11,10 @@ generates:
             - ' **********************************************************************/'
       - typescript
     config:
-      avoidOptionals:
-        field: true
-        inputValue: false
-        object: true
-        defaultValue: true
-      scalars:
-        ID: number
+      enumsAsTypes: true
+      avoidOptionals: true
+      inputMaybeValue: T | null | undefined
+      maybeValue: T | null
+      namingConvention:
+        typeNames: change-case-all#pascalCase
+        enumValues: change-case-all#upperCase

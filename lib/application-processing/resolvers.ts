@@ -1,53 +1,492 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
-import { Prisma } from '@prisma/client'; // Prisma client
-import { Resolver } from '@lib/resolvers'; // Resolver type
-import { Province } from '@lib/graphql/types'; // GraphQL types
-import { DBErrorCode } from '@lib/db/errors';
-import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
+import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
+import { ApplicationNotFoundError } from '@lib/application-processing/errors'; // Application processing errors
 import {
-  ApplicationNotFoundError,
-  MissingGuardianFieldsError,
-} from '@lib/application-processing/errors'; // Application processing errors
-import { CompleteNewApplicationGuardianUpdate } from '@lib/application-processing/types'; // Application processing types
+  ApproveApplicationResult,
+  CompleteApplicationResult,
+  MutationApproveApplicationArgs,
+  MutationCompleteApplicationArgs,
+  MutationRejectApplicationArgs,
+  MutationUpdateApplicationProcessingAssignAppNumberArgs,
+  MutationUpdateApplicationProcessingAssignInvoiceNumberArgs,
+  MutationUpdateApplicationProcessingCreateWalletCardArgs,
+  MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
+  MutationUpdateApplicationProcessingMailOutArgs,
+  MutationUpdateApplicationProcessingUploadDocumentsArgs,
+  RejectApplicationResult,
+  UpdateApplicationProcessingAssignAppNumberResult,
+  UpdateApplicationProcessingAssignInvoiceNumberResult,
+  UpdateApplicationProcessingCreateWalletCardResult,
+  UpdateApplicationProcessingHolepunchParkingPermitResult,
+  UpdateApplicationProcessingMailOutResult,
+  UpdateApplicationProcessingUploadDocumentsResult,
+} from '@lib/graphql/types';
+import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 
 /**
- * Updates the ApplicationProcessing object with the optional values provided
- * @returns Status of operation (ok, error)
+ * Approve application
+ * @returns Status of the operation (ok)
  */
-export const updateApplicationProcessing: Resolver = async (_, args, { prisma }) => {
+export const approveApplication: Resolver<
+  MutationApproveApplicationArgs,
+  ApproveApplicationResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
   const { input } = args;
-  const { applicationId, documentUrl, ...rest } = input;
+  const { id } = input;
 
   let updatedApplication;
   try {
     updatedApplication = await prisma.application.update({
-      where: { id: parseInt(applicationId) },
+      where: { id },
       data: {
         applicationProcessing: {
           update: {
-            ...rest,
-            ...(documentUrl && {
-              // TODO: Figure out way to make this work when deleting files post-MVP
-              documentUrls: {
-                push: documentUrl,
-              },
-            }),
+            status: 'IN_PROGRESS',
           },
         },
       },
     });
-  } catch (err) {
-    if (
-      err instanceof Prisma.PrismaClientKnownRequestError &&
-      err.code === DBErrorCode.RecordNotFound
-    ) {
-      throw new ApplicationNotFoundError(`Application with ID ${applicationId} not found`);
-    }
+  } catch {
+    // TODO: Handle errors
   }
 
-  // Throw internal server error if application processing object was not updated
   if (!updatedApplication) {
-    throw new ApolloError('Application processing record was unable to be updated');
+    throw new ApolloError('Unable to approve application');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Reject application
+ * @returns Status of the operation (ok)
+ */
+export const rejectApplication: Resolver<MutationRejectApplicationArgs, RejectApplicationResult> =
+  async (_parent, args, { prisma }) => {
+    // TODO: Validation
+    const { input } = args;
+    const { id } = input;
+
+    let updatedApplication;
+    try {
+      updatedApplication = await prisma.application.update({
+        where: { id },
+        data: {
+          applicationProcessing: {
+            update: {
+              status: 'REJECTED',
+            },
+          },
+        },
+      });
+    } catch {
+      // TODO: Handle errors
+    }
+
+    if (!updatedApplication) {
+      throw new ApolloError('Unable to approve application');
+    }
+
+    return { ok: true };
+  };
+
+/**
+ * Completes an application by setting the ApplicationStatus to COMPLETED, querying the application data,
+ * and calling updateApplicant, updateGuardian, updateMedicalInformation, and upsertPhysician with the queried data.
+ * @param {ID!} args.applicationId - The id of the Application to complete
+ * @returns Status of operation (ok, error)
+ */
+export const completeApplication: Resolver<
+  MutationCompleteApplicationArgs,
+  CompleteApplicationResult
+> = async (_, args, { prisma }) => {
+  const { input } = args;
+  const { id } = input;
+
+  // Set application status as COMPLETED operation
+  const completeApplicationOperation = prisma.application.update({
+    where: { id },
+    data: {
+      applicationProcessing: {
+        update: {
+          status: 'COMPLETED',
+        },
+      },
+    },
+  });
+
+  try {
+    const application = await prisma.application.findUnique({
+      where: { id },
+      include: { applicationProcessing: true },
+    });
+
+    if (!application) {
+      throw new ApplicationNotFoundError(`Application with ID ${id} not found`);
+    }
+
+    const {
+      applicantId,
+      firstName,
+      middleName,
+      lastName,
+      phone,
+      email,
+      receiveEmailUpdates,
+      addressLine1,
+      addressLine2,
+      city,
+      province,
+      country,
+      postalCode,
+      type,
+      permitType,
+      applicationProcessing: { appNumber },
+    } = application;
+
+    if (appNumber === null) {
+      // TODO: Improve validation
+      throw new ApolloError('Missing assigned APP number');
+    }
+
+    if (type === 'NEW') {
+      // Retrieve new application record
+      const newApplication = await prisma.newApplication.findUnique({
+        where: { applicationId: id },
+      });
+
+      if (!newApplication) {
+        // TODO: Improve validation
+        throw new ApolloError('New application not found');
+      }
+
+      const {
+        dateOfBirth,
+        gender,
+        otherGender,
+        disability,
+        disabilityCertificationDate,
+        patientCondition,
+        mobilityAids,
+        otherPatientCondition,
+        temporaryPermitExpiry,
+        physicianFirstName,
+        physicianLastName,
+        physicianMspNumber,
+        physicianPhone,
+        physicianAddressLine1,
+        physicianAddressLine2,
+        physicianCity,
+        physicianProvince,
+        physicianCountry,
+        physicianPostalCode,
+        guardianFirstName,
+        guardianMiddleName,
+        guardianLastName,
+        guardianPhone,
+        guardianRelationship,
+        guardianAddressLine1,
+        guardianAddressLine2,
+        guardianCity,
+        guardianProvince,
+        guardianCountry,
+        guardianPostalCode,
+      } = newApplication;
+
+      // Only create a guardian record if all required fields are filled
+      let guardian;
+      if (
+        guardianFirstName &&
+        guardianLastName &&
+        guardianPhone &&
+        guardianRelationship &&
+        guardianAddressLine1 &&
+        guardianCity &&
+        guardianProvince &&
+        guardianCountry &&
+        guardianPostalCode
+      ) {
+        guardian = {
+          firstName: guardianFirstName,
+          middleName: guardianMiddleName,
+          lastName: guardianLastName,
+          phone: guardianPhone,
+          relationship: guardianRelationship,
+          addressLine1: guardianAddressLine1,
+          addressLine2: guardianAddressLine2,
+          city: guardianCity,
+          province: guardianProvince,
+          country: guardianCountry,
+          postalCode: guardianPostalCode,
+        };
+      } else {
+        guardian = undefined;
+      }
+
+      const expiryDate =
+        permitType === 'TEMPORARY' && temporaryPermitExpiry
+          ? temporaryPermitExpiry
+          : getPermanentPermitExpiryDate();
+
+      // Upsert physician
+      const upsertPhysicianOperation = prisma.physician.upsert({
+        where: { mspNumber: physicianMspNumber },
+        update: {
+          firstName: physicianFirstName,
+          lastName: physicianLastName,
+          phone: physicianPhone,
+          addressLine1: physicianAddressLine1,
+          addressLine2: physicianAddressLine2,
+          city: physicianCity,
+          province: physicianProvince,
+          country: physicianCountry,
+          postalCode: physicianPostalCode,
+        },
+        create: {
+          mspNumber: physicianMspNumber,
+          firstName: physicianFirstName,
+          lastName: physicianLastName,
+          phone: physicianPhone,
+          addressLine1: physicianAddressLine1,
+          addressLine2: physicianAddressLine2,
+          city: physicianCity,
+          province: physicianProvince,
+          country: physicianCountry,
+          postalCode: physicianPostalCode,
+        },
+      });
+
+      const createPermitOperation = prisma.permit.create({
+        data: {
+          rcdPermitId: appNumber,
+          type: permitType,
+          expiryDate,
+          // Create a new applicant record
+          applicant: {
+            create: {
+              firstName,
+              middleName,
+              lastName,
+              dateOfBirth,
+              gender,
+              otherGender,
+              phone,
+              email,
+              receiveEmailUpdates,
+              addressLine1,
+              addressLine2,
+              city,
+              province,
+              country,
+              postalCode,
+              // Connect application to newly created applicant
+              applications: {
+                connect: {
+                  id,
+                },
+              },
+              medicalInformation: {
+                create: {
+                  disability,
+                  disabilityCertificationDate,
+                  patientCondition,
+                  mobilityAids,
+                  otherPatientCondition,
+                  physician: {
+                    connect: { mspNumber: physicianMspNumber },
+                  },
+                },
+              },
+              ...(guardian && {
+                guardian: { create: guardian },
+              }),
+            },
+          },
+          // Connect permit to existing application
+          application: { connect: { id } },
+        },
+      });
+
+      const [upsertedPhysician, createdPermit, completedApplicationProcessing] =
+        await prisma.$transaction([
+          completeApplicationOperation,
+          upsertPhysicianOperation,
+          createPermitOperation,
+        ]);
+
+      if (!upsertedPhysician || !createdPermit || !completedApplicationProcessing) {
+        throw new ApolloError('Error completing application');
+      }
+    } else if (type === 'RENEWAL') {
+      // Retrieve renewal record
+      const renewalApplication = await prisma.renewalApplication.findUnique({
+        where: { applicationId: id },
+      });
+
+      if (!applicantId || !renewalApplication) {
+        // TODO: Improve validation
+        throw new ApolloError('New application not found');
+      }
+
+      const {
+        physicianFirstName,
+        physicianLastName,
+        physicianMspNumber,
+        physicianPhone,
+        physicianAddressLine1,
+        physicianAddressLine2,
+        physicianCity,
+        physicianProvince,
+        physicianCountry,
+        physicianPostalCode,
+      } = renewalApplication;
+
+      // Update applicant
+      const updateApplicantOperation = prisma.applicant.update({
+        where: { id: applicantId },
+        data: {
+          firstName,
+          middleName,
+          lastName,
+          phone,
+          email,
+          receiveEmailUpdates,
+          addressLine1,
+          addressLine2,
+          city,
+          province,
+          country,
+          postalCode,
+          medicalInformation: {
+            update: {
+              physician: {
+                update: {
+                  firstName: physicianFirstName,
+                  lastName: physicianLastName,
+                  mspNumber: physicianMspNumber,
+                  phone: physicianPhone,
+                  addressLine1: physicianAddressLine1,
+                  addressLine2: physicianAddressLine2,
+                  city: physicianCity,
+                  province: physicianProvince,
+                  country: physicianCountry,
+                  postalCode: physicianPostalCode,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // Upsert physician
+      const upsertPhysicianOperation = prisma.physician.upsert({
+        where: { mspNumber: physicianMspNumber },
+        update: {
+          firstName: physicianFirstName,
+          lastName: physicianLastName,
+          phone: physicianPhone,
+          addressLine1: physicianAddressLine1,
+          addressLine2: physicianAddressLine2,
+          city: physicianCity,
+          province: physicianProvince,
+          country: physicianCountry,
+          postalCode: physicianPostalCode,
+        },
+        create: {
+          mspNumber: physicianMspNumber,
+          firstName: physicianFirstName,
+          lastName: physicianLastName,
+          phone: physicianPhone,
+          addressLine1: physicianAddressLine1,
+          addressLine2: physicianAddressLine2,
+          city: physicianCity,
+          province: physicianProvince,
+          country: physicianCountry,
+          postalCode: physicianPostalCode,
+        },
+      });
+
+      const createPermitOperation = prisma.permit.create({
+        data: {
+          rcdPermitId: appNumber,
+          type: 'PERMANENT',
+          expiryDate: getPermanentPermitExpiryDate(),
+          applicant: { connect: { id: applicantId } },
+          application: { connect: { id } },
+        },
+      });
+
+      const [upsertedPhysician, updatedApplicant, createdPermit, completedApplicationProcessing] =
+        await prisma.$transaction([
+          upsertPhysicianOperation,
+          updateApplicantOperation,
+          createPermitOperation,
+          completeApplicationOperation,
+        ]);
+
+      if (
+        !upsertedPhysician ||
+        !updatedApplicant ||
+        !createdPermit ||
+        !completedApplicationProcessing
+      ) {
+        // TODO: Improve error handling
+        throw new ApolloError('Error completing application');
+      }
+    } else {
+      if (!applicantId) {
+        // TODO: Improve validation
+        throw new ApolloError('Replacement application not found');
+      }
+
+      // TODO: Invalidate old permit
+
+      // Update applicant
+      const updateApplicantOperation = prisma.applicant.update({
+        where: { id: applicantId },
+        data: {
+          firstName,
+          middleName,
+          lastName,
+          phone,
+          email,
+          addressLine1,
+          addressLine2,
+          city,
+          province,
+          country,
+          postalCode,
+        },
+      });
+
+      const createPermitOperation = prisma.permit.create({
+        data: {
+          rcdPermitId: appNumber,
+          // TODO: Replace with type of most recent permit
+          type: 'PERMANENT',
+          // ? Original permit expiry or 3 years by default?
+          expiryDate: getPermanentPermitExpiryDate(),
+          applicant: { connect: { id: applicantId } },
+          application: { connect: { id } },
+        },
+      });
+
+      const [updatedApplicant, createdPermit, completedApplicationProcessing] =
+        await prisma.$transaction([
+          updateApplicantOperation,
+          createPermitOperation,
+          completeApplicationOperation,
+        ]);
+
+      if (!updatedApplicant || !createdPermit || !completedApplicationProcessing) {
+        // TODO: Improve error handling
+        throw new ApolloError('Error completing application');
+      }
+    }
+  } catch (err) {
+    // TODO: Improve error handling
+    throw new ApolloError(`Error completing application`);
   }
 
   return {
@@ -56,221 +495,265 @@ export const updateApplicationProcessing: Resolver = async (_, args, { prisma })
 };
 
 /**
- * Completes an application by setting the ApplicationStatus to COMPLETED, querying the application data,
- * and calling updateApplicant, updateGuardian, updateMedicalInformation, and upsertPhysician with the queried data.
- * @param {ID!} args.applicationId - The id of the Application to complete
- * @returns Status of operation (ok, error)
+ * Assign APP Number to in-progress application
+ * @returns Status of the operation (ok)
  */
-export const completeApplication: Resolver = async (_, args, { prisma }) => {
-  const { applicationId } = args;
+export const updateApplicationProcessingAssignAppNumber: Resolver<
+  MutationUpdateApplicationProcessingAssignAppNumberArgs,
+  UpdateApplicationProcessingAssignAppNumberResult
+> = async (_parent, args, { prisma, session }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { applicationId, appNumber } = input;
 
-  try {
-    const application = await prisma.application.findUnique({
-      where: { id: parseInt(applicationId) },
-      include: { applicationProcessing: true },
-    });
-
-    if (!application) {
-      throw new ApplicationNotFoundError(`Application with ID ${applicationId} not found`);
-    }
-
-    const {
-      isRenewal,
-
-      rcdUserId,
-      firstName,
-      lastName,
-      gender,
-      customGender,
-      dateOfBirth,
-      email,
-      phone,
-      province,
-      city,
-      addressLine1,
-      addressLine2,
-      postalCode,
-
-      disability,
-      patientEligibility,
-
-      guardianFirstName,
-      guardianMiddleName,
-      guardianLastName,
-      guardianPhone,
-      guardianCity,
-      guardianAddressLine1,
-      guardianAddressLine2,
-      guardianPostalCode,
-      guardianRelationship,
-      guardianNotes,
-
-      physicianName,
-      physicianMspNumber,
-      physicianAddressLine1,
-      physicianAddressLine2,
-      physicianCity,
-      physicianPostalCode,
-      physicianPhone,
-      physicianNotes,
-
-      applicantId,
-      applicationProcessing,
-    } = application;
-
-    const applicantData = {
-      rcdUserId,
-      firstName,
-      lastName,
-      dateOfBirth,
-      gender,
-      customGender,
-      email,
-      phone,
-      province,
-      city,
-      addressLine1,
-      addressLine2,
-      postalCode,
-    };
-
-    const medicalInformationData = {
-      disability,
-      patientEligibility,
-    };
-
-    const physicianData = {
-      name: physicianName,
-      mspNumber: physicianMspNumber,
-      addressLine1: physicianAddressLine1,
-      addressLine2: physicianAddressLine2,
-      city: physicianCity,
-      postalCode: physicianPostalCode,
-      phone: physicianPhone,
-      notes: physicianNotes,
-    };
-
-    const operations = [];
-    const applicationProcessingResult = prisma.applicationProcessing.update({
-      where: { id: applicationProcessing?.id },
-      data: {
-        status: 'COMPLETED',
-      },
-    });
-    operations.push(applicationProcessingResult);
-
-    let applicantPromise;
-    if (isRenewal) {
-      // Check whether applicant currently has guardian
-      const applicant = await prisma.applicant.findUnique({
-        where: { id: applicantId || undefined },
-        select: {
-          guardianId: true,
-        },
-      });
-
-      if (!applicant) {
-        throw new ApplicantNotFoundError('Applicant for renewal could not be found');
-      }
-
-      applicantPromise = prisma.applicant.update({
-        where: { id: applicantId || undefined },
-        data: {
-          ...applicantData,
-          medicalInformation: {
-            update: {
-              ...medicalInformationData,
-              physician: {
-                update: physicianData,
-              },
-            },
-          },
-          guardian:
-            applicant.guardianId !== null
-              ? {
-                  update: {
-                    firstName: guardianFirstName || undefined,
-                    middleName: guardianMiddleName,
-                    lastName: guardianLastName || undefined,
-                    phone: guardianPhone || undefined,
-                    city: guardianCity || undefined,
-                    addressLine1: guardianAddressLine1 || undefined,
-                    addressLine2: guardianAddressLine2,
-                    postalCode: guardianPostalCode || undefined,
-                    relationship: guardianRelationship || undefined,
-                    notes: guardianNotes,
-                  },
-                }
-              : undefined,
-        },
-      });
-    } else {
-      // Guardian update object
-      let guardianUpdate: CompleteNewApplicationGuardianUpdate;
-
-      // Check whether a guardian was included in the application (check for required guardian fields)
-      if (
-        guardianFirstName &&
-        guardianLastName &&
-        guardianPhone &&
-        guardianCity &&
-        guardianAddressLine1 &&
-        guardianPostalCode &&
-        guardianRelationship
-      ) {
-        guardianUpdate = {
-          create: {
-            firstName: guardianFirstName,
-            middleName: guardianMiddleName,
-            lastName: guardianLastName,
-            phone: guardianPhone,
-            province: Province.Bc,
-            city: guardianCity,
-            addressLine1: guardianAddressLine1,
-            addressLine2: guardianAddressLine2,
-            postalCode: guardianPostalCode,
-            relationship: guardianRelationship,
-            notes: guardianNotes,
-          },
-        };
-      } else if (
-        !guardianFirstName &&
-        !guardianLastName &&
-        !guardianPhone &&
-        !guardianCity &&
-        !guardianAddressLine1 &&
-        !guardianPostalCode &&
-        !guardianRelationship
-      ) {
-        guardianUpdate = undefined;
-      } else {
-        // Must include all or none of the required guardian fields
-        throw new MissingGuardianFieldsError('Missing guardian fields');
-      }
-
-      applicantPromise = prisma.applicant.create({
-        data: {
-          ...applicantData,
-          medicalInformation: {
-            create: {
-              ...medicalInformationData,
-              physician: {
-                create: physicianData,
-              },
-            },
-          },
-          guardian: guardianUpdate,
-        },
-      });
-    }
-    operations.push(applicantPromise);
-
-    await prisma.$transaction(operations);
-  } catch (err) {
-    throw new ApolloError(`Error completing application`);
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
   }
 
-  return {
-    ok: true,
-  };
+  const { id: employeeId } = session;
+
+  let updatedApplicationProcessing;
+  try {
+    updatedApplicationProcessing = await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        applicationProcessing: {
+          update: {
+            appNumber,
+            appNumberUpdatedAt: new Date(),
+            appNumberEmployee: { connect: { id: employeeId } },
+          },
+        },
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicationProcessing) {
+    throw new ApolloError('Error assigning APP number to application');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Holepunch permit of in-progress application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
+  MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
+  UpdateApplicationProcessingHolepunchParkingPermitResult
+> = async (_parent, args, { prisma, session }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { applicationId, appHolepunched } = input;
+
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
+
+  const { id: employeeId } = session;
+
+  let updatedApplicationProcessing;
+  try {
+    updatedApplicationProcessing = await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        applicationProcessing: {
+          update: {
+            appHolepunched,
+            appHolepunchedUpdatedAt: new Date(),
+            appHolepunchedEmployee: { connect: { id: employeeId } },
+          },
+        },
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicationProcessing) {
+    throw new ApolloError('Error updating APP holepunched state of application');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Create wallet card for in-progress application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationProcessingCreateWalletCard: Resolver<
+  MutationUpdateApplicationProcessingCreateWalletCardArgs,
+  UpdateApplicationProcessingCreateWalletCardResult
+> = async (_parent, args, { prisma, session }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { applicationId, walletCardCreated } = input;
+
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
+
+  const { id: employeeId } = session;
+
+  let updatedApplicationProcessing;
+  try {
+    updatedApplicationProcessing = await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        applicationProcessing: {
+          update: {
+            walletCardCreated,
+            walletCardCreatedUpdatedAt: new Date(),
+            walletCardCreatedEmployee: { connect: { id: employeeId } },
+          },
+        },
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicationProcessing) {
+    throw new ApolloError('Error updating wallet card create state of application');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Assign invoice Number to in-progress application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationProcessingAssignInvoiceNumber: Resolver<
+  MutationUpdateApplicationProcessingAssignInvoiceNumberArgs,
+  UpdateApplicationProcessingAssignInvoiceNumberResult
+> = async (_parent, args, { prisma, session }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { applicationId, invoiceNumber } = input;
+
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
+
+  const { id: employeeId } = session;
+
+  let updatedApplicationProcessing;
+  try {
+    updatedApplicationProcessing = await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        applicationProcessing: {
+          update: {
+            invoiceNumber,
+            invoiceNumberUpdatedAt: new Date(),
+            invoiceNumberEmployee: { connect: { id: employeeId } },
+          },
+        },
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicationProcessing) {
+    throw new ApolloError('Error assigning invoice number to application');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Attach documents to in-progress application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationProcessingUploadDocuments: Resolver<
+  MutationUpdateApplicationProcessingUploadDocumentsArgs,
+  UpdateApplicationProcessingUploadDocumentsResult
+> = async (_parent, args, { prisma, session }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { applicationId, documentsUrl } = input;
+
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
+
+  const { id: employeeId } = session;
+
+  let updatedApplicationProcessing;
+  try {
+    updatedApplicationProcessing = await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        applicationProcessing: {
+          update: {
+            documentsUrl,
+            documentsUrlUpdatedAt: new Date(),
+            documentsUrlEmployee: { connect: { id: employeeId } },
+          },
+        },
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicationProcessing) {
+    throw new ApolloError('Error attaching uploaded documents to application');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Mail out in-progress application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationProcessingMailOut: Resolver<
+  MutationUpdateApplicationProcessingMailOutArgs,
+  UpdateApplicationProcessingMailOutResult
+> = async (_parent, args, { prisma, session }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { applicationId, appMailed } = input;
+
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
+
+  const { id: employeeId } = session;
+
+  let updatedApplicationProcessing;
+  try {
+    updatedApplicationProcessing = await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        applicationProcessing: {
+          update: {
+            appMailed,
+            appMailedUpdatedAt: new Date(),
+            appMailedEmployee: { connect: { id: employeeId } },
+          },
+        },
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicationProcessing) {
+    throw new ApolloError('Error assigning APP number to application');
+  }
+
+  return { ok: true };
 };

@@ -9,93 +9,122 @@ export enum GenerateReportStep {
 }
 
 /** Ordered array of application requests column names and values */
-export const APPLICATIONS_COLUMNS = [
+export const APPLICATIONS_COLUMNS: Array<{
+  name: string;
+  value: ApplicationsReportColumn;
+  reportColumnId: string;
+}> = [
   {
     name: 'User ID',
-    value: ApplicationsReportColumn.UserId,
+    value: 'USER_ID',
+    reportColumnId: 'id',
   },
   {
     name: 'Applicant Name',
-    value: ApplicationsReportColumn.ApplicantName,
+    value: 'APPLICANT_NAME',
+    reportColumnId: 'applicantName',
   },
   {
     name: 'Applicant DoB',
-    value: ApplicationsReportColumn.ApplicantDateOfBirth,
+    value: 'APPLICANT_DATE_OF_BIRTH',
+    reportColumnId: 'dateOfBirth',
   },
   {
     name: 'APP Number',
-    value: ApplicationsReportColumn.AppNumber,
+    value: 'APP_NUMBER',
+    reportColumnId: 'rcdPermitId',
   },
   {
     name: 'Application Date',
-    value: ApplicationsReportColumn.ApplicationDate,
+    value: 'APPLICATION_DATE',
+    reportColumnId: 'applicationDate',
   },
   {
     name: 'Payment Method',
-    value: ApplicationsReportColumn.PaymentMethod,
+    value: 'PAYMENT_METHOD',
+    reportColumnId: 'paymentMethod',
   },
   {
     name: 'Fee Amount',
-    value: ApplicationsReportColumn.FeeAmount,
+    value: 'FEE_AMOUNT',
+    reportColumnId: 'processingFee',
   },
   {
     name: 'Donation Amount',
-    value: ApplicationsReportColumn.DonationAmount,
+    value: 'DONATION_AMOUNT',
+    reportColumnId: 'donationAmount',
   },
   {
     name: 'Total Amount',
-    value: ApplicationsReportColumn.TotalAmount,
+    value: 'TOTAL_AMOUNT',
+    reportColumnId: 'totalAmount',
   },
 ];
 
 /** Ordered array of permit holders column names and values */
-export const PERMIT_HOLDERS_COLUMNS = [
+export const PERMIT_HOLDERS_COLUMNS: Array<{
+  name: string;
+  value: PermitHoldersReportColumn;
+  reportColumnId: string;
+}> = [
   {
     name: 'User ID',
-    value: PermitHoldersReportColumn.UserId,
+    value: 'USER_ID',
+    reportColumnId: 'id',
   },
   {
     name: 'Applicant Name',
-    value: PermitHoldersReportColumn.ApplicantName,
+    value: 'APPLICANT_NAME',
+    reportColumnId: 'applicantName',
   },
   {
     name: 'Applicant DoB',
-    value: PermitHoldersReportColumn.ApplicantDateOfBirth,
+    value: 'APPLICANT_DATE_OF_BIRTH',
+    reportColumnId: 'dateOfBirth',
   },
   {
     name: 'Home Address',
-    value: PermitHoldersReportColumn.HomeAddress,
+    value: 'HOME_ADDRESS',
+    reportColumnId: 'homeAddress',
   },
   {
     name: 'Email',
-    value: PermitHoldersReportColumn.Email,
+    value: 'EMAIL',
+    reportColumnId: 'email',
   },
   {
     name: 'Phone Number',
-    value: PermitHoldersReportColumn.PhoneNumber,
+    value: 'PHONE_NUMBER',
+    reportColumnId: 'phone',
   },
   {
     name: 'Guardian/POA Name',
-    value: PermitHoldersReportColumn.GuardianPoaName,
+    value: 'GUARDIAN_POA_NAME',
+    reportColumnId: 'guardianPOAName',
   },
   {
     name: 'Guardian/POA Relation',
-    value: PermitHoldersReportColumn.GuardianPoaRelation,
+    value: 'GUARDIAN_POA_RELATION',
+    reportColumnId: 'guardianRelationship',
   },
   {
     name: 'Guardian/POA Address',
-    value: PermitHoldersReportColumn.GuardianPoaAddress,
+    value: 'GUARDIAN_POA_ADDRESS',
+    reportColumnId: 'guardianPOAAdress',
   },
   {
     name: 'Recent APP Number',
-    value: PermitHoldersReportColumn.RecentAppNumber,
+    value: 'RECENT_APP_NUMBER',
+    reportColumnId: 'rcdPermitId',
   },
   {
     name: 'Recent APP Type',
-    value: PermitHoldersReportColumn.RecentAppType,
+    value: 'RECENT_APP_TYPE',
+    reportColumnId: 'permitType',
   },
   {
     name: 'User Status',
-    value: PermitHoldersReportColumn.UserStatus,
+    value: 'USER_STATUS',
+    reportColumnId: 'status',
   },
 ];

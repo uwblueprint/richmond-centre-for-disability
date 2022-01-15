@@ -1,4 +1,4 @@
-import { GridItem, Flex, Text, Spacer, GridItemProps } from '@chakra-ui/react'; // Chakra UI
+import { GridItem, Flex, Text, Spacer, GridItemProps, Divider } from '@chakra-ui/react'; // Chakra UI
 import { ReactNode } from 'react'; // React
 
 type PermitHolderInfoCardProps = GridItemProps & {
@@ -7,6 +7,8 @@ type PermitHolderInfoCardProps = GridItemProps & {
   updated?: boolean;
   editModal?: ReactNode;
   alignGridItems?: string;
+  /** Whether to show a divider under the header */
+  divider?: boolean;
 };
 
 /**
@@ -15,7 +17,7 @@ type PermitHolderInfoCardProps = GridItemProps & {
  * @returns custom Card.
  */
 export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
-  const { children, header, updated, editModal, alignGridItems } = props;
+  const { children, header, updated, editModal, alignGridItems, divider } = props;
   return (
     <GridItem
       display="flex"
@@ -29,7 +31,7 @@ export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
       borderRadius="8px"
       {...props}
     >
-      <Flex w="100%" justifyContent="flex-start" alignItems="center">
+      <Flex w="100%" justifyContent="flex-start" alignItems="center" mb={divider ? '20px' : '12px'}>
         {typeof header === 'string' ? (
           <Text as="h5" textStyle="display-small-semibold">
             {header}
@@ -45,6 +47,7 @@ export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
         <Spacer />
         {editModal}
       </Flex>
+      {divider && <Divider mb="20px" />}
       {children}
     </GridItem>
   );

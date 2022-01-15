@@ -20,15 +20,16 @@ import {
   NumberInputField,
   Divider,
   useToast,
+  HStack,
 } from '@chakra-ui/react'; // Chakra UI
 import { Step, Steps } from 'chakra-ui-steps'; // Chakra UI Steps
 import Layout from '@components/applicant/Layout'; // Layout component
 import ReviewRequestField from '@components/applicant/renewals/ReviewRequestField'; // Field in Review Request section
 import IncompleteSectionAlert from '@components/applicant/renewals/IncompleteSectionAlert'; // Alert box for incomplete form section
 import {
-  CREATE_RENEWAL_APPLICATION_MUTATION,
-  CreateRenewalApplicationRequest,
-  CreateRenewalApplicationResponse,
+  CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION,
+  CreateExternalRenewalApplicationRequest,
+  CreateExternalRenewalApplicationResponse,
 } from '@tools/applicant/renew'; // Page tools
 import useSteps from '@tools/hooks/useSteps'; // Custom hook for managing steps state
 import Request from '@containers/Request'; // Request state
@@ -59,7 +60,8 @@ export default function Renew() {
   const [contactEmailAddress, setContactEmailAddress] = useState('');
 
   // Doctor information state
-  const [doctorName, setDoctorName] = useState('');
+  const [doctorFirstName, setDoctorFirstName] = useState('');
+  const [doctorLastName, setDoctorLastName] = useState('');
   const [doctorMspNumber, setDoctorMspNumber] = useState('');
   const [doctorAddressLine1, setDoctorAddressLine1] = useState('');
   const [doctorAddressLine2, setDoctorAddressLine2] = useState('');
@@ -79,7 +81,8 @@ export default function Renew() {
   const invalidContact = updatedContactInfo && !contactPhoneNumber && !contactEmailAddress;
   const invalidDoctor =
     updatedDoctor &&
-    (!doctorName ||
+    (!doctorFirstName ||
+      !doctorLastName ||
       !doctorMspNumber ||
       !doctorAddressLine1 ||
       !doctorCity ||
@@ -115,9 +118,9 @@ export default function Renew() {
 
   // Submit application mutation
   const [submitApplication, { loading }] = useMutation<
-    CreateRenewalApplicationResponse,
-    CreateRenewalApplicationRequest
-  >(CREATE_RENEWAL_APPLICATION_MUTATION, {
+    CreateExternalRenewalApplicationResponse,
+    CreateExternalRenewalApplicationRequest
+  >(CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION, {
     onCompleted: data => {
       if (data?.createRenewalApplication.ok) {
         toast({
@@ -174,29 +177,27 @@ export default function Renew() {
           updatedAddress,
           updatedContactInfo,
           updatedPhysician: updatedDoctor,
-          ...(updatedAddress && {
-            addressLine1: personalAddressLine1,
-            addressLine2: personalAddressLine2,
-            city: personalCity,
-            postalCode: personalPostalCode,
-          }),
-          ...(updatedContactInfo && {
-            phone: contactPhoneNumber,
-            email: contactEmailAddress,
-          }),
-          ...(updatedDoctor && {
-            physicianName: doctorName,
-            physicianMspNumber: parseInt(doctorMspNumber),
-            physicianAddressLine1: doctorAddressLine1,
-            physicianAddressLine2: doctorAddressLine2,
-            physicianCity: doctorCity,
-            physicianPostalCode: doctorPostalCode,
-            physicianPhone: doctorPhoneNumber,
-          }),
+          addressLine1: updatedAddress ? personalAddressLine1 : null,
+          addressLine2: updatedAddress ? personalAddressLine2 : null,
+          city: updatedAddress ? personalCity : null,
+          postalCode: updatedAddress ? personalPostalCode : null,
+          phone: updatedContactInfo ? contactPhoneNumber : null,
+          email: updatedContactInfo ? contactEmailAddress : null,
+          physicianFirstName: updatedDoctor ? doctorFirstName : null,
+          physicianLastName: updatedDoctor ? doctorLastName : null,
+          physicianMspNumber: updatedDoctor ? parseInt(doctorMspNumber) : null,
+          physicianAddressLine1: updatedDoctor ? doctorAddressLine1 : null,
+          physicianAddressLine2: updatedDoctor ? doctorAddressLine2 : null,
+          physicianCity: updatedDoctor ? doctorCity : null,
+          physicianPostalCode: updatedDoctor ? doctorPostalCode : null,
+          physicianPhone: updatedDoctor ? doctorPhoneNumber : null,
           //TODO: Replace with dynamic values
           receiveEmailUpdates: false,
           usesAccessibleConvertedVan: false,
+          accessibleConvertedVanLoadingMethod: null,
           requiresWiderParkingSpace: false,
+          requiresWiderParkingSpaceReason: null,
+          otherRequiresWiderParkingSpaceReason: null,
         },
       },
     });
@@ -381,15 +382,22 @@ export default function Renew() {
                     textStyle="body-bold"
                     marginBottom="24px"
                   >{`Please fill out your doctor's information:`}</Text>
-                  <Flex marginBottom="24px">
+                  <HStack spacing="48px" marginBottom="24px">
                     <FormControl isRequired>
-                      <FormLabel>{`Name`}</FormLabel>
+                      <FormLabel>{`First name`}</FormLabel>
                       <Input
-                        value={doctorName}
-                        onChange={event => setDoctorName(event.target.value)}
+                        value={doctorFirstName}
+                        onChange={event => setDoctorFirstName(event.target.value)}
                       />
                     </FormControl>
-                  </Flex>
+                    <FormControl isRequired>
+                      <FormLabel>{`Last name`}</FormLabel>
+                      <Input
+                        value={doctorLastName}
+                        onChange={event => setDoctorLastName(event.target.value)}
+                      />
+                    </FormControl>
+                  </HStack>
                   <FormControl isRequired marginBottom="24px">
                     <FormLabel>{`Your Doctor's Medical Services Plan (MSP) Number`}</FormLabel>
                     <NumberInput width="184px">
@@ -513,7 +521,7 @@ export default function Renew() {
               </Flex>
               {updatedDoctor ? (
                 <>
-                  <ReviewRequestField name={`Name`} value={doctorName} />
+                  <ReviewRequestField name={`Name`} value={doctorFirstName} />
                   <ReviewRequestField name={`MSP Number`} value={doctorMspNumber} />
                   <ReviewRequestField
                     name={`Address`}

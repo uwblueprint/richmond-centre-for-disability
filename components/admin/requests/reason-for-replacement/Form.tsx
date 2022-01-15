@@ -12,17 +12,17 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
 import { formatDate } from '@lib/utils/format'; // Date formatter util
-import { ReasonForReplacement } from '@tools/admin/requests/reason-for-replacement'; // Reason For Replacement Type
+import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-replacement';
 
 type ReasonForReplacementProps = {
-  readonly reasonForReplacement: ReasonForReplacement;
-  readonly onChange: (updatedData: ReasonForReplacement) => void;
+  readonly reasonForReplacement: ReasonForReplacementFormData;
+  readonly onChange: (updatedData: ReasonForReplacementFormData) => void;
 };
 
 /**
  * ReasonForReplacementForm Component for allowing users to edit reason for replacement information.
  *
- * @param {ReasonForReplacement} ReasonForReplacement Data Structure that holds all reason for replacement information for a client request.
+ * @param {ReasonForReplacementFormData} reasonForReplacement Data Structure that holds all reason for replacement information for a client request.
  * @param onChange Function that uses the updated values from form.
  */
 export default function ReasonForReplacementForm({
@@ -36,7 +36,7 @@ export default function ReasonForReplacementForm({
           {'Reason'}
         </FormLabel>
         <RadioGroup
-          value={reasonForReplacement.reason}
+          value={reasonForReplacement.reason || undefined}
           onChange={value =>
             onChange({
               ...reasonForReplacement,
@@ -45,15 +45,15 @@ export default function ReasonForReplacementForm({
           }
         >
           <Stack>
-            <Radio value={ReasonForReplacementEnum.Lost}>{'Lost'}</Radio>
-            <Radio value={ReasonForReplacementEnum.Stolen}>{'Stolen'}</Radio>
-            <Radio value={ReasonForReplacementEnum.Other}>{'Other'}</Radio>
+            <Radio value={'LOST'}>{'Lost'}</Radio>
+            <Radio value={'STOLEN'}>{'Stolen'}</Radio>
+            <Radio value={'OTHER'}>{'Other'}</Radio>
           </Stack>
         </RadioGroup>
       </FormControl>
 
       {/* Conditionally render this section if Lost is selected as replacement reason */}
-      {reasonForReplacement.reason === ReasonForReplacementEnum.Lost && (
+      {reasonForReplacement.reason === 'LOST' && (
         <>
           <SimpleGrid columns={[1, 1, 1, 2]} spacing="32px">
             <FormControl isRequired paddingBottom="24px">
@@ -130,11 +130,11 @@ export default function ReasonForReplacementForm({
           <FormControl isRequired>
             <FormLabel>{'Event description'}</FormLabel>
             <Textarea
-              value={reasonForReplacement.description || ''}
+              value={reasonForReplacement.eventDescription || ''}
               onChange={event =>
                 onChange({
                   ...reasonForReplacement,
-                  description: event.target.value,
+                  eventDescription: event.target.value,
                 })
               }
             />
@@ -143,7 +143,7 @@ export default function ReasonForReplacementForm({
       )}
 
       {/* Conditionally renders this section if Stolen is selected as replacement reason */}
-      {reasonForReplacement.reason === ReasonForReplacementEnum.Stolen && (
+      {reasonForReplacement.reason === 'STOLEN' && (
         <>
           <SimpleGrid columns={[1, 1, 1, 1, 3]} spacing="26px">
             <FormControl isRequired paddingBottom="24px">
@@ -199,15 +199,15 @@ export default function ReasonForReplacementForm({
       )}
 
       {/* Conditionally renders this section if Other is selected as replacement reason */}
-      {reasonForReplacement.reason === ReasonForReplacementEnum.Other && (
+      {reasonForReplacement.reason === 'OTHER' && (
         <FormControl isRequired>
           <FormLabel>{'Event description'}</FormLabel>
           <Textarea
-            value={reasonForReplacement.description || ''}
+            value={reasonForReplacement.eventDescription || ''}
             onChange={event =>
               onChange({
                 ...reasonForReplacement,
-                description: event.target.value,
+                eventDescription: event.target.value,
               })
             }
           />

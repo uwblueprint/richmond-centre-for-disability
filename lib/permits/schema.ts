@@ -1,26 +1,15 @@
-export default `
+/**
+ * GraphQL schema for permits
+ */
+
+import { gql } from '@apollo/client';
+
+export default gql`
   type Permit {
-    id: ID!
     rcdPermitId: Int!
+    type: PermitType!
     expiryDate: Date!
-    receiptId: Int
     active: Boolean!
     application: Application!
-    applicationId: Int!
-    applicant: Applicant!
-    applicantId: Int!
-  }
-
-  input CreatePermitInput {
-    rcdPermitId: Int!
-    expiryDate: Date!
-    receiptId: Int
-    active: Boolean!
-    applicationId: Int!
-    applicantId: Int!
-  }
-
-  type CreatePermitResult {
-    ok: Boolean!
   }
 `;

@@ -1,16 +1,24 @@
+/**
+ * Global GraphQL API schema
+ */
+
 import { gql } from '@apollo/client';
 
 export default gql`
   type Query {
-    meta: Meta!
-    applicants(filter: ApplicantsFilter): QueryApplicantsResult
-    applicant(id: ID!): Applicant
-    employees(filter: EmployeesFilter): QueryEmployeesResult
-    employee(id: ID!): Employee
-    physicians: [Physician!]
-    applications(filter: ApplicationsFilter): QueryApplicationsResult
-    application(id: ID!): Application
-    permits: [Permit!]
+    # Applicants
+    applicants(filter: ApplicantsFilter): ApplicantsResult
+    applicant(id: Int!): Applicant
+
+    # Applications
+    applications(filter: ApplicationsFilter): ApplicationsResult
+    application(id: Int!): Application
+
+    # Employees
+    employees(filter: EmployeesFilter): EmployeesResult
+    employee(id: Int!): Employee
+
+    # Reports
     generateApplicationsReport(
       input: GenerateApplicationsReportInput!
     ): GenerateApplicationsReportResult
@@ -20,30 +28,82 @@ export default gql`
   }
 
   type Mutation {
-    createApplicant(input: CreateApplicantInput!): CreateApplicantResult!
-    updateApplicant(input: UpdateApplicantInput!): UpdateApplicantResult!
-    createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
-    updateEmployee(input: UpdateEmployeeInput!): UpdateEmployeeResult!
-    deleteEmployee(id: ID!): DeleteEmployeeResult!
-    createPhysician(input: CreatePhysicianInput!): CreatePhysicianResult!
-    upsertPhysician(input: UpsertPhysicianInput!): UpsertPhysicianResult!
-    createNewApplication(input: CreateNewApplicationInput!): CreateNewApplicationResult!
-    createRenewalApplication(input: CreateRenewalApplicationInput!): CreateRenewalApplicationResult!
+    # Applicants
+    updateApplicantGeneralInformation(
+      input: UpdateApplicantGeneralInformationInput!
+    ): UpdateApplicantGeneralInformationResult
+    updateApplicantDoctorInformation(
+      input: UpdateApplicantDoctorInformationInput!
+    ): UpdateApplicantDoctorInformationResult
+    updateApplicantGuardianInformation(
+      input: UpdateApplicantGuardianInformationInput!
+    ): UpdateApplicantGuardianInformationResult
+    setApplicantAsActive(input: SetApplicantAsActiveInput!): SetApplicantAsActiveResult
+    setApplicantAsInactive(input: SetApplicantAsInactiveInput!): SetApplicantAsInactiveResult
+    verifyIdentity(input: VerifyIdentityInput!): VerifyIdentityResult!
+
+    # Applications
+    createNewApplication(input: CreateNewApplicationInput!): CreateNewApplicationResult
+    createRenewalApplication(input: CreateRenewalApplicationInput!): CreateRenewalApplicationResult
+    createExternalRenewalApplication(
+      input: CreateExternalRenewalApplicationInput!
+    ): CreateExternalRenewalApplicationResult!
     createReplacementApplication(
       input: CreateReplacementApplicationInput!
-    ): CreateReplacementApplicationResult!
-    updateApplication(input: UpdateApplicationInput!): UpdateApplicationResult!
-    createPermit(input: CreatePermitInput!): CreatePermitResult!
-    updateMedicalInformation(input: UpdateMedicalInformationInput!): UpdateMedicalInformationResult!
-    updateGuardian(input: UpdateGuardianInput!): UpdateGuardianResult!
-    updateApplicationProcessing(
-      input: UpdateApplicationProcessingInput!
-    ): UpdateApplicationProcessingResult!
-    completeApplication(applicationId: ID!): CompleteApplicationResult!
-    verifyIdentity(input: VerifyIdentityInput!): VerifyIdentityResult!
+    ): CreateReplacementApplicationResult
+    updateApplicationGeneralInformation(
+      input: UpdateApplicationGeneralInformationInput!
+    ): UpdateApplicationGeneralInformationResult
+    updateApplicationDoctorInformation(
+      input: UpdateApplicationDoctorInformationInput!
+    ): UpdateApplicationDoctorInformationResult
+    updateApplicationAdditionalInformation(
+      input: UpdateApplicationAdditionalInformationInput!
+    ): UpdateApplicationAdditionalInformationResult
+    updateApplicationPaymentInformation(
+      input: UpdateApplicationPaymentInformationInput!
+    ): UpdateApplicationPaymentInformationResult
+    updateApplicationReasonForReplacement(
+      input: UpdateApplicationReasonForReplacementInput!
+    ): UpdateApplicationReasonForReplacementResult
+    updateApplicationPhysicianAssessment(
+      input: UpdateApplicationPhysicianAssessmentInput!
+    ): UpdateApplicationPhysicianAssessmentResult
+
+    # Application processing
+    approveApplication(input: ApproveApplicationInput!): ApproveApplicationResult
+    rejectApplication(input: RejectApplicationInput!): RejectApplicationResult
+    completeApplication(input: CompleteApplicationInput!): CompleteApplicationResult
+    updateApplicationProcessingAssignAppNumber(
+      input: UpdateApplicationProcessingAssignAppNumberInput!
+    ): UpdateApplicationProcessingAssignAppNumberResult
+    updateApplicationProcessingHolepunchParkingPermit(
+      input: UpdateApplicationProcessingHolepunchParkingPermitInput!
+    ): UpdateApplicationProcessingHolepunchParkingPermitResult
+    updateApplicationProcessingCreateWalletCard(
+      input: UpdateApplicationProcessingCreateWalletCardInput!
+    ): UpdateApplicationProcessingCreateWalletCardResult
+    updateApplicationProcessingAssignInvoiceNumber(
+      input: UpdateApplicationProcessingAssignInvoiceNumberInput!
+    ): UpdateApplicationProcessingAssignInvoiceNumberResult
+    updateApplicationProcessingUploadDocuments(
+      input: UpdateApplicationProcessingUploadDocumentsInput!
+    ): UpdateApplicationProcessingUploadDocumentsResult
+    updateApplicationProcessingMailOut(
+      input: UpdateApplicationProcessingMailOutInput!
+    ): UpdateApplicationProcessingMailOutResult
+
+    # Employees
+    createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
+    updateEmployee(input: UpdateEmployeeInput!): UpdateEmployeeResult!
+    deleteEmployee(input: DeleteEmployeeInput!): DeleteEmployeeResult!
   }
 
+  # Scalars
+
   scalar Date
+
+  # Enums
 
   enum Role {
     ADMIN
@@ -75,6 +135,7 @@ export default gql`
     CHEQUE
     DEBIT
     MONEY_ORDER
+    SHOPIFY
   }
 
   enum ApplicantStatus {
@@ -82,7 +143,7 @@ export default gql`
     INACTIVE
   }
 
-  enum Aid {
+  enum MobilityAid {
     CANE
     ELECTRIC_CHAIR
     MANUAL_CHAIR
@@ -103,7 +164,7 @@ export default gql`
 
   enum ApplicationStatus {
     PENDING
-    APPROVED
+    IN_PROGRESS
     REJECTED
     COMPLETED
   }
@@ -114,53 +175,37 @@ export default gql`
     OTHER
   }
 
-  enum PermitStatus {
-    VALID
-    EXPIRED
-    EXPIRING_IN_THIRTY_DAYS
-  }
-
-  enum UserStatus {
-    ACTIVE
-    INACTIVE
-  }
-
   enum PermitType {
     PERMANENT
     TEMPORARY
   }
 
-  enum ApplicationsReportColumn {
-    USER_ID
-    APPLICANT_NAME
-    APPLICANT_DATE_OF_BIRTH
-    APP_NUMBER
-    APPLICATION_DATE
-    PAYMENT_METHOD
-    FEE_AMOUNT
-    DONATION_AMOUNT
-    TOTAL_AMOUNT
-  }
-
-  enum PermitHoldersReportColumn {
-    USER_ID
-    APPLICANT_NAME
-    APPLICANT_DATE_OF_BIRTH
-    HOME_ADDRESS
-    EMAIL
-    PHONE_NUMBER
-    GUARDIAN_POA_NAME
-    GUARDIAN_POA_RELATION
-    GUARDIAN_POA_ADDRESS
-    RECENT_APP_NUMBER
-    RECENT_APP_TYPE
-    USER_STATUS
-  }
-
-  enum Eligibility {
+  enum PatientCondition {
     AFFECTS_MOBILITY
     MOBILITY_AID_REQUIRED
     CANNOT_WALK_100M
     OTHER
+  }
+
+  enum ApplicationType {
+    NEW
+    RENEWAL
+    REPLACEMENT
+  }
+
+  enum AccessibleConvertedVanLoadingMethod {
+    SIDE_LOADING
+    END_LOADING
+  }
+
+  enum RequiresWiderParkingSpaceReason {
+    HAS_ACCESSIBLE_VAN
+    MEDICAL_REASONS
+    OTHER
+  }
+
+  enum ShopifyPaymentStatus {
+    PENDING
+    RECEIVED
   }
 `;

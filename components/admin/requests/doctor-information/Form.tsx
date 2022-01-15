@@ -1,3 +1,4 @@
+import { ChangeEventHandler } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -7,12 +8,13 @@ import {
   FormHelperText,
   Box,
   Divider,
+  VStack,
 } from '@chakra-ui/react'; // Chakra UI
-import { Physician } from '@tools/admin/requests/doctor-information';
+import { DoctorFormData } from '@tools/admin/requests/doctor-information';
 
 type DoctorInformationFormProps = {
-  readonly doctorInformation: Physician;
-  readonly onChange: (updatedData: Physician) => void;
+  readonly doctorInformation: DoctorFormData;
+  readonly onChange: (updatedData: DoctorFormData) => void;
 };
 
 /**
@@ -24,29 +26,38 @@ export default function DoctorInformationForm({
   doctorInformation,
   onChange,
 }: DoctorInformationFormProps) {
+  const { firstName, lastName, mspNumber, phone, addressLine1, addressLine2, city, postalCode } =
+    doctorInformation;
+
+  const handleChange =
+    (field: keyof DoctorFormData): ChangeEventHandler<HTMLInputElement> =>
+    event => {
+      onChange({
+        ...doctorInformation,
+        [field]: event.target.value,
+      });
+    };
+
   return (
     <>
       {/* Personal Information Section */}
-      <Box paddingBottom="32px">
-        <Stack direction="row" spacing="20px" paddingBottom="24px">
+      <VStack spacing="24px" align="left" paddingBottom="32px">
+        <Stack direction="row" spacing="20px">
           <FormControl isRequired>
-            <FormLabel>{'Name'}</FormLabel>
-            <Input
-              value={doctorInformation.name}
-              onChange={event =>
-                onChange({
-                  ...doctorInformation,
-                  name: event.target.value,
-                })
-              }
-            />
+            <FormLabel>{'First name'}</FormLabel>
+            <Input value={firstName} onChange={handleChange('firstName')} />
+          </FormControl>
+
+          <FormControl isRequired>
+            <FormLabel>{'Last name'}</FormLabel>
+            <Input value={lastName} onChange={handleChange('lastName')} />
           </FormControl>
         </Stack>
         <Stack direction="row" spacing="20px">
           <FormControl isRequired>
             <FormLabel>{'Medical services plan number'}</FormLabel>
             <Input
-              value={doctorInformation.mspNumber || ''}
+              value={mspNumber || ''}
               onChange={event =>
                 onChange({
                   ...doctorInformation,
@@ -58,19 +69,11 @@ export default function DoctorInformationForm({
 
           <FormControl isRequired>
             <FormLabel>{'Phone number'}</FormLabel>
-            <Input
-              value={doctorInformation.phone}
-              onChange={event =>
-                onChange({
-                  ...doctorInformation,
-                  phone: event.target.value,
-                })
-              }
-            />
+            <Input value={phone} onChange={handleChange('phone')} />
             <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
           </FormControl>
         </Stack>
-      </Box>
+      </VStack>
 
       <Divider />
 
@@ -86,15 +89,7 @@ export default function DoctorInformationForm({
 
         <FormControl isRequired paddingBottom="24px">
           <FormLabel>{'Address line 1'}</FormLabel>
-          <Input
-            value={doctorInformation.addressLine1}
-            onChange={event =>
-              onChange({
-                ...doctorInformation,
-                addressLine1: event.target.value,
-              })
-            }
-          />
+          <Input value={addressLine1} onChange={handleChange('addressLine1')} />
           <FormHelperText color="text.seconday">
             {'Street Address, P.O. Box, Company Name, c/o'}
           </FormHelperText>
@@ -107,15 +102,7 @@ export default function DoctorInformationForm({
               {'(optional)'}
             </Box>
           </FormLabel>
-          <Input
-            value={doctorInformation.addressLine2 || ''}
-            onChange={event =>
-              onChange({
-                ...doctorInformation,
-                addressLine2: event.target.value,
-              })
-            }
-          />
+          <Input value={addressLine2 || ''} onChange={handleChange('addressLine2')} />
           <FormHelperText color="text.seconday">
             {'Apartment, suite, unit, building, floor, etc'}
           </FormHelperText>
@@ -125,7 +112,7 @@ export default function DoctorInformationForm({
           <FormControl isRequired>
             <FormLabel>{'City'}</FormLabel>
             <Input
-              value={doctorInformation.city}
+              value={city}
               onChange={event =>
                 onChange({
                   ...doctorInformation,
@@ -137,15 +124,7 @@ export default function DoctorInformationForm({
 
           <FormControl isRequired>
             <FormLabel>{'Postal code'}</FormLabel>
-            <Input
-              value={doctorInformation.postalCode}
-              onChange={event =>
-                onChange({
-                  ...doctorInformation,
-                  postalCode: event.target.value,
-                })
-              }
-            />
+            <Input value={postalCode} onChange={handleChange('postalCode')} />
             <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
           </FormControl>
         </Stack>

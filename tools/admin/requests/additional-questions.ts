@@ -1,7 +1,48 @@
-import { Renewal } from '@lib/graphql/types';
+import { gql } from '@apollo/client';
+import { NewApplication, QueryApplicationArgs, RenewalApplication } from '@lib/graphql/types';
 
 /** Additional questions in forms */
-export type AdditionalQuestions = Pick<
-  Renewal,
-  'usesAccessibleConvertedVan' | 'requiresWiderParkingSpace'
+export type AdditionalInformationFormData = Pick<
+  NewApplication | RenewalApplication,
+  | 'usesAccessibleConvertedVan'
+  | 'accessibleConvertedVanLoadingMethod'
+  | 'requiresWiderParkingSpace'
+  | 'requiresWiderParkingSpaceReason'
+  | 'otherRequiresWiderParkingSpaceReason'
 >;
+
+/** Get additional information of application */
+export const GET_ADDITIONAL_INFORMATION = gql`
+  query GetAdditionalInformation($id: Int!) {
+    application(id: $id) {
+      __typename
+      ... on NewApplication {
+        usesAccessibleConvertedVan
+        accessibleConvertedVanLoadingMethod
+        requiresWiderParkingSpace
+        requiresWiderParkingSpaceReason
+        otherRequiresWiderParkingSpaceReason
+      }
+      ... on RenewalApplication {
+        usesAccessibleConvertedVan
+        accessibleConvertedVanLoadingMethod
+        requiresWiderParkingSpace
+        requiresWiderParkingSpaceReason
+        otherRequiresWiderParkingSpaceReason
+      }
+    }
+  }
+`;
+
+export type GetAdditionalInformationRequest = QueryApplicationArgs;
+
+export type GetAdditionalInformationResponse = {
+  application: Pick<
+    NewApplication | RenewalApplication,
+    | 'usesAccessibleConvertedVan'
+    | 'accessibleConvertedVanLoadingMethod'
+    | 'requiresWiderParkingSpace'
+    | 'requiresWiderParkingSpaceReason'
+    | 'otherRequiresWiderParkingSpaceReason'
+  >;
+};

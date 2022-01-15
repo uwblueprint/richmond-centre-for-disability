@@ -1,4 +1,4 @@
-import { Role } from '@lib/types'; // Role enum
+import { Role } from '@lib/graphql/types'; // Role enum
 
 // Enum for internal page paths
 export enum InternalPagePath {
@@ -17,7 +17,7 @@ export enum InternalPagePath {
  * @returns The index of the tab corresponding to the path
  */
 export const getTabIndex = (path: string, role: Role): number => {
-  if (role === Role.Secretary) {
+  if (role === 'SECRETARY') {
     // Secretary
     if (path === InternalPagePath.Requests || path.includes(InternalPagePath.Request)) {
       return 0;
@@ -26,7 +26,7 @@ export const getTabIndex = (path: string, role: Role): number => {
       return 1;
     }
     return 0;
-  } else if (role === Role.Accounting) {
+  } else if (role === 'ACCOUNTING') {
     // Accounting
     return 0; // Only has access to 1 tab
   } else {

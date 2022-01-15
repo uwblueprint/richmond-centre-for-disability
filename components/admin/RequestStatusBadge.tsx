@@ -1,18 +1,19 @@
 import { Badge, Box, Wrap } from '@chakra-ui/react'; // Chakra UI
 import Image from 'next/image'; // Optimized images
-import { ApplicationStatus } from '@lib/types'; // Types
+import { ApplicationStatus } from '@lib/graphql/types'; // Types
+import { FC } from 'react';
 
 type Props = {
-  variant: ApplicationStatus | 'EXPIRING' | 'EXPIRED' | 'ACTIVE';
+  variant: ApplicationStatus;
 };
 
-export default function RequestStatusBadge({ variant }: Props) {
+const RequestStatusBadge: FC<Props> = ({ variant }) => {
   /**
    * Renders the request status badge content (icon + text)
    * @param variant for specifying request status badge type
    * @returns {JSX.Element} contents of the badge
    */
-  const _renderBadgeContent = (variant: Props['variant']): JSX.Element => {
+  const _renderBadgeContent = (variant: ApplicationStatus): JSX.Element => {
     switch (variant) {
       case 'COMPLETED':
         return (
@@ -25,34 +26,6 @@ export default function RequestStatusBadge({ variant }: Props) {
             />
             <Box as="span" pl="8px">
               Completed
-            </Box>
-          </>
-        );
-      case 'EXPIRING':
-        return (
-          <>
-            <Image
-              src="/assets/expiring-icon.svg"
-              alt="Expiring Application Icon"
-              height={14}
-              width={14}
-            />
-            <Box as="span" pl="8px" pr="13px">
-              {'Expiring < 30 days'}
-            </Box>
-          </>
-        );
-      case 'EXPIRED':
-        return (
-          <>
-            <Image
-              src="/assets/expired-icon.svg"
-              alt="Expired Application Icon"
-              height={15}
-              width={16}
-            />
-            <Box as="span" pl="8px">
-              Expired
             </Box>
           </>
         );
@@ -84,7 +57,7 @@ export default function RequestStatusBadge({ variant }: Props) {
             </Box>
           </>
         );
-      case 'APPROVED':
+      case 'IN_PROGRESS':
         return (
           <>
             <Image
@@ -98,22 +71,7 @@ export default function RequestStatusBadge({ variant }: Props) {
             </Box>
           </>
         );
-      case 'ACTIVE':
-        return (
-          <>
-            <Image
-              src="/assets/active-icon.svg"
-              alt="Active Application Icon"
-              height={12}
-              width={12}
-            />
-            <Box as="span" pl="8px">
-              Active
-            </Box>
-          </>
-        );
     }
-    return <></>;
   };
 
   return (
@@ -125,4 +83,6 @@ export default function RequestStatusBadge({ variant }: Props) {
       </Badge>
     </Wrap>
   );
-}
+};
+
+export default RequestStatusBadge;

@@ -1,103 +1,104 @@
 import Layout from '@components/admin/Layout'; // Layout component
 import { Text, Box, Flex, Stack, Button, GridItem, useToast } from '@chakra-ui/react'; // Chakra UI
 import { SyntheticEvent, useState } from 'react'; // React
-import PermitHolderInformationForm from '@components/admin/requests/applicant-information/Form'; //Permit holder information form
-import { PermitHolderInformation } from '@tools/admin/requests/permit-holder-information'; //Permit holder information type
+import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form'; //Doctor information form
 import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form'; //Additional questions form
-import { AdditionalQuestions } from '@tools/admin/requests/additional-questions'; //Additional questions type
+import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions'; //Additional questions type
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
-import { PaymentInformation } from '@tools/admin/requests/payment-information';
-import { ApplicantStatus, Gender, PaymentType, Province, Role } from '@lib/graphql/types'; //GraphQL types
+import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import Link from 'next/link'; // Link
 import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
-import { PermitHolder } from '@tools/admin/permit-holders/graphql/get-permit-holders';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import {
   CreateRenewalApplicationRequest,
   CreateRenewalApplicationResponse,
   CREATE_RENEWAL_APPLICATION_MUTATION,
-} from '@tools/applicant/renew';
-import {
-  GET_APPLICANT_RENEWAL_QUERY,
-  GetApplicantRenewalRequest,
-  GetApplicantRenewalResponse,
-} from '@tools/admin/requests/graphql/create/get-renewal-applicant';
+} from '@tools/admin/requests/create-renewal';
 import { RequestFlowPageState } from '@tools/admin/requests/types';
 import { useRouter } from 'next/router';
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
-import { ApplicantData } from '@tools/admin/permit-holders/types';
 import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
-import { Physician } from '@tools/admin/requests/doctor-information';
+import { DoctorFormData } from '@tools/admin/requests/doctor-information';
+import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
+import {
+  GetRenewalApplicantRequest,
+  GetRenewalApplicantResponse,
+  GET_RENEWAL_APPLICANT,
+} from '@tools/admin/requests/create-renewal';
+import { PaymentType } from '@lib/graphql/types';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
     RequestFlowPageState.SelectingPermitHolderPage
   );
-  const [permitHolderRcdUserID, setPermitHolderRcdUserID] = useState<number>();
-  const [applicantID, setApplicantID] = useState<number>();
-  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
+  const [applicantId, setApplicantId] = useState<number | null>(null);
+
+  /** Permit holder information section */
+  const [permitHolderInformation, setPermitHolderInformation] = useState<
+    Omit<ApplicantFormData, 'dateOfBirth' | 'gender'> & { receiveEmailUpdates: boolean }
+  >({
     firstName: '',
+    middleName: null,
     lastName: '',
     email: '',
+    phone: '',
     receiveEmailUpdates: false,
+    addressLine1: '',
+    addressLine2: null,
+    city: '',
+    postalCode: '',
+  });
+
+  /** Doctor information section */
+  const [doctorInformation, setDoctorInformation] = useState<DoctorFormData>({
+    firstName: '',
+    lastName: '',
+    mspNumber: null,
     phone: '',
     addressLine1: '',
     addressLine2: '',
     city: '',
     postalCode: '',
   });
-  const [doctorInformation, setDoctorInformation] = useState<Physician>({
-    phone: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    postalCode: '',
-    name: '',
-    mspNumber: 0, //TODO: change default value to undefined
-    province: Province.Bc,
-  });
-  const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalQuestions>({
-    usesAccessibleConvertedVan: false,
-    requiresWiderParkingSpace: false,
-  });
-  const [paymentDetails, setPaymentDetails] = useState<PaymentInformation>({
-    paymentMethod: PaymentType.Mastercard,
-    donationAmount: 0,
+
+  /** Additional information section */
+  const [additionalInformation, setAdditionalInformation] = useState<AdditionalInformationFormData>(
+    {
+      usesAccessibleConvertedVan: false,
+      accessibleConvertedVanLoadingMethod: null,
+      requiresWiderParkingSpace: false,
+      requiresWiderParkingSpaceReason: null,
+      otherRequiresWiderParkingSpaceReason: null,
+    }
+  );
+
+  /** Payment information section */
+  const [paymentInformation, setPaymentInformation] = useState<
+    PaymentInformationFormData & { paymentMethod: PaymentType | null }
+  >({
+    paymentMethod: null,
+    donationAmount: '',
     shippingAddressSameAsHomeAddress: false,
     shippingFullName: '',
     shippingAddressLine1: '',
     shippingAddressLine2: '',
     shippingCity: '',
-    shippingProvince: Province.Bc,
+    shippingProvince: 'BC',
+    shippingCountry: '',
     shippingPostalCode: '',
     billingAddressSameAsHomeAddress: false,
     billingFullName: '',
     billingAddressLine1: '',
     billingAddressLine2: '',
     billingCity: '',
-    billingProvince: Province.Bc,
+    billingProvince: 'BC',
+    billingCountry: '',
     billingPostalCode: '',
-  });
-  const [personalInformationCard, setPersonalInformationCard] = useState<ApplicantData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    postalCode: '',
-    rcdUserId: 0,
-    id: 0,
-    dateOfBirth: '',
-    status: ApplicantStatus.Active,
-    gender: Gender.Other,
-    province: Province.On,
   });
 
   // Toast message
@@ -106,108 +107,60 @@ export default function CreateRenewal() {
   // Router
   const router = useRouter();
 
-  // Always override address, contact info, and physician
-  const updatedAddress = true;
-  const updatedContactInfo = true;
-  const updatedPhysician = true;
-
   /**
    * Get information about applicant to pre-populate form
    */
-  const [getApplicant, { loading: getApplicantLoading }] = useLazyQuery<
-    GetApplicantRenewalResponse,
-    GetApplicantRenewalRequest
-  >(GET_APPLICANT_RENEWAL_QUERY, {
-    fetchPolicy: 'network-only',
-    onCompleted: data => {
-      // set personal information card
-      setPersonalInformationCard({
-        id: +data.applicant.id,
-        rcdUserId: data.applicant.rcdUserId || 0,
-        firstName: data.applicant.firstName,
-        lastName: data.applicant.lastName,
-        gender: data.applicant.gender,
-        dateOfBirth: data.applicant.dateOfBirth,
-        email: data.applicant.email,
-        phone: data.applicant.phone,
-        province: data.applicant.province,
-        city: data.applicant.city,
-        addressLine1: data.applicant.addressLine1,
-        addressLine2: data.applicant.addressLine2,
-        status: data.applicant.status,
-        postalCode: data.applicant.postalCode,
-      });
-
-      // set permitHolderInformation
-      setPermitHolderRcdUserID(data.applicant.rcdUserId || undefined);
-      setApplicantID(+data.applicant.id);
-      setPermitHolderInformation({
-        firstName: data.applicant.firstName,
-        lastName: data.applicant.lastName,
-        email: data.applicant.email,
-        receiveEmailUpdates: data.applicant.mostRecentRenewal.receiveEmailUpdates,
-        phone: data.applicant.phone,
-        addressLine1: data.applicant.addressLine1,
-        addressLine2: data.applicant.addressLine2,
-        city: data.applicant.city,
-        postalCode: data.applicant.postalCode,
-      });
-
-      // set doctorInformation
-      const physician = data.applicant.medicalInformation.physician;
-      setDoctorInformation({
-        ...doctorInformation,
-        phone: physician.phone,
-        addressLine1: physician.addressLine1,
-        addressLine2: physician.addressLine2,
-        city: physician.city,
-        postalCode: physician.postalCode,
-        name: physician.name,
-        mspNumber: physician.mspNumber,
-      });
-
-      // set additionalQuestions
-      if (data.applicant.mostRecentRenewal.renewal) {
-        setAdditionalQuestions({
-          usesAccessibleConvertedVan:
-            data.applicant.mostRecentRenewal.renewal.usesAccessibleConvertedVan,
-          requiresWiderParkingSpace:
-            data.applicant.mostRecentRenewal.renewal.requiresWiderParkingSpace,
-        });
-      } else {
-        setAdditionalQuestions({
-          usesAccessibleConvertedVan: false,
-          requiresWiderParkingSpace: false,
-        });
-      }
-
-      // set paymentDetails
-      const previousApplication = data.applicant.mostRecentRenewal;
-      setPaymentDetails({
-        ...paymentDetails,
-        shippingAddressSameAsHomeAddress: previousApplication.shippingAddressSameAsHomeAddress,
-        shippingFullName: previousApplication.shippingFullName,
-        shippingAddressLine1: previousApplication.shippingAddressLine1,
-        shippingAddressLine2: previousApplication.shippingAddressLine2,
-        shippingCity: previousApplication.shippingCity,
-        shippingProvince: previousApplication.shippingProvince,
-        shippingPostalCode: previousApplication.shippingPostalCode,
-      });
-    },
-  });
+  const [getApplicant] = useLazyQuery<GetRenewalApplicantResponse, GetRenewalApplicantRequest>(
+    GET_RENEWAL_APPLICANT,
+    {
+      onCompleted: data => {
+        if (data) {
+          const {
+            firstName,
+            middleName,
+            lastName,
+            email,
+            phone,
+            receiveEmailUpdates,
+            addressLine1,
+            addressLine2,
+            city,
+            postalCode,
+            medicalInformation: { physician },
+          } = data.applicant;
+          setPermitHolderInformation({
+            firstName,
+            middleName,
+            lastName,
+            email,
+            phone,
+            receiveEmailUpdates,
+            addressLine1,
+            addressLine2,
+            city,
+            postalCode,
+          });
+          setDoctorInformation({
+            firstName: physician.firstName,
+            lastName: physician.lastName,
+            mspNumber: physician.mspNumber,
+            phone: physician.phone,
+            addressLine1: physician.addressLine1,
+            addressLine2: physician.addressLine2,
+            city: physician.city,
+            postalCode: physician.postalCode,
+          });
+        }
+      },
+    }
+  );
 
   /**
    * Set and fetch data about applicant when permit holder is selected
    */
-  const handleSelectPermitHolder = async (permitHolder: PermitHolder | undefined) => {
-    setPermitHolderRcdUserID(permitHolder?.rcdUserId || undefined);
-    if (permitHolder) {
-      await getApplicant({
-        variables: {
-          id: permitHolder.id,
-        },
-      });
-    }
+  const handleSelectPermitHolder = async (applicantId: number) => {
+    setApplicantId(applicantId);
+    getApplicant({ variables: { id: applicantId } });
   };
 
   /**
@@ -218,14 +171,19 @@ export default function CreateRenewal() {
     CreateRenewalApplicationRequest
   >(CREATE_RENEWAL_APPLICATION_MUTATION, {
     onCompleted: data => {
-      if (data.createRenewalApplication.ok) {
-        toast({
-          status: 'success',
-          description: 'Renewal application has been submitted!',
-          isClosable: true,
-        });
+      if (data) {
+        const { ok, applicationId } = data.createRenewalApplication;
+        if (ok) {
+          toast({
+            status: 'success',
+            description: 'Renewal application has been submitted!',
+            isClosable: true,
+          });
 
-        router.push(`/admin/request/${data.createRenewalApplication.applicationId}`);
+          if (applicationId) {
+            router.push(`/admin/request/${data.createRenewalApplication.applicationId}`);
+          }
+        }
       }
     },
     onError: error => {
@@ -242,57 +200,48 @@ export default function CreateRenewal() {
    */
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    if (applicantID) {
-      await submitRenewalApplication({
-        variables: {
-          input: {
-            applicantId: applicantID,
-            updatedAddress,
-            firstName: permitHolderInformation.firstName,
-            lastName: permitHolderInformation.lastName,
-            addressLine1: permitHolderInformation.addressLine1,
-            addressLine2: permitHolderInformation.addressLine2,
-            city: permitHolderInformation.city,
-            postalCode: permitHolderInformation.postalCode,
-            updatedContactInfo,
-            phone: permitHolderInformation.phone,
-            email: permitHolderInformation.email,
-            receiveEmailUpdates: permitHolderInformation.receiveEmailUpdates,
-            rcdUserId: permitHolderRcdUserID,
-            updatedPhysician,
-            physicianName: doctorInformation.name,
-            physicianMspNumber: doctorInformation.mspNumber,
-            physicianAddressLine1: doctorInformation.addressLine1,
-            physicianAddressLine2: doctorInformation.addressLine2,
-            physicianCity: doctorInformation.city,
-            physicianPostalCode: doctorInformation.postalCode,
-            physicianPhone: doctorInformation.phone,
-            usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
-            requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
-            shippingAddressSameAsHomeAddress: paymentDetails.shippingAddressSameAsHomeAddress,
-            billingAddressSameAsHomeAddress: paymentDetails.billingAddressSameAsHomeAddress,
-            ...(paymentDetails.shippingAddressSameAsHomeAddress === false && {
-              shippingFullName: paymentDetails.shippingFullName,
-              shippingAddressLine1: paymentDetails.shippingAddressLine1,
-              shippingAddressLine2: paymentDetails.shippingAddressLine2,
-              shippingCity: paymentDetails.shippingCity,
-              shippingProvince: paymentDetails.shippingProvince,
-              shippingPostalCode: paymentDetails.shippingPostalCode,
-            }),
-            ...(paymentDetails.billingAddressSameAsHomeAddress === false && {
-              billingFullName: paymentDetails.billingFullName,
-              billingAddressLine1: paymentDetails.billingAddressLine1,
-              billingAddressLine2: paymentDetails.billingAddressLine2,
-              billingCity: paymentDetails.billingCity,
-              billingProvince: paymentDetails.billingProvince,
-              billingPostalCode: paymentDetails.billingPostalCode,
-            }),
-            donationAmount: paymentDetails.donationAmount,
-            paymentMethod: paymentDetails.paymentMethod,
-          },
-        },
+    if (applicantId === null) {
+      toast({
+        status: 'error',
+        description: 'You must select a permit holder for a Renewal Request.',
+        isClosable: true,
       });
+      return;
     }
+
+    if (doctorInformation.mspNumber === null) {
+      toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
+      return;
+    }
+
+    if (paymentInformation.paymentMethod === null) {
+      toast({ status: 'error', description: 'Missing payment method', isClosable: true });
+      return;
+    }
+
+    await submitRenewalApplication({
+      variables: {
+        input: {
+          applicantId,
+          ...permitHolderInformation,
+          physicianFirstName: doctorInformation.firstName,
+          physicianLastName: doctorInformation.lastName,
+          physicianMspNumber: doctorInformation.mspNumber,
+          physicianPhone: doctorInformation.phone,
+          physicianAddressLine1: doctorInformation.addressLine1,
+          physicianAddressLine2: doctorInformation.addressLine2,
+          physicianCity: doctorInformation.city,
+          physicianPostalCode: doctorInformation.postalCode,
+          ...additionalInformation,
+          ...paymentInformation,
+          paymentMethod: paymentInformation.paymentMethod,
+          // TODO: Replace with dynamic values
+          paidThroughShopify: false,
+          shopifyPaymentStatus: null,
+          shopifyConfirmationNumber: null,
+        },
+      },
+    });
   };
 
   return (
@@ -301,12 +250,12 @@ export default function CreateRenewal() {
         <Flex>
           <Text textStyle="display-large">
             {`New Renewal Request`}
-            {permitHolderRcdUserID && (
+            {applicantId && (
               <>
                 {` (User ID: `}
                 <Box as="span" color="primary">
-                  <Link href={`/admin/permit-holder/${applicantID}`}>
-                    <a>{permitHolderRcdUserID}</a>
+                  <Link href={`/admin/permit-holder/${applicantId}`}>
+                    <a>{applicantId}</a>
                   </Link>
                 </Box>
                 {`)`}
@@ -334,17 +283,12 @@ export default function CreateRenewal() {
               </Box>
             </GridItem>
             <GridItem paddingTop="32px">
-              {permitHolderRcdUserID && (
-                <SelectedPermitHolderCard
-                  applicant={personalInformationCard}
-                  loading={getApplicantLoading}
-                />
-              )}
+              {applicantId && <SelectedPermitHolderCard applicantId={applicantId} />}
             </GridItem>
           </>
         )}
         {/* Permit Holder Information Form */}
-        {permitHolderRcdUserID && currentPageState == RequestFlowPageState.SubmittingRequestPage && (
+        {applicantId && currentPageState == RequestFlowPageState.SubmittingRequestPage && (
           <form onSubmit={handleSubmit}>
             <GridItem paddingTop="32px">
               <Box
@@ -361,7 +305,7 @@ export default function CreateRenewal() {
                   {`Permit Holder's Information`}
                 </Text>
                 <PermitHolderInformationForm
-                  type="renewal"
+                  type="RENEWAL"
                   permitHolderInformation={permitHolderInformation}
                   onChange={setPermitHolderInformation}
                 />
@@ -404,8 +348,8 @@ export default function CreateRenewal() {
                   {`Additional Information`}
                 </Text>
                 <AdditionalQuestionsForm
-                  data={additionalQuestions}
-                  onChange={setAdditionalQuestions}
+                  data={additionalInformation}
+                  onChange={setAdditionalInformation}
                 />
               </Box>
             </GridItem>
@@ -425,8 +369,8 @@ export default function CreateRenewal() {
                   {`Payment, Shipping, and Billing Information`}
                 </Text>
                 <PaymentDetailsForm
-                  paymentInformation={paymentDetails}
-                  onChange={setPaymentDetails}
+                  paymentInformation={paymentInformation}
+                  onChange={setPaymentInformation}
                 />
               </Box>
             </GridItem>
@@ -454,8 +398,7 @@ export default function CreateRenewal() {
                   >
                     <BackToSearchModal
                       onGoBack={() => {
-                        setApplicantID(undefined);
-                        setPermitHolderRcdUserID(undefined);
+                        setApplicantId(null);
                         setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
                       }}
                     >
@@ -532,7 +475,7 @@ export default function CreateRenewal() {
                         height="48px"
                         width="217px"
                         type="submit"
-                        isDisabled={permitHolderRcdUserID === undefined}
+                        isDisabled={!applicantId}
                         onClick={() => setNewPageState(RequestFlowPageState.SubmittingRequestPage)}
                       >
                         <Text textStyle="button-semibold">Proceed to request</Text>
@@ -553,7 +496,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
 
   // Only secretaries and admins can access APP requests
-  if (authorize(session, [Role.Secretary])) {
+  if (authorize(session, ['SECRETARY'])) {
     return {
       props: {},
     };

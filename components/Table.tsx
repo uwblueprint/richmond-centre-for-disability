@@ -1,3 +1,6 @@
+// Allow `object` type for react-table type compliance
+/* eslint-disable @typescript-eslint/ban-types */
+
 import { useEffect } from 'react'; // React
 import { Box, Flex, Table as ChakraTable, Th, Td, Thead, Tbody, Tr } from '@chakra-ui/react'; // Chakra UI
 import { ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'; // Chakra UI Icons
@@ -6,14 +9,14 @@ import { SortOptions } from '@tools/types'; // Sorting types
 import { getSortOptions } from '@tools/admin/table'; // Get the sort options from the React Table sortBy state
 
 // Table Props
-type Props = {
-  readonly columns: Array<Column<any>>; // Depends on shape of data
-  readonly data: Array<any>; // Depends on shape of data
+type Props<T extends object> = {
+  readonly columns: Array<Column<T>>; // Depends on shape of data
+  readonly data: Array<T>; // Depends on shape of data
   readonly onChangeSortOrder?: (sort: SortOptions) => unknown; // Callback after changing sorting
-  readonly onRowClick?: (row: any) => unknown;
+  readonly onRowClick?: (row: T) => unknown;
 };
 
-export default function Table(props: Props) {
+export default function Table<T extends object>(props: Props<T>) {
   const { columns, data, onChangeSortOrder, onRowClick } = props;
 
   // Table rendering functions

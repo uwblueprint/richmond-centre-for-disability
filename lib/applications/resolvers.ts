@@ -1,28 +1,69 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Prisma } from '@prisma/client'; // Prisma client
-import { Resolver } from '@lib/resolvers'; // Resolver type
+import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
 import {
-  ShopifyConfirmationNumberAlreadyExistsError,
   ApplicantIdDoesNotExistError,
   ApplicationFieldTooLongError,
-  ApplicationNotFoundError,
   UpdatedFieldsMissingError,
   EmptyFieldsMissingError,
 } from '@lib/applications/errors'; // Application errors
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { ApplicationsReportColumn, PaymentType } from '@lib/graphql/types'; // GraphQL types
-import { formatDate, formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
-import { createObjectCsvWriter } from 'csv-writer';
+import { formatPhoneNumber, formatFullName } from '@lib/utils/format'; // Formatting utils
+import {
+  Application,
+  CreateExternalRenewalApplicationResult,
+  CreateNewApplicationResult,
+  CreateRenewalApplicationResult,
+  CreateReplacementApplicationResult,
+  MutationCreateExternalRenewalApplicationArgs,
+  MutationCreateNewApplicationArgs,
+  MutationCreateRenewalApplicationArgs,
+  MutationCreateReplacementApplicationArgs,
+  MutationUpdateApplicationAdditionalInformationArgs,
+  MutationUpdateApplicationDoctorInformationArgs,
+  MutationUpdateApplicationGeneralInformationArgs,
+  MutationUpdateApplicationPaymentInformationArgs,
+  MutationUpdateApplicationPhysicianAssessmentArgs,
+  MutationUpdateApplicationReasonForReplacementArgs,
+  NewApplication,
+  QueryApplicationArgs,
+  QueryApplicationsArgs,
+  RenewalApplication,
+  ReplacementApplication,
+  UpdateApplicationAdditionalInformationResult,
+  UpdateApplicationDoctorInformationResult,
+  UpdateApplicationGeneralInformationResult,
+  UpdateApplicationPaymentInformationResult,
+  UpdateApplicationPhysicianAssessmentResult,
+  UpdateApplicationReasonForReplacementResult,
+} from '@lib/graphql/types';
+import { flattenApplication } from '@lib/applications/utils';
 
 /**
  * Query an application by ID
  * @returns Application with given ID
  */
-export const application: Resolver = async (_parent, args, { prisma }) => {
-  const application = await prisma.application.findUnique({ where: { id: parseInt(args.id) } });
-  return application;
+export const application: Resolver<
+  QueryApplicationArgs,
+  Omit<NewApplication | RenewalApplication | ReplacementApplication, 'processing' | 'applicant'>
+> = async (_parent, args, { prisma }) => {
+  const { id } = args;
+  const application = await prisma.application.findUnique({
+    where: { id },
+    include: {
+      newApplication: true,
+      renewalApplication: true,
+      replacementApplication: true,
+    },
+  });
+
+  if (application === null) {
+    return application;
+  }
+
+  return flattenApplication(application);
 };
 
 /**
@@ -44,7 +85,10 @@ export const application: Resolver = async (_parent, args, { prisma }) => {
  *
  * @returns All RCD applications that match the filter(s).
  */
-export const applications: Resolver = async (_parent, { filter }, { prisma }) => {
+export const applications: Resolver<
+  QueryApplicationsArgs,
+  { result: Array<Omit<Application, 'processing' | 'applicant'>>; totalCount: number }
+> = async (_parent, { filter }, { prisma }) => {
   let where = {};
   let orderBy = undefined;
 
@@ -60,7 +104,7 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     // Parse search string
     let rcdUserIDSearch, firstSearch, middleSearch, lastSearch, nameFilters;
 
-    if (parseInt(search)) {
+    if (search && parseInt(search)) {
       rcdUserIDSearch = parseInt(search);
     } else if (search) {
       // Split search to first, middle and last name elements
@@ -102,25 +146,27 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
     // Parse sorting order
     if (order && order.length > 0) {
       const sortingOrder: Array<Record<string, SortOrder>> = [];
-      order.forEach(([field, order]: [string, SortOrder]) => {
+      order.forEach(([field, order]) => {
         if (field === 'name') {
           // Primary sort is by first name and secondary sort is by last name
-          sortingOrder.push({ firstName: order });
-          sortingOrder.push({ lastName: order });
+          sortingOrder.push({ firstName: order as SortOrder });
+          sortingOrder.push({ lastName: order as SortOrder });
         } else if (field === 'dateReceived') {
-          sortingOrder.push({ createdAt: order });
+          sortingOrder.push({ createdAt: order as SortOrder });
         }
       });
       orderBy = sortingOrder;
     }
 
     where = {
-      rcdUserId: rcdUserIDSearch,
-      applicationProcessing: {
-        status: status,
+      applicant: {
+        id: rcdUserIDSearch,
       },
-      isRenewal: requestType ? requestType === 'Renewal' : undefined,
-      permitType: permitType,
+      applicationProcessing: {
+        status: status || undefined,
+      },
+      type: requestType || undefined,
+      permitType: permitType || undefined,
       ...nameFilters,
     };
   }
@@ -131,15 +177,19 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
   });
 
   // Get applications with filter, sorting, pagination
-  const applications = await prisma.application.findMany({
-    skip: filter?.offset || 0,
-    take: filter?.limit || 20,
-    orderBy: orderBy,
-    where,
-    include: {
-      applicationProcessing: true,
-    },
-  });
+  const applications = (
+    await prisma.application.findMany({
+      skip: filter?.offset || 0,
+      take: filter?.limit || 20,
+      orderBy: orderBy,
+      where,
+      include: {
+        newApplication: true,
+        renewalApplication: true,
+        replacementApplication: true,
+      },
+    })
+  ).map(flattenApplication);
 
   return {
     result: applications,
@@ -149,20 +199,101 @@ export const applications: Resolver = async (_parent, { filter }, { prisma }) =>
 
 /**
  * Create a new RCD application
- * @returns Status of operation (ok, error)
+ * @returns Status of operation (ok)
  */
-export const createNewApplication: Resolver = async (_, args, { prisma }) => {
+export const createNewApplication: Resolver<
+  MutationCreateNewApplicationArgs,
+  CreateNewApplicationResult
+> = async (_, args, { prisma }) => {
+  // TODO: Validation
   const { input } = args;
-  const { shopifyConfirmationNumber } = input;
-  const { applicantId, ...rest } = input;
+  const {
+    dateOfBirth,
+    gender,
+    otherGender,
+    disability,
+    disabilityCertificationDate,
+    patientCondition,
+    mobilityAids,
+    otherPatientCondition,
+    temporaryPermitExpiry,
+    physicianFirstName,
+    physicianLastName,
+    physicianMspNumber,
+    physicianPhone,
+    physicianAddressLine1,
+    physicianAddressLine2,
+    physicianCity,
+    physicianPostalCode,
+    omitGuardianPoa,
+    guardianFirstName,
+    guardianMiddleName,
+    guardianLastName,
+    guardianPhone,
+    guardianRelationship,
+    guardianAddressLine1,
+    guardianAddressLine2,
+    guardianCity,
+    guardianPostalCode,
+    poaFormUrl,
+    usesAccessibleConvertedVan,
+    accessibleConvertedVanLoadingMethod,
+    requiresWiderParkingSpace,
+    requiresWiderParkingSpaceReason,
+    otherRequiresWiderParkingSpaceReason,
+    donationAmount,
+    ...data
+  } = input;
+
+  if (!process.env.PROCESSING_FEE) {
+    throw new Error('Processing fee not defined');
+  }
 
   let application;
   try {
     application = await prisma.application.create({
       data: {
-        ...rest,
-        applicant: {
-          connect: { id: applicantId },
+        type: 'NEW',
+        processingFee: process.env.PROCESSING_FEE,
+        donationAmount: donationAmount || 0,
+        ...data,
+        newApplication: {
+          create: {
+            dateOfBirth,
+            gender,
+            otherGender,
+            disability,
+            disabilityCertificationDate,
+            patientCondition,
+            mobilityAids: mobilityAids || [],
+            otherPatientCondition,
+            temporaryPermitExpiry,
+            physicianFirstName,
+            physicianLastName,
+            physicianMspNumber,
+            physicianPhone,
+            physicianAddressLine1,
+            physicianAddressLine2,
+            physicianCity,
+            physicianPostalCode,
+            ...(omitGuardianPoa && {
+              guardianFirstName,
+              guardianMiddleName,
+              guardianLastName,
+              guardianPhone,
+              guardianRelationship,
+              guardianAddressLine1,
+              guardianAddressLine2,
+              guardianCity,
+              guardianPostalCode,
+              poaFormUrl,
+            }),
+            usesAccessibleConvertedVan,
+            accessibleConvertedVanLoadingMethod,
+            requiresWiderParkingSpace,
+            requiresWiderParkingSpaceReason,
+            otherRequiresWiderParkingSpaceReason,
+          },
         },
         applicationProcessing: {
           create: {},
@@ -170,26 +301,16 @@ export const createNewApplication: Resolver = async (_, args, { prisma }) => {
       },
     });
   } catch (err) {
+    // TODO: Handle errors
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      if (
-        err.code === DBErrorCode.UniqueConstraintFailed &&
-        getUniqueConstraintFailedFields(err)?.includes('shopifyConfirmationNumber')
-      ) {
-        throw new ShopifyConfirmationNumberAlreadyExistsError(
-          `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
-        );
-      } else if (
-        err.code === DBErrorCode.ForeignKeyConstraintFailed &&
-        getUniqueConstraintFailedFields(err)?.includes('applicantId')
-      ) {
-        throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
-      } else if (err.code === DBErrorCode.LengthConstraintFailed) {
+      if (err.code === DBErrorCode.LengthConstraintFailed) {
         throw new ApplicationFieldTooLongError(
           'Length constraint failed, provided value too long for an application field.'
         );
       }
     }
   }
+
   // Throw internal server error if application was not created
   if (!application) {
     throw new ApolloError('Application was unable to be created');
@@ -201,89 +322,122 @@ export const createNewApplication: Resolver = async (_, args, { prisma }) => {
 };
 
 /**
- * Updates the Application object with the optional values provided
- * @returns Status of operation (ok, error)
+ * Create a renewal application internally (via RCD-facing portal)
+ * @returns Status of operation (ok)
  */
-export const updateApplication: Resolver = async (_, args, { prisma }) => {
+export const createRenewalApplication: Resolver<
+  MutationCreateRenewalApplicationArgs,
+  CreateRenewalApplicationResult
+> = async (_, args, { prisma }) => {
+  // TODO: Validation
   const { input } = args;
-  const { id, ...rest } = input;
+  const {
+    applicantId,
+    physicianFirstName,
+    physicianLastName,
+    physicianMspNumber,
+    physicianPhone,
+    physicianAddressLine1,
+    physicianAddressLine2,
+    physicianCity,
+    physicianPostalCode,
+    usesAccessibleConvertedVan,
+    accessibleConvertedVanLoadingMethod,
+    requiresWiderParkingSpace,
+    requiresWiderParkingSpaceReason,
+    otherRequiresWiderParkingSpaceReason,
+    donationAmount,
+    ...data
+  } = input;
 
-  let application;
+  if (!process.env.PROCESSING_FEE) {
+    throw new Error('Processing fee not defined');
+  }
+
+  let createdRenewalApplication;
   try {
-    application = await prisma.application.update({
-      where: { id: parseInt(id) },
+    createdRenewalApplication = await prisma.application.create({
       data: {
-        ...rest,
+        type: 'RENEWAL',
+        processingFee: process.env.PROCESSING_FEE,
+        donationAmount: donationAmount || 0,
+        ...data,
+        applicant: {
+          connect: { id: applicantId },
+        },
+        renewalApplication: {
+          create: {
+            physicianFirstName,
+            physicianLastName,
+            physicianMspNumber,
+            physicianPhone,
+            physicianAddressLine1,
+            physicianAddressLine2,
+            physicianCity,
+            physicianPostalCode,
+            usesAccessibleConvertedVan,
+            accessibleConvertedVanLoadingMethod,
+            requiresWiderParkingSpace,
+            requiresWiderParkingSpaceReason,
+            otherRequiresWiderParkingSpaceReason,
+          },
+        },
+        applicationProcessing: { create: {} },
       },
     });
-  } catch (err) {
-    if (
-      err instanceof Prisma.PrismaClientKnownRequestError &&
-      err.code === DBErrorCode.RecordNotFound
-    ) {
-      throw new ApplicationNotFoundError(`Application with ID ${id} not found`);
-    }
+  } catch {
+    // TODO: Handle errors
   }
 
-  // Throw internal server error if application processing object was not updated
-  if (!application) {
-    throw new ApolloError('Application was unable to be updated');
+  if (!createdRenewalApplication) {
+    throw new ApolloError('Renewal application was unable to be created');
   }
 
-  return {
-    ok: true,
-  };
+  return { ok: true, applicationId: createdRenewalApplication.id };
 };
 
 /**
- * Create a renewal application
+ * Create a renewal application externally (via applicant-facing portal)
  * Requires updated field values to be provided if any of personal address, contact, or doctor info are updated.
  * @returns Status of operation (ok) and application id of new renewal application
  */
-export const createRenewalApplication: Resolver = async (_, args, { prisma }) => {
+export const createExternalRenewalApplication: Resolver<
+  MutationCreateExternalRenewalApplicationArgs,
+  CreateExternalRenewalApplicationResult
+> = async (_, args, { prisma }) => {
+  const { input } = args;
   const {
-    input: {
-      applicantId,
-      updatedAddress,
-      firstName,
-      lastName,
-      addressLine1,
-      addressLine2,
-      city,
-      postalCode,
-      updatedContactInfo,
-      phone,
-      email,
-      rcdUserId,
-      receiveEmailUpdates,
-      updatedPhysician,
-      physicianName,
-      physicianMspNumber,
-      physicianAddressLine1,
-      physicianAddressLine2,
-      physicianCity,
-      physicianPostalCode,
-      physicianPhone,
-      usesAccessibleConvertedVan,
-      requiresWiderParkingSpace,
-      shippingFullName,
-      shippingAddressLine1,
-      shippingAddressLine2,
-      shippingCity,
-      shippingProvince,
-      shippingPostalCode,
-      billingFullName,
-      billingAddressLine1,
-      billingAddressLine2,
-      billingCity,
-      billingProvince,
-      billingPostalCode,
-      shippingAddressSameAsHomeAddress,
-      billingAddressSameAsHomeAddress,
-      donationAmount,
-      paymentMethod,
-    },
-  } = args;
+    applicantId,
+    updatedAddress,
+    addressLine1,
+    addressLine2,
+    city,
+    postalCode,
+    updatedContactInfo,
+    phone,
+    email,
+    receiveEmailUpdates,
+    updatedPhysician,
+    physicianFirstName,
+    physicianLastName,
+    physicianMspNumber,
+    physicianPhone,
+    physicianAddressLine1,
+    physicianAddressLine2,
+    physicianCity,
+    physicianPostalCode,
+    usesAccessibleConvertedVan,
+    accessibleConvertedVanLoadingMethod,
+    requiresWiderParkingSpace,
+    requiresWiderParkingSpaceReason,
+    otherRequiresWiderParkingSpaceReason,
+  } = input;
+
+  if (!process.env.PROCESSING_FEE) {
+    throw new Error('Processing fee not defined');
+  }
+
+  // TODO: Improve validation
 
   // Validate that fields are present if address, contact info, or doctor are updated
   // Validate updated address fields
@@ -292,15 +446,17 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
   }
 
   // Validate updated contact info fields (at least one of phone or email must be provided)
-  if (updatedContactInfo && !phone && !email) {
+  if (updatedContactInfo && !phone) {
     throw new UpdatedFieldsMissingError('Missing updated contact info fields');
   }
 
   // Validate updated doctor info fields
   if (
     updatedPhysician &&
-    (!physicianName ||
+    (!physicianFirstName ||
+      !physicianLastName ||
       !physicianMspNumber ||
+      !physicianPhone ||
       !physicianAddressLine1 ||
       !physicianCity ||
       !physicianPostalCode)
@@ -321,114 +477,89 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
 
   const physician = applicant.medicalInformation.physician;
 
-  // Temporary Shopify confirmation number placeholder
   // TODO: Integrate with Shopify payments
-  const currentDateTime = new Date().getTime().toString();
-  const shopifyConfirmationNumber = currentDateTime.substr(currentDateTime.length - 7);
-
-  const applicantFirstName = firstName || applicant.firstName;
-  const applicantLastName = lastName || applicant.lastName;
-  const applicantEmail = updatedContactInfo ? email : applicant.email;
-  const applicantCity = updatedAddress && city ? city : applicant.city;
-  const applicantAddressLine1 =
-    updatedAddress && addressLine1 ? addressLine1 : applicant.addressLine1;
-  const applicantAddressLine2 =
-    updatedAddress && addressLine2 ? addressLine2 : applicant.addressLine2;
-  const applicantPostalCode =
-    updatedAddress && postalCode ? formatPostalCode(postalCode) : applicant.postalCode;
 
   let application;
   try {
     application = await prisma.application.create({
       data: {
-        firstName: applicantFirstName,
-        lastName: applicantLastName,
-        dateOfBirth: applicant.dateOfBirth,
-        gender: applicant.gender,
-        customGender: applicant.customGender,
-        email: applicantEmail,
+        type: 'RENEWAL',
+        firstName: applicant.firstName,
+        middleName: applicant.middleName,
+        lastName: applicant.lastName,
         phone: updatedContactInfo && phone ? formatPhoneNumber(phone) : applicant.phone,
-        city: applicantCity,
-        addressLine1: applicantAddressLine1,
-        addressLine2: applicantAddressLine2,
-        postalCode: applicantPostalCode,
-        rcdUserId: rcdUserId || applicant.rcdUserId,
-        isRenewal: true,
-        receiveEmailUpdates: receiveEmailUpdates,
-        patientEligibility: applicant.medicalInformation.patientEligibility,
-        certificationDate: applicant.medicalInformation.certificationDate,
-        // TODO: Link with Shopify checkout
-        shopifyConfirmationNumber,
-        processingFee: 26,
-        donationAmount,
-        paymentMethod: paymentMethod || PaymentType.Cash,
-        // TODO: Modify logic when DB schema gets changed (medicalInfo is not undefined)
-        disability: applicant.medicalInformation?.disability || 'Placeholder disability',
-        physicianName: updatedPhysician ? physicianName : physician.name,
-        physicianMspNumber: updatedPhysician ? physicianMspNumber : physician.mspNumber,
-        physicianAddressLine1: updatedPhysician ? physicianAddressLine1 : physician.addressLine1,
-        physicianAddressLine2: updatedPhysician ? physicianAddressLine2 : physician.addressLine2,
-        physicianCity: updatedPhysician ? physicianCity : physician.city,
-        physicianPostalCode: updatedPhysician
-          ? formatPostalCode(physicianPostalCode)
-          : physician.postalCode,
-        physicianPhone: updatedPhysician ? physicianPhone : physician.phone,
-        shippingAddressSameAsHomeAddress,
-        billingAddressSameAsHomeAddress,
-        shippingFullName: shippingAddressSameAsHomeAddress
-          ? `${applicantFirstName} ${applicantLastName}`
-          : shippingFullName,
-        shippingAddressLine1: shippingAddressSameAsHomeAddress
-          ? applicantAddressLine1
-          : shippingAddressLine1,
-        shippingAddressLine2: shippingAddressSameAsHomeAddress
-          ? applicantAddressLine2
-          : shippingAddressLine2,
-        shippingCity: shippingAddressSameAsHomeAddress ? applicantCity : shippingCity,
-        shippingPostalCode: shippingAddressSameAsHomeAddress
-          ? applicantPostalCode
-          : formatPostalCode(shippingPostalCode),
-        shippingProvince,
-        billingFullName: billingAddressSameAsHomeAddress
-          ? `${applicantFirstName} ${applicantLastName}`
-          : billingFullName,
-        billingAddressLine1: billingAddressSameAsHomeAddress
-          ? applicantAddressLine1
-          : billingAddressLine1,
-        billingAddressLine2: billingAddressSameAsHomeAddress
-          ? applicantAddressLine2
-          : billingAddressLine2,
-        billingCity: billingAddressSameAsHomeAddress ? applicantCity : billingCity,
-        billingProvince,
-        billingPostalCode: billingAddressSameAsHomeAddress
-          ? applicantPostalCode
-          : formatPostalCode(billingPostalCode),
+        email: updatedContactInfo ? email || null : applicant.email,
+        receiveEmailUpdates: updatedContactInfo
+          ? receiveEmailUpdates
+          : applicant.receiveEmailUpdates,
+        addressLine1: updatedAddress && addressLine1 ? addressLine1 : applicant.addressLine1,
+        addressLine2: updatedAddress ? addressLine2 : applicant.addressLine2,
+        city: updatedAddress && city ? city : applicant.city,
+        postalCode: updatedAddress && postalCode ? postalCode : applicant.postalCode,
+        processingFee: process.env.PROCESSING_FEE,
+        donationAmount: 0, // ? Investigate
+        paymentMethod: 'SHOPIFY',
+        // TODO: Replace shipping info with Shopify checkout inputs
+        shippingAddressSameAsHomeAddress: true,
+        shippingFullName: formatFullName(
+          applicant.firstName,
+          applicant.middleName,
+          applicant.lastName
+        ),
+        shippingAddressLine1: applicant.addressLine1,
+        shippingAddressLine2: applicant.addressLine2,
+        shippingCity: applicant.city,
+        shippingProvince: applicant.province,
+        shippingCountry: applicant.country,
+        shippingPostalCode: applicant.postalCode,
+        // TODO: Replace billing info with Shopify checkout inputs
+        billingAddressSameAsHomeAddress: true,
+        billingFullName: formatFullName(
+          applicant.firstName,
+          applicant.middleName,
+          applicant.lastName
+        ),
+        billingAddressLine1: applicant.addressLine1,
+        billingAddressLine2: applicant.addressLine2,
+        billingCity: applicant.city,
+        billingProvince: applicant.province,
+        billingCountry: applicant.country,
+        billingPostalCode: applicant.postalCode,
         applicant: {
-          connect: {
-            id: applicantId,
+          connect: { id: applicantId },
+        },
+        renewalApplication: {
+          create: {
+            physicianFirstName:
+              updatedPhysician && physicianFirstName ? physicianFirstName : physician.firstName,
+            physicianLastName:
+              updatedPhysician && physicianLastName ? physicianLastName : physician.lastName,
+            physicianMspNumber:
+              updatedPhysician && physicianMspNumber ? physicianMspNumber : physician.mspNumber,
+            physicianPhone: updatedPhysician && physicianPhone ? physicianPhone : physician.phone,
+            physicianAddressLine1:
+              updatedPhysician && addressLine1 ? addressLine1 : physician.addressLine1,
+            physicianAddressLine2: updatedPhysician
+              ? physicianAddressLine2
+              : physician.addressLine2,
+            physicianCity: updatedPhysician && physicianCity ? physicianCity : physician.city,
+            physicianPostalCode:
+              updatedPhysician && physicianPostalCode ? physicianPostalCode : physician.postalCode,
+            usesAccessibleConvertedVan,
+            accessibleConvertedVanLoadingMethod,
+            requiresWiderParkingSpace,
+            requiresWiderParkingSpaceReason,
+            otherRequiresWiderParkingSpaceReason,
           },
         },
         applicationProcessing: {
           create: {},
-        },
-        renewal: {
-          create: {
-            usesAccessibleConvertedVan,
-            requiresWiderParkingSpace,
-          },
         },
       },
     });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (
-        err.code === DBErrorCode.UniqueConstraintFailed &&
-        getUniqueConstraintFailedFields(err)?.includes('shopifyConfirmationNumber')
-      ) {
-        throw new ShopifyConfirmationNumberAlreadyExistsError(
-          `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
-        );
-      } else if (
         err.code === DBErrorCode.ForeignKeyConstraintFailed &&
         getUniqueConstraintFailedFields(err)?.includes('applicantId')
       ) {
@@ -457,55 +588,32 @@ export const createRenewalApplication: Resolver = async (_, args, { prisma }) =>
  * Requires updated field values to be provided if any of personal address, contact, or doctor info are updated.
  * @returns Status of operation (ok)
  */
-export const createReplacementApplication: Resolver = async (_, args, { prisma }) => {
+export const createReplacementApplication: Resolver<
+  MutationCreateReplacementApplicationArgs,
+  CreateReplacementApplicationResult
+> = async (_, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
   const {
-    input: {
-      // Permit Holder Information Card
-      applicantId,
-      firstName,
-      lastName,
-      phone,
-      email,
-      addressLine1,
-      addressLine2,
-      city,
-      postalCode,
-      // Reason for Replacement Card
-      reason,
-      // date,
-      lostTimestamp,
-      lostLocation,
-      description,
-      // Payment, Shipping, and Billing Card
-      paymentMethod,
-      donationAmount,
-      shippingAddressSameAsHomeAddress,
-      shippingFullName,
-      shippingAddressLine1,
-      shippingAddressLine2,
-      shippingCity,
-      shippingProvince,
-      shippingPostalCode,
-      billingAddressSameAsHomeAddress,
-      billingFullName,
-      billingAddressLine1,
-      billingAddressLine2,
-      billingCity,
-      billingProvince,
-      billingPostalCode,
-    },
-  } = args;
+    applicantId,
+    reason,
+    lostTimestamp,
+    lostLocation,
+    stolenPoliceFileNumber,
+    stolenJurisdiction,
+    stolenPoliceOfficerName,
+    eventDescription,
+    donationAmount,
+    ...data
+  } = input;
+
+  if (!process.env.PROCESSING_FEE) {
+    throw new Error('Processing fee not defined');
+  }
 
   // Retrieve applicant record
   const applicant = await prisma.applicant.findUnique({
     where: { id: applicantId },
-    include: {
-      medicalInformation: {
-        include: {
-          physician: true,
-        },
-      },
-    },
   });
 
   // If applicant not found, throw error
@@ -513,89 +621,39 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
     throw new ApplicantNotFoundError(`No applicant with ID ${applicantId} was found`);
   }
 
-  // Temporary Shopify confirmation number placeholder,
-  // TODO: Integrate with Shopify payments
-  const currentDateTime = new Date().getTime().toString();
-  const shopifyConfirmationNumber = currentDateTime.substr(currentDateTime.length - 7);
-
-  if (!reason)
-    throw new EmptyFieldsMissingError('No reason for the replacement request was given.');
+  if (!reason) throw new EmptyFieldsMissingError('No reason for the replacement was given.');
 
   let application;
   try {
-    const physician = applicant.medicalInformation.physician;
     application = await prisma.application.create({
       data: {
-        firstName,
-        lastName,
-        phone: formatPhoneNumber(phone),
-        email: email || applicant.email,
-        dateOfBirth: applicant.dateOfBirth,
-        gender: applicant.gender,
-        customGender: applicant.customGender,
-        addressLine1,
-        addressLine2,
-        city,
-        postalCode: formatPostalCode(postalCode),
-        isRenewal: false,
-        // TODO: Link with Shopify checkout
-        shopifyConfirmationNumber,
-        processingFee: 26,
-        paymentMethod,
-        disability: applicant.medicalInformation.disability,
-        patientEligibility: applicant.medicalInformation.patientEligibility,
-        certificationDate: applicant.medicalInformation.certificationDate,
-        physicianName: physician.name,
-        physicianMspNumber: physician.mspNumber,
-        physicianAddressLine1: physician.addressLine1,
-        physicianAddressLine2: physician.addressLine2,
-        physicianCity: physician.city,
-        physicianPostalCode: physician.postalCode,
-        physicianPhone: physician.phone,
-        donationAmount,
-        shippingAddressSameAsHomeAddress,
-        shippingFullName,
-        shippingAddressLine1,
-        shippingAddressLine2,
-        shippingCity,
-        shippingProvince,
-        shippingPostalCode,
-        billingAddressSameAsHomeAddress,
-        billingFullName,
-        billingAddressLine1,
-        billingAddressLine2,
-        billingCity,
-        billingProvince,
-        billingPostalCode,
+        type: 'REPLACEMENT',
+        processingFee: process.env.PROCESSING_FEE,
+        donationAmount: donationAmount || 0,
+        ...data,
         applicant: {
-          connect: {
-            id: applicantId,
-          },
+          connect: { id: applicantId },
         },
-        // TODO: Modify logic when DB schema gets changed (medicalInfo is not undefined)
-        applicationProcessing: {
-          create: {},
-        },
-        replacement: {
+        replacementApplication: {
           create: {
             reason,
             lostTimestamp,
             lostLocation,
-            description,
+            stolenPoliceFileNumber,
+            stolenJurisdiction,
+            stolenPoliceOfficerName,
+            eventDescription,
           },
+        },
+        applicationProcessing: {
+          create: {},
         },
       },
     });
   } catch (err) {
+    // TODO: Handle more errors
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (
-        err.code === DBErrorCode.UniqueConstraintFailed &&
-        getUniqueConstraintFailedFields(err)?.includes('shopifyConfirmationNumber')
-      ) {
-        throw new ShopifyConfirmationNumberAlreadyExistsError(
-          `Application with Shopify confirmation number ${shopifyConfirmationNumber} already exists`
-        );
-      } else if (
         err.code === DBErrorCode.ForeignKeyConstraintFailed &&
         getUniqueConstraintFailedFields(err)?.includes('applicantId')
       ) {
@@ -612,6 +670,7 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
   if (!application) {
     throw new ApolloError('Application was unable to be created');
   }
+
   return {
     ok: true,
     applicationId: application.id,
@@ -619,105 +678,272 @@ export const createReplacementApplication: Resolver = async (_, args, { prisma }
 };
 
 /**
- * Generates csv with applications' info, given a start date, end date, and values from
- * ApplicationsReportColumn that the user would like to have on the generated csv
- * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
+ * Update the general information section of an application
+ * @returns Status of the operation (ok)
  */
-export const generateApplicationsReport: Resolver = async (_, args, { prisma }) => {
-  const {
-    input: { startDate, endDate, columns },
-  } = args;
+export const updateApplicationGeneralInformation: Resolver<
+  MutationUpdateApplicationGeneralInformationArgs,
+  UpdateApplicationGeneralInformationResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, receiveEmailUpdates, ...data } = input;
 
-  const columnsSet = new Set(columns);
-
-  const applications = await prisma.application.findMany({
-    where: {
-      createdAt: {
-        gte: startDate,
-        lte: endDate,
+  let updatedApplication;
+  try {
+    updatedApplication = await prisma.application.update({
+      where: { id },
+      data: {
+        // Only set to `undefined` if `receiveEmailUpdates` is null
+        receiveEmailUpdates: receiveEmailUpdates ?? undefined,
+        ...data,
       },
-    },
-    select: {
-      rcdUserId: columnsSet.has(ApplicationsReportColumn.UserId),
-      firstName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
-      middleName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
-      lastName: columnsSet.has(ApplicationsReportColumn.ApplicantName),
-      dateOfBirth: columnsSet.has(ApplicationsReportColumn.ApplicantDateOfBirth),
-      createdAt: columnsSet.has(ApplicationsReportColumn.ApplicationDate),
-      paymentMethod: columnsSet.has(ApplicationsReportColumn.PaymentMethod),
-      processingFee:
-        columnsSet.has(ApplicationsReportColumn.FeeAmount) ||
-        columnsSet.has(ApplicationsReportColumn.TotalAmount),
-      donationAmount:
-        columnsSet.has(ApplicationsReportColumn.DonationAmount) ||
-        columnsSet.has(ApplicationsReportColumn.TotalAmount),
-      permit: {
-        select: {
-          rcdPermitId: true,
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplication) {
+    throw new ApolloError('Application general information was unable to be created');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Update the doctor information section of an application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationDoctorInformation: Resolver<
+  MutationUpdateApplicationDoctorInformationArgs,
+  UpdateApplicationDoctorInformationResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const {
+    id,
+    firstName: physicianFirstName,
+    lastName: physicianLastName,
+    mspNumber: physicianMspNumber,
+    phone: physicianPhone,
+    addressLine1: physicianAddressLine1,
+    addressLine2: physicianAddressLine2,
+    city: physicianCity,
+    postalCode: physicianPostalCode,
+  } = input;
+
+  const application = await prisma.application.findUnique({
+    where: { id },
+    select: { type: true },
+  });
+
+  if (!application) {
+    throw new ApolloError('Application not found');
+  }
+
+  const { type } = application;
+
+  let updatedApplication;
+  try {
+    updatedApplication = await prisma.application.update({
+      where: { id },
+      data: {
+        ...(type === 'NEW' && {
+          newApplication: {
+            update: {
+              physicianFirstName,
+              physicianLastName,
+              physicianMspNumber,
+              physicianPhone,
+              physicianAddressLine1,
+              physicianAddressLine2,
+              physicianCity,
+              physicianPostalCode,
+            },
+          },
+        }),
+        ...(type === 'RENEWAL' && {
+          renewalApplication: {
+            update: {
+              physicianFirstName,
+              physicianLastName,
+              physicianMspNumber,
+              physicianPhone,
+              physicianAddressLine1,
+              physicianAddressLine2,
+              physicianCity,
+              physicianPostalCode,
+            },
+          },
+        }),
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplication) {
+    throw new ApolloError('Application doctor information was unable to be created');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Update the additional information section of an application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationAdditionalInformation: Resolver<
+  MutationUpdateApplicationAdditionalInformationArgs,
+  UpdateApplicationAdditionalInformationResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, ...data } = input;
+
+  // Get existing application type (should be NEW/RENEWAL)
+  const application = await prisma.application.findUnique({
+    where: { id },
+    select: { type: true },
+  });
+  if (!application) {
+    // TODO: Improve validation
+    throw new ApolloError('Application not found');
+  }
+
+  const { type } = application;
+
+  let updatedApplication;
+  try {
+    if (type === 'NEW') {
+      updatedApplication = await prisma.application.update({
+        where: { id },
+        data: {
+          newApplication: {
+            update: data,
+          },
+        },
+      });
+    } else if (type === 'RENEWAL') {
+      updatedApplication = await prisma.application.update({
+        where: { id },
+        data: {
+          renewalApplication: {
+            update: data,
+          },
+        },
+      });
+    } else {
+      throw new ApolloError('Replacement application cannot have additional information updated');
+    }
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplication) {
+    throw new ApolloError('Application additional information was unable to be created');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Update the payment information section of an application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationPaymentInformation: Resolver<
+  MutationUpdateApplicationPaymentInformationArgs,
+  UpdateApplicationPaymentInformationResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, donationAmount, ...data } = input;
+
+  let updatedApplication;
+  try {
+    updatedApplication = await prisma.application.update({
+      where: { id },
+      data: {
+        donationAmount: donationAmount || 0,
+        ...data,
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplication) {
+    throw new ApolloError('Application payment information was unable to be updated');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Update the reason for replacement section of a replacement application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationReasonForReplacement: Resolver<
+  MutationUpdateApplicationReasonForReplacementArgs,
+  UpdateApplicationReasonForReplacementResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, ...data } = input;
+
+  let updatedApplication;
+  try {
+    updatedApplication = await prisma.application.update({
+      where: { id },
+      data: {
+        replacementApplication: {
+          update: data,
         },
       },
-    },
-  });
-
-  // Formats the date fields and adds totalAmount, applicantName and rcdPermitId properties to allow for csv writing
-  const csvApplications = applications.map(application => {
-    return {
-      ...application,
-      dateOfBirth: formatDate(application.dateOfBirth),
-      applicationDate: application.createdAt.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: 'numeric',
-        timeZone: 'America/Vancouver',
-      }),
-      applicantName: `${application.firstName}${
-        application.middleName ? ` ${application.middleName}` : ''
-      } ${application.lastName}`,
-      totalAmount: (application.processingFee || 0) + (application?.donationAmount || 0),
-      rcdPermitId: application.permit?.rcdPermitId,
-    };
-  });
-
-  const csvHeaders = [];
-
-  if (columnsSet.has(ApplicationsReportColumn.UserId)) {
-    csvHeaders.push({ id: 'rcdUserId', title: 'User ID' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.ApplicantName)) {
-    csvHeaders.push({ id: 'applicantName', title: 'Applicant Name' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.ApplicantDateOfBirth)) {
-    csvHeaders.push({ id: 'dateOfBirth', title: 'Applicant DoB' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.AppNumber)) {
-    csvHeaders.push({ id: 'rcdPermitId', title: 'APP Number' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.ApplicationDate)) {
-    csvHeaders.push({ id: 'applicationDate', title: 'Application Date' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.PaymentMethod)) {
-    csvHeaders.push({ id: 'paymentMethod', title: 'Payment Method' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.FeeAmount)) {
-    csvHeaders.push({ id: 'processingFee', title: 'Fee Amount' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.DonationAmount)) {
-    csvHeaders.push({ id: 'donationAmount', title: 'Donation Amount' });
-  }
-  if (columnsSet.has(ApplicationsReportColumn.TotalAmount)) {
-    csvHeaders.push({ id: 'totalAmount', title: 'Total Amount' });
+    });
+  } catch {
+    // TODO: Error handling
   }
 
-  const csvWriter = createObjectCsvWriter({
-    path: 'temp/file.csv',
-    header: csvHeaders,
-  });
+  if (!updatedApplication) {
+    throw new ApolloError('Application reason for replacement was unable to be created');
+  }
 
-  await csvWriter.writeRecords(csvApplications);
+  return { ok: true };
+};
 
-  return {
-    ok: true,
-  };
+/**
+ * Update the physician assessment section of a new application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationPhysicianAssessment: Resolver<
+  MutationUpdateApplicationPhysicianAssessmentArgs,
+  UpdateApplicationPhysicianAssessmentResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, mobilityAids, ...data } = input;
+
+  let updatedApplication;
+  try {
+    updatedApplication = await prisma.application.update({
+      where: { id },
+      data: {
+        newApplication: {
+          update: {
+            mobilityAids: mobilityAids || [],
+            ...data,
+          },
+        },
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplication) {
+    throw new ApolloError('Application physician assessment was unable to be created');
+  }
+
+  return { ok: true };
 };

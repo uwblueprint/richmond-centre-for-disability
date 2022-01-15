@@ -1,40 +1,130 @@
-export default `
+/**
+ * GraphQL schema for application processing
+ */
+
+import { gql } from '@apollo/client';
+
+// TODO: Add nested resolver support for employees
+export default gql`
   type ApplicationProcessing {
-    id: ID!
     status: ApplicationStatus!
+    rejectedReason: String
     appNumber: Int
+    appNumberEmployeeId: Int
+    appNumberUpdatedAt: Date
     appHolepunched: Boolean!
+    appHolepunchedEmployeeId: Int
+    appHolepunchedUpdatedAt: Date
     walletCardCreated: Boolean!
+    walletCardCreatedEmployeeId: Int
+    walletCardCreatedUpdatedAt: Date
     invoiceNumber: Int
-    documentUrls: [String!]
+    invoiceNumberEmployeeId: Int
+    invoiceNumberUpdatedAt: Date
+    documentsUrl: String
+    documentsUrlEmployeeId: Int
+    documentsUrlUpdatedAt: Date
     appMailed: Boolean!
-    createdAt: Date!
-    updatedAt: Date!
-    application: Application!
+    appMailedEmployeeId: Int
+    appMailedUpdatedAt: Date
   }
 
-  input UpdateApplicationProcessingInput {
-    applicationId: ID!
-    status: ApplicationStatus
-    appNumber: Int
-    appHolepunched: Boolean
-    walletCardCreated: Boolean
-    invoiceNumber: Int
-    documentUrl: String
-    appMailed: Boolean
+  # Approve application
+  input ApproveApplicationInput {
+    # Application ID
+    id: Int!
   }
 
-  type UpdateApplicationProcessingResult {
+  type ApproveApplicationResult {
     ok: Boolean!
+  }
+
+  # Reject application
+  input RejectApplicationInput {
+    # Application ID
+    id: Int!
+
+    # Reason for rejection
+    reason: String!
+  }
+
+  type RejectApplicationResult {
+    ok: Boolean!
+  }
+
+  # Complete application
+  input CompleteApplicationInput {
+    # Application ID
+    id: Int!
   }
 
   type CompleteApplicationResult {
     ok: Boolean!
   }
 
-  type ApplicationFileAttachments {
-    documentUrls: [String!]
+  # Assign APP number to application
+  input UpdateApplicationProcessingAssignAppNumberInput {
+    applicationId: Int!
+
     appNumber: Int
-    createdAt: Date!
+  }
+
+  type UpdateApplicationProcessingAssignAppNumberResult {
+    ok: Boolean!
+  }
+
+  # Holepunch permit card
+  input UpdateApplicationProcessingHolepunchParkingPermitInput {
+    applicationId: Int!
+
+    appHolepunched: Boolean!
+  }
+
+  type UpdateApplicationProcessingHolepunchParkingPermitResult {
+    ok: Boolean!
+  }
+
+  # Create wallet card to mail to applicant
+  input UpdateApplicationProcessingCreateWalletCardInput {
+    applicationId: Int!
+
+    walletCardCreated: Boolean!
+  }
+
+  type UpdateApplicationProcessingCreateWalletCardResult {
+    ok: Boolean!
+  }
+
+  # Assign invoice number to application
+  input UpdateApplicationProcessingAssignInvoiceNumberInput {
+    applicationId: Int!
+
+    invoiceNumber: Int
+  }
+
+  type UpdateApplicationProcessingAssignInvoiceNumberResult {
+    ok: Boolean!
+  }
+
+  # Upload scans of application documents
+  input UpdateApplicationProcessingUploadDocumentsInput {
+    applicationId: Int!
+
+    documentsUrl: String # TODO: Investigate FE vs BE file upload to AWS
+  }
+
+  type UpdateApplicationProcessingUploadDocumentsResult {
+    ok: Boolean!
+  }
+
+  # Mail application to applicant
+  input UpdateApplicationProcessingMailOutInput {
+    applicationId: Int!
+
+    appMailed: Boolean!
+  }
+
+  type UpdateApplicationProcessingMailOutResult {
+    ok: Boolean!
   }
 `;

@@ -1,94 +1,143 @@
-// TODO: `guardian` should be optional in `CreateApplicantInput`
-export default `
+/**
+ * GraphQL schema for applicants
+ */
+
+import { gql } from '@apollo/client';
+
+export default gql`
   type Applicant {
-    id: ID!
+    id: Int!
+
+    # Personal
     firstName: String!
     middleName: String
     lastName: String!
     dateOfBirth: Date!
     gender: Gender!
-    customGender: String
-    email: String
+    otherGender: String
+
+    # Contact
     phone: String!
-    province: Province!
-    city: String!
+    email: String
+    receiveEmailUpdates: Boolean!
+
+    # Address
     addressLine1: String!
     addressLine2: String
+    city: String!
+    province: Province!
+    country: String!
     postalCode: String!
-    rcdUserId: Int
-    acceptedTos: Date
-    status: ApplicantStatus
-    inactiveReason: String
+
+    status: ApplicantStatus!
+
+    mostRecentPermit: Permit
     activePermit: Permit
-    applications: [Application!]
-    guardianId: Int
-    guardian: Guardian
-    medicalInformationId: Int!
-    medicalInformation: MedicalInformation!
     permits: [Permit!]!
-    medicalHistory: [MedicalHistory!]
-    mostRecentPermit: Permit!
-    mostRecentRenewal: Application
-    mostRecentApplication: Application
-    fileHistory: [ApplicationFileAttachments!]!
+    completedApplications: [Application!]!
+    guardian: Guardian
+    medicalInformation: MedicalInformation!
   }
 
-  input CreateApplicantInput {
+  # Update applicant general information
+  input UpdateApplicantGeneralInformationInput {
+    # Applicant ID
+    id: Int!
+
+    # Personal
     firstName: String!
     middleName: String
     lastName: String!
     dateOfBirth: Date!
     gender: Gender!
-    customGender: String
-    email: String
+
+    # Contact
     phone: String!
-    province: Province!
-    city: String!
+    email: String
+
+    # Address (omit Province, Country)
     addressLine1: String!
     addressLine2: String
+    city: String!
     postalCode: String!
-    rcdUserId: Int
-    acceptedTos: Date
-    medicalInformation: CreateMedicalInformationInput!
-    guardian: CreateGuardianInput!
   }
 
-  type CreateApplicantResult {
+  type UpdateApplicantGeneralInformationResult {
     ok: Boolean!
   }
 
-  type MedicalHistory {
-    applicationId: ID!
-    physician: Physician!
-  }
+  # Update applicant doctor information
+  input UpdateApplicantDoctorInformationInput {
+    # Applicant ID
+    id: Int!
 
-  input UpdateApplicantInput {
-    id: ID!
-    firstName: String
-    middleName: String
-    lastName: String
-    dateOfBirth: Date
-    gender: Gender
-    customGender: String
-    email: String
-    phone: String
-    province: Province
-    city: String
-    addressLine1: String
+    # Personal
+    firstName: String!
+    lastName: String!
+    mspNumber: Int!
+    phone: String!
+
+    # Address
+    addressLine1: String!
     addressLine2: String
-    postalCode: String
-    inactiveReason: String
-    rcdUserId: Int
+    city: String!
+    postalCode: String!
   }
 
-  type UpdateApplicantResult {
+  type UpdateApplicantDoctorInformationResult {
     ok: Boolean!
   }
 
+  # Update applicant guardian information
+  input UpdateApplicantGuardianInformationInput {
+    # Applicant ID
+    id: Int!
+
+    # Personal
+    firstName: String!
+    middleName: String
+    lastName: String!
+    phone: String!
+    relationship: String!
+
+    # Address (omit Province, Country)
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    postalCode: String!
+  }
+
+  type UpdateApplicantGuardianInformationResult {
+    ok: Boolean!
+  }
+
+  # Set applicant as active
+  input SetApplicantAsActiveInput {
+    # Applicant ID
+    id: Int!
+  }
+
+  type SetApplicantAsActiveResult {
+    ok: Boolean!
+  }
+
+  # Set applicant as inactive
+  input SetApplicantAsInactiveInput {
+    # Applicant ID
+    id: Int!
+
+    reason: String!
+  }
+
+  type SetApplicantAsInactiveResult {
+    ok: Boolean!
+  }
+
+  # Query many applicants
   input ApplicantsFilter {
     order: [[String!]!]
     permitStatus: PermitStatus
-    userStatus: UserStatus
+    userStatus: ApplicantStatus
     expiryDateRangeFrom: Date
     expiryDateRangeTo: Date
     search: String
@@ -96,11 +145,19 @@ export default `
     offset: Int
   }
 
-  type QueryApplicantsResult {
+  type ApplicantsResult {
     result: [Applicant!]!
     totalCount: Int!
   }
 
+  # Permit status enum for filtering applicants
+  enum PermitStatus {
+    ACTIVE
+    EXPIRING
+    EXPIRED
+  }
+
+  # ID verification for external applications
   input VerifyIdentityInput {
     userId: Int!
     phoneNumberSuffix: String!
@@ -114,19 +171,9 @@ export default `
     applicantId: Int
   }
 
+  # Reason for ID verification failure
   enum VerifyIdentityFailureReason {
     IDENTITY_VERIFICATION_FAILED
     APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS
-  }
-
-  input GeneratePermitHoldersReportInput {
-    startDate: Date!
-    endDate: Date!
-    columns: [PermitHoldersReportColumn!]!
-  }
-
-  # TODO: Return link to AWS S3 file
-  type GeneratePermitHoldersReportResult {
-    ok: Boolean!
   }
 `;

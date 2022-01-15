@@ -192,9 +192,9 @@ export default function AdminManagement() {
               });
             }}
           >
-            <option value={Role.Secretary}>Front Desk</option>
-            <option value={Role.Accounting}>Accountant</option>
-            <option value={Role.Admin}>Admin</option>
+            <option value="SECRETARY">Front Desk</option>
+            <option value="ACCOUNTING">Accountant</option>
+            <option value="ADMIN">Admin</option>
           </Select>
         );
       },
@@ -327,7 +327,9 @@ export default function AdminManagement() {
     if (userToDelete) {
       await deleteEmployee({
         variables: {
-          id: userToDelete?.id,
+          input: {
+            id: userToDelete.id,
+          },
         },
       });
     }

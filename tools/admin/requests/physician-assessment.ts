@@ -1,9 +1,9 @@
-import { Application } from '@lib/graphql/types';
+import { NewApplication } from '@lib/graphql/types';
 
 /** Physician assessment in forms */
 export type PhysicianAssessment = Pick<
-  Application,
-  'disability' | 'patientEligibility' | 'permitType'
+  NewApplication,
+  'disability' | 'patientCondition' | 'permitType'
 > & {
   //TODO: Update DB to account for these columns
   physicianCertificationDate: string;

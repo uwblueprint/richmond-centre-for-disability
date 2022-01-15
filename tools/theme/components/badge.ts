@@ -20,7 +20,7 @@ const Badge: ComponentSingleStyleConfig = {
     COMPLETED: {
       bg: 'badge.completed',
     },
-    APPROVED: {
+    IN_PROGRESS: {
       bg: 'badge.approved',
     },
     PENDING: {

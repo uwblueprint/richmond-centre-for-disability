@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 // Relative paths required, path aliases throw error with seed command
 import prisma from '../index'; // Prisma client
-import { Role } from '../../lib/graphql/types'; // GraphQL types
 
 // Seed data
 const employees = [
@@ -21,12 +20,12 @@ export default async function employeeUpsert(): Promise<void> {
     const employeeUpsert = await prisma.employee.upsert({
       where: { email: employee.email },
       update: {
-        role: Role.Admin,
+        role: 'ADMIN',
         firstName: employee.firstName,
         lastName: employee.lastName,
       },
       create: {
-        role: Role.Admin,
+        role: 'ADMIN',
         email: employee.email,
         firstName: employee.firstName,
         lastName: employee.lastName,

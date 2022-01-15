@@ -77,7 +77,7 @@ const colors = {
     rejected: '#FFE7DF',
     expired: '#FFE7DF',
     expiring: '#FFEBD4',
-    active: '#F1F8F5',
+    active: '#C6F6D5',
     inactive: '#FFF4F4',
   },
   alerticon: {

@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client';
 import {
   useDisclosure,
   Modal,
@@ -10,15 +11,32 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
+import {
+  CompleteApplicationRequest,
+  CompleteApplicationResponse,
+  COMPLETE_APPLICATION_MUTATION,
+} from '@tools/admin/requests/complete-request-modal';
 import { ReactNode } from 'react'; // React JSX Type
 
 type CompleteRequestModalProps = {
-  readonly onComplete: () => void;
+  readonly applicationId: number;
   readonly children: ReactNode;
 };
 
-export default function CompleteRequestModal({ onComplete, children }: CompleteRequestModalProps) {
+export default function CompleteRequestModal({
+  applicationId,
+  children,
+}: CompleteRequestModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [completeApplication] = useMutation<
+    CompleteApplicationResponse,
+    CompleteApplicationRequest
+  >(COMPLETE_APPLICATION_MUTATION, { refetchQueries: ['GetApplication'] });
+  const handleCompleteApplication = () => {
+    completeApplication({ variables: { input: { id: applicationId } } });
+  };
+
   return (
     <>
       <Box onClick={onOpen}>{children}</Box>
@@ -46,7 +64,7 @@ export default function CompleteRequestModal({ onComplete, children }: CompleteR
             </Button>
             <Button
               onClick={() => {
-                onComplete();
+                handleCompleteApplication();
                 onClose();
               }}
             >

@@ -2,7 +2,6 @@ import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { Text, GridItem, Box, Flex, Input, Button, Spinner } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
-import { Role } from '@lib/types'; // Role enum
 import { authorize } from '@tools/authorization'; // Page authorization
 import { DownloadIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import { useState } from 'react'; // React
@@ -118,7 +117,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
 
   // Only accounting and admins can access reports
-  if (authorize(session, [Role.Accounting])) {
+  if (authorize(session, ['ACCOUNTING'])) {
     return {
       props: {},
     };

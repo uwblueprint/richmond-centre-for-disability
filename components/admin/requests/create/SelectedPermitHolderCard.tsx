@@ -14,19 +14,30 @@ import {
   Spinner,
   Center,
 } from '@chakra-ui/react'; // Chakra UI
-import { ApplicantData } from '@tools/admin/permit-holders/types'; // Applicant data type
-import { formatDate } from '@lib/utils/format'; // Date formatter util
+import { formatDate, formatFullName } from '@lib/utils/format'; // Date formatter util
+import { useQuery } from '@apollo/client';
+import {
+  GetSelectedApplicantRequest,
+  GetSelectedApplicantResponse,
+  GET_SELECTED_APPLICANT_QUERY,
+} from '@tools/admin/requests/permit-holder-information';
+import Address from '@components/admin/Address';
 
 type SelectedPermitHolderCardProps = {
-  readonly applicant: ApplicantData;
-  readonly loading: boolean;
+  readonly applicantId: number;
 };
 
 export default function SelectedPermitHolderCard(props: SelectedPermitHolderCardProps) {
-  const { applicant, loading } = props;
-  const { hasCopied, onCopy } = useClipboard(applicant?.email || '');
+  const { applicantId } = props;
 
-  if (loading) {
+  const { data, loading } = useQuery<GetSelectedApplicantResponse, GetSelectedApplicantRequest>(
+    GET_SELECTED_APPLICANT_QUERY,
+    { variables: { id: applicantId } }
+  );
+
+  const { hasCopied, onCopy } = useClipboard(data?.applicant.email || '');
+
+  if (loading || !data?.applicant) {
     return (
       <VStack
         padding="20px 24px 24px"
@@ -49,6 +60,23 @@ export default function SelectedPermitHolderCard(props: SelectedPermitHolderCard
     );
   }
 
+  const {
+    firstName,
+    middleName,
+    lastName,
+    status,
+    dateOfBirth,
+    gender,
+    phone,
+    email,
+    addressLine1,
+    addressLine2,
+    city,
+    province,
+    country,
+    postalCode,
+  } = data.applicant;
+
   return (
     <GridItem
       display="flex"
@@ -62,99 +90,79 @@ export default function SelectedPermitHolderCard(props: SelectedPermitHolderCard
       borderRadius="8px"
       textAlign="left"
     >
-      <Flex marginTop={5} alignItems="center">
-        <Box>
-          <Flex alignItems="center">
-            <Text textStyle="display-large" as="h1" marginRight={3}>
-              {`${applicant.firstName} ${applicant.lastName}`}
-            </Text>
-            {applicant.status && (
-              <Wrap>
-                <Badge variant={applicant.status}>{applicant.status}</Badge>
-              </Wrap>
-            )}
-          </Flex>
-          <HStack spacing={3} marginTop={3}>
-            <Text textStyle="caption" as="p">
-              ID: #{applicant.rcdUserId}
+      <VStack width="100%" spacing="24px" align="stretch">
+        <Flex alignItems="center">
+          <Box>
+            <Flex alignItems="center">
+              <Text textStyle="display-large" as="h1" marginRight={3}>
+                {formatFullName(firstName, middleName, lastName)}
+              </Text>
+              {status && (
+                <Wrap>
+                  <Badge variant={status}>{status}</Badge>
+                </Wrap>
+              )}
+            </Flex>
+            <HStack spacing={3} marginTop={3}>
+              <Text textStyle="caption" as="p">
+                ID: #{applicantId}
+              </Text>
+            </HStack>
+          </Box>
+        </Flex>
+        <Divider />
+        <VStack spacing="12px" align="left">
+          <HStack spacing="12px">
+            <Text as="h4" textStyle="body-bold">
+              Personal Information
             </Text>
           </HStack>
-        </Box>
-      </Flex>
-
-      <Divider mt="24px" />
-
-      <VStack spacing="12px" pt="24px" align="left">
-        <HStack spacing="12px">
-          <Text as="h4" textStyle="body-bold">
-            Personal Information
+          <Text as="p" textStyle="body-regular">
+            Date of Birth: {formatDate(dateOfBirth)}
           </Text>
-        </HStack>
-        <Text as="p" textStyle="body-regular">
-          Date of Birth: {formatDate(applicant.dateOfBirth)}
-        </Text>
-        <Text as="p" textStyle="body-regular">
-          Gender: {applicant.gender.toLowerCase().replace(/^\w/, c => c.toUpperCase())}
-        </Text>
-      </VStack>
-
-      <Divider mt="24px" />
-
-      <VStack spacing="12px" pt="24px" align="left">
-        <HStack spacing="12px">
-          <Text as="h4" textStyle="body-bold">
-            Contact Information
+          <Text as="p" textStyle="body-regular">
+            Gender: {gender.toLowerCase().replace(/^\w/, c => c.toUpperCase())}
           </Text>
-        </HStack>
-        <Tooltip
-          hasArrow
-          closeOnClick={false}
-          label={hasCopied ? 'Copied to clipboard' : 'Click to copy address'}
-          placement="top"
-          bg="background.grayHover"
-          color="black"
-        >
-          <Link
-            textStyle="body-regular"
-            color="primary"
-            textDecoration="underline"
-            onClick={onCopy}
-          >
-            {applicant.email}
-          </Link>
-        </Tooltip>
-        <Text as="p" textStyle="body-regular">
-          {applicant.phone}
-        </Text>
-      </VStack>
-
-      <Divider mt="24px" />
-
-      <VStack spacing="12px" pt="24px" align="left">
-        <HStack spacing="12px">
-          <Box>
+        </VStack>
+        <Divider />
+        <VStack spacing="12px" align="left">
+          <HStack spacing="12px">
             <Text as="h4" textStyle="body-bold">
-              Home Address
+              Contact Information
             </Text>
-          </Box>
-        </HStack>
-        <Box>
+          </HStack>
+          <Tooltip
+            hasArrow
+            closeOnClick={false}
+            label={hasCopied ? 'Copied to clipboard' : 'Click to copy address'}
+            placement="top"
+            bg="background.grayHover"
+            color="black"
+          >
+            <Link
+              textStyle="body-regular"
+              color="primary"
+              textDecoration="underline"
+              onClick={onCopy}
+            >
+              {email}
+            </Link>
+          </Tooltip>
           <Text as="p" textStyle="body-regular">
-            {applicant.addressLine1}
+            {phone}
           </Text>
-          <Text as="p" textStyle="body-regular">
-            {applicant.addressLine2}
-          </Text>
-          <Text as="p" textStyle="body-regular">
-            {applicant.city} {applicant.province}
-          </Text>
-          <Text as="p" textStyle="body-regular">
-            Canada
-          </Text>
-          <Text as="p" textStyle="body-regular">
-            {applicant.postalCode}
-          </Text>
-        </Box>
+        </VStack>
+        <Divider />
+        <VStack spacing="12px" align="left">
+          <HStack spacing="12px">
+            <Box>
+              <Text as="h4" textStyle="body-bold">
+                Home Address
+              </Text>
+            </Box>
+          </HStack>
+          <Address address={{ addressLine1, addressLine2, city, province, country, postalCode }} />
+        </VStack>
       </VStack>
     </GridItem>
   );

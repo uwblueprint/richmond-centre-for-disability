@@ -1,8 +1,11 @@
 import { gql } from '@apollo/client'; // gql tag
-import { CreateRenewalApplicationResult, MutationCreateRenewalApplicationArgs } from '@lib/types'; // GraphQL types
+import {
+  CreateExternalRenewalApplicationResult,
+  MutationCreateExternalRenewalApplicationArgs,
+} from '@lib/graphql/types'; // GraphQL types
 
-// Create renewal application mutation
-export const CREATE_RENEWAL_APPLICATION_MUTATION = gql`
+// Create external renewal application mutation
+export const CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION = gql`
   mutation CreateApplicationMutation($input: CreateRenewalApplicationInput!) {
     createRenewalApplication(input: $input) {
       ok
@@ -12,9 +15,9 @@ export const CREATE_RENEWAL_APPLICATION_MUTATION = gql`
 `;
 
 // Create renewal application mutation arguments
-export type CreateRenewalApplicationRequest = MutationCreateRenewalApplicationArgs;
+export type CreateExternalRenewalApplicationRequest = MutationCreateExternalRenewalApplicationArgs;
 
 // Create renewal application mutation result
-export type CreateRenewalApplicationResponse = {
-  createRenewalApplication: CreateRenewalApplicationResult;
+export type CreateExternalRenewalApplicationResponse = {
+  createRenewalApplication: CreateExternalRenewalApplicationResult;
 };

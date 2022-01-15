@@ -1,20 +1,26 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
-import { Prisma } from '@prisma/client'; // Prisma client
-import { Resolver } from '@lib/resolvers'; // Resolver type
-import {
-  ApplicantAlreadyExistsError,
-  ApplicantNotFoundError,
-  RcdUserIdAlreadyExistsError,
-  InvalidPhoneNumberSuffixLengthError,
-} from '@lib/applicants/errors'; // Applicant errors
-import { getUniqueConstraintFailedFields, DBErrorCode } from '@lib/db/errors'; // Database errors
-import { MspNumberDoesNotExistError } from '@lib/physicians/errors'; // Physician errors
+import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
+import { InvalidPhoneNumberSuffixLengthError } from '@lib/applicants/errors'; // Applicant errors
 import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
-import { formatDate, formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
-import { PermitHoldersReportColumn, PermitStatus, VerifyIdentityFailureReason } from '@lib/types'; // GraphQL types
+import {
+  Applicant,
+  MutationSetApplicantAsActiveArgs,
+  MutationSetApplicantAsInactiveArgs,
+  MutationUpdateApplicantDoctorInformationArgs,
+  MutationUpdateApplicantGeneralInformationArgs,
+  MutationUpdateApplicantGuardianInformationArgs,
+  MutationVerifyIdentityArgs,
+  QueryApplicantArgs,
+  QueryApplicantsArgs,
+  SetApplicantAsActiveResult,
+  SetApplicantAsInactiveResult,
+  UpdateApplicantDoctorInformationResult,
+  UpdateApplicantGeneralInformationResult,
+  UpdateApplicantGuardianInformationResult,
+  VerifyIdentityResult,
+} from '@lib/graphql/types'; // GraphQL types
 import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
-import { createObjectCsvWriter } from 'csv-writer';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -35,7 +41,23 @@ import { createObjectCsvWriter } from 'csv-writer';
  * - order: array of tuples of the field being sorted and the order. Default [['firstName', 'asc'], ['lastName', 'asc']]
  * @returns All RCD applicants that match the filter(s).
  */
-export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
+export const applicants: Resolver<
+  QueryApplicantsArgs,
+  {
+    result: Array<
+      Omit<
+        Applicant,
+        | 'mostRecentPermit'
+        | 'activePermit'
+        | 'permits'
+        | 'guardian'
+        | 'medicalInformation'
+        | 'completedApplications'
+      >
+    >;
+    totalCount: number;
+  }
+> = async (_parent, { filter }, { prisma }) => {
   // Create default filter
   let where = {};
 
@@ -57,7 +79,7 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
       lastSearch;
 
     // Parse search input for id or name
-    if (parseInt(search)) {
+    if (search && parseInt(search)) {
       rcdUserIDSearch = parseInt(search);
     } else if (search) {
       // Split search to first, middle and last name elements
@@ -100,13 +122,13 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
 
     // Permit status filter depends on expiry date
     switch (permitStatus) {
-      case PermitStatus.Valid:
+      case 'ACTIVE':
         expiryDateLowerBound = TODAY;
         break;
-      case PermitStatus.Expired:
+      case 'EXPIRED':
         expiryDateUpperBound = TODAY;
         break;
-      case PermitStatus.ExpiringInThirtyDays:
+      case 'EXPIRING':
         expiryDateLowerBound = TODAY;
         expiryDateUpperBound = DateUtils.addMonths(TODAY, 1);
         break;
@@ -135,8 +157,8 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
 
     // Update default filter since there were filter arguments
     where = {
-      rcdUserId: rcdUserIDSearch,
-      status: userStatus,
+      id: rcdUserIDSearch,
+      status: userStatus || undefined,
       permits: permitFilter,
       ...nameFilters,
     };
@@ -147,11 +169,11 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
   const sortingOrder: Record<string, SortOrder> = {};
 
   if (filter?.order) {
-    filter.order.forEach(([field, order]: [string, SortOrder]) => (sortingOrder[field] = order));
+    filter.order.forEach(([field, order]) => (sortingOrder[field] = order as SortOrder));
   }
 
-  const take = filter?.limit;
-  const skip = filter?.offset;
+  const take = filter?.limit || undefined;
+  const skip = filter?.offset || undefined;
 
   const totalCount = await prisma.applicant.count({
     where,
@@ -177,125 +199,190 @@ export const applicants: Resolver = async (_parent, { filter }, { prisma }) => {
  * Query an applicant based on ID
  * @returns Applicant with given ID
  */
-export const applicant: Resolver = async (_parent, args, { prisma }) => {
+export const applicant: Resolver<
+  QueryApplicantArgs,
+  Omit<
+    Applicant,
+    | 'mostRecentPermit'
+    | 'activePermit'
+    | 'permits'
+    | 'guardian'
+    | 'medicalInformation'
+    | 'completedApplications'
+  >
+> = async (_parent, args, { prisma }) => {
+  const { id } = args;
   const applicant = await prisma.applicant.findUnique({
     where: {
-      id: parseInt(args.id),
+      id,
     },
   });
   return applicant;
 };
 
 /**
- * Create an applicant
- * @returns Status of operation (ok)
+ * Update general information of an applicant (personal, contact, address)
+ * @returns Status of the operation
  */
-export const createApplicant: Resolver = async (_, args, { prisma }) => {
+export const updateApplicantGeneralInformation: Resolver<
+  MutationUpdateApplicantGeneralInformationArgs,
+  UpdateApplicantGeneralInformationResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
   const { input } = args;
-  const {
-    medicalInformation: { physicianMspNumber, ...medicalInformation },
-    guardian,
-    ...rest
-  } = input;
-
-  // Get physician record with physicianMspNumber
-  const physician = await prisma.physician.findUnique({
-    where: {
-      mspNumber: physicianMspNumber,
-    },
-  });
-
-  // If physician doesn't exist, throw an error
-  if (!physician) {
-    throw new MspNumberDoesNotExistError(
-      `Physician with MSP number ${physicianMspNumber} could not be found`
-    );
-  }
-
-  let applicant;
-  try {
-    applicant = await prisma.applicant.create({
-      data: {
-        ...rest,
-        postalCode: formatPostalCode(input.postalCode),
-        phone: formatPhoneNumber(input.phone),
-        medicalInformation: {
-          create: { ...medicalInformation, physicianId: physician.id },
-        },
-        guardian: {
-          create: guardian,
-        },
-      },
-    });
-  } catch (err) {
-    if (
-      err instanceof Prisma.PrismaClientKnownRequestError &&
-      err.code === DBErrorCode.UniqueConstraintFailed &&
-      getUniqueConstraintFailedFields(err)?.includes('email')
-    ) {
-      throw new ApplicantAlreadyExistsError(`Applicant with email ${input.email} already exists`);
-    }
-  }
-
-  // Throw internal server error if applicant was not created
-  if (!applicant) {
-    throw new ApolloError('Applicant was unable to be created');
-  }
-  return {
-    ok: true,
-  };
-};
-
-/**
- * Update an applicant
- * @returns Status of operation (ok)
- */
-export const updateApplicant: Resolver = async (_, args, { prisma }) => {
-  const { input } = args;
-  const { id, ...rest } = input;
-  const formattedApplicantData = {
-    ...rest,
-    phone: formatPhoneNumber(input.phone),
-    postalCode: formatPostalCode(input.postalCode),
-  };
+  const { id, ...data } = input;
 
   let updatedApplicant;
   try {
     updatedApplicant = await prisma.applicant.update({
-      where: {
-        id: parseInt(id),
-      },
-      data: formattedApplicantData,
+      where: { id },
+      data,
     });
-  } catch (err) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      if (err.code === DBErrorCode.RecordNotFound) {
-        throw new ApplicantNotFoundError(`Applicant with ID ${id} not found`);
-      }
-      if (
-        err.code === DBErrorCode.UniqueConstraintFailed &&
-        getUniqueConstraintFailedFields(err)?.includes('email')
-      ) {
-        throw new ApplicantAlreadyExistsError(`Applicant with email ${input.email} already exists`);
-      }
-      if (
-        err.code === DBErrorCode.UniqueConstraintFailed &&
-        getUniqueConstraintFailedFields(err)?.includes('rcdUserId')
-      ) {
-        throw new RcdUserIdAlreadyExistsError(
-          `Applicant with RCD user ID ${input.rcdUserId} already exists`
-        );
-      }
-    }
+  } catch {
+    // TODO: Handle error
   }
 
   if (!updatedApplicant) {
     throw new ApolloError('Applicant was unable to be updated');
   }
 
-  return {
-    ok: true,
-  };
+  return { ok: true };
+};
+
+/**
+ * Update information of an applicant's doctor
+ * @returns Status of the operation
+ */
+export const updateApplicantDoctorInformation: Resolver<
+  MutationUpdateApplicantDoctorInformationArgs,
+  UpdateApplicantDoctorInformationResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, mspNumber, ...data } = input;
+
+  let updatedApplicant;
+  try {
+    updatedApplicant = await prisma.applicant.update({
+      where: { id },
+      data: {
+        medicalInformation: {
+          update: {
+            physician: {
+              upsert: {
+                create: { mspNumber, ...data },
+                update: data,
+              },
+            },
+          },
+        },
+      },
+    });
+  } catch {
+    // TODO: Handle error
+  }
+
+  if (!updatedApplicant) {
+    throw new ApolloError("Applicant's physician was unable to be updated");
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Update information of an applicant's guardian
+ * @returns Status of the operation
+ */
+export const updateApplicantGuardianInformation: Resolver<
+  MutationUpdateApplicantGuardianInformationArgs,
+  UpdateApplicantGuardianInformationResult
+> = async (_parent, args, { prisma }) => {
+  const { input } = args;
+  const { id, ...data } = input;
+
+  let updatedApplicant;
+  try {
+    updatedApplicant = await prisma.applicant.update({
+      where: { id },
+      data: {
+        guardian: {
+          update: data,
+        },
+      },
+    });
+  } catch {
+    // TODO: Handle error
+  }
+
+  if (!updatedApplicant) {
+    throw new ApolloError("Applicant's guardian was unable to be updated");
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Set applicant status to ACTIVE
+ * @returns Status of the operation (ok)
+ */
+export const setApplicantAsActive: Resolver<
+  MutationSetApplicantAsActiveArgs,
+  SetApplicantAsActiveResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id } = input;
+
+  let updatedApplicant;
+  try {
+    updatedApplicant = await prisma.applicant.update({
+      where: { id },
+      data: {
+        status: 'ACTIVE',
+        inactiveReason: null,
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicant) {
+    throw new ApolloError('Unable to set applicant status to active');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Set applicant status to INACTIVE
+ * @returns Status of the operation (ok)
+ */
+export const setApplicantAsInactive: Resolver<
+  MutationSetApplicantAsInactiveArgs,
+  SetApplicantAsInactiveResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, reason } = input;
+
+  let updatedApplicant;
+  try {
+    updatedApplicant = await prisma.applicant.update({
+      where: { id },
+      data: {
+        status: 'INACTIVE',
+        inactiveReason: reason,
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicant) {
+    throw new ApolloError('Unable to set applicant status to inactive');
+  }
+
+  return { ok: true };
 };
 
 /**
@@ -305,7 +392,11 @@ export const updateApplicant: Resolver = async (_, args, { prisma }) => {
  * applicant has an active permit that is expiring within the next 30 days.
  * @returns Whether identity could be verified (ok), failure reason if ok=false, applicant ID if ok=true
  */
-export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
+export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentityResult> = async (
+  _,
+  args,
+  { prisma }
+) => {
   const {
     input: { userId, phoneNumberSuffix, dateOfBirth, acceptedTos },
   } = args;
@@ -320,11 +411,10 @@ export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
   // Retrieve applicant with matching info
   const applicant = await prisma.applicant.findUnique({
     where: {
-      rcdUserId: userId,
+      id: userId,
     },
     select: {
       id: true,
-      rcdUserId: true,
       phone: true,
       dateOfBirth: true,
     },
@@ -334,7 +424,7 @@ export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
   if (!applicant) {
     return {
       ok: false,
-      failureReason: VerifyIdentityFailureReason.IdentityVerificationFailed,
+      failureReason: 'IDENTITY_VERIFICATION_FAILED',
       applicantId: null,
     };
   }
@@ -346,7 +436,7 @@ export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
   ) {
     return {
       ok: false,
-      failureReason: VerifyIdentityFailureReason.IdentityVerificationFailed,
+      failureReason: 'IDENTITY_VERIFICATION_FAILED',
       applicantId: null,
     };
   }
@@ -357,7 +447,7 @@ export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
   if (activePermit === null) {
     return {
       ok: false,
-      failureReason: VerifyIdentityFailureReason.AppDoesNotExpireWithin_30Days,
+      failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS',
       applicantId: null,
     };
   }
@@ -366,7 +456,7 @@ export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
   if (activePermit.expiryDate.getTime() - new Date().getTime() > 30 * 24 * 60 * 60 * 1000) {
     return {
       ok: false,
-      failureReason: VerifyIdentityFailureReason.AppDoesNotExpireWithin_30Days,
+      failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS',
       applicantId: null,
     };
   }
@@ -389,163 +479,5 @@ export const verifyIdentity: Resolver = async (_, args, { prisma }) => {
     ok: true,
     failureReason: null,
     applicantId: applicant.id,
-  };
-};
-
-/**
- * Generates csv with permit holders' info, given a start date, end date, and values from
- * PermitHoldersReportColumn that the user would like to have on the generated csv
- * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
- */
-export const generatePermitHoldersReport: Resolver = async (_, args, { prisma }) => {
-  const {
-    input: { startDate, endDate, columns },
-  } = args;
-
-  const columnsSet = new Set(columns);
-
-  const applicants = await prisma.applicant.findMany({
-    where: {
-      permits: {
-        some: {
-          expiryDate: {
-            gte: startDate,
-            lte: endDate,
-          },
-        },
-      },
-    },
-    select: {
-      rcdUserId: true,
-      firstName: true,
-      middleName: true,
-      lastName: true,
-      dateOfBirth: true,
-      addressLine1: true,
-      addressLine2: true,
-      city: true,
-      province: true,
-      postalCode: true,
-      email: true,
-      phone: true,
-      status: true,
-      guardian: {
-        select: {
-          firstName: true,
-          middleName: true,
-          lastName: true,
-          relationship: true,
-          addressLine1: true,
-          addressLine2: true,
-          postalCode: true,
-          city: true,
-          province: true,
-        },
-      },
-      // Fetches rcdPermitId from latest permit
-      permits: {
-        orderBy: {
-          createdAt: SortOrder.DESC,
-        },
-        take: 1,
-        select: {
-          rcdPermitId: true,
-          // TODO: Update permit table to include permit type
-          // TODO: Once updated, fetch permitType from latest permit
-          // permitType: true,
-        },
-      },
-      // Fetches permitType from latest application
-      // TODO: Update permit table to include permit type
-      // TODO: Once updated, fetch field from latest permit instead and remove following code
-      applications: {
-        orderBy: {
-          createdAt: SortOrder.DESC,
-        },
-        take: 1,
-        select: {
-          permitType: true,
-        },
-      },
-    },
-  });
-
-  // Formats fields and adds properties to allow for csv writing
-  const csvApplicants = applicants.map(applicant => {
-    return {
-      ...applicant,
-      dateOfBirth: formatDate(applicant.dateOfBirth),
-      applicantName: `${applicant.firstName}${
-        applicant.middleName ? ` ${applicant.middleName}` : ''
-      } ${applicant.lastName}`,
-      rcdPermitId: applicant.permits[0].rcdPermitId,
-      permitType: applicant.applications[0].permitType,
-      homeAddress: `${applicant.addressLine1},${
-        applicant.addressLine2 ? ` ${applicant.addressLine2},` : ''
-      } ${applicant.city}, ${applicant.province} ${applicant.postalCode}`,
-      guardianRelationship: applicant.guardian?.relationship,
-      guardianPOAName: applicant.guardian
-        ? `${applicant.guardian.firstName}${
-            applicant.guardian?.middleName ? ` ${applicant.guardian.middleName}` : ''
-          } ${applicant.guardian.lastName}`
-        : '',
-      guardianPOAAdress: applicant.guardian
-        ? `${applicant.guardian.addressLine1}${
-            applicant.guardian.addressLine2 ? ` ${applicant.guardian.addressLine2},` : ''
-          } ${applicant.guardian.city}, ${applicant.guardian.province} ${
-            applicant.guardian.postalCode
-          }`
-        : '',
-    };
-  });
-
-  const csvHeaders = [];
-
-  if (columnsSet.has(PermitHoldersReportColumn.UserId)) {
-    csvHeaders.push({ id: 'rcdUserId', title: 'User ID' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.ApplicantName)) {
-    csvHeaders.push({ id: 'applicantName', title: 'Applicant Name' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.ApplicantDateOfBirth)) {
-    csvHeaders.push({ id: 'dateOfBirth', title: 'Applicant DoB' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.HomeAddress)) {
-    csvHeaders.push({ id: 'homeAddress', title: 'Home Address' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.Email)) {
-    csvHeaders.push({ id: 'email', title: 'Email' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.PhoneNumber)) {
-    csvHeaders.push({ id: 'phone', title: 'Phone Number' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaName)) {
-    csvHeaders.push({ id: 'guardianPOAName', title: 'Guardian/POA Name' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaRelation)) {
-    csvHeaders.push({ id: 'guardianRelationship', title: 'Guardian/POA Relation' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.GuardianPoaAddress)) {
-    csvHeaders.push({ id: 'guardianPOAAdress', title: 'Guardian/POA Address' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.RecentAppNumber)) {
-    csvHeaders.push({ id: 'rcdPermitId', title: 'Recent APP Number' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.RecentAppType)) {
-    csvHeaders.push({ id: 'permitType', title: 'Recent APP Type' });
-  }
-  if (columnsSet.has(PermitHoldersReportColumn.UserStatus)) {
-    csvHeaders.push({ id: 'status', title: 'User Status' });
-  }
-
-  const csvWriter = createObjectCsvWriter({
-    path: 'temp/file-permit-holders.csv',
-    header: csvHeaders,
-  });
-
-  await csvWriter.writeRecords(csvApplicants);
-
-  return {
-    ok: true,
   };
 };

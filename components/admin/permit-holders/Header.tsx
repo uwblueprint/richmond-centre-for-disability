@@ -1,13 +1,20 @@
-import { Badge, Box, Flex, HStack, Text, Wrap } from '@chakra-ui/react'; // Chakra UI
+import { Box, HStack, Text, VStack, Wrap } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import Link from 'next/link'; // Link
-import { ApplicantData } from '@tools/admin/permit-holders/types'; // Applicant data type
+import { ApplicantStatus } from '@lib/graphql/types';
+import PermitHolderStatusBadge from '@components/admin/PermitHolderStatusBadge';
 
 type PermitHolderHeaderProps = {
-  readonly applicant: ApplicantData;
+  readonly applicant: {
+    id: number;
+    name: string;
+    status: ApplicantStatus;
+  };
 };
 
-export default function PermitHolderHeader({ applicant }: PermitHolderHeaderProps) {
+export default function PermitHolderHeader({
+  applicant: { id, name, status },
+}: PermitHolderHeaderProps) {
   return (
     <Box textAlign="left">
       <Link href="/admin/permit-holders" passHref>
@@ -16,25 +23,19 @@ export default function PermitHolderHeader({ applicant }: PermitHolderHeaderProp
           All permit holders
         </Text>
       </Link>
-      <Flex marginTop={5} alignItems="center">
-        <Box>
-          <Flex alignItems="center">
-            <Text textStyle="display-large" as="h1" marginRight={3}>
-              {`${applicant.firstName} ${applicant.lastName}`}
-            </Text>
-            {applicant.status && (
-              <Wrap>
-                <Badge variant={applicant.status}>{applicant.status}</Badge>
-              </Wrap>
-            )}
-          </Flex>
-          <HStack spacing={3} marginTop={1}>
-            <Text textStyle="caption" as="p">
-              ID: #{applicant.rcdUserId}
-            </Text>
-          </HStack>
-        </Box>
-      </Flex>
+      <VStack marginTop={5} align="left">
+        <HStack>
+          <Text textStyle="display-large" as="h1" marginRight={3}>
+            {name}
+          </Text>
+          <Wrap>
+            <PermitHolderStatusBadge variant={status} />
+          </Wrap>
+        </HStack>
+        <Text textStyle="caption" as="p">
+          ID: #{id}
+        </Text>
+      </VStack>
     </Box>
   );
 }

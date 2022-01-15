@@ -3,8 +3,9 @@ import { ComponentSingleStyleConfig } from '@chakra-ui/theme';
 // Divider styles
 const Divider: ComponentSingleStyleConfig = {
   baseStyle: {
-    borderWidth: '0',
+    borderWidth: '1px',
     color: 'border.secondary',
+    opacity: 1,
   },
 };
 

@@ -1,5 +1,5 @@
-import { Role } from '@lib/types';
-import { Resolver } from '@lib/resolvers';
+import { Role } from '@lib/graphql/types';
+import { Resolver } from '@lib/graphql/resolvers';
 
 /**
  * authorize is a wrapper function around graphQL resolvers that grants or denies access to certain resources based on an employee's role.
@@ -9,12 +9,12 @@ import { Resolver } from '@lib/resolvers';
  * @returns {Resolver | null} - resolver if authorized or null otherwise.
  */
 export const authorize =
-  (resolver: Resolver, authorizedRoles: ReadonlyArray<Role> = []): Resolver =>
+  <A, R>(resolver: Resolver<A, R>, authorizedRoles: ReadonlyArray<Role> = []): Resolver<A, R> =>
   (root, args, context, info) => {
     const userRole = context.session?.role as Role;
 
     // If user is an Admin or has the necessary permissions, allow the query or mutation to go through.
-    if (userRole && (userRole === Role.Admin || authorizedRoles.includes(userRole))) {
+    if (userRole && (userRole === 'ADMIN' || authorizedRoles.includes(userRole))) {
       return resolver(root, args, context, info);
     }
 

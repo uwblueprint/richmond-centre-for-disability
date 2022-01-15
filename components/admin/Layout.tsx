@@ -19,7 +19,7 @@ import {
   MenuItem,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI icon
-import { Role } from '@lib/types'; // Role enum
+import { Role } from '@lib/graphql/types'; // Role enum
 import { InternalPagePath, getTabIndex } from '@tools/admin/layout'; // Routing enums and tools
 import Tab from '@components/admin/navbar/Tab'; // Custom Tab component
 import { authorize } from '@tools/authorization';
@@ -83,11 +83,18 @@ function Header() {
     <Flex
       height="80px"
       width="100%"
+      justify="center"
       backgroundColor="background.grey"
       borderBottom="1px solid"
       borderBottomColor="border.secondary"
     >
-      <Flex height="100%" width="100%" justifyContent="space-between" marginX="80px">
+      <Flex
+        height="100%"
+        width="100%"
+        maxWidth="1440px"
+        justifyContent="space-between"
+        marginX="80px"
+      >
         <Flex alignItems="center">
           <Box marginRight="12px">
             <Image src="/assets/logo.svg" alt="RCD Logo" height={48} width={31} priority />
@@ -106,7 +113,7 @@ function Header() {
             <>
               <Tabs height="100%" index={getTabIndex(pathname, session.role as Role)}>
                 <TabList height="100%" borderBottomColor="transparent">
-                  {authorize(session, [Role.Secretary]) && (
+                  {authorize(session, ['SECRETARY']) && (
                     <>
                       <Tab
                         path={InternalPagePath.Requests}
@@ -122,7 +129,7 @@ function Header() {
                       </Tab>
                     </>
                   )}
-                  {authorize(session, [Role.Accounting]) && (
+                  {authorize(session, ['ACCOUNTING']) && (
                     <Tab path={InternalPagePath.Reports}>Reports</Tab>
                   )}
                   {authorize(session, []) && (
@@ -169,7 +176,7 @@ function Header() {
 // Footer
 function Footer() {
   return (
-    <Center width="100%" flexDirection="column" paddingBottom={4}>
+    <Center width="100%" maxWidth="1440px" flexDirection="column" paddingBottom={4}>
       <Text textStyle="caption">&copy; 2021 Richmond Centre for Disability. v0.0.1.</Text>
       <Text textStyle="caption">
         A project by{' '}
@@ -200,6 +207,7 @@ function InternalGrid({
     <Grid
       flexGrow={1}
       width="100%"
+      maxWidth="1440px"
       marginX={isContent ? '80px' : undefined}
       templateColumns="repeat(12, 1fr)"
       gap="20px"

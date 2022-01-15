@@ -12,20 +12,22 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
 import ReasonForReplacementForm from '@components/admin/requests/reason-for-replacement/Form'; // ReasonForReplacement form fields
-import { ReasonForReplacement } from '@tools/admin/requests/reason-for-replacement';
+import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-replacement';
 
 type EditReasonForReplacementModalProps = {
-  readonly reasonForReplacement: ReasonForReplacement;
+  readonly reasonForReplacement: ReasonForReplacementFormData;
+  readonly onSave: (data: ReasonForReplacementFormData) => void;
   readonly children: ReactNode;
 };
 
 export default function EditReasonForReplacementModal({
   reasonForReplacement: currentReasonForReplacement,
+  onSave,
   children,
 }: EditReasonForReplacementModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [reasonForReplacement, setReasonForReplacement] = useState<ReasonForReplacement>(
+  const [reasonForReplacement, setReasonForReplacement] = useState<ReasonForReplacementFormData>(
     currentReasonForReplacement
   );
 
@@ -35,7 +37,7 @@ export default function EditReasonForReplacementModal({
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    //  TODO: Will be addressed in API hookup
+    onSave(reasonForReplacement);
     onClose();
   };
 

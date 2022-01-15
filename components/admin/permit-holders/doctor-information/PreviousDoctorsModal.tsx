@@ -13,18 +13,21 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import Table from '@components/Table'; // Table component
 import { ReactNode } from 'react'; // React
-import { PreviousPhysicianData } from '@tools/admin/permit-holders/types';
+import { Column } from 'react-table';
+import { PreviousDoctorRow } from '@tools/admin/permit-holders/doctor-information';
+import { formatFullName } from '@lib/utils/format';
 
-const COLUMNS = [
+const COLUMNS: Array<Column<PreviousDoctorRow>> = [
   {
     Header: 'Name',
     accessor: 'name',
     disableSortBy: true,
     minWidth: 140,
+    Cell: ({ value: { firstName, lastName } }) => formatFullName(firstName, lastName),
   },
   {
     Header: 'Phone #',
-    accessor: 'phoneNumber',
+    accessor: 'phone',
     disableSortBy: true,
     maxWidth: 140,
   },
@@ -38,27 +41,21 @@ const COLUMNS = [
     accessor: 'applicationId',
     disableSortBy: true,
     maxWidth: 200,
-    Cell: _renderAppLink,
+    Cell: ({ value }) => {
+      return (
+        <Link href={`/admin/request/${value}`} passHref>
+          <Text textStyle="body-regular" textColor="primary" as="a">
+            {'View associated APP'}
+          </Text>
+        </Link>
+      );
+    },
   },
 ];
 
-type appProps = {
-  value: { applicationId: number };
-};
-
-function _renderAppLink({ value }: appProps) {
-  return (
-    <Link href={`/admin/request/${value.applicationId}`} passHref>
-      <Text textStyle="body-regular" textColor="primary" as="a">
-        {'View associated APP'}
-      </Text>
-    </Link>
-  );
-}
-
 type PreviousDoctorsInformationModalProps = {
-  children: ReactNode;
-  readonly previousPhysicianData: PreviousPhysicianData[];
+  readonly previousPhysicianData: PreviousDoctorRow[];
+  readonly children: ReactNode;
 };
 
 export default function PreviousDoctorsInformationModal({

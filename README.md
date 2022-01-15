@@ -54,7 +54,13 @@ applicant-facing application portal and an internal user/APP management portal.
 
 Duplicate `.env.sample` to `.env` and configure environment variables.
 
-To deploy your database schema, run the following:
+To deploy your database schema, run:
+
+```bash
+yarn reset-db YOUR_APP_NAME
+```
+
+or if that doesn't work, run the steps manually:
 
 ```bash
 # Drop all tables from current Heroku Postgres database
@@ -64,7 +70,7 @@ heroku pg:reset -a YOUR_APP_NAME
 heroku pg:psql -a YOUR_APP_NAME -f prisma/schema.sql
 
 # Regenerate Prisma schema and client
-npx prisma introspect && npx prisma generate
+npx prisma db pull && npx prisma format && npx prisma generate
 
 # Seeding the database with sample data
 npx prisma db seed --preview-feature

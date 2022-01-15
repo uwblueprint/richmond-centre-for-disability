@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next'; // Get server side props
+import { GetServerSideProps, NextPage } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { useRouter } from 'next/router'; // Next Router
 import {
@@ -31,29 +31,25 @@ import RequestStatusBadge from '@components/admin/RequestStatusBadge'; //Status 
 import { useQuery } from '@apollo/client'; //Apollo client
 import { useEffect, useState } from 'react'; // React
 import {
+  ApplicationRow,
   GetApplicationsRequest,
   GetApplicationsResponse,
   GET_APPLICATIONS_QUERY,
-} from '@tools/admin/requests/graphql/get-applications'; //Applications queries
+} from '@tools/admin/requests/requests-table';
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
-import { ApplicationStatus, PermitType, Role } from '@lib/graphql/types'; //GraphQL types
+import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/types'; //GraphQL types
 import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
-import { formatDateVerbose } from '@lib/utils/format'; // Verbose date formatter util
+import { formatDateVerbose, formatFullName } from '@lib/utils/format'; // Verbose date formatter util
 import GenerateReportModal from '@components/admin/requests/reports/GenerateModal'; // Generate report modal
-// Map uppercase enum strings to lowercase
-const permitTypeString: Record<string, string> = {
-  [PermitType.Permanent]: 'Permanent',
-  [PermitType.Temporary]: 'Temporary',
-};
 
 // Placeholder columns
-const COLUMNS: Column<any>[] = [
+const COLUMNS: Column<ApplicationRow>[] = [
   {
     Header: 'Name',
     accessor: 'name',
-    Cell: ({ value }) => {
-      const name = `${value.firstName} ${value.lastName}`;
+    Cell: ({ value: { id, firstName, middleName, lastName } }) => {
+      const name = formatFullName(firstName, middleName, lastName);
       return (
         <div>
           <Tooltip label={name} placement="top-start">
@@ -68,7 +64,7 @@ const COLUMNS: Column<any>[] = [
             </Text>
           </Tooltip>
           <Text textStyle="caption" textColor="secondary">
-            ID: {value.rcdUserId ? `#${value.rcdUserId}` : 'N/A'}
+            ID: {id ? `#${id}` : 'N/A'}
           </Text>
         </div>
       );
@@ -92,18 +88,18 @@ const COLUMNS: Column<any>[] = [
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
-    Cell: ({ value }) => {
-      return <Text>{permitTypeString[value]}</Text>;
+    Cell: ({ value }: { value: string }) => {
+      return <Text textTransform="capitalize">{value.toLowerCase()}</Text>;
     },
   },
   {
     Header: 'Request Type',
-    accessor: 'isRenewal',
+    accessor: 'type',
     disableSortBy: true,
     maxWidth: 180,
     width: 180,
     Cell: ({ value }) => {
-      return <Text>{value ? 'Renewal' : 'Replacement'}</Text>;
+      return <Text textTransform="capitalize">{value.toLowerCase()}</Text>;
     },
   },
   {
@@ -122,24 +118,11 @@ const COLUMNS: Column<any>[] = [
   },
 ];
 
-// Application data for table
-type ApplicationData = {
-  name: {
-    firstName: string;
-    lastName: string;
-    rcdUserId?: number;
-  };
-  dateReceived: Date;
-  permitType: PermitType;
-  isRenewal: boolean;
-  status?: ApplicationStatus;
-};
-
 // Max number of entries in a page
 const PAGE_SIZE = 20;
 
 // Internal home page - view APP requests
-export default function Requests() {
+const Requests: NextPage = () => {
   // Router
   const router = useRouter();
 
@@ -150,10 +133,10 @@ export default function Requests() {
     onClose: onCloseGenerateReportModal,
   } = useDisclosure();
 
-  //Filters
-  const [statusFilter, setStatusFilter] = useState<ApplicationStatus>();
-  const [permitTypeFilter, setPermitTypeFilter] = useState<PermitType>();
-  const [requestTypeFilter, setRequestTypeFilter] = useState<string>();
+  // Filters
+  const [statusFilter, setStatusFilter] = useState<ApplicationStatus | null>(null);
+  const [permitTypeFilter, setPermitTypeFilter] = useState<PermitType | null>(null);
+  const [requestTypeFilter, setRequestTypeFilter] = useState<ApplicationType | null>(null);
   const [searchFilter, setSearchFilter] = useState<string>('');
 
   // Sorting
@@ -164,7 +147,7 @@ export default function Requests() {
   const debouncedSearchFilter = useDebounce<string>(searchFilter, 500);
 
   // Data & pagination
-  const [requestsData, setRequestsData] = useState<ApplicationData[]>();
+  const [requestsData, setRequestsData] = useState<Array<ApplicationRow>>([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState(0);
 
@@ -173,32 +156,42 @@ export default function Requests() {
     variables: {
       filter: {
         order: sortOrder,
-        permitType: permitTypeFilter,
-        requestType: requestTypeFilter,
-        status: statusFilter,
+        permitType: permitTypeFilter || null,
+        requestType: requestTypeFilter || null,
+        status: statusFilter || null,
         search: debouncedSearchFilter,
         offset: pageNumber * PAGE_SIZE,
         limit: PAGE_SIZE,
       },
     },
-    fetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
-    onCompleted: data => {
+    onCompleted: ({ applications: { result, totalCount } }) => {
       setRequestsData(
-        data.applications?.result.map(record => ({
-          id: record.id,
-          name: {
-            firstName: record.firstName,
-            lastName: record.lastName,
-            rcdUserId: record.rcdUserId || undefined,
-          },
-          dateReceived: record.createdAt,
-          permitType: record.permitType,
-          isRenewal: record.isRenewal,
-          status: record.applicationProcessing?.status,
-        }))
+        result.map(
+          ({
+            id,
+            firstName,
+            middleName,
+            lastName,
+            createdAt,
+            applicant,
+            processing: { status },
+            ...application
+          }) => ({
+            id,
+            name: {
+              id: applicant?.id || null,
+              firstName,
+              middleName,
+              lastName,
+            },
+            dateReceived: createdAt,
+            status,
+            ...application,
+          })
+        )
       );
-      setRecordsCount(data.applications.totalCount);
+      setRecordsCount(totalCount);
     },
   });
 
@@ -243,7 +236,7 @@ export default function Requests() {
               <Tab
                 height="64px"
                 onClick={() => {
-                  setStatusFilter(undefined);
+                  setStatusFilter(null);
                 }}
               >
                 All
@@ -251,7 +244,7 @@ export default function Requests() {
               <Tab
                 height="64px"
                 onClick={() => {
-                  setStatusFilter(ApplicationStatus.Pending);
+                  setStatusFilter('PENDING');
                 }}
               >
                 Pending
@@ -259,7 +252,7 @@ export default function Requests() {
               <Tab
                 height="64px"
                 onClick={() => {
-                  setStatusFilter(ApplicationStatus.Approved);
+                  setStatusFilter('IN_PROGRESS');
                 }}
               >
                 In Progress
@@ -267,7 +260,7 @@ export default function Requests() {
               <Tab
                 height="64px"
                 onClick={() => {
-                  setStatusFilter(ApplicationStatus.Completed);
+                  setStatusFilter('COMPLETED');
                 }}
               >
                 Completed
@@ -275,7 +268,7 @@ export default function Requests() {
               <Tab
                 height="64px"
                 onClick={() => {
-                  setStatusFilter(ApplicationStatus.Rejected);
+                  setStatusFilter('REJECTED');
                 }}
               >
                 Rejected
@@ -298,28 +291,28 @@ export default function Requests() {
                   <Text as="span" textStyle="button-semibold">
                     Permit type:{' '}
                   </Text>
-                  <Text as="span" textStyle="button-regular">
-                    {permitTypeFilter ? permitTypeString[permitTypeFilter] : 'All'}
+                  <Text as="span" textStyle="button-regular" textTransform="capitalize">
+                    {permitTypeFilter?.toLowerCase() || 'All'}
                   </Text>
                 </MenuButton>
                 <MenuList>
                   <MenuItem
                     onClick={() => {
-                      setPermitTypeFilter(undefined);
+                      setPermitTypeFilter(null);
                     }}
                   >
                     All
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      setPermitTypeFilter(PermitType.Permanent);
+                      setPermitTypeFilter('PERMANENT');
                     }}
                   >
                     Permanent
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      setPermitTypeFilter(PermitType.Temporary);
+                      setPermitTypeFilter('TEMPORARY');
                     }}
                   >
                     Temporary
@@ -340,28 +333,28 @@ export default function Requests() {
                   <Text as="span" textStyle="button-semibold">
                     Request type:{' '}
                   </Text>
-                  <Text as="span" textStyle="button-regular">
-                    {requestTypeFilter || 'All'}
+                  <Text as="span" textStyle="button-regular" textTransform="capitalize">
+                    {requestTypeFilter?.toLowerCase() || 'All'}
                   </Text>
                 </MenuButton>
                 <MenuList>
                   <MenuItem
                     onClick={() => {
-                      setRequestTypeFilter(undefined);
+                      setRequestTypeFilter(null);
                     }}
                   >
                     All
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      setRequestTypeFilter('Replacement');
+                      setRequestTypeFilter('REPLACEMENT');
                     }}
                   >
                     Replacement
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      setRequestTypeFilter('Renewal');
+                      setRequestTypeFilter('RENEWAL');
                     }}
                   >
                     Renewal
@@ -382,8 +375,8 @@ export default function Requests() {
             </Flex>
             <Table
               columns={COLUMNS}
-              data={requestsData || []}
-              onChangeSortOrder={sortOrder => setSortOrder(sortOrder)}
+              data={requestsData}
+              onChangeSortOrder={setSortOrder}
               onRowClick={({ id }) => router.push(`/admin/request/${id}`)}
             />
             <Flex justifyContent="flex-end">
@@ -403,13 +396,15 @@ export default function Requests() {
       />
     </Layout>
   );
-}
+};
+
+export default Requests;
 
 export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
 
   // Only secretaries and admins can access APP requests
-  if (authorize(session, [Role.Secretary])) {
+  if (authorize(session, ['SECRETARY'])) {
     return {
       props: {},
     };
