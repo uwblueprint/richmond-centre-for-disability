@@ -17,7 +17,7 @@ export const APPLICATIONS_COLUMNS: Array<{
   {
     name: 'User ID',
     value: 'USER_ID',
-    reportColumnId: 'rcdUserId',
+    reportColumnId: 'id',
   },
   {
     name: 'Applicant Name',
@@ -70,7 +70,7 @@ export const PERMIT_HOLDERS_COLUMNS: Array<{
   {
     name: 'User ID',
     value: 'USER_ID',
-    reportColumnId: 'rcdUserId',
+    reportColumnId: 'id',
   },
   {
     name: 'Applicant Name',

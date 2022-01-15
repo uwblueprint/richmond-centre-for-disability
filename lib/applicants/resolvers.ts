@@ -157,7 +157,7 @@ export const applicants: Resolver<
 
     // Update default filter since there were filter arguments
     where = {
-      rcdUserId: rcdUserIDSearch,
+      id: rcdUserIDSearch,
       status: userStatus || undefined,
       permits: permitFilter,
       ...nameFilters,
@@ -411,11 +411,10 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
   // Retrieve applicant with matching info
   const applicant = await prisma.applicant.findUnique({
     where: {
-      rcdUserId: userId,
+      id: userId,
     },
     select: {
       id: true,
-      rcdUserId: true,
       phone: true,
       dateOfBirth: true,
     },

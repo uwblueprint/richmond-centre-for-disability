@@ -14,7 +14,6 @@ export const GET_APPLICANT_RENEWAL_QUERY = gql`
       city
       postalCode
       id
-      rcdUserId
       dateOfBirth
       status
       gender
@@ -65,7 +64,6 @@ export type GetApplicantRenewalResponse = {
     | 'addressLine2'
     | 'city'
     | 'postalCode'
-    | 'rcdUserId'
     | 'dateOfBirth'
     | 'status'
     | 'gender'

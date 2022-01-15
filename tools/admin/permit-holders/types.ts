@@ -5,7 +5,6 @@ import { Applicant } from '@lib/graphql/types';
 export type ApplicantData = Pick<
   Applicant,
   | 'id'
-  | 'rcdUserId'
   | 'firstName'
   | 'lastName'
   | 'gender'

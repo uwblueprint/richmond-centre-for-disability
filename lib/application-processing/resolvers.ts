@@ -127,6 +127,7 @@ export const completeApplication: Resolver<
     }
 
     const {
+      applicantId,
       firstName,
       middleName,
       lastName,
@@ -262,7 +263,6 @@ export const completeApplication: Resolver<
           type: permitType,
           expiryDate,
           // Create a new applicant record
-          // ? How to set rcdUserId?
           applicant: {
             create: {
               firstName,
@@ -324,14 +324,12 @@ export const completeApplication: Resolver<
         where: { applicationId: id },
       });
 
-      if (!renewalApplication) {
+      if (!applicantId || !renewalApplication) {
         // TODO: Improve validation
         throw new ApolloError('New application not found');
       }
 
       const {
-        applicantId,
-        receiveEmailUpdates,
         physicianFirstName,
         physicianLastName,
         physicianMspNumber,
@@ -437,18 +435,10 @@ export const completeApplication: Resolver<
         throw new ApolloError('Error completing application');
       }
     } else {
-      // Retrieve replacement record
-      const replacementApplication = await prisma.replacementApplication.findUnique({
-        where: { applicationId: id },
-        select: { applicantId: true },
-      });
-
-      if (!replacementApplication) {
+      if (!applicantId) {
         // TODO: Improve validation
         throw new ApolloError('Replacement application not found');
       }
-
-      const { applicantId } = replacementApplication;
 
       // TODO: Invalidate old permit
 

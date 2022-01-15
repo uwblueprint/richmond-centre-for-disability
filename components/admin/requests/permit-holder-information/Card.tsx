@@ -129,7 +129,7 @@ const Card: FC<Props> = props => {
         {/* Permit holder information */}
         <VStack spacing="12px" align="left">
           <Text as="p" textStyle="body-regular">
-            User ID: {type === 'NEW' ? 'N/A' : permitHolderInformation.applicant.rcdUserId}
+            User ID: {type === 'NEW' ? 'N/A' : permitHolderInformation.applicant.id}
           </Text>
           <VStack align="left">
             <HStack spacing="12px">

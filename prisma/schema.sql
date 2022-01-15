@@ -185,7 +185,6 @@ CREATE TABLE applicants (
   province Province NOT NULL DEFAULT 'BC',
   country VARCHAR(255) NOT NULL DEFAULT 'Canada',
   postal_code VARCHAR(6) NOT NULL,
-  rcd_user_id INTEGER UNIQUE,
   status ApplicantStatus NOT NULL DEFAULT 'ACTIVE',
   inactive_reason VARCHAR(255),
   accepted_tos TIMESTAMPTZ,

@@ -26,10 +26,10 @@ export type PermitHolderRow = Pick<
   'id' | 'dateOfBirth' | 'email' | 'phone' | 'status'
 > & {
   name: {
+    id: number;
     firstName: string;
     middleName: string | null;
     lastName: string;
-    rcdUserId: number | null;
   };
   homeAddress: {
     addressLine1: string;
@@ -68,7 +68,6 @@ export const GET_PERMIT_HOLDERS_QUERY = gql`
           rcdPermitId
         }
         status
-        rcdUserId
       }
       totalCount
     }
@@ -93,7 +92,6 @@ export type PermitHolder = Pick<
   | 'email'
   | 'phone'
   | 'status'
-  | 'rcdUserId'
 > & {
   mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'>;
 };

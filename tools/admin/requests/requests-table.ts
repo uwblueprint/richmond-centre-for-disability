@@ -10,10 +10,10 @@ import {
 /** Application row data */
 export type ApplicationRow = Pick<Application, 'id' | 'type' | 'permitType'> & {
   name: {
+    id: number | null;
     firstName: string;
     middleName: string | null;
     lastName: string;
-    rcdUserId: number | null;
   };
   dateReceived: Date;
   status: ApplicationStatus;
@@ -31,7 +31,7 @@ export const GET_APPLICATIONS_QUERY = gql`
         permitType
         createdAt
         applicant {
-          rcdUserId
+          id
         }
         processing {
           status
@@ -51,7 +51,7 @@ export type GetApplicationsResponse = {
         Application,
         'id' | 'firstName' | 'middleName' | 'lastName' | 'type' | 'permitType' | 'createdAt'
       > & {
-        applicant: Pick<Applicant, 'rcdUserId'> | null;
+        applicant: Pick<Applicant, 'id'> | null;
         processing: Pick<ApplicationProcessing, 'status'>;
       }
     >;

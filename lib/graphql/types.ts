@@ -39,7 +39,6 @@ export type Applicant = {
   province: Province;
   country: Scalars['String'];
   postalCode: Scalars['String'];
-  rcdUserId: Maybe<Scalars['Int']>;
   status: ApplicantStatus;
   mostRecentPermit: Maybe<Permit>;
   activePermit: Maybe<Permit>;

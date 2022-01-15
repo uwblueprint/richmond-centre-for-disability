@@ -48,7 +48,7 @@ const COLUMNS: Column<ApplicationRow>[] = [
   {
     Header: 'Name',
     accessor: 'name',
-    Cell: ({ value: { firstName, middleName, lastName, rcdUserId } }) => {
+    Cell: ({ value: { id, firstName, middleName, lastName } }) => {
       const name = formatFullName(firstName, middleName, lastName);
       return (
         <div>
@@ -64,7 +64,7 @@ const COLUMNS: Column<ApplicationRow>[] = [
             </Text>
           </Tooltip>
           <Text textStyle="caption" textColor="secondary">
-            ID: {rcdUserId ? `#${rcdUserId}` : 'N/A'}
+            ID: {id ? `#${id}` : 'N/A'}
           </Text>
         </div>
       );
@@ -180,10 +180,10 @@ const Requests: NextPage = () => {
           }) => ({
             id,
             name: {
+              id: applicant?.id || null,
               firstName,
               middleName,
               lastName,
-              rcdUserId: applicant?.rcdUserId || null,
             },
             dateReceived: createdAt,
             status,

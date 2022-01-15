@@ -6,14 +6,14 @@ import PermitHolderStatusBadge from '@components/admin/PermitHolderStatusBadge';
 
 type PermitHolderHeaderProps = {
   readonly applicant: {
+    id: number;
     name: string;
     status: ApplicantStatus;
-    rcdUserId: number | null; // TODO: Should be non-null (same as DB schema)
   };
 };
 
 export default function PermitHolderHeader({
-  applicant: { name, status, rcdUserId },
+  applicant: { id, name, status },
 }: PermitHolderHeaderProps) {
   return (
     <Box textAlign="left">
@@ -33,7 +33,7 @@ export default function PermitHolderHeader({
           </Wrap>
         </HStack>
         <Text textStyle="caption" as="p">
-          ID: {rcdUserId ? `#${rcdUserId}` : 'N/A'}
+          ID: #{id}
         </Text>
       </VStack>
     </Box>

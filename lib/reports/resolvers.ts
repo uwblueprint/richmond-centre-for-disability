@@ -37,7 +37,7 @@ export const generatePermitHoldersReport: Resolver<
       },
     },
     select: {
-      rcdUserId: true,
+      id: true,
       firstName: true,
       middleName: true,
       lastName: true,
@@ -80,6 +80,7 @@ export const generatePermitHoldersReport: Resolver<
   // Formats fields and adds properties to allow for csv writing
   const csvApplicants = applicants.map(
     ({
+      id,
       firstName,
       middleName,
       lastName,
@@ -95,6 +96,7 @@ export const generatePermitHoldersReport: Resolver<
     }) => {
       return {
         ...applicant,
+        id,
         dateOfBirth: formatDate(dateOfBirth),
         applicantName: formatFullName(firstName, middleName, lastName),
         rcdPermitId: permits[0].rcdPermitId,

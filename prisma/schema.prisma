@@ -24,7 +24,6 @@ model Applicant {
   province             Province           @default(BC)
   country              String             @default("Canada") @db.VarChar(255)
   postalCode           String             @map("postal_code") @db.VarChar(6)
-  rcdUserId            Int?               @unique @map("rcd_user_id")
   status               ApplicantStatus    @default(ACTIVE)
   inactiveReason       String?            @map("inactive_reason") @db.VarChar(255)
   acceptedTos          DateTime?          @map("accepted_tos") @db.Timestamptz(6)

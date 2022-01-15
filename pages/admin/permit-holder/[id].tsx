@@ -33,13 +33,13 @@ export default function PermitHolder({ id: idString }: Props) {
     return null;
   }
 
-  const { firstName, middleName, lastName, status, rcdUserId } = data.applicant;
+  const { firstName, middleName, lastName, status } = data.applicant;
 
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3}>
         <PermitHolderHeader
-          applicant={{ name: formatFullName(firstName, middleName, lastName), status, rcdUserId }}
+          applicant={{ name: formatFullName(firstName, middleName, lastName), status, id }}
         />
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">

@@ -48,10 +48,7 @@ export type PermitHolderCardData = Pick<
     // Renewal/replacement application
     | {
         type: 'RENEWAL' | 'REPLACEMENT';
-        applicant: Pick<
-          Applicant,
-          'id' | 'rcdUserId' | 'dateOfBirth' | 'gender' | 'otherGender'
-        > & {
+        applicant: Pick<Applicant, 'id' | 'dateOfBirth' | 'gender' | 'otherGender'> & {
           mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'> | null;
         };
       }
@@ -82,7 +79,6 @@ export const GET_APPLICANT_INFORMATION = gql`
       }
       applicant {
         id
-        rcdUserId
         dateOfBirth
         gender
         otherGender

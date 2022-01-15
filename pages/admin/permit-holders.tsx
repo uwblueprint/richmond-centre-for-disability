@@ -97,21 +97,22 @@ const PermitHolders: NextPage = () => {
       setPermitHolderData(
         result.map(
           ({
+            id,
             firstName,
             middleName,
             lastName,
-            rcdUserId,
             addressLine1,
             addressLine2,
             city,
             postalCode,
             ...applicant
           }) => ({
+            id,
             name: {
+              id,
               firstName,
               lastName,
               middleName,
-              rcdUserId,
             },
             homeAddress: {
               addressLine1,
@@ -154,7 +155,7 @@ const PermitHolders: NextPage = () => {
         minWidth: 180,
         maxWidth: 180,
         sortDescFirst: true,
-        Cell: ({ value: { firstName, middleName, lastName, rcdUserId } }) => {
+        Cell: ({ value: { id, firstName, middleName, lastName } }) => {
           const name = formatFullName(firstName, middleName, lastName);
           return (
             <>
@@ -170,7 +171,7 @@ const PermitHolders: NextPage = () => {
                 </Text>
               </Tooltip>
               <Text textStyle="caption" textColor="secondary">
-                ID: {rcdUserId ? `#${rcdUserId}` : 'N/A'}
+                ID: #{id}
               </Text>
             </>
           );

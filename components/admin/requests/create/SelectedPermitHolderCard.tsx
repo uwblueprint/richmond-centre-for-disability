@@ -76,7 +76,7 @@ export default function SelectedPermitHolderCard(props: SelectedPermitHolderCard
           </Flex>
           <HStack spacing={3} marginTop={3}>
             <Text textStyle="caption" as="p">
-              ID: #{applicant.rcdUserId}
+              ID: #{applicant.id}
             </Text>
           </HStack>
         </Box>

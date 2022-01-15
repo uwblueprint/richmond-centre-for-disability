@@ -29,7 +29,6 @@ export default gql`
     country: String!
     postalCode: String!
 
-    rcdUserId: Int
     status: ApplicantStatus!
 
     mostRecentPermit: Permit

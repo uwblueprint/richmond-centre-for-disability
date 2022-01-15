@@ -160,7 +160,7 @@ export const applications: Resolver<
 
     where = {
       applicant: {
-        rcdUserId: rcdUserIDSearch,
+        id: rcdUserIDSearch,
       },
       applicationProcessing: {
         status: status || undefined,

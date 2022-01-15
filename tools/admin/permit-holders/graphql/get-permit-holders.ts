@@ -4,10 +4,10 @@ import { ApplicantsFilter, Applicant, ApplicantStatus } from '@lib/graphql/types
 /** Row in permit holders table */
 export type PermitHolderRow = {
   name: {
+    id: number;
     firstName: string;
     middleName: string | null;
     lastName: string;
-    rcdUserId: number | null;
   };
   dateOfBirth: Date;
   homeAddress: {
@@ -42,7 +42,6 @@ export const GET_PERMIT_HOLDERS_QUERY = gql`
           rcdPermitId
         }
         status
-        rcdUserId
       }
       totalCount
     }
@@ -67,7 +66,6 @@ export type PermitHolder = Pick<
   | 'phone'
   | 'mostRecentPermit'
   | 'status'
-  | 'rcdUserId'
 >;
 
 export type GetPermitHoldersResponse = {

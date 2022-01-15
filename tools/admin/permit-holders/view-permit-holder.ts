@@ -5,11 +5,9 @@ import { Applicant, QueryApplicantArgs } from '@lib/graphql/types';
 export const GET_APPLICANT_QUERY = gql`
   query GetApplicant($id: Int!) {
     applicant(id: $id) {
-      id
       firstName
       middleName
       lastName
-      rcdUserId
       status
     }
   }
@@ -18,5 +16,5 @@ export const GET_APPLICANT_QUERY = gql`
 export type GetApplicantRequest = QueryApplicantArgs;
 
 export type GetApplicantResponse = {
-  applicant: Pick<Applicant, 'firstName' | 'middleName' | 'lastName' | 'rcdUserId' | 'status'>;
+  applicant: Pick<Applicant, 'firstName' | 'middleName' | 'lastName' | 'status'>;
 };
