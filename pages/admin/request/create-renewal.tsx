@@ -24,13 +24,12 @@ import { useRouter } from 'next/router';
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
 import { DoctorFormData } from '@tools/admin/requests/doctor-information';
-import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 import {
   GetRenewalApplicantRequest,
   GetRenewalApplicantResponse,
   GET_RENEWAL_APPLICANT,
 } from '@tools/admin/requests/create-renewal';
-import { PaymentType } from '@lib/graphql/types';
+import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -39,9 +38,7 @@ export default function CreateRenewal() {
   const [applicantId, setApplicantId] = useState<number | null>(null);
 
   /** Permit holder information section */
-  const [permitHolderInformation, setPermitHolderInformation] = useState<
-    Omit<ApplicantFormData, 'dateOfBirth' | 'gender'> & { receiveEmailUpdates: boolean }
-  >({
+  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderFormData>({
     firstName: '',
     middleName: null,
     lastName: '',
@@ -78,9 +75,7 @@ export default function CreateRenewal() {
   );
 
   /** Payment information section */
-  const [paymentInformation, setPaymentInformation] = useState<
-    PaymentInformationFormData & { paymentMethod: PaymentType | null }
-  >({
+  const [paymentInformation, setPaymentInformation] = useState<PaymentInformationFormData>({
     paymentMethod: null,
     donationAmount: '',
     shippingAddressSameAsHomeAddress: false,
@@ -254,6 +249,7 @@ export default function CreateRenewal() {
               <>
                 {` (User ID: `}
                 <Box as="span" color="primary">
+                  {/* TODO: make sure we're showing the right id here */}
                   <Link href={`/admin/permit-holder/${applicantId}`}>
                     <a>{applicantId}</a>
                   </Link>

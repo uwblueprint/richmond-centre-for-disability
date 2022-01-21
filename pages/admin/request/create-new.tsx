@@ -17,42 +17,26 @@ import { getSession } from 'next-auth/client';
 import { useLazyQuery } from '@apollo/client';
 
 import Layout from '@components/admin/Layout';
-import PermitHolderTypeahead from '@components/admin/permit-holders/PermitHolderTypeahead';
-import SelectedPermitHolderCard from '@components/admin/requests/SelectedPermitHolderCard';
-import PermitHolderInformationForm from '@components/admin/requests/forms/PermitHolderInformationForm';
-import PhysicianAssessmentForm from '@components/admin/requests/forms/new-applications/PhysicianAssessmentForm';
-import DoctorInformationForm from '@components/admin/requests/forms/DoctorInformationForm';
-import GuardianInformationForm from '@components/admin/requests/forms/new-applications/GuardianInformationForm';
-import AdditionalQuestionsForm from '@components/admin/requests/forms/renewals/AdditionalQuestionsForm';
-import PaymentDetailsForm from '@components/admin/requests/forms/PaymentDetailsForm';
-import BackToSearchModal from '@components/admin/requests/modals/BackToSearchModal';
-import CancelCreateRequestModal from '@components/admin/requests/modals/CancelCreateRequestModal';
+import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
+import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
+import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form';
+import PhysicianAssessmentForm from '@components/admin/requests/physician-assessment/Form';
+import DoctorInformationForm from '@components/admin/requests/doctor-information/Form';
+import GuardianInformationForm from '@components/admin/requests/guardian-information/Form';
+import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form';
+import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
+import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
+import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 
-import {
-  Role,
-  ApplicantStatus,
-  Gender,
-  Province,
-  PaymentType,
-  PermitType,
-} from '@lib/graphql/types';
 import { authorize } from '@tools/authorization';
-import { GET_APPLICANT_RENEWAL_QUERY } from '@tools/pages/admin/requests/queries';
-import {
-  GetApplicantRenewalRequest,
-  GetApplicantRenewalResponse,
-  RequestFlowPageState,
-} from '@tools/pages/admin/requests/types';
-import {
-  DoctorInformation,
-  PermitHolderInformation,
-  AdditionalQuestions,
-  PaymentDetails,
-  GuardianInformation,
-} from '@tools/components/admin/requests/forms/types';
-import { ApplicantData } from '@tools/pages/admin/permit-holders/types';
-import { PermitHolder } from '@tools/pages/admin/permit-holders/get-permit-holders';
-import { PhysicianAssessmentInformation } from '@tools/components/admin/requests/forms/types';
+import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment';
+import { DoctorFormData } from '@tools/admin/requests/doctor-information';
+import { GuardianInformation } from '@tools/admin/requests/guardian-information';
+import { RequestFlowPageState } from '@tools/admin/requests/types';
+import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
+import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
+import { Gender } from '@lib/graphql/types';
+import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -66,58 +50,47 @@ export default function CreateNew() {
   const [rcdUserId, setRcdUserId] = useState<number | null>(null); // RCD user id
 
   // General information
-  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderInformation>({
+  const [permitHolderInformation, setPermitHolderInformation] = useState<
+    PermitHolderFormData & { dateOfBirth: Date; gender: Gender }
+  >({
     firstName: '',
+    middleName: '',
     lastName: '',
+    dateOfBirth: new Date(),
+    gender: 'MALE', //TODO: handle default
     email: '',
     phone: '',
+    receiveEmailUpdates: false, //TODO: verify default
     addressLine1: '',
     addressLine2: '',
     city: '',
     postalCode: '',
   });
-  // Personal information
-  const [personalInformation, setPersonalInformation] = useState<ApplicantData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    postalCode: '',
-    rcdUserId: 0,
-    id: 0,
-    dateOfBirth: '',
-    status: ApplicantStatus.Active,
-    gender: Gender.Other,
-    province: Province.On,
-  });
+
   // Physician assessment
-  const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessmentInformation>({
+  const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment>({
     disability: '',
-    affectsMobility: false,
-    mobilityAidRequired: false,
-    cannotWalk100m: false,
-    permitType: PermitType.Permanent,
+    patientCondition: 'AFFECTS_MOBILITY', //TODO: verify default
+    permitType: 'PERMANENT',
     physicianCertificationDate: new Date().toLocaleDateString('en-CA'),
   });
   // Doctor information
-  const [doctorInformation, setDoctorInformation] = useState<DoctorInformation>({
+  const [doctorInformation, setDoctorInformation] = useState<DoctorFormData>({
+    firstName: '',
+    lastName: '',
+    mspNumber: null,
     phone: '',
     addressLine1: '',
     addressLine2: '',
     city: '',
     postalCode: '',
-    name: '',
-    mspNumber: 0, //TODO: change default value to undefined
   });
   // Guardian/POA information
   const [guardianInformation, setGuardianInformation] = useState<GuardianInformation>({
     firstName: '',
     middleName: '',
     lastName: '',
-    guardianRelationship: '',
+    relationship: '',
     phone: '',
     addressLine1: '',
     addressLine2: '',
@@ -127,27 +100,32 @@ export default function CreateNew() {
     poaFormUrl: '',
   });
   // Additional questions
-  const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalQuestions>({
+  const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>({
     usesAccessibleConvertedVan: false,
+    accessibleConvertedVanLoadingMethod: null,
     requiresWiderParkingSpace: false,
+    requiresWiderParkingSpaceReason: null,
+    otherRequiresWiderParkingSpaceReason: null,
   });
   // Payment information
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
-    paymentMethod: PaymentType.Mastercard,
-    donationAmount: 0,
+  const [paymentDetails, setPaymentDetails] = useState<PaymentInformationFormData>({
+    paymentMethod: null,
+    donationAmount: '',
     shippingAddressSameAsHomeAddress: false,
     shippingFullName: '',
     shippingAddressLine1: '',
     shippingAddressLine2: '',
     shippingCity: '',
-    shippingProvince: Province.Bc,
+    shippingProvince: 'BC',
+    shippingCountry: '',
     shippingPostalCode: '',
     billingAddressSameAsHomeAddress: false,
     billingFullName: '',
     billingAddressLine1: '',
     billingAddressLine2: '',
     billingCity: '',
-    billingProvince: Province.Bc,
+    billingProvince: 'BC',
+    billingCountry: '',
     billingPostalCode: '',
   });
 
@@ -159,32 +137,18 @@ export default function CreateNew() {
     {
       fetchPolicy: 'network-only',
       onCompleted: data => {
-        // set personal information card
-        setPersonalInformation({
-          id: +data.applicant.id,
-          rcdUserId: data.applicant.rcdUserId || 0,
-          firstName: data.applicant.firstName,
-          lastName: data.applicant.lastName,
-          gender: data.applicant.gender,
-          dateOfBirth: data.applicant.dateOfBirth,
-          email: data.applicant.email,
-          phone: data.applicant.phone,
-          province: data.applicant.province,
-          city: data.applicant.city,
-          addressLine1: data.applicant.addressLine1,
-          addressLine2: data.applicant.addressLine2,
-          status: data.applicant.status,
-          postalCode: data.applicant.postalCode,
-        });
-
         // set permitHolderInformation
         setRcdUserId(data.applicant.rcdUserId || null);
         setPermitHolderId(+data.applicant.id);
         setPermitHolderInformation({
           firstName: data.applicant.firstName,
+          middleName: data.applicant.middleName,
           lastName: data.applicant.lastName,
+          dateOfBirth: data.applicant.dateOfBirth,
+          gender: data.applicant.gender,
           email: data.applicant.email,
           phone: data.applicant.phone,
+          receiveEmailUpdates: data.applicant.receiveEmailUpdates,
           addressLine1: data.applicant.addressLine1,
           addressLine2: data.applicant.addressLine2,
           city: data.applicant.city,
@@ -194,41 +158,14 @@ export default function CreateNew() {
         // set doctorInformation
         const physician = data.applicant.medicalInformation.physician;
         setDoctorInformation({
+          firstName: physician.firstName,
+          lastName: physician.lastName,
+          mspNumber: physician.mspNumber,
           phone: physician.phone,
           addressLine1: physician.addressLine1,
           addressLine2: physician.addressLine2,
           city: physician.city,
           postalCode: physician.postalCode,
-          name: physician.name,
-          mspNumber: physician.mspNumber,
-        });
-
-        // set additionalQuestions
-        if (data.applicant.mostRecentRenewal.renewal) {
-          setAdditionalQuestions({
-            usesAccessibleConvertedVan:
-              data.applicant.mostRecentRenewal.renewal.usesAccessibleConvertedVan,
-            requiresWiderParkingSpace:
-              data.applicant.mostRecentRenewal.renewal.requiresWiderParkingSpace,
-          });
-        } else {
-          setAdditionalQuestions({
-            usesAccessibleConvertedVan: false,
-            requiresWiderParkingSpace: false,
-          });
-        }
-
-        // set paymentDetails
-        const previousApplication = data.applicant.mostRecentRenewal;
-        setPaymentDetails({
-          ...paymentDetails,
-          shippingAddressSameAsHomeAddress: previousApplication.shippingAddressSameAsHomeAddress,
-          shippingFullName: previousApplication.shippingFullName,
-          shippingAddressLine1: previousApplication.shippingAddressLine1,
-          shippingAddressLine2: previousApplication.shippingAddressLine2,
-          shippingCity: previousApplication.shippingCity,
-          shippingProvince: previousApplication.shippingProvince,
-          shippingPostalCode: previousApplication.shippingPostalCode,
         });
 
         setLoading(false);
@@ -239,7 +176,8 @@ export default function CreateNew() {
   /**
    * Sets and fetches permit holder data when selected from typeahead
    */
-  const handleSelectPermitHolder = useCallback((permitHolder: PermitHolder | undefined) => {
+  const handleSelectPermitHolder = useCallback(permitHolder => {
+    //TODO: update this
     setRcdUserId(permitHolder?.rcdUserId || null);
     setPermitHolderId(permitHolder?.id || null);
     if (permitHolder) {
@@ -407,7 +345,7 @@ export default function CreateNew() {
                         </Text>
                       </VStack>
                     ) : (
-                      <SelectedPermitHolderCard applicant={personalInformation} />
+                      <SelectedPermitHolderCard applicantId={permitHolderId} />
                     ))}
                 </Box>
               </>
@@ -435,7 +373,7 @@ export default function CreateNew() {
         )}
 
         {/* Forms step */}
-        {step === RequestFlowPageState.SubmitingRequestPage && (
+        {step === RequestFlowPageState.SubmittingRequestPage && (
           // TODO: API hookup
           <form>
             <VStack spacing="32px">
@@ -452,6 +390,7 @@ export default function CreateNew() {
                   {`Permit Holder's Information`}
                 </Text>
                 <PermitHolderInformationForm
+                  type="NEW"
                   permitHolderInformation={permitHolderInformation}
                   onChange={setPermitHolderInformation}
                 />
@@ -469,7 +408,7 @@ export default function CreateNew() {
                   {`Physician's Assessment`}
                 </Text>
                 <PhysicianAssessmentForm
-                  physicianAssessmentInformation={physicianAssessment}
+                  physicianAssessment={physicianAssessment}
                   onChange={setPhysicianAssessment}
                 />
               </Box>
@@ -644,7 +583,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const session = await getSession(context);
 
   // Only secretaries and admins can access APP requests
-  if (authorize(session, [Role.Secretary])) {
+  if (authorize(session, ['SECRETARY'])) {
     return {
       props: {},
     };
