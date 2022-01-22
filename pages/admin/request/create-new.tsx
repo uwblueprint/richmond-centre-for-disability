@@ -37,6 +37,11 @@ import { PaymentInformationFormData } from '@tools/admin/requests/payment-inform
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
 import { Gender } from '@lib/graphql/types';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
+import {
+  GetApplicantNewRequestInfoRequest,
+  GetApplicantNewRequestInfoResponse,
+  GET_APPLICANT_NEW_REQUEST_INFO_QUERY,
+} from '@tools/admin/requests/create-new';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -46,8 +51,7 @@ export default function CreateNew() {
   const [loading, setLoading] = useState(false);
   const [permitHolderExists, setPermitHolderExists] = useState(true);
 
-  const [permitHolderId, setPermitHolderId] = useState<number | null>(null); // Permit holder ID in DB
-  const [rcdUserId, setRcdUserId] = useState<number | null>(null); // RCD user id
+  const [applicantId, setApplicantId] = useState<number | null>(null); // RCD user id
 
   // General information
   const [permitHolderInformation, setPermitHolderInformation] = useState<
@@ -101,7 +105,7 @@ export default function CreateNew() {
   });
   // Additional questions
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>({
-    usesAccessibleConvertedVan: false,
+    usesAccessibleConvertedVan: false, //TODO: set default to null??
     accessibleConvertedVanLoadingMethod: null,
     requiresWiderParkingSpace: false,
     requiresWiderParkingSpaceReason: null,
@@ -132,31 +136,48 @@ export default function CreateNew() {
   /**
    * Get information about applicant to pre-populate form
    */
-  const [getApplicant] = useLazyQuery<GetApplicantRenewalResponse, GetApplicantRenewalRequest>(
-    GET_APPLICANT_RENEWAL_QUERY,
-    {
-      fetchPolicy: 'network-only',
-      onCompleted: data => {
+  const [getApplicant] = useLazyQuery<
+    GetApplicantNewRequestInfoResponse,
+    GetApplicantNewRequestInfoRequest
+  >(GET_APPLICANT_NEW_REQUEST_INFO_QUERY, {
+    fetchPolicy: 'network-only',
+    onCompleted: data => {
+      if (data) {
+        const {
+          firstName,
+          middleName,
+          lastName,
+          dateOfBirth,
+          gender,
+          // otherGender,
+          phone,
+          email,
+          receiveEmailUpdates,
+          addressLine1,
+          addressLine2,
+          city,
+          postalCode,
+          medicalInformation: { physician },
+          guardian,
+        } = data.applicant;
+
         // set permitHolderInformation
-        setRcdUserId(data.applicant.rcdUserId || null);
-        setPermitHolderId(+data.applicant.id);
         setPermitHolderInformation({
-          firstName: data.applicant.firstName,
-          middleName: data.applicant.middleName,
-          lastName: data.applicant.lastName,
-          dateOfBirth: data.applicant.dateOfBirth,
-          gender: data.applicant.gender,
-          email: data.applicant.email,
-          phone: data.applicant.phone,
-          receiveEmailUpdates: data.applicant.receiveEmailUpdates,
-          addressLine1: data.applicant.addressLine1,
-          addressLine2: data.applicant.addressLine2,
-          city: data.applicant.city,
-          postalCode: data.applicant.postalCode,
+          firstName,
+          middleName,
+          lastName,
+          dateOfBirth,
+          gender,
+          email,
+          phone,
+          receiveEmailUpdates,
+          addressLine1,
+          addressLine2,
+          city,
+          postalCode,
         });
 
         // set doctorInformation
-        const physician = data.applicant.medicalInformation.physician;
         setDoctorInformation({
           firstName: physician.firstName,
           lastName: physician.lastName,
@@ -168,23 +189,36 @@ export default function CreateNew() {
           postalCode: physician.postalCode,
         });
 
-        setLoading(false);
-      },
-    }
-  );
+        // set guardianInformation
+        setGuardianInformation({
+          firstName: guardian.firstName,
+          middleName: guardian.middleName,
+          lastName: guardian.lastName,
+          phone: guardian.phone,
+          relationship: guardian.relationship,
+          addressLine1: guardian.addressLine1,
+          addressLine2: guardian.addressLine2,
+          city: guardian.city,
+          postalCode: guardian.postalCode,
+          poaFormUrl: '', //TODO
+        });
+      }
+
+      setLoading(false);
+    },
+  });
 
   /**
    * Sets and fetches permit holder data when selected from typeahead
    */
-  const handleSelectPermitHolder = useCallback(permitHolder => {
-    //TODO: update this
-    setRcdUserId(permitHolder?.rcdUserId || null);
-    setPermitHolderId(permitHolder?.id || null);
-    if (permitHolder) {
+  const handleSelectPermitHolder = useCallback(applicantId => {
+    //TODO: confirm when we should be fetching all of this data (have to proceed first??)
+    setApplicantId(applicantId || null);
+    if (applicantId) {
       setLoading(true);
       getApplicant({
         variables: {
-          id: permitHolder.id,
+          id: applicantId,
         },
       });
     }
@@ -255,12 +289,12 @@ export default function CreateNew() {
         <Flex mb="32px">
           <Text as="h1" textStyle="display-large">
             {'New APP Request'}
-            {rcdUserId && (
+            {applicantId && (
               <>
                 {` (User ID: `}
                 <Box as="span" color="primary">
-                  <Link href={`/admin/permit-holder/${rcdUserId}`}>
-                    <a>{rcdUserId}</a>
+                  <Link href={`/admin/permit-holder/${applicantId}`}>
+                    <a>{applicantId}</a>
                   </Link>
                 </Box>
                 {`)`}
@@ -293,8 +327,7 @@ export default function CreateNew() {
                 value={permitHolderExists ? 'search-existing' : 'create-new'}
                 onChange={value => {
                   setPermitHolderExists(value === 'search-existing');
-                  setPermitHolderId(null);
-                  setRcdUserId(null);
+                  setApplicantId(null);
                 }}
               >
                 <VStack alignItems="flex-start">
@@ -321,7 +354,7 @@ export default function CreateNew() {
                   <PermitHolderTypeahead onSelect={handleSelectPermitHolder} />
                 </Box>
                 <Box w="100%">
-                  {permitHolderId &&
+                  {applicantId &&
                     // TODO: Coordinate loading state display with other screens
                     (loading ? (
                       <VStack
@@ -345,7 +378,7 @@ export default function CreateNew() {
                         </Text>
                       </VStack>
                     ) : (
-                      <SelectedPermitHolderCard applicantId={permitHolderId} />
+                      <SelectedPermitHolderCard applicantId={applicantId} />
                     ))}
                 </Box>
               </>
@@ -407,6 +440,7 @@ export default function CreateNew() {
                 <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
                   {`Physician's Assessment`}
                 </Text>
+                {/* TODO: don't autofill any of this form */}
                 <PhysicianAssessmentForm
                   physicianAssessment={physicianAssessment}
                   onChange={setPhysicianAssessment}
@@ -525,8 +559,8 @@ export default function CreateNew() {
               h="48px"
               w="217px"
               bg="primary"
-              disabled={permitHolderExists && !permitHolderId}
-              onClick={() => setStep(RequestFlowPageState.SubmitingRequestPage)}
+              disabled={permitHolderExists && !applicantId}
+              onClick={() => setStep(RequestFlowPageState.SubmittingRequestPage)}
             >
               Proceed to request
             </Button>
@@ -542,8 +576,7 @@ export default function CreateNew() {
             >
               <BackToSearchModal
                 onGoBack={() => {
-                  setRcdUserId(null);
-                  setPermitHolderId(null);
+                  setApplicantId(null);
                   setStep(RequestFlowPageState.SelectingPermitHolderPage);
                 }}
               >
