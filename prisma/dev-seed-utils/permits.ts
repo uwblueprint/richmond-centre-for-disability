@@ -11,7 +11,7 @@ const permits: Array<UpsertPermit> = [
     applicantId: 2,
     applicationId: 2,
     type: PermitType.PERMANENT,
-    expiryDate: new Date(2018, 1, 1),
+    expiryDate: new Date('2018-01-01'),
     active: false,
   },
   {
@@ -19,7 +19,7 @@ const permits: Array<UpsertPermit> = [
     applicantId: 3,
     applicationId: 3,
     type: PermitType.PERMANENT,
-    expiryDate: new Date(2025, 1, 1),
+    expiryDate: new Date('2025-01-01'),
     active: true,
   },
 ];
