@@ -37,7 +37,7 @@ export type PermitHolderRow = Pick<
     city: string;
     postalCode: string;
   };
-  mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'> | null;
+  mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'>;
 };
 
 /**
