@@ -3,6 +3,7 @@
 import prisma from '../prisma/index'; // Prisma client
 import devApplicantUpsert from './dev-seed-utils/applicants'; // Dev applicants upsert
 import devApplicationUpsert from './dev-seed-utils/applications'; // Dev applications upsert
+import devPermitUpsert from './dev-seed-utils/permits'; // Dev employees upsert
 import devEmployeeUpsert from './dev-seed-utils/employees'; // Dev employees upsert
 import prodEmployeeUpsert from './prod-seed-utils/employees'; // Prod employees upsert
 
@@ -36,6 +37,9 @@ const devSeed = async () => {
 
   // Upsert applications
   await devApplicationUpsert();
+
+  // Upsert permits
+  await devPermitUpsert();
 };
 
 // Execute seeding

@@ -4,6 +4,7 @@ import {
   Guardian,
   MedicalInformation,
   NewApplication,
+  Permit,
   Physician,
   RenewalApplication,
   ReplacementApplication,
@@ -174,3 +175,9 @@ export type UpsertApplication = Pick<
         >;
       }
   );
+
+// Type of Permit to upsert in DB
+export type UpsertPermit = Pick<
+  Permit,
+  'rcdPermitId' | 'applicantId' | 'applicationId' | 'type' | 'expiryDate' | 'active'
+>;

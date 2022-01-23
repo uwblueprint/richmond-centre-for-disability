@@ -37,7 +37,7 @@ const COLUMNS: Column<AppHistoryRow>[] = [
     maxWidth: 195,
     Cell: ({ value }) => (
       <Box pr="10px">
-        <PermitStatusBadge variant={getPermitExpiryStatus(new Date(value))} />
+        <PermitStatusBadge variant={value} />
       </Box>
     ),
   },
