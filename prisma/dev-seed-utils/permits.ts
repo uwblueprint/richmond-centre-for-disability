@@ -5,13 +5,13 @@ import prisma from '../index'; // Prisma client
 import { UpsertPermit } from '../types'; // Seeding types
 
 // Seed data
-const permits = [
+const permits: Array<UpsertPermit> = [
   {
     rcdPermitId: 1,
     applicantId: 2,
     applicationId: 2,
     type: PermitType.PERMANENT,
-    expiryDate: new Date(2018, 1, 1).toISOString(),
+    expiryDate: new Date(2018, 1, 1),
     active: false,
   },
   {
@@ -19,7 +19,7 @@ const permits = [
     applicantId: 3,
     applicationId: 3,
     type: PermitType.PERMANENT,
-    expiryDate: new Date(2025, 1, 1).toISOString(),
+    expiryDate: new Date(2025, 1, 1),
     active: true,
   },
 ];
