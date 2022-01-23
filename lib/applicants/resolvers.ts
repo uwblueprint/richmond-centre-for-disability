@@ -24,6 +24,7 @@ import { SortOrder } from '@tools/types'; // Sorting Type
 
 /**
  * Query and filter RCD applicants from the internal facing app.
+ * Will only return applicants that have had at least one permit.
  * All fields are optional.
  *
  * Filters:
