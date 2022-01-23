@@ -398,6 +398,8 @@ export default gql`
     billingProvince: Province
     billingCountry: String
     billingPostalCode: String
+
+    applicantId: Int
   }
 
   type CreateNewApplicationResult {

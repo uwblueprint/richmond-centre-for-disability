@@ -264,43 +264,46 @@ export const completeApplication: Resolver<
           expiryDate,
           // Create a new applicant record
           applicant: {
-            create: {
-              firstName,
-              middleName,
-              lastName,
-              dateOfBirth,
-              gender,
-              otherGender,
-              phone,
-              email,
-              receiveEmailUpdates,
-              addressLine1,
-              addressLine2,
-              city,
-              province,
-              country,
-              postalCode,
-              // Connect application to newly created applicant
-              applications: {
-                connect: {
-                  id,
-                },
-              },
-              medicalInformation: {
-                create: {
-                  disability,
-                  disabilityCertificationDate,
-                  patientCondition,
-                  mobilityAids,
-                  otherPatientCondition,
-                  physician: {
-                    connect: { mspNumber: physicianMspNumber },
+            connectOrCreate: {
+              where: { id: applicantId || undefined },
+              create: {
+                firstName,
+                middleName,
+                lastName,
+                dateOfBirth,
+                gender,
+                otherGender,
+                phone,
+                email,
+                receiveEmailUpdates,
+                addressLine1,
+                addressLine2,
+                city,
+                province,
+                country,
+                postalCode,
+                // Connect application to newly created applicant
+                applications: {
+                  connect: {
+                    id,
                   },
                 },
+                medicalInformation: {
+                  create: {
+                    disability,
+                    disabilityCertificationDate,
+                    patientCondition,
+                    mobilityAids,
+                    otherPatientCondition,
+                    physician: {
+                      connect: { mspNumber: physicianMspNumber },
+                    },
+                  },
+                },
+                ...(guardian && {
+                  guardian: { create: guardian },
+                }),
               },
-              ...(guardian && {
-                guardian: { create: guardian },
-              }),
             },
           },
           // Connect permit to existing application
