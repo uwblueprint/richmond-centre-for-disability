@@ -224,16 +224,7 @@ const PermitHolders: NextPage = () => {
         disableSortBy: true,
         width: 140,
         maxWidth: 140,
-        Cell: ({ value }) => {
-          if (value === null) {
-            return (
-              <Text as="span" mr="9px">
-                N/A
-              </Text>
-            );
-          }
-
-          const { expiryDate, rcdPermitId } = value;
+        Cell: ({ value: { expiryDate, rcdPermitId } }) => {
           const permitStatus = getPermitExpiryStatus(new Date(expiryDate));
           return (
             <Flex>

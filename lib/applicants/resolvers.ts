@@ -62,12 +62,16 @@ export const applicants: Resolver<
   let where = {};
 
   if (filter) {
-    const { permitStatus = undefined, userStatus = undefined, search = undefined } = filter;
-    const expiryDateRangeFrom = (filter.expiryDateRangeFrom || undefined) as Date | undefined;
-    const expiryDateRangeTo = (filter.expiryDateRangeTo || undefined) as Date | undefined;
+    const {
+      permitStatus = undefined,
+      userStatus = undefined,
+      expiryDateRangeFrom = undefined,
+      expiryDateRangeTo = undefined,
+      search = undefined,
+    } = filter;
 
-    let expiryDateUpperBound: Date | undefined,
-      expiryDateLowerBound: Date | undefined,
+    let expiryDateUpperBound,
+      expiryDateLowerBound,
       rcdUserIDSearch,
       nameFilters,
       firstSearch,
@@ -79,7 +83,7 @@ export const applicants: Resolver<
       rcdUserIDSearch = parseInt(search);
     } else if (search) {
       // Split search to first, middle and last name elements
-      [firstSearch, middleSearch, lastSearch] = search.split(' ');
+      [firstSearch, middleSearch, lastSearch] = search?.split(' ');
 
       // If all search elements are present, search by each respectively
       // search by first AND middle AND last
@@ -132,35 +136,24 @@ export const applicants: Resolver<
 
     // Permit status and expiry date range filters both look at the permit expiryDate.
     // For this reason we need to filter on expiryDate twice to take both filters in account.
-    let permitFilter;
-    if (expiryDateLowerBound || expiryDateUpperBound || expiryDateRangeFrom || expiryDateRangeTo) {
-      const permitExpiryDateFilters = [];
-      // Expiry date bounds based on permit status
-      if (expiryDateLowerBound || expiryDateUpperBound) {
-        permitExpiryDateFilters.push({
-          expiryDate: {
-            gte: expiryDateLowerBound,
-            lte: expiryDateUpperBound,
+    const permitFilter = {
+      some: {
+        AND: [
+          {
+            expiryDate: {
+              gte: expiryDateLowerBound?.toISOString(),
+              lte: expiryDateUpperBound?.toISOString(),
+            },
           },
-        });
-      }
-      // Expiry date bounds based on query filter input
-      if (expiryDateRangeFrom || expiryDateRangeTo) {
-        permitExpiryDateFilters.push({
-          expiryDate: {
-            gte: expiryDateRangeFrom,
-            lte: expiryDateRangeTo,
+          {
+            expiryDate: {
+              gte: expiryDateRangeFrom?.toISOString(),
+              lte: expiryDateRangeTo?.toISOString(),
+            },
           },
-        });
-      }
-      permitFilter = {
-        some: {
-          AND: permitExpiryDateFilters,
-        },
-      };
-    } else {
-      permitFilter = undefined;
-    }
+        ],
+      },
+    };
 
     // Update default filter since there were filter arguments
     where = {
