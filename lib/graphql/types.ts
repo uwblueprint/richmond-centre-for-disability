@@ -442,6 +442,16 @@ export type Gender =
   | 'FEMALE'
   | 'OTHER';
 
+export type GenerateAccountantReportInput = {
+  startDate: Scalars['Date'];
+  endDate: Scalars['Date'];
+};
+
+export type GenerateAccountantReportResult = {
+  __typename?: 'GenerateAccountantReportResult';
+  ok: Scalars['Boolean'];
+};
+
 export type GenerateApplicationsReportInput = {
   startDate: Scalars['Date'];
   endDate: Scalars['Date'];
@@ -841,6 +851,7 @@ export type Query = {
   employee: Maybe<Employee>;
   generateApplicationsReport: Maybe<GenerateApplicationsReportResult>;
   generatePermitHoldersReport: Maybe<GeneratePermitHoldersReportResult>;
+  generateAccountantReport: Maybe<GenerateAccountantReportResult>;
 };
 
 
@@ -881,6 +892,11 @@ export type QueryGenerateApplicationsReportArgs = {
 
 export type QueryGeneratePermitHoldersReportArgs = {
   input: GeneratePermitHoldersReportInput;
+};
+
+
+export type QueryGenerateAccountantReportArgs = {
+  input: GenerateAccountantReportInput;
 };
 
 export type ReasonForReplacement =

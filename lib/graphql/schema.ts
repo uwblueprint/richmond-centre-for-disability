@@ -25,6 +25,7 @@ export default gql`
     generatePermitHoldersReport(
       input: GeneratePermitHoldersReportInput!
     ): GeneratePermitHoldersReportResult
+    generateAccountantReport(input: GenerateAccountantReportInput!): GenerateAccountantReportResult
   }
 
   type Mutation {

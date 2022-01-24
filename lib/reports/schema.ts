@@ -57,4 +57,15 @@ export default gql`
     RECENT_APP_TYPE
     USER_STATUS
   }
+
+  # Generate Accountant Report
+  input GenerateAccountantReportInput {
+    startDate: Date!
+    endDate: Date!
+  }
+
+  # TODO: Return link to AWS S3 file
+  type GenerateAccountantReportResult {
+    ok: Boolean!
+  }
 `;

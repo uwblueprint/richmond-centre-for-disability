@@ -1,4 +1,5 @@
 import { Province } from '@lib/graphql/types';
+import { PaymentType } from '@prisma/client';
 
 /**
  * Format North American phone number by removing all non-numeric characters.
@@ -104,4 +105,25 @@ ${province ? `${city} ${province}` : city}
 ${country || ''}
 ${postalCode}
   `;
+};
+
+export const formatPaymentType = (paymentMethod: string) => {
+  let ending = '';
+  switch (paymentMethod) {
+    case PaymentType.MASTERCARD:
+    case PaymentType.VISA: {
+      paymentMethod = paymentMethod[0] + paymentMethod.substring(1).toLowerCase();
+      ending = ' (Office)';
+      break;
+    }
+    case PaymentType.ETRANSFER: {
+      paymentMethod = 'E-Transfer';
+      break;
+    }
+    default: {
+      paymentMethod = paymentMethod[0] + paymentMethod.substring(1).toLowerCase();
+      break;
+    }
+  }
+  return paymentMethod + ending;
 };

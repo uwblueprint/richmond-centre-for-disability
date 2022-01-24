@@ -5,9 +5,11 @@ import {
   GeneratePermitHoldersReportResult,
   QueryGenerateApplicationsReportArgs,
   GenerateApplicationsReportResult,
+  QueryGenerateAccountantReportArgs,
+  GenerateAccountantReportResult,
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
-import { formatAddress, formatDate, formatFullName } from '@lib/utils/format'; // Formatting utils
+import { formatAddress, formatDate, formatFullName, formatPaymentType } from '@lib/utils/format'; // Formatting utils
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
 
 /**
@@ -239,6 +241,83 @@ export const generateApplicationsReport: Resolver<
   });
 
   await csvWriter.writeRecords(csvApplications);
+
+  return {
+    ok: true,
+  };
+};
+
+/**
+ * Generates csv with accountants' info, given a start date and end date
+ * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
+ */
+export const generateAccountantReport: Resolver<
+  QueryGenerateAccountantReportArgs,
+  GenerateAccountantReportResult
+> = async (_, args, { prisma }) => {
+  const {
+    input: { startDate, endDate },
+  } = args;
+
+  const paymentMethodGroups = await prisma.application.groupBy({
+    by: ['paymentMethod'],
+    where: {
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
+    },
+    _sum: {
+      processingFee: true,
+      donationAmount: true,
+    },
+    _count: {
+      paymentMethod: true,
+    },
+  });
+
+  const totalAggregate = await prisma.application.aggregate({
+    _sum: {
+      processingFee: true,
+      donationAmount: true,
+    },
+    _count: {
+      paymentMethod: true,
+    },
+  });
+
+  const csvAccountantReportRows = [];
+  for (const key in paymentMethodGroups) {
+    const paymentMethodGroup = paymentMethodGroups[key];
+    csvAccountantReportRows.push({
+      rowName: formatPaymentType(paymentMethodGroup.paymentMethod),
+      countIssued: paymentMethodGroup._count.paymentMethod,
+      processingFee: paymentMethodGroup._sum.processingFee,
+      donationAmount: paymentMethodGroup._sum.donationAmount,
+      totalAmount: paymentMethodGroup._sum.donationAmount?.add(
+        paymentMethodGroup._sum.processingFee || 0
+      ),
+    });
+  }
+  csvAccountantReportRows.push({
+    rowName: 'Total',
+    countIssued: totalAggregate._count.paymentMethod,
+    processingFee: totalAggregate._sum.processingFee,
+    donationAmount: totalAggregate._sum.donationAmount,
+    totalAmount: totalAggregate._sum.donationAmount?.add(totalAggregate._sum.processingFee || 0),
+  });
+
+  const csvHeaders = [];
+  csvHeaders.push({ id: 'rowName', title: '' });
+  csvHeaders.push({ id: 'countIssued', title: 'Issued #' });
+  csvHeaders.push({ id: 'processingFee', title: 'Fees' });
+  csvHeaders.push({ id: 'donationAmount', title: 'Donation' });
+  csvHeaders.push({ id: 'totalAmount', title: 'Total' });
+  const csvWriter = createObjectCsvWriter({
+    path: 'temp/file.csv',
+    header: csvHeaders,
+  });
+  await csvWriter.writeRecords(csvAccountantReportRows);
 
   return {
     ok: true,
