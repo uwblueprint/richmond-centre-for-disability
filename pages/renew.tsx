@@ -89,7 +89,7 @@ export default function Renew() {
       !doctorPostalCode ||
       !doctorPhoneNumber);
 
-  const shopifyCheckout = async () => {
+  const shopifyCheckout = async (applicationId: number) => {
     /* Setup Shopify Checkout on success. */
     const client = Client.buildClient({
       domain: process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN as string,
@@ -109,7 +109,13 @@ export default function Renew() {
     const [product, cart] = await Promise.all([productPromise, cartPromise]);
 
     // Add product to cart.
-    const lineItemsToAdd = [{ variantId: product.variants[0].id, quantity: 1 }];
+    const lineItemsToAdd = [
+      {
+        variantId: product.variants[0].id,
+        quantity: 1,
+        customAttributes: [{ key: 'applicationId', value: applicationId.toString() }],
+      },
+    ];
     await client.checkout.addLineItems(cart.id, lineItemsToAdd);
 
     // Open checkout window.
@@ -122,13 +128,13 @@ export default function Renew() {
     CreateExternalRenewalApplicationRequest
   >(CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION, {
     onCompleted: data => {
-      if (data?.createRenewalApplication.ok) {
+      if (data?.createExternalRenewalApplication.ok) {
         toast({
           status: 'success',
           description: 'Redirecting to payment page...',
           isClosable: true,
         });
-        shopifyCheckout();
+        shopifyCheckout(data?.createExternalRenewalApplication.applicationId);
       }
     },
     onError: error => {

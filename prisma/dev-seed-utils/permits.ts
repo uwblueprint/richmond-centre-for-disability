@@ -11,8 +11,8 @@ const permits: Array<UpsertPermit> = [
     applicantId: 2,
     applicationId: 2,
     type: PermitType.PERMANENT,
-    expiryDate: new Date('2018-01-01'),
-    active: false,
+    expiryDate: new Date('2022-02-01'),
+    active: true,
   },
   {
     rcdPermitId: 2,
