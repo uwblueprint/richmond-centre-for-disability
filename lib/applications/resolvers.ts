@@ -242,6 +242,7 @@ export const createNewApplication: Resolver<
     requiresWiderParkingSpaceReason,
     otherRequiresWiderParkingSpaceReason,
     donationAmount,
+    applicantId,
     ...data
   } = input;
 
@@ -256,6 +257,12 @@ export const createNewApplication: Resolver<
         type: 'NEW',
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
+        // Connect to applicant if applicant exists in DB
+        ...(applicantId && {
+          applicant: {
+            connect: { id: applicantId },
+          },
+        }),
         ...data,
         newApplication: {
           create: {

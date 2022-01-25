@@ -300,6 +300,7 @@ export type CreateNewApplicationInput = {
   billingProvince: Maybe<Province>;
   billingCountry: Maybe<Scalars['String']>;
   billingPostalCode: Maybe<Scalars['String']>;
+  applicantId: Maybe<Scalars['Int']>;
 };
 
 export type CreateNewApplicationResult = {

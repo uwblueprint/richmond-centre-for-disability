@@ -194,7 +194,7 @@ CREATE TABLE applicants (
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  FOREIGN KEY(guardian_id) REFERENCES guardians(id),
+  FOREIGN KEY(guardian_id) REFERENCES guardians(id) ON DELETE SET NULL,
   FOREIGN KEY(medical_information_id) REFERENCES medical_information(id)
 );
 
