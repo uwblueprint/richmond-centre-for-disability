@@ -94,6 +94,7 @@ export const rejectApplication: Resolver<MutationRejectApplicationArgs, RejectAp
 /**
  * Completes an application by setting the ApplicationStatus to COMPLETED, querying the application data,
  * and calling updateApplicant, updateGuardian, updateMedicalInformation, and upsertPhysician with the queried data.
+ * TODO: Separate cases into utility functions and move to separate file
  * @param {ID!} args.applicationId - The id of the Application to complete
  * @returns Status of operation (ok, error)
  */
@@ -257,15 +258,96 @@ export const completeApplication: Resolver<
         },
       });
 
-      const createPermitOperation = prisma.permit.create({
-        data: {
-          rcdPermitId: appNumber,
-          type: permitType,
-          expiryDate,
-          // Create a new applicant record
-          applicant: {
-            connectOrCreate: {
-              where: { id: applicantId || undefined },
+      if (applicantId) {
+        // Applicant exists - update applicant, then create permit
+
+        // Update applicant
+        const updateApplicantOperation = prisma.applicant.update({
+          where: { id: applicantId },
+          data: {
+            firstName,
+            middleName,
+            lastName,
+            dateOfBirth,
+            gender,
+            otherGender,
+            phone,
+            email,
+            receiveEmailUpdates,
+            addressLine1,
+            addressLine2,
+            city,
+            province,
+            country,
+            postalCode,
+            medicalInformation: {
+              update: {
+                disability,
+                disabilityCertificationDate,
+                patientCondition,
+                mobilityAids,
+                otherPatientCondition,
+                physician: {
+                  connect: { mspNumber: physicianMspNumber },
+                },
+              },
+            },
+            // If guardian information given, upsert. Otherwise, delete (SET NULL)
+            ...(guardian
+              ? {
+                  guardian: {
+                    upsert: {
+                      create: guardian,
+                      update: guardian,
+                    },
+                  },
+                }
+              : { guardian: { delete: true } }),
+          },
+        });
+
+        // Create permit
+        const createPermitOperation = prisma.permit.create({
+          data: {
+            rcdPermitId: appNumber,
+            type: permitType,
+            expiryDate,
+            // Connect to existing applicant
+            applicant: {
+              connect: { id: applicantId },
+            },
+            // Connect permit to existing application
+            application: { connect: { id } },
+          },
+        });
+
+        const [upsertedPhysician, updatedApplicant, createdPermit, completedApplicationProcessing] =
+          await prisma.$transaction([
+            upsertPhysicianOperation,
+            updateApplicantOperation,
+            createPermitOperation,
+            completeApplicationOperation,
+          ]);
+
+        if (
+          !upsertedPhysician ||
+          !updatedApplicant ||
+          !createdPermit ||
+          !completedApplicationProcessing
+        ) {
+          throw new ApolloError('Error completing application');
+        }
+      } else {
+        // Applicant does not exist (first-time applicant)
+
+        // Create permit
+        const createPermitOperation = prisma.permit.create({
+          data: {
+            rcdPermitId: appNumber,
+            type: permitType,
+            expiryDate,
+            // Create new applicant
+            applicant: {
               create: {
                 firstName,
                 middleName,
@@ -300,26 +382,27 @@ export const completeApplication: Resolver<
                     },
                   },
                 },
+                // Create guardian if guardian info given
                 ...(guardian && {
                   guardian: { create: guardian },
                 }),
               },
             },
+            // Connect permit to existing application
+            application: { connect: { id } },
           },
-          // Connect permit to existing application
-          application: { connect: { id } },
-        },
-      });
+        });
 
-      const [upsertedPhysician, createdPermit, completedApplicationProcessing] =
-        await prisma.$transaction([
-          completeApplicationOperation,
-          upsertPhysicianOperation,
-          createPermitOperation,
-        ]);
+        const [upsertedPhysician, createdPermit, completedApplicationProcessing] =
+          await prisma.$transaction([
+            upsertPhysicianOperation,
+            createPermitOperation,
+            completeApplicationOperation,
+          ]);
 
-      if (!upsertedPhysician || !createdPermit || !completedApplicationProcessing) {
-        throw new ApolloError('Error completing application');
+        if (!upsertedPhysician || !createdPermit || !completedApplicationProcessing) {
+          throw new ApolloError('Error completing application');
+        }
       }
     } else if (type === 'RENEWAL') {
       // Retrieve renewal record
@@ -329,7 +412,7 @@ export const completeApplication: Resolver<
 
       if (!applicantId || !renewalApplication) {
         // TODO: Improve validation
-        throw new ApolloError('New application not found');
+        throw new ApolloError('Renewal application not found');
       }
 
       const {
