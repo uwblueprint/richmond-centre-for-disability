@@ -23,6 +23,32 @@ export type PermitHolderFormData = Pick<
   | 'addressLine2'
   | 'city'
   | 'postalCode'
+> &
+  (
+    | // New application
+    ({ type: 'NEW' } & Pick<NewApplication, 'dateOfBirth' | 'gender' | 'otherGender'>)
+
+    // Renewal/replacement application
+    | {
+        type: 'RENEWAL' | 'REPLACEMENT';
+      }
+  );
+
+export type NewApplicationPermitHolderFormData = Pick<
+  NewApplication,
+  | 'firstName'
+  | 'middleName'
+  | 'lastName'
+  | 'email'
+  | 'phone'
+  | 'receiveEmailUpdates'
+  | 'addressLine1'
+  | 'addressLine2'
+  | 'city'
+  | 'postalCode'
+  | 'dateOfBirth'
+  | 'gender'
+  | 'otherGender'
 >;
 
 /** Permit holder information for cards */

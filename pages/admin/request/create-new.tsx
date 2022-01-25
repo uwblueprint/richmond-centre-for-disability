@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, SyntheticEvent } from 'react';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import {
@@ -10,11 +10,12 @@ import {
   Radio,
   RadioGroup,
   Button,
-  HStack,
   Spinner,
+  useToast,
+  Stack,
 } from '@chakra-ui/react';
 import { getSession } from 'next-auth/client';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 
 import Layout from '@components/admin/Layout';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
@@ -35,33 +36,37 @@ import { GuardianInformation } from '@tools/admin/requests/guardian-information'
 import { RequestFlowPageState } from '@tools/admin/requests/types';
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
-import { Gender } from '@lib/graphql/types';
+// import { Gender } from '@lib/graphql/types';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import {
+  CreateNewApplicationRequest,
+  CreateNewApplicationResponse,
+  CREATE_NEW_APPLICATION_MUTATION,
   GetApplicantNewRequestInfoRequest,
   GetApplicantNewRequestInfoResponse,
   GET_APPLICANT_NEW_REQUEST_INFO_QUERY,
 } from '@tools/admin/requests/create-new';
+import { useRouter } from 'next/router';
 
 /** Create New APP page */
 export default function CreateNew() {
   const [step, setStep] = useState<RequestFlowPageState>(
     RequestFlowPageState.SelectingPermitHolderPage
   );
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); //TODO: verify if this is needed
   const [permitHolderExists, setPermitHolderExists] = useState(true);
 
   const [applicantId, setApplicantId] = useState<number | null>(null); // RCD user id
 
   // General information
-  const [permitHolderInformation, setPermitHolderInformation] = useState<
-    PermitHolderFormData & { dateOfBirth: Date; gender: Gender }
-  >({
+  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderFormData>({
+    type: 'NEW',
     firstName: '',
     middleName: '',
     lastName: '',
     dateOfBirth: new Date(),
     gender: 'MALE', //TODO: handle default
+    otherGender: '',
     email: '',
     phone: '',
     receiveEmailUpdates: false, //TODO: verify default
@@ -91,6 +96,7 @@ export default function CreateNew() {
   });
   // Guardian/POA information
   const [guardianInformation, setGuardianInformation] = useState<GuardianInformation>({
+    omitGuardianPoa: false,
     firstName: '',
     middleName: '',
     lastName: '',
@@ -133,6 +139,12 @@ export default function CreateNew() {
     billingPostalCode: '',
   });
 
+  // Toast message
+  const toast = useToast();
+
+  // Router
+  const router = useRouter();
+
   /**
    * Get information about applicant to pre-populate form
    */
@@ -163,11 +175,13 @@ export default function CreateNew() {
 
         // set permitHolderInformation
         setPermitHolderInformation({
+          type: 'NEW',
           firstName,
           middleName,
           lastName,
           dateOfBirth,
           gender,
+          otherGender: '', //TODO
           email,
           phone,
           receiveEmailUpdates,
@@ -191,6 +205,7 @@ export default function CreateNew() {
 
         // set guardianInformation
         setGuardianInformation({
+          omitGuardianPoa: false, //TODO
           firstName: guardian.firstName,
           middleName: guardian.middleName,
           lastName: guardian.lastName,
@@ -225,62 +240,183 @@ export default function CreateNew() {
   }, []);
 
   /**
+   * Submit application mutation
+   */
+  const [submitNewApplication, { loading: submitRequestLoading }] = useMutation<
+    CreateNewApplicationResponse,
+    CreateNewApplicationRequest
+  >(CREATE_NEW_APPLICATION_MUTATION, {
+    onCompleted: data => {
+      if (data) {
+        const { ok, applicationId } = data.createNewApplication;
+        if (ok) {
+          toast({
+            status: 'success',
+            description: 'New application has been submitted!',
+            isClosable: true,
+          });
+
+          if (applicationId) {
+            router.push(`/admin/request/${applicationId}`);
+          }
+        }
+      }
+    },
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+        isClosable: true,
+      });
+    },
+  });
+
+  /**
+   * Handle new request submission
+   */
+  const handleSubmit = async (event: SyntheticEvent) => {
+    event.preventDefault();
+    // if (applicantId === null) {
+    //   toast({
+    //     status: 'error',
+    //     description: 'You must select a permit holder for a Renewal Request.',
+    //     isClosable: true,
+    //   });
+    //   return;
+    // }
+
+    //TODO: figure out what checks we need here
+    if (doctorInformation.mspNumber === null) {
+      toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
+      return;
+    }
+
+    if (paymentDetails.paymentMethod === null) {
+      toast({ status: 'error', description: 'Missing payment method', isClosable: true });
+      return;
+    }
+
+    await submitNewApplication({
+      variables: {
+        input: {
+          firstName: permitHolderInformation.firstName,
+          middleName: permitHolderInformation.middleName,
+          lastName: permitHolderInformation.lastName,
+          email: permitHolderInformation.email,
+          phone: permitHolderInformation.phone,
+          receiveEmailUpdates: permitHolderInformation.receiveEmailUpdates,
+          addressLine1: permitHolderInformation.addressLine1,
+          addressLine2: permitHolderInformation.addressLine2,
+          city: permitHolderInformation.city,
+          postalCode: permitHolderInformation.postalCode,
+          ...(permitHolderInformation.type === 'NEW' && {
+            dateOfBirth: permitHolderInformation.dateOfBirth,
+            gender: permitHolderInformation.gender,
+            otherGender: permitHolderInformation.otherGender,
+          }),
+
+          disability: physicianAssessment.disability,
+          disabilityCertificationDate: physicianAssessment.physicianCertificationDate,
+          patientCondition: physicianAssessment.patientCondition,
+          mobilityAids: null, //TODO
+          otherPatientCondition: physicianAssessment.patientEligibilityDescription || null,
+          // TODO: add to CreateNewApplicationInput
+          // permitType: physicianAssessment.permitType,
+          temporaryPermitExpiry: physicianAssessment.temporaryPermitExpiryDate,
+
+          physicianFirstName: doctorInformation.firstName,
+          physicianLastName: doctorInformation.lastName,
+          physicianMspNumber: doctorInformation.mspNumber,
+          physicianPhone: doctorInformation.phone,
+          physicianAddressLine1: doctorInformation.addressLine1,
+          physicianAddressLine2: doctorInformation.addressLine2,
+          physicianCity: doctorInformation.city,
+          physicianPostalCode: doctorInformation.postalCode,
+
+          omitGuardianPoa: guardianInformation.omitGuardianPoa,
+          guardianFirstName: guardianInformation.firstName,
+          guardianMiddleName: guardianInformation.middleName,
+          guardianLastName: guardianInformation.lastName,
+          guardianPhone: guardianInformation.phone,
+          guardianRelationship: guardianInformation.relationship,
+          guardianAddressLine1: guardianInformation.addressLine1,
+          guardianAddressLine2: guardianInformation.addressLine2,
+          guardianCity: guardianInformation.city,
+          guardianPostalCode: guardianInformation.postalCode,
+          poaFormUrl: guardianInformation.poaFormUrl,
+
+          ...additionalQuestions,
+          ...paymentDetails,
+
+          // TODO: Replace with dynamic values
+          //TODO: add to new application input type
+          // paidThroughShopify: false,
+          // shopifyPaymentStatus: null,
+          // shopifyConfirmationNumber: null,
+        },
+      },
+    });
+  };
+
+  /**
    * Handle new APP request submission
    */
   //   TODO: Implement once create new APP API is complete
-  //   const handleSubmit = useCallback(async (event: SyntheticEvent) => {
-  //     event.preventDefault();
-  //     if (permitHolderId) {
-  //       await submitRenewalApplication({
-  //         variables: {
-  //           input: {
-  //             applicantId: permitHolderId,
-  //             updatedAddress,
-  //             firstName: permitHolderInformation.firstName,
-  //             lastName: permitHolderInformation.lastName,
-  //             addressLine1: permitHolderInformation.addressLine1,
-  //             addressLine2: permitHolderInformation.addressLine2,
-  //             city: permitHolderInformation.city,
-  //             postalCode: permitHolderInformation.postalCode,
-  //             updatedContactInfo,
-  //             phone: permitHolderInformation.phone,
-  //             email: permitHolderInformation.email,
-  //             rcdUserId: permitHolderRcdUserID,
-  //             updatedPhysician,
-  //             physicianName: doctorInformation.name,
-  //             physicianMspNumber: doctorInformation.mspNumber,
-  //             physicianAddressLine1: doctorInformation.addressLine1,
-  //             physicianAddressLine2: doctorInformation.addressLine2,
-  //             physicianCity: doctorInformation.city,
-  //             physicianPostalCode: doctorInformation.postalCode,
-  //             physicianPhone: doctorInformation.phone,
-  //             usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
-  //             requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
-  //             shippingAddressSameAsHomeAddress: paymentDetails.shippingAddressSameAsHomeAddress,
-  //             billingAddressSameAsHomeAddress: paymentDetails.billingAddressSameAsHomeAddress,
-  //             ...(paymentDetails.shippingAddressSameAsHomeAddress === false && {
-  //               shippingFullName: paymentDetails.shippingFullName,
-  //               shippingAddressLine1: paymentDetails.shippingAddressLine1,
-  //               shippingAddressLine2: paymentDetails.shippingAddressLine2,
-  //               shippingCity: paymentDetails.shippingCity,
-  //               shippingProvince: paymentDetails.shippingProvince,
-  //               shippingPostalCode: paymentDetails.shippingPostalCode,
-  //             }),
-  //             ...(paymentDetails.billingAddressSameAsHomeAddress === false && {
-  //               billingFullName: paymentDetails.billingFullName,
-  //               billingAddressLine1: paymentDetails.billingAddressLine1,
-  //               billingAddressLine2: paymentDetails.billingAddressLine2,
-  //               billingCity: paymentDetails.billingCity,
-  //               billingProvince: paymentDetails.billingProvince,
-  //               billingPostalCode: paymentDetails.billingPostalCode,
-  //             }),
-  //             donationAmount: paymentDetails.donationAmount,
-  //             paymentMethod: paymentDetails.paymentMethod,
-  //           },
+  // const handleSubmit = useCallback(async (event: SyntheticEvent) => {
+  //   event.preventDefault();
+  //   if (permitHolderId) {
+  //     await submitRenewalApplication({
+  //       variables: {
+  //         input: {
+  //           applicantId: permitHolderId,
+  //           updatedAddress,
+  //           firstName: permitHolderInformation.firstName,
+  //           lastName: permitHolderInformation.lastName,
+  //           addressLine1: permitHolderInformation.addressLine1,
+  //           addressLine2: permitHolderInformation.addressLine2,
+  //           city: permitHolderInformation.city,addressLine2: permitHolderInformation.addressLine2,
+  // addressLine2: permitHolderInformation.addressLine2,
+  // addressLine2: permitHolderInformation.addressLine2,
+  //           postalCode: permitHolderInformation.postalCode,
+  //           updatedContactInfo,
+  //           phone: permitHolderInformation.phone,
+  //           email: permitHolderInformation.email,
+  //           rcdUserId: permitHolderRcdUserID,
+  //           updatedPhysician,
+  //           physicianName: doctorInformation.name,
+  //           physicianMspNumber: doctorInformation.mspNumber,
+  //           physicianAddressLine1: doctorInformation.addressLine1,
+  //           physicianAddressLine2: doctorInformation.addressLine2,
+  //           physicianCity: doctorInformation.city,
+  //           physicianPostalCode: doctorInformation.postalCode,
+  //           physicianPhone: doctorInformation.phone,
+  //           usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
+  //           requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
+  //           shippingAddressSameAsHomeAddress: paymentDetails.shippingAddressSameAsHomeAddress,
+  //           billingAddressSameAsHomeAddress: paymentDetails.billingAddressSameAsHomeAddress,
+  //           ...(paymentDetails.shippingAddressSameAsHomeAddress === false && {
+  //             shippingFullName: paymentDetails.shippingFullName,
+  //             shippingAddressLine1: paymentDetails.shippingAddressLine1,
+  //             shippingAddressLine2: paymentDetails.shippingAddressLine2,
+  //             shippingCity: paymentDetails.shippingCity,
+  //             shippingProvince: paymentDetails.shippingProvince,
+  //             shippingPostalCode: paymentDetails.shippingPostalCode,
+  //           }),
+  //           ...(paymentDetails.billingAddressSameAsHomeAddress === false && {
+  //             billingFullName: paymentDetails.billingFullName,
+  //             billingAddressLine1: paymentDetails.billingAddressLine1,
+  //             billingAddressLine2: paymentDetails.billingAddressLine2,
+  //             billingCity: paymentDetails.billingCity,
+  //             billingProvince: paymentDetails.billingProvince,
+  //             billingPostalCode: paymentDetails.billingPostalCode,
+  //           }),
+  //           donationAmount: paymentDetails.donationAmount,
+  //           paymentMethod: paymentDetails.paymentMethod,
   //         },
-  //       });
-  //     }
-  //   }, []);
+  //       },
+  //     });
+  //   }
+  // }, []);
 
   return (
     <Layout>
@@ -408,7 +544,7 @@ export default function CreateNew() {
         {/* Forms step */}
         {step === RequestFlowPageState.SubmittingRequestPage && (
           // TODO: API hookup
-          <form>
+          <form onSubmit={handleSubmit}>
             <VStack spacing="32px">
               <Box
                 w="100%"
@@ -517,97 +653,118 @@ export default function CreateNew() {
                 />
               </Box>
             </VStack>
+            <Box
+              position="fixed"
+              left="0"
+              bottom="0"
+              right="0"
+              paddingY="20px"
+              paddingX="188px"
+              bgColor="white"
+              boxShadow="dark-lg"
+            >
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Button
+                    bg="background.gray"
+                    _hover={{ bg: 'background.grayHover' }}
+                    marginRight="20px"
+                    height="48px"
+                    width="180px"
+                    isDisabled={submitRequestLoading}
+                  >
+                    <BackToSearchModal
+                      onGoBack={() => {
+                        setApplicantId(null);
+                        setStep(RequestFlowPageState.SelectingPermitHolderPage);
+                      }}
+                    >
+                      <Text textStyle="button-semibold" color="text.default">
+                        Back to search
+                      </Text>
+                    </BackToSearchModal>
+                  </Button>
+                </Box>
+                <Box>
+                  <Stack direction="row" justifyContent="space-between">
+                    <CancelCreateRequestModal type="renewal">
+                      <Button
+                        bg="secondary.critical"
+                        _hover={{ bg: 'secondary.criticalHover' }}
+                        marginRight="20px"
+                        height="48px"
+                        width="188px"
+                        isDisabled={submitRequestLoading}
+                      >
+                        <Text textStyle="button-semibold">Discard request</Text>
+                      </Button>
+                    </CancelCreateRequestModal>
+                    <Button
+                      bg="primary"
+                      height="48px"
+                      width="180px"
+                      type="submit"
+                      isLoading={submitRequestLoading}
+                    >
+                      <Text textStyle="button-semibold">Create request</Text>
+                    </Button>
+                  </Stack>
+                </Box>
+              </Stack>
+            </Box>
           </form>
         )}
-      </GridItem>
-
-      {/* Footer */}
-      <HStack
-        h="88px"
-        position="fixed"
-        left="0"
-        right="0"
-        bottom="0"
-        justifyContent={
-          step === RequestFlowPageState.SelectingPermitHolderPage ? 'flex-end' : 'space-between'
-        }
-        alignItems="center"
-        spacing="20px"
-        px="188px"
-        bg="white"
-        boxShadow="dark-md"
-      >
-        {/* TODO: Fix button heights */}
-        {step === RequestFlowPageState.SelectingPermitHolderPage ? (
-          <>
-            <Link href="/admin">
-              <a>
-                <Button
-                  size="lg"
-                  h="48px"
-                  w="149px"
-                  bg="secondary.gray"
-                  _hover={{ bg: 'background.grayHover' }}
-                  textColor="text.default"
-                >
-                  Cancel
-                </Button>
-              </a>
-            </Link>
-            <Button
-              size="lg"
-              h="48px"
-              w="217px"
-              bg="primary"
-              disabled={permitHolderExists && !applicantId}
-              onClick={() => setStep(RequestFlowPageState.SubmittingRequestPage)}
-            >
-              Proceed to request
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              height="48px"
-              width="180px"
-              bg="background.gray"
-              _hover={{ bg: 'background.grayHover' }}
-              marginRight="20px"
-            >
-              <BackToSearchModal
-                onGoBack={() => {
-                  setApplicantId(null);
-                  setStep(RequestFlowPageState.SelectingPermitHolderPage);
-                }}
-              >
-                <Text textStyle="button-semibold" color="text.default">
-                  Back to search
-                </Text>
-              </BackToSearchModal>
-            </Button>
-            <HStack spacing="20px">
-              <CancelCreateRequestModal type="renewal">
-                <Button
-                  size="lg"
-                  height="48px"
-                  width="188px"
-                  bg="secondary.critical"
-                  _hover={{ bg: 'secondary.criticalHover' }}
-                  marginRight="20px"
-                  loading={loading}
-                >
-                  <Text textStyle="button-semibold" color="white">
-                    Discard request
-                  </Text>
-                </Button>
-              </CancelCreateRequestModal>
-              <Button bg="primary" height="48px" width="180px" type="submit" loading={loading}>
-                <Text textStyle="button-semibold">Create request</Text>
-              </Button>
-            </HStack>
-          </>
+        {/* Footer on Permit Searcher Page*/}
+        {step == RequestFlowPageState.SelectingPermitHolderPage && (
+          <Box
+            position="fixed"
+            left="0"
+            bottom="0"
+            right="0"
+            paddingY="20px"
+            paddingX="188px"
+            bgColor="white"
+            boxShadow="dark-lg"
+          >
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Box />
+              <Box>
+                <Stack direction="row" justifyContent="space-between">
+                  <Link href={`/admin`}>
+                    <a>
+                      <Button
+                        bg="background.gray"
+                        _hover={{ bg: 'background.grayHover' }}
+                        marginRight="20px"
+                        height="48px"
+                        width="149px"
+                      >
+                        <Text textStyle="button-semibold" color="text.default">
+                          Cancel
+                        </Text>
+                      </Button>
+                    </a>
+                  </Link>
+                  <Link href="#">
+                    <a>
+                      <Button
+                        bg="primary"
+                        height="48px"
+                        width="217px"
+                        type="submit"
+                        isDisabled={permitHolderExists && !applicantId}
+                        onClick={() => setStep(RequestFlowPageState.SubmittingRequestPage)}
+                      >
+                        <Text textStyle="button-semibold">Proceed to request</Text>
+                      </Button>
+                    </a>
+                  </Link>
+                </Stack>
+              </Box>
+            </Stack>
+          </Box>
         )}
-      </HStack>
+      </GridItem>
     </Layout>
   );
 }

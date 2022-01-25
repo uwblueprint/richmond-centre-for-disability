@@ -325,6 +325,7 @@ export const createNewApplication: Resolver<
 
   return {
     ok: true,
+    applicationId: application.id,
   };
 };
 

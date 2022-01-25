@@ -1,5 +1,12 @@
 import { gql } from '@apollo/client';
-import { Applicant, Guardian, Physician, QueryApplicantArgs } from '@lib/graphql/types';
+import {
+  Applicant,
+  CreateNewApplicationResult,
+  Guardian,
+  MutationCreateNewApplicationArgs,
+  Physician,
+  QueryApplicantArgs,
+} from '@lib/graphql/types';
 
 export const GET_APPLICANT_NEW_REQUEST_INFO_QUERY = gql`
   query GetApplicantNewRequestInfo($id: Int!) {
@@ -90,4 +97,21 @@ export type GetApplicantNewRequestInfoResponse = {
       | 'postalCode'
     >;
   };
+};
+
+export const CREATE_NEW_APPLICATION_MUTATION = gql`
+  mutation CreateNewApplicationMutation($input: CreateNewApplicationInput!) {
+    createNewApplication(input: $input) {
+      ok
+      applicationId
+    }
+  }
+`;
+
+// Create new application mutation arguments
+export type CreateNewApplicationRequest = MutationCreateNewApplicationArgs;
+
+// Create new application mutation result
+export type CreateNewApplicationResponse = {
+  createNewApplication: CreateNewApplicationResult;
 };

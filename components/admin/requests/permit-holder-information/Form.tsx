@@ -8,7 +8,9 @@ import {
   Box,
   Divider,
   Checkbox,
+  Select,
 } from '@chakra-ui/react'; // Chakra UI
+import { Gender } from '@lib/graphql/types';
 import { ApplicationType } from '@lib/graphql/types';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { ChangeEventHandler } from 'react';
@@ -57,6 +59,16 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             />
           </FormControl>
 
+          {props.type === 'NEW' && (
+            <FormControl>
+              <FormLabel>{'Middle name'}</FormLabel>
+              <Input
+                value={props.permitHolderInformation.middleName || ''}
+                onChange={handleChange('middleName')}
+              />
+            </FormControl>
+          )}
+
           <FormControl isRequired>
             <FormLabel>{'Last name'}</FormLabel>
             <Input
@@ -65,6 +77,45 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             />
           </FormControl>
         </Stack>
+
+        {props.permitHolderInformation.type === 'NEW' && (
+          <Stack direction="row" spacing="20px">
+            <FormControl isRequired>
+              <FormLabel>{`Date of birth`}</FormLabel>
+              <Input
+                type="date"
+                value={props.permitHolderInformation.dateOfBirth}
+                onChange={event => {
+                  if (props.permitHolderInformation.type === 'NEW') {
+                    props.onChange({
+                      ...props.permitHolderInformation,
+                      dateOfBirth: event.target.value,
+                    });
+                  }
+                }}
+              />
+            </FormControl>
+
+            <FormControl isRequired>
+              <FormLabel>{`Gender`}</FormLabel>
+              <Select
+                value={props.permitHolderInformation.gender}
+                onChange={event => {
+                  if (props.permitHolderInformation.type === 'NEW') {
+                    props.onChange({
+                      ...props.permitHolderInformation,
+                      gender: event.target.value as Gender,
+                    });
+                  }
+                }}
+              >
+                <option value={'MALE'}>Male</option>
+                <option value={'FEMALE'}>Female</option>
+                <option value={'OTHER'}>Other</option>
+              </Select>
+            </FormControl>
+          </Stack>
+        )}
       </Box>
 
       <Divider />
