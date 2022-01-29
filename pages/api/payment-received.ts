@@ -1,36 +1,58 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next'; // Next
 import { ShopifyPaymentStatus } from '@prisma/client'; // Prisma client
+import crypto from 'crypto'; // Verifying Shopify Request
+import getRawBody from 'raw-body';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === 'POST') {
-    const applicationId = req.body.line_items[0].properties[0].applicationId;
-    const shopifyOrderId = req.body.id;
-    try {
-      const applicationIdInt = parseInt(applicationId);
-
-      await prisma.application.update({
-        where: { id: applicationIdInt },
-        data: {
-          shopifyPaymentStatus: ShopifyPaymentStatus.RECEIVED,
-          shopifyConfirmationNumber: shopifyOrderId,
-          paidThroughShopify: true,
-        },
-      });
-    } catch {
-      // what to do here
-      //   console.log('bruh');
-    }
-
-    // if (!updatedApplication) {
-    //   throw new ApolloError('Application general information was unable to be created');
-    // }
-
-    res.status(200);
-  } else {
+const paymentReceivedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+  if (req.method !== 'POST') {
     res.status(405).end('Method not allowed');
+    return;
   }
+
+  // Verify Request is from Shopify
+  const rawBody = await getRawBody(req, true);
+  const hmacHeader = req.headers['x-shopify-hmac-sha256'];
+  const digest = crypto
+    .createHmac('sha256', process.env.SHOPIFY_WEBHOOK_SECRET as string)
+    .update(rawBody)
+    .digest('base64');
+  if (digest !== hmacHeader) {
+    res.status(401).end();
+    return;
+  }
+
+  // Since Next.js Parser is disabled, we need to do our own parsing
+  const body = JSON.parse(rawBody);
+  req.body = body;
+
+  // properties = [ { name: 'applicationId', value: '7' } ]
+  const rawApplicationId = req.body.line_items[0]?.properties[0]?.value;
+  const shopifyOrderId = req.body.id;
+  try {
+    const applicationId = parseInt(rawApplicationId);
+    await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        shopifyPaymentStatus: ShopifyPaymentStatus.RECEIVED,
+        shopifyConfirmationNumber: `${shopifyOrderId}`,
+        paidThroughShopify: true,
+      },
+    });
+  } catch (err) {
+    // TODO: Determine what we do here
+    res.status(200).end();
+  }
+
+  res.status(200).end();
+  return;
 };
 
-// caee3dca5c7da804be9ae6d4aa4d299c2192191f435c2af9655ec214a799399a
+// Turn off the default bodyParser provided by Next.js
+// Needed for Shopify Webhook Verification
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
-export default handler;
+export default paymentReceivedHandler;
