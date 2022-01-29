@@ -271,7 +271,6 @@ export default function CreateRenewal() {
               <>
                 {` (User ID: `}
                 <Box as="span" color="primary">
-                  {/* TODO: make sure we're showing the right id here */}
                   <Link href={`/admin/permit-holder/${applicantId}`}>
                     <a>{applicantId}</a>
                   </Link>
