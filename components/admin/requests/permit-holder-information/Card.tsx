@@ -9,8 +9,10 @@ import {
   GET_APPLICANT_INFORMATION,
   PermitHolderCardData,
   PermitHolderFormData,
+  UpdateNewPermitHolderInformationRequest,
   UpdatePermitHolderInformationRequest,
   UpdatePermitHolderInformationResponse,
+  UPDATE_NEW_PERMIT_HOLDER_INFORMATION,
   UPDATE_PERMIT_HOLDER_INFORMATION,
 } from '@tools/admin/requests/permit-holder-information'; // Applicant type
 import { getPermitExpiryStatus } from '@lib/utils/permit-expiry'; // Get variant of PermitHolderStatusBadge
@@ -45,7 +47,14 @@ const Card: FC<Props> = props => {
       variables: { id: applicationId },
       onCompleted: data => {
         if (data) {
-          setPermitHolderInformation(data.application);
+          if (data.application.type == 'NEW') {
+            setPermitHolderInformation({
+              dateOfBirth: formatDateYYYYMMDD(new Date(data.application.dateOfBirth)),
+              ...data.application,
+            });
+          } else {
+            setPermitHolderInformation(data.application);
+          }
         }
       },
       notifyOnNetworkStatusChange: true,
@@ -57,13 +66,27 @@ const Card: FC<Props> = props => {
     UpdatePermitHolderInformationRequest
   >(UPDATE_PERMIT_HOLDER_INFORMATION);
 
+  const [updateNewPermitHolderInformation] = useMutation<
+    UpdatePermitHolderInformationResponse,
+    UpdateNewPermitHolderInformationRequest
+  >(UPDATE_NEW_PERMIT_HOLDER_INFORMATION);
+
   if (!permitHolderInformation) {
     return null;
   }
 
   /** Handler for saving permit holder information */
   const handleSave = async (data: PermitHolderFormData) => {
-    await updatePermitHolderInformation({ variables: { input: { id: applicationId, ...data } } });
+    const { type, ...permitHolderData } = data;
+    if (type === 'NEW') {
+      await updateNewPermitHolderInformation({
+        variables: { input: { id: applicationId, ...permitHolderData } },
+      });
+    } else {
+      await updatePermitHolderInformation({
+        variables: { input: { id: applicationId, ...permitHolderData } },
+      });
+    }
     refetch();
   };
 

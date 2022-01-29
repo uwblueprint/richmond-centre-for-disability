@@ -11,6 +11,7 @@ import {
   Select,
 } from '@chakra-ui/react'; // Chakra UI
 import { Gender } from '@lib/graphql/types';
+import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { ChangeEventHandler } from 'react';
 
@@ -82,7 +83,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
               <FormLabel>{`Date of birth`}</FormLabel>
               <Input
                 type="date"
-                value={props.permitHolderInformation.dateOfBirth}
+                value={formatDateYYYYMMDD(props.permitHolderInformation.dateOfBirth)}
                 onChange={event => {
                   if (props.permitHolderInformation.type === 'NEW') {
                     props.onChange({

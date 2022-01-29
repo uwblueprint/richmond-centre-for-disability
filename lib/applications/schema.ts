@@ -620,6 +620,31 @@ export default gql`
     ok: Boolean!
   }
 
+  # Update general information section of application
+  input UpdateNewApplicationGeneralInformationInput {
+    # Application ID
+    id: Int!
+
+    # Personal information
+    firstName: String!
+    middleName: String
+    lastName: String!
+    dateOfBirth: Date!
+    gender: Gender!
+    otherGender: String
+
+    # Contact information
+    phone: String!
+    email: String
+    receiveEmailUpdates: Boolean
+
+    # Address
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    postalCode: String!
+  }
+
   # Update doctor information section of application
   input UpdateApplicationDoctorInformationInput {
     # Application ID

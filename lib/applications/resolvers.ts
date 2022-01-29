@@ -40,6 +40,7 @@ import {
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
+import { MutationUpdateNewApplicationGeneralInformationArgs } from '@lib/graphql/types';
 
 /**
  * Query an application by ID
@@ -727,6 +728,47 @@ export const updateApplicationGeneralInformation: Resolver<
       },
     });
   } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplication) {
+    throw new ApolloError('Application general information was unable to be created');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Update the general information section of an application
+ * @returns Status of the operation (ok)
+ */
+export const updateNewApplicationGeneralInformation: Resolver<
+  MutationUpdateNewApplicationGeneralInformationArgs,
+  UpdateApplicationGeneralInformationResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, receiveEmailUpdates, postalCode, dateOfBirth, gender, otherGender, ...data } = input;
+
+  let updatedApplication;
+  try {
+    updatedApplication = await prisma.application.update({
+      where: { id },
+      data: {
+        // Only set to `undefined` if `receiveEmailUpdates` is null
+        receiveEmailUpdates: receiveEmailUpdates ?? undefined,
+        postalCode: formatPostalCode(postalCode),
+        newApplication: {
+          update: {
+            dateOfBirth,
+            gender,
+            otherGender: otherGender ?? undefined,
+          },
+        },
+        ...data,
+      },
+    });
+  } catch (err) {
     // TODO: Error handling
   }
 

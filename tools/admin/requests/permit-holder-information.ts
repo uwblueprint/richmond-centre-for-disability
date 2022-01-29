@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client';
+import { MutationUpdateNewApplicationGeneralInformationArgs } from '@lib/graphql/types';
 import {
   Applicant,
   Application,
@@ -141,6 +142,20 @@ export type UpdatePermitHolderInformationRequest = MutationUpdateApplicationGene
 export type UpdatePermitHolderInformationResponse = {
   updateApplicationGeneralInformation: UpdateApplicationGeneralInformationResult;
 };
+
+/** Update permit holder information of application */
+export const UPDATE_NEW_PERMIT_HOLDER_INFORMATION = gql`
+  mutation UpdateNewApplicationPermitHolderInformation(
+    $input: UpdateNewApplicationGeneralInformationInput!
+  ) {
+    updateNewApplicationGeneralInformation(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type UpdateNewPermitHolderInformationRequest =
+  MutationUpdateNewApplicationGeneralInformationArgs;
 
 /** Get permit holder information for selected permit holder preview card */
 export const GET_SELECTED_APPLICANT_QUERY = gql`
