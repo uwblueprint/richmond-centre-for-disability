@@ -63,7 +63,7 @@ export default function CreateNew() {
       firstName: '',
       middleName: '',
       lastName: '',
-      dateOfBirth: new Date(),
+      dateOfBirth: '',
       gender: 'MALE',
       otherGender: '',
       email: '',
@@ -77,8 +77,8 @@ export default function CreateNew() {
   // Physician assessment
   const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment>({
     disability: '',
-    patientCondition: 'AFFECTS_MOBILITY',
-    permitType: 'PERMANENT',
+    patientCondition: null,
+    permitType: null,
     physicianCertificationDate: new Date().toLocaleDateString('en-CA'),
   });
   // Doctor information
@@ -109,9 +109,9 @@ export default function CreateNew() {
   });
   // Additional questions
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>({
-    usesAccessibleConvertedVan: false,
+    usesAccessibleConvertedVan: null,
     accessibleConvertedVanLoadingMethod: null,
-    requiresWiderParkingSpace: false,
+    requiresWiderParkingSpace: null,
     requiresWiderParkingSpaceReason: null,
     otherRequiresWiderParkingSpaceReason: null,
   });
@@ -153,7 +153,7 @@ export default function CreateNew() {
       firstName: '',
       middleName: '',
       lastName: '',
-      dateOfBirth: new Date(),
+      dateOfBirth: '',
       gender: 'MALE',
       otherGender: '',
       email: '',
@@ -167,8 +167,8 @@ export default function CreateNew() {
 
     setPhysicianAssessment({
       disability: '',
-      patientCondition: 'AFFECTS_MOBILITY',
-      permitType: 'PERMANENT',
+      patientCondition: null,
+      permitType: null,
       physicianCertificationDate: new Date().toLocaleDateString('en-CA'),
     });
 
@@ -199,9 +199,9 @@ export default function CreateNew() {
     });
 
     setAdditionalQuestions({
-      usesAccessibleConvertedVan: false,
+      usesAccessibleConvertedVan: null,
       accessibleConvertedVanLoadingMethod: null,
-      requiresWiderParkingSpace: false,
+      requiresWiderParkingSpace: null,
       requiresWiderParkingSpaceReason: null,
       otherRequiresWiderParkingSpaceReason: null,
     });
@@ -371,7 +371,34 @@ export default function CreateNew() {
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
 
-    //TODO: figure out what checks we need here
+    if (physicianAssessment.patientCondition === null) {
+      toast({ status: 'error', description: 'Missing patient condition', isClosable: true });
+      return;
+    }
+
+    if (physicianAssessment.permitType === null) {
+      toast({ status: 'error', description: 'Missing permit type', isClosable: true });
+      return;
+    }
+
+    if (additionalQuestions.requiresWiderParkingSpace === null) {
+      toast({
+        status: 'error',
+        description: 'Missing if patient requires wider parking space',
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (additionalQuestions.usesAccessibleConvertedVan === null) {
+      toast({
+        status: 'error',
+        description: 'Missing if patient uses accessible converted van',
+        isClosable: true,
+      });
+      return;
+    }
+
     if (doctorInformation.mspNumber === null) {
       toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
       return;
@@ -428,7 +455,9 @@ export default function CreateNew() {
           guardianPostalCode: guardianInformation.postalCode,
           poaFormUrl: guardianInformation.poaFormUrl,
 
-          ...additionalQuestions,
+          requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
+          usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
+
           ...paymentDetails,
           paymentMethod: paymentDetails.paymentMethod,
 

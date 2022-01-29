@@ -4,12 +4,13 @@ import { NewApplication, QueryApplicationArgs, RenewalApplication } from '@lib/g
 /** Additional questions in forms */
 export type AdditionalInformationFormData = Pick<
   NewApplication | RenewalApplication,
-  | 'usesAccessibleConvertedVan'
   | 'accessibleConvertedVanLoadingMethod'
-  | 'requiresWiderParkingSpace'
   | 'requiresWiderParkingSpaceReason'
   | 'otherRequiresWiderParkingSpaceReason'
->;
+> & {
+  usesAccessibleConvertedVan: boolean | null;
+  requiresWiderParkingSpace: boolean | null;
+};
 
 /** Get additional information of application */
 export const GET_ADDITIONAL_INFORMATION = gql`

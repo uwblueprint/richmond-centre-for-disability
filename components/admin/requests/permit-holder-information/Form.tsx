@@ -83,7 +83,11 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
               <FormLabel>{`Date of birth`}</FormLabel>
               <Input
                 type="date"
-                value={formatDateYYYYMMDD(props.permitHolderInformation.dateOfBirth)}
+                value={
+                  props.permitHolderInformation.dateOfBirth
+                    ? formatDateYYYYMMDD(props.permitHolderInformation.dateOfBirth)
+                    : undefined
+                }
                 onChange={event => {
                   if (props.permitHolderInformation.type === 'NEW') {
                     props.onChange({
