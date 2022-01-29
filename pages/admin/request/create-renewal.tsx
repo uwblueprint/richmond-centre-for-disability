@@ -68,9 +68,9 @@ export default function CreateRenewal() {
   /** Additional information section */
   const [additionalInformation, setAdditionalInformation] = useState<AdditionalInformationFormData>(
     {
-      usesAccessibleConvertedVan: false,
+      usesAccessibleConvertedVan: null,
       accessibleConvertedVanLoadingMethod: null,
-      requiresWiderParkingSpace: false,
+      requiresWiderParkingSpace: null,
       requiresWiderParkingSpaceReason: null,
       otherRequiresWiderParkingSpaceReason: null,
     }
@@ -216,6 +216,24 @@ export default function CreateRenewal() {
       return;
     }
 
+    if (additionalInformation.usesAccessibleConvertedVan === null) {
+      toast({
+        status: 'error',
+        description: 'Missing if patient uses accessible converted van',
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (additionalInformation.requiresWiderParkingSpace === null) {
+      toast({
+        status: 'error',
+        description: 'Missing if patient requires wider parking space',
+        isClosable: true,
+      });
+      return;
+    }
+
     await submitRenewalApplication({
       variables: {
         input: {
@@ -230,6 +248,8 @@ export default function CreateRenewal() {
           physicianCity: doctorInformation.city,
           physicianPostalCode: doctorInformation.postalCode,
           ...additionalInformation,
+          usesAccessibleConvertedVan: additionalInformation.usesAccessibleConvertedVan,
+          requiresWiderParkingSpace: additionalInformation.requiresWiderParkingSpace,
           ...paymentInformation,
           paymentMethod: paymentInformation.paymentMethod,
           // TODO: Replace with dynamic values

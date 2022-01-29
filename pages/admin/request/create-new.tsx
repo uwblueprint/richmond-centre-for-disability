@@ -381,19 +381,19 @@ export default function CreateNew() {
       return;
     }
 
-    if (additionalQuestions.requiresWiderParkingSpace === null) {
+    if (additionalQuestions.usesAccessibleConvertedVan === null) {
       toast({
         status: 'error',
-        description: 'Missing if patient requires wider parking space',
+        description: 'Missing if patient uses accessible converted van',
         isClosable: true,
       });
       return;
     }
 
-    if (additionalQuestions.usesAccessibleConvertedVan === null) {
+    if (additionalQuestions.requiresWiderParkingSpace === null) {
       toast({
         status: 'error',
-        description: 'Missing if patient uses accessible converted van',
+        description: 'Missing if patient requires wider parking space',
         isClosable: true,
       });
       return;
@@ -455,8 +455,9 @@ export default function CreateNew() {
           guardianPostalCode: guardianInformation.postalCode,
           poaFormUrl: guardianInformation.poaFormUrl,
 
-          requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
+          ...additionalQuestions,
           usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
+          requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
 
           ...paymentDetails,
           paymentMethod: paymentDetails.paymentMethod,
