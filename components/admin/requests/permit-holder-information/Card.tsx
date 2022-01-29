@@ -102,18 +102,37 @@ const Card: FC<Props> = props => {
   // Personal information card editing modal
   const EditModal = (
     <EditPermitHolderInformationModal
-      type={type}
       permitHolderInformation={{
-        firstName,
-        middleName,
-        lastName,
-        phone,
-        email,
-        receiveEmailUpdates,
-        addressLine1,
-        addressLine2,
-        city,
-        postalCode,
+        ...(type === 'NEW'
+          ? {
+              type,
+              firstName,
+              middleName,
+              lastName,
+              phone,
+              email,
+              receiveEmailUpdates,
+              addressLine1,
+              addressLine2,
+              city,
+              postalCode,
+              dateOfBirth: permitHolderInformation.dateOfBirth,
+              gender: permitHolderInformation.gender,
+              otherGender: permitHolderInformation.otherGender,
+            }
+          : {
+              type,
+              firstName,
+              middleName,
+              lastName,
+              phone,
+              email,
+              receiveEmailUpdates,
+              addressLine1,
+              addressLine2,
+              city,
+              postalCode,
+            }),
       }}
       onSave={handleSave}
     >

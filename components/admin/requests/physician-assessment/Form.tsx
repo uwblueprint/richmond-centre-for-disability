@@ -77,7 +77,7 @@ export default function PhysicianAssessmentForm({
             <FormLabel>{'Please select the condition'}</FormLabel>
             {/* TODO: Revise DB schema to replace the 3 boolean columns to a single enum column */}
             <RadioGroup
-              value={physicianAssessment.patientCondition}
+              value={physicianAssessment.patientCondition || undefined}
               onChange={value => {
                 // handleChangedPatientEligibility
                 onChange({
@@ -132,7 +132,7 @@ export default function PhysicianAssessmentForm({
         <FormControl isRequired paddingBottom="24px">
           <FormLabel>{'This patient is experiencing a mobility impairment which is'}</FormLabel>
           <RadioGroup
-            value={physicianAssessment.permitType}
+            value={physicianAssessment.permitType || undefined}
             onChange={value =>
               onChange({
                 ...physicianAssessment,

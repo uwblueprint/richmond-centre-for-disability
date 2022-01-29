@@ -10,7 +10,7 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { formatPhoneNumber, formatFullName } from '@lib/utils/format'; // Formatting utils
+import { formatPhoneNumber, formatFullName, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 import {
   Application,
   CreateExternalRenewalApplicationResult,
@@ -211,6 +211,7 @@ export const createNewApplication: Resolver<
     dateOfBirth,
     gender,
     otherGender,
+    postalCode,
     disability,
     disabilityCertificationDate,
     patientCondition,
@@ -242,6 +243,8 @@ export const createNewApplication: Resolver<
     requiresWiderParkingSpaceReason,
     otherRequiresWiderParkingSpaceReason,
     donationAmount,
+    shippingPostalCode,
+    billingPostalCode,
     applicantId,
     ...data
   } = input;
@@ -264,6 +267,9 @@ export const createNewApplication: Resolver<
           },
         }),
         ...data,
+        postalCode: formatPostalCode(postalCode),
+        shippingPostalCode: formatPostalCode(shippingPostalCode),
+        billingPostalCode: formatPostalCode(billingPostalCode),
         newApplication: {
           create: {
             dateOfBirth,
@@ -282,7 +288,7 @@ export const createNewApplication: Resolver<
             physicianAddressLine1,
             physicianAddressLine2,
             physicianCity,
-            physicianPostalCode,
+            physicianPostalCode: formatPostalCode(physicianPostalCode),
             ...(omitGuardianPoa && {
               guardianFirstName,
               guardianMiddleName,
@@ -292,7 +298,7 @@ export const createNewApplication: Resolver<
               guardianAddressLine1,
               guardianAddressLine2,
               guardianCity,
-              guardianPostalCode,
+              guardianPostalCode: formatPostalCode(guardianPostalCode),
               poaFormUrl,
             }),
             usesAccessibleConvertedVan,
@@ -341,6 +347,7 @@ export const createRenewalApplication: Resolver<
   const { input } = args;
   const {
     applicantId,
+    postalCode,
     physicianFirstName,
     physicianLastName,
     physicianMspNumber,
@@ -355,6 +362,8 @@ export const createRenewalApplication: Resolver<
     requiresWiderParkingSpaceReason,
     otherRequiresWiderParkingSpaceReason,
     donationAmount,
+    shippingPostalCode,
+    billingPostalCode,
     ...data
   } = input;
 
@@ -370,6 +379,9 @@ export const createRenewalApplication: Resolver<
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
         ...data,
+        postalCode: formatPostalCode(postalCode),
+        shippingPostalCode: formatPostalCode(shippingPostalCode),
+        billingPostalCode: formatPostalCode(billingPostalCode),
         applicant: {
           connect: { id: applicantId },
         },
@@ -382,7 +394,7 @@ export const createRenewalApplication: Resolver<
             physicianAddressLine1,
             physicianAddressLine2,
             physicianCity,
-            physicianPostalCode,
+            physicianPostalCode: formatPostalCode(physicianPostalCode),
             usesAccessibleConvertedVan,
             accessibleConvertedVanLoadingMethod,
             requiresWiderParkingSpace,
@@ -604,6 +616,7 @@ export const createReplacementApplication: Resolver<
   const { input } = args;
   const {
     applicantId,
+    postalCode,
     reason,
     lostTimestamp,
     lostLocation,
@@ -612,6 +625,8 @@ export const createReplacementApplication: Resolver<
     stolenPoliceOfficerName,
     eventDescription,
     donationAmount,
+    shippingPostalCode,
+    billingPostalCode,
     ...data
   } = input;
 
@@ -638,6 +653,9 @@ export const createReplacementApplication: Resolver<
         type: 'REPLACEMENT',
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
+        postalCode: formatPostalCode(postalCode),
+        shippingPostalCode: formatPostalCode(shippingPostalCode),
+        billingPostalCode: formatPostalCode(billingPostalCode),
         ...data,
         applicant: {
           connect: { id: applicantId },
@@ -695,7 +713,7 @@ export const updateApplicationGeneralInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   // TODO: Validation
   const { input } = args;
-  const { id, receiveEmailUpdates, ...data } = input;
+  const { id, receiveEmailUpdates, postalCode, ...data } = input;
 
   let updatedApplication;
   try {
@@ -704,6 +722,7 @@ export const updateApplicationGeneralInformation: Resolver<
       data: {
         // Only set to `undefined` if `receiveEmailUpdates` is null
         receiveEmailUpdates: receiveEmailUpdates ?? undefined,
+        postalCode: formatPostalCode(postalCode),
         ...data,
       },
     });
@@ -766,7 +785,7 @@ export const updateApplicationDoctorInformation: Resolver<
               physicianAddressLine1,
               physicianAddressLine2,
               physicianCity,
-              physicianPostalCode,
+              physicianPostalCode: formatPostalCode(physicianPostalCode),
             },
           },
         }),
@@ -780,7 +799,7 @@ export const updateApplicationDoctorInformation: Resolver<
               physicianAddressLine1,
               physicianAddressLine2,
               physicianCity,
-              physicianPostalCode,
+              physicianPostalCode: formatPostalCode(physicianPostalCode),
             },
           },
         }),
@@ -865,7 +884,7 @@ export const updateApplicationPaymentInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   // TODO: Validation
   const { input } = args;
-  const { id, donationAmount, ...data } = input;
+  const { id, donationAmount, shippingPostalCode, billingPostalCode, ...data } = input;
 
   let updatedApplication;
   try {
@@ -873,6 +892,8 @@ export const updateApplicationPaymentInformation: Resolver<
       where: { id },
       data: {
         donationAmount: donationAmount || 0,
+        shippingPostalCode: formatPostalCode(shippingPostalCode),
+        billingPostalCode: formatPostalCode(billingPostalCode),
         ...data,
       },
     });

@@ -11,7 +11,6 @@ import {
   Select,
 } from '@chakra-ui/react'; // Chakra UI
 import { Gender } from '@lib/graphql/types';
-import { ApplicationType } from '@lib/graphql/types';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { ChangeEventHandler } from 'react';
 
@@ -19,7 +18,6 @@ import { ChangeEventHandler } from 'react';
  * PermitHolderInformationFormProps props for allowing users to edit permit holder information.
  */
 type PermitHolderInformationFormProps = {
-  readonly type: ApplicationType;
   readonly permitHolderInformation: PermitHolderFormData;
   readonly onChange: (updatedData: PermitHolderFormData) => void;
 };
@@ -50,7 +48,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
         <Text as="h3" textStyle="heading" paddingBottom="24px">
           {'Personal Information'}
         </Text>
-        <Stack direction="row" spacing="20px">
+        <Stack direction="row" spacing="20px" paddingBottom="24px">
           <FormControl isRequired>
             <FormLabel>{'First name'}</FormLabel>
             <Input
@@ -59,7 +57,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             />
           </FormControl>
 
-          {props.type === 'NEW' && (
+          {props.permitHolderInformation.type === 'NEW' && (
             <FormControl>
               <FormLabel>{'Middle name'}</FormLabel>
               <Input
@@ -96,6 +94,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
               />
             </FormControl>
 
+            {/* TODO: set otherGender if selected option is OTHER */}
             <FormControl isRequired>
               <FormLabel>{`Gender`}</FormLabel>
               <Select
@@ -152,7 +151,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
           </FormControl>
         </Stack>
 
-        {props.type !== 'REPLACEMENT' && (
+        {props.permitHolderInformation.type !== 'REPLACEMENT' && (
           <FormControl>
             <Checkbox
               paddingTop="24px"

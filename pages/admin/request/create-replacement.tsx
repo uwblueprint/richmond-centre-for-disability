@@ -266,8 +266,8 @@ export default function CreateReplacement() {
                   {`Permit Holder's Information`}
                 </Text>
                 <PermitHolderInformationForm
-                  type="REPLACEMENT"
                   permitHolderInformation={{
+                    type: 'REPLACEMENT',
                     receiveEmailUpdates: false,
                     ...permitHolderInformation,
                   }}

@@ -36,7 +36,6 @@ import { GuardianInformation } from '@tools/admin/requests/guardian-information'
 import { RequestFlowPageState } from '@tools/admin/requests/types';
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
-// import { Gender } from '@lib/graphql/types';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import {
   CreateNewApplicationRequest,
@@ -47,13 +46,13 @@ import {
   GET_APPLICANT_NEW_REQUEST_INFO_QUERY,
 } from '@tools/admin/requests/create-new';
 import { useRouter } from 'next/router';
+import { formatDateYYYYMMDD } from '@lib/utils/format';
 
 /** Create New APP page */
 export default function CreateNew() {
   const [step, setStep] = useState<RequestFlowPageState>(
     RequestFlowPageState.SelectingPermitHolderPage
   );
-  const [loading, setLoading] = useState(false); //TODO: verify if this is needed
   const [permitHolderExists, setPermitHolderExists] = useState(true);
 
   const [applicantId, setApplicantId] = useState<number | null>(null); // RCD user id
@@ -65,22 +64,21 @@ export default function CreateNew() {
     middleName: '',
     lastName: '',
     dateOfBirth: new Date(),
-    gender: 'MALE', //TODO: handle default
+    gender: 'MALE',
     otherGender: '',
     email: '',
     phone: '',
-    receiveEmailUpdates: false, //TODO: verify default
+    receiveEmailUpdates: false,
     addressLine1: '',
     addressLine2: '',
     city: '',
     postalCode: '',
   });
-
   // Physician assessment
   const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment>({
     disability: '',
-    patientCondition: 'AFFECTS_MOBILITY', //TODO: verify default
-    permitType: 'PERMANENT',
+    patientCondition: null,
+    permitType: null,
     physicianCertificationDate: new Date().toLocaleDateString('en-CA'),
   });
   // Doctor information
@@ -111,9 +109,9 @@ export default function CreateNew() {
   });
   // Additional questions
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>({
-    usesAccessibleConvertedVan: false, //TODO: set default to null??
+    usesAccessibleConvertedVan: null,
     accessibleConvertedVanLoadingMethod: null,
-    requiresWiderParkingSpace: false,
+    requiresWiderParkingSpace: null,
     requiresWiderParkingSpaceReason: null,
     otherRequiresWiderParkingSpaceReason: null,
   });
@@ -145,10 +143,96 @@ export default function CreateNew() {
   // Router
   const router = useRouter();
 
+  // Reset all fields when application is discarded
+  const resetAllFields = () => {
+    setApplicantId(null);
+
+    setPermitHolderExists(true);
+
+    setPermitHolderInformation({
+      type: 'NEW',
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      dateOfBirth: new Date(),
+      gender: 'MALE',
+      otherGender: '',
+      email: '',
+      phone: '',
+      receiveEmailUpdates: false,
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      postalCode: '',
+    });
+
+    setPhysicianAssessment({
+      disability: '',
+      patientCondition: null,
+      permitType: null,
+      physicianCertificationDate: new Date().toLocaleDateString('en-CA'),
+    });
+
+    setDoctorInformation({
+      firstName: '',
+      lastName: '',
+      mspNumber: null,
+      phone: '',
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      postalCode: '',
+    });
+
+    setGuardianInformation({
+      omitGuardianPoa: false,
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      relationship: '',
+      phone: '',
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      postalCode: '',
+      // TODO: poaFormUrl work with file upload
+      poaFormUrl: '',
+    });
+
+    setAdditionalQuestions({
+      usesAccessibleConvertedVan: null,
+      accessibleConvertedVanLoadingMethod: null,
+      requiresWiderParkingSpace: null,
+      requiresWiderParkingSpaceReason: null,
+      otherRequiresWiderParkingSpaceReason: null,
+    });
+
+    setPaymentDetails({
+      paymentMethod: null,
+      donationAmount: '',
+      shippingAddressSameAsHomeAddress: false,
+      shippingFullName: '',
+      shippingAddressLine1: '',
+      shippingAddressLine2: '',
+      shippingCity: '',
+      shippingProvince: 'BC',
+      shippingCountry: '',
+      shippingPostalCode: '',
+      billingAddressSameAsHomeAddress: false,
+      billingFullName: '',
+      billingAddressLine1: '',
+      billingAddressLine2: '',
+      billingCity: '',
+      billingProvince: 'BC',
+      billingCountry: '',
+      billingPostalCode: '',
+    });
+  };
+
   /**
    * Get information about applicant to pre-populate form
    */
-  const [getApplicant] = useLazyQuery<
+  const [getApplicant, { loading: getApplicantLoading }] = useLazyQuery<
     GetApplicantNewRequestInfoResponse,
     GetApplicantNewRequestInfoRequest
   >(GET_APPLICANT_NEW_REQUEST_INFO_QUERY, {
@@ -161,7 +245,7 @@ export default function CreateNew() {
           lastName,
           dateOfBirth,
           gender,
-          // otherGender,
+          otherGender,
           phone,
           email,
           receiveEmailUpdates,
@@ -179,9 +263,9 @@ export default function CreateNew() {
           firstName,
           middleName,
           lastName,
-          dateOfBirth,
+          dateOfBirth: formatDateYYYYMMDD(new Date(dateOfBirth)),
           gender,
-          otherGender: '', //TODO
+          otherGender,
           email,
           phone,
           receiveEmailUpdates,
@@ -204,22 +288,36 @@ export default function CreateNew() {
         });
 
         // set guardianInformation
-        setGuardianInformation({
-          omitGuardianPoa: false, //TODO
-          firstName: guardian.firstName,
-          middleName: guardian.middleName,
-          lastName: guardian.lastName,
-          phone: guardian.phone,
-          relationship: guardian.relationship,
-          addressLine1: guardian.addressLine1,
-          addressLine2: guardian.addressLine2,
-          city: guardian.city,
-          postalCode: guardian.postalCode,
-          poaFormUrl: '', //TODO
-        });
+        if (guardian) {
+          setGuardianInformation({
+            omitGuardianPoa: false,
+            firstName: guardian.firstName,
+            middleName: guardian.middleName,
+            lastName: guardian.lastName,
+            phone: guardian.phone,
+            relationship: guardian.relationship,
+            addressLine1: guardian.addressLine1,
+            addressLine2: guardian.addressLine2,
+            city: guardian.city,
+            postalCode: guardian.postalCode,
+            poaFormUrl: '', //TODO
+          });
+        } else {
+          setGuardianInformation({
+            omitGuardianPoa: false,
+            firstName: '',
+            middleName: '',
+            lastName: '',
+            phone: '',
+            relationship: '',
+            addressLine1: '',
+            addressLine2: '',
+            city: '',
+            postalCode: '',
+            poaFormUrl: '', //TODO
+          });
+        }
       }
-
-      setLoading(false);
     },
   });
 
@@ -227,10 +325,8 @@ export default function CreateNew() {
    * Sets and fetches permit holder data when selected from typeahead
    */
   const handleSelectPermitHolder = useCallback(applicantId => {
-    //TODO: confirm when we should be fetching all of this data (have to proceed first??)
     setApplicantId(applicantId || null);
     if (applicantId) {
-      setLoading(true);
       getApplicant({
         variables: {
           id: applicantId,
@@ -272,18 +368,10 @@ export default function CreateNew() {
   });
 
   /**
-   * Handle new request submission
+   * Handle new APP request submission
    */
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    // if (applicantId === null) {
-    //   toast({
-    //     status: 'error',
-    //     description: 'You must select a permit holder for a Renewal Request.',
-    //     isClosable: true,
-    //   });
-    //   return;
-    // }
 
     //TODO: figure out what checks we need here
     if (doctorInformation.mspNumber === null) {
@@ -318,10 +406,9 @@ export default function CreateNew() {
           disability: physicianAssessment.disability,
           disabilityCertificationDate: physicianAssessment.physicianCertificationDate,
           patientCondition: physicianAssessment.patientCondition,
-          mobilityAids: null, //TODO
+          mobilityAids: null, //TODO: get mobility aids when forms are updated to get this data
           otherPatientCondition: physicianAssessment.patientEligibilityDescription || null,
-          // TODO: add to CreateNewApplicationInput
-          // permitType: physicianAssessment.permitType,
+          permitType: physicianAssessment.permitType,
           temporaryPermitExpiry: physicianAssessment.temporaryPermitExpiryDate,
 
           physicianFirstName: doctorInformation.firstName,
@@ -349,74 +436,14 @@ export default function CreateNew() {
           ...paymentDetails,
 
           // TODO: Replace with dynamic values
-          //TODO: add to new application input type
-          // paidThroughShopify: false,
-          // shopifyPaymentStatus: null,
-          // shopifyConfirmationNumber: null,
+          paidThroughShopify: false,
+          shopifyPaymentStatus: null,
+          shopifyConfirmationNumber: null,
+          applicantId,
         },
       },
     });
   };
-
-  /**
-   * Handle new APP request submission
-   */
-  //   TODO: Implement once create new APP API is complete
-  // const handleSubmit = useCallback(async (event: SyntheticEvent) => {
-  //   event.preventDefault();
-  //   if (permitHolderId) {
-  //     await submitRenewalApplication({
-  //       variables: {
-  //         input: {
-  //           applicantId: permitHolderId,
-  //           updatedAddress,
-  //           firstName: permitHolderInformation.firstName,
-  //           lastName: permitHolderInformation.lastName,
-  //           addressLine1: permitHolderInformation.addressLine1,
-  //           addressLine2: permitHolderInformation.addressLine2,
-  //           city: permitHolderInformation.city,addressLine2: permitHolderInformation.addressLine2,
-  // addressLine2: permitHolderInformation.addressLine2,
-  // addressLine2: permitHolderInformation.addressLine2,
-  //           postalCode: permitHolderInformation.postalCode,
-  //           updatedContactInfo,
-  //           phone: permitHolderInformation.phone,
-  //           email: permitHolderInformation.email,
-  //           rcdUserId: permitHolderRcdUserID,
-  //           updatedPhysician,
-  //           physicianName: doctorInformation.name,
-  //           physicianMspNumber: doctorInformation.mspNumber,
-  //           physicianAddressLine1: doctorInformation.addressLine1,
-  //           physicianAddressLine2: doctorInformation.addressLine2,
-  //           physicianCity: doctorInformation.city,
-  //           physicianPostalCode: doctorInformation.postalCode,
-  //           physicianPhone: doctorInformation.phone,
-  //           usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
-  //           requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
-  //           shippingAddressSameAsHomeAddress: paymentDetails.shippingAddressSameAsHomeAddress,
-  //           billingAddressSameAsHomeAddress: paymentDetails.billingAddressSameAsHomeAddress,
-  //           ...(paymentDetails.shippingAddressSameAsHomeAddress === false && {
-  //             shippingFullName: paymentDetails.shippingFullName,
-  //             shippingAddressLine1: paymentDetails.shippingAddressLine1,
-  //             shippingAddressLine2: paymentDetails.shippingAddressLine2,
-  //             shippingCity: paymentDetails.shippingCity,
-  //             shippingProvince: paymentDetails.shippingProvince,
-  //             shippingPostalCode: paymentDetails.shippingPostalCode,
-  //           }),
-  //           ...(paymentDetails.billingAddressSameAsHomeAddress === false && {
-  //             billingFullName: paymentDetails.billingFullName,
-  //             billingAddressLine1: paymentDetails.billingAddressLine1,
-  //             billingAddressLine2: paymentDetails.billingAddressLine2,
-  //             billingCity: paymentDetails.billingCity,
-  //             billingProvince: paymentDetails.billingProvince,
-  //             billingPostalCode: paymentDetails.billingPostalCode,
-  //           }),
-  //           donationAmount: paymentDetails.donationAmount,
-  //           paymentMethod: paymentDetails.paymentMethod,
-  //         },
-  //       },
-  //     });
-  //   }
-  // }, []);
 
   return (
     <Layout>
@@ -491,8 +518,7 @@ export default function CreateNew() {
                 </Box>
                 <Box w="100%">
                   {applicantId &&
-                    // TODO: Coordinate loading state display with other screens
-                    (loading ? (
+                    (getApplicantLoading ? (
                       <VStack
                         h="384px"
                         w="100%"
@@ -543,7 +569,6 @@ export default function CreateNew() {
 
         {/* Forms step */}
         {step === RequestFlowPageState.SubmittingRequestPage && (
-          // TODO: API hookup
           <form onSubmit={handleSubmit}>
             <VStack spacing="32px">
               <Box
@@ -559,7 +584,6 @@ export default function CreateNew() {
                   {`Permit Holder's Information`}
                 </Text>
                 <PermitHolderInformationForm
-                  type="NEW"
                   permitHolderInformation={permitHolderInformation}
                   onChange={setPermitHolderInformation}
                 />
@@ -576,7 +600,6 @@ export default function CreateNew() {
                 <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
                   {`Physician's Assessment`}
                 </Text>
-                {/* TODO: don't autofill any of this form */}
                 <PhysicianAssessmentForm
                   physicianAssessment={physicianAssessment}
                   onChange={setPhysicianAssessment}
@@ -675,7 +698,7 @@ export default function CreateNew() {
                   >
                     <BackToSearchModal
                       onGoBack={() => {
-                        setApplicantId(null);
+                        resetAllFields();
                         setStep(RequestFlowPageState.SelectingPermitHolderPage);
                       }}
                     >

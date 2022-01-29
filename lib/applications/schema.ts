@@ -342,6 +342,7 @@ export default gql`
     patientCondition: PatientCondition!
     mobilityAids: [MobilityAid!]
     otherPatientCondition: String
+    permitType: PermitType!
     temporaryPermitExpiry: Date
 
     # Doctor information
@@ -376,8 +377,10 @@ export default gql`
 
     # Payment information (omit processing fee)
     paymentMethod: PaymentType!
-    # Input monetary value as string
-    donationAmount: String
+    donationAmount: String # Input monetary value as string
+    paidThroughShopify: Boolean!
+    shopifyPaymentStatus: ShopifyPaymentStatus
+    shopifyConfirmationNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!

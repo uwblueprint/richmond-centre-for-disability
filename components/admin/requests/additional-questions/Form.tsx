@@ -12,7 +12,13 @@ export default function AdditionalQuestionsForm({ data, onChange }: AdditionalQu
       <FormControl as="fieldset" isRequired>
         <FormLabel>{'Is the applicant using an accessible converted van?'}</FormLabel>
         <RadioGroup
-          value={data.usesAccessibleConvertedVan ? '0' : '1'}
+          value={
+            data.usesAccessibleConvertedVan === null
+              ? undefined
+              : data.usesAccessibleConvertedVan
+              ? '0'
+              : '1'
+          }
           onChange={value =>
             onChange({ ...data, usesAccessibleConvertedVan: value === '0' ? true : false })
           }
@@ -27,7 +33,13 @@ export default function AdditionalQuestionsForm({ data, onChange }: AdditionalQu
       <FormControl as="fieldset" isRequired paddingTop="24px">
         <FormLabel>{'Does the applicant need a wider accessible parking space?'}</FormLabel>
         <RadioGroup
-          value={data.requiresWiderParkingSpace ? '0' : '1'}
+          value={
+            data.requiresWiderParkingSpace === null
+              ? undefined
+              : data.requiresWiderParkingSpace
+              ? '0'
+              : '1'
+          }
           onChange={value =>
             onChange({ ...data, requiresWiderParkingSpace: value === '0' ? true : false })
           }

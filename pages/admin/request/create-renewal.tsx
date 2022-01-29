@@ -39,6 +39,7 @@ export default function CreateRenewal() {
 
   /** Permit holder information section */
   const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderFormData>({
+    type: 'RENEWAL',
     firstName: '',
     middleName: null,
     lastName: '',
@@ -124,6 +125,7 @@ export default function CreateRenewal() {
             medicalInformation: { physician },
           } = data.applicant;
           setPermitHolderInformation({
+            type: 'RENEWAL',
             firstName,
             middleName,
             lastName,
@@ -301,7 +303,6 @@ export default function CreateRenewal() {
                   {`Permit Holder's Information`}
                 </Text>
                 <PermitHolderInformationForm
-                  type="RENEWAL"
                   permitHolderInformation={permitHolderInformation}
                   onChange={setPermitHolderInformation}
                 />
