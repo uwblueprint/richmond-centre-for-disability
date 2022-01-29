@@ -35,7 +35,7 @@ export type PermitHolderFormData = Pick<
       }
   );
 
-export type NewApplicationPermitHolderFormData = Pick<
+export type NewApplicationPermitHolderInformation = Pick<
   NewApplication,
   | 'firstName'
   | 'middleName'
@@ -70,8 +70,9 @@ export type PermitHolderCardData = Pick<
 > &
   (
     | // New application
-    ({ type: 'NEW'; applicant: null } & Partial<
-        Pick<NewApplication, 'dateOfBirth' | 'gender' | 'otherGender' | 'receiveEmailUpdates'>
+    ({ type: 'NEW'; applicant: null } & Pick<
+        NewApplication,
+        'dateOfBirth' | 'gender' | 'otherGender' | 'receiveEmailUpdates'
       >)
     // Renewal/replacement application
     | {

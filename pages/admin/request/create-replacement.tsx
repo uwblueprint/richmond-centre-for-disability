@@ -271,7 +271,11 @@ export default function CreateReplacement() {
                     receiveEmailUpdates: false,
                     ...permitHolderInformation,
                   }}
-                  onChange={setPermitHolderInformation}
+                  onChange={updatedPermitHolder => {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    const { type, receiveEmailUpdates, ...permitHolder } = updatedPermitHolder;
+                    setPermitHolderInformation(permitHolder);
+                  }}
                 />
               </Box>
             </GridItem>

@@ -269,8 +269,8 @@ export const createNewApplication: Resolver<
         }),
         ...data,
         postalCode: formatPostalCode(postalCode),
-        shippingPostalCode: formatPostalCode(shippingPostalCode),
-        billingPostalCode: formatPostalCode(billingPostalCode),
+        shippingPostalCode: shippingPostalCode ? formatPostalCode(shippingPostalCode) : undefined,
+        billingPostalCode: billingPostalCode ? formatPostalCode(billingPostalCode) : undefined,
         newApplication: {
           create: {
             dateOfBirth,
@@ -299,7 +299,9 @@ export const createNewApplication: Resolver<
               guardianAddressLine1,
               guardianAddressLine2,
               guardianCity,
-              guardianPostalCode: formatPostalCode(guardianPostalCode),
+              guardianPostalCode: guardianPostalCode
+                ? formatPostalCode(guardianPostalCode)
+                : undefined,
               poaFormUrl,
             }),
             usesAccessibleConvertedVan,
@@ -381,8 +383,8 @@ export const createRenewalApplication: Resolver<
         donationAmount: donationAmount || 0,
         ...data,
         postalCode: formatPostalCode(postalCode),
-        shippingPostalCode: formatPostalCode(shippingPostalCode),
-        billingPostalCode: formatPostalCode(billingPostalCode),
+        shippingPostalCode: shippingPostalCode ? formatPostalCode(shippingPostalCode) : undefined,
+        billingPostalCode: billingPostalCode ? formatPostalCode(billingPostalCode) : undefined,
         applicant: {
           connect: { id: applicantId },
         },
@@ -516,7 +518,8 @@ export const createExternalRenewalApplication: Resolver<
         addressLine1: updatedAddress && addressLine1 ? addressLine1 : applicant.addressLine1,
         addressLine2: updatedAddress ? addressLine2 : applicant.addressLine2,
         city: updatedAddress && city ? city : applicant.city,
-        postalCode: updatedAddress && postalCode ? postalCode : applicant.postalCode,
+        postalCode:
+          updatedAddress && postalCode ? formatPostalCode(postalCode) : applicant.postalCode,
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: 0, // ? Investigate
         paymentMethod: 'SHOPIFY',
@@ -565,7 +568,9 @@ export const createExternalRenewalApplication: Resolver<
               : physician.addressLine2,
             physicianCity: updatedPhysician && physicianCity ? physicianCity : physician.city,
             physicianPostalCode:
-              updatedPhysician && physicianPostalCode ? physicianPostalCode : physician.postalCode,
+              updatedPhysician && physicianPostalCode
+                ? formatPostalCode(physicianPostalCode)
+                : physician.postalCode,
             usesAccessibleConvertedVan,
             accessibleConvertedVanLoadingMethod,
             requiresWiderParkingSpace,
@@ -655,8 +660,8 @@ export const createReplacementApplication: Resolver<
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
         postalCode: formatPostalCode(postalCode),
-        shippingPostalCode: formatPostalCode(shippingPostalCode),
-        billingPostalCode: formatPostalCode(billingPostalCode),
+        shippingPostalCode: shippingPostalCode ? formatPostalCode(shippingPostalCode) : undefined,
+        billingPostalCode: billingPostalCode ? formatPostalCode(billingPostalCode) : undefined,
         ...data,
         applicant: {
           connect: { id: applicantId },
@@ -934,8 +939,8 @@ export const updateApplicationPaymentInformation: Resolver<
       where: { id },
       data: {
         donationAmount: donationAmount || 0,
-        shippingPostalCode: formatPostalCode(shippingPostalCode),
-        billingPostalCode: formatPostalCode(billingPostalCode),
+        shippingPostalCode: shippingPostalCode ? formatPostalCode(shippingPostalCode) : undefined,
+        billingPostalCode: billingPostalCode ? formatPostalCode(billingPostalCode) : undefined,
         ...data,
       },
     });

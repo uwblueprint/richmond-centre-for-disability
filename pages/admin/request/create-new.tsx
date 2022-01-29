@@ -36,7 +36,7 @@ import { GuardianInformation } from '@tools/admin/requests/guardian-information'
 import { RequestFlowPageState } from '@tools/admin/requests/types';
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
-import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
+import { NewApplicationPermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
 import {
   CreateNewApplicationRequest,
   CreateNewApplicationResponse,
@@ -58,27 +58,27 @@ export default function CreateNew() {
   const [applicantId, setApplicantId] = useState<number | null>(null); // RCD user id
 
   // General information
-  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderFormData>({
-    type: 'NEW',
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    dateOfBirth: new Date(),
-    gender: 'MALE',
-    otherGender: '',
-    email: '',
-    phone: '',
-    receiveEmailUpdates: false,
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    postalCode: '',
-  });
+  const [permitHolderInformation, setPermitHolderInformation] =
+    useState<NewApplicationPermitHolderInformation>({
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      dateOfBirth: new Date(),
+      gender: 'MALE',
+      otherGender: '',
+      email: '',
+      phone: '',
+      receiveEmailUpdates: false,
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      postalCode: '',
+    });
   // Physician assessment
   const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment>({
     disability: '',
-    patientCondition: null,
-    permitType: null,
+    patientCondition: 'AFFECTS_MOBILITY',
+    permitType: 'PERMANENT',
     physicianCertificationDate: new Date().toLocaleDateString('en-CA'),
   });
   // Doctor information
@@ -109,9 +109,9 @@ export default function CreateNew() {
   });
   // Additional questions
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>({
-    usesAccessibleConvertedVan: null,
+    usesAccessibleConvertedVan: false,
     accessibleConvertedVanLoadingMethod: null,
-    requiresWiderParkingSpace: null,
+    requiresWiderParkingSpace: false,
     requiresWiderParkingSpaceReason: null,
     otherRequiresWiderParkingSpaceReason: null,
   });
@@ -150,7 +150,6 @@ export default function CreateNew() {
     setPermitHolderExists(true);
 
     setPermitHolderInformation({
-      type: 'NEW',
       firstName: '',
       middleName: '',
       lastName: '',
@@ -168,8 +167,8 @@ export default function CreateNew() {
 
     setPhysicianAssessment({
       disability: '',
-      patientCondition: null,
-      permitType: null,
+      patientCondition: 'AFFECTS_MOBILITY',
+      permitType: 'PERMANENT',
       physicianCertificationDate: new Date().toLocaleDateString('en-CA'),
     });
 
@@ -200,9 +199,9 @@ export default function CreateNew() {
     });
 
     setAdditionalQuestions({
-      usesAccessibleConvertedVan: null,
+      usesAccessibleConvertedVan: false,
       accessibleConvertedVanLoadingMethod: null,
-      requiresWiderParkingSpace: null,
+      requiresWiderParkingSpace: false,
       requiresWiderParkingSpaceReason: null,
       otherRequiresWiderParkingSpaceReason: null,
     });
@@ -259,7 +258,6 @@ export default function CreateNew() {
 
         // set permitHolderInformation
         setPermitHolderInformation({
-          type: 'NEW',
           firstName,
           middleName,
           lastName,
@@ -397,11 +395,9 @@ export default function CreateNew() {
           addressLine2: permitHolderInformation.addressLine2,
           city: permitHolderInformation.city,
           postalCode: permitHolderInformation.postalCode,
-          ...(permitHolderInformation.type === 'NEW' && {
-            dateOfBirth: permitHolderInformation.dateOfBirth,
-            gender: permitHolderInformation.gender,
-            otherGender: permitHolderInformation.otherGender,
-          }),
+          dateOfBirth: permitHolderInformation.dateOfBirth,
+          gender: permitHolderInformation.gender,
+          otherGender: permitHolderInformation.otherGender,
 
           disability: physicianAssessment.disability,
           disabilityCertificationDate: physicianAssessment.physicianCertificationDate,
@@ -434,6 +430,7 @@ export default function CreateNew() {
 
           ...additionalQuestions,
           ...paymentDetails,
+          paymentMethod: paymentDetails.paymentMethod,
 
           // TODO: Replace with dynamic values
           paidThroughShopify: false,
@@ -584,8 +581,14 @@ export default function CreateNew() {
                   {`Permit Holder's Information`}
                 </Text>
                 <PermitHolderInformationForm
-                  permitHolderInformation={permitHolderInformation}
-                  onChange={setPermitHolderInformation}
+                  permitHolderInformation={{ type: 'NEW', ...permitHolderInformation }}
+                  onChange={updatedPermitHolder => {
+                    if (updatedPermitHolder.type === 'NEW') {
+                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                      const { type, ...permitHolder } = updatedPermitHolder;
+                      setPermitHolderInformation(permitHolder);
+                    }
+                  }}
                 />
               </Box>
               <Box

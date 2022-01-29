@@ -29,7 +29,7 @@ import {
   GetRenewalApplicantResponse,
   GET_RENEWAL_APPLICANT,
 } from '@tools/admin/requests/create-renewal';
-import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
+import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -38,8 +38,9 @@ export default function CreateRenewal() {
   const [applicantId, setApplicantId] = useState<number | null>(null);
 
   /** Permit holder information section */
-  const [permitHolderInformation, setPermitHolderInformation] = useState<PermitHolderFormData>({
-    type: 'RENEWAL',
+  const [permitHolderInformation, setPermitHolderInformation] = useState<
+    Omit<ApplicantFormData, 'dateOfBirth' | 'gender'> & { receiveEmailUpdates: boolean }
+  >({
     firstName: '',
     middleName: null,
     lastName: '',
@@ -125,7 +126,6 @@ export default function CreateRenewal() {
             medicalInformation: { physician },
           } = data.applicant;
           setPermitHolderInformation({
-            type: 'RENEWAL',
             firstName,
             middleName,
             lastName,
@@ -303,8 +303,12 @@ export default function CreateRenewal() {
                   {`Permit Holder's Information`}
                 </Text>
                 <PermitHolderInformationForm
-                  permitHolderInformation={permitHolderInformation}
-                  onChange={setPermitHolderInformation}
+                  permitHolderInformation={{ type: 'RENEWAL', ...permitHolderInformation }}
+                  onChange={updatedPermitHolder => {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    const { type, ...permitHolder } = updatedPermitHolder;
+                    setPermitHolderInformation(permitHolder);
+                  }}
                 />
               </Box>
             </GridItem>

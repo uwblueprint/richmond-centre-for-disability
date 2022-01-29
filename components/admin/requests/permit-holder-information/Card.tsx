@@ -49,8 +49,8 @@ const Card: FC<Props> = props => {
         if (data) {
           if (data.application.type == 'NEW') {
             setPermitHolderInformation({
-              dateOfBirth: formatDateYYYYMMDD(new Date(data.application.dateOfBirth)),
               ...data.application,
+              dateOfBirth: formatDateYYYYMMDD(new Date(data.application.dateOfBirth)),
             });
           } else {
             setPermitHolderInformation(data.application);
@@ -77,12 +77,15 @@ const Card: FC<Props> = props => {
 
   /** Handler for saving permit holder information */
   const handleSave = async (data: PermitHolderFormData) => {
-    const { type, ...permitHolderData } = data;
-    if (type === 'NEW') {
+    if (data.type === 'NEW') {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { type, ...permitHolderData } = data;
       await updateNewPermitHolderInformation({
         variables: { input: { id: applicationId, ...permitHolderData } },
       });
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { type, ...permitHolderData } = data;
       await updatePermitHolderInformation({
         variables: { input: { id: applicationId, ...permitHolderData } },
       });
