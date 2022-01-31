@@ -81,7 +81,7 @@ export default function GuardianInformationForm({
                   type="tel"
                   onChange={handleChange('phone')}
                 />
-                <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
+                <FormHelperText color="text.secondary">{'Example: 000-000-0000'}</FormHelperText>
               </FormControl>
 
               <FormControl isRequired>
@@ -113,7 +113,7 @@ export default function GuardianInformationForm({
                 value={guardianInformation.addressLine1}
                 onChange={handleChange('addressLine1')}
               />
-              <FormHelperText color="text.seconday">
+              <FormHelperText color="text.secondary">
                 {'Street Address, P.O. Box, Company Name, c/o'}
               </FormHelperText>
             </FormControl>
@@ -129,7 +129,7 @@ export default function GuardianInformationForm({
                 value={guardianInformation.addressLine2 || ''}
                 onChange={handleChange('addressLine2')}
               />
-              <FormHelperText color="text.seconday">
+              <FormHelperText color="text.secondary">
                 {'Apartment, suite, unit, building, floor, etc'}
               </FormHelperText>
             </FormControl>
@@ -146,7 +146,7 @@ export default function GuardianInformationForm({
                   value={guardianInformation.postalCode}
                   onChange={handleChange('postalCode')}
                 />
-                <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
+                <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
               </FormControl>
             </Stack>
 
@@ -154,7 +154,7 @@ export default function GuardianInformationForm({
               {'Upload POA File'}
             </Text>
             {/* TODO: Implement the file upload functionality using the fileList prop */}
-            <Text color="text.seconday">
+            <Text color="text.secondary">
               {
                 'Only ONE file can be added. Files must be .pdf and can be a maximum of 5MB in size.'
               }{' '}

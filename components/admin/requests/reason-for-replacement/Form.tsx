@@ -110,7 +110,7 @@ export default function ReasonForReplacementForm({
                   });
                 }}
               />
-              <FormHelperText color="text.seconday">{'Example: HH:MM AM/PM'}</FormHelperText>
+              <FormHelperText color="text.secondary">{'Example: HH:MM AM/PM'}</FormHelperText>
             </FormControl>
           </SimpleGrid>
 

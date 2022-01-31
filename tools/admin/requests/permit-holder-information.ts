@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { MutationUpdateNewApplicationGeneralInformationArgs } from '@lib/graphql/types';
+import { Gender } from '@lib/graphql/types';
 import {
   Applicant,
   Application,
@@ -7,6 +7,7 @@ import {
   NewApplication,
   QueryApplicationArgs,
   MutationUpdateApplicationGeneralInformationArgs,
+  MutationUpdateNewApplicationGeneralInformationArgs,
   UpdateApplicationGeneralInformationResult,
   QueryApplicantArgs,
 } from '@lib/graphql/types'; // Applicant type
@@ -27,7 +28,9 @@ export type PermitHolderFormData = Pick<
 > &
   (
     | // New application
-    ({ type: 'NEW' } & Pick<NewApplication, 'dateOfBirth' | 'gender' | 'otherGender'>)
+    ({ type: 'NEW' } & Pick<NewApplication, 'dateOfBirth' | 'otherGender'> & {
+          gender: Gender | null;
+        })
 
     // Renewal/replacement application
     | {
@@ -35,6 +38,7 @@ export type PermitHolderFormData = Pick<
       }
   );
 
+/** Permit holder information for new application forms */
 export type NewApplicationPermitHolderInformation = Pick<
   NewApplication,
   | 'firstName'
@@ -48,9 +52,8 @@ export type NewApplicationPermitHolderInformation = Pick<
   | 'city'
   | 'postalCode'
   | 'dateOfBirth'
-  | 'gender'
   | 'otherGender'
->;
+> & { gender: Gender | null };
 
 /** Permit holder information for cards */
 export type PermitHolderCardData = Pick<
@@ -144,8 +147,8 @@ export type UpdatePermitHolderInformationResponse = {
   updateApplicationGeneralInformation: UpdateApplicationGeneralInformationResult;
 };
 
-/** Update permit holder information of application */
-export const UPDATE_NEW_PERMIT_HOLDER_INFORMATION = gql`
+/** Update permit holder information of new application */
+export const UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION = gql`
   mutation UpdateNewApplicationPermitHolderInformation(
     $input: UpdateNewApplicationGeneralInformationInput!
   ) {
@@ -155,7 +158,7 @@ export const UPDATE_NEW_PERMIT_HOLDER_INFORMATION = gql`
   }
 `;
 
-export type UpdateNewPermitHolderInformationRequest =
+export type UpdateNewApplicationPermitHolderInformationRequest =
   MutationUpdateNewApplicationGeneralInformationArgs;
 
 /** Get permit holder information for selected permit holder preview card */

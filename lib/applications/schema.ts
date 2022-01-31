@@ -378,10 +378,6 @@ export default gql`
     # Payment information (omit processing fee)
     paymentMethod: PaymentType!
     donationAmount: String # Input monetary value as string
-    paidThroughShopify: Boolean!
-    shopifyPaymentStatus: ShopifyPaymentStatus
-    shopifyConfirmationNumber: String
-
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
     shippingFullName: String
@@ -620,7 +616,7 @@ export default gql`
     ok: Boolean!
   }
 
-  # Update general information section of application
+  # Update general information section of a new application (includes date of birth, gender)
   input UpdateNewApplicationGeneralInformationInput {
     # Application ID
     id: Int!

@@ -44,6 +44,12 @@ import {
   GetApplicantNewRequestInfoRequest,
   GetApplicantNewRequestInfoResponse,
   GET_APPLICANT_NEW_REQUEST_INFO_QUERY,
+  INITIAL_ADDITIONAL_QUESTIONS,
+  INITIAL_DOCTOR_INFORMATION,
+  INITIAL_GUARDIAN_INFORMATION,
+  INITIAL_PAYMENT_DETAILS,
+  INITIAL_PERMIT_HOLDER_INFORMATION,
+  INITIAL_PHYSICIAN_ASSESSMENT,
 } from '@tools/admin/requests/create-new';
 import { useRouter } from 'next/router';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
@@ -59,83 +65,26 @@ export default function CreateNew() {
 
   // General information
   const [permitHolderInformation, setPermitHolderInformation] =
-    useState<NewApplicationPermitHolderInformation>({
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      dateOfBirth: '',
-      gender: 'MALE',
-      otherGender: '',
-      email: '',
-      phone: '',
-      receiveEmailUpdates: false,
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      postalCode: '',
-    });
+    useState<NewApplicationPermitHolderInformation>(INITIAL_PERMIT_HOLDER_INFORMATION);
   // Physician assessment
-  const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment>({
-    disability: '',
-    patientCondition: null,
-    permitType: null,
-    physicianCertificationDate: new Date().toLocaleDateString('en-CA'),
-  });
+  const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment>(
+    INITIAL_PHYSICIAN_ASSESSMENT
+  );
   // Doctor information
-  const [doctorInformation, setDoctorInformation] = useState<DoctorFormData>({
-    firstName: '',
-    lastName: '',
-    mspNumber: null,
-    phone: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    postalCode: '',
-  });
+  const [doctorInformation, setDoctorInformation] = useState<DoctorFormData>(
+    INITIAL_DOCTOR_INFORMATION
+  );
   // Guardian/POA information
-  const [guardianInformation, setGuardianInformation] = useState<GuardianInformation>({
-    omitGuardianPoa: false,
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    relationship: '',
-    phone: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    postalCode: '',
-    // TODO: poaFormUrl work with file upload
-    poaFormUrl: '',
-  });
+  const [guardianInformation, setGuardianInformation] = useState<GuardianInformation>(
+    INITIAL_GUARDIAN_INFORMATION
+  );
   // Additional questions
-  const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>({
-    usesAccessibleConvertedVan: null,
-    accessibleConvertedVanLoadingMethod: null,
-    requiresWiderParkingSpace: null,
-    requiresWiderParkingSpaceReason: null,
-    otherRequiresWiderParkingSpaceReason: null,
-  });
+  const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>(
+    INITIAL_ADDITIONAL_QUESTIONS
+  );
   // Payment information
-  const [paymentDetails, setPaymentDetails] = useState<PaymentInformationFormData>({
-    paymentMethod: null,
-    donationAmount: '',
-    shippingAddressSameAsHomeAddress: false,
-    shippingFullName: '',
-    shippingAddressLine1: '',
-    shippingAddressLine2: '',
-    shippingCity: '',
-    shippingProvince: 'BC',
-    shippingCountry: '',
-    shippingPostalCode: '',
-    billingAddressSameAsHomeAddress: false,
-    billingFullName: '',
-    billingAddressLine1: '',
-    billingAddressLine2: '',
-    billingCity: '',
-    billingProvince: 'BC',
-    billingCountry: '',
-    billingPostalCode: '',
-  });
+  const [paymentDetails, setPaymentDetails] =
+    useState<PaymentInformationFormData>(INITIAL_PAYMENT_DETAILS);
 
   // Toast message
   const toast = useToast();
@@ -146,86 +95,13 @@ export default function CreateNew() {
   // Reset all fields when application is discarded
   const resetAllFields = () => {
     setApplicantId(null);
-
     setPermitHolderExists(true);
-
-    setPermitHolderInformation({
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      dateOfBirth: '',
-      gender: 'MALE',
-      otherGender: '',
-      email: '',
-      phone: '',
-      receiveEmailUpdates: false,
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      postalCode: '',
-    });
-
-    setPhysicianAssessment({
-      disability: '',
-      patientCondition: null,
-      permitType: null,
-      physicianCertificationDate: new Date().toLocaleDateString('en-CA'),
-    });
-
-    setDoctorInformation({
-      firstName: '',
-      lastName: '',
-      mspNumber: null,
-      phone: '',
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      postalCode: '',
-    });
-
-    setGuardianInformation({
-      omitGuardianPoa: false,
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      relationship: '',
-      phone: '',
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      postalCode: '',
-      // TODO: poaFormUrl work with file upload
-      poaFormUrl: '',
-    });
-
-    setAdditionalQuestions({
-      usesAccessibleConvertedVan: null,
-      accessibleConvertedVanLoadingMethod: null,
-      requiresWiderParkingSpace: null,
-      requiresWiderParkingSpaceReason: null,
-      otherRequiresWiderParkingSpaceReason: null,
-    });
-
-    setPaymentDetails({
-      paymentMethod: null,
-      donationAmount: '',
-      shippingAddressSameAsHomeAddress: false,
-      shippingFullName: '',
-      shippingAddressLine1: '',
-      shippingAddressLine2: '',
-      shippingCity: '',
-      shippingProvince: 'BC',
-      shippingCountry: '',
-      shippingPostalCode: '',
-      billingAddressSameAsHomeAddress: false,
-      billingFullName: '',
-      billingAddressLine1: '',
-      billingAddressLine2: '',
-      billingCity: '',
-      billingProvince: 'BC',
-      billingCountry: '',
-      billingPostalCode: '',
-    });
+    setPermitHolderInformation(INITIAL_PERMIT_HOLDER_INFORMATION);
+    setPhysicianAssessment(INITIAL_PHYSICIAN_ASSESSMENT);
+    setDoctorInformation(INITIAL_DOCTOR_INFORMATION);
+    setGuardianInformation(INITIAL_GUARDIAN_INFORMATION);
+    setAdditionalQuestions(INITIAL_ADDITIONAL_QUESTIONS);
+    setPaymentDetails(INITIAL_PAYMENT_DETAILS);
   };
 
   /**
@@ -322,15 +198,13 @@ export default function CreateNew() {
   /**
    * Sets and fetches permit holder data when selected from typeahead
    */
-  const handleSelectPermitHolder = useCallback(applicantId => {
-    setApplicantId(applicantId || null);
-    if (applicantId) {
-      getApplicant({
-        variables: {
-          id: applicantId,
-        },
-      });
-    }
+  const handleSelectPermitHolder = useCallback((applicantId: number) => {
+    setApplicantId(applicantId);
+    getApplicant({
+      variables: {
+        id: applicantId,
+      },
+    });
   }, []);
 
   /**
@@ -371,12 +245,17 @@ export default function CreateNew() {
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
 
-    if (physicianAssessment.patientCondition === null) {
+    if (!permitHolderInformation.gender) {
+      toast({ status: 'error', description: 'Missing gender', isClosable: true });
+      return;
+    }
+
+    if (!physicianAssessment.patientCondition) {
       toast({ status: 'error', description: 'Missing patient condition', isClosable: true });
       return;
     }
 
-    if (physicianAssessment.permitType === null) {
+    if (!physicianAssessment.permitType) {
       toast({ status: 'error', description: 'Missing permit type', isClosable: true });
       return;
     }
@@ -399,12 +278,12 @@ export default function CreateNew() {
       return;
     }
 
-    if (doctorInformation.mspNumber === null) {
+    if (!doctorInformation.mspNumber) {
       toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
       return;
     }
 
-    if (paymentDetails.paymentMethod === null) {
+    if (!paymentDetails.paymentMethod) {
       toast({ status: 'error', description: 'Missing payment method', isClosable: true });
       return;
     }
@@ -426,13 +305,10 @@ export default function CreateNew() {
           gender: permitHolderInformation.gender,
           otherGender: permitHolderInformation.otherGender,
 
-          disability: physicianAssessment.disability,
-          disabilityCertificationDate: physicianAssessment.physicianCertificationDate,
+          ...physicianAssessment,
           patientCondition: physicianAssessment.patientCondition,
           mobilityAids: null, //TODO: get mobility aids when forms are updated to get this data
-          otherPatientCondition: physicianAssessment.patientEligibilityDescription || null,
           permitType: physicianAssessment.permitType,
-          temporaryPermitExpiry: physicianAssessment.temporaryPermitExpiryDate,
 
           physicianFirstName: doctorInformation.firstName,
           physicianLastName: doctorInformation.lastName,
@@ -462,10 +338,6 @@ export default function CreateNew() {
           ...paymentDetails,
           paymentMethod: paymentDetails.paymentMethod,
 
-          // TODO: Replace with dynamic values
-          paidThroughShopify: false,
-          shopifyPaymentStatus: null,
-          shopifyConfirmationNumber: null,
           applicantId,
         },
       },
@@ -611,7 +483,7 @@ export default function CreateNew() {
                   {`Permit Holder's Information`}
                 </Text>
                 <PermitHolderInformationForm
-                  permitHolderInformation={{ type: 'NEW', ...permitHolderInformation }}
+                  permitHolderInformation={{ ...permitHolderInformation, type: 'NEW' }}
                   onChange={updatedPermitHolder => {
                     if (updatedPermitHolder.type === 'NEW') {
                       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -801,20 +673,16 @@ export default function CreateNew() {
                       </Button>
                     </a>
                   </Link>
-                  <Link href="#">
-                    <a>
-                      <Button
-                        bg="primary"
-                        height="48px"
-                        width="217px"
-                        type="submit"
-                        isDisabled={permitHolderExists && !applicantId}
-                        onClick={() => setStep(RequestFlowPageState.SubmittingRequestPage)}
-                      >
-                        <Text textStyle="button-semibold">Proceed to request</Text>
-                      </Button>
-                    </a>
-                  </Link>
+                  <Button
+                    bg="primary"
+                    height="48px"
+                    width="217px"
+                    type="submit"
+                    isDisabled={permitHolderExists && !applicantId}
+                    onClick={() => setStep(RequestFlowPageState.SubmittingRequestPage)}
+                  >
+                    <Text textStyle="button-semibold">Proceed to request</Text>
+                  </Button>
                 </Stack>
               </Box>
             </Stack>

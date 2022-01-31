@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { HStack, VStack, Text, Divider, Button } from '@chakra-ui/react'; // Chakra UI
+import { HStack, VStack, Text, Divider, Button, useToast } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
 import EditPermitHolderInformationModal from '@components/admin/requests/permit-holder-information/EditModal'; // Edit modal
 import {
@@ -9,10 +9,10 @@ import {
   GET_APPLICANT_INFORMATION,
   PermitHolderCardData,
   PermitHolderFormData,
-  UpdateNewPermitHolderInformationRequest,
+  UpdateNewApplicationPermitHolderInformationRequest,
   UpdatePermitHolderInformationRequest,
   UpdatePermitHolderInformationResponse,
-  UPDATE_NEW_PERMIT_HOLDER_INFORMATION,
+  UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION,
   UPDATE_PERMIT_HOLDER_INFORMATION,
 } from '@tools/admin/requests/permit-holder-information'; // Applicant type
 import { getPermitExpiryStatus } from '@lib/utils/permit-expiry'; // Get variant of PermitHolderStatusBadge
@@ -61,6 +61,9 @@ const Card: FC<Props> = props => {
     }
   );
 
+  // Toast message
+  const toast = useToast();
+
   const [updatePermitHolderInformation] = useMutation<
     UpdatePermitHolderInformationResponse,
     UpdatePermitHolderInformationRequest
@@ -68,8 +71,8 @@ const Card: FC<Props> = props => {
 
   const [updateNewPermitHolderInformation] = useMutation<
     UpdatePermitHolderInformationResponse,
-    UpdateNewPermitHolderInformationRequest
-  >(UPDATE_NEW_PERMIT_HOLDER_INFORMATION);
+    UpdateNewApplicationPermitHolderInformationRequest
+  >(UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION);
 
   if (!permitHolderInformation) {
     return null;
@@ -78,10 +81,14 @@ const Card: FC<Props> = props => {
   /** Handler for saving permit holder information */
   const handleSave = async (data: PermitHolderFormData) => {
     if (data.type === 'NEW') {
+      if (!data.gender) {
+        toast({ status: 'error', description: 'Missing gender', isClosable: true });
+        return;
+      }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { type, ...permitHolderData } = data;
+      const { type, gender, ...permitHolderData } = data;
       await updateNewPermitHolderInformation({
-        variables: { input: { id: applicationId, ...permitHolderData } },
+        variables: { input: { id: applicationId, ...permitHolderData, gender } },
       });
     } else {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

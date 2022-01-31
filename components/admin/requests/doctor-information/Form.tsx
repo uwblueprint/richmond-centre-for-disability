@@ -70,7 +70,7 @@ export default function DoctorInformationForm({
           <FormControl isRequired>
             <FormLabel>{'Phone number'}</FormLabel>
             <Input value={phone} onChange={handleChange('phone')} />
-            <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
+            <FormHelperText color="text.secondary">{'Example: 000-000-0000'}</FormHelperText>
           </FormControl>
         </Stack>
       </VStack>
@@ -90,7 +90,7 @@ export default function DoctorInformationForm({
         <FormControl isRequired paddingBottom="24px">
           <FormLabel>{'Address line 1'}</FormLabel>
           <Input value={addressLine1} onChange={handleChange('addressLine1')} />
-          <FormHelperText color="text.seconday">
+          <FormHelperText color="text.secondary">
             {'Street Address, P.O. Box, Company Name, c/o'}
           </FormHelperText>
         </FormControl>
@@ -103,7 +103,7 @@ export default function DoctorInformationForm({
             </Box>
           </FormLabel>
           <Input value={addressLine2 || ''} onChange={handleChange('addressLine2')} />
-          <FormHelperText color="text.seconday">
+          <FormHelperText color="text.secondary">
             {'Apartment, suite, unit, building, floor, etc'}
           </FormHelperText>
         </FormControl>
@@ -125,7 +125,7 @@ export default function DoctorInformationForm({
           <FormControl isRequired>
             <FormLabel>{'Postal code'}</FormLabel>
             <Input value={postalCode} onChange={handleChange('postalCode')} />
-            <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
+            <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
           </FormControl>
         </Stack>
       </Box>

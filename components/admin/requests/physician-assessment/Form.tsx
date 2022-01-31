@@ -55,10 +55,10 @@ export default function PhysicianAssessmentForm({
             <FormLabel>{'Physician’s certification date'}</FormLabel>
             <Input
               type="date"
-              value={physicianAssessment.physicianCertificationDate}
-              onChange={handleChange('physicianCertificationDate')}
+              value={physicianAssessment.disabilityCertificationDate}
+              onChange={handleChange('disabilityCertificationDate')}
             />
-            <FormHelperText color="text.seconday">{'Format: YYYY-MM-DD'}</FormHelperText>
+            <FormHelperText color="text.secondary">{'Format: YYYY-MM-DD'}</FormHelperText>
           </FormControl>
         </Stack>
       </Box>
@@ -75,7 +75,6 @@ export default function PhysicianAssessmentForm({
         <Stack spacing="20px">
           <FormControl isRequired>
             <FormLabel>{'Please select the condition'}</FormLabel>
-            {/* TODO: Revise DB schema to replace the 3 boolean columns to a single enum column */}
             <RadioGroup
               value={physicianAssessment.patientCondition || undefined}
               onChange={value => {
@@ -107,11 +106,11 @@ export default function PhysicianAssessmentForm({
             <FormControl isRequired>
               <FormLabel>{'Description'}</FormLabel>
               <Textarea
-                value={physicianAssessment.patientEligibilityDescription || ''}
+                value={physicianAssessment.otherPatientCondition || ''}
                 onChange={event =>
                   onChange({
                     ...physicianAssessment,
-                    patientEligibilityDescription: event.target.value,
+                    otherPatientCondition: event.target.value,
                   })
                 }
               />
@@ -151,15 +150,15 @@ export default function PhysicianAssessmentForm({
             <FormLabel>{'Temporary permit will expire on'}</FormLabel>
             <Input
               type="date"
-              value={physicianAssessment.temporaryPermitExpiryDate}
+              value={physicianAssessment.temporaryPermitExpiry}
               onChange={event =>
                 onChange({
                   ...physicianAssessment,
-                  temporaryPermitExpiryDate: event.target.value,
+                  temporaryPermitExpiry: event.target.value,
                 })
               }
             />
-            <FormHelperText color="text.seconday">{'Format: YYYY-MM-DD'}</FormHelperText>
+            <FormHelperText color="text.secondary">{'Format: YYYY-MM-DD'}</FormHelperText>
           </FormControl>
         )}
       </Box>

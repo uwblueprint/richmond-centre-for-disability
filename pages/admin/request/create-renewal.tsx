@@ -197,7 +197,7 @@ export default function CreateRenewal() {
    */
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    if (applicantId === null) {
+    if (!applicantId) {
       toast({
         status: 'error',
         description: 'You must select a permit holder for a Renewal Request.',
@@ -206,12 +206,12 @@ export default function CreateRenewal() {
       return;
     }
 
-    if (doctorInformation.mspNumber === null) {
+    if (!doctorInformation.mspNumber) {
       toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
       return;
     }
 
-    if (paymentInformation.paymentMethod === null) {
+    if (!paymentInformation.paymentMethod) {
       toast({ status: 'error', description: 'Missing payment method', isClosable: true });
       return;
     }
@@ -322,7 +322,7 @@ export default function CreateRenewal() {
                   {`Permit Holder's Information`}
                 </Text>
                 <PermitHolderInformationForm
-                  permitHolderInformation={{ type: 'RENEWAL', ...permitHolderInformation }}
+                  permitHolderInformation={{ ...permitHolderInformation, type: 'RENEWAL' }}
                   onChange={updatedPermitHolder => {
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const { type, ...permitHolder } = updatedPermitHolder;

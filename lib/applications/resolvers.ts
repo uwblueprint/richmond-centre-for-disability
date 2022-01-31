@@ -27,6 +27,7 @@ import {
   MutationUpdateApplicationPaymentInformationArgs,
   MutationUpdateApplicationPhysicianAssessmentArgs,
   MutationUpdateApplicationReasonForReplacementArgs,
+  MutationUpdateNewApplicationGeneralInformationArgs,
   NewApplication,
   QueryApplicationArgs,
   QueryApplicationsArgs,
@@ -40,7 +41,6 @@ import {
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
-import { MutationUpdateNewApplicationGeneralInformationArgs } from '@lib/graphql/types';
 
 /**
  * Query an application by ID
@@ -269,8 +269,8 @@ export const createNewApplication: Resolver<
         }),
         ...data,
         postalCode: formatPostalCode(postalCode),
-        shippingPostalCode: shippingPostalCode ? formatPostalCode(shippingPostalCode) : undefined,
-        billingPostalCode: billingPostalCode ? formatPostalCode(billingPostalCode) : undefined,
+        shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
+        billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
         newApplication: {
           create: {
             dateOfBirth,
@@ -299,9 +299,7 @@ export const createNewApplication: Resolver<
               guardianAddressLine1,
               guardianAddressLine2,
               guardianCity,
-              guardianPostalCode: guardianPostalCode
-                ? formatPostalCode(guardianPostalCode)
-                : undefined,
+              guardianPostalCode: guardianPostalCode && formatPostalCode(guardianPostalCode),
               poaFormUrl,
             }),
             usesAccessibleConvertedVan,
@@ -383,8 +381,8 @@ export const createRenewalApplication: Resolver<
         donationAmount: donationAmount || 0,
         ...data,
         postalCode: formatPostalCode(postalCode),
-        shippingPostalCode: shippingPostalCode ? formatPostalCode(shippingPostalCode) : undefined,
-        billingPostalCode: billingPostalCode ? formatPostalCode(billingPostalCode) : undefined,
+        shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
+        billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
         applicant: {
           connect: { id: applicantId },
         },
@@ -660,8 +658,8 @@ export const createReplacementApplication: Resolver<
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
         postalCode: formatPostalCode(postalCode),
-        shippingPostalCode: shippingPostalCode ? formatPostalCode(shippingPostalCode) : undefined,
-        billingPostalCode: billingPostalCode ? formatPostalCode(billingPostalCode) : undefined,
+        shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
+        billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
         ...data,
         applicant: {
           connect: { id: applicantId },
@@ -744,7 +742,7 @@ export const updateApplicationGeneralInformation: Resolver<
 };
 
 /**
- * Update the general information section of an application
+ * Update the general information section of a new application (includes date of birth, gender)
  * @returns Status of the operation (ok)
  */
 export const updateNewApplicationGeneralInformation: Resolver<
@@ -939,8 +937,8 @@ export const updateApplicationPaymentInformation: Resolver<
       where: { id },
       data: {
         donationAmount: donationAmount || 0,
-        shippingPostalCode: shippingPostalCode ? formatPostalCode(shippingPostalCode) : undefined,
-        billingPostalCode: billingPostalCode ? formatPostalCode(billingPostalCode) : undefined,
+        shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
+        billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
         ...data,
       },
     });

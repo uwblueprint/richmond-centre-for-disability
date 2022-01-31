@@ -180,12 +180,12 @@ export default function CreateReplacement() {
       return;
     }
 
-    if (reasonForReplacement.reason === null) {
+    if (!reasonForReplacement.reason) {
       toast({ status: 'error', description: 'Missing reason for replacement', isClosable: true });
       return;
     }
 
-    if (paymentInformation.paymentMethod === null) {
+    if (!paymentInformation.paymentMethod) {
       toast({ status: 'error', description: 'Missing payment method', isClosable: true });
       return;
     }
@@ -267,9 +267,9 @@ export default function CreateReplacement() {
                 </Text>
                 <PermitHolderInformationForm
                   permitHolderInformation={{
+                    ...permitHolderInformation,
                     type: 'REPLACEMENT',
                     receiveEmailUpdates: false,
-                    ...permitHolderInformation,
                   }}
                   onChange={updatedPermitHolder => {
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars

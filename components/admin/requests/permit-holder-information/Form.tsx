@@ -58,15 +58,13 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             />
           </FormControl>
 
-          {props.permitHolderInformation.type === 'NEW' && (
-            <FormControl>
-              <FormLabel>{'Middle name'}</FormLabel>
-              <Input
-                value={props.permitHolderInformation.middleName || ''}
-                onChange={handleChange('middleName')}
-              />
-            </FormControl>
-          )}
+          <FormControl>
+            <FormLabel>{'Middle name'}</FormLabel>
+            <Input
+              value={props.permitHolderInformation.middleName || ''}
+              onChange={handleChange('middleName')}
+            />
+          </FormControl>
 
           <FormControl isRequired>
             <FormLabel>{'Last name'}</FormLabel>
@@ -103,7 +101,8 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             <FormControl isRequired>
               <FormLabel>{`Gender`}</FormLabel>
               <Select
-                value={props.permitHolderInformation.gender}
+                placeholder="Select gender"
+                value={props.permitHolderInformation.gender || undefined}
                 onChange={event => {
                   if (props.permitHolderInformation.type === 'NEW') {
                     props.onChange({
@@ -139,7 +138,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
               type="tel"
               onChange={handleChange('phone')}
             />
-            <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
+            <FormHelperText color="text.secondary">{'Example: 000-000-0000'}</FormHelperText>
           </FormControl>
 
           <FormControl>
@@ -188,7 +187,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             value={props.permitHolderInformation.addressLine1}
             onChange={handleChange('addressLine1')}
           />
-          <FormHelperText color="text.seconday">
+          <FormHelperText color="text.secondary">
             {'Street Address, P.O. Box, Company Name, c/o'}
           </FormHelperText>
         </FormControl>
@@ -204,7 +203,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             value={props.permitHolderInformation.addressLine2 || ''}
             onChange={handleChange('addressLine2')}
           />
-          <FormHelperText color="text.seconday">
+          <FormHelperText color="text.secondary">
             {'Apartment, suite, unit, building, floor, etc'}
           </FormHelperText>
         </FormControl>
@@ -221,7 +220,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
               value={props.permitHolderInformation.postalCode}
               onChange={handleChange('postalCode')}
             />
-            <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
+            <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
           </FormControl>
         </Stack>
       </Box>

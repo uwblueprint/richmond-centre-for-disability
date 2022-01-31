@@ -194,7 +194,9 @@ export default function EditUserInformationModal({
                       onChange={event => setPhoneNumber(event.target.value)}
                       type="tel"
                     />
-                    <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
+                    <FormHelperText color="text.secondary">
+                      {'Example: 000-000-0000'}
+                    </FormHelperText>
                   </FormControl>
 
                   <FormControl isRequired>
@@ -204,7 +206,9 @@ export default function EditUserInformationModal({
                       onChange={event => setPhoneNumber(event.target.value)}
                       type="tel"
                     />
-                    <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
+                    <FormHelperText color="text.secondary">
+                      {'Example: 000-000-0000'}
+                    </FormHelperText>
                   </FormControl>
                 </Stack>
               </Box>
@@ -224,7 +228,7 @@ export default function EditUserInformationModal({
                     value={addressLine1}
                     onChange={event => setAddressLine1(event.target.value)}
                   />
-                  <FormHelperText color="text.seconday">
+                  <FormHelperText color="text.secondary">
                     {'Street Address, P.O. Box, Company Name, c/o'}
                   </FormHelperText>
                 </FormControl>
@@ -235,7 +239,7 @@ export default function EditUserInformationModal({
                     value={addressLine2}
                     onChange={event => setAddressLine2(event.target.value)}
                   />
-                  <FormHelperText color="text.seconday">
+                  <FormHelperText color="text.secondary">
                     {'Apartment, suite, unit, building, floor, etc'}
                   </FormHelperText>
                 </FormControl>
@@ -252,7 +256,7 @@ export default function EditUserInformationModal({
                       value={postalCode}
                       onChange={event => setPostalCode(event.target.value)}
                     />
-                    <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
+                    <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
                   </FormControl>
                 </Stack>
               </Box>
