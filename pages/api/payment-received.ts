@@ -3,7 +3,7 @@ import { ShopifyPaymentStatus } from '@prisma/client'; // Prisma client
 import crypto from 'crypto'; // Verifying Shopify Request
 import getRawBody from 'raw-body';
 
-const paymentReceivedHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function paymentReceivedHandler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.status(405).end('Method not allowed');
     return;
@@ -21,14 +21,14 @@ const paymentReceivedHandler = async (req: NextApiRequest, res: NextApiResponse)
     return;
   }
 
-  // Since Next.js Parser is disabled, we need to do our own parsing
-  const body = JSON.parse(rawBody);
-  req.body = body;
-
-  // properties = [ { name: 'applicationId', value: '7' } ]
-  const rawApplicationId = req.body.line_items[0]?.properties[0]?.value;
-  const shopifyOrderId = req.body.id;
   try {
+    // Since Next.js Parser is disabled, we need to do our own parsing
+    const body = JSON.parse(rawBody);
+    req.body = body;
+
+    // properties = [ { name: 'applicationId', value: '7' } ]
+    const rawApplicationId = req.body.line_items[0]?.properties[0]?.value;
+    const shopifyOrderId = req.body.id;
     const applicationId = parseInt(rawApplicationId);
     await prisma.application.update({
       where: { id: applicationId },
@@ -39,20 +39,18 @@ const paymentReceivedHandler = async (req: NextApiRequest, res: NextApiResponse)
       },
     });
   } catch (err) {
-    // TODO: Determine what we do here
-    res.status(200).end();
+    // TODO: Add some sort of logging or notification
+    res.status(500).end();
   }
 
   res.status(200).end();
   return;
-};
+}
 
 // Turn off the default bodyParser provided by Next.js
-// Needed for Shopify Webhook Verification
+// Shopify Webhook Verification needs the raw request body
 export const config = {
   api: {
     bodyParser: false,
   },
 };
-
-export default paymentReceivedHandler;
