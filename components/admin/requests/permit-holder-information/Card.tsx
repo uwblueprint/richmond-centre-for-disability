@@ -114,23 +114,19 @@ const Card: FC<Props> = props => {
     province,
     country,
     postalCode,
+    applicant,
   } = permitHolderInformation;
 
   // Personal information card header
-  const Header =
-    type === 'NEW' ? (
-      formatFullName(firstName, middleName, lastName)
-    ) : (
-      <a
-        href={`/admin/permit-holder/${permitHolderInformation.applicant.id}`}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <Text as="h5" variant="link" textStyle="display-small-semibold">
-          {formatFullName(firstName, middleName, lastName)}
-        </Text>
-      </a>
-    );
+  const Header = applicant ? (
+    <a href={`/admin/permit-holder/${applicant.id}`} target="_blank" rel="noreferrer">
+      <Text as="h5" variant="link" textStyle="display-small-semibold">
+        {formatFullName(firstName, middleName, lastName)}
+      </Text>
+    </a>
+  ) : (
+    formatFullName(firstName, middleName, lastName)
+  );
 
   // Personal information card editing modal
   const EditModal = (
@@ -181,35 +177,31 @@ const Card: FC<Props> = props => {
         {/* Permit holder information */}
         <VStack spacing="12px" align="left">
           <Text as="p" textStyle="body-regular">
-            User ID: {type === 'NEW' ? 'N/A' : permitHolderInformation.applicant.id}
+            User ID: {applicant ? applicant.id : 'N/A'}
           </Text>
           <VStack align="left">
             <HStack spacing="12px">
               <Text as="p" textStyle="body-regular">
                 Most recent APP:{' '}
-                {type !== 'NEW' && permitHolderInformation.applicant.mostRecentPermit
-                  ? `#${permitHolderInformation.applicant.mostRecentPermit.rcdPermitId}`
+                {applicant && applicant.mostRecentPermit
+                  ? `#${applicant.mostRecentPermit.rcdPermitId}`
                   : 'N/A'}
               </Text>
-              {type !== 'NEW' && permitHolderInformation.applicant.mostRecentPermit && (
+              {applicant && applicant.mostRecentPermit && (
                 <PermitHolderStatusBadge
                   variant={
-                    getPermitExpiryStatus(
-                      new Date(permitHolderInformation.applicant.mostRecentPermit.expiryDate)
-                    ) === 'EXPIRED'
+                    getPermitExpiryStatus(new Date(applicant.mostRecentPermit.expiryDate)) ===
+                    'EXPIRED'
                       ? 'INACTIVE'
                       : 'ACTIVE'
                   }
                 />
               )}
             </HStack>
-            {type !== 'NEW' && permitHolderInformation.applicant.mostRecentPermit && (
+            {applicant && applicant.mostRecentPermit && (
               // TODO: Fix text styles to avoid !important
               <Text as="p" textStyle="xsmall" margin="0 !important" color="secondary">
-                Expiring{' '}
-                {new Date(
-                  permitHolderInformation.applicant.mostRecentPermit.expiryDate
-                ).toDateString()}
+                Expiring {new Date(applicant.mostRecentPermit.expiryDate).toDateString()}
               </Text>
             )}
           </VStack>
@@ -256,7 +248,16 @@ const Card: FC<Props> = props => {
             </a>
           )}
           <Text as="p" textStyle="body-regular">
-            Renewal updates through email: <b>{receiveEmailUpdates ? 'Yes' : 'No'}</b>
+            Renewal updates through email:{' '}
+            <b>
+              {(
+                type === 'NEW'
+                  ? receiveEmailUpdates
+                  : permitHolderInformation.applicant.receiveEmailUpdates
+              )
+                ? 'Yes'
+                : 'No'}
+            </b>
           </Text>
         </VStack>
         <Divider />

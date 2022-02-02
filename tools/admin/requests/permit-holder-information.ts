@@ -80,7 +80,10 @@ export type PermitHolderCardData = Pick<
     // Renewal/replacement application
     | {
         type: 'RENEWAL' | 'REPLACEMENT';
-        applicant: Pick<Applicant, 'id' | 'dateOfBirth' | 'gender' | 'otherGender'> & {
+        applicant: Pick<
+          Applicant,
+          'id' | 'dateOfBirth' | 'gender' | 'otherGender' | 'receiveEmailUpdates'
+        > & {
           mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'> | null;
         };
       }
@@ -98,6 +101,7 @@ export const GET_APPLICANT_INFORMATION = gql`
       lastName
       phone
       email
+      receiveEmailUpdates
       addressLine1
       addressLine2
       city
