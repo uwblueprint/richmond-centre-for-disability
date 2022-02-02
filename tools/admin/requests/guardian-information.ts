@@ -1,5 +1,6 @@
 /** Guardian information in forms */
 export type GuardianInformation = {
+  omitGuardianPoa: boolean;
   firstName: string;
   middleName: string | null;
   lastName: string;

@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client';
+import { Province } from '@lib/graphql/types';
 import {
   Application,
   MutationUpdateApplicationPaymentInformationArgs,
@@ -16,7 +17,6 @@ export type PaymentInformationFormData = Pick<
   | 'shippingAddressLine1'
   | 'shippingAddressLine2'
   | 'shippingCity'
-  | 'shippingProvince'
   | 'shippingCountry'
   | 'shippingPostalCode'
   | 'billingAddressSameAsHomeAddress'
@@ -24,10 +24,13 @@ export type PaymentInformationFormData = Pick<
   | 'billingAddressLine1'
   | 'billingAddressLine2'
   | 'billingCity'
-  | 'billingProvince'
   | 'billingCountry'
   | 'billingPostalCode'
-> & { paymentMethod: PaymentType | null };
+> & {
+  paymentMethod: PaymentType | null;
+  shippingProvince: Province | null;
+  billingProvince: Province | null;
+};
 
 /** Payment information for cards */
 export type PaymentInformationCardData = Pick<

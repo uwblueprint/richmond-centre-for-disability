@@ -160,7 +160,7 @@ export default function PaymentDetailsForm({
                 value={shippingAddressLine1 || ''}
                 onChange={handleChange('shippingAddressLine1')}
               />
-              <FormHelperText color="text.seconday">
+              <FormHelperText color="text.secondary">
                 {'Street Address, P.O. Box, Company Name, c/o'}
               </FormHelperText>
             </FormControl>
@@ -176,7 +176,7 @@ export default function PaymentDetailsForm({
                 value={shippingAddressLine2 || ''}
                 onChange={handleChange('shippingAddressLine2')}
               />
-              <FormHelperText color="text.seconday">
+              <FormHelperText color="text.secondary">
                 {'Apartment, suite, unit, building, floor, etc'}
               </FormHelperText>
             </FormControl>
@@ -214,7 +214,7 @@ export default function PaymentDetailsForm({
               <FormControl isRequired>
                 <FormLabel>{'Postal code'}</FormLabel>
                 <Input value={shippingPostalCode} onChange={handleChange('shippingPostalCode')} />
-                <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
+                <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
               </FormControl>
             </Stack>
           </>
@@ -250,7 +250,7 @@ export default function PaymentDetailsForm({
                 value={billingAddressLine1 || ''}
                 onChange={handleChange('billingAddressLine1')}
               />
-              <FormHelperText color="text.seconday">
+              <FormHelperText color="text.secondary">
                 {'Street Address, P.O. Box, Company Name, c/o'}
               </FormHelperText>
             </FormControl>
@@ -266,7 +266,7 @@ export default function PaymentDetailsForm({
                 value={billingAddressLine2 || ''}
                 onChange={handleChange('billingAddressLine2')}
               />
-              <FormHelperText color="text.seconday">
+              <FormHelperText color="text.secondary">
                 {'Apartment, suite, unit, building, floor, etc'}
               </FormHelperText>
             </FormControl>
@@ -307,7 +307,7 @@ export default function PaymentDetailsForm({
                   value={billingPostalCode || ''}
                   onChange={handleChange('billingPostalCode')}
                 />
-                <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
+                <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
               </FormControl>
             </Stack>
           </>

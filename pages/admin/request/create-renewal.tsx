@@ -24,13 +24,12 @@ import { useRouter } from 'next/router';
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
 import { DoctorFormData } from '@tools/admin/requests/doctor-information';
-import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 import {
   GetRenewalApplicantRequest,
   GetRenewalApplicantResponse,
   GET_RENEWAL_APPLICANT,
 } from '@tools/admin/requests/create-renewal';
-import { PaymentType } from '@lib/graphql/types';
+import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -69,18 +68,16 @@ export default function CreateRenewal() {
   /** Additional information section */
   const [additionalInformation, setAdditionalInformation] = useState<AdditionalInformationFormData>(
     {
-      usesAccessibleConvertedVan: false,
+      usesAccessibleConvertedVan: null,
       accessibleConvertedVanLoadingMethod: null,
-      requiresWiderParkingSpace: false,
+      requiresWiderParkingSpace: null,
       requiresWiderParkingSpaceReason: null,
       otherRequiresWiderParkingSpaceReason: null,
     }
   );
 
   /** Payment information section */
-  const [paymentInformation, setPaymentInformation] = useState<
-    PaymentInformationFormData & { paymentMethod: PaymentType | null }
-  >({
+  const [paymentInformation, setPaymentInformation] = useState<PaymentInformationFormData>({
     paymentMethod: null,
     donationAmount: '',
     shippingAddressSameAsHomeAddress: false,
@@ -200,7 +197,7 @@ export default function CreateRenewal() {
    */
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    if (applicantId === null) {
+    if (!applicantId) {
       toast({
         status: 'error',
         description: 'You must select a permit holder for a Renewal Request.',
@@ -209,13 +206,31 @@ export default function CreateRenewal() {
       return;
     }
 
-    if (doctorInformation.mspNumber === null) {
+    if (!doctorInformation.mspNumber) {
       toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
       return;
     }
 
-    if (paymentInformation.paymentMethod === null) {
+    if (!paymentInformation.paymentMethod) {
       toast({ status: 'error', description: 'Missing payment method', isClosable: true });
+      return;
+    }
+
+    if (additionalInformation.usesAccessibleConvertedVan === null) {
+      toast({
+        status: 'error',
+        description: 'Missing if patient uses accessible converted van',
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (additionalInformation.requiresWiderParkingSpace === null) {
+      toast({
+        status: 'error',
+        description: 'Missing if patient requires wider parking space',
+        isClosable: true,
+      });
       return;
     }
 
@@ -233,6 +248,8 @@ export default function CreateRenewal() {
           physicianCity: doctorInformation.city,
           physicianPostalCode: doctorInformation.postalCode,
           ...additionalInformation,
+          usesAccessibleConvertedVan: additionalInformation.usesAccessibleConvertedVan,
+          requiresWiderParkingSpace: additionalInformation.requiresWiderParkingSpace,
           ...paymentInformation,
           paymentMethod: paymentInformation.paymentMethod,
           // TODO: Replace with dynamic values
@@ -305,9 +322,12 @@ export default function CreateRenewal() {
                   {`Permit Holder's Information`}
                 </Text>
                 <PermitHolderInformationForm
-                  type="RENEWAL"
-                  permitHolderInformation={permitHolderInformation}
-                  onChange={setPermitHolderInformation}
+                  permitHolderInformation={{ ...permitHolderInformation, type: 'RENEWAL' }}
+                  onChange={updatedPermitHolder => {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    const { type, ...permitHolder } = updatedPermitHolder;
+                    setPermitHolderInformation(permitHolder);
+                  }}
                 />
               </Box>
             </GridItem>

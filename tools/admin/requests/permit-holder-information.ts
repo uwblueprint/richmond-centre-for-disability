@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client';
+import { Gender } from '@lib/graphql/types';
 import {
   Applicant,
   Application,
@@ -6,6 +7,7 @@ import {
   NewApplication,
   QueryApplicationArgs,
   MutationUpdateApplicationGeneralInformationArgs,
+  MutationUpdateNewApplicationGeneralInformationArgs,
   UpdateApplicationGeneralInformationResult,
   QueryApplicantArgs,
 } from '@lib/graphql/types'; // Applicant type
@@ -23,7 +25,35 @@ export type PermitHolderFormData = Pick<
   | 'addressLine2'
   | 'city'
   | 'postalCode'
->;
+> &
+  (
+    | // New application
+    ({ type: 'NEW' } & Pick<NewApplication, 'dateOfBirth' | 'otherGender'> & {
+          gender: Gender | null;
+        })
+
+    // Renewal/replacement application
+    | {
+        type: 'RENEWAL' | 'REPLACEMENT';
+      }
+  );
+
+/** Permit holder information for new application forms */
+export type NewApplicationPermitHolderInformation = Pick<
+  NewApplication,
+  | 'firstName'
+  | 'middleName'
+  | 'lastName'
+  | 'email'
+  | 'phone'
+  | 'receiveEmailUpdates'
+  | 'addressLine1'
+  | 'addressLine2'
+  | 'city'
+  | 'postalCode'
+  | 'dateOfBirth'
+  | 'otherGender'
+> & { gender: Gender | null };
 
 /** Permit holder information for cards */
 export type PermitHolderCardData = Pick<
@@ -43,13 +73,17 @@ export type PermitHolderCardData = Pick<
 > &
   (
     | // New application
-    ({ type: 'NEW'; applicant: null } & Partial<
-        Pick<NewApplication, 'dateOfBirth' | 'gender' | 'otherGender' | 'receiveEmailUpdates'>
+    ({ type: 'NEW'; applicant: null } & Pick<
+        NewApplication,
+        'dateOfBirth' | 'gender' | 'otherGender' | 'receiveEmailUpdates'
       >)
     // Renewal/replacement application
     | {
         type: 'RENEWAL' | 'REPLACEMENT';
-        applicant: Pick<Applicant, 'id' | 'dateOfBirth' | 'gender' | 'otherGender'> & {
+        applicant: Pick<
+          Applicant,
+          'id' | 'dateOfBirth' | 'gender' | 'otherGender' | 'receiveEmailUpdates'
+        > & {
           mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'> | null;
         };
       }
@@ -67,6 +101,7 @@ export const GET_APPLICANT_INFORMATION = gql`
       lastName
       phone
       email
+      receiveEmailUpdates
       addressLine1
       addressLine2
       city
@@ -115,6 +150,20 @@ export type UpdatePermitHolderInformationRequest = MutationUpdateApplicationGene
 export type UpdatePermitHolderInformationResponse = {
   updateApplicationGeneralInformation: UpdateApplicationGeneralInformationResult;
 };
+
+/** Update permit holder information of new application */
+export const UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION = gql`
+  mutation UpdateNewApplicationPermitHolderInformation(
+    $input: UpdateNewApplicationGeneralInformationInput!
+  ) {
+    updateNewApplicationGeneralInformation(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type UpdateNewApplicationPermitHolderInformationRequest =
+  MutationUpdateNewApplicationGeneralInformationArgs;
 
 /** Get permit holder information for selected permit holder preview card */
 export const GET_SELECTED_APPLICANT_QUERY = gql`

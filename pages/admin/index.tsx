@@ -1,6 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
 import { useRouter } from 'next/router'; // Next Router
+import Link from 'next/link';
 import {
   Box,
   Flex,
@@ -220,12 +221,15 @@ const Requests: NextPage = () => {
                 Create a request
               </MenuButton>
               <MenuList>
-                <MenuItem onClick={() => router.push('/admin/request/create-replacement')}>
-                  Replacement Request
-                </MenuItem>
-                <MenuItem onClick={() => router.push('/admin/request/create-renewal')}>
-                  Renewal Request
-                </MenuItem>
+                <Link href="/admin/request/create-replacement">
+                  <MenuItem>Replacement Request</MenuItem>
+                </Link>
+                <Link href="/admin/request/create-renewal">
+                  <MenuItem>Renewal Request</MenuItem>
+                </Link>
+                <Link href="/admin/request/create-new">
+                  <MenuItem>New APP Request</MenuItem>
+                </Link>
               </MenuList>
             </Menu>
           </HStack>

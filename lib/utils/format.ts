@@ -15,7 +15,7 @@ export const formatPhoneNumber = (phone: string): string => {
  * @returns {string} formatted postal code
  */
 export const formatPostalCode = (postalCode: string): string => {
-  return postalCode?.replace(/[^A-Za-z\d]/g, '');
+  return postalCode.replace(/[^A-Za-z\d]/g, '');
 };
 
 /**

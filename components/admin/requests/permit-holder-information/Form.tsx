@@ -8,8 +8,10 @@ import {
   Box,
   Divider,
   Checkbox,
+  Select,
 } from '@chakra-ui/react'; // Chakra UI
-import { ApplicationType } from '@lib/graphql/types';
+import { Gender } from '@lib/graphql/types';
+import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { ChangeEventHandler } from 'react';
 
@@ -17,7 +19,6 @@ import { ChangeEventHandler } from 'react';
  * PermitHolderInformationFormProps props for allowing users to edit permit holder information.
  */
 type PermitHolderInformationFormProps = {
-  readonly type: ApplicationType;
   readonly permitHolderInformation: PermitHolderFormData;
   readonly onChange: (updatedData: PermitHolderFormData) => void;
 };
@@ -48,12 +49,20 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
         <Text as="h3" textStyle="heading" paddingBottom="24px">
           {'Personal Information'}
         </Text>
-        <Stack direction="row" spacing="20px">
+        <Stack direction="row" spacing="20px" paddingBottom="24px">
           <FormControl isRequired>
             <FormLabel>{'First name'}</FormLabel>
             <Input
               value={props.permitHolderInformation.firstName}
               onChange={handleChange('firstName')}
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>{'Middle name'}</FormLabel>
+            <Input
+              value={props.permitHolderInformation.middleName || ''}
+              onChange={handleChange('middleName')}
             />
           </FormControl>
 
@@ -65,6 +74,51 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             />
           </FormControl>
         </Stack>
+
+        {props.permitHolderInformation.type === 'NEW' && (
+          <Stack direction="row" spacing="20px">
+            <FormControl isRequired>
+              <FormLabel>{`Date of birth`}</FormLabel>
+              <Input
+                type="date"
+                value={
+                  props.permitHolderInformation.dateOfBirth
+                    ? formatDateYYYYMMDD(props.permitHolderInformation.dateOfBirth)
+                    : undefined
+                }
+                onChange={event => {
+                  if (props.permitHolderInformation.type === 'NEW') {
+                    props.onChange({
+                      ...props.permitHolderInformation,
+                      dateOfBirth: event.target.value,
+                    });
+                  }
+                }}
+              />
+            </FormControl>
+
+            {/* TODO: set otherGender if selected option is OTHER */}
+            <FormControl isRequired>
+              <FormLabel>{`Gender`}</FormLabel>
+              <Select
+                placeholder="Select gender"
+                value={props.permitHolderInformation.gender || undefined}
+                onChange={event => {
+                  if (props.permitHolderInformation.type === 'NEW') {
+                    props.onChange({
+                      ...props.permitHolderInformation,
+                      gender: event.target.value as Gender,
+                    });
+                  }
+                }}
+              >
+                <option value={'MALE'}>Male</option>
+                <option value={'FEMALE'}>Female</option>
+                <option value={'OTHER'}>Other</option>
+              </Select>
+            </FormControl>
+          </Stack>
+        )}
       </Box>
 
       <Divider />
@@ -84,7 +138,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
               type="tel"
               onChange={handleChange('phone')}
             />
-            <FormHelperText color="text.seconday">{'Example: 000-000-0000'}</FormHelperText>
+            <FormHelperText color="text.secondary">{'Example: 000-000-0000'}</FormHelperText>
           </FormControl>
 
           <FormControl>
@@ -101,7 +155,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
           </FormControl>
         </Stack>
 
-        {props.type !== 'REPLACEMENT' && (
+        {props.permitHolderInformation.type !== 'REPLACEMENT' && (
           <FormControl>
             <Checkbox
               paddingTop="24px"
@@ -133,7 +187,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             value={props.permitHolderInformation.addressLine1}
             onChange={handleChange('addressLine1')}
           />
-          <FormHelperText color="text.seconday">
+          <FormHelperText color="text.secondary">
             {'Street Address, P.O. Box, Company Name, c/o'}
           </FormHelperText>
         </FormControl>
@@ -149,7 +203,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
             value={props.permitHolderInformation.addressLine2 || ''}
             onChange={handleChange('addressLine2')}
           />
-          <FormHelperText color="text.seconday">
+          <FormHelperText color="text.secondary">
             {'Apartment, suite, unit, building, floor, etc'}
           </FormHelperText>
         </FormControl>
@@ -166,7 +220,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
               value={props.permitHolderInformation.postalCode}
               onChange={handleChange('postalCode')}
             />
-            <FormHelperText color="text.seconday">{'Example: X0X 0X0'} </FormHelperText>
+            <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
           </FormControl>
         </Stack>
       </Box>

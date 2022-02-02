@@ -257,6 +257,7 @@ export type CreateNewApplicationInput = {
   patientCondition: PatientCondition;
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherPatientCondition: Maybe<Scalars['String']>;
+  permitType: PermitType;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
   physicianFirstName: Scalars['String'];
   physicianLastName: Scalars['String'];
@@ -306,6 +307,7 @@ export type CreateNewApplicationInput = {
 export type CreateNewApplicationResult = {
   __typename?: 'CreateNewApplicationResult';
   ok: Scalars['Boolean'];
+  applicationId: Maybe<Scalars['Int']>;
 };
 
 export type CreateRenewalApplicationInput = {
@@ -511,6 +513,7 @@ export type Mutation = {
   createExternalRenewalApplication: CreateExternalRenewalApplicationResult;
   createReplacementApplication: Maybe<CreateReplacementApplicationResult>;
   updateApplicationGeneralInformation: Maybe<UpdateApplicationGeneralInformationResult>;
+  updateNewApplicationGeneralInformation: Maybe<UpdateApplicationGeneralInformationResult>;
   updateApplicationDoctorInformation: Maybe<UpdateApplicationDoctorInformationResult>;
   updateApplicationAdditionalInformation: Maybe<UpdateApplicationAdditionalInformationResult>;
   updateApplicationPaymentInformation: Maybe<UpdateApplicationPaymentInformationResult>;
@@ -583,6 +586,11 @@ export type MutationCreateReplacementApplicationArgs = {
 
 export type MutationUpdateApplicationGeneralInformationArgs = {
   input: UpdateApplicationGeneralInformationInput;
+};
+
+
+export type MutationUpdateNewApplicationGeneralInformationArgs = {
+  input: UpdateNewApplicationGeneralInformationInput;
 };
 
 
@@ -1277,6 +1285,23 @@ export type UpdateEmployeeResult = {
   __typename?: 'UpdateEmployeeResult';
   ok: Scalars['Boolean'];
   employee: Employee;
+};
+
+export type UpdateNewApplicationGeneralInformationInput = {
+  id: Scalars['Int'];
+  firstName: Scalars['String'];
+  middleName: Maybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  dateOfBirth: Scalars['Date'];
+  gender: Gender;
+  otherGender: Maybe<Scalars['String']>;
+  phone: Scalars['String'];
+  email: Maybe<Scalars['String']>;
+  receiveEmailUpdates: Maybe<Scalars['Boolean']>;
+  addressLine1: Scalars['String'];
+  addressLine2: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  postalCode: Scalars['String'];
 };
 
 export type UpsertPhysicianInput = {

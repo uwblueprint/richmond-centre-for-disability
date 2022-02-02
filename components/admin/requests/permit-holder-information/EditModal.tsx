@@ -13,21 +13,18 @@ import {
 import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form';
-import { ApplicationType } from '@lib/graphql/types';
 
 /**
  * Props for Edit Permit Information Modal
  */
 type EditPermitHolderInformationModalProps = {
   children: ReactNode;
-  readonly type: ApplicationType;
   readonly permitHolderInformation: PermitHolderFormData;
   readonly onSave: (applicationData: PermitHolderFormData) => void;
 };
 
 export default function EditPermitHolderInformationModal({
   children,
-  type,
   permitHolderInformation: currentPermitHolderInformation,
   onSave,
 }: EditPermitHolderInformationModalProps) {
@@ -49,7 +46,7 @@ export default function EditPermitHolderInformationModal({
   };
 
   const handleChange = (updatedData: PermitHolderFormData) => {
-    if (type === 'REPLACEMENT') {
+    if (permitHolderInformation.type === 'REPLACEMENT') {
       setPermitHolderInformation({
         ...permitHolderInformation,
         ...updatedData,
@@ -82,7 +79,6 @@ export default function EditPermitHolderInformationModal({
             </ModalHeader>
             <ModalBody paddingY="20px" paddingX="4px">
               <PermitHolderInformationForm
-                type={type}
                 permitHolderInformation={permitHolderInformation}
                 onChange={handleChange}
               />

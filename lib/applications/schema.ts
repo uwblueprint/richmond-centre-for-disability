@@ -342,6 +342,7 @@ export default gql`
     patientCondition: PatientCondition!
     mobilityAids: [MobilityAid!]
     otherPatientCondition: String
+    permitType: PermitType!
     temporaryPermitExpiry: Date
 
     # Doctor information
@@ -376,9 +377,7 @@ export default gql`
 
     # Payment information (omit processing fee)
     paymentMethod: PaymentType!
-    # Input monetary value as string
-    donationAmount: String
-
+    donationAmount: String # Input monetary value as string
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
     shippingFullName: String
@@ -404,6 +403,7 @@ export default gql`
 
   type CreateNewApplicationResult {
     ok: Boolean!
+    applicationId: Int
   }
 
   input CreateRenewalApplicationInput {
@@ -614,6 +614,31 @@ export default gql`
 
   type UpdateApplicationGeneralInformationResult {
     ok: Boolean!
+  }
+
+  # Update general information section of a new application (includes date of birth, gender)
+  input UpdateNewApplicationGeneralInformationInput {
+    # Application ID
+    id: Int!
+
+    # Personal information
+    firstName: String!
+    middleName: String
+    lastName: String!
+    dateOfBirth: Date!
+    gender: Gender!
+    otherGender: String
+
+    # Contact information
+    phone: String!
+    email: String
+    receiveEmailUpdates: Boolean
+
+    # Address
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    postalCode: String!
   }
 
   # Update doctor information section of application
