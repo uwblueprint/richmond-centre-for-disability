@@ -1,12 +1,14 @@
-import { NextApiRequest, NextApiResponse } from 'next'; // Next
+import { NextApiHandler } from 'next'; // Next
 import { ShopifyPaymentStatus } from '@prisma/client'; // Prisma client
 import crypto from 'crypto'; // Verifying Shopify Request
 import getRawBody from 'raw-body';
 
-export default async function paymentReceivedHandler(req: NextApiRequest, res: NextApiResponse) {
+/**
+ * Webhook to handle payment submission from Shopify
+ */
+const paymentReceivedHandler: NextApiHandler = async (req, res) => {
   if (req.method !== 'POST') {
-    res.status(405).end('Method not allowed');
-    return;
+    return res.status(405).end('Method not allowed');
   }
 
   // Verify Request is from Shopify
@@ -17,8 +19,7 @@ export default async function paymentReceivedHandler(req: NextApiRequest, res: N
     .update(rawBody)
     .digest('base64');
   if (digest !== hmacHeader) {
-    res.status(401).end();
-    return;
+    return res.status(401).end();
   }
 
   try {
@@ -43,9 +44,8 @@ export default async function paymentReceivedHandler(req: NextApiRequest, res: N
     res.status(500).end();
   }
 
-  res.status(200).end();
-  return;
-}
+  return res.status(200).end();
+};
 
 // Turn off the default bodyParser provided by Next.js
 // Shopify Webhook Verification needs the raw request body
@@ -54,3 +54,5 @@ export const config = {
     bodyParser: false,
   },
 };
+
+export default paymentReceivedHandler;

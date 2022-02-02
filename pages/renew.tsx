@@ -128,13 +128,17 @@ export default function Renew() {
     CreateExternalRenewalApplicationRequest
   >(CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION, {
     onCompleted: data => {
-      if (data?.createExternalRenewalApplication.ok) {
+      if (
+        data.createExternalRenewalApplication.ok &&
+        data.createExternalRenewalApplication.applicationId
+      ) {
         toast({
           status: 'success',
           description: 'Redirecting to payment page...',
           isClosable: true,
         });
-        shopifyCheckout(data?.createExternalRenewalApplication.applicationId);
+
+        shopifyCheckout(data.createExternalRenewalApplication.applicationId);
       }
     },
     onError: error => {

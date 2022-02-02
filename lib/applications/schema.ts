@@ -511,7 +511,7 @@ export default gql`
 
   type CreateExternalRenewalApplicationResult {
     ok: Boolean!
-    applicationId: Int!
+    applicationId: Int
   }
 
   input CreateReplacementApplicationInput {
