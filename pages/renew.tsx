@@ -113,7 +113,7 @@ export default function Renew() {
       {
         variantId: product.variants[0].id,
         quantity: 1,
-        customAttributes: [{ key: 'applicationId', value: applicationId.toString() }],
+        customAttributes: [{ key: '_applicationId', value: applicationId.toString() }],
       },
     ];
     await client.checkout.addLineItems(cart.id, lineItemsToAdd);
