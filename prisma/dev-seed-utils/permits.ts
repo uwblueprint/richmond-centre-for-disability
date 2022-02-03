@@ -22,6 +22,14 @@ const permits: Array<UpsertPermit> = [
     expiryDate: new Date('2025-01-01'),
     active: true,
   },
+  {
+    rcdPermitId: 3,
+    applicantId: 4,
+    applicationId: 5,
+    type: PermitType.PERMANENT,
+    expiryDate: new Date(new Date().getTime() + 29 * 24 * 60 * 60 * 1000), // Expiring in < 30 days
+    active: true,
+  },
 ];
 
 /**

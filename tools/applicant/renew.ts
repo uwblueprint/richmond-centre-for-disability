@@ -6,8 +6,10 @@ import {
 
 // Create external renewal application mutation
 export const CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION = gql`
-  mutation CreateApplicationMutation($input: CreateRenewalApplicationInput!) {
-    createRenewalApplication(input: $input) {
+  mutation CreateExternalRenewalApplicationMutation(
+    $input: CreateExternalRenewalApplicationInput!
+  ) {
+    createExternalRenewalApplication(input: $input) {
       ok
       applicationId
     }
@@ -19,5 +21,5 @@ export type CreateExternalRenewalApplicationRequest = MutationCreateExternalRene
 
 // Create renewal application mutation result
 export type CreateExternalRenewalApplicationResponse = {
-  createRenewalApplication: CreateExternalRenewalApplicationResult;
+  createExternalRenewalApplication: CreateExternalRenewalApplicationResult;
 };
