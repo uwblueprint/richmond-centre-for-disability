@@ -109,6 +109,8 @@ export default function Renew() {
     const [product, cart] = await Promise.all([productPromise, cartPromise]);
 
     // Add product to cart.
+    // Add custom attributes to be returned by shopify webhook
+    // Attributes with leading _ are hidden in the shopify checkout page
     const lineItemsToAdd = [
       {
         variantId: product.variants[0].id,
