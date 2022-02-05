@@ -1,8 +1,14 @@
+import { AttachmentIcon } from '@chakra-ui/icons';
 import { Button, Text } from '@chakra-ui/react';
 import { SyntheticEvent, useRef } from 'react';
 
+type FileUploadProps = {
+  currentFile: File;
+  onUploadFile: (selectedFile: File) => void;
+};
+
 //TODO: rename this better??
-export default function FileUpload() {
+export default function FileUpload(props: FileUploadProps) {
   const hiddenFileInput = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = () => {
@@ -13,15 +19,16 @@ export default function FileUpload() {
 
   const handleChange = (event: SyntheticEvent) => {
     const target = event.target as HTMLInputElement;
-    /* eslint-disable @typescript-eslint/no-unused-vars */
     const fileUploaded = (target.files as FileList)[0];
-    // props.handleFile(fileUploaded);
+    props.onUploadFile(fileUploaded);
   };
 
   return (
     <>
-      <Button bg="primary" onClick={handleFileUpload}>
-        <Text textStyle="button-semibold">Click to add attachment</Text>
+      <Button bg="primary" onClick={handleFileUpload} leftIcon={<AttachmentIcon />}>
+        <Text textStyle="button-semibold">
+          Click to {props.currentFile ? 'replace' : 'add'} attachment
+        </Text>
       </Button>
       <input
         type="file"
