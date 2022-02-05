@@ -18,7 +18,7 @@ type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
   readonly onChange: (updatedData: GuardianInformation) => void;
   readonly file: File | null;
-  onUploadFile: (selectedFile: File) => void; //TODO: should it be File | null? how do you remove a file?
+  onUploadFile: (selectedFile: File) => void;
 };
 
 /**
@@ -167,8 +167,7 @@ export default function GuardianInformationForm({
                 <Text as="h4" textStyle="button-semibold" mt="24px">
                   Current File
                 </Text>
-                <Link>
-                  {/* TODO: make link download the file onclick */}
+                <Link href={URL.createObjectURL(file)} download={file.name}>
                   <Text
                     textStyle="body-regular"
                     color="primary"
