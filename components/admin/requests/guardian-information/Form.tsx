@@ -7,17 +7,18 @@ import {
   FormHelperText,
   Box,
   Divider,
-  Button,
   Checkbox,
+  Link,
 } from '@chakra-ui/react'; // Chakra UI
-import { AttachmentIcon } from '@chakra-ui/icons';
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 import { ChangeEventHandler } from 'react';
+import FileUpload from '@components/FileUploadField';
 
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
   readonly onChange: (updatedData: GuardianInformation) => void;
-  readonly files: FileList | null;
+  readonly file: File | null;
+  onUploadFile: (selectedFile: File) => void; //TODO: should it be File | null? how do you remove a file?
 };
 
 /**
@@ -29,6 +30,8 @@ type GuardianInformationFormProps = {
 export default function GuardianInformationForm({
   guardianInformation,
   onChange,
+  file,
+  onUploadFile,
 }: GuardianInformationFormProps) {
   const handleChange =
     (field: keyof GuardianInformation): ChangeEventHandler<HTMLInputElement> =>
@@ -153,15 +156,31 @@ export default function GuardianInformationForm({
             <Text as="h3" textStyle="heading" paddingBottom="20px">
               {'Upload POA File'}
             </Text>
-            {/* TODO: Implement the file upload functionality using the fileList prop */}
+            {/* TODO: explicitly prevent non pdfs or files > 5Mb? */}
             <Text color="text.secondary">
               {
                 'Only ONE file can be added. Files must be .pdf and can be a maximum of 5MB in size.'
               }{' '}
             </Text>
-            <Button variant="solid" marginTop="15px" leftIcon={<AttachmentIcon />}>
-              {'Click to add attachement'}
-            </Button>
+            {file && (
+              <>
+                <Text as="h4" textStyle="button-semibold" mt="24px">
+                  Current File
+                </Text>
+                <Link>
+                  {/* TODO: make link download the file onclick */}
+                  <Text
+                    textStyle="body-regular"
+                    color="primary"
+                    textDecoration="underline"
+                    mt="8px"
+                  >
+                    {file.name}
+                  </Text>
+                </Link>
+              </>
+            )}
+            <FileUpload currentFile={file} onUploadFile={onUploadFile} />
           </Box>
         </>
       )}

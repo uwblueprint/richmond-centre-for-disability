@@ -78,6 +78,8 @@ export default function CreateNew() {
   const [guardianInformation, setGuardianInformation] = useState<GuardianInformation>(
     INITIAL_GUARDIAN_INFORMATION
   );
+  // Guardian/POA File
+  const [guardianPOAFile, setGuardianPOAFile] = useState<File | null>(null);
   // Additional questions
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>(
     INITIAL_ADDITIONAL_QUESTIONS
@@ -100,6 +102,7 @@ export default function CreateNew() {
     setPhysicianAssessment(INITIAL_PHYSICIAN_ASSESSMENT);
     setDoctorInformation(INITIAL_DOCTOR_INFORMATION);
     setGuardianInformation(INITIAL_GUARDIAN_INFORMATION);
+    setGuardianPOAFile(null);
     setAdditionalQuestions(INITIAL_ADDITIONAL_QUESTIONS);
     setPaymentDetails(INITIAL_PAYMENT_DETAILS);
   };
@@ -542,8 +545,8 @@ export default function CreateNew() {
                 <GuardianInformationForm
                   guardianInformation={guardianInformation}
                   onChange={setGuardianInformation}
-                  // TODO: Implement functionality for file selection
-                  files={null}
+                  file={guardianPOAFile}
+                  onUploadFile={setGuardianPOAFile}
                 />
               </Box>
               <Box
