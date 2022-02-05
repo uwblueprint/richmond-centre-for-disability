@@ -167,16 +167,17 @@ export default function GuardianInformationForm({
                 <Text as="h4" textStyle="button-semibold" mt="24px">
                   Current File
                 </Text>
-                <Link href={URL.createObjectURL(file)} download={file.name}>
-                  <Text
+                <Box mt="8px">
+                  <Link
+                    href={URL.createObjectURL(file)}
+                    download={file.name}
                     textStyle="body-regular"
                     color="primary"
                     textDecoration="underline"
-                    mt="8px"
                   >
                     {file.name}
-                  </Text>
-                </Link>
+                  </Link>
+                </Box>
               </>
             )}
             <FileUpload currentFile={file} onUploadFile={onUploadFile} />
