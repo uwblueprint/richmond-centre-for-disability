@@ -1,4 +1,4 @@
-import { Province } from '@lib/graphql/types';
+import { PaymentType, Province } from '@lib/graphql/types';
 
 /**
  * Format North American phone number by removing all non-numeric characters.
@@ -104,4 +104,23 @@ ${province ? `${city} ${province}` : city}
 ${country || ''}
 ${postalCode}
   `;
+};
+
+/**
+ * Format database payment types to respective CSV column name
+ * @param {PaymentType} paymentMethod payment method to be formatted
+ * @returns {string} formatted payment method
+ */
+export const formatPaymentType = (paymentMethod: PaymentType): string => {
+  const paymentTypeToString: Record<PaymentType, string> = {
+    MASTERCARD: 'MasterCard (Office)',
+    VISA: 'Visa (Office)',
+    CASH: 'Cash',
+    DEBIT: 'Debit',
+    SHOPIFY: 'Shopify',
+    MONEY_ORDER: 'Money Order',
+    ETRANSFER: 'E-Transfer',
+    CHEQUE: 'Cheque',
+  };
+  return paymentTypeToString[paymentMethod];
 };

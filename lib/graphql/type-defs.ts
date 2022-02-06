@@ -7,7 +7,7 @@ import guardiansSchema from '@lib/guardian/schema'; // Guardians schema
 import medicalInformationSchema from '@lib/medical-information/schema'; // Medical information schema
 import permitsSchema from '@lib/permits/schema'; // Permits schema
 import physiciansSchema from '@lib/physicians/schema'; // Physicians schema
-import reportsSchema from '@lib/reports/schema';
+import reportsSchema from '@lib/reports/schema'; // Reports schema
 
 // Merge schemas
 const typeDefs = [

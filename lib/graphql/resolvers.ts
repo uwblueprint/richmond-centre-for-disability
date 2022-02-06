@@ -60,7 +60,11 @@ import {
   applicationProcessingResolver,
 } from '@lib/applications/field-resolvers'; // Application field resolvers
 import { medicalInformationPhysicianResolver } from '@lib/medical-information/field-resolvers';
-import { generatePermitHoldersReport, generateApplicationsReport } from '@lib/reports/resolvers';
+import {
+  generatePermitHoldersReport,
+  generateApplicationsReport,
+  generateAccountantReport,
+} from '@lib/reports/resolvers';
 import { permitApplicationResolver } from '@lib/permits/field-resolvers';
 
 /**
@@ -119,6 +123,7 @@ const resolvers = {
     // Reports
     generateApplicationsReport: authorize(generateApplicationsReport, ['SECRETARY']),
     generatePermitHoldersReport: authorize(generatePermitHoldersReport, ['SECRETARY']),
+    generateAccountantReport: authorize(generateAccountantReport, [`ACCOUNTING`]),
   },
   Mutation: {
     // Applicants
