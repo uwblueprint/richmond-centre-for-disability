@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer'; // Nodemailer
 /**
  * Send email to user to confirm appliction was received
  */
-const sendConfirmationEmail = (to: string, from: string): Promise<void> => {
+const sendConfirmationEmail = (to: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     nodemailer
       .createTransport({
@@ -13,7 +13,7 @@ const sendConfirmationEmail = (to: string, from: string): Promise<void> => {
       .sendMail(
         {
           to,
-          from,
+          from: process.env.NA_EMAIL_FROM,
           subject: 'RCD Application Received',
           text: text,
           html: html,
@@ -25,8 +25,10 @@ const sendConfirmationEmail = (to: string, from: string): Promise<void> => {
   });
 };
 
+// TODO: Update email content
 const text = 'Your parking permit application has been received';
 
+// TODO: Update email content
 const html = `
     <body
       style="

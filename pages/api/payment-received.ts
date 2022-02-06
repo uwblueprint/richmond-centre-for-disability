@@ -2,6 +2,7 @@ import { NextApiHandler } from 'next'; // Next
 import { Prisma, ShopifyPaymentStatus } from '@prisma/client'; // Prisma client
 import crypto from 'crypto'; // Verifying Shopify Request
 import getRawBody from 'raw-body';
+import sendConfirmationEmail from '@pages/api/sendConfirmationEmail';
 
 /**
  * Webhook to handle payment submission from Shopify
@@ -54,6 +55,8 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
 
     const shopifyOrderId = req.body.id;
     const donationAmount = new Prisma.Decimal(req.body.total_tip_received);
+    const email = req.body.email;
+
     await prisma.application.update({
       where: { id: applicationId },
       data: {
@@ -63,6 +66,8 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
         donationAmount: donationAmount,
       },
     });
+
+    await sendConfirmationEmail(email);
   } catch (err) {
     // TODO: Add some sort of logging or notification
     res.status(500).end();
