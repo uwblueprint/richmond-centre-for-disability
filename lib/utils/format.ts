@@ -108,7 +108,7 @@ ${postalCode}
 
 /**
  * Format database payment types to respective CSV column name
- * @param {string} paymentMethod payment method to be formatted
+ * @param {PaymentType} paymentMethod payment method to be formatted
  * @returns {string} formatted payment method
  */
 export const formatPaymentType = (paymentMethod: PaymentType): string => {
