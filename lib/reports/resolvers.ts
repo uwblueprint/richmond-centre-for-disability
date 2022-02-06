@@ -11,7 +11,7 @@ import {
 import { SortOrder } from '@tools/types';
 import { formatAddress, formatDate, formatFullName, formatPaymentType } from '@lib/utils/format'; // Formatting utils
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
-
+import { Prisma } from '@prisma/client';
 /**
  * Generates csv with permit holders' info, given a start date, end date, and values from
  * PermitHoldersReportColumn that the user would like to have on the generated csv
@@ -287,14 +287,14 @@ export const generateAccountantReport: Resolver<
   });
 
   const csvAccountantReportRows = [];
-  for (const key in paymentMethodGroups) {
-    const paymentMethodGroup = paymentMethodGroups[key];
+  for (const paymentMethodGroup of paymentMethodGroups) {
     csvAccountantReportRows.push({
       rowName: formatPaymentType(paymentMethodGroup.paymentMethod),
       countIssued: paymentMethodGroup._count.paymentMethod,
-      processingFee: paymentMethodGroup._sum.processingFee,
-      donationAmount: paymentMethodGroup._sum.donationAmount,
-      totalAmount: paymentMethodGroup._sum.donationAmount?.add(
+      processingFee: paymentMethodGroup._sum.processingFee || 0,
+      donationAmount: paymentMethodGroup._sum.donationAmount || 0,
+      totalAmount: Prisma.Decimal.add(
+        paymentMethodGroup._sum.donationAmount || 0,
         paymentMethodGroup._sum.processingFee || 0
       ),
     });
@@ -302,17 +302,21 @@ export const generateAccountantReport: Resolver<
   csvAccountantReportRows.push({
     rowName: 'Total',
     countIssued: totalAggregate._count.paymentMethod,
-    processingFee: totalAggregate._sum.processingFee,
-    donationAmount: totalAggregate._sum.donationAmount,
-    totalAmount: totalAggregate._sum.donationAmount?.add(totalAggregate._sum.processingFee || 0),
+    processingFee: totalAggregate._sum.processingFee || 0,
+    donationAmount: totalAggregate._sum.donationAmount || 0,
+    totalAmount: Prisma.Decimal.add(
+      totalAggregate._sum.donationAmount || 0,
+      totalAggregate._sum.processingFee || 0
+    ),
   });
 
-  const csvHeaders = [];
-  csvHeaders.push({ id: 'rowName', title: '' });
-  csvHeaders.push({ id: 'countIssued', title: 'Issued #' });
-  csvHeaders.push({ id: 'processingFee', title: 'Fees' });
-  csvHeaders.push({ id: 'donationAmount', title: 'Donation' });
-  csvHeaders.push({ id: 'totalAmount', title: 'Total' });
+  const csvHeaders = [
+    { id: 'rowName', title: '' },
+    { id: 'countIssued', title: 'Issued #' },
+    { id: 'processingFee', title: 'Fees' },
+    { id: 'donationAmount', title: 'Donation' },
+    { id: 'totalAmount', title: 'Total' },
+  ];
   const csvWriter = createObjectCsvWriter({
     path: 'temp/file.csv',
     header: csvHeaders,

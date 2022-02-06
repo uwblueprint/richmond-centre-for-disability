@@ -122,7 +122,7 @@ const resolvers = {
     // Reports
     generateApplicationsReport: authorize(generateApplicationsReport, ['SECRETARY']),
     generatePermitHoldersReport: authorize(generatePermitHoldersReport, ['SECRETARY']),
-    generateAccountantReport: authorize(generateAccountantReport, [`SECRETARY`]),
+    generateAccountantReport: authorize(generateAccountantReport, [`ACCOUNTING`]),
   },
   Mutation: {
     // Applicants
