@@ -216,7 +216,7 @@ export const generateApplicationsReport: Resolver<
       return {
         ...application,
         dateOfBirth: dateOfBirth && formatDate(dateOfBirth),
-        applicationDate: createdAt.toLocaleDateString('en-US', {
+        applicationDate: createdAt?.toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'short',
           day: '2-digit',
