@@ -301,7 +301,7 @@ export const generateAccountantReport: Resolver<
   }
   csvAccountantReportRows.push({
     rowName: 'Total',
-    countIssued: totalAggregate._count.paymentMethod,
+    countIssued: totalAggregate._count.paymentMethod || 0,
     processingFee: totalAggregate._sum.processingFee || 0,
     donationAmount: totalAggregate._sum.donationAmount || 0,
     totalAmount: Prisma.Decimal.add(
