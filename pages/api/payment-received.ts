@@ -67,7 +67,9 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
       },
     });
 
-    await sendConfirmationEmail(email);
+    if (email) {
+      await sendConfirmationEmail(email);
+    }
   } catch (err) {
     // TODO: Add some sort of logging or notification
     res.status(500).end();
