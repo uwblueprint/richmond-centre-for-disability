@@ -1,24 +1,57 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
-import { Text, GridItem, Box, Flex, Input, Button, Spinner } from '@chakra-ui/react'; // Chakra UI
+import { Text, GridItem, Box, Flex, Input, Button, Spinner, useToast } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import { authorize } from '@tools/authorization'; // Page authorization
 import { DownloadIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import { useState } from 'react'; // React
-
+import { useLazyQuery } from '@apollo/client';
+import {
+  GENERATE_ACCOUNTANT_REPORT_QUERY,
+  GenerateAccountantReportRequest,
+  GenerateAccountantReportResponse,
+} from '@tools/admin/permit-holders/graphql/generate-report';
 // Internal home page
 export default function Reports() {
   // const { dateRange, addDayToDateRange, dateRangeString } = useDateRangePicker();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [loading, setLoading] = useState(false);
+  // Toast message
+  const toast = useToast();
+  // Export csv query
+  const [exportCSV, { loading: queryLoading }] = useLazyQuery<
+    GenerateAccountantReportResponse,
+    GenerateAccountantReportRequest
+  >(GENERATE_ACCOUNTANT_REPORT_QUERY, {
+    onCompleted: data => {
+      if (data.generateAccountantReport.ok) {
+        toast({
+          status: 'success',
+          description: `A CSV permit holders report has been successfully generated.`,
+        });
+      }
+    },
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
 
-  //TODO: Remove after API hookup
-  function removeLoading() {
-    setTimeout(function () {
-      setLoading(false);
-    }, 3000);
-  }
+  /**
+   * Handle CSV export
+   */
+  const handleSubmit = async () => {
+    await exportCSV({
+      variables: {
+        input: {
+          startDate,
+          endDate,
+        },
+      },
+    });
+  };
 
   return (
     <Layout>
@@ -62,15 +95,13 @@ export default function Reports() {
                     value={endDate}
                     onChange={event => {
                       setEndDate(event.target.value);
-                      setLoading(true);
-                      removeLoading();
                     }}
                   />
                 </Flex>
               </Box>
             </Flex>
             {startDate && endDate ? (
-              loading ? (
+              queryLoading ? (
                 <Box padding="218px">
                   <Spinner
                     thickness="4px"
@@ -94,7 +125,9 @@ export default function Reports() {
                       as a .csv by clicking the button below:
                     </Text>
                   </Flex>
-                  <Button leftIcon={<DownloadIcon />}>Export as .CSV</Button>
+                  <Button onClick={handleSubmit} leftIcon={<DownloadIcon />}>
+                    Export as .CSV
+                  </Button>
                 </Box>
               )
             ) : (
