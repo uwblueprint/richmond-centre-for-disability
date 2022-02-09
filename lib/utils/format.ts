@@ -116,9 +116,8 @@ export const formatPaymentType = (paymentMethod: PaymentType): string => {
     MASTERCARD: 'MasterCard (Office)',
     VISA: 'Visa (Office)',
     CASH: 'Cash',
-    DEBIT: 'Debit',
+    DEBIT: 'Interac - Debit (Office)',
     SHOPIFY: 'Shopify',
-    MONEY_ORDER: 'Money Order',
     ETRANSFER: 'E-Transfer',
     CHEQUE: 'Cheque',
   };

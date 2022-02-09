@@ -781,7 +781,6 @@ export type PaymentType =
   | 'CASH'
   | 'CHEQUE'
   | 'DEBIT'
-  | 'MONEY_ORDER'
   | 'SHOPIFY';
 
 export type Permit = {
