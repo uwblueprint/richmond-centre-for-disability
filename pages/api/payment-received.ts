@@ -1,17 +1,35 @@
 import { NextApiHandler } from 'next'; // Next
-import { ShopifyPaymentStatus } from '@prisma/client'; // Prisma client
+import { Prisma, ShopifyPaymentStatus } from '@prisma/client'; // Prisma client
 import crypto from 'crypto'; // Verifying Shopify Request
 import getRawBody from 'raw-body';
 
 /**
  * Webhook to handle payment submission from Shopify
+
+ * Example request body:
+    * {
+    *  id: '4646400131094'
+    *  total_tip_received: '26.00'
+    *  order_id: '8'
+    *    ...
+    *  line_items: [{
+    *      ...
+    *      name: 'Tip' // ** If there is no Donation, this line item will not be included
+    *      ...
+    *    }, {
+    *      ...
+    *      name: 'Permit'
+    *      properties: [{name: '_applicationId', 'value: '7'}]
+    *      ...
+    *    }]
+    * }
  */
 const paymentReceivedHandler: NextApiHandler = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).end('Method not allowed');
   }
 
-  // Verify Request is from Shopify
+  // Shopify Webhook Verification: verify request came from Shopify
   const rawBody = await getRawBody(req, true);
   const hmacHeader = req.headers['x-shopify-hmac-sha256'];
   const digest = crypto
@@ -27,16 +45,22 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     const body = JSON.parse(rawBody);
     req.body = body;
 
-    // properties = [ { name: 'applicationId', value: '7' } ]
-    const rawApplicationId = req.body.line_items[0]?.properties[0]?.value;
-    const shopifyOrderId = req.body.id;
+    // There may be 1 or 2 line items in the checkout depending if there was a donation or not.
+    // We cannot assume ordering is deterministic so check both line items for the properties field.
+    const lineItems = req.body.line_items;
+    const rawApplicationId =
+      lineItems[0]?.properties[0]?.value || lineItems[1]?.properties[0]?.value;
     const applicationId = parseInt(rawApplicationId);
+
+    const shopifyOrderId = req.body.id;
+    const donationAmount = new Prisma.Decimal(req.body.total_tip_received);
     await prisma.application.update({
       where: { id: applicationId },
       data: {
         shopifyPaymentStatus: ShopifyPaymentStatus.RECEIVED,
         shopifyConfirmationNumber: `${shopifyOrderId}`,
         paidThroughShopify: true,
+        donationAmount: donationAmount,
       },
     });
   } catch (err) {
@@ -47,8 +71,10 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
   return res.status(200).end();
 };
 
-// Turn off the default bodyParser provided by Next.js
-// Shopify Webhook Verification needs the raw request body
+/**
+ * Turn off the default bodyParser provided by Next.js because
+ * Shopify Webhook Verification needs the raw request body
+ **/
 export const config = {
   api: {
     bodyParser: false,
