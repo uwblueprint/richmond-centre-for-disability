@@ -8,11 +8,10 @@ import {
   Box,
   Divider,
   Checkbox,
-  Link,
 } from '@chakra-ui/react'; // Chakra UI
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 import { ChangeEventHandler } from 'react';
-import FileUpload from '@components/FileUploadField';
+import PoaFormUploadField from '@components/admin/requests/guardian-information/PoaFormUploadField';
 
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
@@ -153,34 +152,7 @@ export default function GuardianInformationForm({
               </FormControl>
             </Stack>
 
-            <Text as="h3" textStyle="heading" paddingBottom="20px">
-              {'Upload POA File'}
-            </Text>
-            {/* TODO: explicitly prevent non pdfs or files > 5Mb? */}
-            <Text color="text.secondary">
-              {
-                'Only ONE file can be added. Files must be .pdf and can be a maximum of 5MB in size.'
-              }{' '}
-            </Text>
-            {file && (
-              <>
-                <Text as="h4" textStyle="button-semibold" mt="24px">
-                  Current File
-                </Text>
-                <Box mt="8px">
-                  <Link
-                    href={URL.createObjectURL(file)}
-                    download={file.name}
-                    textStyle="body-regular"
-                    color="primary"
-                    textDecoration="underline"
-                  >
-                    {file.name}
-                  </Link>
-                </Box>
-              </>
-            )}
-            <FileUpload currentFile={file} onUploadFile={onUploadFile} />
+            <PoaFormUploadField file={file} onUploadFile={onUploadFile} />
           </Box>
         </>
       )}
