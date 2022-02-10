@@ -7,17 +7,17 @@ import {
   FormHelperText,
   Box,
   Divider,
-  Button,
   Checkbox,
 } from '@chakra-ui/react'; // Chakra UI
-import { AttachmentIcon } from '@chakra-ui/icons';
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 import { ChangeEventHandler } from 'react';
+import PoaFormUploadField from '@components/admin/requests/guardian-information/PoaFormUploadField';
 
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
   readonly onChange: (updatedData: GuardianInformation) => void;
-  readonly files: FileList | null;
+  readonly file: File | null;
+  onUploadFile: (selectedFile: File) => void;
 };
 
 /**
@@ -29,6 +29,8 @@ type GuardianInformationFormProps = {
 export default function GuardianInformationForm({
   guardianInformation,
   onChange,
+  file,
+  onUploadFile,
 }: GuardianInformationFormProps) {
   const handleChange =
     (field: keyof GuardianInformation): ChangeEventHandler<HTMLInputElement> =>
@@ -150,18 +152,7 @@ export default function GuardianInformationForm({
               </FormControl>
             </Stack>
 
-            <Text as="h3" textStyle="heading" paddingBottom="20px">
-              {'Upload POA File'}
-            </Text>
-            {/* TODO: Implement the file upload functionality using the fileList prop */}
-            <Text color="text.secondary">
-              {
-                'Only ONE file can be added. Files must be .pdf and can be a maximum of 5MB in size.'
-              }{' '}
-            </Text>
-            <Button variant="solid" marginTop="15px" leftIcon={<AttachmentIcon />}>
-              {'Click to add attachement'}
-            </Button>
+            <PoaFormUploadField file={file} onUploadFile={onUploadFile} />
           </Box>
         </>
       )}
