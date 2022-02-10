@@ -31,17 +31,21 @@ export const PoaFormUploadField: FC<Props> = ({ file, onUploadFile }) => {
    * Handle file selection
    */
   const handleChange = (event: SyntheticEvent) => {
+    const target = event.target as HTMLInputElement;
+    const uploadedFile = (target.files as FileList)[0] || null;
+
+    if (!uploadedFile) {
+      return;
+    }
+
     setErrorMessage(null);
 
-    const target = event.target as HTMLInputElement;
-    const file = (target.files as FileList)[0] || null;
-
     // Verify that uploaded file is < 5MB
-    if (file && file.size > FILE_SIZE_LIMIT) {
+    if (uploadedFile && uploadedFile.size > FILE_SIZE_LIMIT) {
       setErrorMessage('File exceeds maximum size');
     }
 
-    onUploadFile(file);
+    onUploadFile(uploadedFile);
   };
 
   return (
