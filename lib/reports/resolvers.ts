@@ -289,6 +289,12 @@ export const generateAccountantReport: Resolver<
   });
 
   const totalAggregate = await prisma.application.aggregate({
+    where: {
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
+    },
     _sum: {
       processingFee: true,
       donationAmount: true,
