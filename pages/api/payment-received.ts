@@ -2,7 +2,7 @@ import { NextApiHandler } from 'next'; // Next
 import { Prisma, ShopifyPaymentStatus } from '@prisma/client'; // Prisma client
 import crypto from 'crypto'; // Verifying Shopify Request
 import getRawBody from 'raw-body';
-import sendConfirmationEmail from '@pages/api/sendConfirmationEmail';
+import sendConfirmationEmail from '@lib/reports/utils';
 
 /**
  * Webhook to handle payment submission from Shopify

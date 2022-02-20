@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer'; // Nodemailer
 
 /**
  * Send email to user to confirm appliction was received
+ * @param to Receiver's email
  */
 const sendConfirmationEmail = (to: string): Promise<void> => {
   return new Promise((resolve, reject) => {
