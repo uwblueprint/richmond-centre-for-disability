@@ -339,7 +339,6 @@ enum PaymentType {
   CASH
   CHEQUE
   DEBIT
-  MONEY_ORDER
   SHOPIFY
 
   @@map("paymenttype")

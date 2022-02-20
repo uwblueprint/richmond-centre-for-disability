@@ -138,7 +138,6 @@ export default gql`
     CASH
     CHEQUE
     DEBIT
-    MONEY_ORDER
     SHOPIFY
   }
 

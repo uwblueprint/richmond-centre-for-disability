@@ -26,7 +26,6 @@ CREATE TYPE PaymentType as ENUM(
   'CASH',
   'CHEQUE',
   'DEBIT',
-  'MONEY_ORDER',
   'SHOPIFY'
 );
 

@@ -7,11 +7,13 @@ import {
   GenerateApplicationsReportResult,
   QueryGenerateAccountantReportArgs,
   GenerateAccountantReportResult,
+  PaymentType,
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
-import { formatAddress, formatDate, formatFullName, formatPaymentType } from '@lib/utils/format'; // Formatting utils
+import { formatAddress, formatDate, formatFullName } from '@lib/utils/format'; // Formatting utils
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
 import { Prisma } from '@prisma/client';
+
 /**
  * Generates csv with permit holders' info, given a start date, end date, and values from
  * PermitHoldersReportColumn that the user would like to have on the generated csv
@@ -259,6 +261,16 @@ export const generateAccountantReport: Resolver<
     input: { startDate, endDate },
   } = args;
 
+  const paymentTypeToString: Record<PaymentType, string> = {
+    MASTERCARD: 'Mastercard (Office)',
+    VISA: 'Visa (Office)',
+    CASH: 'Cash',
+    DEBIT: 'Interac - Debit (Office)',
+    SHOPIFY: 'Shopify',
+    ETRANSFER: 'E-Transfer',
+    CHEQUE: 'Cheque',
+  };
+
   const paymentMethodGroups = await prisma.application.groupBy({
     by: ['paymentMethod'],
     where: {
@@ -289,7 +301,7 @@ export const generateAccountantReport: Resolver<
   const csvAccountantReportRows = [];
   for (const paymentMethodGroup of paymentMethodGroups) {
     csvAccountantReportRows.push({
-      rowName: formatPaymentType(paymentMethodGroup.paymentMethod),
+      rowName: paymentTypeToString[paymentMethodGroup.paymentMethod],
       countIssued: paymentMethodGroup._count.paymentMethod,
       processingFee: paymentMethodGroup._sum.processingFee || 0,
       donationAmount: paymentMethodGroup._sum.donationAmount || 0,
