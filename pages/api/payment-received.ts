@@ -2,6 +2,7 @@ import { NextApiHandler } from 'next'; // Next
 import { Prisma, ShopifyPaymentStatus } from '@prisma/client'; // Prisma client
 import crypto from 'crypto'; // Verifying Shopify Request
 import getRawBody from 'raw-body';
+import sendConfirmationEmail from '@lib/reports/utils';
 
 /**
  * Webhook to handle payment submission from Shopify
@@ -54,6 +55,16 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
 
     const shopifyOrderId = req.body.id;
     const donationAmount = new Prisma.Decimal(req.body.total_tip_received);
+    const email = req.body.email; // Applicant email entered in Shopify checkout
+
+    // Get email that was inputted in original application, if exists
+    const application = await prisma.application.findUnique({
+      where: { id: applicationId },
+      select: { email: true },
+    });
+    const applicationEmail = application?.email;
+
+    // Update application
     await prisma.application.update({
       where: { id: applicationId },
       data: {
@@ -63,6 +74,18 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
         donationAmount: donationAmount,
       },
     });
+
+    // Send confirmation email
+    if (applicationEmail) {
+      // Send confirmation email to email originally entered in application
+      // (intended for application confirmation), if exists
+      await sendConfirmationEmail(applicationEmail);
+    } else if (email) {
+      // If no email was provided in original application, fall back to email
+      // provided in Shopify checkout (intended for payment confirmation),
+      // if exists
+      await sendConfirmationEmail(email);
+    }
   } catch (err) {
     // TODO: Add some sort of logging or notification
     res.status(500).end();
