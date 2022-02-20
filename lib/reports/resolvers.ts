@@ -262,7 +262,7 @@ export const generateAccountantReport: Resolver<
   } = args;
 
   const paymentTypeToString: Record<PaymentType, string> = {
-    MASTERCARD: 'MasterCard (Office)',
+    MASTERCARD: 'Mastercard (Office)',
     VISA: 'Visa (Office)',
     CASH: 'Cash',
     DEBIT: 'Interac - Debit (Office)',
