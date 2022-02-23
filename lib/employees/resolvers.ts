@@ -19,6 +19,7 @@ import {
   QueryEmployeesArgs,
   UpdateEmployeeResult,
 } from '@lib/graphql/types';
+import { employeeSchema } from './validation/schema';
 
 /**
  * Query for one employee in the internal-facing app given id
@@ -95,7 +96,16 @@ export const createEmployee: Resolver<MutationCreateEmployeeArgs, CreateEmployee
     input: { firstName, lastName, email, role },
   } = args;
 
+  // const result =
+  await employeeSchema.validate({ firstName, lastName, email, role });
+
+  // console.log(result);
   let user;
+  // return {
+  //   ok: true,
+  //   employee: user,
+  // };
+
   try {
     user = await prisma.employee.create({
       data: {
