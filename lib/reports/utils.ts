@@ -21,7 +21,7 @@ const sendConfirmationEmail = (to: string, firstName?: string): Promise<void> =>
           to,
           from: process.env.CONFIRMATION_EMAIL_FROM,
           subject: 'RCD Parking Permit Application Submitted',
-          text: text,
+          text: text(firstName),
           html: html(firstName),
         },
         error => {
@@ -31,7 +31,16 @@ const sendConfirmationEmail = (to: string, firstName?: string): Promise<void> =>
   });
 };
 
-const text = 'Your Parking Permit Renewal Application was Successfully Submitted';
+const text = (firstName: string) => {
+  return `Your Parking Permit Renewal Application was Successfully Submitted.
+
+  Hi ${firstName},
+  We’re currently reviewing your Parking Permit Renewal Application.
+  We will notify you when your application has been approved and your new Parking Permit has been sent.
+
+  If you have any questions about your application, please contact us via phone at 604-232-2404 or via email at parkingpermit@rcdrichmond.org
+`;
+};
 
 const html = (firstName?: string) => {
   return `
