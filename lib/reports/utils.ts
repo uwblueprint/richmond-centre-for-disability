@@ -5,7 +5,7 @@ import nodemailer from 'nodemailer'; // Nodemailer
  * @param to Receiver's email
  * @param firstName Receiver's first name
  */
-const sendConfirmationEmail = (to: string, firstName?: string): Promise<void> => {
+const sendConfirmationEmail = (to: string, firstName: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     nodemailer
       .createTransport({
@@ -42,7 +42,7 @@ const text = (firstName: string) => {
 `;
 };
 
-const html = (firstName?: string) => {
+const html = (firstName: string) => {
   return `
     <body
       style="
@@ -94,7 +94,7 @@ const html = (firstName?: string) => {
               margin: 0 0 32px;
             "
           >
-          Hi${firstName ? ` ${firstName}` : ''},
+          Hi ${firstName},
           <br /> 
           We’re currently reviewing your Parking Permit Renewal Application.
           <br/>
