@@ -3,8 +3,9 @@ import nodemailer from 'nodemailer'; // Nodemailer
 /**
  * Send email to user to confirm appliction was received
  * @param to Receiver's email
+ * @param firstName Receiver's first name
  */
-const sendConfirmationEmail = (to: string): Promise<void> => {
+const sendConfirmationEmail = (to: string, firstName?: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     nodemailer
       .createTransport({
@@ -18,11 +19,10 @@ const sendConfirmationEmail = (to: string): Promise<void> => {
       .sendMail(
         {
           to,
-          // TODO: Use different email
-          from: process.env.NA_EMAIL_FROM,
-          subject: 'RCD Application Received',
+          from: process.env.CONFIRMATION_EMAIL_FROM,
+          subject: 'RCD Parking Permit Application Submitted',
           text: text,
-          html: html,
+          html: html(firstName),
         },
         error => {
           return error ? reject(error) : resolve();
@@ -31,15 +31,14 @@ const sendConfirmationEmail = (to: string): Promise<void> => {
   });
 };
 
-// TODO: Update email content
-const text = 'Your parking permit application has been received';
+const text = 'Your Parking Permit Renewal Application was Successfully Submitted';
 
-// TODO: Update email content
-const html = `
+const html = (firstName?: string) => {
+  return `
     <body
       style="
         background-color: #ffffff;
-        text-align: center;
+        text-align: left;
         font-family: Arial, sans-serif;
       "
     >
@@ -60,7 +59,10 @@ const html = `
           style="
             height: 65px;
             width: 59px;
-            margin: 0 0 20px;
+            display: block;
+            margin-bottom: 20px;
+            margin-left: auto;
+            margin-right: auto;
           "
           alt="Richmond Centre for Disability logo"
         />
@@ -74,11 +76,35 @@ const html = `
               margin: 0 0 20px;
             "
           >
-            Confirmation Email
+          Your Parking Permit Renewal Application was Successfully Submitted
           </h1>
+          <p
+            style="
+              font-size: 18px;
+              line-height: 150%;
+              margin: 0 0 32px;
+            "
+          >
+          Hi${firstName ? ` ${firstName}` : ''},
+          <br /> 
+          We’re currently reviewing your Parking Permit Renewal Application.
+          <br/>
+          We will notify you when your application has been approved and your new Parking Permit has been sent.
+          </p>
+          <p
+            style="
+              color: #718096;
+              font-size: 18px;
+              line-height: 150%;
+              margin: 32px 0 40px;
+            "
+          >
+           If you have any questions about your application, please contact us via phone at <a href="tel:604-232-2404">604-232-2404</a> or via email at <a href="mailto:parkingpermit@rcdrichmond.org">parkingpermit@rcdrichmond.org</a>
+          </p>
         </div>
       </div>
     </body>
     `;
+};
 
 export default sendConfirmationEmail;
