@@ -64,34 +64,34 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     });
 
     if (!application) {
-      // Bad request, occurs if application ID does not exist
-      res.status(400).end();
-    } else {
-      const applicationEmail = application.email;
-      const applicationFirstName = application.firstName;
+      // Bad request, occurs if application with given applicationId does not exist
+      return res.status(400).send({ error: 'Application with given id does not exist' });
+    }
 
-      // Update application
-      await prisma.application.update({
-        where: { id: applicationId },
-        data: {
-          shopifyPaymentStatus: ShopifyPaymentStatus.RECEIVED,
-          shopifyConfirmationNumber: `${shopifyOrderId}`,
-          paidThroughShopify: true,
-          donationAmount: donationAmount,
-        },
-      });
+    const applicationEmail = application.email;
+    const applicationFirstName = application.firstName;
 
-      // Send confirmation email
-      if (applicationEmail) {
-        // Send confirmation email to email originally entered in application
-        // (intended for application confirmation), if exists
-        await sendConfirmationEmail(applicationEmail, applicationFirstName);
-      } else if (email) {
-        // If no email was provided in original application, fall back to email
-        // provided in Shopify checkout (intended for payment confirmation),
-        // if exists
-        await sendConfirmationEmail(email, applicationFirstName);
-      }
+    // Update application
+    await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        shopifyPaymentStatus: ShopifyPaymentStatus.RECEIVED,
+        shopifyConfirmationNumber: `${shopifyOrderId}`,
+        paidThroughShopify: true,
+        donationAmount: donationAmount,
+      },
+    });
+
+    // Send confirmation email
+    if (applicationEmail) {
+      // Send confirmation email to email originally entered in application
+      // (intended for application confirmation), if exists
+      await sendConfirmationEmail(applicationEmail, applicationFirstName);
+    } else if (email) {
+      // If no email was provided in original application, fall back to email
+      // provided in Shopify checkout (intended for payment confirmation),
+      // if exists
+      await sendConfirmationEmail(email, applicationFirstName);
     }
   } catch (err) {
     // TODO: Add some sort of logging or notification
