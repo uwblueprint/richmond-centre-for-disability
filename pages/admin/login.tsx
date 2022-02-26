@@ -15,6 +15,7 @@ import {
   VStack,
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
+import { loginSchema } from '@lib/auth/validation';
 
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
 
@@ -42,16 +43,17 @@ export default function Login() {
     setIsSigningIn(false);
 
     if (signInResponse?.error) {
-      setEmailInputError('This email has not been registered by the admin.');
+      setEmailInputError(signInResponse?.error);
     }
   };
 
-  const handleSubmit = (event: SyntheticEvent) => {
+  const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    if (email.length) {
+
+    if (await loginSchema.isValid({ email })) {
       signInWithEmail();
     } else {
-      setEmailInputError('Please enter an email address.');
+      setEmailInputError('Please enter a valid email.');
     }
   };
 
@@ -85,7 +87,10 @@ export default function Login() {
                       height="51px"
                       type="email"
                       value={email}
-                      onChange={event => setEmail(event.target.value)}
+                      onChange={event => {
+                        setEmailInputError('');
+                        setEmail(event.target.value);
+                      }}
                       isDisabled={isSigningIn}
                     />
                     <FormErrorMessage>

@@ -5,6 +5,9 @@ import prisma from '@prisma/index'; // Prisma client
 import sendVerificationRequest from '@lib/auth/sendVerificationRequest'; // Send verification email
 import { VerifySignInError } from '@lib/auth/errors'; // Error raised when failing to verify signin
 import { Role } from '@lib/graphql/types';
+import { loginSchema } from '@lib/auth/validation';
+import { ValidationError } from 'yup';
+import { Prisma } from '@prisma/client';
 
 /**
  * Database config for Next Auth
@@ -80,24 +83,29 @@ export default NextAuth({
       return Promise.resolve(token);
     },
     signIn: async user => {
-      if (!user?.email) {
-        return false;
-      }
-
-      // Check if user email exists in DB (throw error if not found)
-      let employee;
       try {
-        employee = await prisma.employee.findUnique({
+        const validatedUser = await loginSchema.validate(user);
+
+        // Check if user email exists in DB (throw error if not found)
+        await prisma.employee.findUnique({
           where: {
-            email: user.email,
+            email: validatedUser.email,
           },
           rejectOnNotFound: true,
         });
-      } catch {
-        throw new VerifySignInError('Error signing in');
-      }
 
-      return !!employee;
+        return true;
+      } catch (err) {
+        if (err instanceof ValidationError) {
+          // Yup validation failure
+          throw new VerifySignInError('Invalid email input');
+        } else if ((err as Prisma.PrismaClientKnownRequestError).name === 'NotFoundError') {
+          // User does not exist
+          throw new VerifySignInError('This email has not been registered by the admin.');
+        } else {
+          throw new Error('Internal server error');
+        }
+      }
     },
   },
   database: databaseConfig,
