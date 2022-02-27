@@ -83,6 +83,7 @@ const html = (firstName: string) => {
               font-size: 24px;
               line-height: 150%;
               margin: 0 0 20px;
+              text-align: center;
             "
           >
           Your Parking Permit Renewal Application was Successfully Submitted
@@ -95,7 +96,7 @@ const html = (firstName: string) => {
             "
           >
           Hi ${firstName},
-          <br /> 
+          <br /><br />
           We’re currently reviewing your Parking Permit Renewal Application.
           <br/>
           We will notify you when your application has been approved and your new Parking Permit has been sent.
