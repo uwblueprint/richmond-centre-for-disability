@@ -53,6 +53,7 @@ import {
 } from '@tools/admin/requests/create-new';
 import { useRouter } from 'next/router';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
+import { useS3Upload } from 'next-s3-upload';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -93,6 +94,9 @@ export default function CreateNew() {
 
   // Router
   const router = useRouter();
+
+  // S3 Upload
+  const { uploadToS3 } = useS3Upload();
 
   // Reset all fields when application is discarded
   const resetAllFields = () => {
@@ -247,6 +251,23 @@ export default function CreateNew() {
    */
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
+
+    if (guardianPOAFile) {
+      try {
+        const { url } = await uploadToS3(guardianPOAFile);
+        setGuardianInformation({
+          ...guardianInformation,
+          poaFormUrl: url,
+        });
+      } catch (err) {
+        toast({
+          status: 'error',
+          description: `Failed to upload POA file: ${err}`,
+          isClosable: true,
+        });
+        return;
+      }
+    }
 
     if (!permitHolderInformation.gender) {
       toast({ status: 'error', description: 'Missing gender', isClosable: true });
