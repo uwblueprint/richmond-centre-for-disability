@@ -57,12 +57,19 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     const donationAmount = new Prisma.Decimal(req.body.total_tip_received);
     const email = req.body.email; // Applicant email entered in Shopify checkout
 
-    // Get email that was inputted in original application, if exists
+    // Get email and first name that were inputted in original application, if exists
     const application = await prisma.application.findUnique({
       where: { id: applicationId },
-      select: { email: true },
+      select: { email: true, firstName: true },
     });
-    const applicationEmail = application?.email;
+
+    if (!application) {
+      // Bad request, occurs if application with given applicationId does not exist
+      return res.status(400).send({ error: 'Application with given id does not exist' });
+    }
+
+    const applicationEmail = application.email;
+    const applicationFirstName = application.firstName;
 
     // Update application
     await prisma.application.update({
@@ -79,12 +86,12 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     if (applicationEmail) {
       // Send confirmation email to email originally entered in application
       // (intended for application confirmation), if exists
-      await sendConfirmationEmail(applicationEmail);
+      await sendConfirmationEmail(applicationEmail, applicationFirstName);
     } else if (email) {
       // If no email was provided in original application, fall back to email
       // provided in Shopify checkout (intended for payment confirmation),
       // if exists
-      await sendConfirmationEmail(email);
+      await sendConfirmationEmail(email, applicationFirstName);
     }
   } catch (err) {
     // TODO: Add some sort of logging or notification
