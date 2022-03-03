@@ -264,7 +264,7 @@ model NewApplication {
   guardianProvince                     Province?                            @default(BC) @map("guardian_province")
   guardianCountry                      String?                              @default("Canada") @map("guardian_country") @db.VarChar(255)
   guardianPostalCode                   String?                              @map("guardian_postal_code") @db.VarChar(6)
-  poaFormUrl                           String?                              @map("poa_form_url") @db.VarChar(255)
+  poaFormS3ObjectKey                   String?                              @map("poa_form_s3_object_key") @db.VarChar(255)
   usesAccessibleConvertedVan           Boolean                              @map("uses_accessible_converted_van")
   accessibleConvertedVanLoadingMethod  AccessibleConvertedVanLoadingMethod? @map("accessible_converted_van_loading_method")
   requiresWiderParkingSpace            Boolean                              @map("requires_wider_parking_space")

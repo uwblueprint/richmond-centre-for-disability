@@ -53,6 +53,7 @@ import {
 } from '@tools/admin/requests/create-new';
 import { useRouter } from 'next/router';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
+import { useS3Upload } from 'next-s3-upload';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -93,6 +94,9 @@ export default function CreateNew() {
 
   // Router
   const router = useRouter();
+
+  // S3 Upload
+  const { uploadToS3 } = useS3Upload();
 
   // Reset all fields when application is discarded
   const resetAllFields = () => {
@@ -177,7 +181,7 @@ export default function CreateNew() {
             addressLine2: guardian.addressLine2,
             city: guardian.city,
             postalCode: guardian.postalCode,
-            poaFormUrl: '', //TODO
+            poaFormS3ObjectKey: '',
           });
         } else {
           setGuardianInformation({
@@ -191,7 +195,7 @@ export default function CreateNew() {
             addressLine2: '',
             city: '',
             postalCode: '',
-            poaFormUrl: '', //TODO
+            poaFormS3ObjectKey: '',
           });
         }
       }
@@ -247,6 +251,21 @@ export default function CreateNew() {
    */
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
+
+    let poaFormS3ObjectKey = '';
+    if (guardianPOAFile) {
+      try {
+        const { key } = await uploadToS3(guardianPOAFile);
+        poaFormS3ObjectKey = key;
+      } catch (err) {
+        toast({
+          status: 'error',
+          description: `Failed to upload POA file: ${err}`,
+          isClosable: true,
+        });
+        return;
+      }
+    }
 
     if (!permitHolderInformation.gender) {
       toast({ status: 'error', description: 'Missing gender', isClosable: true });
@@ -332,7 +351,7 @@ export default function CreateNew() {
           guardianAddressLine2: guardianInformation.addressLine2,
           guardianCity: guardianInformation.city,
           guardianPostalCode: guardianInformation.postalCode,
-          poaFormUrl: guardianInformation.poaFormUrl,
+          poaFormS3ObjectKey: poaFormS3ObjectKey,
 
           ...additionalQuestions,
           usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,

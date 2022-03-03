@@ -175,8 +175,7 @@ export const INITIAL_GUARDIAN_INFORMATION: GuardianInformation = {
   addressLine2: '',
   city: '',
   postalCode: '',
-  // TODO: poaFormUrl work with file upload
-  poaFormUrl: '',
+  poaFormS3ObjectKey: '',
 };
 
 // Initial data for additional questions in application forms

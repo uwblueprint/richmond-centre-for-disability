@@ -237,7 +237,7 @@ export const createNewApplication: Resolver<
     guardianAddressLine2,
     guardianCity,
     guardianPostalCode,
-    poaFormUrl,
+    poaFormS3ObjectKey,
     usesAccessibleConvertedVan,
     accessibleConvertedVanLoadingMethod,
     requiresWiderParkingSpace,
@@ -290,7 +290,7 @@ export const createNewApplication: Resolver<
             physicianAddressLine2,
             physicianCity,
             physicianPostalCode: formatPostalCode(physicianPostalCode),
-            ...(omitGuardianPoa && {
+            ...(!omitGuardianPoa && {
               guardianFirstName,
               guardianMiddleName,
               guardianLastName,
@@ -300,7 +300,7 @@ export const createNewApplication: Resolver<
               guardianAddressLine2,
               guardianCity,
               guardianPostalCode: guardianPostalCode && formatPostalCode(guardianPostalCode),
-              poaFormUrl,
+              poaFormS3ObjectKey,
             }),
             usesAccessibleConvertedVan,
             accessibleConvertedVanLoadingMethod,

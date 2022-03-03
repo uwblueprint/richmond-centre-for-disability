@@ -394,7 +394,7 @@ CREATE TABLE new_applications (
   guardian_province Province DEFAULT 'BC',
   guardian_country VARCHAR(255) DEFAULT 'Canada',
   guardian_postal_code VARCHAR(6),
-  poa_form_url VARCHAR(255),
+  poa_form_s3_object_key VARCHAR(255),
 
   -- Additional Information
   uses_accessible_converted_van BOOLEAN NOT NULL,

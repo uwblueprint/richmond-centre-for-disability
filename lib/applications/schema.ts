@@ -123,7 +123,7 @@ export default gql`
     guardianProvince: Province!
     guardianCountry: String!
     guardianPostalCode: String!
-    poaFormUrl: String
+    poaFormS3ObjectKey: String
 
     # Additional information
     usesAccessibleConvertedVan: Boolean!
@@ -366,7 +366,7 @@ export default gql`
     guardianAddressLine2: String
     guardianCity: String
     guardianPostalCode: String
-    poaFormUrl: String
+    poaFormS3ObjectKey: String
 
     # Additional information
     usesAccessibleConvertedVan: Boolean!
