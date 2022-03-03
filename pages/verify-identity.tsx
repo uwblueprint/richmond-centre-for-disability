@@ -20,6 +20,7 @@ import {
   PopoverFooter,
   Input,
   useToast,
+  Stack,
 } from '@chakra-ui/react'; // Chakra UI
 import { InfoOutlineIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/applicant/Layout'; // Layout component
@@ -93,14 +94,19 @@ export default function IdentityVerificationForm() {
 
   return (
     <Layout footer={false}>
-      <GridItem colSpan={8} colStart={3}>
+      <GridItem colSpan={{ sm: 12, md: 8 }} colStart={{ sm: 1, md: 3 }}>
         <Flex width="100%" justifyContent="flex-start">
           <Flex width="100%" flexFlow="column" alignItems="flex-start">
             <Text
+              as="h2"
+              textStyle={{ sm: 'heading', md: 'display-medium-bold' }}
+              mb={{ sm: '40px', md: '48px' }}
+            >{`Renewal Form`}</Text>
+            <Text
               as="h1"
-              textStyle="display-xlarge"
+              textStyle={{ sm: 'display-medium-bold', md: 'display-xlarge' }}
               marginBottom="20px"
-            >{`Verify your Identity`}</Text>
+            >{`Identity Verification`}</Text>
             <Text as="p" textStyle="body-bold" textAlign="left" marginBottom="20px">
               {`You must have a record with Richmond Centre for Disability before proceeding. Please fill
         out the information below so we may validate your identity:`}
@@ -113,7 +119,12 @@ export default function IdentityVerificationForm() {
               <Flex alignItems="center">
                 <Popover placement="left" trigger="hover" gutter={24}>
                   <PopoverTrigger>
-                    <InfoOutlineIcon marginRight="8px" cursor="pointer" />
+                    <InfoOutlineIcon
+                      marginRight="8px"
+                      cursor="pointer"
+                      alignSelf="flex-start"
+                      mt={{ sm: '16px', md: 'initial' }}
+                    />
                   </PopoverTrigger>
                   <PopoverContent>
                     <PopoverBody>
@@ -127,8 +138,9 @@ export default function IdentityVerificationForm() {
                   </PopoverContent>
                 </Popover>
                 <FormHelperText>
-                  {`You can find your user ID on the back of your wallet card. If you cannot find your
-              wallet card, please call RCD at 604-232-2404.`}
+                  {`You can find your user ID on the back of your wallet card, on a payment receipt or in the 
+                  previous form mailed to you by RCD. If you cannot find your wallet card, please call RCD at 
+                  604-232-2404.`}
                 </FormHelperText>
               </Flex>
             </FormControl>
@@ -140,7 +152,7 @@ export default function IdentityVerificationForm() {
                 onChange={event => setPhoneNumberSuffix(event.target.value)}
               />
             </FormControl>
-            <FormControl isRequired textAlign="left" marginBottom="20px">
+            <FormControl isRequired textAlign="left" marginBottom={{ sm: '40px', md: '20px' }}>
               <FormLabel>{`Date of Birth`}</FormLabel>
               <Input
                 type="date"
@@ -149,13 +161,17 @@ export default function IdentityVerificationForm() {
                 onChange={event => setDateOfBirth(event.target.value)}
               />
               <FormHelperText>
-                {`Please enter your date of birth in YYYY-MM-DD format. For example, if you were born on
-            20th August 1950, you would enter 1950-08-20`}
+                {`Please select your birthday using the date selector or type in your birthday in YYYY-MM-DD format`}
               </FormHelperText>
             </FormControl>
-            <Flex width="100%" justifyContent="flex-end">
+            <Stack
+              width="100%"
+              direction={{ sm: 'column-reverse', md: 'row' }}
+              justifyContent="flex-end"
+              spacing={{ sm: '16px', md: '12px' }}
+            >
               <Link href="/">
-                <Button variant="outline" marginRight="12px">{`Go back to home page`}</Button>
+                <Button variant="outline">{`Go back to home page`}</Button>
               </Link>
               <Button
                 variant="solid"
@@ -163,7 +179,7 @@ export default function IdentityVerificationForm() {
                 loading={loading}
                 onClick={handleSubmit}
               >{`Continue`}</Button>
-            </Flex>
+            </Stack>
           </Flex>
         </Flex>
         <TOSModal />
