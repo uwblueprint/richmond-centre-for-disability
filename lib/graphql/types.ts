@@ -277,7 +277,7 @@ export type CreateNewApplicationInput = {
   guardianAddressLine2: Maybe<Scalars['String']>;
   guardianCity: Maybe<Scalars['String']>;
   guardianPostalCode: Maybe<Scalars['String']>;
-  poaFormUrl: Maybe<Scalars['String']>;
+  poaFormS3ObjectKey: Maybe<Scalars['String']>;
   usesAccessibleConvertedVan: Scalars['Boolean'];
   accessibleConvertedVanLoadingMethod: Maybe<AccessibleConvertedVanLoadingMethod>;
   requiresWiderParkingSpace: Scalars['Boolean'];
@@ -734,7 +734,7 @@ export type NewApplication = Application & {
   guardianProvince: Province;
   guardianCountry: Scalars['String'];
   guardianPostalCode: Scalars['String'];
-  poaFormUrl: Maybe<Scalars['String']>;
+  poaFormS3ObjectKey: Maybe<Scalars['String']>;
   usesAccessibleConvertedVan: Scalars['Boolean'];
   accessibleConvertedVanLoadingMethod: Maybe<AccessibleConvertedVanLoadingMethod>;
   requiresWiderParkingSpace: Scalars['Boolean'];

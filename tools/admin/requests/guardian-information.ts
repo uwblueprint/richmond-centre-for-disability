@@ -10,5 +10,5 @@ export type GuardianInformation = {
   addressLine2: string | null;
   city: string;
   postalCode: string;
-  poaFormUrl: string | null;
+  poaFormS3ObjectKey: string | null;
 };

@@ -181,7 +181,7 @@ export default function CreateNew() {
             addressLine2: guardian.addressLine2,
             city: guardian.city,
             postalCode: guardian.postalCode,
-            poaFormUrl: '', //TODO
+            poaFormS3ObjectKey: '', //TODO
           });
         } else {
           setGuardianInformation({
@@ -195,7 +195,7 @@ export default function CreateNew() {
             addressLine2: '',
             city: '',
             postalCode: '',
-            poaFormUrl: '', //TODO
+            poaFormS3ObjectKey: '', //TODO
           });
         }
       }
@@ -252,11 +252,11 @@ export default function CreateNew() {
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
 
-    let poaFormUrl = '';
+    let poaFormS3ObjectKey = '';
     if (guardianPOAFile) {
       try {
-        const { url } = await uploadToS3(guardianPOAFile);
-        poaFormUrl = url;
+        const { key } = await uploadToS3(guardianPOAFile);
+        poaFormS3ObjectKey = key;
       } catch (err) {
         toast({
           status: 'error',
@@ -351,7 +351,7 @@ export default function CreateNew() {
           guardianAddressLine2: guardianInformation.addressLine2,
           guardianCity: guardianInformation.city,
           guardianPostalCode: guardianInformation.postalCode,
-          poaFormUrl: poaFormUrl,
+          poaFormS3ObjectKey: poaFormS3ObjectKey,
 
           ...additionalQuestions,
           usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
