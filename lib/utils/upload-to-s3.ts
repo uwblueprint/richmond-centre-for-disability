@@ -1,5 +1,7 @@
 import S3 from 'aws-sdk/clients/s3';
 
+// Adapted from https://github.com/ryanto/next-s3-upload/blob/master/packages/next-s3-upload/src/hooks/use-s3-upload.tsx
+
 export const uploadToS3 = async (file: File) => {
   const filename = encodeURIComponent(file.name);
   const res = await fetch(`/api/s3-upload?filename=${filename}`);

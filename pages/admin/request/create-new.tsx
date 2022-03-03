@@ -53,7 +53,7 @@ import {
 } from '@tools/admin/requests/create-new';
 import { useRouter } from 'next/router';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
-import { uploadToS3 } from '@tools/hooks/useS3UploadEdit';
+import { uploadToS3 } from '@lib/utils/upload-to-s3';
 
 /** Create New APP page */
 export default function CreateNew() {
