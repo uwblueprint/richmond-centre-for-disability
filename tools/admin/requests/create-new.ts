@@ -175,7 +175,6 @@ export const INITIAL_GUARDIAN_INFORMATION: GuardianInformation = {
   addressLine2: '',
   city: '',
   postalCode: '',
-  // TODO: poaFormS3ObjectKey work with file upload
   poaFormS3ObjectKey: '',
 };
 
