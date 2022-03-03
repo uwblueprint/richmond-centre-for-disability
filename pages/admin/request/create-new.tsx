@@ -252,13 +252,11 @@ export default function CreateNew() {
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
 
+    let poaFormUrl = '';
     if (guardianPOAFile) {
       try {
         const { url } = await uploadToS3(guardianPOAFile);
-        setGuardianInformation({
-          ...guardianInformation,
-          poaFormUrl: url,
-        });
+        poaFormUrl = url;
       } catch (err) {
         toast({
           status: 'error',
@@ -353,7 +351,7 @@ export default function CreateNew() {
           guardianAddressLine2: guardianInformation.addressLine2,
           guardianCity: guardianInformation.city,
           guardianPostalCode: guardianInformation.postalCode,
-          poaFormUrl: guardianInformation.poaFormUrl,
+          poaFormUrl: poaFormUrl,
 
           ...additionalQuestions,
           usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
