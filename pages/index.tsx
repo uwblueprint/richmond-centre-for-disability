@@ -22,18 +22,23 @@ export default function Landing() {
 
   return (
     <Layout>
-      <GridItem colSpan={8} colStart={1}>
-        <Text as="h1" textStyle="display-xlarge" align="left">
+      <GridItem colSpan={{ sm: 12, md: 8 }} colStart={1}>
+        <Text as="h1" textStyle={{ sm: 'display-large', md: 'display-xlarge' }} align="left">
           {t('landing')}
         </Text>
-        <Text as="p" textStyle="display-small" align="left" mt="24px">
+        <Text as="p" textStyle={{ sm: 'body-regular', md: 'display-small' }} align="left" mt="24px">
           Find the services you need related to your British Columbia accessible parking permit. You
           may choose to use our online service or download a physical form and email, mail or drop
           it off in person to RCD.
         </Text>
       </GridItem>
-      <GridItem colSpan={5} colStart={1} mt="28px" textAlign="left">
-        <Text as="h2" textStyle="display-medium" align="left" fontWeight="semibold">
+      <GridItem
+        colSpan={{ sm: 12, md: 5 }}
+        colStart={1}
+        mt={{ sm: '36px', md: '28px' }}
+        textAlign="left"
+      >
+        <Text as="h2" textStyle="display-medium" align="left" fontWeight={{ md: 'semibold' }}>
           Option 1: Online Service
         </Text>
         <Text as="p" textStyle="body-regular" align="left" mt="24px">
@@ -59,18 +64,23 @@ export default function Landing() {
             variant="solid"
             fontWeight="semibold"
             size="lg"
-            width="320px"
-            height="48px"
+            width={{ sm: '100%', md: '320px' }}
+            height={{ sm: '72px', md: '48px' }}
             radius="6px"
-            mt="48px"
+            mt={{ sm: '32px', md: '48px' }}
             p="12px 25px 12px 25px"
           >
             <Text as="span">Renew your permit online</Text>
           </Button>
         </Link>
       </GridItem>
-      <GridItem colSpan={5} colStart={7} mt="28px" textAlign="left">
-        <Text as="h2" textStyle="display-medium" align="left" fontWeight="semibold">
+      <GridItem
+        colSpan={{ sm: 12, md: 5 }}
+        colStart={{ sm: 1, md: 7 }}
+        mt={{ sm: '36px', md: '28px' }}
+        textAlign="left"
+      >
+        <Text as="h2" textStyle="display-medium" align="left" fontWeight={{ md: 'semibold' }}>
           Option 2: Download Form
         </Text>
         <Text as="p" textStyle="body-regular" align="left" mt="24px">
@@ -90,10 +100,10 @@ export default function Landing() {
             variant="solid"
             fontWeight="semibold"
             size="lg"
-            width="320px"
-            height="48px"
+            width={{ sm: '100%', md: '320px' }}
+            height={{ sm: '72px', md: '48px' }}
             radius="6px"
-            mt="36px"
+            mt={{ sm: '32px', md: '48px' }}
             p="12px 25px 12px 25px"
           >
             <Text as="span">Download new form</Text>
@@ -105,28 +115,44 @@ export default function Landing() {
             variant="solid"
             fontWeight="semibold"
             size="lg"
-            width="320px"
-            height="48px"
+            width={{ sm: '100%', md: '320px' }}
+            height={{ sm: '72px', md: '48px' }}
             radius="6px"
-            mt="32px"
+            mt={{ sm: '20px', md: '32px' }}
             p="12px 25px 12px 25px"
           >
             <Text as="span">Download replacement form</Text>
           </Button>
         </Link>
       </GridItem>
-      <GridItem colSpan={12} colStart={0} mb="44px" mt="52px">
+      <GridItem
+        colSpan={12}
+        colStart={0}
+        mb="44px"
+        mt="52px"
+        display={{ sm: 'none', md: 'initial' }}
+      >
         <Divider />
       </GridItem>
-      <GridItem colSpan={8} colStart={1} mb="64px">
-        <Text as="h2" textStyle="display-large" textAlign="left">
+      <GridItem
+        colSpan={{ sm: 12, md: 8 }}
+        colStart={1}
+        mt={{ sm: '28px', md: 'initial' }}
+        mb={{ sm: '48px', md: '64px' }}
+      >
+        <Text as="h2" textStyle={{ sm: 'display-medium', md: 'display-large' }} textAlign="left">
           Frequently Asked Questions
         </Text>
-        <Text as="p" textStyle="display-small" textAlign="left" mt="24px">
+        <Text
+          as="p"
+          textStyle={{ sm: 'body-regular', md: 'display-small' }}
+          textAlign="left"
+          mt="24px"
+        >
           Have any questions about our online services or our services? Look below to see some of
           the most frequently asked questions.
         </Text>
-        <Accordion allowMultiple mt="24px">
+        <Accordion allowMultiple mt={{ sm: '32px', md: '24px' }}>
           <AccordionItem>
             <h2>
               <AccordionButton>
@@ -224,7 +250,7 @@ export default function Landing() {
           </AccordionItem>
         </Accordion>
       </GridItem>
-      <GridItem colSpan={4} colStart={9}>
+      <GridItem colSpan={{ sm: 12, md: 4 }} colStart={{ sm: 1, md: 9 }}>
         <Box
           borderWidth="1px"
           borderRadius="12px"

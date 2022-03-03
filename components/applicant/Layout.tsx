@@ -3,7 +3,7 @@ import Head from 'next/head'; // HTML head handling
 import Link from 'next/link'; // Client-side linking
 import Image from 'next/image'; // Optimized images
 
-import { Box, Flex, Grid, GridItem, Button, Center, Text, Spacer, Divider } from '@chakra-ui/react'; // Chakra UI
+import { Box, Flex, Grid, GridItem, Button, Center, Text, Divider, Stack } from '@chakra-ui/react'; // Chakra UI
 
 type Props = {
   readonly children: ReactNode;
@@ -14,15 +14,15 @@ type Props = {
 // Applicant Layout component
 export default function Layout({ children, header = true, footer = true }: Props) {
   return (
-    <Box textAlign="center">
+    <Box width="100vw" textAlign="center">
       <Meta />
-      <Flex flexDirection="column" alignItems="center" minHeight="100vh">
+      <Flex width="100%" flexDirection="column" alignItems="stretch" minHeight="100vh">
         {header && <Header />}
         <Flex
           flexGrow={1}
           width="100%"
           justifyContent="center"
-          paddingY="64px"
+          paddingY={{ sm: '44px', md: '64px' }}
           backgroundColor="background.grey"
         >
           <ApplicantGrid>{children}</ApplicantGrid>
@@ -54,15 +54,15 @@ function Meta() {
 function Header() {
   return (
     <Center height="108px" width="100%" backgroundColor="background.grey">
-      <ApplicantGrid alignItems="center" isContent={false}>
-        <GridItem colSpan={1}>
+      <ApplicantGrid alignItems="center">
+        <GridItem colSpan={{ sm: 2, md: 1 }}>
           <Link href="/">
-            <Flex justifyContent="keft" cursor="pointer">
+            <Flex justifyContent="left" cursor="pointer">
               <Image src="/assets/logo.svg" alt="RCD Logo" height={68} width={48} priority />
             </Flex>
           </Link>
         </GridItem>
-        <GridItem colSpan={9}>
+        <GridItem colSpan={{ sm: 10, md: 9 }}>
           <Text textStyle="body-bold" textAlign="left">
             Richmond Centre for Disability
           </Text>
@@ -70,7 +70,7 @@ function Header() {
             Accessible Parking Permit
           </Text>
         </GridItem>
-        <GridItem colStart={11} colSpan={2}>
+        <GridItem colStart={11} colSpan={2} display={{ sm: 'none', md: 'initial' }}>
           <a href="https://www.rcdrichmond.org/">
             <Button variant="outline" size="lg">
               Go to main site
@@ -85,17 +85,25 @@ function Header() {
 // Footer
 function Footer() {
   return (
-    <Center flexDirection="column" width="100%" paddingTop={20} backgroundColor="background.grey">
-      <ApplicantGrid marginBottom={10} isContent={false}>
-        <GridItem colSpan={2} textAlign="left">
+    <Center
+      flexDirection="column"
+      width="100%"
+      paddingTop={{ sm: '32px', md: 20 }}
+      backgroundColor="background.grey"
+    >
+      <ApplicantGrid marginBottom={10}>
+        <GridItem colSpan={{ sm: 12, md: 2 }} textAlign={{ sm: 'center', md: 'left' }}>
           <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} priority />
           <a href="https://www.rcdrichmond.org/">
             <Text textStyle="heading">Go to main site</Text>
           </a>
         </GridItem>
-        <GridItem colStart={3} colSpan={10}>
-          <Flex>
-            <Box flexGrow={1} textAlign="left">
+        <GridItem colStart={{ sm: 1, md: 3 }} colSpan={{ sm: 12, md: 10 }}>
+          <Stack
+            flexDirection={{ sm: 'column', md: 'initial' }}
+            spacing={{ sm: '32px', md: '16px' }}
+          >
+            <Box flexGrow={1} textAlign={{ sm: 'center', md: 'left' }}>
               <Text marginBottom={4} textStyle="body-bold">
                 Location
               </Text>
@@ -109,9 +117,7 @@ function Footer() {
                 V6X 2X9
               </Text>
             </Box>
-
-            <Spacer minWidth={16} />
-            <Box flexGrow={1} textAlign="left">
+            <Box flexGrow={1} textAlign={{ sm: 'center', md: 'left' }}>
               <Text marginBottom={4} textStyle="body-bold">
                 Hours
               </Text>
@@ -124,8 +130,7 @@ function Footer() {
                 <br /> statutory holidays
               </Text>
             </Box>
-            <Spacer minWidth={16} />
-            <Box flexGrow={1} textAlign="left">
+            <Box flexGrow={1} textAlign={{ sm: 'center', md: 'left' }}>
               <Text marginBottom={4} textStyle="body-bold">
                 Social Media
               </Text>
@@ -150,8 +155,7 @@ function Footer() {
                 </Text>
               </a>
             </Box>
-            <Spacer minWidth={16} />
-            <Box flexGrow={1} textAlign="left">
+            <Box flexGrow={1} textAlign={{ sm: 'center', md: 'left' }}>
               <Text marginBottom={4} textStyle="body-bold">
                 Contact Info
               </Text>
@@ -160,11 +164,18 @@ function Footer() {
                 <Text textStyle="caption">Email: parkingpermit@rcdrichmond.org</Text>
               </a>
             </Box>
-          </Flex>
+          </Stack>
         </GridItem>
       </ApplicantGrid>
       <Divider />
-      <Flex width="100%" maxWidth="1200px" paddingY={10} justifyContent="space-between">
+      <Flex
+        width="100%"
+        maxWidth="1200px"
+        paddingY={10}
+        paddingX={{ sm: '32px', md: 'initial' }}
+        flexDirection={{ sm: 'column', md: 'initial' }}
+        justifyContent="space-between"
+      >
         <Text textStyle="body-regular">© 2021 Richmond Centre for Disability</Text>
         <Box>
           <a href="#">
@@ -188,23 +199,17 @@ type ApplicantGridProps = {
   children: ReactNode;
   alignItems?: string;
   marginBottom?: number;
-  isContent?: boolean;
 };
 
-function ApplicantGrid({
-  children,
-  alignItems,
-  marginBottom,
-  isContent = true,
-}: ApplicantGridProps) {
+function ApplicantGrid({ children, alignItems, marginBottom }: ApplicantGridProps) {
   return (
     <Grid
       flexGrow={1}
       width="100%"
       maxWidth={{ xl: '1200px' }}
-      marginX={isContent ? '120px' : undefined}
+      marginX={{ sm: '16px', md: '80px', lg: '120px' }}
       templateColumns="repeat(12, 1fr)"
-      gap="20px"
+      gap={{ sm: '8px', md: '32px', lg: '20px' }}
       alignItems={alignItems}
       marginBottom={marginBottom}
     >
