@@ -254,12 +254,6 @@ export default function CreateNew() {
       try {
         const { key } = await uploadToS3(guardianPOAFile);
         poaFormS3ObjectKey = key;
-        toast({
-          status: 'success',
-          description: `Success key: ${key}`,
-          isClosable: true,
-        });
-        return;
       } catch (err) {
         toast({
           status: 'error',

@@ -1,9 +1,19 @@
 import S3 from 'aws-sdk/clients/s3';
 
+type UploadedObject = {
+  url: string;
+  bucket: string;
+  key: string;
+};
 // Adapted from https://github.com/ryanto/next-s3-upload/blob/master/packages/next-s3-upload/src/hooks/use-s3-upload.tsx
-
-export const uploadToS3 = async (file: File) => {
+/**
+ * Upload file to S3
+ * @param file File to upload
+ * @returns object with url, bucket and key
+ */
+export const uploadToS3 = async (file: File): Promise<UploadedObject> => {
   const filename = encodeURIComponent(file.name);
+  // call backend to generate temporary/limited s3 upload keys
   const res = await fetch(`/api/s3-upload?filename=${filename}`);
   const data = await res.json();
 
@@ -28,23 +38,8 @@ export const uploadToS3 = async (file: File) => {
 
     const uploadResult = await s3.upload(params).promise();
 
-    // sign url example
-
-    // try{
-    //     var url = s3.getSignedUrl("getObject", {
-    //         Bucket: data.bucket,
-    //         Key: data.Key,
-    //         Expires: 200 // seconds
-    //     })
-    //     console.log("PRESIGNED URL: ", url);
-    // } catch (err) {
-    //     console.log("SIGNING ERROR")
-    //     console.log(err)
-    //     throw err
-    // }
-
     return {
-      url: uploadResult.Location, // this URL can't really be used anywhere now
+      url: uploadResult.Location,
       bucket: uploadResult.Bucket,
       key: uploadResult.Key,
     };
