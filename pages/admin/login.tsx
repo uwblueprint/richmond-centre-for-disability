@@ -1,30 +1,19 @@
-import { useState, SyntheticEvent } from 'react'; // React
+import { useState } from 'react'; // React
 import { GetServerSideProps } from 'next'; // Get server side props
 import Image from 'next/image';
 import { getSession, signIn, SignInResponse } from 'next-auth/client'; // Session management
-import {
-  Text,
-  Link,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  Input,
-  Button,
-  Box,
-  Center,
-  VStack,
-  useToast,
-} from '@chakra-ui/react'; // Chakra UI
+import { Text, Link, Button, Box, Center, VStack, useToast } from '@chakra-ui/react'; // Chakra UI
 import { loginSchema } from '@lib/auth/validation';
 
+import { Form, Formik } from 'formik';
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
+import TextField from '@components/form/TextField';
 
 export default function Login() {
-  const [email, setEmail] = useState(''); // Email input
   const [emailInputError, setEmailInputError] = useState(''); // Error message displayed under input
 
   // Store email in local storage
-  const [, setLocalStorageEmail] = useLocalStorage('rcd-email-redirect', '');
+  const [localStorageEmail, setLocalStorageEmail] = useLocalStorage('rcd-email-redirect', '');
 
   // Loading state for log in button
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -34,7 +23,7 @@ export default function Login() {
   /**
    * Process login using email input
    */
-  const signInWithEmail = async () => {
+  const signInWithEmail = async (email: string) => {
     setIsSigningIn(true);
     setLocalStorageEmail(email);
     const signInResponse = await signIn('email', { email, redirect: false });
@@ -47,14 +36,8 @@ export default function Login() {
     }
   };
 
-  const handleSubmit = async (event: SyntheticEvent) => {
-    event.preventDefault();
-
-    if (await loginSchema.isValid({ email })) {
-      signInWithEmail();
-    } else {
-      setEmailInputError('Please enter a valid email.');
-    }
+  const handleSubmit = async (values: { email: string }) => {
+    signInWithEmail(values.email);
   };
 
   const resendEmailToast = useToast();
@@ -80,38 +63,30 @@ export default function Login() {
             {/* If NextAuth's callback doesn't contain a URL, auth (sending email) wasn't successful. */}
             {!authState?.url ? (
               <>
-                <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-                  <FormControl isInvalid={!!emailInputError}>
-                    <FormLabel>Email</FormLabel>
-                    <Input
-                      height="51px"
-                      type="email"
-                      value={email}
-                      onChange={event => {
-                        setEmailInputError('');
-                        setEmail(event.target.value);
-                      }}
-                      isDisabled={isSigningIn}
-                    />
-                    <FormErrorMessage>
-                      <Text as="span" textStyle="body-regular">
-                        {emailInputError}
-                      </Text>
-                    </FormErrorMessage>
-                  </FormControl>
-                  <Button
-                    onClick={handleSubmit}
-                    isLoading={isSigningIn}
-                    loadingText="Continue with Email"
-                    width="100%"
-                    height="46px"
-                    marginTop="7.5%"
-                  >
-                    <Text as="span" textStyle="button-semibold">
-                      Continue with Email
+                <Formik
+                  initialValues={{ email: '' }}
+                  validationSchema={loginSchema}
+                  onSubmit={handleSubmit}
+                >
+                  <Form style={{ width: '100%' }}>
+                    <TextField name="email" label="Email" height="51px" />
+                    <Text as="span" textStyle="body-regular">
+                      {emailInputError}
                     </Text>
-                  </Button>
-                </form>
+                    <Button
+                      type="submit"
+                      isLoading={isSigningIn}
+                      loadingText="Continue with Email"
+                      width="100%"
+                      height="46px"
+                      marginTop="7.5%"
+                    >
+                      <Text as="span" textStyle="button-semibold">
+                        Continue with Email
+                      </Text>
+                    </Button>
+                  </Form>
+                </Formik>
                 <Text as="p" textStyle="caption" width="100%" textAlign="left">
                   <b>Don&apos;t have an account?</b> Please contact your administrator for access.
                 </Text>
@@ -119,14 +94,14 @@ export default function Login() {
             ) : (
               <>
                 <Text as="p" textStyle="body-regular" align="center">
-                  We just sent an email to {email}. <br />
+                  We just sent an email to {localStorageEmail}. <br />
                   There should be a link in your inbox to log in.
                 </Text>
                 <Text as="p" textStyle="caption" textAlign="left">
                   <b>Didn&apos;t get an email?</b> Check your spam or trash folder or{' '}
                   <Link
                     onClick={() => {
-                      signIn('email', { email, redirect: false });
+                      signIn('email', { localStorageEmail, redirect: false });
                       resendEmailToast({
                         status: 'success',
                         title: 'Login Email Resent',
