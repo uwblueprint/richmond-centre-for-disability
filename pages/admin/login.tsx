@@ -32,7 +32,8 @@ export default function Login() {
     setIsSigningIn(false);
 
     if (signInResponse?.error) {
-      setEmailInputError(signInResponse?.error);
+      // Removes "Error: " from the beginning of error messages
+      setEmailInputError(signInResponse?.error.substring(signInResponse?.error.indexOf(':') + 2));
     }
   };
 
@@ -70,7 +71,7 @@ export default function Login() {
                 >
                   <Form style={{ width: '100%' }}>
                     <TextField name="email" label="Email" height="51px" />
-                    <Text as="span" textStyle="body-regular">
+                    <Text as="span" textStyle="body-regular" color="critical">
                       {emailInputError}
                     </Text>
                     <Button
