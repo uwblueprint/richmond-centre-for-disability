@@ -32,8 +32,12 @@ export default function Login() {
     setIsSigningIn(false);
 
     if (signInResponse?.error) {
-      // Removes "Error: " from the beginning of error messages
-      setEmailInputError(signInResponse?.error.substring(signInResponse?.error.indexOf(':') + 2));
+      if (signInResponse.error.toLowerCase().includes('error:')) {
+        // Removes "Error: " from the beginning of error messages
+        setEmailInputError(signInResponse.error.substring(signInResponse.error.indexOf(':') + 2));
+      } else {
+        setEmailInputError(signInResponse.error);
+      }
     }
   };
 
@@ -70,10 +74,13 @@ export default function Login() {
                   onSubmit={handleSubmit}
                 >
                   <Form style={{ width: '100%' }}>
-                    <TextField name="email" label="Email" height="51px" />
-                    <Text as="span" textStyle="body-regular" color="critical">
-                      {emailInputError}
-                    </Text>
+                    <TextField
+                      name="email"
+                      label="Email"
+                      backendError={emailInputError}
+                      setBackendError={setEmailInputError}
+                      height="51px"
+                    />
                     <Button
                       type="submit"
                       isLoading={isSigningIn}
