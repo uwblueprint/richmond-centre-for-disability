@@ -1,19 +1,18 @@
 import { APIRoute } from 'next-s3-upload';
-import { getToken } from 'next-auth/jwt';
 import { NextApiHandler } from 'next';
+import { getSession } from 'next-auth/client';
 
 // Folder structure in s3 can be in the configure if needed
 // see https://next-s3-upload.codingvalue.com/s3-file-paths
 const uploadHandler = APIRoute.configure({});
-const jwtSecret = process.env.NA_JWT_SECRET;
 
 /**
  * Auth wrapper for next-s3-upload API Route
  * https://next-s3-upload.codingvalue.com
  */
 const s3UploadHandler: NextApiHandler = async (req, res) => {
-  const token = await getToken({ req: req, secret: jwtSecret });
-  if (token) {
+  const session = await getSession({ req });
+  if (session) {
     // Signed in
     await uploadHandler(req, res);
   } else {

@@ -5,9 +5,10 @@ type UploadedObject = {
   bucket: string;
   key: string;
 };
-// Adapted from https://github.com/ryanto/next-s3-upload/blob/master/packages/next-s3-upload/src/hooks/use-s3-upload.tsx
+
 /**
  * Upload file to S3
+ * Adapted from https://github.com/ryanto/next-s3-upload/blob/master/packages/next-s3-upload/src/hooks/use-s3-upload.tsx
  * @param file File to upload
  * @returns object with url, bucket and key
  */
