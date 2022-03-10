@@ -53,7 +53,7 @@ import {
 } from '@tools/admin/requests/create-new';
 import { useRouter } from 'next/router';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
-import { useS3Upload } from 'next-s3-upload';
+import { uploadToS3 } from '@lib/utils/upload-to-s3';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -94,9 +94,6 @@ export default function CreateNew() {
 
   // Router
   const router = useRouter();
-
-  // S3 Upload
-  const { uploadToS3 } = useS3Upload();
 
   // Reset all fields when application is discarded
   const resetAllFields = () => {
