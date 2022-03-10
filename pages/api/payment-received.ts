@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { NextApiHandler } from 'next'; // Next
 import { Prisma, ShopifyPaymentStatus } from '@prisma/client'; // Prisma client
+import prisma from '@prisma/index'; // Prisma client
 import crypto from 'crypto'; // Verifying Shopify Request
 import getRawBody from 'raw-body';
 import sendConfirmationEmail from '@lib/reports/utils';
