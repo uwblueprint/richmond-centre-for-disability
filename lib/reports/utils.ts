@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import nodemailer from 'nodemailer'; // Nodemailer
 
 /**
@@ -25,6 +26,8 @@ const sendConfirmationEmail = (to: string, firstName: string): Promise<void> => 
           html: html(firstName),
         },
         error => {
+          console.log('OTHER ERROR: ');
+          console.log(error);
           return error ? reject(error) : resolve();
         }
       );

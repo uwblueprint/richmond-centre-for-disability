@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { NextApiHandler } from 'next'; // Next
 import { Prisma, ShopifyPaymentStatus } from '@prisma/client'; // Prisma client
 import crypto from 'crypto'; // Verifying Shopify Request
@@ -95,6 +96,8 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     }
   } catch (err) {
     // TODO: Add some sort of logging or notification
+    console.log('CATCH ERROR: ');
+    console.log(err);
     res.status(500).end();
   }
 
