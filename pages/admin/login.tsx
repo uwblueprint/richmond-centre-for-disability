@@ -2,7 +2,18 @@ import { useState } from 'react'; // React
 import { GetServerSideProps } from 'next'; // Get server side props
 import Image from 'next/image';
 import { getSession, signIn, SignInResponse } from 'next-auth/client'; // Session management
-import { Text, Link, Button, Box, Center, VStack, useToast } from '@chakra-ui/react'; // Chakra UI
+import {
+  Text,
+  Link,
+  Button,
+  Box,
+  Center,
+  VStack,
+  useToast,
+  Alert,
+  AlertIcon,
+  AlertDescription,
+} from '@chakra-ui/react'; // Chakra UI
 import { loginSchema } from '@lib/auth/validation';
 
 import { Form, Formik } from 'formik';
@@ -74,13 +85,14 @@ export default function Login() {
                   onSubmit={handleSubmit}
                 >
                   <Form style={{ width: '100%' }}>
-                    <TextField
-                      name="email"
-                      label="Email"
-                      backendError={emailInputError}
-                      setBackendError={setEmailInputError}
-                      height="51px"
-                    />
+                    <TextField name="email" label="Email" height="51px" />
+                    {/* TODO: backend error styling */}
+                    {emailInputError && (
+                      <Alert status="error" mt="2">
+                        <AlertIcon />
+                        <AlertDescription>{emailInputError}</AlertDescription>
+                      </Alert>
+                    )}
                     <Button
                       type="submit"
                       isLoading={isSigningIn}
