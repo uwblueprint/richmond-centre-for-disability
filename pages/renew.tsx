@@ -218,20 +218,25 @@ export default function Renew() {
   return (
     <Layout>
       <GridItem colSpan={10} colStart={2}>
-        <Text as="h1" textStyle="display-xlarge" textAlign="left" marginBottom="48px">
+        <Text
+          as="h1"
+          textStyle={{ sm: 'display-medium-bold', md: 'display-xlarge' }}
+          textAlign="left"
+          marginBottom="48px"
+        >
           Renewal Form
         </Text>
         <Steps orientation="vertical" activeStep={activeStep}>
           <Step label={`Personal Address Information`}>
             <Box marginLeft="8px">
               {/* Check whether applicant has updated address */}
-              <FormControl isRequired textAlign="left">
+              <FormControl isRequired textAlign="left" mb="12px">
                 <FormLabel>{`Has your address changed since you received your last parking pass?`}</FormLabel>
                 <RadioGroup
                   value={updatedAddress ? '0' : '1'}
                   onChange={value => setUpdatedAddress(value === '0' ? true : false)}
                 >
-                  <Stack direction="row">
+                  <Stack direction={{ sm: 'column', md: 'row' }}>
                     <Radio value="0">{`Yes, it has`}</Radio>
                     <Radio value="1">{`No, it has not`}</Radio>
                   </Stack>
@@ -285,9 +290,14 @@ export default function Renew() {
                 </Box>
               )}
               {invalidPersonalAddress && <IncompleteSectionAlert />}
-              <Flex width="100%" justifyContent="flex-end">
+              <Stack
+                width={{ sm: '176px', md: '100%' }}
+                direction={{ sm: 'column-reverse', md: 'row' }}
+                spacing={{ sm: '12px', md: '32px' }}
+                justifyContent="flex-end"
+              >
                 <Link href="/">
-                  <Button variant="outline" marginRight="32px">{`Go back to home page`}</Button>
+                  <Button variant="outline">{`Previous`}</Button>
                 </Link>
                 <Button
                   variant="solid"
@@ -296,13 +306,13 @@ export default function Renew() {
                 >
                   {isReviewing ? `Review request` : `Next`}
                 </Button>
-              </Flex>
+              </Stack>
             </Box>
           </Step>
           <Step label={`Personal Contact Information`}>
             <Box marginLeft="8px">
               {/* Check whether applicant has updated contact info */}
-              <FormControl isRequired textAlign="left">
+              <FormControl isRequired textAlign="left" mb="12px">
                 <FormLabel>
                   {`Have you changed your contact information since you received or renewed your last
                   parking pass?`}
@@ -311,7 +321,7 @@ export default function Renew() {
                   value={updatedContactInfo ? '0' : '1'}
                   onChange={value => setUpdatedContactInfo(value === '0' ? true : false)}
                 >
-                  <Stack direction="row">
+                  <Stack direction={{ sm: 'column', md: 'row' }}>
                     <Radio value="0">{`Yes, I have`}</Radio>
                     <Radio value="1">{`No, I have not`}</Radio>
                   </Stack>
@@ -351,12 +361,13 @@ export default function Renew() {
                 </Box>
               )}
               {invalidContact && <IncompleteSectionAlert />}
-              <Flex width="100%" justifyContent="flex-end">
-                <Button
-                  variant="outline"
-                  onClick={prevStep}
-                  marginRight="32px"
-                >{`Previous`}</Button>
+              <Stack
+                width={{ sm: '176px', md: '100%' }}
+                direction={{ sm: 'column-reverse', md: 'row' }}
+                justifyContent="flex-end"
+                spacing={{ sm: '12px', md: '32px' }}
+              >
+                <Button variant="outline" onClick={prevStep}>{`Previous`}</Button>
                 <Button
                   variant="solid"
                   onClick={isReviewing ? goToReview : nextStep}
@@ -364,13 +375,13 @@ export default function Renew() {
                 >
                   {isReviewing ? `Review request` : `Next`}
                 </Button>
-              </Flex>
+              </Stack>
             </Box>
           </Step>
           <Step label={`Doctor's Information`}>
             <Box marginLeft="8px">
               {/* Check whether applicant has updated doctor info */}
-              <FormControl isRequired textAlign="left">
+              <FormControl isRequired textAlign="left" mb="12px">
                 <FormLabel>
                   {`Have you changed your doctor since you last received or renewed your parking
                   permit?`}
@@ -379,7 +390,7 @@ export default function Renew() {
                   value={updatedDoctor ? '0' : '1'}
                   onChange={value => setUpdatedDoctor(value === '0' ? true : false)}
                 >
-                  <Stack direction="row">
+                  <Stack direction={{ sm: 'column', md: 'row' }}>
                     <Radio value="0">{`Yes, I have`}</Radio>
                     <Radio value="1">{`No, I have not`}</Radio>
                   </Stack>
@@ -467,12 +478,13 @@ export default function Renew() {
                 </Box>
               )}
               {invalidDoctor && <IncompleteSectionAlert />}
-              <Flex width="100%" justifyContent="flex-end">
-                <Button
-                  variant="outline"
-                  onClick={prevStep}
-                  marginRight="32px"
-                >{`Previous`}</Button>
+              <Stack
+                width={{ sm: '176px', md: '100%' }}
+                direction={{ sm: 'column-reverse', md: 'row' }}
+                spacing={{ sm: '12px', md: '32px' }}
+                justifyContent="flex-end"
+              >
+                <Button variant="outline" onClick={prevStep}>{`Previous`}</Button>
                 <Button
                   variant="solid"
                   onClick={isReviewing ? goToReview : nextStep}
@@ -480,14 +492,18 @@ export default function Renew() {
                 >
                   {isReviewing ? `Review request` : `Next`}
                 </Button>
-              </Flex>
+              </Stack>
             </Box>
           </Step>
           <Step label={`Review Request`}>
-            <Box marginTop="24px" marginBottom="40px">
-              <Flex minWidth="700px" justifyContent="space-between">
+            <Box marginTop="24px" marginBottom="40px" textAlign="left">
+              <Flex minWidth={{ md: '600px' }} justifyContent="space-between">
                 <Text as="h3" textStyle="heading">{`Address Information`}</Text>
-                <Button variant="outline" onClick={() => goToStep(0)}>{`Edit`}</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => goToStep(0)}
+                  display={{ sm: 'none', md: 'initial' }}
+                >{`Edit`}</Button>
               </Flex>
               {updatedAddress ? (
                 <>
@@ -503,14 +519,24 @@ export default function Renew() {
                   as="p"
                   textStyle="body-regular"
                   textAlign="left"
+                  mb="16px"
                 >{`Has not changed since last renewal.`}</Text>
               )}
+              <Button
+                variant="outline"
+                onClick={() => goToStep(0)}
+                display={{ sm: 'initial', md: 'none' }}
+              >{`Edit`}</Button>
             </Box>
             <Divider />
-            <Box marginTop="24px" marginBottom="40px">
-              <Flex minWidth="700px" justifyContent="space-between">
+            <Box marginTop="24px" marginBottom="40px" textAlign="left">
+              <Flex minWidth={{ md: '640px' }} justifyContent="space-between">
                 <Text as="h3" textStyle="heading">{`Contact Information`}</Text>
-                <Button variant="outline" onClick={() => goToStep(1)}>{`Edit`}</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => goToStep(1)}
+                  display={{ sm: 'none', md: 'initial' }}
+                >{`Edit`}</Button>
               </Flex>
               {updatedContactInfo ? (
                 <>
@@ -522,14 +548,24 @@ export default function Renew() {
                   as="p"
                   textStyle="body-regular"
                   textAlign="left"
+                  mb="16px"
                 >{`Has not changed since last renewal.`}</Text>
               )}
+              <Button
+                variant="outline"
+                onClick={() => goToStep(1)}
+                display={{ sm: 'initial', md: 'none' }}
+              >{`Edit`}</Button>
             </Box>
             <Divider />
-            <Box marginTop="24px" marginBottom="40px">
-              <Flex minWidth="700px" justifyContent="space-between">
+            <Box marginTop="24px" marginBottom="40px" textAlign="left">
+              <Flex minWidth={{ md: '640px' }} justifyContent="space-between">
                 <Text as="h3" textStyle="heading">{`Doctor's Information`}</Text>
-                <Button variant="outline" onClick={() => goToStep(2)}>{`Edit`}</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => goToStep(2)}
+                  display={{ sm: 'none', md: 'initial' }}
+                >{`Edit`}</Button>
               </Flex>
               {updatedDoctor ? (
                 <>
@@ -550,6 +586,12 @@ export default function Renew() {
                   textAlign="left"
                 >{`Has not changed since last renewal.`}</Text>
               )}
+              <Button
+                variant="outline"
+                onClick={() => goToStep(2)}
+                display={{ sm: 'initial', md: 'none' }}
+                mt="16px"
+              >{`Edit`}</Button>
             </Box>
             <Box marginTop="24px" marginBottom="40px">
               <Text
@@ -568,8 +610,13 @@ export default function Renew() {
                 information required in this application.`}
               </Checkbox>
             </Box>
-            <Flex width="100%" justifyContent="flex-end">
-              <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
+            <Stack
+              width="100%"
+              direction={{ sm: 'column-reverse', md: 'row' }}
+              justifyContent="flex-end"
+              spacing={{ sm: '12px', md: '32px' }}
+            >
+              <Button variant="outline" onClick={prevStep}>{`Previous`}</Button>
               <Button
                 variant="solid"
                 onClick={handleSubmit}
@@ -581,8 +628,8 @@ export default function Renew() {
                   invalidContact ||
                   invalidDoctor
                 }
-              >{`Proceed to payment`}</Button>
-            </Flex>
+              >{`Proceed to Checkout`}</Button>
+            </Stack>
           </Step>
         </Steps>
       </GridItem>
