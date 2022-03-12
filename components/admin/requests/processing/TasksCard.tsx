@@ -1,5 +1,9 @@
 import { useQuery, useMutation } from '@apollo/client';
+<<<<<<< HEAD
 import { useState } from 'react';
+=======
+import { useState, useEffect } from 'react';
+>>>>>>> 085de0e (made buttons unclickable when steps not done and worked on undo functionality)
 import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/processing/AssignNumberModal'; // AssignNumber Modal component
@@ -109,6 +113,14 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     },
   } = data;
 
+  const [preliminaryTasks, setPreliminaryTasks] = useState(false);
+
+  useEffect(() => {
+    appNumber !== null && appHolepunched && walletCardCreated
+      ? setPreliminaryTasks(true)
+      : setPreliminaryTasks(false);
+  }, [appNumber, appHolepunched, walletCardCreated]);
+
   return (
     <PermitHolderInfoCard colSpan={7} header={`Processing Tasks`}>
       <Divider mt="20px" />
@@ -206,6 +218,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         {/* Task 4: Review Request Information -> Disable Editing of First 3 steps */}
         <ProcessingTaskStep
           id={4}
+<<<<<<< HEAD
           label={`Review request information`}
           description="Editing will be disabled upon completion of this step"
           isCompleted={hasReviewedRequestInformation}
@@ -240,26 +253,33 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           label={`Assign invoice number${invoiceNumber === null ? '' : `: ${invoiceNumber}`}`}
           description="Include permit number, expiry date, full name, and birth month"
           isCompleted={invoiceNumber !== null}
+=======
+          label={'Review request information'}
+          description="Editing will be disabled upon completion of this step"
+          isCompleted={invoiceNumber !== null && preliminaryTasks}
+>>>>>>> 085de0e (made buttons unclickable when steps not done and worked on undo functionality)
         >
+          {/* TODO: Change to review information modal */}
           <AssignNumberModal
-            modalTitle="Assign Invoice Number"
+            modalTitle="Review Information"
             fieldName="Invoice number"
             onAssign={handleAssignInvoiceNumber}
           >
-            {invoiceNumber === null ? (
+            {invoiceNumber === null || !preliminaryTasks ? (
               <Button
                 marginLeft="auto"
                 height="35px"
                 bg="background.gray"
                 _hover={{ bg: 'background.grayHover' }}
                 color="black"
+                disabled={!appNumber && !appHolepunched && !walletCardCreated}
               >
-                <Text textStyle="xsmall-medium">Assign number</Text>
+                <Text textStyle="xsmall-medium">Review information</Text>
               </Button>
             ) : (
               <Button variant="ghost" textDecoration="underline black">
                 <Text textStyle="caption" color="black">
-                  Edit number
+                  Undo Review
                 </Text>
               </Button>
             )}
@@ -278,6 +298,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             bg="background.gray"
             _hover={{ bg: 'background.grayHover' }}
             color="black"
+            disabled={!invoiceNumber}
             // TODO: Add document uploading functionality
             onClick={() => handleUploadDocuments('placeholder url')}
           >
@@ -304,6 +325,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               bg="background.gray"
               _hover={{ bg: 'background.grayHover' }}
               color="black"
+              disabled={!documentsUrl}
               onClick={() => handleMailOut(true)}
             >
               <Text textStyle="xsmall-medium">Mark as complete</Text>
