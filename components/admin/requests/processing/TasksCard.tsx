@@ -1,9 +1,13 @@
 import { useQuery, useMutation } from '@apollo/client';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useState } from 'react';
 =======
 import { useState, useEffect } from 'react';
 >>>>>>> 085de0e (made buttons unclickable when steps not done and worked on undo functionality)
+=======
+import { useState } from 'react';
+>>>>>>> 8bedd55 (implemented logic for the processessing tasks)
 import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/processing/AssignNumberModal'; // AssignNumber Modal component
@@ -11,10 +15,10 @@ import ProcessingTaskStep from '@components/admin/requests/processing/TaskStep';
 import {
   AssignAppNumberRequest,
   AssignAppNumberResponse,
-  AssignInvoiceNumberRequest,
-  AssignInvoiceNumberResponse,
+  // AssignInvoiceNumberRequest,
+  // AssignInvoiceNumberResponse,
   ASSIGN_APP_NUMBER_MUTATION,
-  ASSIGN_INVOICE_NUMBER_MUTATION,
+  // ASSIGN_INVOICE_NUMBER_MUTATION,
   CreateWalletCardRequest,
   CreateWalletCardResponse,
   CREATE_WALLET_CARD_MUTATION,
@@ -27,9 +31,9 @@ import {
   MailOutRequest,
   MailOutResponse,
   MAIL_OUT_APP_MUTATION,
-  UploadDocumentsRequest,
-  UploadDocumentsResponse,
-  UPLOAD_DOCUMENTS_MUTATION,
+  // UploadDocumentsRequest,
+  // UploadDocumentsResponse,
+  // UPLOAD_DOCUMENTS_MUTATION,
 } from '@tools/admin/requests/processing-tasks-card';
 import ReviewInformationModal from '@components/admin/requests/processing/ReviewInformationModal';
 
@@ -74,21 +78,21 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
-  const [assignInvoiceNumber] = useMutation<
-    AssignInvoiceNumberResponse,
-    AssignInvoiceNumberRequest
-  >(ASSIGN_INVOICE_NUMBER_MUTATION);
-  const handleAssignInvoiceNumber = async (invoiceNumber: number) => {
-    await assignInvoiceNumber({ variables: { input: { applicationId, invoiceNumber } } });
-    refetch();
-  };
+  // const [assignInvoiceNumber] = useMutation<
+  //   AssignInvoiceNumberResponse,
+  //   AssignInvoiceNumberRequest
+  // >(ASSIGN_INVOICE_NUMBER_MUTATION);
+  // const handleAssignInvoiceNumber = async (invoiceNumber: number) => {
+  //   await assignInvoiceNumber({ variables: { input: { applicationId, invoiceNumber } } });
+  //   refetch();
+  // };
 
-  const [uploadDocuments] =
-    useMutation<UploadDocumentsResponse, UploadDocumentsRequest>(UPLOAD_DOCUMENTS_MUTATION);
-  const handleUploadDocuments = async (documentsUrl: string) => {
-    await uploadDocuments({ variables: { input: { applicationId, documentsUrl } } });
-    refetch();
-  };
+  // const [uploadDocuments] =
+  //   useMutation<UploadDocumentsResponse, UploadDocumentsRequest>(UPLOAD_DOCUMENTS_MUTATION);
+  // const handleUploadDocuments = async (documentsUrl: string) => {
+  //   await uploadDocuments({ variables: { input: { applicationId, documentsUrl } } });
+  //   refetch();
+  // };
 
   const [mailOut] = useMutation<MailOutResponse, MailOutRequest>(MAIL_OUT_APP_MUTATION);
   const handleMailOut = async (appMailed: boolean) => {
@@ -106,20 +110,22 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         appNumber,
         appHolepunched,
         walletCardCreated,
-        invoiceNumber,
-        documentsUrl,
+        // invoiceNumber,
+        // documentsUrl,
         appMailed,
       },
     },
   } = data;
 
-  const [preliminaryTasks, setPreliminaryTasks] = useState(false);
-
-  useEffect(() => {
-    appNumber !== null && appHolepunched && walletCardCreated
-      ? setPreliminaryTasks(true)
-      : setPreliminaryTasks(false);
-  }, [appNumber, appHolepunched, walletCardCreated]);
+  const [reviewRequestTask, setReviewRequestTask] = useState(false);
+  const [documentUploadTask, setDocumentUploadTask] = useState(false);
+  const [generateInvoiceTask, setGenerateInvoiceTask] = useState(false);
+  // const [preliminaryTasks, setPreliminaryTasks] = useState(false);
+  // useEffect(() => {
+  //   appNumber !== null && appHolepunched && walletCardCreated
+  //     ? setPreliminaryTasks(true)
+  //     : setPreliminaryTasks(false);
+  // }, [appNumber, appHolepunched, walletCardCreated]);
 
   return (
     <PermitHolderInfoCard colSpan={7} header={`Processing Tasks`}>
@@ -136,7 +142,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             fieldName="New APP number"
             onAssign={handleAssignAppNumber}
           >
-            {appNumber === null ? (
+            {appNumber === null && !reviewRequestTask ? (
               <Button
                 marginLeft="auto"
                 height="35px"
@@ -146,13 +152,13 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               >
                 <Text textStyle="xsmall-medium">Assign number</Text>
               </Button>
-            ) : (
+            ) : appNumber !== null && !reviewRequestTask ? (
               <Button variant="ghost" textDecoration="underline black">
                 <Text textStyle="caption" color="black">
                   Edit number
                 </Text>
               </Button>
-            )}
+            ) : null}
           </AssignNumberModal>
         </ProcessingTaskStep>
         {/* Task 2: Hole punch parking permit: Mark as complete (CHECK) */}
@@ -162,7 +168,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           description="Gender, Year and Month"
           isCompleted={appHolepunched}
         >
-          {appHolepunched ? (
+          {appHolepunched && !reviewRequestTask ? (
             <Button
               variant="ghost"
               textDecoration="underline black"
@@ -172,7 +178,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 Undo
               </Text>
             </Button>
-          ) : (
+          ) : !appHolepunched && !reviewRequestTask ? (
             <Button
               marginLeft="auto"
               height="35px"
@@ -183,7 +189,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             >
               <Text textStyle="xsmall-medium">Mark as complete</Text>
             </Button>
-          )}
+          ) : null}
         </ProcessingTaskStep>
         {/* Task 3: Create a new wallet card: Mark as complete (CHECK) */}
         <ProcessingTaskStep
@@ -192,7 +198,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           description="Include permit number, expiry date, full name, and birth month"
           isCompleted={walletCardCreated}
         >
-          {walletCardCreated ? (
+          {walletCardCreated && !reviewRequestTask ? (
             <Button
               variant="ghost"
               textDecoration="underline black"
@@ -202,7 +208,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 Undo
               </Text>
             </Button>
-          ) : (
+          ) : !walletCardCreated && !reviewRequestTask ? (
             <Button
               marginLeft="auto"
               height="35px"
@@ -213,7 +219,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             >
               <Text textStyle="xsmall-medium">Mark as complete</Text>
             </Button>
-          )}
+          ) : null}
         </ProcessingTaskStep>
         {/* Task 4: Review Request Information -> Disable Editing of First 3 steps */}
         <ProcessingTaskStep
@@ -256,56 +262,128 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
 =======
           label={'Review request information'}
           description="Editing will be disabled upon completion of this step"
+<<<<<<< HEAD
           isCompleted={invoiceNumber !== null && preliminaryTasks}
 >>>>>>> 085de0e (made buttons unclickable when steps not done and worked on undo functionality)
+=======
+          isCompleted={reviewRequestTask}
+>>>>>>> 8bedd55 (implemented logic for the processessing tasks)
         >
           {/* TODO: Change to review information modal */}
-          <AssignNumberModal
+          {/* <AssignNumberModal
             modalTitle="Review Information"
             fieldName="Invoice number"
             onAssign={handleAssignInvoiceNumber}
-          >
-            {invoiceNumber === null || !preliminaryTasks ? (
-              <Button
-                marginLeft="auto"
-                height="35px"
-                bg="background.gray"
-                _hover={{ bg: 'background.grayHover' }}
-                color="black"
-                disabled={!appNumber && !appHolepunched && !walletCardCreated}
-              >
-                <Text textStyle="xsmall-medium">Review information</Text>
-              </Button>
-            ) : (
-              <Button variant="ghost" textDecoration="underline black">
-                <Text textStyle="caption" color="black">
-                  Undo Review
-                </Text>
-              </Button>
-            )}
-          </AssignNumberModal>
+          > */}
+          {!reviewRequestTask ? (
+            <Button
+              marginLeft="auto"
+              height="35px"
+              bg="background.gray"
+              _hover={{ bg: 'background.grayHover' }}
+              color="black"
+              disabled={!appNumber || !appHolepunched || !walletCardCreated}
+              onClick={() => setReviewRequestTask(true)}
+            >
+              <Text textStyle="xsmall-medium">Review information</Text>
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              textDecoration="underline black"
+              onClick={() => {
+                // if (documentUploadTask) {
+
+                // }
+                // if (generateInvoiceTask) {
+
+                // }
+                setDocumentUploadTask(false);
+                setGenerateInvoiceTask(false);
+                handleMailOut(false);
+                setReviewRequestTask(false);
+              }}
+            >
+              <Text textStyle="caption" color="black">
+                Undo Review
+              </Text>
+            </Button>
+          )}
+          {/* </AssignNumberModal> */}
         </ProcessingTaskStep>
-        {/* Task 5: Upload document: Choose document (UPLOAD FILE) */}
+        {/* Task 5: Generate Invoice */}
         <ProcessingTaskStep
+<<<<<<< HEAD
+=======
+          id={5}
+          label="Generate Invoice"
+          description="Invoice number will be automatically assigned"
+          isCompleted={generateInvoiceTask && reviewRequestTask}
+          // isCompleted={!!documentsUrl}
+        >
+          {generateInvoiceTask && reviewRequestTask ? (
+            <Button
+              variant="ghost"
+              textDecoration="underline black"
+              onClick={() => setGenerateInvoiceTask(false)}
+            >
+              <Text textStyle="caption" color="black">
+                Undo
+              </Text>
+            </Button>
+          ) : (
+            <Button
+              marginLeft="auto"
+              height="35px"
+              bg="background.gray"
+              _hover={{ bg: 'background.grayHover' }}
+              color="black"
+              disabled={!reviewRequestTask}
+              // TODO: Add document uploading functionality
+              onClick={() => setGenerateInvoiceTask(true)}
+              // onClick={() => handleUploadDocuments('placeholder url')}
+            >
+              <Text textStyle="xsmall-medium">Generate document</Text>
+            </Button>
+          )}
+        </ProcessingTaskStep>
+
+        {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
+        <ProcessingTaskStep
+>>>>>>> 8bedd55 (implemented logic for the processessing tasks)
           id={6}
           label="Upload document"
           description="Scan all documents and upload as PDF (5MB limit)"
-          isCompleted={!!documentsUrl}
+          isCompleted={documentUploadTask && reviewRequestTask}
+          // isCompleted={!!documentsUrl}
         >
-          <Button
-            marginLeft="auto"
-            height="35px"
-            bg="background.gray"
-            _hover={{ bg: 'background.grayHover' }}
-            color="black"
-            disabled={!invoiceNumber}
-            // TODO: Add document uploading functionality
-            onClick={() => handleUploadDocuments('placeholder url')}
-          >
-            <Text textStyle="xsmall-medium">Choose document</Text>
-          </Button>
+          {documentUploadTask && reviewRequestTask ? (
+            <Button
+              variant="ghost"
+              textDecoration="underline black"
+              onClick={() => setDocumentUploadTask(false)}
+            >
+              <Text textStyle="caption" color="black">
+                Undo
+              </Text>
+            </Button>
+          ) : (
+            <Button
+              marginLeft="auto"
+              height="35px"
+              bg="background.gray"
+              _hover={{ bg: 'background.grayHover' }}
+              color="black"
+              disabled={!generateInvoiceTask}
+              // TODO: Add document uploading functionality
+              onClick={() => setDocumentUploadTask(true)}
+              // onClick={() => handleUploadDocuments('placeholder url')}
+            >
+              <Text textStyle="xsmall-medium">Choose document</Text>
+            </Button>
+          )}
         </ProcessingTaskStep>
-        {/* Task 6: Mail out: Mark as complete (CHECK) */}
+        {/* Task 7: Mail out: Mark as complete (CHECK) */}
         <ProcessingTaskStep
           id={7}
           label="Mail out"
@@ -325,7 +403,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               bg="background.gray"
               _hover={{ bg: 'background.grayHover' }}
               color="black"
-              disabled={!documentsUrl}
+              disabled={!documentUploadTask}
               onClick={() => handleMailOut(true)}
             >
               <Text textStyle="xsmall-medium">Mark as complete</Text>
