@@ -19,10 +19,11 @@ import Address from '@components/admin/Address';
 type Props = {
   readonly applicationId: number;
   readonly isUpdated?: boolean;
+  readonly editDisabled?: boolean;
 };
 
 const Card: FC<Props> = props => {
-  const { applicationId, isUpdated } = props;
+  const { applicationId, isUpdated, editDisabled } = props;
 
   const [doctorInformation, setDoctorInformation] = useState<DoctorCardData | null>(null);
 
@@ -81,23 +82,25 @@ const Card: FC<Props> = props => {
       updated={isUpdated}
       divider
       editModal={
-        <EditDoctorInformationModal
-          doctorInformation={{
-            firstName,
-            lastName,
-            mspNumber,
-            phone,
-            addressLine1,
-            addressLine2,
-            city,
-            postalCode,
-          }}
-          onSave={handleSave}
-        >
-          <Button color="primary" variant="ghost" textDecoration="underline">
-            <Text textStyle="body-bold">Edit</Text>
-          </Button>
-        </EditDoctorInformationModal>
+        editDisabled !== true && (
+          <EditDoctorInformationModal
+            doctorInformation={{
+              firstName,
+              lastName,
+              mspNumber,
+              phone,
+              addressLine1,
+              addressLine2,
+              city,
+              postalCode,
+            }}
+            onSave={handleSave}
+          >
+            <Button color="primary" variant="ghost" textDecoration="underline">
+              <Text textStyle="body-bold">Edit</Text>
+            </Button>
+          </EditDoctorInformationModal>
+        )
       }
     >
       <VStack width="100%" spacing="24px" align="left">

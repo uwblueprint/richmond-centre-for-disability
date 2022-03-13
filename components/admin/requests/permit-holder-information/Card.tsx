@@ -25,6 +25,7 @@ type Props = {
   readonly applicationId: number;
   readonly contactInfoUpdated?: boolean;
   readonly addressInfoUpdated?: boolean;
+  readonly editDisabled?: boolean;
 };
 
 // TODO: Updated states
@@ -36,7 +37,7 @@ type Props = {
  * @param addressInfoUpdated Whether address information was updated
  */
 const Card: FC<Props> = props => {
-  const { applicationId, contactInfoUpdated, addressInfoUpdated } = props;
+  const { applicationId, contactInfoUpdated, addressInfoUpdated, editDisabled } = props;
 
   const [permitHolderInformation, setPermitHolderInformation] =
     useState<PermitHolderCardData | null>(null);
@@ -129,7 +130,7 @@ const Card: FC<Props> = props => {
   );
 
   // Personal information card editing modal
-  const EditModal = (
+  const EditModal = editDisabled !== true && (
     <EditPermitHolderInformationModal
       permitHolderInformation={{
         ...(type === 'NEW'

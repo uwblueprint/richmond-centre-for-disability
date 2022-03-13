@@ -1,4 +1,5 @@
 import { useQuery, useMutation } from '@apollo/client';
+import { useState } from 'react';
 import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/processing/AssignNumberModal'; // AssignNumber Modal component
@@ -26,6 +27,7 @@ import {
   UploadDocumentsResponse,
   UPLOAD_DOCUMENTS_MUTATION,
 } from '@tools/admin/requests/processing-tasks-card';
+import ReviewInformationModal from '@components/admin/requests/processing/ReviewInformationModal';
 
 type ProcessingTasksCardProps = {
   readonly applicationId: number;
@@ -89,7 +91,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     await mailOut({ variables: { input: { applicationId, appMailed } } });
     refetch();
   };
-
+  const [reviewedRequestInformation, setReviewedRequest] = useState<boolean>(false);
   if (!data?.application.processing) {
     return null;
   }
@@ -201,9 +203,40 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             </Button>
           )}
         </ProcessingTaskStep>
-        {/* Task 4: Assign invoice number: Assign number (MODAL) */}
+        {/* Task 4: Review Request Information -> Disable Editing of First 3 steps */}
         <ProcessingTaskStep
           id={4}
+          label={`Review request information`}
+          description="Editing will be disabled upon completion of this step"
+          isCompleted={reviewedRequestInformation}
+        >
+          <ReviewInformationModal
+            applicationId={applicationId}
+            requestType={'Request'}
+            onConfirmed={() => setReviewedRequest(true)}
+          >
+            {invoiceNumber === null ? (
+              <Button
+                marginLeft="auto"
+                height="35px"
+                bg="background.gray"
+                _hover={{ bg: 'background.grayHover' }}
+                color="black"
+              >
+                <Text textStyle="xsmall-medium">Review Information</Text>
+              </Button>
+            ) : (
+              <Button variant="ghost" textDecoration="underline black">
+                <Text textStyle="caption" color="black">
+                  Edit number
+                </Text>
+              </Button>
+            )}
+          </ReviewInformationModal>
+        </ProcessingTaskStep>
+        {/* Task 5: Assign invoice number: Assign number (MODAL) */}
+        <ProcessingTaskStep
+          id={5}
           label={`Assign invoice number${invoiceNumber === null ? '' : `: ${invoiceNumber}`}`}
           description="Include permit number, expiry date, full name, and birth month"
           isCompleted={invoiceNumber !== null}
@@ -234,7 +267,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         </ProcessingTaskStep>
         {/* Task 5: Upload document: Choose document (UPLOAD FILE) */}
         <ProcessingTaskStep
-          id={5}
+          id={6}
           label="Upload document"
           description="Scan all documents and upload as PDF (5MB limit)"
           isCompleted={!!documentsUrl}
@@ -253,7 +286,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         </ProcessingTaskStep>
         {/* Task 6: Mail out: Mark as complete (CHECK) */}
         <ProcessingTaskStep
-          id={6}
+          id={7}
           label="Mail out"
           description="Include returning envelope and previous permit number"
           isCompleted={appMailed}

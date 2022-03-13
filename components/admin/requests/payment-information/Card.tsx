@@ -18,10 +18,11 @@ import Address from '@components/admin/Address';
 type Props = {
   readonly applicationId: number;
   readonly isUpdated?: boolean;
+  readonly editDisabled?: boolean;
 };
 
 const Card: FC<Props> = props => {
-  const { applicationId, isUpdated } = props;
+  const { applicationId, isUpdated, editDisabled } = props;
 
   const [paymentInformation, setPaymentInformation] =
     useState<PaymentInformationCardData | null>(null);
@@ -86,11 +87,13 @@ const Card: FC<Props> = props => {
       updated={isUpdated}
       divider
       editModal={
-        <EditPaymentDetailsModal paymentInformation={paymentInformation} onSave={handleSave}>
-          <Button color="primary" variant="ghost" textDecoration="underline">
-            <Text textStyle="body-bold">Edit</Text>
-          </Button>
-        </EditPaymentDetailsModal>
+        editDisabled !== true && (
+          <EditPaymentDetailsModal paymentInformation={paymentInformation} onSave={handleSave}>
+            <Button color="primary" variant="ghost" textDecoration="underline">
+              <Text textStyle="body-bold">Edit</Text>
+            </Button>
+          </EditPaymentDetailsModal>
+        )
       }
     >
       <VStack align="left" spacing="12px">
