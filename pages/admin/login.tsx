@@ -13,12 +13,18 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
+  Radio,
+  Stack,
 } from '@chakra-ui/react'; // Chakra UI
 import { loginSchema } from '@lib/auth/validation';
 
 import { Form, Formik } from 'formik';
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
 import TextField from '@components/form/TextField';
+import TextArea from '@components/form/TextAreaField';
+import DateField from '@components/form/DateField';
+import RadioGroupField from '@components/form/RadioGroupField';
+import { PaymentType } from '@lib/graphql/types';
 
 export default function Login() {
   const [emailInputError, setEmailInputError] = useState(''); // Error message displayed under input
@@ -52,7 +58,12 @@ export default function Login() {
     }
   };
 
-  const handleSubmit = async (values: { email: string }) => {
+  const handleSubmit = async (values: {
+    email: string;
+    comments: string;
+    date: string;
+    paymentMethod: string;
+  }) => {
     signInWithEmail(values.email);
   };
 
@@ -80,12 +91,25 @@ export default function Login() {
             {!authState?.url ? (
               <>
                 <Formik
-                  initialValues={{ email: '' }}
+                  initialValues={{ email: '', comments: '', date: '', paymentMethod: '' }}
                   validationSchema={loginSchema}
                   onSubmit={handleSubmit}
                 >
                   <Form style={{ width: '100%' }}>
                     <TextField name="email" label="Email" height="51px" />
+                    <TextArea name="comments" label="Comments" />
+                    <DateField name="date" label="Date" />
+
+                    <RadioGroupField name="paymentMethod" label="TestLabel">
+                      <Stack>
+                        <Radio value={'MASTERCARD' as PaymentType}>{'Mastercard'}</Radio>
+                        <Radio value={'VISA' as PaymentType}>{'Visa'}</Radio>
+                        <Radio value={'DEBIT' as PaymentType}>{'Debit'}</Radio>
+                        <Radio value={'CASH' as PaymentType}>{'Cash'}</Radio>
+                        <Radio value={'CHEQUE' as PaymentType}>{'Cheque'}</Radio>
+                        <Radio value={'E_TRANSFER' as PaymentType}>{'E-transfer'}</Radio>
+                      </Stack>
+                    </RadioGroupField>
                     {/* TODO: backend error styling */}
                     {emailInputError && (
                       <Alert status="error" mt="2">

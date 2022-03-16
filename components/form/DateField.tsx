@@ -5,18 +5,18 @@ import {
   FormErrorMessage,
   FormLabel,
   Text,
-  Select,
-  SelectProps,
+  Input,
+  InputProps,
 } from '@chakra-ui/react';
 
-type Props = SelectProps & {
+type Props = InputProps & {
   readonly name: string;
   readonly label: string;
   readonly required?: boolean;
 };
 
-const SelectField: FC<Props> = props => {
-  const { name, label, required, ...selectProps } = props;
+const DateField: FC<Props> = props => {
+  const { name, label, required, ...inputProps } = props;
   const [field, meta] = useField(name);
 
   return (
@@ -24,7 +24,7 @@ const SelectField: FC<Props> = props => {
       <FormLabel htmlFor={name} required={required}>
         {label}
       </FormLabel>
-      <Select {...field} {...selectProps} />
+      <Input type="date" {...field} {...inputProps} />
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">
           {meta.touched && meta.error ? meta.error : null}
@@ -34,4 +34,4 @@ const SelectField: FC<Props> = props => {
   );
 };
 
-export default SelectField;
+export default DateField;

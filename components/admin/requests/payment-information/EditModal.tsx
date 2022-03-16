@@ -12,7 +12,7 @@ import {
   Box,
 } from '@chakra-ui/react'; // Chakra UI
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
-import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
+import PaymentDetailsForm from '@components/admin/requests/payment-information/FormikForm';
 
 type EditPaymentDetailsModalProps = {
   readonly children: ReactNode;
