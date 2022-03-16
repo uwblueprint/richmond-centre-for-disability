@@ -66,6 +66,8 @@ export default function Login() {
     paymentMethod: string;
     gender: string;
   }) => {
+    // console.log("submitting");
+    // console.log(values);
     signInWithEmail(values.email);
   };
 

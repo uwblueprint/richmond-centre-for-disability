@@ -11,4 +11,5 @@ export const loginSchema = object({
   date: date().max('2022-12-31', 'dec 31st 2020 is the max!').required(),
   paymentMethod: string().required('A radio option is required'),
   gender: string().required(),
+  // TODO: check for non-empty string??
 });

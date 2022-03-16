@@ -1,5 +1,5 @@
-import { FC } from 'react';
-import { useField } from 'formik';
+import { FC, ReactNode } from 'react';
+import { useField, useFormikContext } from 'formik';
 import {
   FormControl,
   FormErrorMessage,
@@ -13,18 +13,23 @@ type Props = RadioGroupProps & {
   readonly name: string;
   readonly label: string;
   readonly required?: boolean;
+  children: ReactNode;
 };
 
 const RadioGroupField: FC<Props> = props => {
-  const { children, name, label, required, ...radioGroupProps } = props;
+  const { name, label, required, children, ...radioGroupProps } = props;
   const [field, meta] = useField(name);
+  const { setFieldValue } = useFormikContext();
+  const handleChange = (value: string) => {
+    setFieldValue(name, value);
+  };
 
   return (
     <FormControl isInvalid={!!meta.error}>
       <FormLabel htmlFor={name} required={required}>
         {label}
       </FormLabel>
-      <RadioGroup {...field} {...radioGroupProps}>
+      <RadioGroup id={name} {...field} onChange={handleChange} {...radioGroupProps}>
         {children}
       </RadioGroup>
       <FormErrorMessage>
