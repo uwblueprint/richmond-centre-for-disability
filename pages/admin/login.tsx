@@ -25,6 +25,7 @@ import TextArea from '@components/form/TextAreaField';
 import DateField from '@components/form/DateField';
 import RadioGroupField from '@components/form/RadioGroupField';
 import { PaymentType } from '@lib/graphql/types';
+import SelectField from '@components/form/SelectField';
 
 export default function Login() {
   const [emailInputError, setEmailInputError] = useState(''); // Error message displayed under input
@@ -63,6 +64,7 @@ export default function Login() {
     comments: string;
     date: string;
     paymentMethod: string;
+    gender: string;
   }) => {
     signInWithEmail(values.email);
   };
@@ -91,7 +93,13 @@ export default function Login() {
             {!authState?.url ? (
               <>
                 <Formik
-                  initialValues={{ email: '', comments: '', date: '', paymentMethod: '' }}
+                  initialValues={{
+                    email: '',
+                    comments: '',
+                    date: '',
+                    paymentMethod: '',
+                    gender: 'MALE',
+                  }}
                   validationSchema={loginSchema}
                   onSubmit={handleSubmit}
                 >
@@ -99,6 +107,11 @@ export default function Login() {
                     <TextField name="email" label="Email" height="51px" />
                     <TextArea name="comments" label="Comments" />
                     <DateField name="date" label="Date" />
+                    <SelectField name="gender" label="Gender">
+                      <option value={'MALE'}>{'Male'}</option>
+                      <option value={'FEMALE'}>{'Female'}</option>
+                      <option value={'OTHER'}>{'Other'}</option>
+                    </SelectField>
 
                     <RadioGroupField name="paymentMethod" label="TestLabel">
                       <Stack>
