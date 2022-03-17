@@ -10,14 +10,14 @@ import {
 } from '@chakra-ui/react';
 
 type Props = CheckboxGroupProps & {
-  children: ReactNode;
   readonly name: string;
   readonly label: string;
   readonly required?: boolean;
+  children: ReactNode;
 };
 
 const CheckboxGroupField: FC<Props> = props => {
-  const { name, label, required, ...checkboxGroupProps } = props;
+  const { name, label, required, children, ...checkboxGroupProps } = props;
   const [field, meta] = useField(name);
   const { setFieldValue } = useFormikContext();
   const handleChange = (value: string[]) => {
@@ -29,7 +29,9 @@ const CheckboxGroupField: FC<Props> = props => {
       <FormLabel htmlFor={name} required={required}>
         {label}
       </FormLabel>
-      <CheckboxGroup {...field} onChange={handleChange} {...checkboxGroupProps}></CheckboxGroup>
+      <CheckboxGroup {...field} onChange={handleChange} {...checkboxGroupProps}>
+        {children}
+      </CheckboxGroup>
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">
           {meta.touched && meta.error ? meta.error : null}

@@ -119,10 +119,12 @@ export default function Login() {
                       <option value={'OTHER'}>{'Other'}</option>
                     </SelectField>
 
-                    <CheckboxGroupField name="checkOptions" label="AnotherLabel">
+                    <CheckboxGroupField name="checkboxOptions" label="AnotherLabel">
                       <Stack>
                         <Checkbox value={'option1'}>{'option1'}</Checkbox>
                         <Checkbox value={'option2'}>{'option2'}</Checkbox>
+                        <Checkbox value={'option3'}>{'option3'}</Checkbox>
+                        <Checkbox value={'option4'}>{'option4'}</Checkbox>
                       </Stack>
                     </CheckboxGroupField>
                     <RadioGroupField name="paymentMethod" label="TestLabel">
