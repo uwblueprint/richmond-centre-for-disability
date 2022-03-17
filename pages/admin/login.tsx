@@ -13,6 +13,7 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
+  Checkbox,
   Radio,
   Stack,
 } from '@chakra-ui/react'; // Chakra UI
@@ -23,6 +24,7 @@ import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
 import TextField from '@components/form/TextField';
 import TextArea from '@components/form/TextAreaField';
 import DateField from '@components/form/DateField';
+import CheckboxGroupField from '@components/form/CheckboxGroupField';
 import RadioGroupField from '@components/form/RadioGroupField';
 import { PaymentType } from '@lib/graphql/types';
 import SelectField from '@components/form/SelectField';
@@ -63,6 +65,7 @@ export default function Login() {
     email: string;
     comments: string;
     date: string;
+    checkboxOptions: string[];
     paymentMethod: string;
     gender: string;
   }) => {
@@ -99,6 +102,7 @@ export default function Login() {
                     email: '',
                     comments: '',
                     date: '',
+                    checkboxOptions: [],
                     paymentMethod: '',
                     gender: 'MALE',
                   }}
@@ -115,6 +119,12 @@ export default function Login() {
                       <option value={'OTHER'}>{'Other'}</option>
                     </SelectField>
 
+                    <CheckboxGroupField name="checkOptions" label="AnotherLabel">
+                      <Stack>
+                        <Checkbox value={'option1'}>{'option1'}</Checkbox>
+                        <Checkbox value={'option2'}>{'option2'}</Checkbox>
+                      </Stack>
+                    </CheckboxGroupField>
                     <RadioGroupField name="paymentMethod" label="TestLabel">
                       <Stack>
                         <Radio value={'MASTERCARD' as PaymentType}>{'Mastercard'}</Radio>
