@@ -12,6 +12,4 @@ export const loginSchema = object({
   checkboxOptions: array().min(3, 'A checkbox option is required'),
   paymentMethod: string().required('A radio option is required'),
   gender: string().required(),
-  // TODO: check for non-empty string??
-  // TODO: validation for checkbox options
 });

@@ -42,25 +42,3 @@ const RadioGroupField: FC<Props> = props => {
 };
 
 export default RadioGroupField;
-
-// {
-/* <Field name={name}>
-  {({ field, form }: FieldProps) => {
-    const { onChange, ...rest } = field;
-    return (
-      <FormControl
-        id={name}
-        isInvalid={!!form.errors[name] && !!form.touched[name]}
-      >
-        <FormLabel htmlFor={name}>{label}</FormLabel>
-        <RadioGroup {...rest} id={name} {...props}>
-          {values.map((value) => (
-            <Radio onChange={onChange} value={value}>{value}</Radio>
-          ))}
-        </RadioGroup>
-        <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
-      </FormControl>
-    );
-  }}
-</Field>; */
-// }

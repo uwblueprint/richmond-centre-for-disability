@@ -69,8 +69,6 @@ export default function Login() {
     paymentMethod: string;
     gender: string;
   }) => {
-    // console.log("submitting");
-    // console.log(values);
     signInWithEmail(values.email);
   };
 
@@ -104,21 +102,22 @@ export default function Login() {
                     date: '',
                     checkboxOptions: [],
                     paymentMethod: '',
-                    gender: 'MALE',
+                    gender: '',
                   }}
                   validationSchema={loginSchema}
                   onSubmit={handleSubmit}
                 >
                   <Form style={{ width: '100%' }}>
                     <TextField name="email" label="Email" height="51px" />
+
+                    {/* TODO: remove before merging */}
                     <TextArea name="comments" label="Comments" />
                     <DateField name="date" label="Date" />
-                    <SelectField name="gender" label="Gender">
+                    <SelectField name="gender" label="Gender" placeholder="Select gender">
                       <option value={'MALE'}>{'Male'}</option>
                       <option value={'FEMALE'}>{'Female'}</option>
                       <option value={'OTHER'}>{'Other'}</option>
                     </SelectField>
-
                     <CheckboxGroupField name="checkboxOptions" label="AnotherLabel">
                       <Stack>
                         <Checkbox value={'option1'}>{'option1'}</Checkbox>
