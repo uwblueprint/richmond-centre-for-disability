@@ -73,6 +73,8 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     AssignInvoiceNumberRequest
   >(ASSIGN_INVOICE_NUMBER_MUTATION);
   const handleAssignInvoiceNumber = async (invoiceNumber: number) => {
+    // TODO: we need to generate the invoice first before assigning.
+    // Ideally we call an endpoint to generate it and then pass the returned invoice number
     await assignInvoiceNumber({ variables: { input: { applicationId, invoiceNumber } } });
     refetch();
   };

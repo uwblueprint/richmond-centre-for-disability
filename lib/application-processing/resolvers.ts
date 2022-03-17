@@ -729,8 +729,6 @@ export const updateApplicationProcessingAssignInvoiceNumber: Resolver<
     throw new ApolloError('Not authenticated');
   }
 
-  const { id: employeeId } = session;
-
   let updatedApplicationProcessing;
   try {
     updatedApplicationProcessing = await prisma.application.update({
@@ -738,9 +736,7 @@ export const updateApplicationProcessingAssignInvoiceNumber: Resolver<
       data: {
         applicationProcessing: {
           update: {
-            invoiceNumber,
-            invoiceNumberUpdatedAt: new Date(),
-            invoiceNumberEmployee: { connect: { id: employeeId } },
+            applicationInvoice: { connect: { invoiceNumber: invoiceNumber } },
           },
         },
       },
