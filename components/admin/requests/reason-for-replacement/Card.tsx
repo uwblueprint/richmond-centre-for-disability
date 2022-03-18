@@ -16,10 +16,11 @@ import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-r
 type ReplacementProps = {
   readonly applicationId: number;
   readonly isUpdated?: boolean;
+  readonly editDisabled?: boolean;
 };
 
 export default function ReasonForReplacementCard(props: ReplacementProps) {
-  const { applicationId, isUpdated } = props;
+  const { applicationId, isUpdated, editDisabled } = props;
 
   const { data, refetch } = useQuery<
     GetReasonForReplacementResponse,
@@ -74,14 +75,16 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
       updated={isUpdated}
       divider
       editModal={
-        <EditReasonForReplacementModal
-          reasonForReplacement={{ ...data.application }}
-          onSave={handleSave}
-        >
-          <Button color="primary" variant="ghost" textDecoration="underline">
-            <Text textStyle="body-bold">Edit</Text>
-          </Button>
-        </EditReasonForReplacementModal>
+        !editDisabled && (
+          <EditReasonForReplacementModal
+            reasonForReplacement={{ ...data.application }}
+            onSave={handleSave}
+          >
+            <Button color="primary" variant="ghost" textDecoration="underline">
+              <Text textStyle="body-bold">Edit</Text>
+            </Button>
+          </EditReasonForReplacementModal>
+        )
       }
     >
       <SimpleGrid columns={2} spacingY="12px" spacingX="20px">
