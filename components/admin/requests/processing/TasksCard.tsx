@@ -1,13 +1,5 @@
 import { useQuery, useMutation } from '@apollo/client';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { useState } from 'react';
-=======
-import { useState, useEffect } from 'react';
->>>>>>> 085de0e (made buttons unclickable when steps not done and worked on undo functionality)
-=======
-import { useState } from 'react';
->>>>>>> 8bedd55 (implemented logic for the processessing tasks)
 import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/processing/AssignNumberModal'; // AssignNumber Modal component
@@ -35,7 +27,6 @@ import {
   // UploadDocumentsResponse,
   // UPLOAD_DOCUMENTS_MUTATION,
 } from '@tools/admin/requests/processing-tasks-card';
-import ReviewInformationModal from '@components/admin/requests/processing/ReviewInformationModal';
 
 type ProcessingTasksCardProps = {
   readonly applicationId: number;
@@ -99,7 +90,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     await mailOut({ variables: { input: { applicationId, appMailed } } });
     refetch();
   };
-  const [hasReviewedRequestInformation, setHasReviewedRequest] = useState<boolean>(false);
+
   if (!data?.application.processing) {
     return null;
   }
@@ -221,53 +212,12 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             </Button>
           ) : null}
         </ProcessingTaskStep>
-        {/* Task 4: Review Request Information -> Disable Editing of First 3 steps */}
+        {/* Task 4: Assign invoice number: Assign number (MODAL) */}
         <ProcessingTaskStep
           id={4}
-<<<<<<< HEAD
-          label={`Review request information`}
-          description="Editing will be disabled upon completion of this step"
-          isCompleted={hasReviewedRequestInformation}
-        >
-          <ReviewInformationModal
-            applicationId={applicationId}
-            requestType={'Request'}
-            onConfirmed={() => setHasReviewedRequest(true)}
-          >
-            {invoiceNumber === null ? (
-              <Button
-                marginLeft="auto"
-                height="35px"
-                bg="background.gray"
-                _hover={{ bg: 'background.grayHover' }}
-                color="black"
-              >
-                <Text textStyle="xsmall-medium">Review Information</Text>
-              </Button>
-            ) : (
-              <Button variant="ghost" textDecoration="underline black">
-                <Text textStyle="caption" color="black">
-                  Edit number
-                </Text>
-              </Button>
-            )}
-          </ReviewInformationModal>
-        </ProcessingTaskStep>
-        {/* Task 5: Assign invoice number: Assign number (MODAL) */}
-        <ProcessingTaskStep
-          id={5}
-          label={`Assign invoice number${invoiceNumber === null ? '' : `: ${invoiceNumber}`}`}
-          description="Include permit number, expiry date, full name, and birth month"
-          isCompleted={invoiceNumber !== null}
-=======
           label={'Review request information'}
           description="Editing will be disabled upon completion of this step"
-<<<<<<< HEAD
-          isCompleted={invoiceNumber !== null && preliminaryTasks}
->>>>>>> 085de0e (made buttons unclickable when steps not done and worked on undo functionality)
-=======
           isCompleted={reviewRequestTask}
->>>>>>> 8bedd55 (implemented logic for the processessing tasks)
         >
           {/* TODO: Change to review information modal */}
           {/* <AssignNumberModal
@@ -313,8 +263,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         </ProcessingTaskStep>
         {/* Task 5: Generate Invoice */}
         <ProcessingTaskStep
-<<<<<<< HEAD
-=======
           id={5}
           label="Generate Invoice"
           description="Invoice number will be automatically assigned"
@@ -350,7 +298,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
 
         {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
         <ProcessingTaskStep
->>>>>>> 8bedd55 (implemented logic for the processessing tasks)
           id={6}
           label="Upload document"
           description="Scan all documents and upload as PDF (5MB limit)"
@@ -391,7 +338,11 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           isCompleted={appMailed}
         >
           {appMailed ? (
-            <Button variant="ghost" color="black" onClick={() => handleMailOut(false)}>
+            <Button
+              variant="ghost"
+              textDecoration="underline black"
+              onClick={() => handleMailOut(false)}
+            >
               <Text textStyle="caption" color="black">
                 Undo
               </Text>
