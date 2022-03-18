@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC } from 'react';
 import { useField, useFormikContext } from 'formik';
 import {
   FormControl,
@@ -13,7 +13,6 @@ type Props = CheckboxGroupProps & {
   readonly name: string;
   readonly label: string;
   readonly required?: boolean;
-  children: ReactNode;
 };
 
 const CheckboxGroupField: FC<Props> = props => {
