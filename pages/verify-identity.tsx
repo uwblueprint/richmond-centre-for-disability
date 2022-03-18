@@ -1,4 +1,3 @@
-import { useState } from 'react'; // React
 import Link from 'next/link'; // Link
 import Image from 'next/image'; // Next Image
 import { useRouter } from 'next/router'; // Router
@@ -8,18 +7,14 @@ import {
   Flex,
   Text,
   Button,
-  FormControl,
-  FormLabel,
-  FormHelperText,
-  NumberInput,
-  NumberInputField,
   Popover,
   PopoverTrigger,
   PopoverContent,
   PopoverBody,
   PopoverFooter,
-  Input,
   useToast,
+  Box,
+  FormHelperText,
 } from '@chakra-ui/react'; // Chakra UI
 import { InfoOutlineIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/applicant/Layout'; // Layout component
@@ -29,9 +24,15 @@ import {
   VerifyIdentityRequest,
   VerifyIdentityResponse,
   getErrorMessage,
+  verifyIdentitySchema,
 } from '@tools/applicant/verify-identity'; // Tools
 import Request from '@containers/Request'; // Request state
 import { formatDate } from '@lib/utils/format'; // Date formatter util
+// import { verifyIdentitySchema } from '@lib/applicants/validation';
+import DateField from '@components/form/DateField';
+import TextField from '@components/form/TextField';
+import { Form, Formik } from 'formik';
+// import { object, string, number, date} from 'yup';
 
 export default function IdentityVerificationForm() {
   // Router
@@ -43,9 +44,15 @@ export default function IdentityVerificationForm() {
   // Request state
   const { acceptedTOSTimestamp, setApplicantId } = Request.useContainer();
 
-  const [userId, setUserId] = useState('');
-  const [phoneNumberSuffix, setPhoneNumberSuffix] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(formatDate(new Date(), true));
+  // const [userId, setUserId] = useState('');
+  // const [phoneNumberSuffix, setPhoneNumberSuffix] = useState('');
+  // const [dateOfBirth, setDateOfBirth] = useState(formatDate(new Date(), true));
+
+  // const verifyIdentitySchema = object({
+  //   userId: number().required().positive().integer(),
+  //   phoneNumberSuffix: string().matches(/^\d+$/).required().max(4, 'Must be exactly 4 digits'),
+  //   dateOfBirth: date().required(),
+  // });
 
   // Verify identity query
   const [verifyIdentity, { loading }] = useMutation<VerifyIdentityResponse, VerifyIdentityRequest>(
@@ -76,13 +83,17 @@ export default function IdentityVerificationForm() {
   /**
    * Handle identity verification submit
    */
-  const handleSubmit = () => {
+  const handleSubmit = (values: {
+    userId: string;
+    phoneNumberSuffix: string;
+    dateOfBirth: string;
+  }) => {
     verifyIdentity({
       variables: {
         input: {
-          userId: parseInt(userId),
-          phoneNumberSuffix,
-          dateOfBirth,
+          userId: parseInt(values.userId),
+          phoneNumberSuffix: values.phoneNumberSuffix,
+          dateOfBirth: formatDate(new Date(values.dateOfBirth)),
           acceptedTos: acceptedTOSTimestamp,
         },
       },
@@ -96,74 +107,95 @@ export default function IdentityVerificationForm() {
       <GridItem colSpan={8} colStart={3}>
         <Flex width="100%" justifyContent="flex-start">
           <Flex width="100%" flexFlow="column" alignItems="flex-start">
-            <Text
-              as="h1"
-              textStyle="display-xlarge"
-              marginBottom="20px"
-            >{`Verify your Identity`}</Text>
+            <Text as="h1" textStyle="display-xlarge" mb="20px">{`Verify your Identity`}</Text>
             <Text as="p" textStyle="body-bold" textAlign="left" marginBottom="20px">
               {`You must have a record with Richmond Centre for Disability before proceeding. Please fill
-        out the information below so we may validate your identity:`}
+                out the information below so we may validate your identity:`}
             </Text>
-            <FormControl isRequired textAlign="left" marginBottom="48px">
-              <FormLabel>{`User ID number`}</FormLabel>
-              <NumberInput width="184px" min={1} value={userId} onChange={setUserId}>
-                <NumberInputField />
-              </NumberInput>
-              <Flex alignItems="center">
-                <Popover placement="left" trigger="hover" gutter={24}>
-                  <PopoverTrigger>
-                    <InfoOutlineIcon marginRight="8px" cursor="pointer" />
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverBody>
-                      <Image src="/assets/wallet-card-example.png" height={200} width={320} />
-                    </PopoverBody>
-                    <PopoverFooter backgroundColor="background.grayHover">
-                      <Text textStyle="caption">
-                        {`Locate your User ID on the Wallet Card that came with your Permit.`}
-                      </Text>
-                    </PopoverFooter>
-                  </PopoverContent>
-                </Popover>
-                <FormHelperText>
-                  {`You can find your user ID on the back of your wallet card. If you cannot find your
-              wallet card, please call RCD at 604-232-2404.`}
-                </FormHelperText>
-              </Flex>
-            </FormControl>
-            <FormControl isRequired textAlign="left" marginBottom="48px">
-              <FormLabel>{`Last 4 digits of your phone number`}</FormLabel>
-              <Input
-                width="184px"
-                value={phoneNumberSuffix}
-                onChange={event => setPhoneNumberSuffix(event.target.value)}
-              />
-            </FormControl>
-            <FormControl isRequired textAlign="left" marginBottom="20px">
-              <FormLabel>{`Date of Birth`}</FormLabel>
-              <Input
-                type="date"
-                width="184px"
-                value={dateOfBirth}
-                onChange={event => setDateOfBirth(event.target.value)}
-              />
-              <FormHelperText>
-                {`Please enter your date of birth in YYYY-MM-DD format. For example, if you were born on
-            20th August 1950, you would enter 1950-08-20`}
-              </FormHelperText>
-            </FormControl>
-            <Flex width="100%" justifyContent="flex-end">
-              <Link href="/">
-                <Button variant="outline" marginRight="12px">{`Go back to home page`}</Button>
-              </Link>
-              <Button
-                variant="solid"
-                disabled={loading || !userId || !phoneNumberSuffix || !dateOfBirth}
-                loading={loading}
-                onClick={handleSubmit}
-              >{`Continue`}</Button>
-            </Flex>
+            <Formik
+              initialValues={{
+                userId: '',
+                phoneNumberSuffix: '',
+                dateOfBirth: '',
+              }}
+              validationSchema={verifyIdentitySchema}
+              onSubmit={handleSubmit}
+            >
+              {({ values }) => (
+                <Form style={{ width: '100%' }} noValidate>
+                  <Box marginBottom="48px" textAlign={'left'}>
+                    <TextField
+                      name="userId"
+                      label="User ID number"
+                      required={true}
+                      width="184px"
+                      min={1}
+                    >
+                      <Flex alignItems="center">
+                        <Popover placement="left" trigger="hover" gutter={24}>
+                          <PopoverTrigger>
+                            <InfoOutlineIcon marginRight="8px" cursor="pointer" />
+                          </PopoverTrigger>
+                          <PopoverContent>
+                            <PopoverBody>
+                              <Image
+                                src="/assets/wallet-card-example.png"
+                                height={200}
+                                width={320}
+                              />
+                            </PopoverBody>
+                            <PopoverFooter backgroundColor="background.grayHover">
+                              <Text textStyle="caption">
+                                {`Locate your User ID on the Wallet Card that came with your Permit.`}
+                              </Text>
+                            </PopoverFooter>
+                          </PopoverContent>
+                        </Popover>
+                        <FormHelperText>
+                          {`You can find your user ID on the back of your wallet card. If you cannot find your
+                        wallet card, please call RCD at 604-232-2404.`}
+                        </FormHelperText>
+                      </Flex>
+                    </TextField>
+                  </Box>
+
+                  <Box marginBottom="48px" textAlign={'left'}>
+                    <TextField
+                      name="phoneNumberSuffix"
+                      label="Last 4 digits of your phone number"
+                      required={true}
+                      width="184px"
+                    />
+                  </Box>
+
+                  <Box marginBottom="20px" textAlign={'left'}>
+                    <DateField name="dateOfBirth" label="Date of Birth" width="184px">
+                      <FormHelperText>
+                        {`Please enter your date of birth in YYYY-MM-DD format. For example, if you were born on
+                      20th August 1950, you would enter 1950-08-20`}
+                      </FormHelperText>
+                    </DateField>
+                  </Box>
+
+                  <Flex width="100%" justifyContent="flex-end">
+                    <Link href="/">
+                      <Button variant="outline" marginRight="12px">{`Go back to home page`}</Button>
+                    </Link>
+                    <Button
+                      type="submit"
+                      variant="solid"
+                      isLoading={loading}
+                      disabled={
+                        loading ||
+                        !values.userId ||
+                        !values.phoneNumberSuffix ||
+                        !values.dateOfBirth
+                      }
+                    >{`Continue`}</Button>
+                  </Flex>
+                </Form>
+              )}
+            </Formik>
           </Flex>
         </Flex>
         <TOSModal />
