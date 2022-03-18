@@ -130,7 +130,7 @@ const Card: FC<Props> = props => {
   );
 
   // Personal information card editing modal
-  const EditModal = editDisabled !== true && (
+  const EditModal = (
     <EditPermitHolderInformationModal
       permitHolderInformation={{
         ...(type === 'NEW'
@@ -173,7 +173,7 @@ const Card: FC<Props> = props => {
   );
 
   return (
-    <PermitHolderInfoCard colSpan={5} header={Header} editModal={EditModal}>
+    <PermitHolderInfoCard colSpan={5} header={Header} editModal={!editDisabled && EditModal}>
       <VStack width="100%" spacing="24px" align="left">
         {/* Permit holder information */}
         <VStack spacing="12px" align="left">

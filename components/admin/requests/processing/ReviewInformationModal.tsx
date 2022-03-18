@@ -57,14 +57,13 @@ export default function ReviewInformationModalProps({
             </ModalHeader>
             <ModalBody paddingY="20px" paddingX="4px">
               <VStack width="100%" spacing="20px" align="stretch">
-                <PersonalInformationCard applicationId={applicationId} editDisabled={true} />
-                {requestType !== 'REPLACEMENT' && (
-                  <DoctorInformationCard applicationId={applicationId} editDisabled={true} />
+                <PersonalInformationCard applicationId={applicationId} editDisabled />
+                {requestType === 'REPLACEMENT' ? (
+                  <ReasonForReplacementCard applicationId={applicationId} editDisabled />
+                ) : (
+                  <DoctorInformationCard applicationId={applicationId} editDisabled />
                 )}
-                {requestType === 'REPLACEMENT' && (
-                  <ReasonForReplacementCard applicationId={applicationId} editDisabled={true} />
-                )}
-                <PaymentInformationCard applicationId={applicationId} editDisabled={true} />
+                <PaymentInformationCard applicationId={applicationId} editDisabled />
               </VStack>
             </ModalBody>
             <ModalFooter paddingBottom="24px" paddingX="4px">

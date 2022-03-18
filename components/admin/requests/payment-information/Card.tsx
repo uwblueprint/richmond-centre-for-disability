@@ -87,7 +87,7 @@ const Card: FC<Props> = props => {
       updated={isUpdated}
       divider
       editModal={
-        editDisabled !== true && (
+        !editDisabled && (
           <EditPaymentDetailsModal paymentInformation={paymentInformation} onSave={handleSave}>
             <Button color="primary" variant="ghost" textDecoration="underline">
               <Text textStyle="body-bold">Edit</Text>

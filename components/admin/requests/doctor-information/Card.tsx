@@ -82,7 +82,7 @@ const Card: FC<Props> = props => {
       updated={isUpdated}
       divider
       editModal={
-        editDisabled !== true && (
+        !editDisabled && (
           <EditDoctorInformationModal
             doctorInformation={{
               firstName,

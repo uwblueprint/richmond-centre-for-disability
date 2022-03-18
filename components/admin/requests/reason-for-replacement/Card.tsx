@@ -75,7 +75,7 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
       updated={isUpdated}
       divider
       editModal={
-        editDisabled !== true && (
+        !editDisabled && (
           <EditReasonForReplacementModal
             reasonForReplacement={{ ...data.application }}
             onSave={handleSave}
