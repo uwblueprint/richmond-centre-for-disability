@@ -126,8 +126,6 @@ export type ApplicationProcessing = {
   walletCardCreatedEmployeeId: Maybe<Scalars['Int']>;
   walletCardCreatedUpdatedAt: Maybe<Scalars['Date']>;
   invoiceNumber: Maybe<Scalars['Int']>;
-  invoiceNumberEmployeeId: Maybe<Scalars['Int']>;
-  invoiceNumberUpdatedAt: Maybe<Scalars['Date']>;
   documentsUrl: Maybe<Scalars['String']>;
   documentsUrlEmployeeId: Maybe<Scalars['Int']>;
   documentsUrlUpdatedAt: Maybe<Scalars['Date']>;
@@ -1224,7 +1222,7 @@ export type UpdateApplicationProcessingAssignAppNumberResult = {
 
 export type UpdateApplicationProcessingAssignInvoiceNumberInput = {
   applicationId: Scalars['Int'];
-  invoiceNumber: Maybe<Scalars['Int']>;
+  invoiceNumber: Scalars['Int'];
 };
 
 export type UpdateApplicationProcessingAssignInvoiceNumberResult = {
