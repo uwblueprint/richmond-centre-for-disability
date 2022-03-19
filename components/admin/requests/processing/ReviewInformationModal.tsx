@@ -43,39 +43,47 @@ export default function ReviewInformationModalProps({
         size="3xl" // TODO: change to custom size
       >
         <ModalOverlay />
-        <form onSubmit={onConfirmed}>
-          <ModalContent paddingX="36px">
-            <ModalHeader
-              textStyle="display-medium-bold"
-              paddingBottom="12px"
-              paddingTop="24px"
-              paddingX="4px"
+        {/* <form> */}
+        <ModalContent paddingX="36px">
+          <ModalHeader
+            textStyle="display-medium-bold"
+            paddingBottom="12px"
+            paddingTop="24px"
+            paddingX="4px"
+          >
+            <Text as="h2" textStyle="display-medium-bold">
+              {'Review Request Information'}
+            </Text>
+          </ModalHeader>
+          <ModalBody paddingY="20px" paddingX="4px">
+            <VStack width="100%" spacing="20px" align="stretch">
+              <PersonalInformationCard applicationId={applicationId} editDisabled />
+              {requestType === 'REPLACEMENT' ? (
+                <ReasonForReplacementCard applicationId={applicationId} editDisabled />
+              ) : (
+                <DoctorInformationCard applicationId={applicationId} editDisabled />
+              )}
+              <PaymentInformationCard applicationId={applicationId} editDisabled />
+            </VStack>
+          </ModalBody>
+          <ModalFooter paddingBottom="24px" paddingX="4px">
+            <Button colorScheme="gray" variant="solid" onClick={onClose}>
+              {'Cancel'}
+            </Button>
+            <Button
+              variant="solid"
+              type="submit"
+              ml={'12px'}
+              onClick={() => {
+                onConfirmed();
+                onClose();
+              }}
             >
-              <Text as="h2" textStyle="display-medium-bold">
-                {'Review Request Information'}
-              </Text>
-            </ModalHeader>
-            <ModalBody paddingY="20px" paddingX="4px">
-              <VStack width="100%" spacing="20px" align="stretch">
-                <PersonalInformationCard applicationId={applicationId} editDisabled />
-                {requestType === 'REPLACEMENT' ? (
-                  <ReasonForReplacementCard applicationId={applicationId} editDisabled />
-                ) : (
-                  <DoctorInformationCard applicationId={applicationId} editDisabled />
-                )}
-                <PaymentInformationCard applicationId={applicationId} editDisabled />
-              </VStack>
-            </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingX="4px">
-              <Button colorScheme="gray" variant="solid" onClick={onClose}>
-                {'Cancel'}
-              </Button>
-              <Button variant="solid" type="submit" ml={'12px'}>
-                {'Confirm'}
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </form>
+              {'Confirm'}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+        {/* </form> */}
       </Modal>
     </>
   );

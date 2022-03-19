@@ -4,6 +4,7 @@ import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/processing/AssignNumberModal'; // AssignNumber Modal component
 import ProcessingTaskStep from '@components/admin/requests/processing/TaskStep'; // Processing Task Step
+import ReviewInformationModal from '@components/admin/requests/processing/ReviewInformationModal'; // Review Information Modal
 import {
   AssignAppNumberRequest,
   AssignAppNumberResponse,
@@ -108,16 +109,16 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     },
   } = data;
 
-  const [reviewRequestTask, setReviewRequestTask] = useState(false);
-  const [documentUploadTask, setDocumentUploadTask] = useState(false);
-  const [generateInvoiceTask, setGenerateInvoiceTask] = useState(false);
+  const [reviewRequestTask, setReviewRequestTask] = useState<boolean>(false);
+  const [documentUploadTask, setDocumentUploadTask] = useState<boolean>(false);
+  const [generateInvoiceTask, setGenerateInvoiceTask] = useState<boolean>(false);
+  // const [hasReviewedRequestInformation, setHasReviewedRequest] = useState<boolean>(false);
   // const [preliminaryTasks, setPreliminaryTasks] = useState(false);
   // useEffect(() => {
   //   appNumber !== null && appHolepunched && walletCardCreated
   //     ? setPreliminaryTasks(true)
   //     : setPreliminaryTasks(false);
   // }, [appNumber, appHolepunched, walletCardCreated]);
-
   return (
     <PermitHolderInfoCard colSpan={7} header={`Processing Tasks`}>
       <Divider mt="20px" />
@@ -212,54 +213,46 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             </Button>
           ) : null}
         </ProcessingTaskStep>
-        {/* Task 4: Assign invoice number: Assign number (MODAL) */}
+        {/* Task 4: Review Information: Review Information (MODAL) */}
         <ProcessingTaskStep
           id={4}
           label={'Review request information'}
           description="Editing will be disabled upon completion of this step"
           isCompleted={reviewRequestTask}
         >
-          {/* TODO: Change to review information modal */}
-          {/* <AssignNumberModal
-            modalTitle="Review Information"
-            fieldName="Invoice number"
-            onAssign={handleAssignInvoiceNumber}
-          > */}
-          {!reviewRequestTask ? (
-            <Button
-              marginLeft="auto"
-              height="35px"
-              bg="background.gray"
-              _hover={{ bg: 'background.grayHover' }}
-              color="black"
-              disabled={!appNumber || !appHolepunched || !walletCardCreated}
-              onClick={() => setReviewRequestTask(true)}
-            >
-              <Text textStyle="xsmall-medium">Review information</Text>
-            </Button>
-          ) : (
-            <Button
-              variant="ghost"
-              textDecoration="underline black"
-              onClick={() => {
-                // if (documentUploadTask) {
-
-                // }
-                // if (generateInvoiceTask) {
-
-                // }
-                setDocumentUploadTask(false);
-                setGenerateInvoiceTask(false);
-                handleMailOut(false);
-                setReviewRequestTask(false);
-              }}
-            >
-              <Text textStyle="caption" color="black">
-                Undo Review
-              </Text>
-            </Button>
-          )}
-          {/* </AssignNumberModal> */}
+          <ReviewInformationModal
+            applicationId={applicationId}
+            requestType={'Request'}
+            onConfirmed={() => setReviewRequestTask(true)}
+          >
+            {!reviewRequestTask ? (
+              <Button
+                marginLeft="auto"
+                height="35px"
+                bg="background.gray"
+                _hover={{ bg: 'background.grayHover' }}
+                color="black"
+                disabled={!appNumber || !appHolepunched || !walletCardCreated}
+              >
+                <Text textStyle="xsmall-medium">Review information</Text>
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                textDecoration="underline black"
+                onClick={() => {
+                  setDocumentUploadTask(false);
+                  setGenerateInvoiceTask(false);
+                  handleMailOut(false);
+                  setReviewRequestTask(false);
+                }}
+              >
+                <Text textStyle="caption" color="black">
+                  Undo Review
+                </Text>
+              </Button>
+            )}
+          </ReviewInformationModal>
         </ProcessingTaskStep>
         {/* Task 5: Generate Invoice */}
         <ProcessingTaskStep
@@ -300,7 +293,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         <ProcessingTaskStep
           id={6}
           label="Upload document"
-          description="Scan all documents and upload as PDF (5MB limit)"
+          description="Scan all documents and upload as one PDF"
           isCompleted={documentUploadTask && reviewRequestTask}
           // isCompleted={!!documentsUrl}
         >
