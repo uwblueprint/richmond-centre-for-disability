@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'; // GraphQL queries
 import {
   ApplicationProcessing,
   MutationUpdateApplicationProcessingAssignAppNumberArgs,
-  MutationUpdateApplicationProcessingAssignInvoiceNumberArgs,
+  MutationUpdateApplicationProcessingGenerateInvoiceArgs,
   MutationUpdateApplicationProcessingCreateWalletCardArgs,
   MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
   MutationUpdateApplicationProcessingMailOutArgs,
@@ -10,7 +10,7 @@ import {
   MutationUpdateApplicationProcessingReviewRequestInformationArgs,
   QueryApplicationArgs,
   UpdateApplicationProcessingAssignAppNumberResult,
-  UpdateApplicationProcessingAssignInvoiceNumberResult,
+  UpdateApplicationProcessingGenerateInvoiceResult,
   UpdateApplicationProcessingCreateWalletCardResult,
   UpdateApplicationProcessingHolepunchParkingPermitResult,
   UpdateApplicationProcessingMailOutResult,
@@ -118,17 +118,17 @@ export type ReviewRequestInformationResponse = {
 
 /** Assign invoice number task */
 export const ASSIGN_INVOICE_NUMBER_MUTATION = gql`
-  mutation AssignInvoiceNumber($input: UpdateApplicationProcessingAssignInvoiceNumberInput!) {
-    updateApplicationProcessingAssignInvoiceNumber(input: $input) {
+  mutation AssignInvoiceNumber($input: UpdateApplicationProcessingGenerateInvoiceInput!) {
+    UpdateApplicationProcessingGenerateInvoice(input: $input) {
       ok
     }
   }
 `;
 
-export type AssignInvoiceNumberRequest = MutationUpdateApplicationProcessingAssignInvoiceNumberArgs;
+export type AssignInvoiceNumberRequest = MutationUpdateApplicationProcessingGenerateInvoiceArgs;
 
 export type AssignInvoiceNumberResponse = {
-  updateApplicationProcessingAssignInvoiceNumber: UpdateApplicationProcessingAssignInvoiceNumberResult;
+  UpdateApplicationProcessingGenerateInvoice: UpdateApplicationProcessingGenerateInvoiceResult;
 };
 
 /** Upload documents task */

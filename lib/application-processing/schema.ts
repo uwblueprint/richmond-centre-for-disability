@@ -22,6 +22,7 @@ export default gql`
     reviewRequestCompletedEmployeeId: Int
     reviewRequestCompletedUpdatedAt: Date
     invoiceNumber: Int
+    invoiceGeneratedEmployeeId: Int
     documentsUrl: String
     documentsUrlEmployeeId: Int
     documentsUrlUpdatedAt: Date
@@ -108,13 +109,13 @@ export default gql`
   }
 
   # Assign invoice number to application
-  input UpdateApplicationProcessingAssignInvoiceNumberInput {
+  input UpdateApplicationProcessingGenerateInvoiceInput {
     applicationId: Int!
 
     invoiceNumber: Int!
   }
 
-  type UpdateApplicationProcessingAssignInvoiceNumberResult {
+  type UpdateApplicationProcessingGenerateInvoiceResult {
     ok: Boolean!
   }
 

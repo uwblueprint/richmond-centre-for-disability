@@ -39,7 +39,7 @@ import {
   updateApplicationProcessingAssignAppNumber,
   updateApplicationProcessingHolepunchParkingPermit,
   updateApplicationProcessingCreateWalletCard,
-  updateApplicationProcessingAssignInvoiceNumber,
+  updateApplicationProcessingGenerateInvoice,
   updateApplicationProcessingUploadDocuments,
   updateApplicationProcessingMailOut,
   updateApplicationProcessingReviewRequestInformation,
@@ -184,8 +184,8 @@ const resolvers = {
       updateApplicationProcessingReviewRequestInformation,
       ['SECRETARY']
     ),
-    updateApplicationProcessingAssignInvoiceNumber: authorize(
-      updateApplicationProcessingAssignInvoiceNumber,
+    updateApplicationProcessingGenerateInvoice: authorize(
+      updateApplicationProcessingGenerateInvoice,
       ['SECRETARY']
     ),
     updateApplicationProcessingUploadDocuments: authorize(

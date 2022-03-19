@@ -90,9 +90,9 @@ export default gql`
     updateApplicationProcessingReviewRequestInformation(
       input: UpdateApplicationProcessingReviewRequestInformationInput!
     ): UpdateApplicationProcessingReviewRequestInformationResult
-    updateApplicationProcessingAssignInvoiceNumber(
-      input: UpdateApplicationProcessingAssignInvoiceNumberInput!
-    ): UpdateApplicationProcessingAssignInvoiceNumberResult
+    updateApplicationProcessingGenerateInvoice(
+      input: UpdateApplicationProcessingGenerateInvoiceInput!
+    ): UpdateApplicationProcessingGenerateInvoiceResult
     updateApplicationProcessingUploadDocuments(
       input: UpdateApplicationProcessingUploadDocumentsInput!
     ): UpdateApplicationProcessingUploadDocumentsResult

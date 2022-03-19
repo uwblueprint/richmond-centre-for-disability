@@ -109,6 +109,7 @@ model Employee {
   assignedAppNumberApplicationProcessings ApplicationProcessing[] @relation("application_processing_app_number_employee_idToemployees")
   setDocumentsUrlApplicationProcessings   ApplicationProcessing[] @relation("application_processing_documents_url_employee_idToemployees")
   reviewRequestApplicationProcessings     ApplicationProcessing[] @relation("application_processing_review_request_completed_employee_idToemployees")
+  generatedInvoiceApplicationProcessings  ApplicationProcessing[] @relation("application_processing_invoice_generated_employee_idToemployees")
   createdWalletCardApplicationProcessings ApplicationProcessing[] @relation("application_processing_wallet_card_created_employee_idToemployees")
 
   @@map("employees")
@@ -323,10 +324,8 @@ model ReplacementApplication {
 model ApplicationInvoice {
   invoiceNumber         Int                    @id @default(autoincrement()) @map("invoice_number")
   s3ObjectKey           String?                @map("s3_object_key") @db.VarChar(255)
-  employeeId            Int?                   @map("employee_id")
   createdAt             DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt             DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
-  employee              Employee?              @relation("application_invoicesToemployees", fields: [employeeId], references: [id])
   applicationProcessing ApplicationProcessing? @relation("application_invoicesToapplication_processing")
 
   @@map("application_invoices")

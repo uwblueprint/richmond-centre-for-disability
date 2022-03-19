@@ -8,7 +8,7 @@ import {
   MutationCompleteApplicationArgs,
   MutationRejectApplicationArgs,
   MutationUpdateApplicationProcessingAssignAppNumberArgs,
-  MutationUpdateApplicationProcessingAssignInvoiceNumberArgs,
+  MutationUpdateApplicationProcessingGenerateInvoiceArgs,
   MutationUpdateApplicationProcessingCreateWalletCardArgs,
   MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
   MutationUpdateApplicationProcessingMailOutArgs,
@@ -16,7 +16,7 @@ import {
   MutationUpdateApplicationProcessingReviewRequestInformationArgs,
   RejectApplicationResult,
   UpdateApplicationProcessingAssignAppNumberResult,
-  UpdateApplicationProcessingAssignInvoiceNumberResult,
+  UpdateApplicationProcessingGenerateInvoiceResult,
   UpdateApplicationProcessingCreateWalletCardResult,
   UpdateApplicationProcessingHolepunchParkingPermitResult,
   UpdateApplicationProcessingMailOutResult,
@@ -830,12 +830,12 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
 };
 
 /**
- * Assign invoice Number to in-progress application
+ * Generate invoice for in-progress application
  * @returns Status of the operation (ok)
  */
-export const updateApplicationProcessingAssignInvoiceNumber: Resolver<
-  MutationUpdateApplicationProcessingAssignInvoiceNumberArgs,
-  UpdateApplicationProcessingAssignInvoiceNumberResult
+export const updateApplicationProcessingGenerateInvoice: Resolver<
+  MutationUpdateApplicationProcessingGenerateInvoiceArgs,
+  UpdateApplicationProcessingGenerateInvoiceResult
 > = async (_parent, args, { prisma, session }) => {
   // TODO: Validation
   const { input } = args;
