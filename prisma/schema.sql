@@ -201,8 +201,11 @@ CREATE TABLE applicants (
 CREATE TABLE application_invoices (
   invoice_number SERIAL PRIMARY KEY,
   s3_object_key VARCHAR(255),
+  employee_id INTEGER NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY(employee_id) REFERENCES employees(id)
 );
 
 -- Create application processing table
@@ -223,7 +226,6 @@ CREATE TABLE application_processing (
   review_request_completed_employee_id INTEGER,
   review_request_completed_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   invoice_number INTEGER UNIQUE,
-  invoice_generated_employee_id INTEGER,
   documents_url VARCHAR(255),
   documents_url_employee_id INTEGER,
   documents_url_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -238,7 +240,6 @@ CREATE TABLE application_processing (
   FOREIGN KEY(wallet_card_created_employee_id) REFERENCES employees(id),
   FOREIGN KEY(review_request_completed_employee_id) REFERENCES employees(id),
   FOREIGN KEY(invoice_number) REFERENCES application_invoices(invoice_number),
-  FOREIGN KEY(invoice_generated_employee_id) REFERENCES employees(id),
   FOREIGN KEY(documents_url_employee_id) REFERENCES employees(id),
   FOREIGN KEY(app_mailed_employee_id) REFERENCES employees(id)
 );

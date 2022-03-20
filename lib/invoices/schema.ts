@@ -8,6 +8,7 @@ export default gql`
   type Invoice {
     invoiceNumber: Int!
     s3ObjectKey: String
+    employee: Employee!
     createdAt: Date!
     updatedAt: Date!
   }

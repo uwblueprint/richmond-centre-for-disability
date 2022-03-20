@@ -24,6 +24,7 @@ import {
   UpdateApplicationProcessingReviewRequestInformationResult,
 } from '@lib/graphql/types';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
+import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
 
 /**
  * Approve application
@@ -845,6 +846,19 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     // TODO: Create error
     throw new ApolloError('Not authenticated');
   }
+
+  // Use the application record to retrieve the applicant name, applicant ID, permit type, current date, and employee initials
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: { applicant: true },
+  });
+
+  if (!application) {
+    throw new ApolloError('Application does not exist');
+  }
+
+  // TESTING GENERATE APPLICATION INVOICE
+  generateApplicationInvoicePdf(application, session, invoiceNumber);
 
   let updatedApplicationProcessing;
   try {

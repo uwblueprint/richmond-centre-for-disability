@@ -498,6 +498,7 @@ export type Invoice = {
   __typename?: 'Invoice';
   invoiceNumber: Scalars['Int'];
   s3ObjectKey: Maybe<Scalars['String']>;
+  employee: Employee;
   createdAt: Scalars['Date'];
   updatedAt: Scalars['Date'];
 };

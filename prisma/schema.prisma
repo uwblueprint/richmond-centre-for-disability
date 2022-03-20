@@ -324,8 +324,10 @@ model ReplacementApplication {
 model ApplicationInvoice {
   invoiceNumber         Int                    @id @default(autoincrement()) @map("invoice_number")
   s3ObjectKey           String?                @map("s3_object_key") @db.VarChar(255)
+  employeeId            Int
   createdAt             DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt             DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
+  employee              Employee               @relation("application_invoicesToemployees", fields: [employeeId], references: [id])
   applicationProcessing ApplicationProcessing? @relation("application_invoicesToapplication_processing")
 
   @@map("application_invoices")

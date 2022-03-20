@@ -6,7 +6,14 @@ import ProcessingTaskStep from '@components/admin/requests/processing/TaskStep';
 import {
   AssignAppNumberRequest,
   AssignAppNumberResponse,
+<<<<<<< HEAD
   ASSIGN_APP_NUMBER_MUTATION,
+=======
+  GenerateInvoiceRequest,
+  GenerateInvoiceResponse,
+  ASSIGN_APP_NUMBER_MUTATION,
+  GENERATE_INVOICE_MUTATION,
+>>>>>>> Install PDFMake dependency, generate PDF with dynamic values, update GraphQL API
   CreateWalletCardRequest,
   CreateWalletCardResponse,
   CREATE_WALLET_CARD_MUTATION,
@@ -72,6 +79,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
+<<<<<<< HEAD
   const [reviewRequestInformation] = useMutation<
     ReviewRequestInformationResponse,
     ReviewRequestInformationRequest
@@ -89,9 +97,14 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     AssignInvoiceNumberRequest
   >(ASSIGN_INVOICE_NUMBER_MUTATION);
   const handleAssignInvoiceNumber = async (invoiceNumber: number) => {
+=======
+  const [generateInvoice] =
+    useMutation<GenerateInvoiceResponse, GenerateInvoiceRequest>(GENERATE_INVOICE_MUTATION);
+  const handleGenerateInvoice = async (invoiceNumber: number) => {
+>>>>>>> Install PDFMake dependency, generate PDF with dynamic values, update GraphQL API
     // TODO: we need to generate the invoice first before assigning.
     // Ideally we call an endpoint to generate it and then pass the returned invoice number
-    await assignInvoiceNumber({ variables: { input: { applicationId, invoiceNumber } } });
+    await generateInvoice({ variables: { input: { applicationId, invoiceNumber } } });
     refetch();
   };
 
@@ -250,6 +263,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           description="Invoice number will be automatically assigned"
           isCompleted={invoiceNumber !== null}
         >
+<<<<<<< HEAD
           {invoiceNumber !== null ? (
             <Button
               color={'blue'}
@@ -276,6 +290,31 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               <Text textStyle="xsmall-medium">Generate document</Text>
             </Button>
           )}
+=======
+          <AssignNumberModal
+            modalTitle="Assign Invoice Number"
+            fieldName="Invoice number"
+            onAssign={handleGenerateInvoice}
+          >
+            {invoiceNumber === null ? (
+              <Button
+                marginLeft="auto"
+                height="35px"
+                bg="background.gray"
+                _hover={{ bg: 'background.grayHover' }}
+                color="black"
+              >
+                <Text textStyle="xsmall-medium">Assign number</Text>
+              </Button>
+            ) : (
+              <Button variant="ghost" textDecoration="underline black">
+                <Text textStyle="caption" color="black">
+                  Edit number
+                </Text>
+              </Button>
+            )}
+          </AssignNumberModal>
+>>>>>>> Install PDFMake dependency, generate PDF with dynamic values, update GraphQL API
         </ProcessingTaskStep>
 
         {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}

@@ -117,18 +117,18 @@ export type ReviewRequestInformationResponse = {
 };
 
 /** Assign invoice number task */
-export const ASSIGN_INVOICE_NUMBER_MUTATION = gql`
+export const GENERATE_INVOICE_MUTATION = gql`
   mutation AssignInvoiceNumber($input: UpdateApplicationProcessingGenerateInvoiceInput!) {
-    UpdateApplicationProcessingGenerateInvoice(input: $input) {
+    updateApplicationProcessingGenerateInvoice(input: $input) {
       ok
     }
   }
 `;
 
-export type AssignInvoiceNumberRequest = MutationUpdateApplicationProcessingGenerateInvoiceArgs;
+export type GenerateInvoiceRequest = MutationUpdateApplicationProcessingGenerateInvoiceArgs;
 
-export type AssignInvoiceNumberResponse = {
-  UpdateApplicationProcessingGenerateInvoice: UpdateApplicationProcessingGenerateInvoiceResult;
+export type GenerateInvoiceResponse = {
+  updateApplicationProcessingGenerateInvoice: UpdateApplicationProcessingGenerateInvoiceResult;
 };
 
 /** Upload documents task */
