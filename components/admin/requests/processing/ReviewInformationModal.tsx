@@ -3,6 +3,7 @@ import DoctorInformationCard from '@components/admin/requests/doctor-information
 import PaymentInformationCard from '@components/admin/requests/payment-information/Card'; // Payment information card
 import PersonalInformationCard from '@components/admin/requests/permit-holder-information/Card'; // Personal information card
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
+import AdditionalInformationCard from '@components/admin/requests/additional-questions/Card';
 import {
   Modal,
   ModalOverlay,
@@ -61,7 +62,10 @@ export default function ReviewInformationModalProps({
                 {requestType === 'REPLACEMENT' ? (
                   <ReasonForReplacementCard applicationId={applicationId} editDisabled />
                 ) : (
-                  <DoctorInformationCard applicationId={applicationId} editDisabled />
+                  <>
+                    <DoctorInformationCard applicationId={applicationId} editDisabled />
+                    <AdditionalInformationCard applicationId={applicationId} />
+                  </>
                 )}
                 <PaymentInformationCard applicationId={applicationId} editDisabled />
               </VStack>
