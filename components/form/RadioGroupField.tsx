@@ -24,7 +24,7 @@ const RadioGroupField: FC<Props> = props => {
   };
 
   return (
-    <FormControl isInvalid={!!meta.error} isRequired={required}>
+    <FormControl isInvalid={!!meta.error && !!meta.touched} isRequired={required}>
       <FormLabel htmlFor={name}>{label}</FormLabel>
       <RadioGroup id={name} {...field} onChange={handleChange} {...radioGroupProps}>
         {children}

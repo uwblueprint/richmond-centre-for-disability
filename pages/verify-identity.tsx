@@ -32,6 +32,7 @@ import { formatDate } from '@lib/utils/format'; // Date formatter util
 import DateField from '@components/form/DateField';
 import TextField from '@components/form/TextField';
 import { Form, Formik } from 'formik';
+import NumberField from '@components/form/NumberField';
 // import { object, string, number, date} from 'yup';
 
 export default function IdentityVerificationForm() {
@@ -84,14 +85,14 @@ export default function IdentityVerificationForm() {
    * Handle identity verification submit
    */
   const handleSubmit = (values: {
-    userId: string;
+    userId: number;
     phoneNumberSuffix: string;
     dateOfBirth: string;
   }) => {
     verifyIdentity({
       variables: {
         input: {
-          userId: parseInt(values.userId),
+          userId: values.userId,
           phoneNumberSuffix: values.phoneNumberSuffix,
           dateOfBirth: formatDate(new Date(values.dateOfBirth)),
           acceptedTos: acceptedTOSTimestamp,
@@ -114,7 +115,7 @@ export default function IdentityVerificationForm() {
             </Text>
             <Formik
               initialValues={{
-                userId: '',
+                userId: 0,
                 phoneNumberSuffix: '',
                 dateOfBirth: '',
               }}
@@ -124,7 +125,7 @@ export default function IdentityVerificationForm() {
               {({ values }) => (
                 <Form style={{ width: '100%' }} noValidate>
                   <Box marginBottom="48px" textAlign={'left'}>
-                    <TextField
+                    <NumberField
                       name="userId"
                       label="User ID number"
                       required={true}
@@ -156,7 +157,7 @@ export default function IdentityVerificationForm() {
                         wallet card, please call RCD at 604-232-2404.`}
                         </FormHelperText>
                       </Flex>
-                    </TextField>
+                    </NumberField>
                   </Box>
 
                   <Box marginBottom="48px" textAlign={'left'}>
