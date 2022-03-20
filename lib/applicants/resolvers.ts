@@ -1,6 +1,5 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
-import { InvalidPhoneNumberSuffixLengthError } from '@lib/applicants/errors'; // Applicant errors
 import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
 import {
   Applicant,
@@ -22,6 +21,7 @@ import {
 import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
 import { PermitType } from '@prisma/client';
+import { verifyIdentitySchema } from '@tools/applicant/verify-identity';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -403,11 +403,9 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     input: { userId, phoneNumberSuffix, dateOfBirth, acceptedTos },
   } = args;
 
-  // Phone number suffix must be of length 4
-  if (phoneNumberSuffix.length != 4) {
-    throw new InvalidPhoneNumberSuffixLengthError(
-      'Last 4 digits of phone number must be 4 digits long'
-    );
+  if (!verifyIdentitySchema.isValidSync({ userId, phoneNumberSuffix, dateOfBirth })) {
+    // Yup validation failure
+    throw new Error('Invalid input');
   }
 
   // Retrieve applicant with matching info
