@@ -20,6 +20,8 @@ export const getErrorMessage = (failureReason: VerifyIdentityFailureReason): str
     case 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS':
       return `Your current permit expiry date is too far away to request a renewal.
       Please check back when your permit is expiring within 30 days or less.`;
+    case 'USER_HOLDS_TEMPORARY_PERMIT':
+      return `Temporary parking permits cannot be renewed. Please apply for a new parking permit at RCD.`;
     default:
       return 'Unknown error';
   }
@@ -44,6 +46,9 @@ export type VerifyIdentityResponse = {
   verifyIdentity: VerifyIdentityResult;
 };
 
+/**
+ * Verify Identity validation schema
+ */
 export const verifyIdentitySchema = object({
   userId: number().required().positive().integer(),
   phoneNumberSuffix: string().matches(/^\d+$/).required().max(4, 'Must be exactly 4 digits'),

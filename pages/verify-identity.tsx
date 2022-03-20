@@ -27,13 +27,10 @@ import {
   verifyIdentitySchema,
 } from '@tools/applicant/verify-identity'; // Tools
 import Request from '@containers/Request'; // Request state
-import { formatDate } from '@lib/utils/format'; // Date formatter util
-// import { verifyIdentitySchema } from '@lib/applicants/validation';
 import DateField from '@components/form/DateField';
 import TextField from '@components/form/TextField';
 import { Form, Formik } from 'formik';
 import NumberField from '@components/form/NumberField';
-// import { object, string, number, date} from 'yup';
 
 export default function IdentityVerificationForm() {
   // Router
@@ -44,16 +41,6 @@ export default function IdentityVerificationForm() {
 
   // Request state
   const { acceptedTOSTimestamp, setApplicantId } = Request.useContainer();
-
-  // const [userId, setUserId] = useState('');
-  // const [phoneNumberSuffix, setPhoneNumberSuffix] = useState('');
-  // const [dateOfBirth, setDateOfBirth] = useState(formatDate(new Date(), true));
-
-  // const verifyIdentitySchema = object({
-  //   userId: number().required().positive().integer(),
-  //   phoneNumberSuffix: string().matches(/^\d+$/).required().max(4, 'Must be exactly 4 digits'),
-  //   dateOfBirth: date().required(),
-  // });
 
   // Verify identity query
   const [verifyIdentity, { loading }] = useMutation<VerifyIdentityResponse, VerifyIdentityRequest>(
@@ -92,9 +79,9 @@ export default function IdentityVerificationForm() {
     verifyIdentity({
       variables: {
         input: {
-          userId: values.userId,
+          userId: Number(values.userId),
           phoneNumberSuffix: values.phoneNumberSuffix,
-          dateOfBirth: formatDate(new Date(values.dateOfBirth)),
+          dateOfBirth: values.dateOfBirth,
           acceptedTos: acceptedTOSTimestamp,
         },
       },
@@ -166,6 +153,7 @@ export default function IdentityVerificationForm() {
                       label="Last 4 digits of your phone number"
                       required={true}
                       width="184px"
+                      maxLength={4}
                     />
                   </Box>
 

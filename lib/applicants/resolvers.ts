@@ -21,6 +21,7 @@ import {
 } from '@lib/graphql/types'; // GraphQL types
 import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
+import { PermitType } from '@prisma/client';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -448,7 +449,7 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
   if (activePermit === null) {
     return {
       ok: false,
-      failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS',
+      failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS', // NOTETOSELF: should this be a different reason
       applicantId: null,
     };
   }
@@ -458,6 +459,15 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     return {
       ok: false,
       failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS',
+      applicantId: null,
+    };
+  }
+
+  // Temporary permit cannot be renewed
+  if (activePermit.type === PermitType.TEMPORARY) {
+    return {
+      ok: false,
+      failureReason: 'USER_HOLDS_TEMPORARY_PERMIT',
       applicantId: null,
     };
   }
