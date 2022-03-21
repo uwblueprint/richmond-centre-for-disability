@@ -80,14 +80,7 @@ export default function Login() {
             {!authState?.url ? (
               <>
                 <Formik
-                  initialValues={{
-                    email: '',
-                    comments: '',
-                    date: '',
-                    checkboxOptions: [],
-                    paymentMethod: '',
-                    gender: '',
-                  }}
+                  initialValues={{ email: '' }}
                   validationSchema={loginSchema}
                   onSubmit={handleSubmit}
                 >
