@@ -12,9 +12,11 @@ import {
   PopoverContent,
   PopoverBody,
   PopoverFooter,
-  useToast,
   Box,
   FormHelperText,
+  AlertIcon,
+  Alert,
+  AlertDescription,
 } from '@chakra-ui/react'; // Chakra UI
 import { InfoOutlineIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/applicant/Layout'; // Layout component
@@ -31,16 +33,15 @@ import TextField from '@components/form/TextField';
 import { Form, Formik } from 'formik';
 import NumberField from '@components/form/NumberField';
 import { verifyIdentitySchema } from '@lib/applicants/verify-identity/validation';
+import { useState } from 'react';
 
 export default function IdentityVerificationForm() {
   // Router
   const router = useRouter();
 
-  // Toast
-  const toast = useToast();
-
   // Request state
   const { acceptedTOSTimestamp, setApplicantId } = Request.useContainer();
+  const [alertError, setAlertError] = useState(''); // Error message displayed in alert
 
   // Verify identity query
   const [verifyIdentity, { loading }] = useMutation<VerifyIdentityResponse, VerifyIdentityRequest>(
@@ -51,19 +52,11 @@ export default function IdentityVerificationForm() {
           setApplicantId(data.verifyIdentity.applicantId);
           router.push('/renew');
         } else if (data.verifyIdentity.failureReason) {
-          toast({
-            status: 'error',
-            description: getErrorMessage(data.verifyIdentity.failureReason),
-            isClosable: true,
-          });
+          setAlertError(getErrorMessage(data.verifyIdentity.failureReason));
         }
       },
       onError: error => {
-        toast({
-          status: 'error',
-          description: error.message,
-          isClosable: true,
-        });
+        setAlertError(error.message);
       },
     }
   );
@@ -165,6 +158,17 @@ export default function IdentityVerificationForm() {
                       </FormHelperText>
                     </DateField>
                   </Box>
+
+                  {alertError && (
+                    <Box marginY="20px" textAlign={'left'}>
+                      <Alert status="error" marginY="12px">
+                        <AlertIcon />
+                        <AlertDescription>{alertError}</AlertDescription>
+                        {/* TODO: Make alert closable */}
+                        {/* <CloseButton position="absolute" right="8px" top="8px" /> */}
+                      </Alert>
+                    </Box>
+                  )}
 
                   <Flex width="100%" justifyContent="flex-end">
                     <Link href="/">
