@@ -60,10 +60,10 @@ const Card: FC<Props> = props => {
           </Box>
           <Box>
             <Text as="p" textStyle="body-regular" textAlign="left">
-              {usesAccessibleConvertedVan ? 'No' : 'Yes'}
+              {usesAccessibleConvertedVan ? 'Yes' : 'No'}
             </Text>
           </Box>
-          {accessibleConvertedVanLoadingMethod && (
+          {usesAccessibleConvertedVan && (
             <>
               <Box>
                 <Text as="p" textStyle="body-regular" textAlign="left">
