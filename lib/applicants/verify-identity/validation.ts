@@ -7,7 +7,7 @@ export const verifyIdentitySchema = object({
   userId: number()
     .typeError('User ID must be a positive number')
     .required('Please enter your User ID')
-    .positive('User ID must be a positive number')
+    .positive('Please enter your User ID')
     .integer('Please enter your User ID'),
   phoneNumberSuffix: string()
     .matches(/^\d+$/, 'Must only contain numbers')
