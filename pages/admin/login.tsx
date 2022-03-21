@@ -13,21 +13,12 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
-  Checkbox,
-  Radio,
-  Stack,
 } from '@chakra-ui/react'; // Chakra UI
 import { loginSchema } from '@lib/auth/validation';
 
 import { Form, Formik } from 'formik';
 import useLocalStorage from '@tools/hooks/useLocalStorage'; // Local storage
 import TextField from '@components/form/TextField';
-import TextArea from '@components/form/TextAreaField';
-import DateField from '@components/form/DateField';
-import CheckboxGroupField from '@components/form/CheckboxGroupField';
-import RadioGroupField from '@components/form/RadioGroupField';
-import { PaymentType } from '@lib/graphql/types';
-import SelectField from '@components/form/SelectField';
 
 export default function Login() {
   const [emailInputError, setEmailInputError] = useState(''); // Error message displayed under input
@@ -61,14 +52,7 @@ export default function Login() {
     }
   };
 
-  const handleSubmit = async (values: {
-    email: string;
-    comments: string;
-    date: string;
-    checkboxOptions: string[];
-    paymentMethod: string;
-    gender: string;
-  }) => {
+  const handleSubmit = async (values: { email: string }) => {
     signInWithEmail(values.email);
   };
 
@@ -109,33 +93,6 @@ export default function Login() {
                 >
                   <Form style={{ width: '100%' }}>
                     <TextField name="email" label="Email" height="51px" />
-
-                    {/* TODO: remove before merging */}
-                    <TextArea name="comments" label="Comments" />
-                    <DateField name="date" label="Date" />
-                    <SelectField name="gender" label="Gender" placeholder="Select gender">
-                      <option value={'MALE'}>{'Male'}</option>
-                      <option value={'FEMALE'}>{'Female'}</option>
-                      <option value={'OTHER'}>{'Other'}</option>
-                    </SelectField>
-                    <CheckboxGroupField name="checkboxOptions" label="AnotherLabel">
-                      <Stack>
-                        <Checkbox value={'option1'}>{'option1'}</Checkbox>
-                        <Checkbox value={'option2'}>{'option2'}</Checkbox>
-                        <Checkbox value={'option3'}>{'option3'}</Checkbox>
-                        <Checkbox value={'option4'}>{'option4'}</Checkbox>
-                      </Stack>
-                    </CheckboxGroupField>
-                    <RadioGroupField name="paymentMethod" label="TestLabel">
-                      <Stack>
-                        <Radio value={'MASTERCARD' as PaymentType}>{'Mastercard'}</Radio>
-                        <Radio value={'VISA' as PaymentType}>{'Visa'}</Radio>
-                        <Radio value={'DEBIT' as PaymentType}>{'Debit'}</Radio>
-                        <Radio value={'CASH' as PaymentType}>{'Cash'}</Radio>
-                        <Radio value={'CHEQUE' as PaymentType}>{'Cheque'}</Radio>
-                        <Radio value={'E_TRANSFER' as PaymentType}>{'E-transfer'}</Radio>
-                      </Stack>
-                    </RadioGroupField>
                     {/* TODO: backend error styling */}
                     {emailInputError && (
                       <Alert status="error" mt="2">
