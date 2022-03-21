@@ -24,13 +24,13 @@ import {
   VerifyIdentityRequest,
   VerifyIdentityResponse,
   getErrorMessage,
-  verifyIdentitySchema,
 } from '@tools/applicant/verify-identity'; // Tools
 import Request from '@containers/Request'; // Request state
 import DateField from '@components/form/DateField';
 import TextField from '@components/form/TextField';
 import { Form, Formik } from 'formik';
 import NumberField from '@components/form/NumberField';
+import { verifyIdentitySchema } from '@lib/applicants/verify-identity/validation';
 
 export default function IdentityVerificationForm() {
   // Router

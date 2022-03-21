@@ -21,7 +21,7 @@ import {
 import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
 import { PermitType } from '@prisma/client';
-import { verifyIdentitySchema } from '@tools/applicant/verify-identity';
+import { verifyIdentitySchema } from '@lib/applicants/verify-identity/validation';
 
 /**
  * Query and filter RCD applicants from the internal facing app.

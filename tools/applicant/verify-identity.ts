@@ -4,7 +4,6 @@ import {
   VerifyIdentityFailureReason,
   VerifyIdentityResult,
 } from '@lib/graphql/types'; // GraphQL types
-import { object, string, number, date } from 'yup';
 
 /**
  * Get the error message to render in the Alert component given the reason for identity
@@ -45,12 +44,3 @@ export type VerifyIdentityRequest = MutationVerifyIdentityArgs;
 export type VerifyIdentityResponse = {
   verifyIdentity: VerifyIdentityResult;
 };
-
-/**
- * Verify Identity validation schema
- */
-export const verifyIdentitySchema = object({
-  userId: number().required().positive().integer(),
-  phoneNumberSuffix: string().matches(/^\d+$/).required().max(4, 'Must be exactly 4 digits'),
-  dateOfBirth: date().required(),
-});
