@@ -144,7 +144,7 @@ export default function IdentityVerificationForm() {
                     <TextField
                       name="phoneNumberSuffix"
                       label="Last 4 digits of your phone number"
-                      required={true}
+                      required
                       width="184px"
                       maxLength={4}
                     />
