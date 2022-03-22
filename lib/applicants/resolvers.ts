@@ -1,6 +1,6 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
-import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
+import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import {
   Applicant,
   MutationSetApplicantAsActiveArgs,
@@ -441,19 +441,10 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     };
   }
 
-  // Verify that active permit exists and is expiring within 30 days
-  const activePermit = await getActivePermit(applicant.id);
-
-  if (activePermit === null) {
-    return {
-      ok: false,
-      failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS', // NOTETOSELF: should this be a different reason
-      applicantId: null,
-    };
-  }
+  const mostRecentPermit = await getMostRecentPermit(applicant.id);
 
   // Note: 30 days = 30 * 24 * 60 * 60 * 1000 milliseconds
-  if (activePermit.expiryDate.getTime() - new Date().getTime() > 30 * 24 * 60 * 60 * 1000) {
+  if (mostRecentPermit.expiryDate.getTime() - new Date().getTime() > 30 * 24 * 60 * 60 * 1000) {
     return {
       ok: false,
       failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS',
@@ -462,7 +453,7 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
   }
 
   // Temporary permit cannot be renewed
-  if (activePermit.type === PermitType.TEMPORARY) {
+  if (mostRecentPermit.type === PermitType.TEMPORARY) {
     return {
       ok: false,
       failureReason: 'USER_HOLDS_TEMPORARY_PERMIT',

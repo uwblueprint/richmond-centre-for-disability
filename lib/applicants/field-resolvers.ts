@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'; // Prisma client
 import { FieldResolver } from '@lib/graphql/resolvers'; // Resolver type
 import { Applicant, Application, Guardian, MedicalInformation, Permit } from '@lib/graphql/types'; // Applicant type
 import { SortOrder } from '@tools/types'; // Sorting type
-import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
+import { getActivePermit, getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import { ApolloError } from 'apollo-server-micro'; // Apollo errors
 import { flattenApplication } from '@lib/applications/utils';
 
@@ -13,17 +13,16 @@ import { flattenApplication } from '@lib/applications/utils';
 export const applicantMostRecentPermitResolver: FieldResolver<
   Applicant,
   Omit<Permit, 'application'>
-> = async (parent, _args, { prisma }) => {
-  const permit = await prisma.applicant
-    .findUnique({
-      where: { id: parent.id },
-    })
-    .permits({
-      orderBy: { createdAt: SortOrder.DESC },
-      take: 1,
-    });
+> = async parent => {
+  try {
+    return await getMostRecentPermit(parent.id);
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      throw new ApolloError(err.message);
+    }
 
-  return permit[0];
+    throw new ApolloError('Error querying most recent permit');
+  }
 };
 
 /**
