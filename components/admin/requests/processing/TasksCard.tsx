@@ -214,7 +214,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         >
           <ReviewInformationModal
             applicationId={applicationId}
-            applicationType={'RENEWAL'}
             onConfirmed={() => setHasReviewedRequest(true)}
           >
             {invoiceNumber === null ? (
