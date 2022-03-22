@@ -20,7 +20,7 @@ const TextField: FC<Props> = props => {
   const [field, meta] = useField(name);
 
   return (
-    <FormControl isInvalid={!!meta.error && !!meta.touched} isRequired={required}>
+    <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
       <FormLabel htmlFor={name}>{label}</FormLabel>
       <Input {...field} {...inputProps} />
       <FormErrorMessage>

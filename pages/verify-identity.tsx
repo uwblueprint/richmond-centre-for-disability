@@ -108,7 +108,7 @@ export default function IdentityVerificationForm() {
                     <NumberField
                       name="userId"
                       label="User ID number"
-                      required={true}
+                      required
                       width="184px"
                       min={1}
                     >
