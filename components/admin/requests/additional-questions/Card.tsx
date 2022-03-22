@@ -98,11 +98,11 @@ const Card: FC<Props> = props => {
               </Box>
               <Box>
                 <Text as="p" textStyle="body-regular" textAlign="left">
-                  {requiresWiderParkingSpaceReason
-                    ? requiresWiderParkingSpaceReason
-                    : otherRequiresWiderParkingSpaceReason
-                    ? otherRequiresWiderParkingSpaceReason
-                    : 'Not Given'}
+                  {requiresWiderParkingSpaceReason === 'HAS_ACCESSIBLE_VAN'
+                    ? 'Has accessible van'
+                    : requiresWiderParkingSpaceReason === 'MEDICAL_REASONS'
+                    ? 'Medical reasons'
+                    : 'Other - ' + otherRequiresWiderParkingSpaceReason}
                 </Text>
               </Box>
             </>

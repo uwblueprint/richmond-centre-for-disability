@@ -1,9 +1,17 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
+import { useQuery } from '@apollo/client';
+import {
+  GetReviewInformationRequest,
+  GetReviewInformationResponse,
+  GET_REVIEW_INFORMATION_QUERY,
+} from '@components/admin/requests/processing/review-information';
 import DoctorInformationCard from '@components/admin/requests/doctor-information/Card'; // Doctor information card
 import PaymentInformationCard from '@components/admin/requests/payment-information/Card'; // Payment information card
 import PersonalInformationCard from '@components/admin/requests/permit-holder-information/Card'; // Personal information card
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
 import AdditionalInformationCard from '@components/admin/requests/additional-questions/Card';
+import GuardianInformationCard from '@components/admin/permit-holders/guardian-information/Card';
+
 import {
   Modal,
   ModalOverlay,
@@ -17,26 +25,40 @@ import {
   Box,
   VStack,
 } from '@chakra-ui/react'; // Chakra UI
+import { ApplicationType, Guardian } from '@lib/graphql/types';
 
 type ReviewInformationModalProps = {
   readonly children: ReactNode;
   readonly applicationId: number;
-  readonly requestType: string;
   readonly onConfirmed: () => void;
 };
 
 export default function ReviewInformationModalProps({
   children,
   applicationId,
-  requestType,
   onConfirmed,
 }: ReviewInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [applicationType, setApplicationType] = useState<ApplicationType | null>(null);
+  const [applicationGuardian, setApplicationGuardian] = useState<Guardian | null>(null);
+
+  useQuery<GetReviewInformationResponse, GetReviewInformationRequest>(
+    GET_REVIEW_INFORMATION_QUERY,
+    {
+      variables: { id: applicationId },
+      onCompleted: data => {
+        if (data) {
+          setApplicationGuardian(data.application.guardian.guardian || null);
+          setApplicationType(data.application.type);
+        }
+      },
+      notifyOnNetworkStatusChange: true,
+    }
+  );
   return (
     <>
       <Box onClick={onOpen}>{children}</Box>
-
       <Modal
         onClose={onClose}
         isOpen={isOpen}
@@ -44,42 +66,43 @@ export default function ReviewInformationModalProps({
         size="3xl" // TODO: change to custom size
       >
         <ModalOverlay />
-        <form onSubmit={onConfirmed}>
-          <ModalContent paddingX="36px">
-            <ModalHeader
-              textStyle="display-medium-bold"
-              paddingBottom="12px"
-              paddingTop="24px"
-              paddingX="4px"
-            >
-              <Text as="h2" textStyle="display-medium-bold">
-                {'Review Request Information'}
-              </Text>
-            </ModalHeader>
-            <ModalBody paddingY="20px" paddingX="4px">
-              <VStack width="100%" spacing="20px" align="stretch">
-                <PersonalInformationCard applicationId={applicationId} editDisabled />
-                {requestType === 'REPLACEMENT' ? (
-                  <ReasonForReplacementCard applicationId={applicationId} editDisabled />
-                ) : (
-                  <>
-                    <DoctorInformationCard applicationId={applicationId} editDisabled />
-                    <AdditionalInformationCard applicationId={applicationId} />
-                  </>
-                )}
-                <PaymentInformationCard applicationId={applicationId} editDisabled />
-              </VStack>
-            </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingX="4px">
-              <Button colorScheme="gray" variant="solid" onClick={onClose}>
-                {'Cancel'}
-              </Button>
-              <Button variant="solid" type="submit" ml={'12px'}>
-                {'Confirm'}
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </form>
+        <ModalContent paddingX="36px">
+          <ModalHeader
+            textStyle="display-medium-bold"
+            paddingBottom="12px"
+            paddingTop="24px"
+            paddingX="4px"
+          >
+            <Text as="h2" textStyle="display-medium-bold">
+              {'Review Request Information'}
+            </Text>
+          </ModalHeader>
+          <ModalBody paddingY="20px" paddingX="4px">
+            <VStack width="100%" spacing="20px" align="stretch">
+              <PersonalInformationCard applicationId={applicationId} editDisabled />
+              {applicationType === 'REPLACEMENT' ? (
+                <ReasonForReplacementCard applicationId={applicationId} editDisabled />
+              ) : (
+                <>
+                  <DoctorInformationCard applicationId={applicationId} editDisabled />
+                  <AdditionalInformationCard applicationId={applicationId} />
+                  {applicationType === 'NEW' && applicationGuardian && (
+                    <GuardianInformationCard guardian={applicationGuardian} />
+                  )}
+                </>
+              )}
+              <PaymentInformationCard applicationId={applicationId} editDisabled />
+            </VStack>
+          </ModalBody>
+          <ModalFooter paddingBottom="24px" paddingX="4px">
+            <Button colorScheme="gray" variant="solid" onClick={onClose}>
+              {'Cancel'}
+            </Button>
+            <Button variant="solid" onClick={onConfirmed} ml={'12px'}>
+              {'Confirm'}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
       </Modal>
     </>
   );
