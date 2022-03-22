@@ -10,9 +10,11 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
+import { useState, useEffect, ReactNode } from 'react'; // React
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form';
+import { Form, Formik } from 'formik';
+import { permitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
 
 /**
  * Props for Edit Permit Information Modal
@@ -39,9 +41,9 @@ export default function EditPermitHolderInformationModal({
 
   //   TODO: Add error states for each field (post-mvp)
 
-  const handleSubmit = (event: SyntheticEvent) => {
-    event.preventDefault();
-    onSave(permitHolderInformation);
+  const handleSubmit = (values: PermitHolderFormData) => {
+    // event.preventDefault();
+    onSave(values);
     onClose();
   };
 
@@ -65,34 +67,44 @@ export default function EditPermitHolderInformationModal({
       <Box onClick={onOpen}>{children}</Box>
       <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />
-        <form onSubmit={handleSubmit}>
-          <ModalContent paddingX="36px">
-            <ModalHeader
-              textStyle="display-medium-bold"
-              paddingBottom="12px"
-              paddingTop="24px"
-              paddingX="4px"
-            >
-              <Text as="h2" textStyle="display-medium-bold">
-                {'Edit Permit Holder Information'}
-              </Text>
-            </ModalHeader>
-            <ModalBody paddingY="20px" paddingX="4px">
-              <PermitHolderInformationForm
-                permitHolderInformation={permitHolderInformation}
-                onChange={handleChange}
-              />
-            </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingX="4px">
-              <Button colorScheme="gray" variant="solid" onClick={onClose}>
-                {'Cancel'}
-              </Button>
-              <Button variant="solid" type="submit" ml={'12px'}>
-                {'Save'}
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </form>
+        <Formik
+          initialValues={{ ...permitHolderInformation }}
+          validationSchema={permitHolderInformationSchema}
+          onSubmit={handleSubmit}
+        >
+          {() => (
+            <Form style={{ width: '100%' }} noValidate>
+              {/* <form onSubmit={handleSubmit}> */}
+              <ModalContent paddingX="36px">
+                <ModalHeader
+                  textStyle="display-medium-bold"
+                  paddingBottom="12px"
+                  paddingTop="24px"
+                  paddingX="4px"
+                >
+                  <Text as="h2" textStyle="display-medium-bold">
+                    {'Edit Permit Holder Information'}
+                  </Text>
+                </ModalHeader>
+                <ModalBody paddingY="20px" paddingX="4px">
+                  <PermitHolderInformationForm
+                    permitHolderInformation={permitHolderInformation}
+                    onChange={handleChange}
+                  />
+                </ModalBody>
+                <ModalFooter paddingBottom="24px" paddingX="4px">
+                  <Button colorScheme="gray" variant="solid" onClick={onClose}>
+                    {'Cancel'}
+                  </Button>
+                  <Button variant="solid" type="submit" ml={'12px'}>
+                    {'Save'}
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+              {/* </form> */}
+            </Form>
+          )}
+        </Formik>
       </Modal>
     </>
   );
