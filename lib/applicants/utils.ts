@@ -38,7 +38,7 @@ export const getMostRecentPermit = async (applicantId: number): Promise<Permit> 
       take: 1,
     });
 
-  if (!permit) {
+  if (permit.length === 0) {
     throw new Error('Applicant has no permit');
   }
 
