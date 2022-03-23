@@ -43,7 +43,6 @@ export default function ReviewInformationModalProps({
         size="3xl" // TODO: change to custom size
       >
         <ModalOverlay />
-        {/* <form> */}
         <ModalContent paddingX="36px">
           <ModalHeader
             textStyle="display-medium-bold"
@@ -83,7 +82,6 @@ export default function ReviewInformationModalProps({
             </Button>
           </ModalFooter>
         </ModalContent>
-        {/* </form> */}
       </Modal>
     </>
   );

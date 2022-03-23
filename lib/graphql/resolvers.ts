@@ -42,6 +42,7 @@ import {
   updateApplicationProcessingAssignInvoiceNumber,
   updateApplicationProcessingUploadDocuments,
   updateApplicationProcessingMailOut,
+  updateApplicationProcessingReviewRequestInformation,
 } from '@lib/application-processing/resolvers'; // Application processing resolvers
 import { Context } from '@lib/graphql/context'; // Context type
 import { dateScalar } from '@lib/graphql/scalars'; // Custom date scalar implementation
@@ -177,6 +178,10 @@ const resolvers = {
     ),
     updateApplicationProcessingCreateWalletCard: authorize(
       updateApplicationProcessingCreateWalletCard,
+      ['SECRETARY']
+    ),
+    updateApplicationProcessingReviewRequestInformation: authorize(
+      updateApplicationProcessingReviewRequestInformation,
       ['SECRETARY']
     ),
     updateApplicationProcessingAssignInvoiceNumber: authorize(

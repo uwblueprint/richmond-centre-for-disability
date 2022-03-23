@@ -13,6 +13,7 @@ import {
   MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
   MutationUpdateApplicationProcessingMailOutArgs,
   MutationUpdateApplicationProcessingUploadDocumentsArgs,
+  MutationUpdateApplicationProcessingReviewRequestInformationArgs,
   RejectApplicationResult,
   UpdateApplicationProcessingAssignAppNumberResult,
   UpdateApplicationProcessingAssignInvoiceNumberResult,
@@ -20,6 +21,7 @@ import {
   UpdateApplicationProcessingHolepunchParkingPermitResult,
   UpdateApplicationProcessingMailOutResult,
   UpdateApplicationProcessingUploadDocumentsResult,
+  UpdateApplicationProcessingReviewRequestInformationResult,
 } from '@lib/graphql/types';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 
@@ -707,6 +709,43 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
 
   if (!updatedApplicationProcessing) {
     throw new ApolloError('Error updating wallet card create state of application');
+  }
+
+  return { ok: true };
+};
+
+export const updateApplicationProcessingReviewRequestInformation: Resolver<
+  MutationUpdateApplicationProcessingReviewRequestInformationArgs,
+  UpdateApplicationProcessingReviewRequestInformationResult
+> = async (_parent, args, { prisma, session }) => {
+  const { input } = args;
+  const { applicationId, reviewRequestCompleted } = input;
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
+  const { id: employeeId } = session;
+
+  let updatedApplicationProcessing;
+  try {
+    updatedApplicationProcessing = await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        applicationProcessing: {
+          update: {
+            reviewRequestCompleted,
+            reviewRequestEmployee: { connect: { id: employeeId } },
+            reviewRequestCompletedUpdatedAt: new Date(),
+          },
+        },
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicationProcessing) {
+    throw new ApolloError('Error assigning invoice number to application');
   }
 
   return { ok: true };
