@@ -102,7 +102,7 @@ export default function IdentityVerificationForm() {
               validationSchema={verifyIdentitySchema}
               onSubmit={handleSubmit}
             >
-              {({ values }) => (
+              {({ values, isValid }) => (
                 <Form style={{ width: '100%' }} noValidate>
                   <Box marginBottom="48px" textAlign={'left'}>
                     <NumberField
@@ -180,6 +180,7 @@ export default function IdentityVerificationForm() {
                       isLoading={loading}
                       disabled={
                         loading ||
+                        !isValid ||
                         !values.userId ||
                         !values.phoneNumberSuffix ||
                         !values.dateOfBirth
