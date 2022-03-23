@@ -39,8 +39,6 @@ export default function EditPermitHolderInformationModal({
     setPermitHolderInformation(currentPermitHolderInformation);
   }, [currentPermitHolderInformation, isOpen]);
 
-  //   TODO: Add error states for each field (post-mvp)
-
   const handleSubmit = (values: PermitHolderFormData) => {
     // event.preventDefault();
     onSave(values);
@@ -74,7 +72,6 @@ export default function EditPermitHolderInformationModal({
         >
           {() => (
             <Form style={{ width: '100%' }} noValidate>
-              {/* <form onSubmit={handleSubmit}> */}
               <ModalContent paddingX="36px">
                 <ModalHeader
                   textStyle="display-medium-bold"
@@ -101,7 +98,6 @@ export default function EditPermitHolderInformationModal({
                   </Button>
                 </ModalFooter>
               </ModalContent>
-              {/* </form> */}
             </Form>
           )}
         </Formik>

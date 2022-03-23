@@ -17,5 +17,6 @@ export const permitHolderInformationSchema = object({
   city: string().required('Please enter a city'),
   postalCode: string()
     .required('Please enter a valid postal code')
-    .min(7, 'Please enter a valid postal code'),
+    .min(6, 'Please enter a valid postal code')
+    .max(7, 'Please enter a valid postal code'),
 });

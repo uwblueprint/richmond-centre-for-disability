@@ -50,7 +50,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
 
         {props.permitHolderInformation.type === 'NEW' && (
           <Stack direction="row" spacing="20px">
-            <DateField name="dateOfBirth" label="Date of birth" />
+            <DateField name="dateOfBirth" label="Date of birth" required />
             {/* TODO: custom onchange */}
             {/* <FormControl isRequired>
               <FormLabel>{`Date of birth`}</FormLabel>
@@ -74,7 +74,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
 
             {/* TODO: set otherGender if selected option is OTHER */}
             {/* TODO: custom onchange */}
-            <SelectField name="gender" label="Gender" isRequired placeholder="Select gender">
+            <SelectField name="gender" label="Gender" required placeholder="Select gender">
               <option value={'MALE'}>{'Male'}</option>
               <option value={'FEMALE'}>{'Female'}</option>
               <option value={'OTHER'}>{'Other'}</option>
@@ -118,7 +118,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
           </TextField>
 
           {/* TODO: (optional)  text beside label*/}
-          <TextField name="email" label="Email address" />
+          <TextField name="email" label="Email address" labelHelperText="(optional)" />
 
           {/* <FormControl>
             <FormLabel>
@@ -168,8 +168,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
         </Box>
 
         <Box paddingBottom="24px">
-          {/* TODO: (optional) text */}
-          <TextField name="addressLine2" label="Address line 2">
+          <TextField name="addressLine2" label="Address line 2" labelHelperText="(optional)">
             <FormHelperText color="text.secondary">
               {'Apartment, suite, unit, building, floor, etc'}
             </FormHelperText>
