@@ -49,7 +49,19 @@ export default function ReviewInformationModalProps({
       variables: { id: applicationId },
       onCompleted: data => {
         if (data) {
-          setApplicationGuardian(data.application.guardian.guardian || null);
+          setApplicationGuardian({
+            firstName: data.application.guardianFirstName || '',
+            middleName: data.application.guardianMiddleName || '',
+            lastName: data.application.guardianLastName || '',
+            phone: data.application.guardianPhone || '',
+            relationship: data.application.guardianRelationship || '',
+            addressLine1: data.application.guardianAddressLine1 || '',
+            addressLine2: data.application.guardianAddressLine2 || '',
+            city: data.application.guardianCity || '',
+            province: data.application.guardianProvince || 'BC',
+            country: data.application.guardianCountry || '',
+            postalCode: data.application.guardianPostalCode || '',
+          });
           setApplicationType(data.application.type);
         }
       },
