@@ -19,10 +19,12 @@ type Props = {
   readonly applicationId: number;
   readonly isUpdated?: boolean;
   readonly editDisabled?: boolean;
+  /** Whether card is a subsection */
+  readonly isSubsection?: boolean;
 };
 
 const Card: FC<Props> = props => {
-  const { applicationId, isUpdated, editDisabled } = props;
+  const { applicationId, isUpdated, editDisabled, isSubsection } = props;
 
   const [paymentInformation, setPaymentInformation] =
     useState<PaymentInformationCardData | null>(null);
@@ -86,6 +88,7 @@ const Card: FC<Props> = props => {
       header={`Payment, Shipping, and Billing Information`}
       updated={isUpdated}
       divider
+      isSubsection={isSubsection}
       editModal={
         !editDisabled && (
           <EditPaymentDetailsModal paymentInformation={paymentInformation} onSave={handleSave}>
