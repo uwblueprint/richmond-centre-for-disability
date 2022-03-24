@@ -169,6 +169,8 @@ export default function CreateReplacement() {
     });
   };
 
+  const replacementFormSchema = object();
+
   return (
     <Layout>
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">

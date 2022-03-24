@@ -237,6 +237,8 @@ export default function CreateRenewal() {
     });
   };
 
+  const renewalFormSchema = object();
+
   return (
     <Layout>
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
