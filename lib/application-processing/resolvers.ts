@@ -714,6 +714,10 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
   return { ok: true };
 };
 
+/**
+ * Review application information of in-progress application
+ * @returns Status of the operation (ok)
+ */
 export const updateApplicationProcessingReviewRequestInformation: Resolver<
   MutationUpdateApplicationProcessingReviewRequestInformationArgs,
   UpdateApplicationProcessingReviewRequestInformationResult
@@ -736,6 +740,17 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
             reviewRequestCompleted,
             reviewRequestEmployee: { connect: { id: employeeId } },
             reviewRequestCompletedUpdatedAt: new Date(),
+            // Invoice generation and document upload steps should be reset
+            // TODO: Integrate with invoice generation
+            invoiceNumber: null,
+            invoiceNumberEmployee: {
+              disconnect: true,
+            },
+            // TODO: Integrate with document upload
+            documentsUrl: null,
+            documentsUrlEmployee: {
+              disconnect: true,
+            },
           },
         },
       },
@@ -745,7 +760,7 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
   }
 
   if (!updatedApplicationProcessing) {
-    throw new ApolloError('Error assigning invoice number to application');
+    throw new ApolloError('Error updating application review status');
   }
 
   return { ok: true };

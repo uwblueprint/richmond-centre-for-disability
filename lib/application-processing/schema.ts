@@ -98,7 +98,7 @@ export default gql`
     ok: Boolean!
   }
 
-  # Review Request Information for applicant
+  # Review Request Information
   input UpdateApplicationProcessingReviewRequestInformationInput {
     applicationId: Int!
 

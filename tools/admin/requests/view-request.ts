@@ -38,6 +38,7 @@ export type GetApplicationResponse = {
       | 'invoiceNumber'
       | 'documentsUrl'
       | 'appMailed'
+      | 'reviewRequestCompleted'
     >;
   };
 };
