@@ -26,8 +26,6 @@ type Props = {
   readonly contactInfoUpdated?: boolean;
   readonly addressInfoUpdated?: boolean;
   readonly editDisabled?: boolean;
-  /** Whether card is a subsection */
-  readonly isSubsection?: boolean;
 };
 
 // TODO: Updated states
@@ -39,8 +37,7 @@ type Props = {
  * @param addressInfoUpdated Whether address information was updated
  */
 const Card: FC<Props> = props => {
-  const { applicationId, contactInfoUpdated, addressInfoUpdated, editDisabled, isSubsection } =
-    props;
+  const { applicationId, contactInfoUpdated, addressInfoUpdated, editDisabled } = props;
 
   const [permitHolderInformation, setPermitHolderInformation] =
     useState<PermitHolderCardData | null>(null);
@@ -176,12 +173,7 @@ const Card: FC<Props> = props => {
   );
 
   return (
-    <PermitHolderInfoCard
-      colSpan={5}
-      header={Header}
-      editModal={!editDisabled && EditModal}
-      isSubsection={isSubsection}
-    >
+    <PermitHolderInfoCard colSpan={5} header={Header} editModal={!editDisabled && EditModal}>
       <VStack width="100%" spacing="24px" align="left">
         {/* Permit holder information */}
         <VStack spacing="12px" align="left">

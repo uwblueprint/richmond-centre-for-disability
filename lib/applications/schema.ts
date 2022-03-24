@@ -112,17 +112,17 @@ export default gql`
     physicianPostalCode: String!
 
     # Guardian information
-    guardianFirstName: String
+    guardianFirstName: String!
     guardianMiddleName: String
-    guardianLastName: String
-    guardianPhone: String
-    guardianRelationship: String
-    guardianAddressLine1: String
+    guardianLastName: String!
+    guardianPhone: String!
+    guardianRelationship: String!
+    guardianAddressLine1: String!
     guardianAddressLine2: String
-    guardianCity: String
-    guardianProvince: Province
-    guardianCountry: String
-    guardianPostalCode: String
+    guardianCity: String!
+    guardianProvince: Province!
+    guardianCountry: String!
+    guardianPostalCode: String!
     poaFormS3ObjectKey: String
 
     # Additional information

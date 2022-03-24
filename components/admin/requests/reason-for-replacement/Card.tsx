@@ -17,12 +17,10 @@ type ReplacementProps = {
   readonly applicationId: number;
   readonly isUpdated?: boolean;
   readonly editDisabled?: boolean;
-  /** Whether card is a subsection */
-  readonly isSubsection?: boolean;
 };
 
 export default function ReasonForReplacementCard(props: ReplacementProps) {
-  const { applicationId, isUpdated, editDisabled, isSubsection } = props;
+  const { applicationId, isUpdated, editDisabled } = props;
 
   const { data, refetch } = useQuery<
     GetReasonForReplacementResponse,
@@ -76,7 +74,6 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
       header={`Reason For Replacement`}
       updated={isUpdated}
       divider
-      isSubsection={isSubsection}
       editModal={
         !editDisabled && (
           <EditReasonForReplacementModal
