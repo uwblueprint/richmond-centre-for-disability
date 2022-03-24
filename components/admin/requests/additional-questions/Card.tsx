@@ -12,10 +12,12 @@ import {
 type Props = {
   readonly applicationId: number;
   readonly isUpdated?: boolean;
+  /** Whether card is a subsection */
+  isSubsection?: boolean;
 };
 
 const Card: FC<Props> = props => {
-  const { applicationId, isUpdated } = props;
+  const { applicationId, isUpdated, isSubsection } = props;
 
   const [additionalInformation, setAdditionalInformation] =
     useState<AdditionalInformationFormData | null>(null);
@@ -50,6 +52,7 @@ const Card: FC<Props> = props => {
       updated={isUpdated}
       divider
       editModal={false}
+      isSubsection={isSubsection}
     >
       <VStack align="left" spacing="12px">
         <SimpleGrid columns={2} spacingX="70px" spacingY="12px">
