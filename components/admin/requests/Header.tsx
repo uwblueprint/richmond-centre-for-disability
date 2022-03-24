@@ -14,7 +14,6 @@ import Link from 'next/link'; // Link
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Request status badge
 import ApproveRequestModal from '@components/admin/requests/processing/ApproveRequestModal'; // Approve button + modal
 import RejectRequestModal from '@components/admin/requests/processing/RejectRequestModal'; // Reject button + modal
-import CompleteRequestModal from '@components/admin/requests/processing/CompleteModal'; // Mark as complete button + modal
 import { ApplicationStatus, ApplicationType } from '@lib/graphql/types';
 
 type RequestHeaderProps = {
@@ -22,7 +21,6 @@ type RequestHeaderProps = {
   readonly applicationStatus?: ApplicationStatus;
   readonly applicationType: ApplicationType;
   readonly createdAt: Date;
-  readonly allStepsCompleted: boolean;
 };
 
 /**
@@ -35,7 +33,6 @@ export default function RequestHeader({
   applicationId,
   applicationStatus,
   createdAt,
-  allStepsCompleted,
   applicationType,
 }: RequestHeaderProps) {
   /**
@@ -56,12 +53,6 @@ export default function RequestHeader({
               <Button>Approve</Button>
             </ApproveRequestModal>
           </HStack>
-        );
-      case 'IN_PROGRESS':
-        return (
-          <CompleteRequestModal applicationId={applicationId}>
-            <Button disabled={!allStepsCompleted}>Mark as complete</Button>
-          </CompleteRequestModal>
         );
       default:
         return null;

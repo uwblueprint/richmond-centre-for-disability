@@ -1,6 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
-import { GridItem, VStack } from '@chakra-ui/react'; // Chakra UI
+import { GridItem, VStack, Box, Stack, Button, Text } from '@chakra-ui/react'; // Chakra UI
+import Link from 'next/link'; // Next Link
 import Layout from '@components/admin/Layout'; // Layout component
 import RequestHeader from '@components/admin/requests/Header'; // Request header
 import DoctorInformationCard from '@components/admin/requests/doctor-information/Card'; // Doctor information card
@@ -15,6 +16,7 @@ import {
   GetApplicationResponse,
 } from '@tools/admin/requests/view-request'; // Request page GraphQL queries
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
+import CompleteRequestModal from '@components/admin/requests/processing/CompleteModal'; // Mark as complete button + modal
 
 type Props = {
   readonly id: string;
@@ -68,7 +70,6 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           applicationStatus={status}
           applicationType={type}
           createdAt={new Date(createdAt)}
-          allStepsCompleted={allStepsCompleted}
         />
       </GridItem>
       <GridItem colStart={1} colSpan={5} textAlign="left">
@@ -84,6 +85,56 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           <PaymentInformationCard applicationId={id} />
         </VStack>
       </GridItem>
+      {status == 'IN_PROGRESS' && (
+          <Box
+            position="fixed"
+            left="0"
+            bottom="0"
+            right="0"
+            paddingY="20px"
+            paddingX="150px"
+            bgColor="white"
+            boxShadow="dark-lg"
+          >
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Box>
+              <Stack direction="row" justifyContent="space-between">
+                  <Link href={`/admin`}>
+                    <a>
+                      <Button
+                        bg="background.gray"
+                        _hover={{ bg: 'background.grayHover' }}
+                        marginRight="20px"
+                        height="48px"
+                        width="280px"
+                      >
+                        <Text textStyle="button-semibold" color="text.default">
+                          View permit holder page
+                        </Text>
+                      </Button>
+                    </a>
+                  </Link>
+                </Stack>
+              </Box>
+              <Box>
+                <Stack direction="row" justifyContent="space-between">
+                  <CompleteRequestModal isDisabled={allStepsCompleted} applicationId={id}>
+                    <Button
+                      bg="primary"
+                      height="48px"
+                      width="217px"
+                      type="submit"
+                      disabled={!allStepsCompleted}
+                      onClick={() => console.log(1)}
+                    >
+                      <Text textStyle="button-semibold">Complete request</Text>
+                    </Button>
+                  </CompleteRequestModal>
+                </Stack>
+              </Box>
+            </Stack>
+          </Box>
+        )}
     </Layout>
   );
 };

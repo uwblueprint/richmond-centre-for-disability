@@ -21,11 +21,13 @@ import { ReactNode } from 'react'; // React JSX Type
 type CompleteRequestModalProps = {
   readonly applicationId: number;
   readonly children: ReactNode;
+  readonly isDisabled: boolean;
 };
 
 export default function CompleteRequestModal({
   applicationId,
   children,
+  isDisabled,
 }: CompleteRequestModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -39,7 +41,7 @@ export default function CompleteRequestModal({
 
   return (
     <>
-      <Box onClick={onOpen}>{children}</Box>
+      <Box onClick={() => {if (isDisabled) { onOpen(); }}}>{children}</Box>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
