@@ -13,7 +13,7 @@ type Props = {
   readonly applicationId: number;
   readonly isUpdated?: boolean;
   /** Whether card is a subsection */
-  isSubsection?: boolean;
+  readonly isSubsection?: boolean;
 };
 
 const Card: FC<Props> = props => {
