@@ -175,5 +175,6 @@ export default gql`
   enum VerifyIdentityFailureReason {
     IDENTITY_VERIFICATION_FAILED
     APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS
+    USER_HOLDS_TEMPORARY_PERMIT
   }
 `;

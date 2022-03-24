@@ -1,7 +1,6 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
-import { InvalidPhoneNumberSuffixLengthError } from '@lib/applicants/errors'; // Applicant errors
-import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
+import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import {
   Applicant,
   MutationSetApplicantAsActiveArgs,
@@ -21,6 +20,8 @@ import {
 } from '@lib/graphql/types'; // GraphQL types
 import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
+import { PermitType } from '@prisma/client';
+import { verifyIdentitySchema } from '@lib/applicants/verify-identity/validation';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -402,11 +403,9 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     input: { userId, phoneNumberSuffix, dateOfBirth, acceptedTos },
   } = args;
 
-  // Phone number suffix must be of length 4
-  if (phoneNumberSuffix.length != 4) {
-    throw new InvalidPhoneNumberSuffixLengthError(
-      'Last 4 digits of phone number must be 4 digits long'
-    );
+  if (!verifyIdentitySchema.isValidSync({ userId, phoneNumberSuffix, dateOfBirth })) {
+    // Yup validation failure
+    throw new Error('Invalid input');
   }
 
   // Retrieve applicant with matching info
@@ -442,10 +441,10 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     };
   }
 
-  // Verify that active permit exists and is expiring within 30 days
-  const activePermit = await getActivePermit(applicant.id);
+  const mostRecentPermit = await getMostRecentPermit(applicant.id);
 
-  if (activePermit === null) {
+  // Note: 30 days = 30 * 24 * 60 * 60 * 1000 milliseconds
+  if (mostRecentPermit.expiryDate.getTime() - new Date().getTime() > 30 * 24 * 60 * 60 * 1000) {
     return {
       ok: false,
       failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS',
@@ -453,11 +452,11 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     };
   }
 
-  // Note: 30 days = 30 * 24 * 60 * 60 * 1000 milliseconds
-  if (activePermit.expiryDate.getTime() - new Date().getTime() > 30 * 24 * 60 * 60 * 1000) {
+  // Temporary permit cannot be renewed
+  if (mostRecentPermit.type === PermitType.TEMPORARY) {
     return {
       ok: false,
-      failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS',
+      failureReason: 'USER_HOLDS_TEMPORARY_PERMIT',
       applicantId: null,
     };
   }

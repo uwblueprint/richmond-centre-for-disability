@@ -1338,7 +1338,8 @@ export type UpsertPhysicianResult = {
 
 export type VerifyIdentityFailureReason =
   | 'IDENTITY_VERIFICATION_FAILED'
-  | 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS';
+  | 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS'
+  | 'USER_HOLDS_TEMPORARY_PERMIT';
 
 export type VerifyIdentityInput = {
   userId: Scalars['Int'];
