@@ -15,7 +15,6 @@ export const generateApplicationInvoicePdf = (
   session: Session,
   invoiceNumber: number
 ): void => {
-  // TODO: applicant may be null, look into creating applicant for new applications during create API
   const {
     applicantId,
     firstName,
@@ -67,7 +66,7 @@ export const generateApplicationInvoicePdf = (
 
   const definition = pdfDefinition(
     applicantName,
-    applicantId as number,
+    applicantId,
     permitType,
     invoiceNumber,
     new Date(),
@@ -92,7 +91,7 @@ export const generateApplicationInvoicePdf = (
 /** PDF generation schema */
 const pdfDefinition = (
   applicantName: string,
-  userNumber: number,
+  userNumber: number | null,
   permitType: string,
   receiptNumber: number,
   dateIssued: Date,
@@ -118,7 +117,6 @@ const pdfDefinition = (
       columns: [
         {
           image: 'rcd',
-          // margin: [-40, 0, 0, 0],
         },
         {
           text: [
@@ -135,7 +133,7 @@ const pdfDefinition = (
         heights: 20,
         body: [
           [{ text: 'Client Name:', alignment: 'right' }, applicantName],
-          [{ text: 'User No.:', alignment: 'right' }, userNumber],
+          [{ text: 'User No.:', alignment: 'right' }, userNumber || 'N/A'],
           [{ text: 'Permit Type:', alignment: 'right' }, permitType],
           [{ text: 'Receipt No.:', alignment: 'right' }, receiptNumber],
           [{ text: 'Date Issued:', alignment: 'right' }, formatDate(dateIssued)],
@@ -193,7 +191,7 @@ const pdfDefinition = (
     {
       text: [
         `${applicantName}\n`,
-        `${address.addressLine2 ? `${address.addressLine2} - ` : ''}${address.addressLine1}`,
+        `${address.addressLine2 ? `${address.addressLine2} - ` : ''}${address.addressLine1}\n`,
         `${address.city} ${address.province} ${formatPostalCode(address.postalCode)}`,
       ],
       alignment: 'left',
