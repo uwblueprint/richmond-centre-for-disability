@@ -1,10 +1,12 @@
-import { object, string } from 'yup';
-
+import { object, boolean, string } from 'yup';
 /**
- * Expanded Guardian/POA validation schema
+ * Entire Guardian/POA validation schema
  */
-
 export const guardianSchema = object({
+  omitGuardianPoa: boolean(),
+});
+
+export const guardianDetailsSchema = object({
   firstName: string()
     .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
     .required('Please enter a first name'),
@@ -24,4 +26,5 @@ export const guardianSchema = object({
   postalCode: string()
     .length(7, 'Must be a valid postal code')
     .required('Please enter a postal code'),
+  ...guardianSchema.fields,
 });
