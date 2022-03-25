@@ -120,6 +120,9 @@ const Card: FC<Props> = props => {
         </VStack>
         <Divider />
         <VStack spacing="12px" align="left">
+          <Text as="h4" textStyle="body-bold">
+            Address
+          </Text>
           <Address address={{ addressLine1, addressLine2, city, province, country, postalCode }} />
         </VStack>
       </VStack>
