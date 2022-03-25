@@ -129,8 +129,6 @@ export type ApplicationProcessing = {
   reviewRequestCompletedEmployeeId: Maybe<Scalars['Int']>;
   reviewRequestCompletedUpdatedAt: Maybe<Scalars['Date']>;
   invoiceNumber: Maybe<Scalars['Int']>;
-  invoiceNumberEmployeeId: Maybe<Scalars['Int']>;
-  invoiceNumberUpdatedAt: Maybe<Scalars['Date']>;
   documentsUrl: Maybe<Scalars['String']>;
   documentsUrlEmployeeId: Maybe<Scalars['Int']>;
   documentsUrlUpdatedAt: Maybe<Scalars['Date']>;
@@ -732,17 +730,17 @@ export type NewApplication = Application & {
   physicianProvince: Province;
   physicianCountry: Scalars['String'];
   physicianPostalCode: Scalars['String'];
-  guardianFirstName: Scalars['String'];
+  guardianFirstName: Maybe<Scalars['String']>;
   guardianMiddleName: Maybe<Scalars['String']>;
-  guardianLastName: Scalars['String'];
-  guardianPhone: Scalars['String'];
-  guardianRelationship: Scalars['String'];
-  guardianAddressLine1: Scalars['String'];
+  guardianLastName: Maybe<Scalars['String']>;
+  guardianPhone: Maybe<Scalars['String']>;
+  guardianRelationship: Maybe<Scalars['String']>;
+  guardianAddressLine1: Maybe<Scalars['String']>;
   guardianAddressLine2: Maybe<Scalars['String']>;
-  guardianCity: Scalars['String'];
-  guardianProvince: Province;
-  guardianCountry: Scalars['String'];
-  guardianPostalCode: Scalars['String'];
+  guardianCity: Maybe<Scalars['String']>;
+  guardianProvince: Maybe<Province>;
+  guardianCountry: Maybe<Scalars['String']>;
+  guardianPostalCode: Maybe<Scalars['String']>;
   poaFormS3ObjectKey: Maybe<Scalars['String']>;
   usesAccessibleConvertedVan: Scalars['Boolean'];
   accessibleConvertedVanLoadingMethod: Maybe<AccessibleConvertedVanLoadingMethod>;
@@ -1233,7 +1231,7 @@ export type UpdateApplicationProcessingAssignAppNumberResult = {
 
 export type UpdateApplicationProcessingAssignInvoiceNumberInput = {
   applicationId: Scalars['Int'];
-  invoiceNumber: Maybe<Scalars['Int']>;
+  invoiceNumber: Scalars['Int'];
 };
 
 export type UpdateApplicationProcessingAssignInvoiceNumberResult = {
@@ -1359,7 +1357,8 @@ export type UpsertPhysicianResult = {
 
 export type VerifyIdentityFailureReason =
   | 'IDENTITY_VERIFICATION_FAILED'
-  | 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS';
+  | 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS'
+  | 'USER_HOLDS_TEMPORARY_PERMIT';
 
 export type VerifyIdentityInput = {
   userId: Scalars['Int'];

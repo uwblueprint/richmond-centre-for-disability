@@ -9,6 +9,8 @@ type PermitHolderInfoCardProps = GridItemProps & {
   alignGridItems?: string;
   /** Whether to show a divider under the header */
   divider?: boolean;
+  /** Whether card is a subsection */
+  isSubsection?: boolean;
 };
 
 /**
@@ -17,7 +19,7 @@ type PermitHolderInfoCardProps = GridItemProps & {
  * @returns custom Card.
  */
 export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
-  const { children, header, updated, editModal, alignGridItems, divider } = props;
+  const { children, header, updated, editModal, alignGridItems, divider, isSubsection } = props;
   return (
     <GridItem
       display="flex"
@@ -27,6 +29,7 @@ export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
       background="white"
       border="1px solid"
       borderColor="border.secondary"
+      borderStyle={isSubsection ? 'dashed' : undefined}
       boxSizing="border-box"
       borderRadius="8px"
       {...props}

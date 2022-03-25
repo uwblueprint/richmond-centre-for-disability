@@ -5,32 +5,31 @@ import {
   FormErrorMessage,
   FormLabel,
   Text,
-  Input,
-  InputProps,
+  Textarea,
+  TextareaProps,
 } from '@chakra-ui/react';
 
-type Props = InputProps & {
+type Props = TextareaProps & {
   readonly name: string;
   readonly label: string;
   readonly required?: boolean;
 };
 
-const TextField: FC<Props> = props => {
-  const { name, label, required, children, ...inputProps } = props;
+const TextArea: FC<Props> = props => {
+  const { name, label, required, ...textAreaProps } = props;
   const [field, meta] = useField(name);
 
   return (
     <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
       <FormLabel htmlFor={name}>{label}</FormLabel>
-      <Input {...field} {...inputProps} />
+      <Textarea {...textAreaProps} {...field} />
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">
           {meta.touched && meta.error ? meta.error : null}
         </Text>
       </FormErrorMessage>
-      {children}
     </FormControl>
   );
 };
 
-export default TextField;
+export default TextArea;

@@ -20,10 +20,12 @@ type Props = {
   readonly applicationId: number;
   readonly isUpdated?: boolean;
   readonly editDisabled?: boolean;
+  /** Whether card is a subsection */
+  readonly isSubsection?: boolean;
 };
 
 const Card: FC<Props> = props => {
-  const { applicationId, isUpdated, editDisabled } = props;
+  const { applicationId, isUpdated, editDisabled, isSubsection } = props;
 
   const [doctorInformation, setDoctorInformation] = useState<DoctorCardData | null>(null);
 
@@ -81,6 +83,7 @@ const Card: FC<Props> = props => {
       header={`Doctor's Information`}
       updated={isUpdated}
       divider
+      isSubsection={isSubsection}
       editModal={
         !editDisabled && (
           <EditDoctorInformationModal
@@ -117,6 +120,9 @@ const Card: FC<Props> = props => {
         </VStack>
         <Divider />
         <VStack spacing="12px" align="left">
+          <Text as="h4" textStyle="body-bold">
+            Address
+          </Text>
           <Address address={{ addressLine1, addressLine2, city, province, country, postalCode }} />
         </VStack>
       </VStack>

@@ -15,14 +15,14 @@ type Props = InputProps & {
   readonly required?: boolean;
 };
 
-const TextField: FC<Props> = props => {
+const DateField: FC<Props> = props => {
   const { name, label, required, children, ...inputProps } = props;
   const [field, meta] = useField(name);
 
   return (
     <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
       <FormLabel htmlFor={name}>{label}</FormLabel>
-      <Input {...field} {...inputProps} />
+      <Input type="date" {...field} {...inputProps} />
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">
           {meta.touched && meta.error ? meta.error : null}
@@ -33,4 +33,4 @@ const TextField: FC<Props> = props => {
   );
 };
 
-export default TextField;
+export default DateField;

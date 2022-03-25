@@ -22,8 +22,6 @@ export default gql`
     reviewRequestCompletedEmployeeId: Int
     reviewRequestCompletedUpdatedAt: Date
     invoiceNumber: Int
-    invoiceNumberEmployeeId: Int
-    invoiceNumberUpdatedAt: Date
     documentsUrl: String
     documentsUrlEmployeeId: Int
     documentsUrlUpdatedAt: Date
@@ -113,7 +111,7 @@ export default gql`
   input UpdateApplicationProcessingAssignInvoiceNumberInput {
     applicationId: Int!
 
-    invoiceNumber: Int
+    invoiceNumber: Int!
   }
 
   type UpdateApplicationProcessingAssignInvoiceNumberResult {
