@@ -239,7 +239,6 @@ CREATE TABLE application_processing (
   FOREIGN KEY(app_holepunched_employee_id) REFERENCES employees(id),
   FOREIGN KEY(wallet_card_created_employee_id) REFERENCES employees(id),
   FOREIGN KEY(review_request_completed_employee_id) REFERENCES employees(id),
-  FOREIGN KEY(invoice_number_employee_id) REFERENCES employees(id),
   FOREIGN KEY(invoice_number) REFERENCES application_invoices(invoice_number),
   FOREIGN KEY(documents_url_employee_id) REFERENCES employees(id),
   FOREIGN KEY(app_mailed_employee_id) REFERENCES employees(id)
