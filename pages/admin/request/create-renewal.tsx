@@ -237,6 +237,7 @@ export default function CreateRenewal() {
     });
   };
 
+  // TODO: move to a different file
   const renewalFormSchema = object();
 
   return (
