@@ -317,6 +317,9 @@ export default function CreateNew() {
     });
   };
 
+  // TODO: move to a different file
+  const createNewFormSchema = object();
+
   return (
     <Layout>
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
