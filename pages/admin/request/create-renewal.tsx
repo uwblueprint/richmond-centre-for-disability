@@ -310,7 +310,6 @@ export default function CreateRenewal() {
         )}
         {/* Permit Holder Information Form */}
         {applicantId && currentPageState == RequestFlowPageState.SubmittingRequestPage && (
-          // <form onSubmit={handleSubmit}>
           <Formik
             initialValues={{ ...permitHolderInformation }}
             validationSchema={renewalFormSchema}
@@ -466,7 +465,6 @@ export default function CreateRenewal() {
                 </Stack>
               </Box>
             </Form>
-            {/* </form> */}
           </Formik>
         )}
         {/* Footer on Permit Searcher Page*/}
