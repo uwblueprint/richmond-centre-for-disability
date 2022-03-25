@@ -1,4 +1,4 @@
-import { useState, useCallback, SyntheticEvent } from 'react';
+import { useState, useCallback } from 'react';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import {
@@ -54,6 +54,8 @@ import {
 import { useRouter } from 'next/router';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { uploadToS3 } from '@lib/utils/upload-to-s3';
+import { Form, Formik } from 'formik';
+import { object } from 'yup';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -246,9 +248,7 @@ export default function CreateNew() {
   /**
    * Handle new APP request submission
    */
-  const handleSubmit = async (event: SyntheticEvent) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     let poaFormS3ObjectKey = '';
     if (guardianPOAFile) {
       try {
@@ -362,6 +362,9 @@ export default function CreateNew() {
       },
     });
   };
+
+  // TODO: move to a different file
+  const createNewFormSchema = object();
 
   return (
     <Layout>
@@ -487,179 +490,186 @@ export default function CreateNew() {
 
         {/* Forms step */}
         {step === RequestFlowPageState.SubmittingRequestPage && (
-          <form onSubmit={handleSubmit}>
-            <VStack spacing="32px">
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Permit Holder's Information`}
-                </Text>
-                <PermitHolderInformationForm
-                  permitHolderInformation={{ ...permitHolderInformation, type: 'NEW' }}
-                  onChange={updatedPermitHolder => {
-                    if (updatedPermitHolder.type === 'NEW') {
-                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                      const { type, ...permitHolder } = updatedPermitHolder;
-                      setPermitHolderInformation(permitHolder);
-                    }
-                  }}
-                />
-              </Box>
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Physician's Assessment`}
-                </Text>
-                <PhysicianAssessmentForm
-                  physicianAssessment={physicianAssessment}
-                  onChange={setPhysicianAssessment}
-                />
-              </Box>
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Doctor's Information`}
-                </Text>
-                <DoctorInformationForm
-                  doctorInformation={doctorInformation}
-                  onChange={setDoctorInformation}
-                />
-              </Box>
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Guardian/POA Information`}
-                </Text>
-                <GuardianInformationForm
-                  guardianInformation={guardianInformation}
-                  onChange={setGuardianInformation}
-                  file={guardianPOAFile}
-                  onUploadFile={setGuardianPOAFile}
-                />
-              </Box>
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Additional Information`}
-                </Text>
-                <AdditionalQuestionsForm
-                  data={additionalQuestions}
-                  onChange={setAdditionalQuestions}
-                />
-              </Box>
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Payment, Shipping and Billing Information`}
-                </Text>
-                <PaymentDetailsForm
-                  paymentInformation={paymentDetails}
-                  onChange={setPaymentDetails}
-                />
-              </Box>
-            </VStack>
-            <Box
-              position="fixed"
-              left="0"
-              bottom="0"
-              right="0"
-              paddingY="20px"
-              paddingX="188px"
-              bgColor="white"
-              boxShadow="dark-lg"
-            >
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Box>
-                  <Button
-                    bg="background.gray"
-                    _hover={{ bg: 'background.grayHover' }}
-                    marginRight="20px"
-                    height="48px"
-                    width="180px"
-                    isDisabled={submitRequestLoading}
-                  >
-                    <BackToSearchModal
-                      onGoBack={() => {
-                        resetAllFields();
-                        setStep(RequestFlowPageState.SelectingPermitHolderPage);
-                      }}
-                    >
-                      <Text textStyle="button-semibold" color="text.default">
-                        Back to search
-                      </Text>
-                    </BackToSearchModal>
-                  </Button>
+          // <form onSubmit={handleSubmit}>
+          <Formik
+            initialValues={{ ...permitHolderInformation }}
+            validationSchema={createNewFormSchema}
+            onSubmit={handleSubmit}
+          >
+            <Form noValidate>
+              <VStack spacing="32px">
+                <Box
+                  w="100%"
+                  p="40px"
+                  border="1px solid"
+                  borderColor="border.secondary"
+                  borderRadius="12px"
+                  bgColor="white"
+                  align="left"
+                >
+                  <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                    {`Permit Holder's Information`}
+                  </Text>
+                  <PermitHolderInformationForm
+                    permitHolderInformation={{ ...permitHolderInformation, type: 'NEW' }}
+                    onChange={updatedPermitHolder => {
+                      if (updatedPermitHolder.type === 'NEW') {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const { type, ...permitHolder } = updatedPermitHolder;
+                        setPermitHolderInformation(permitHolder);
+                      }
+                    }}
+                  />
                 </Box>
-                <Box>
-                  <Stack direction="row" justifyContent="space-between">
-                    <CancelCreateRequestModal type="renewal">
-                      <Button
-                        bg="secondary.critical"
-                        _hover={{ bg: 'secondary.criticalHover' }}
-                        marginRight="20px"
-                        height="48px"
-                        width="188px"
-                        isDisabled={submitRequestLoading}
-                      >
-                        <Text textStyle="button-semibold">Discard request</Text>
-                      </Button>
-                    </CancelCreateRequestModal>
+                <Box
+                  w="100%"
+                  p="40px"
+                  border="1px solid"
+                  borderColor="border.secondary"
+                  borderRadius="12px"
+                  bgColor="white"
+                  align="left"
+                >
+                  <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                    {`Physician's Assessment`}
+                  </Text>
+                  <PhysicianAssessmentForm
+                    physicianAssessment={physicianAssessment}
+                    onChange={setPhysicianAssessment}
+                  />
+                </Box>
+                <Box
+                  w="100%"
+                  p="40px"
+                  border="1px solid"
+                  borderColor="border.secondary"
+                  borderRadius="12px"
+                  bgColor="white"
+                  align="left"
+                >
+                  <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                    {`Doctor's Information`}
+                  </Text>
+                  <DoctorInformationForm
+                    doctorInformation={doctorInformation}
+                    onChange={setDoctorInformation}
+                  />
+                </Box>
+                <Box
+                  w="100%"
+                  p="40px"
+                  border="1px solid"
+                  borderColor="border.secondary"
+                  borderRadius="12px"
+                  bgColor="white"
+                  align="left"
+                >
+                  <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                    {`Guardian/POA Information`}
+                  </Text>
+                  <GuardianInformationForm
+                    guardianInformation={guardianInformation}
+                    onChange={setGuardianInformation}
+                    file={guardianPOAFile}
+                    onUploadFile={setGuardianPOAFile}
+                  />
+                </Box>
+                <Box
+                  w="100%"
+                  p="40px"
+                  border="1px solid"
+                  borderColor="border.secondary"
+                  borderRadius="12px"
+                  bgColor="white"
+                  align="left"
+                >
+                  <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                    {`Additional Information`}
+                  </Text>
+                  <AdditionalQuestionsForm
+                    data={additionalQuestions}
+                    onChange={setAdditionalQuestions}
+                  />
+                </Box>
+                <Box
+                  w="100%"
+                  p="40px"
+                  border="1px solid"
+                  borderColor="border.secondary"
+                  borderRadius="12px"
+                  bgColor="white"
+                  align="left"
+                >
+                  <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                    {`Payment, Shipping and Billing Information`}
+                  </Text>
+                  <PaymentDetailsForm
+                    paymentInformation={paymentDetails}
+                    onChange={setPaymentDetails}
+                  />
+                </Box>
+              </VStack>
+              <Box
+                position="fixed"
+                left="0"
+                bottom="0"
+                right="0"
+                paddingY="20px"
+                paddingX="188px"
+                bgColor="white"
+                boxShadow="dark-lg"
+              >
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Box>
                     <Button
-                      bg="primary"
+                      bg="background.gray"
+                      _hover={{ bg: 'background.grayHover' }}
+                      marginRight="20px"
                       height="48px"
                       width="180px"
-                      type="submit"
-                      isLoading={submitRequestLoading}
+                      isDisabled={submitRequestLoading}
                     >
-                      <Text textStyle="button-semibold">Create request</Text>
+                      <BackToSearchModal
+                        onGoBack={() => {
+                          resetAllFields();
+                          setStep(RequestFlowPageState.SelectingPermitHolderPage);
+                        }}
+                      >
+                        <Text textStyle="button-semibold" color="text.default">
+                          Back to search
+                        </Text>
+                      </BackToSearchModal>
                     </Button>
-                  </Stack>
-                </Box>
-              </Stack>
-            </Box>
-          </form>
+                  </Box>
+                  <Box>
+                    <Stack direction="row" justifyContent="space-between">
+                      <CancelCreateRequestModal type="renewal">
+                        <Button
+                          bg="secondary.critical"
+                          _hover={{ bg: 'secondary.criticalHover' }}
+                          marginRight="20px"
+                          height="48px"
+                          width="188px"
+                          isDisabled={submitRequestLoading}
+                        >
+                          <Text textStyle="button-semibold">Discard request</Text>
+                        </Button>
+                      </CancelCreateRequestModal>
+                      <Button
+                        bg="primary"
+                        height="48px"
+                        width="180px"
+                        type="submit"
+                        isLoading={submitRequestLoading}
+                      >
+                        <Text textStyle="button-semibold">Create request</Text>
+                      </Button>
+                    </Stack>
+                  </Box>
+                </Stack>
+              </Box>
+            </Form>
+          </Formik>
         )}
         {/* Footer on Permit Searcher Page*/}
         {step == RequestFlowPageState.SelectingPermitHolderPage && (

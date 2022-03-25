@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent } from 'react'; // React
+import { useState } from 'react'; // React
 import { GetServerSideProps } from 'next';
 import Link from 'next/link'; // Link component
 import { getSession } from 'next-auth/client'; // Session management
@@ -171,8 +171,7 @@ export default function CreateReplacement() {
   });
 
   /** Handle replacement application submission */
-  const handleSubmit = async (event: SyntheticEvent) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
     if (applicantId === null) {
       toast({
         status: 'error',
@@ -253,7 +252,6 @@ export default function CreateReplacement() {
         )}
 
         {applicantId && currentPageState == RequestFlowPageState.SubmittingRequestPage && (
-          // <form onSubmit={handleSubmit}>
           <Formik
             initialValues={{ ...permitHolderInformation }}
             validationSchema={replacementFormSchema}
