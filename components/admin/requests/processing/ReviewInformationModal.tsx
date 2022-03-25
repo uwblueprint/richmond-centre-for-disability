@@ -120,7 +120,14 @@ export default function ReviewInformationModalProps({
             <Button colorScheme="gray" variant="solid" onClick={onClose}>
               {'Cancel'}
             </Button>
-            <Button variant="solid" onClick={onConfirmed} ml={'12px'}>
+            <Button
+              variant="solid"
+              onClick={() => {
+                onConfirmed();
+                onClose();
+              }}
+              ml={'12px'}
+            >
               {'Confirm'}
             </Button>
           </ModalFooter>
