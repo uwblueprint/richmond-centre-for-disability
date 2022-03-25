@@ -742,8 +742,7 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
             reviewRequestCompletedUpdatedAt: new Date(),
             // Invoice generation and document upload steps should be reset
             // TODO: Integrate with invoice generation
-            invoiceNumber: null,
-            invoiceNumberEmployee: {
+            applicationInvoice: {
               disconnect: true,
             },
             // TODO: Integrate with document upload
