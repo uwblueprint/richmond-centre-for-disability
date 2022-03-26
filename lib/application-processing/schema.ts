@@ -107,14 +107,12 @@ export default gql`
     ok: Boolean!
   }
 
-  # Assign invoice number to application
-  input UpdateApplicationProcessingAssignInvoiceNumberInput {
+  # Generate invoice PDF for application
+  input UpdateApplicationProcessingGenerateInvoiceInput {
     applicationId: Int!
-
-    invoiceNumber: Int!
   }
 
-  type UpdateApplicationProcessingAssignInvoiceNumberResult {
+  type UpdateApplicationProcessingGenerateInvoiceResult {
     ok: Boolean!
   }
 

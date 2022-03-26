@@ -39,7 +39,7 @@ import {
   updateApplicationProcessingAssignAppNumber,
   updateApplicationProcessingHolepunchParkingPermit,
   updateApplicationProcessingCreateWalletCard,
-  updateApplicationProcessingAssignInvoiceNumber,
+  updateApplicationProcessingGenerateInvoice,
   updateApplicationProcessingUploadDocuments,
   updateApplicationProcessingMailOut,
   updateApplicationProcessingReviewRequestInformation,
@@ -67,6 +67,7 @@ import {
   generateAccountantReport,
 } from '@lib/reports/resolvers';
 import { permitApplicationResolver } from '@lib/permits/field-resolvers';
+import { invoiceEmployeeResolver } from '@lib/invoices/field-resolvers';
 
 /**
  * Resolver return type - accounts for extra fields
@@ -184,8 +185,8 @@ const resolvers = {
       updateApplicationProcessingReviewRequestInformation,
       ['SECRETARY']
     ),
-    updateApplicationProcessingAssignInvoiceNumber: authorize(
-      updateApplicationProcessingAssignInvoiceNumber,
+    updateApplicationProcessingGenerateInvoice: authorize(
+      updateApplicationProcessingGenerateInvoice,
       ['SECRETARY']
     ),
     updateApplicationProcessingUploadDocuments: authorize(
@@ -235,6 +236,9 @@ const resolvers = {
   },
   Permit: {
     application: permitApplicationResolver,
+  },
+  Invoice: {
+    employee: invoiceEmployeeResolver,
   },
 };
 

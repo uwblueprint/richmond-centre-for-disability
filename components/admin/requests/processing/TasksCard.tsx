@@ -7,6 +7,9 @@ import {
   AssignAppNumberRequest,
   AssignAppNumberResponse,
   ASSIGN_APP_NUMBER_MUTATION,
+  GenerateInvoiceRequest,
+  GenerateInvoiceResponse,
+  GENERATE_INVOICE_MUTATION,
   CreateWalletCardRequest,
   CreateWalletCardResponse,
   CREATE_WALLET_CARD_MUTATION,
@@ -22,9 +25,6 @@ import {
   REVIEW_REQUEST_INFORMATION_MUTATION,
   ReviewRequestInformationRequest,
   ReviewRequestInformationResponse,
-  AssignInvoiceNumberResponse,
-  AssignInvoiceNumberRequest,
-  ASSIGN_INVOICE_NUMBER_MUTATION,
   UploadDocumentsResponse,
   UploadDocumentsRequest,
   UPLOAD_DOCUMENTS_MUTATION,
@@ -83,15 +83,11 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
-  // TODO: Update with invoice generation
-  const [assignInvoiceNumber] = useMutation<
-    AssignInvoiceNumberResponse,
-    AssignInvoiceNumberRequest
-  >(ASSIGN_INVOICE_NUMBER_MUTATION);
-  const handleAssignInvoiceNumber = async (invoiceNumber: number) => {
-    // TODO: we need to generate the invoice first before assigning.
+  const [generateInvoice] =
+    useMutation<GenerateInvoiceResponse, GenerateInvoiceRequest>(GENERATE_INVOICE_MUTATION);
+  const handleGenerateInvoice = async () => {
     // Ideally we call an endpoint to generate it and then pass the returned invoice number
-    await assignInvoiceNumber({ variables: { input: { applicationId, invoiceNumber } } });
+    await generateInvoice({ variables: { input: { applicationId } } });
     refetch();
   };
 
@@ -237,7 +233,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             applicationId={applicationId}
             onConfirmed={() => handleReviewRequestInformation(true)}
             onUndo={() => {
-              handleMailOut(false);
               handleReviewRequestInformation(false);
             }}
           />
@@ -250,32 +245,20 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           description="Invoice number will be automatically assigned"
           isCompleted={invoiceNumber !== null}
         >
-          {invoiceNumber !== null ? (
-            <Button
-              color={'blue'}
-              variant="ghost"
-              textDecoration="underline black"
-              // TODO: Integrate with invoice generation
-              onClick={() => {}} // eslint-disable-line @typescript-eslint/no-empty-function
-            >
-              <Text textStyle="caption" color="black">
-                Undo
-              </Text>
-            </Button>
-          ) : (
+          {invoiceNumber === null ? (
             <Button
               marginLeft="auto"
               height="35px"
               bg="background.gray"
-              _hover={{ bg: 'background.grayHover' }}
-              color="black"
+              _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
               disabled={!reviewRequestCompleted}
-              // TODO: Integrate with invoice generation
-              onClick={() => handleAssignInvoiceNumber(12345)} // eslint-disable-line @typescript-eslint/no-empty-function
+              color="black"
+              onClick={handleGenerateInvoice}
             >
               <Text textStyle="xsmall-medium">Generate document</Text>
             </Button>
-          )}
+          ) : // TODO: Replace with link to download file
+          null}
         </ProcessingTaskStep>
 
         {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
@@ -301,10 +284,10 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               marginLeft="auto"
               height="35px"
               bg="background.gray"
-              _hover={{ bg: 'background.grayHover' }}
+              _hover={invoiceNumber === null ? undefined : { bg: 'background.grayHover' }}
               color="black"
               disabled={invoiceNumber === null}
-              // TODO: Add generate invoice functionality
+              // TODO: Add document upload functionality
               onClick={() => handleUploadDocuments('placeholder url')}
             >
               <Text textStyle="xsmall-medium">Choose document</Text>
@@ -334,7 +317,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               marginLeft="auto"
               height="35px"
               bg="background.gray"
-              _hover={{ bg: 'background.grayHover' }}
+              _hover={documentsUrl === null ? undefined : { bg: 'background.grayHover' }}
               color="black"
               disabled={documentsUrl === null}
               onClick={() => handleMailOut(true)}

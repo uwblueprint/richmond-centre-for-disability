@@ -8,7 +8,7 @@ import {
   MutationCompleteApplicationArgs,
   MutationRejectApplicationArgs,
   MutationUpdateApplicationProcessingAssignAppNumberArgs,
-  MutationUpdateApplicationProcessingAssignInvoiceNumberArgs,
+  MutationUpdateApplicationProcessingGenerateInvoiceArgs,
   MutationUpdateApplicationProcessingCreateWalletCardArgs,
   MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
   MutationUpdateApplicationProcessingMailOutArgs,
@@ -16,7 +16,7 @@ import {
   MutationUpdateApplicationProcessingReviewRequestInformationArgs,
   RejectApplicationResult,
   UpdateApplicationProcessingAssignAppNumberResult,
-  UpdateApplicationProcessingAssignInvoiceNumberResult,
+  UpdateApplicationProcessingGenerateInvoiceResult,
   UpdateApplicationProcessingCreateWalletCardResult,
   UpdateApplicationProcessingHolepunchParkingPermitResult,
   UpdateApplicationProcessingMailOutResult,
@@ -24,6 +24,7 @@ import {
   UpdateApplicationProcessingReviewRequestInformationResult,
 } from '@lib/graphql/types';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
+import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
 
 /**
  * Approve application
@@ -449,18 +450,7 @@ export const completeApplication: Resolver<
           medicalInformation: {
             update: {
               physician: {
-                update: {
-                  firstName: physicianFirstName,
-                  lastName: physicianLastName,
-                  mspNumber: physicianMspNumber,
-                  phone: physicianPhone,
-                  addressLine1: physicianAddressLine1,
-                  addressLine2: physicianAddressLine2,
-                  city: physicianCity,
-                  province: physicianProvince,
-                  country: physicianCountry,
-                  postalCode: physicianPostalCode,
-                },
+                connect: { mspNumber: physicianMspNumber },
               },
             },
           },
@@ -802,7 +792,9 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
         applicationProcessing: {
           update: {
             reviewRequestCompleted,
-            reviewRequestEmployee: { connect: { id: employeeId } },
+            reviewRequestEmployee: reviewRequestCompleted
+              ? { connect: { id: employeeId } }
+              : { disconnect: true },
             reviewRequestCompletedUpdatedAt: new Date(),
             // Invoice generation and document upload steps should be reset
             // TODO: Integrate with invoice generation
@@ -814,6 +806,10 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
             documentsUrlEmployee: {
               disconnect: true,
             },
+            documentsUrlUpdatedAt: new Date(),
+            appMailed: false,
+            appMailedEmployee: { disconnect: true },
+            appMailedUpdatedAt: new Date(),
           },
         },
       },
@@ -830,31 +826,42 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
 };
 
 /**
- * Assign invoice Number to in-progress application
+ * Generate invoice for in-progress application
  * @returns Status of the operation (ok)
  */
-export const updateApplicationProcessingAssignInvoiceNumber: Resolver<
-  MutationUpdateApplicationProcessingAssignInvoiceNumberArgs,
-  UpdateApplicationProcessingAssignInvoiceNumberResult
+export const updateApplicationProcessingGenerateInvoice: Resolver<
+  MutationUpdateApplicationProcessingGenerateInvoiceArgs,
+  UpdateApplicationProcessingGenerateInvoiceResult
 > = async (_parent, args, { prisma, session }) => {
   // TODO: Validation
   const { input } = args;
-  const { applicationId, invoiceNumber } = input;
+  const { applicationId } = input;
 
   if (!session) {
     // TODO: Create error
     throw new ApolloError('Not authenticated');
   }
 
-  let updatedApplicationProcessing;
+  // Use the application record to retrieve the applicant name, applicant ID, permit type, current date, and employee initials
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: { applicant: true, applicationProcessing: true },
+  });
+
+  if (!application) {
+    throw new ApolloError('Application does not exist');
+  }
+
+  // Create invoice record in DB
+  let invoice;
   try {
-    updatedApplicationProcessing = await prisma.application.update({
-      where: { id: applicationId },
+    invoice = await prisma.applicationInvoice.create({
       data: {
         applicationProcessing: {
-          update: {
-            applicationInvoice: { connect: { invoiceNumber: invoiceNumber } },
-          },
+          connect: { id: applicationId },
+        },
+        employee: {
+          connect: { id: session.id },
         },
       },
     });
@@ -862,9 +869,18 @@ export const updateApplicationProcessingAssignInvoiceNumber: Resolver<
     // TODO: Error handling
   }
 
-  if (!updatedApplicationProcessing) {
-    throw new ApolloError('Error assigning invoice number to application');
+  if (!invoice) {
+    throw new ApolloError('Error creating invoice record in DB');
   }
+
+  // Generate application invoice
+  generateApplicationInvoicePdf(
+    application,
+    session,
+    // TODO: Remove typecast when backend guard is implemented
+    application.applicationProcessing.appNumber as number,
+    invoice.invoiceNumber
+  );
 
   return { ok: true };
 };
