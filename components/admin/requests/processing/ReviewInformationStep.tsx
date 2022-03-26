@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import {
   GetReviewInformationRequest,
@@ -20,24 +20,27 @@ import {
   ModalFooter,
   ModalBody,
   Button,
-  useDisclosure,
   Text,
-  Box,
   VStack,
+  useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
 import { ApplicationType } from '@lib/graphql/types';
 
-type ReviewInformationModalProps = {
-  readonly children: ReactNode;
+type Props = {
+  readonly isCompleted: boolean;
+  readonly isDisabled: boolean;
   readonly applicationId: number;
   readonly onConfirmed: () => void;
+  readonly onUndo: () => void;
 };
 
-export default function ReviewInformationModalProps({
-  children,
+export default function ReviewInformationStep({
+  isCompleted,
+  isDisabled,
   applicationId,
   onConfirmed,
-}: ReviewInformationModalProps) {
+  onUndo,
+}: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [applicationType, setApplicationType] = useState<ApplicationType | null>(null);
@@ -92,7 +95,25 @@ export default function ReviewInformationModalProps({
 
   return (
     <>
-      <Box onClick={onOpen}>{children}</Box>
+      {isCompleted ? (
+        <Button color={'black'} variant="ghost" textDecoration="underline black" onClick={onUndo}>
+          <Text textStyle="caption" color="black">
+            Undo Review
+          </Text>
+        </Button>
+      ) : (
+        <Button
+          marginLeft="auto"
+          height="35px"
+          bg="background.gray"
+          _hover={{ bg: 'background.grayHover' }}
+          color="black"
+          disabled={isDisabled}
+          onClick={onOpen}
+        >
+          <Text textStyle="xsmall-medium">Review information</Text>
+        </Button>
+      )}
       <Modal
         onClose={onClose}
         isOpen={isOpen}

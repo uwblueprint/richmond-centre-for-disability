@@ -3,7 +3,6 @@ import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/processing/AssignNumberModal'; // AssignNumber Modal component
 import ProcessingTaskStep from '@components/admin/requests/processing/TaskStep'; // Processing Task Step
-import ReviewInformationModal from '@components/admin/requests/processing/ReviewInformationModal'; // Review Information Modal
 import {
   AssignAppNumberRequest,
   AssignAppNumberResponse,
@@ -30,6 +29,7 @@ import {
   UploadDocumentsRequest,
   UPLOAD_DOCUMENTS_MUTATION,
 } from '@tools/admin/requests/processing-tasks-card';
+import ReviewInformationStep from '@components/admin/requests/processing/ReviewInformationStep';
 
 type ProcessingTasksCardProps = {
   readonly applicationId: number;
@@ -231,38 +231,18 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           description="Editing will be disabled upon completion of this step"
           isCompleted={reviewRequestCompleted}
         >
-          <ReviewInformationModal
+          <ReviewInformationStep
+            isCompleted={reviewRequestCompleted}
+            isDisabled={!appNumber || !appHolepunched || !walletCardCreated}
             applicationId={applicationId}
             onConfirmed={() => handleReviewRequestInformation(true)}
-          >
-            {!reviewRequestCompleted ? (
-              <Button
-                marginLeft="auto"
-                height="35px"
-                bg="background.gray"
-                _hover={{ bg: 'background.grayHover' }}
-                color="black"
-                disabled={!appNumber || !appHolepunched || !walletCardCreated}
-              >
-                <Text textStyle="xsmall-medium">Review information</Text>
-              </Button>
-            ) : (
-              <Button
-                color={'black'}
-                variant="ghost"
-                textDecoration="underline black"
-                onClick={() => {
-                  handleMailOut(false);
-                  handleReviewRequestInformation(false);
-                }}
-              >
-                <Text textStyle="caption" color="black">
-                  Undo Review
-                </Text>
-              </Button>
-            )}
-          </ReviewInformationModal>
+            onUndo={() => {
+              handleMailOut(false);
+              handleReviewRequestInformation(false);
+            }}
+          />
         </ProcessingTaskStep>
+
         {/* Task 5: Generate Invoice */}
         <ProcessingTaskStep
           id={5}

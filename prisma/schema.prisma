@@ -103,7 +103,7 @@ model Employee {
   active                                  Boolean                 @default(true)
   createdAt                               DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                               DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  applicationInvoices                     ApplicationInvoice[]    @relation("application_invoicesToemployees")
+  generatedApplicationInvoices            ApplicationInvoice[]    @relation("application_invoicesToemployees")
   holepunchedApplicationProcessings       ApplicationProcessing[] @relation("application_processing_app_holepunched_employee_idToemployees")
   mailedApplicationProcessings            ApplicationProcessing[] @relation("application_processing_app_mailed_employee_idToemployees")
   assignedAppNumberApplicationProcessings ApplicationProcessing[] @relation("application_processing_app_number_employee_idToemployees")

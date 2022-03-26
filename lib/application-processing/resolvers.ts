@@ -598,26 +598,27 @@ export const updateApplicationProcessingAssignAppNumber: Resolver<
     // TODO: Create error
     throw new ApolloError('Not authenticated');
   }
-
   const { id: employeeId } = session;
+
+  // Prevent assigning APP number if review is complete
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: {
+      applicationProcessing: {
+        select: {
+          reviewRequestCompleted: true,
+        },
+      },
+    },
+  });
+  if (application?.applicationProcessing.reviewRequestCompleted) {
+    throw new ApolloError(
+      'Error assigning APP number to application as application is already reviewed'
+    );
+  }
 
   let updatedApplicationProcessing;
   try {
-    const application = await prisma.application.findUnique({
-      where: { id: applicationId },
-      include: {
-        applicationProcessing: {
-          select: {
-            reviewRequestCompleted: true,
-          },
-        },
-      },
-    });
-    if (application?.applicationProcessing.reviewRequestCompleted)
-      throw new ApolloError(
-        'Error assigning APP number to application as application is already reviewed'
-      );
-
     updatedApplicationProcessing = await prisma.application.update({
       where: { id: applicationId },
       data: {
@@ -657,26 +658,27 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
     // TODO: Create error
     throw new ApolloError('Not authenticated');
   }
-
   const { id: employeeId } = session;
+
+  // Prevent changing holepunched status if review is complete
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: {
+      applicationProcessing: {
+        select: {
+          reviewRequestCompleted: true,
+        },
+      },
+    },
+  });
+  if (application?.applicationProcessing.reviewRequestCompleted) {
+    throw new ApolloError(
+      'Error updating APP holepunched state of application as application is already reviewed'
+    );
+  }
 
   let updatedApplicationProcessing;
   try {
-    const application = await prisma.application.findUnique({
-      where: { id: applicationId },
-      include: {
-        applicationProcessing: {
-          select: {
-            reviewRequestCompleted: true,
-          },
-        },
-      },
-    });
-    if (application?.applicationProcessing.reviewRequestCompleted)
-      throw new ApolloError(
-        'Error updating APP holepunched state of application as application is already reviewed'
-      );
-
     updatedApplicationProcessing = await prisma.application.update({
       where: { id: applicationId },
       data: {
@@ -716,26 +718,27 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
     // TODO: Create error
     throw new ApolloError('Not authenticated');
   }
-
   const { id: employeeId } = session;
+
+  // Prevent changing wallet card creation status if review is complete
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: {
+      applicationProcessing: {
+        select: {
+          reviewRequestCompleted: true,
+        },
+      },
+    },
+  });
+  if (application?.applicationProcessing.reviewRequestCompleted) {
+    throw new ApolloError(
+      'Error updating wallet card to application as application is already reviewed'
+    );
+  }
 
   let updatedApplicationProcessing;
   try {
-    const application = await prisma.application.findUnique({
-      where: { id: applicationId },
-      include: {
-        applicationProcessing: {
-          select: {
-            reviewRequestCompleted: true,
-          },
-        },
-      },
-    });
-    if (application?.applicationProcessing.reviewRequestCompleted)
-      throw new ApolloError(
-        'Error updating wallet card to application as application is already reviewed'
-      );
-
     updatedApplicationProcessing = await prisma.application.update({
       where: { id: applicationId },
       data: {
@@ -775,29 +778,32 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
   }
   const { id: employeeId } = session;
 
-  let updatedApplicationProcessing;
-  try {
-    const application = await prisma.application.findUnique({
-      where: { id: applicationId },
-      include: {
-        applicationProcessing: {
-          select: {
-            appNumber: true,
-            appHolepunched: true,
-            walletCardCreated: true,
-          },
+  // Prevent marking request as reviewed if prior steps are not complete
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: {
+      applicationProcessing: {
+        select: {
+          appNumber: true,
+          appHolepunched: true,
+          walletCardCreated: true,
         },
       },
-    });
-    if (
-      !application?.applicationProcessing.appNumber ||
+    },
+  });
+  if (
+    reviewRequestCompleted &&
+    (!application?.applicationProcessing.appNumber ||
       !application?.applicationProcessing.appHolepunched ||
-      !application?.applicationProcessing.walletCardCreated
-    )
-      throw new ApolloError(
-        'Error reviewing application as one of the initial three task processing steps are not completed'
-      );
+      !application?.applicationProcessing.walletCardCreated)
+  ) {
+    throw new ApolloError(
+      'Error reviewing application as one of the initial three task processing steps are not completed'
+    );
+  }
 
+  let updatedApplicationProcessing;
+  try {
     updatedApplicationProcessing = await prisma.application.update({
       where: { id: applicationId },
       data: {
