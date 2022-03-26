@@ -222,6 +222,9 @@ CREATE TABLE application_processing (
   wallet_card_created BOOLEAN NOT NULL DEFAULT false,
   wallet_card_created_employee_id INTEGER,
   wallet_card_created_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  review_request_completed BOOLEAN NOT NULL DEFAULT false,
+  review_request_completed_employee_id INTEGER,
+  review_request_completed_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   invoice_number INTEGER UNIQUE,
   documents_url VARCHAR(255),
   documents_url_employee_id INTEGER,
@@ -235,6 +238,7 @@ CREATE TABLE application_processing (
   FOREIGN KEY(app_number_employee_id) REFERENCES employees(id),
   FOREIGN KEY(app_holepunched_employee_id) REFERENCES employees(id),
   FOREIGN KEY(wallet_card_created_employee_id) REFERENCES employees(id),
+  FOREIGN KEY(review_request_completed_employee_id) REFERENCES employees(id),
   FOREIGN KEY(invoice_number) REFERENCES application_invoices(invoice_number),
   FOREIGN KEY(documents_url_employee_id) REFERENCES employees(id),
   FOREIGN KEY(app_mailed_employee_id) REFERENCES employees(id)

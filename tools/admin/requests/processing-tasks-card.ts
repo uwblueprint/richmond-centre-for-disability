@@ -7,6 +7,7 @@ import {
   MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
   MutationUpdateApplicationProcessingMailOutArgs,
   MutationUpdateApplicationProcessingUploadDocumentsArgs,
+  MutationUpdateApplicationProcessingReviewRequestInformationArgs,
   QueryApplicationArgs,
   UpdateApplicationProcessingAssignAppNumberResult,
   UpdateApplicationProcessingAssignInvoiceNumberResult,
@@ -14,6 +15,7 @@ import {
   UpdateApplicationProcessingHolepunchParkingPermitResult,
   UpdateApplicationProcessingMailOutResult,
   UpdateApplicationProcessingUploadDocumentsResult,
+  UpdateApplicationProcessingReviewRequestInformationResult,
 } from '@lib/graphql/types';
 
 /** Get application processing */
@@ -27,6 +29,7 @@ export const GET_APPLICATION_PROCESSING = gql`
         invoiceNumber
         documentsUrl
         appMailed
+        reviewRequestCompleted
       }
     }
   }
@@ -44,6 +47,7 @@ export type GetApplicationProcessingResponse = {
       | 'invoiceNumber'
       | 'documentsUrl'
       | 'appMailed'
+      | 'reviewRequestCompleted'
     >;
   };
 };
@@ -92,6 +96,24 @@ export type CreateWalletCardRequest = MutationUpdateApplicationProcessingCreateW
 
 export type CreateWalletCardResponse = {
   updateApplicationProcessingCreateWalletCard: UpdateApplicationProcessingCreateWalletCardResult;
+};
+
+/** Review request information task */
+export const REVIEW_REQUEST_INFORMATION_MUTATION = gql`
+  mutation ReviewRequestInformation(
+    $input: UpdateApplicationProcessingReviewRequestInformationInput!
+  ) {
+    updateApplicationProcessingReviewRequestInformation(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type ReviewRequestInformationRequest =
+  MutationUpdateApplicationProcessingReviewRequestInformationArgs;
+
+export type ReviewRequestInformationResponse = {
+  updateApplicationProcessingReviewRequestInformation: UpdateApplicationProcessingReviewRequestInformationResult;
 };
 
 /** Assign invoice number task */

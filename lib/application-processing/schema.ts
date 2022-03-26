@@ -18,6 +18,9 @@ export default gql`
     walletCardCreated: Boolean!
     walletCardCreatedEmployeeId: Int
     walletCardCreatedUpdatedAt: Date
+    reviewRequestCompleted: Boolean!
+    reviewRequestCompletedEmployeeId: Int
+    reviewRequestCompletedUpdatedAt: Date
     invoiceNumber: Int
     documentsUrl: String
     documentsUrlEmployeeId: Int
@@ -90,6 +93,17 @@ export default gql`
   }
 
   type UpdateApplicationProcessingCreateWalletCardResult {
+    ok: Boolean!
+  }
+
+  # Review Request Information
+  input UpdateApplicationProcessingReviewRequestInformationInput {
+    applicationId: Int!
+
+    reviewRequestCompleted: Boolean!
+  }
+
+  type UpdateApplicationProcessingReviewRequestInformationResult {
     ok: Boolean!
   }
 

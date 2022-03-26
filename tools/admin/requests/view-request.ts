@@ -16,6 +16,7 @@ export const GET_APPLICATION_QUERY = gql`
         invoiceNumber
         documentsUrl
         appMailed
+        reviewRequestCompleted
       }
     }
   }
@@ -37,6 +38,7 @@ export type GetApplicationResponse = {
       | 'invoiceNumber'
       | 'documentsUrl'
       | 'appMailed'
+      | 'reviewRequestCompleted'
     >;
   };
 };

@@ -125,6 +125,9 @@ export type ApplicationProcessing = {
   walletCardCreated: Scalars['Boolean'];
   walletCardCreatedEmployeeId: Maybe<Scalars['Int']>;
   walletCardCreatedUpdatedAt: Maybe<Scalars['Date']>;
+  reviewRequestCompleted: Scalars['Boolean'];
+  reviewRequestCompletedEmployeeId: Maybe<Scalars['Int']>;
+  reviewRequestCompletedUpdatedAt: Maybe<Scalars['Date']>;
   invoiceNumber: Maybe<Scalars['Int']>;
   documentsUrl: Maybe<Scalars['String']>;
   documentsUrlEmployeeId: Maybe<Scalars['Int']>;
@@ -533,6 +536,7 @@ export type Mutation = {
   updateApplicationProcessingAssignAppNumber: Maybe<UpdateApplicationProcessingAssignAppNumberResult>;
   updateApplicationProcessingHolepunchParkingPermit: Maybe<UpdateApplicationProcessingHolepunchParkingPermitResult>;
   updateApplicationProcessingCreateWalletCard: Maybe<UpdateApplicationProcessingCreateWalletCardResult>;
+  updateApplicationProcessingReviewRequestInformation: Maybe<UpdateApplicationProcessingReviewRequestInformationResult>;
   updateApplicationProcessingAssignInvoiceNumber: Maybe<UpdateApplicationProcessingAssignInvoiceNumberResult>;
   updateApplicationProcessingUploadDocuments: Maybe<UpdateApplicationProcessingUploadDocumentsResult>;
   updateApplicationProcessingMailOut: Maybe<UpdateApplicationProcessingMailOutResult>;
@@ -654,6 +658,11 @@ export type MutationUpdateApplicationProcessingHolepunchParkingPermitArgs = {
 
 export type MutationUpdateApplicationProcessingCreateWalletCardArgs = {
   input: UpdateApplicationProcessingCreateWalletCardInput;
+};
+
+
+export type MutationUpdateApplicationProcessingReviewRequestInformationArgs = {
+  input: UpdateApplicationProcessingReviewRequestInformationInput;
 };
 
 
@@ -1257,6 +1266,16 @@ export type UpdateApplicationProcessingMailOutInput = {
 
 export type UpdateApplicationProcessingMailOutResult = {
   __typename?: 'UpdateApplicationProcessingMailOutResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicationProcessingReviewRequestInformationInput = {
+  applicationId: Scalars['Int'];
+  reviewRequestCompleted: Scalars['Boolean'];
+};
+
+export type UpdateApplicationProcessingReviewRequestInformationResult = {
+  __typename?: 'UpdateApplicationProcessingReviewRequestInformationResult';
   ok: Scalars['Boolean'];
 };
 
