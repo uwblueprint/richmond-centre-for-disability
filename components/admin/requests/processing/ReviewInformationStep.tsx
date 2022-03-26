@@ -106,7 +106,7 @@ export default function ReviewInformationStep({
           marginLeft="auto"
           height="35px"
           bg="background.gray"
-          _hover={{ bg: 'background.grayHover' }}
+          _hover={isDisabled ? undefined : { bg: 'background.grayHover' }}
           color="black"
           disabled={isDisabled}
           onClick={onOpen}

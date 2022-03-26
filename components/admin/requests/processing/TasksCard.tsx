@@ -250,7 +250,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               marginLeft="auto"
               height="35px"
               bg="background.gray"
-              _hover={{ bg: 'background.grayHover' }}
+              _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
               disabled={!reviewRequestCompleted}
               color="black"
               onClick={handleGenerateInvoice}
@@ -284,10 +284,10 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               marginLeft="auto"
               height="35px"
               bg="background.gray"
-              _hover={{ bg: 'background.grayHover' }}
+              _hover={invoiceNumber === null ? undefined : { bg: 'background.grayHover' }}
               color="black"
               disabled={invoiceNumber === null}
-              // TODO: Add generate invoice functionality
+              // TODO: Add document upload functionality
               onClick={() => handleUploadDocuments('placeholder url')}
             >
               <Text textStyle="xsmall-medium">Choose document</Text>
@@ -317,7 +317,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               marginLeft="auto"
               height="35px"
               bg="background.gray"
-              _hover={{ bg: 'background.grayHover' }}
+              _hover={documentsUrl === null ? undefined : { bg: 'background.grayHover' }}
               color="black"
               disabled={documentsUrl === null}
               onClick={() => handleMailOut(true)}

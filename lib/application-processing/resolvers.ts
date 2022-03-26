@@ -792,7 +792,9 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
         applicationProcessing: {
           update: {
             reviewRequestCompleted,
-            reviewRequestEmployee: { connect: { id: employeeId } },
+            reviewRequestEmployee: reviewRequestCompleted
+              ? { connect: { id: employeeId } }
+              : { disconnect: true },
             reviewRequestCompletedUpdatedAt: new Date(),
             // Invoice generation and document upload steps should be reset
             // TODO: Integrate with invoice generation
@@ -804,6 +806,10 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
             documentsUrlEmployee: {
               disconnect: true,
             },
+            documentsUrlUpdatedAt: new Date(),
+            appMailed: false,
+            appMailedEmployee: { disconnect: true },
+            appMailedUpdatedAt: new Date(),
           },
         },
       },
