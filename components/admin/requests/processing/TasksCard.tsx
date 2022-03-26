@@ -233,7 +233,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             applicationId={applicationId}
             onConfirmed={() => handleReviewRequestInformation(true)}
             onUndo={() => {
-              handleMailOut(false);
               handleReviewRequestInformation(false);
             }}
           />
@@ -246,29 +245,20 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           description="Invoice number will be automatically assigned"
           isCompleted={invoiceNumber !== null}
         >
-          <AssignNumberModal
-            modalTitle="Assign Invoice Number"
-            fieldName="Invoice number"
-            onAssign={handleGenerateInvoice}
-          >
-            {invoiceNumber === null ? (
-              <Button
-                marginLeft="auto"
-                height="35px"
-                bg="background.gray"
-                _hover={{ bg: 'background.grayHover' }}
-                color="black"
-              >
-                <Text textStyle="xsmall-medium">Assign number</Text>
-              </Button>
-            ) : (
-              <Button variant="ghost" textDecoration="underline black">
-                <Text textStyle="caption" color="black">
-                  Edit number
-                </Text>
-              </Button>
-            )}
-          </AssignNumberModal>
+          {invoiceNumber === null ? (
+            <Button
+              marginLeft="auto"
+              height="35px"
+              bg="background.gray"
+              _hover={{ bg: 'background.grayHover' }}
+              disabled={!reviewRequestCompleted}
+              color="black"
+              onClick={handleGenerateInvoice}
+            >
+              <Text textStyle="xsmall-medium">Generate document</Text>
+            </Button>
+          ) : // TODO: Replace with link to download file
+          null}
         </ProcessingTaskStep>
 
         {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}

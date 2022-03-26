@@ -450,18 +450,7 @@ export const completeApplication: Resolver<
           medicalInformation: {
             update: {
               physician: {
-                update: {
-                  firstName: physicianFirstName,
-                  lastName: physicianLastName,
-                  mspNumber: physicianMspNumber,
-                  phone: physicianPhone,
-                  addressLine1: physicianAddressLine1,
-                  addressLine2: physicianAddressLine2,
-                  city: physicianCity,
-                  province: physicianProvince,
-                  country: physicianCountry,
-                  postalCode: physicianPostalCode,
-                },
+                connect: { mspNumber: physicianMspNumber },
               },
             },
           },
