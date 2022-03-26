@@ -129,7 +129,6 @@ export type ApplicationProcessing = {
   reviewRequestCompletedEmployeeId: Maybe<Scalars['Int']>;
   reviewRequestCompletedUpdatedAt: Maybe<Scalars['Date']>;
   invoiceNumber: Maybe<Scalars['Int']>;
-  invoiceGeneratedEmployeeId: Maybe<Scalars['Int']>;
   documentsUrl: Maybe<Scalars['String']>;
   documentsUrlEmployeeId: Maybe<Scalars['Int']>;
   documentsUrlUpdatedAt: Maybe<Scalars['Date']>;

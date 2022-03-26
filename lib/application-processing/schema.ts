@@ -22,7 +22,6 @@ export default gql`
     reviewRequestCompletedEmployeeId: Int
     reviewRequestCompletedUpdatedAt: Date
     invoiceNumber: Int
-    invoiceGeneratedEmployeeId: Int
     documentsUrl: String
     documentsUrlEmployeeId: Int
     documentsUrlUpdatedAt: Date
