@@ -1251,7 +1251,6 @@ export type UpdateApplicationProcessingCreateWalletCardResult = {
 
 export type UpdateApplicationProcessingGenerateInvoiceInput = {
   applicationId: Scalars['Int'];
-  invoiceNumber: Scalars['Int'];
 };
 
 export type UpdateApplicationProcessingGenerateInvoiceResult = {

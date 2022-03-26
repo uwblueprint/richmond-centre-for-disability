@@ -840,7 +840,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
 > = async (_parent, args, { prisma, session }) => {
   // TODO: Validation
   const { input } = args;
-  const { applicationId, invoiceNumber } = input;
+  const { applicationId } = input;
 
   if (!session) {
     // TODO: Create error
@@ -850,25 +850,23 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
   // Use the application record to retrieve the applicant name, applicant ID, permit type, current date, and employee initials
   const application = await prisma.application.findUnique({
     where: { id: applicationId },
-    include: { applicant: true },
+    include: { applicant: true, applicationProcessing: true },
   });
 
   if (!application) {
     throw new ApolloError('Application does not exist');
   }
 
-  // TESTING GENERATE APPLICATION INVOICE
-  generateApplicationInvoicePdf(application, session, invoiceNumber);
-
-  let updatedApplicationProcessing;
+  // Create invoice record in DB
+  let invoice;
   try {
-    updatedApplicationProcessing = await prisma.application.update({
-      where: { id: applicationId },
+    invoice = await prisma.applicationInvoice.create({
       data: {
         applicationProcessing: {
-          update: {
-            applicationInvoice: { connect: { invoiceNumber: invoiceNumber } },
-          },
+          connect: { id: applicationId },
+        },
+        employee: {
+          connect: { id: session.id },
         },
       },
     });
@@ -876,9 +874,18 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     // TODO: Error handling
   }
 
-  if (!updatedApplicationProcessing) {
-    throw new ApolloError('Error assigning invoice number to application');
+  if (!invoice) {
+    throw new ApolloError('Error creating invoice record in DB');
   }
+
+  // Generate application invoice
+  generateApplicationInvoicePdf(
+    application,
+    session,
+    // TODO: Remove typecast when backend guard is implemented
+    application.applicationProcessing.appNumber as number,
+    invoice.invoiceNumber
+  );
 
   return { ok: true };
 };
