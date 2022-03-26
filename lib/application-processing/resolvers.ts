@@ -672,9 +672,7 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
     },
   });
   if (application?.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError(
-      'Error updating APP holepunched state of application as application is already reviewed'
-    );
+    throw new ApolloError('Cannot update APP number of already-reviewed application');
   }
 
   let updatedApplicationProcessing;
@@ -696,7 +694,7 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
   }
 
   if (!updatedApplicationProcessing) {
-    throw new ApolloError('Error updating APP holepunched state of application');
+    throw new ApolloError('Cannot update APP holepunched status of already-reviewed application');
   }
 
   return { ok: true };
@@ -732,9 +730,7 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
     },
   });
   if (application?.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError(
-      'Error updating wallet card to application as application is already reviewed'
-    );
+    throw new ApolloError('Cannot update wallet card status of already-reviewed application');
   }
 
   let updatedApplicationProcessing;
@@ -797,9 +793,7 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
       !application?.applicationProcessing.appHolepunched ||
       !application?.applicationProcessing.walletCardCreated)
   ) {
-    throw new ApolloError(
-      'Error reviewing application as one of the initial three task processing steps are not completed'
-    );
+    throw new ApolloError('Prior steps incomplete');
   }
 
   let updatedApplicationProcessing;
