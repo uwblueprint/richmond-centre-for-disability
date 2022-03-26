@@ -612,9 +612,7 @@ export const updateApplicationProcessingAssignAppNumber: Resolver<
     },
   });
   if (application?.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError(
-      'Error assigning APP number to application as application is already reviewed'
-    );
+    throw new ApolloError('Cannot update APP number of already-reviewed application');
   }
 
   let updatedApplicationProcessing;
@@ -672,7 +670,7 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
     },
   });
   if (application?.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError('Cannot update APP number of already-reviewed application');
+    throw new ApolloError('Cannot update APP holepunched status of already-reviewed application');
   }
 
   let updatedApplicationProcessing;
@@ -694,7 +692,7 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
   }
 
   if (!updatedApplicationProcessing) {
-    throw new ApolloError('Cannot update APP holepunched status of already-reviewed application');
+    throw new ApolloError('Error updating APP holepunched state of application');
   }
 
   return { ok: true };
