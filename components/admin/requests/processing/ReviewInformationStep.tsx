@@ -11,6 +11,7 @@ import PersonalInformationCard from '@components/admin/requests/permit-holder-in
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
 import AdditionalInformationCard from '@components/admin/requests/additional-questions/Card';
 import GuardianInformationCard from '@components/admin/requests/guardian-information/Card';
+import UndoReviewRequestModal from '@components/admin/requests/processing/UndoReviewRequestModal';
 
 import {
   Modal,
@@ -96,11 +97,13 @@ export default function ReviewInformationStep({
   return (
     <>
       {isCompleted ? (
-        <Button color={'black'} variant="ghost" textDecoration="underline black" onClick={onUndo}>
-          <Text textStyle="caption" color="black">
-            Undo Review
-          </Text>
-        </Button>
+        <UndoReviewRequestModal onUndoConfirmed={onUndo}>
+          <Button color={'black'} variant="ghost" textDecoration="underline black">
+            <Text textStyle="caption" color="black">
+              Undo Review
+            </Text>
+          </Button>
+        </UndoReviewRequestModal>
       ) : (
         <Button
           marginLeft="auto"
