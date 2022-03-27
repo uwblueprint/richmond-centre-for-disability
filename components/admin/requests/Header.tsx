@@ -8,6 +8,8 @@ import {
   MenuItem,
   MenuButton,
   Button,
+  Stack,
+  Portal,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon, ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import Link from 'next/link'; // Link
@@ -59,9 +61,62 @@ export default function RequestHeader({
         );
       case 'IN_PROGRESS':
         return (
-          <CompleteRequestModal applicationId={applicationId}>
-            <Button disabled={!allStepsCompleted}>Mark as complete</Button>
-          </CompleteRequestModal>
+          <Portal>
+            <Box
+              position="fixed"
+              left="0"
+              bottom="0"
+              right="0"
+              paddingY="20px"
+              paddingX="140px"
+              bgColor="white"
+              boxShadow="dark-lg"
+            >
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Link href={`/admin`}>
+                      <a>
+                        <Button
+                          bg="background.gray"
+                          _hover={{ bg: 'background.grayHover' }}
+                          marginRight="20px"
+                          height="48px"
+                          width="225px"
+                        >
+                          <Text textStyle="button-semibold" color="text.default">
+                            View permit holder
+                          </Text>
+                        </Button>
+                      </a>
+                    </Link>
+                  </Stack>
+                </Box>
+                <Box>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Link href="#">
+                      <a>
+                        <CompleteRequestModal
+                          applicationId={applicationId}
+                          isDisabled={!allStepsCompleted}
+                        >
+                          <Button
+                            bg="primary"
+                            height="48px"
+                            width="200px"
+                            type="submit"
+                            disabled={!allStepsCompleted}
+                          >
+                            <Text textStyle="button-semibold">Complete request</Text>
+                          </Button>
+                        </CompleteRequestModal>
+                      </a>
+                    </Link>
+                  </Stack>
+                </Box>
+              </Stack>
+            </Box>
+          </Portal>
         );
       default:
         return null;
@@ -70,7 +125,7 @@ export default function RequestHeader({
 
   /**
    * Returns the appropriate 'More Actions' dropdown to be displayed depending on the current application status
-]   * @returns Rendered 'More Actions' dropdown component or null
+  ]   * @returns Rendered 'More Actions' dropdown component or null
    */
   const _renderMoreActionsDropdown = () => {
     if (applicationStatus === 'IN_PROGRESS' || applicationStatus === 'REJECTED') {
