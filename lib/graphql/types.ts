@@ -1107,6 +1107,7 @@ export type UpdateApplicantGeneralInformationInput = {
   gender: Gender;
   phone: Scalars['String'];
   email: Maybe<Scalars['String']>;
+  receiveEmailUpdates: Scalars['Boolean'];
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];

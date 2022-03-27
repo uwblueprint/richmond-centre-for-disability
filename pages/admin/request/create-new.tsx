@@ -55,7 +55,7 @@ import { useRouter } from 'next/router';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { uploadToS3 } from '@lib/utils/upload-to-s3';
 import { Form, Formik } from 'formik';
-import { permitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
+import { requestingPermitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -355,7 +355,7 @@ export default function CreateNew() {
   };
 
   // TODO: move to a different file
-  const createNewFormSchema = permitHolderInformationSchema;
+  const createNewFormSchema = requestingPermitHolderInformationSchema;
 
   return (
     <Layout>
@@ -632,7 +632,7 @@ export default function CreateNew() {
                     </Box>
                     <Box>
                       <Stack direction="row" justifyContent="space-between">
-                        <CancelCreateRequestModal type="renewal">
+                        <CancelCreateRequestModal type="new">
                           <Button
                             bg="secondary.critical"
                             _hover={{ bg: 'secondary.criticalHover' }}

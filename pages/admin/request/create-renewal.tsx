@@ -31,7 +31,7 @@ import {
 } from '@tools/admin/requests/create-renewal';
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 import { Form, Formik } from 'formik';
-import { permitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
+import { requestingPermitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 
 export default function CreateRenewal() {
@@ -268,7 +268,7 @@ export default function CreateRenewal() {
   };
 
   // TODO: move to a different file
-  const renewalFormSchema = permitHolderInformationSchema;
+  const renewalFormSchema = requestingPermitHolderInformationSchema;
 
   return (
     <Layout>

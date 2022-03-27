@@ -108,6 +108,7 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
             gender,
             phone,
             email,
+            receiveEmailUpdates,
             addressLine1,
             addressLine2,
             city,

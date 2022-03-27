@@ -54,6 +54,7 @@ export default gql`
     # Contact
     phone: String!
     email: String
+    receiveEmailUpdates: Boolean!
 
     # Address (omit Province, Country)
     addressLine1: String!

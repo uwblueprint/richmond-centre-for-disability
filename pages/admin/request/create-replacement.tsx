@@ -41,7 +41,7 @@ import SelectedPermitHolderCard from '@components/admin/requests/create/Selected
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 import { PaymentType } from '@lib/graphql/types';
 import { Form, Formik } from 'formik';
-import { permitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
+import { requestingPermitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
 
 export default function CreateReplacement() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -51,7 +51,7 @@ export default function CreateReplacement() {
 
   /** Permit holder information section */
   const [permitHolderInformation, setPermitHolderInformation] = useState<
-    Omit<ApplicantFormData, 'dateOfBirth' | 'gender'>
+    Omit<ApplicantFormData, 'dateOfBirth' | 'gender' | 'receiveEmailUpdates'>
   >({
     firstName: '',
     middleName: null,
@@ -210,7 +210,7 @@ export default function CreateReplacement() {
   };
 
   // TODO: move to a different file
-  const replacementFormSchema = permitHolderInformationSchema;
+  const replacementFormSchema = requestingPermitHolderInformationSchema;
 
   return (
     <Layout>

@@ -14,7 +14,7 @@ import Link from 'next/link'; // Link
 import { ReactNode } from 'react'; // React JSX Type
 
 type CancelRequestModalProps = {
-  readonly type: 'replacement' | 'renewal';
+  readonly type: 'replacement' | 'renewal' | 'new';
   readonly children: ReactNode;
 };
 /**
@@ -31,9 +31,7 @@ export default function CancelCreateRequestModal({ type, children }: CancelReque
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
-            Discard {type === 'replacement' ? 'Replacement' : 'Renewal'} Request
-          </ModalHeader>
+          <ModalHeader>Discard {type.charAt(0).toUpperCase() + type.slice(1)} Request</ModalHeader>
           <ModalBody>
             <Text textStyle="body-regular" paddingBottom="39px">
               Are you sure you want to discard this request? You will lose all your changes.
