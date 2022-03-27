@@ -13,7 +13,7 @@ import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-inform
  */
 type PermitHolderInformationFormProps = {
   readonly permitHolderInformation: PermitHolderFormData;
-  readonly onChange: (updatedData: PermitHolderFormData) => void;
+  readonly onChange?: (updatedData: PermitHolderFormData) => void;
 };
 
 /**
@@ -24,6 +24,7 @@ type PermitHolderInformationFormProps = {
  * @param onChange Function that uses the updated values from form.
  */
 export default function PermitHolderInformationForm(props: PermitHolderInformationFormProps) {
+  // TODO: figure out if we need the onChange anymore
   // const handleChange =
   //   (field: keyof PermitHolderFormData): ChangeEventHandler<HTMLInputElement> =>
   //   event => {
@@ -43,62 +44,26 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
           {'Personal Information'}
         </Text>
         <Stack direction="row" spacing="20px" paddingBottom="24px">
-          <TextField name="firstName" label="First name" required />
-          <TextField name="middleName" label="Middle name" />
-          <TextField name="lastName" label="Last name" required />
+          <TextField name="permitHolder.firstName" label="First name" required />
+          <TextField name="permitHolder.middleName" label="Middle name" />
+          <TextField name="permitHolder.lastName" label="Last name" required />
         </Stack>
 
         {props.permitHolderInformation.type === 'NEW' && (
           <Stack direction="row" spacing="20px">
-            <DateField name="dateOfBirth" label="Date of birth" required />
-            {/* TODO: custom onchange */}
-            {/* <FormControl isRequired>
-              <FormLabel>{`Date of birth`}</FormLabel>
-              <Input
-                type="date"
-                value={
-                  props.permitHolderInformation.dateOfBirth
-                    ? formatDateYYYYMMDD(props.permitHolderInformation.dateOfBirth)
-                    : undefined
-                }
-                onChange={event => {
-                  if (props.permitHolderInformation.type === 'NEW') {
-                    props.onChange({
-                      ...props.permitHolderInformation,
-                      dateOfBirth: event.target.value,
-                    });
-                  }
-                }}
-              />
-            </FormControl> */}
+            <DateField name="permitHolder.dateOfBirth" label="Date of birth" required />
 
             {/* TODO: set otherGender if selected option is OTHER */}
-            {/* TODO: custom onchange */}
-            <SelectField name="gender" label="Gender" required placeholder="Select gender">
+            <SelectField
+              name="permitHolder.gender"
+              label="Gender"
+              required
+              placeholder="Select gender"
+            >
               <option value={'MALE'}>{'Male'}</option>
               <option value={'FEMALE'}>{'Female'}</option>
               <option value={'OTHER'}>{'Other'}</option>
             </SelectField>
-
-            {/* <FormControl isRequired>
-              <FormLabel>{`Gender`}</FormLabel>
-              <Select
-                placeholder="Select gender"
-                value={props.permitHolderInformation.gender || undefined}
-                onChange={event => {
-                  if (props.permitHolderInformation.type === 'NEW') {
-                    props.onChange({
-                      ...props.permitHolderInformation,
-                      gender: event.target.value as Gender,
-                    });
-                  }
-                }}
-              >
-                <option value={'MALE'}>Male</option>
-                <option value={'FEMALE'}>Female</option>
-                <option value={'OTHER'}>Other</option>
-              </Select>
-            </FormControl> */}
           </Stack>
         )}
       </Box>
@@ -113,32 +78,17 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
         </Text>
 
         <Stack direction="row" spacing="20px">
-          <TextField name="phone" label="Phone number" required type="tel">
+          <TextField name="permitHolder.phone" label="Phone number" required type="tel">
             <FormHelperText color="text.secondary">{'Example: 000-000-0000'}</FormHelperText>
           </TextField>
-
-          {/* TODO: (optional)  text beside label*/}
-          <TextField name="email" label="Email address" labelHelperText="(optional)" />
-
-          {/* <FormControl>
-            <FormLabel>
-              {'Email address '}
-              <Box as="span" textStyle="body-regular" fontSize="sm">
-                {'(optional)'}
-              </Box>
-            </FormLabel>
-            <Input
-              value={props.permitHolderInformation.email || ''}
-              onChange={handleChange('email')}
-            />
-          </FormControl> */}
+          <TextField name="permitHolder.email" label="Email address" labelHelperText="(optional)" />
         </Stack>
 
         {/* TODO: fix condition */}
         {props.permitHolderInformation.type !== 'REPLACEMENT' && (
           <Box paddingTop="24px">
             <CheckboxField
-              name="receiveEmailUpdates"
+              name="permitHolder.receiveEmailUpdates"
               isDisabled={!props.permitHolderInformation.email}
             >
               {'Permit holder would like to receive renewal updates through email'}
@@ -160,7 +110,7 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
         </Text>
 
         <Box paddingBottom="24px">
-          <TextField name="addressLine1" label="Address line 1" required>
+          <TextField name="permitHolder.addressLine1" label="Address line 1" required>
             <FormHelperText color="text.secondary">
               {'Street Address, P.O. Box, Company Name, c/o'}
             </FormHelperText>
@@ -168,33 +118,19 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
         </Box>
 
         <Box paddingBottom="24px">
-          <TextField name="addressLine2" label="Address line 2" labelHelperText="(optional)">
+          <TextField
+            name="permitHolder.addressLine2"
+            label="Address line 2"
+            labelHelperText="(optional)"
+          >
             <FormHelperText color="text.secondary">
               {'Apartment, suite, unit, building, floor, etc'}
             </FormHelperText>
           </TextField>
         </Box>
-
-        {/* <FormControl paddingBottom="24px">
-          <FormLabel>
-            {'Address line 2 '}
-            <Box as="span" textStyle="caption" fontSize="sm">
-              {'(optional)'}
-            </Box>
-          </FormLabel>
-          <Input
-            value={props.permitHolderInformation.addressLine2 || ''}
-            onChange={handleChange('addressLine2')}
-          />
-          <FormHelperText color="text.secondary">
-            {'Apartment, suite, unit, building, floor, etc'}
-          </FormHelperText>
-        </FormControl> */}
-
         <Stack direction="row" spacing="20px">
-          <TextField name="city" label="City" required />
-
-          <TextField name="postalCode" label="Postal code" required>
+          <TextField name="permitHolder.city" label="City" required />
+          <TextField name="permitHolder.postalCode" label="Postal code" required>
             <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
           </TextField>
         </Stack>

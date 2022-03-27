@@ -10,7 +10,7 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, useEffect, ReactNode } from 'react'; // React
+import { ReactNode } from 'react'; // React
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form';
 import { Form, Formik } from 'formik';
@@ -27,37 +27,15 @@ type EditPermitHolderInformationModalProps = {
 
 export default function EditPermitHolderInformationModal({
   children,
-  permitHolderInformation: currentPermitHolderInformation,
+  permitHolderInformation,
   onSave,
 }: EditPermitHolderInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const [permitHolderInformation, setPermitHolderInformation] = useState<
-    EditPermitHolderInformationModalProps['permitHolderInformation']
-  >(currentPermitHolderInformation);
 
-  useEffect(() => {
-    setPermitHolderInformation(currentPermitHolderInformation);
-  }, [currentPermitHolderInformation, isOpen]);
-
-  const handleSubmit = (values: PermitHolderFormData) => {
-    // event.preventDefault();
-    onSave(values);
+  const handleSubmit = (values: { permitHolder: PermitHolderFormData }) => {
+    //TODO: make sure the onSave is working properly, and maybe do backend validation
+    onSave(values.permitHolder);
     onClose();
-  };
-
-  const handleChange = (updatedData: PermitHolderFormData) => {
-    if (permitHolderInformation.type === 'REPLACEMENT') {
-      setPermitHolderInformation({
-        ...permitHolderInformation,
-        ...updatedData,
-        receiveEmailUpdates: false,
-      });
-    } else {
-      setPermitHolderInformation({
-        ...permitHolderInformation,
-        ...updatedData,
-      });
-    }
   };
 
   return (
@@ -66,11 +44,11 @@ export default function EditPermitHolderInformationModal({
       <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />
         <Formik
-          initialValues={{ ...permitHolderInformation }}
+          initialValues={{ permitHolder: { ...permitHolderInformation } }}
           validationSchema={permitHolderInformationSchema}
           onSubmit={handleSubmit}
         >
-          {() => (
+          {({ values, isValid }) => (
             <Form style={{ width: '100%' }} noValidate>
               <ModalContent paddingX="36px">
                 <ModalHeader
@@ -84,16 +62,13 @@ export default function EditPermitHolderInformationModal({
                   </Text>
                 </ModalHeader>
                 <ModalBody paddingY="20px" paddingX="4px">
-                  <PermitHolderInformationForm
-                    permitHolderInformation={permitHolderInformation}
-                    onChange={handleChange}
-                  />
+                  <PermitHolderInformationForm permitHolderInformation={values.permitHolder} />
                 </ModalBody>
                 <ModalFooter paddingBottom="24px" paddingX="4px">
                   <Button colorScheme="gray" variant="solid" onClick={onClose}>
                     {'Cancel'}
                   </Button>
-                  <Button variant="solid" type="submit" ml={'12px'}>
+                  <Button variant="solid" type="submit" ml={'12px'} isDisabled={!isValid}>
                     {'Save'}
                   </Button>
                 </ModalFooter>

@@ -20,6 +20,7 @@ import {
   GetSelectedApplicantRequest,
   GetSelectedApplicantResponse,
   GET_SELECTED_APPLICANT_QUERY,
+  PermitHolderFormData,
 } from '@tools/admin/requests/permit-holder-information';
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
@@ -40,7 +41,7 @@ import SelectedPermitHolderCard from '@components/admin/requests/create/Selected
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 import { PaymentType } from '@lib/graphql/types';
 import { Form, Formik } from 'formik';
-import { object } from 'yup';
+import { permitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
 
 export default function CreateReplacement() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -171,7 +172,7 @@ export default function CreateReplacement() {
   });
 
   /** Handle replacement application submission */
-  const handleSubmit = async () => {
+  const handleSubmit = async (values: { permitHolder: PermitHolderFormData }) => {
     if (applicantId === null) {
       toast({
         status: 'error',
@@ -191,11 +192,14 @@ export default function CreateReplacement() {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { type, receiveEmailUpdates, ...permitHolder } = values.permitHolder;
+
     await submitReplacementApplication({
       variables: {
         input: {
           applicantId,
-          ...permitHolderInformation,
+          ...permitHolder,
           ...reasonForReplacement,
           reason: reasonForReplacement.reason,
           ...paymentInformation,
@@ -206,7 +210,7 @@ export default function CreateReplacement() {
   };
 
   // TODO: move to a different file
-  const replacementFormSchema = object();
+  const replacementFormSchema = permitHolderInformationSchema;
 
   return (
     <Layout>
@@ -254,143 +258,147 @@ export default function CreateReplacement() {
 
         {applicantId && currentPageState == RequestFlowPageState.SubmittingRequestPage && (
           <Formik
-            initialValues={{ ...permitHolderInformation }}
+            initialValues={{
+              permitHolder: {
+                ...permitHolderInformation,
+                type: 'REPLACEMENT',
+                receiveEmailUpdates: false,
+              },
+            }}
             validationSchema={replacementFormSchema}
             onSubmit={handleSubmit}
           >
-            <Form noValidate>
-              {/* Permit Holder Information Form */}
-              <GridItem paddingTop="32px">
-                <Box
-                  border="1px solid"
-                  borderColor="border.secondary"
-                  borderRadius="12px"
-                  bgColor="white"
-                  paddingTop="32px"
-                  paddingBottom="40px"
-                  paddingX="40px"
-                  align="left"
-                >
-                  <Text textStyle="display-small-semibold" paddingBottom="20px">
-                    {`Permit Holder's Information`}
-                  </Text>
-                  <PermitHolderInformationForm
-                    permitHolderInformation={{
-                      ...permitHolderInformation,
-                      type: 'REPLACEMENT',
-                      receiveEmailUpdates: false,
-                    }}
-                    onChange={updatedPermitHolder => {
-                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                      const { type, receiveEmailUpdates, ...permitHolder } = updatedPermitHolder;
-                      setPermitHolderInformation(permitHolder);
-                    }}
-                  />
-                </Box>
-              </GridItem>
-              {/* Reason For Replacement Form */}
-              <GridItem paddingTop="32px">
-                <Box
-                  border="1px solid"
-                  borderColor="border.secondary"
-                  borderRadius="12px"
-                  bgColor="white"
-                  paddingTop="32px"
-                  paddingBottom="40px"
-                  paddingX="40px"
-                  align="left"
-                >
-                  <Text textStyle="display-small-semibold" paddingBottom="20px">
-                    {`Reason for Replacement`}
-                  </Text>
-                  <ReasonForReplacementForm
-                    reasonForReplacement={reasonForReplacement}
-                    onChange={setReasonForReplacement}
-                  />
-                </Box>
-              </GridItem>
-              {/* Payment Details Form */}
-              <GridItem paddingTop="32px" paddingBottom="68px">
-                <Box
-                  border="1px solid"
-                  borderColor="border.secondary"
-                  borderRadius="12px"
-                  bgColor="white"
-                  paddingTop="32px"
-                  paddingBottom="40px"
-                  paddingX="40px"
-                  align="left"
-                >
-                  <Text textStyle="display-small-semibold" paddingBottom="20px">
-                    {`Payment, Shipping, and Billing Information`}
-                  </Text>
-                  <PaymentDetailsForm
-                    paymentInformation={paymentInformation}
-                    onChange={setPaymentInformation}
-                  />
-                </Box>
-              </GridItem>
-              {/* Footer */}
-              <Box
-                position="fixed"
-                left="0"
-                bottom="0"
-                right="0"
-                paddingY="20px"
-                paddingX="188px"
-                bgColor="white"
-                boxShadow="dark-lg"
-              >
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box>
-                    <Button
-                      bg="background.gray"
-                      _hover={{ bg: 'background.grayHover' }}
-                      marginRight="20px"
-                      height="48px"
-                      width="180px"
-                      isDisabled={submitRequestLoading}
-                    >
-                      <BackToSearchModal
-                        onGoBack={() => {
-                          setApplicantId(null);
-                          setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
-                        }}
-                      >
-                        <Text textStyle="button-semibold" color="text.default">
-                          Back to search
-                        </Text>
-                      </BackToSearchModal>
-                    </Button>
+            {({ values, isValid }) => (
+              <Form noValidate>
+                {/* Permit Holder Information Form */}
+                <GridItem paddingTop="32px">
+                  <Box
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    paddingTop="32px"
+                    paddingBottom="40px"
+                    paddingX="40px"
+                    align="left"
+                  >
+                    <Text textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Permit Holder's Information`}
+                    </Text>
+                    <PermitHolderInformationForm
+                      permitHolderInformation={{
+                        ...values.permitHolder,
+                        type: 'REPLACEMENT',
+                        receiveEmailUpdates: false,
+                      }}
+                    />
                   </Box>
-                  <Box>
-                    <Stack direction="row" justifyContent="space-between">
-                      <CancelCreateRequestModal type="replacement">
-                        <Button
-                          bg="secondary.critical"
-                          _hover={{ bg: 'secondary.criticalHover' }}
-                          marginRight="20px"
-                          height="48px"
-                          width="188px"
-                          isDisabled={submitRequestLoading}
-                        >
-                          <Text textStyle="button-semibold">Discard request</Text>
-                        </Button>
-                      </CancelCreateRequestModal>
+                </GridItem>
+                {/* Reason For Replacement Form */}
+                <GridItem paddingTop="32px">
+                  <Box
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    paddingTop="32px"
+                    paddingBottom="40px"
+                    paddingX="40px"
+                    align="left"
+                  >
+                    <Text textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Reason for Replacement`}
+                    </Text>
+                    <ReasonForReplacementForm
+                      reasonForReplacement={reasonForReplacement}
+                      onChange={setReasonForReplacement}
+                    />
+                  </Box>
+                </GridItem>
+                {/* Payment Details Form */}
+                <GridItem paddingTop="32px" paddingBottom="68px">
+                  <Box
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    paddingTop="32px"
+                    paddingBottom="40px"
+                    paddingX="40px"
+                    align="left"
+                  >
+                    <Text textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Payment, Shipping, and Billing Information`}
+                    </Text>
+                    <PaymentDetailsForm
+                      paymentInformation={paymentInformation}
+                      onChange={setPaymentInformation}
+                    />
+                  </Box>
+                </GridItem>
+                {/* Footer */}
+                <Box
+                  position="fixed"
+                  left="0"
+                  bottom="0"
+                  right="0"
+                  paddingY="20px"
+                  paddingX="188px"
+                  bgColor="white"
+                  boxShadow="dark-lg"
+                >
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box>
                       <Button
-                        bg="primary"
+                        bg="background.gray"
+                        _hover={{ bg: 'background.grayHover' }}
+                        marginRight="20px"
                         height="48px"
                         width="180px"
-                        type="submit"
-                        isLoading={submitRequestLoading}
+                        isDisabled={submitRequestLoading}
                       >
-                        <Text textStyle="button-semibold">Create request</Text>
+                        <BackToSearchModal
+                          onGoBack={() => {
+                            setApplicantId(null);
+                            setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
+                          }}
+                        >
+                          <Text textStyle="button-semibold" color="text.default">
+                            Back to search
+                          </Text>
+                        </BackToSearchModal>
                       </Button>
-                    </Stack>
-                  </Box>
-                </Stack>
-              </Box>
-            </Form>
+                    </Box>
+                    <Box>
+                      <Stack direction="row" justifyContent="space-between">
+                        <CancelCreateRequestModal type="replacement">
+                          <Button
+                            bg="secondary.critical"
+                            _hover={{ bg: 'secondary.criticalHover' }}
+                            marginRight="20px"
+                            height="48px"
+                            width="188px"
+                            isDisabled={submitRequestLoading}
+                          >
+                            <Text textStyle="button-semibold">Discard request</Text>
+                          </Button>
+                        </CancelCreateRequestModal>
+                        <Button
+                          bg="primary"
+                          height="48px"
+                          width="180px"
+                          type="submit"
+                          isLoading={submitRequestLoading}
+                          isDisabled={!isValid}
+                        >
+                          <Text textStyle="button-semibold">Create request</Text>
+                        </Button>
+                      </Stack>
+                    </Box>
+                  </Stack>
+                </Box>
+              </Form>
+            )}
           </Formik>
         )}
         {/* Footer on Permit Search*/}
