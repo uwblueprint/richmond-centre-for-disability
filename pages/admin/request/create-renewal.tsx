@@ -31,7 +31,8 @@ import {
 } from '@tools/admin/requests/create-renewal';
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 import { Form, Formik } from 'formik';
-import { object } from 'yup';
+import { permitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
+import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -197,7 +198,7 @@ export default function CreateRenewal() {
   /**
    * Handle renewal request submission
    */
-  const handleSubmit = async () => {
+  const handleSubmit = async (values: { permitHolder: PermitHolderFormData }) => {
     // event.preventDefault();
     if (!applicantId) {
       toast({
@@ -236,11 +237,14 @@ export default function CreateRenewal() {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { type, ...permitHolder } = values.permitHolder;
+
     await submitRenewalApplication({
       variables: {
         input: {
           applicantId,
-          ...permitHolderInformation,
+          ...permitHolder,
           physicianFirstName: doctorInformation.firstName,
           physicianLastName: doctorInformation.lastName,
           physicianMspNumber: doctorInformation.mspNumber,
@@ -264,7 +268,7 @@ export default function CreateRenewal() {
   };
 
   // TODO: move to a different file
-  const renewalFormSchema = object();
+  const renewalFormSchema = permitHolderInformationSchema;
 
   return (
     <Layout>
@@ -312,160 +316,168 @@ export default function CreateRenewal() {
         {/* Permit Holder Information Form */}
         {applicantId && currentPageState == RequestFlowPageState.SubmittingRequestPage && (
           <Formik
-            initialValues={{ ...permitHolderInformation }}
+            initialValues={{
+              permitHolder: {
+                ...permitHolderInformation,
+                type: 'RENEWAL',
+              },
+            }}
             validationSchema={renewalFormSchema}
             onSubmit={handleSubmit}
           >
-            <Form noValidate>
-              <GridItem paddingTop="32px">
-                <Box
-                  border="1px solid"
-                  borderColor="border.secondary"
-                  borderRadius="12px"
-                  bgColor="white"
-                  paddingTop="32px"
-                  paddingBottom="40px"
-                  paddingX="40px"
-                  align="left"
-                >
-                  <Text textStyle="display-small-semibold" paddingBottom="20px">
-                    {`Permit Holder's Information`}
-                  </Text>
-                  <PermitHolderInformationForm
-                    permitHolderInformation={{ ...permitHolderInformation, type: 'RENEWAL' }}
-                    onChange={updatedPermitHolder => {
-                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                      const { type, ...permitHolder } = updatedPermitHolder;
-                      setPermitHolderInformation(permitHolder);
-                    }}
-                  />
-                </Box>
-              </GridItem>
-              {/* Doctor's Information Form */}
-              <GridItem paddingTop="32px">
-                <Box
-                  border="1px solid"
-                  borderColor="border.secondary"
-                  borderRadius="12px"
-                  bgColor="white"
-                  paddingTop="32px"
-                  paddingBottom="40px"
-                  paddingX="40px"
-                  align="left"
-                >
-                  <Text textStyle="display-small-semibold" paddingBottom="20px">
-                    {`Doctor's Information`}
-                  </Text>
-                  <DoctorInformationForm
-                    doctorInformation={doctorInformation}
-                    onChange={setDoctorInformation}
-                  />
-                </Box>
-              </GridItem>
-              {/* Additional Quesitons Form */}
-              <GridItem paddingTop="32px">
-                <Box
-                  border="1px solid"
-                  borderColor="border.secondary"
-                  borderRadius="12px"
-                  bgColor="white"
-                  paddingTop="32px"
-                  paddingBottom="40px"
-                  paddingX="40px"
-                  align="left"
-                >
-                  <Text textStyle="display-small-semibold" paddingBottom="20px">
-                    {`Additional Information`}
-                  </Text>
-                  <AdditionalQuestionsForm
-                    data={additionalInformation}
-                    onChange={setAdditionalInformation}
-                  />
-                </Box>
-              </GridItem>
-              {/* Payment Details Form */}
-              <GridItem paddingTop="32px" paddingBottom="68px">
-                <Box
-                  border="1px solid"
-                  borderColor="border.secondary"
-                  borderRadius="12px"
-                  bgColor="white"
-                  paddingTop="32px"
-                  paddingBottom="40px"
-                  paddingX="40px"
-                  align="left"
-                >
-                  <Text textStyle="display-small-semibold" paddingBottom="20px">
-                    {`Payment, Shipping, and Billing Information`}
-                  </Text>
-                  <PaymentDetailsForm
-                    paymentInformation={paymentInformation}
-                    onChange={setPaymentInformation}
-                  />
-                </Box>
-              </GridItem>
-
-              {/* Footer */}
-              <Box
-                position="fixed"
-                left="0"
-                bottom="0"
-                right="0"
-                paddingY="20px"
-                paddingX="188px"
-                bgColor="white"
-                boxShadow="dark-lg"
-              >
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box>
-                    <Button
-                      bg="background.gray"
-                      _hover={{ bg: 'background.grayHover' }}
-                      marginRight="20px"
-                      height="48px"
-                      width="180px"
-                      isDisabled={submitRequestLoading}
-                    >
-                      <BackToSearchModal
-                        onGoBack={() => {
-                          setApplicantId(null);
-                          setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
-                        }}
-                      >
-                        <Text textStyle="button-semibold" color="text.default">
-                          Back to search
-                        </Text>
-                      </BackToSearchModal>
-                    </Button>
+            {({ values, isValid }) => (
+              <Form noValidate>
+                <GridItem paddingTop="32px">
+                  <Box
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    paddingTop="32px"
+                    paddingBottom="40px"
+                    paddingX="40px"
+                    align="left"
+                  >
+                    <Text textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Permit Holder's Information`}
+                    </Text>
+                    <PermitHolderInformationForm
+                      permitHolderInformation={{ ...values.permitHolder, type: 'RENEWAL' }}
+                      onChange={updatedPermitHolder => {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const { type, ...permitHolder } = updatedPermitHolder;
+                        setPermitHolderInformation(permitHolder);
+                      }}
+                    />
                   </Box>
-                  <Box>
-                    <Stack direction="row" justifyContent="space-between">
-                      <CancelCreateRequestModal type="renewal">
-                        <Button
-                          bg="secondary.critical"
-                          _hover={{ bg: 'secondary.criticalHover' }}
-                          marginRight="20px"
-                          height="48px"
-                          width="188px"
-                          isDisabled={submitRequestLoading}
-                        >
-                          <Text textStyle="button-semibold">Discard request</Text>
-                        </Button>
-                      </CancelCreateRequestModal>
+                </GridItem>
+                {/* Doctor's Information Form */}
+                <GridItem paddingTop="32px">
+                  <Box
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    paddingTop="32px"
+                    paddingBottom="40px"
+                    paddingX="40px"
+                    align="left"
+                  >
+                    <Text textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Doctor's Information`}
+                    </Text>
+                    <DoctorInformationForm
+                      doctorInformation={doctorInformation}
+                      onChange={setDoctorInformation}
+                    />
+                  </Box>
+                </GridItem>
+                {/* Additional Quesitons Form */}
+                <GridItem paddingTop="32px">
+                  <Box
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    paddingTop="32px"
+                    paddingBottom="40px"
+                    paddingX="40px"
+                    align="left"
+                  >
+                    <Text textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Additional Information`}
+                    </Text>
+                    <AdditionalQuestionsForm
+                      data={additionalInformation}
+                      onChange={setAdditionalInformation}
+                    />
+                  </Box>
+                </GridItem>
+                {/* Payment Details Form */}
+                <GridItem paddingTop="32px" paddingBottom="68px">
+                  <Box
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    paddingTop="32px"
+                    paddingBottom="40px"
+                    paddingX="40px"
+                    align="left"
+                  >
+                    <Text textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Payment, Shipping, and Billing Information`}
+                    </Text>
+                    <PaymentDetailsForm
+                      paymentInformation={paymentInformation}
+                      onChange={setPaymentInformation}
+                    />
+                  </Box>
+                </GridItem>
+
+                {/* Footer */}
+                <Box
+                  position="fixed"
+                  left="0"
+                  bottom="0"
+                  right="0"
+                  paddingY="20px"
+                  paddingX="188px"
+                  bgColor="white"
+                  boxShadow="dark-lg"
+                >
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box>
                       <Button
-                        bg="primary"
+                        bg="background.gray"
+                        _hover={{ bg: 'background.grayHover' }}
+                        marginRight="20px"
                         height="48px"
                         width="180px"
-                        type="submit"
-                        isLoading={submitRequestLoading}
+                        isDisabled={submitRequestLoading}
                       >
-                        <Text textStyle="button-semibold">Create request</Text>
+                        <BackToSearchModal
+                          onGoBack={() => {
+                            setApplicantId(null);
+                            setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
+                          }}
+                        >
+                          <Text textStyle="button-semibold" color="text.default">
+                            Back to search
+                          </Text>
+                        </BackToSearchModal>
                       </Button>
-                    </Stack>
-                  </Box>
-                </Stack>
-              </Box>
-            </Form>
+                    </Box>
+                    <Box>
+                      <Stack direction="row" justifyContent="space-between">
+                        <CancelCreateRequestModal type="renewal">
+                          <Button
+                            bg="secondary.critical"
+                            _hover={{ bg: 'secondary.criticalHover' }}
+                            marginRight="20px"
+                            height="48px"
+                            width="188px"
+                            isDisabled={submitRequestLoading}
+                          >
+                            <Text textStyle="button-semibold">Discard request</Text>
+                          </Button>
+                        </CancelCreateRequestModal>
+                        <Button
+                          bg="primary"
+                          height="48px"
+                          width="180px"
+                          type="submit"
+                          isLoading={submitRequestLoading}
+                          isDisabled={!isValid}
+                        >
+                          <Text textStyle="button-semibold">Create request</Text>
+                        </Button>
+                      </Stack>
+                    </Box>
+                  </Stack>
+                </Box>
+              </Form>
+            )}
           </Formik>
         )}
         {/* Footer on Permit Searcher Page*/}

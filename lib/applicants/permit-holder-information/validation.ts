@@ -8,16 +8,16 @@ export const permitHolderInformationSchema = object({
     middleName: string().nullable(),
     lastName: string().required('Please enter a last name'),
     dateOfBirth: date().when('type', {
-      is: 'REPLACEMENT',
-      then: date(),
-      otherwise: date().required('Please enter your date of birth'),
+      is: 'NEW',
+      then: date().required('Please enter your date of birth'),
+      otherwise: date(),
     }),
     gender: mixed<Gender>()
       .oneOf(Object.values(Gender))
       .when('type', {
-        is: 'REPLACEMENT',
-        then: mixed<Gender>().oneOf(Object.values(Gender)),
-        otherwise: mixed<Gender>().oneOf(Object.values(Gender)).required('Please select a gender'),
+        is: 'NEW',
+        then: mixed<Gender>().oneOf(Object.values(Gender)).required('Please select a gender'),
+        otherwise: mixed<Gender>().oneOf(Object.values(Gender)),
       }),
     otherGender: string().nullable(),
     email: string().email('Please enter a valid email address').nullable(),
