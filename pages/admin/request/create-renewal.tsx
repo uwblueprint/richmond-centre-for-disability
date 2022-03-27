@@ -343,11 +343,6 @@ export default function CreateRenewal() {
                     </Text>
                     <PermitHolderInformationForm
                       permitHolderInformation={{ ...values.permitHolder, type: 'RENEWAL' }}
-                      onChange={updatedPermitHolder => {
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        const { type, ...permitHolder } = updatedPermitHolder;
-                        setPermitHolderInformation(permitHolder);
-                      }}
                     />
                   </Box>
                 </GridItem>
