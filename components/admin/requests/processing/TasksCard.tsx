@@ -259,7 +259,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               <Text textStyle="xsmall-medium">Generate document</Text>
             </Button>
           ) : (
-            // TODO: Replace with link to download file
             <Tooltip
               hasArrow
               closeOnClick={false}
