@@ -215,7 +215,7 @@ model ApplicationProcessing {
   reviewRequestCompletedEmployeeId Int?                @map("review_request_completed_employee_id")
   reviewRequestCompletedUpdatedAt  DateTime            @default(now()) @map("review_request_completed_updated_at") @db.Timestamptz(6)
   invoiceNumber                    Int?                @unique @map("invoice_number")
-  documentsUrl                     String?             @map("documents_url") @db.VarChar(255)
+  documentsUrl                     String?             @map("documents_url")
   documentsUrlEmployeeId           Int?                @map("documents_url_employee_id")
   documentsUrlUpdatedAt            DateTime            @default(now()) @map("documents_url_updated_at") @db.Timestamptz(6)
   appMailed                        Boolean             @default(false) @map("app_mailed")
@@ -323,7 +323,7 @@ model ReplacementApplication {
 model ApplicationInvoice {
   invoiceNumber         Int                    @id @default(autoincrement()) @map("invoice_number")
   s3ObjectKey           String?                @map("s3_object_key") @db.VarChar(255)
-  s3ObjectUrl           String?                @map("s3_object_url") @db.VarChar(255)
+  s3ObjectUrl           String?                @map("s3_object_url")
   employeeId            Int                    @map("employee_id")
   createdAt             DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt             DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)

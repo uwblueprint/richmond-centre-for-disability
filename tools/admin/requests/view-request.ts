@@ -13,7 +13,11 @@ export const GET_APPLICATION_QUERY = gql`
         appNumber
         appHolepunched
         walletCardCreated
-        invoiceNumber
+        invoice {
+          invoiceNumber
+          s3ObjectUrl
+          s3ObjectKey
+        }
         documentsUrl
         appMailed
         reviewRequestCompleted
@@ -35,7 +39,7 @@ export type GetApplicationResponse = {
       | 'appNumber'
       | 'appHolepunched'
       | 'walletCardCreated'
-      | 'invoiceNumber'
+      | 'invoice'
       | 'documentsUrl'
       | 'appMailed'
       | 'reviewRequestCompleted'

@@ -29,6 +29,7 @@ export const GET_APPLICATION_PROCESSING = gql`
         invoice {
           invoiceNumber
           s3ObjectUrl
+          s3ObjectKey
         }
         documentsUrl
         appMailed
@@ -47,7 +48,7 @@ export type GetApplicationProcessingResponse = {
       | 'appNumber'
       | 'appHolepunched'
       | 'walletCardCreated'
-      | 'invoiceNumber'
+      | 'invoice'
       | 'documentsUrl'
       | 'appMailed'
       | 'reviewRequestCompleted'
