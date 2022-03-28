@@ -3,17 +3,13 @@ import CheckboxField from '@components/form/CheckboxField';
 import DateField from '@components/form/DateField';
 import SelectField from '@components/form/SelectField';
 import TextField from '@components/form/TextField';
-// import { Gender } from '@lib/graphql/types';
-// import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
-// import { ChangeEventHandler } from 'react';
 
 /**
  * PermitHolderInformationFormProps props for allowing users to edit permit holder information.
  */
 type PermitHolderInformationFormProps = {
   readonly permitHolderInformation: PermitHolderFormData;
-  readonly onChange?: (updatedData: PermitHolderFormData) => void;
 };
 
 /**
@@ -24,18 +20,6 @@ type PermitHolderInformationFormProps = {
  * @param onChange Function that uses the updated values from form.
  */
 export default function PermitHolderInformationForm(props: PermitHolderInformationFormProps) {
-  // TODO: figure out if we need the onChange anymore
-  // const handleChange =
-  //   (field: keyof PermitHolderFormData): ChangeEventHandler<HTMLInputElement> =>
-  //   event => {
-  //     const updatedFieldValue =
-  //       event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-  //     props.onChange({
-  //       ...props.permitHolderInformation,
-  //       [field]: updatedFieldValue,
-  //     });
-  //   };
-
   return (
     <>
       {/* Personal Information Section */}
@@ -84,7 +68,6 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
           <TextField name="permitHolder.email" label="Email address" labelHelperText="(optional)" />
         </Stack>
 
-        {/* TODO: fix condition */}
         {props.permitHolderInformation.type !== 'REPLACEMENT' && (
           <Box paddingTop="24px">
             <CheckboxField

@@ -55,7 +55,7 @@ import { useRouter } from 'next/router';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { uploadToS3 } from '@lib/utils/upload-to-s3';
 import { Form, Formik } from 'formik';
-import { requestingPermitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
+import { newPermitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -245,10 +245,14 @@ export default function CreateNew() {
     },
   });
 
+  // TODO: move to a different file
+  const createNewFormSchema = newPermitHolderInformationSchema;
+
   /**
    * Handle new APP request submission
    */
-  const handleSubmit = async (values: { permitHolder: PermitHolderFormData }) => {
+  //TODO: create type for values
+  const handleSubmit = async (values: { permitHolder: NewApplicationPermitHolderInformation }) => {
     let poaFormS3ObjectKey = '';
     if (guardianPOAFile) {
       try {
@@ -264,10 +268,7 @@ export default function CreateNew() {
       }
     }
 
-    if (!permitHolderInformation.gender) {
-      toast({ status: 'error', description: 'Missing gender', isClosable: true });
-      return;
-    }
+    const validatedValues = await newPermitHolderInformationSchema.validate(values);
 
     if (!physicianAssessment.patientCondition) {
       toast({ status: 'error', description: 'Missing patient condition', isClosable: true });
@@ -308,12 +309,24 @@ export default function CreateNew() {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { type, ...permitHolder } = values.permitHolder;
+    const permitHolder = validatedValues.permitHolder;
 
     await submitNewApplication({
       variables: {
         input: {
-          ...permitHolder,
+          firstName: permitHolder.firstName,
+          middleName: permitHolder.middleName || null,
+          lastName: permitHolder.lastName,
+          email: permitHolder.email || null,
+          phone: permitHolder.phone,
+          receiveEmailUpdates: permitHolder.receiveEmailUpdates,
+          addressLine1: permitHolder.addressLine1,
+          addressLine2: permitHolder.addressLine2 || null,
+          city: permitHolder.city,
+          postalCode: permitHolder.postalCode,
+          dateOfBirth: permitHolder.dateOfBirth,
+          gender: permitHolder.gender,
+          otherGender: permitHolder.otherGender || null,
 
           ...physicianAssessment,
           patientCondition: physicianAssessment.patientCondition,
@@ -353,9 +366,6 @@ export default function CreateNew() {
       },
     });
   };
-
-  // TODO: move to a different file
-  const createNewFormSchema = requestingPermitHolderInformationSchema;
 
   return (
     <Layout>
@@ -485,7 +495,6 @@ export default function CreateNew() {
             initialValues={{
               permitHolder: {
                 ...permitHolderInformation,
-                type: 'NEW',
               },
             }}
             validationSchema={createNewFormSchema}
