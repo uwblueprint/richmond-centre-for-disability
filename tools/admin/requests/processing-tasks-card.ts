@@ -26,7 +26,10 @@ export const GET_APPLICATION_PROCESSING = gql`
         appNumber
         appHolepunched
         walletCardCreated
-        invoiceNumber
+        invoice {
+          invoiceNumber
+          s3ObjectUrl
+        }
         documentsUrl
         appMailed
         reviewRequestCompleted

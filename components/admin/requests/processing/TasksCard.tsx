@@ -83,10 +83,9 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
-  const [generateInvoice] =
+  const [generateInvoice, { loading: generateInvoiceLoading }] =
     useMutation<GenerateInvoiceResponse, GenerateInvoiceRequest>(GENERATE_INVOICE_MUTATION);
   const handleGenerateInvoice = async () => {
-    // Ideally we call an endpoint to generate it and then pass the returned invoice number
     await generateInvoice({ variables: { input: { applicationId } } });
     refetch();
   };
@@ -254,6 +253,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               disabled={!reviewRequestCompleted}
               color="black"
               onClick={handleGenerateInvoice}
+              isLoading={generateInvoiceLoading}
             >
               <Text textStyle="xsmall-medium">Generate document</Text>
             </Button>

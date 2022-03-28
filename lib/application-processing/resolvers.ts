@@ -25,6 +25,8 @@ import {
 } from '@lib/graphql/types';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
+import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
+import { randomUUID } from 'crypto';
 
 /**
  * Approve application
@@ -874,7 +876,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
   }
 
   // Generate application invoice
-  generateApplicationInvoicePdf(
+  const pdfDoc = generateApplicationInvoicePdf(
     application,
     session,
     // TODO: Remove typecast when backend guard is implemented
@@ -882,7 +884,39 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     invoice.invoiceNumber
   );
 
-  return { ok: true };
+  // Upload pdf to s3
+  const s3InvoiceKey = `invoices/${randomUUID()}/${invoice.invoiceNumber}.pdf`;
+  let uploadedPdf;
+  let signedUrl;
+  try {
+    uploadedPdf = await serverUploadToS3(pdfDoc, s3InvoiceKey);
+    signedUrl = getSignedUrlForS3(uploadedPdf.key);
+  } catch (error) {
+    throw new ApolloError(`Error uploading invoice pdf to AWS: ${error}`);
+  }
+
+  let updatedInvoice;
+  try {
+    updatedInvoice = await prisma.applicationInvoice.update({
+      where: {
+        invoiceNumber: invoice.invoiceNumber,
+      },
+      data: {
+        s3ObjectKey: uploadedPdf.key,
+        s3ObjectUrl: signedUrl,
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedInvoice) {
+    throw new ApolloError('Error updating invoice record in DB');
+  }
+
+  return {
+    ok: true,
+  };
 };
 
 /**

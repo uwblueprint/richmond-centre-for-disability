@@ -201,6 +201,7 @@ CREATE TABLE applicants (
 CREATE TABLE application_invoices (
   invoice_number SERIAL PRIMARY KEY,
   s3_object_key VARCHAR(255),
+  s3_object_url VARCHAR(255),
   employee_id INTEGER NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

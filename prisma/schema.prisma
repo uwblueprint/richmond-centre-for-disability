@@ -323,6 +323,7 @@ model ReplacementApplication {
 model ApplicationInvoice {
   invoiceNumber         Int                    @id @default(autoincrement()) @map("invoice_number")
   s3ObjectKey           String?                @map("s3_object_key") @db.VarChar(255)
+  s3ObjectUrl           String?                @map("s3_object_url") @db.VarChar(255)
   employeeId            Int                    @map("employee_id")
   createdAt             DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt             DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
