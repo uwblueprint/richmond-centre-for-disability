@@ -254,7 +254,9 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               color="black"
               onClick={handleGenerateInvoice}
               isLoading={generateInvoiceLoading}
-              spinnerPlacement="end"
+              loadingText="Generate document"
+              fontWeight="normal"
+              fontSize="14px"
             >
               <Text textStyle="xsmall-medium">Generate document</Text>
             </Button>
