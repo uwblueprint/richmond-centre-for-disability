@@ -226,7 +226,7 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
                 <option value={'Canada'}>Canada</option>
               </SelectField>
 
-              <TextField name="paymentInformation.billingPostalCode" label="Country" required>
+              <TextField name="paymentInformation.billingPostalCode" label="Postal code" required>
                 <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
               </TextField>
             </Stack>

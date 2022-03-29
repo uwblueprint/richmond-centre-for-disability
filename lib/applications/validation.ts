@@ -40,8 +40,7 @@ export const paymentInformationSchema = object({
     is: false,
     then: string().required('Please enter a postal code.'),
   }),
-
-  billingAddressSameAsHomeAddress: string().nullable(),
+  billingAddressSameAsHomeAddress: bool().nullable(),
   billingFullName: string().when('billingAddressSameAsHomeAddress', {
     is: false,
     then: string().required('Please enter the recipient’s full name.'),
