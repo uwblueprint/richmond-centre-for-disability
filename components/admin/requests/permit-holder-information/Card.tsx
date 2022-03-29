@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { HStack, VStack, Text, Divider, Button, useToast } from '@chakra-ui/react'; // Chakra UI
+import { HStack, VStack, Text, Divider, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
 import EditPermitHolderInformationModal from '@components/admin/requests/permit-holder-information/EditModal'; // Edit modal
 import {
@@ -20,6 +20,7 @@ import { formatDateYYYYMMDD, formatFullName } from '@lib/utils/format';
 import PermitHolderStatusBadge from '@components/admin/PermitHolderStatusBadge';
 import Updated from '@components/admin/Updated';
 import Address from '@components/admin/Address';
+import { permitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
 
 type Props = {
   readonly applicationId: number;
@@ -65,9 +66,6 @@ const Card: FC<Props> = props => {
     }
   );
 
-  // Toast message
-  const toast = useToast();
-
   const [updatePermitHolderInformation] = useMutation<
     UpdatePermitHolderInformationResponse,
     UpdatePermitHolderInformationRequest
@@ -84,19 +82,15 @@ const Card: FC<Props> = props => {
 
   /** Handler for saving permit holder information */
   const handleSave = async (data: PermitHolderFormData) => {
-    if (data.type === 'NEW') {
-      if (!data.gender) {
-        toast({ status: 'error', description: 'Missing gender', isClosable: true });
-        return;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { type, gender, ...permitHolderData } = data;
+    const { type, ...permitHolderData } = data;
+
+    if (type === 'NEW') {
+      const validatedData = await permitHolderInformationSchema.validate(permitHolderData);
+
       await updateNewPermitHolderInformation({
-        variables: { input: { id: applicationId, ...permitHolderData, gender } },
+        variables: { input: { id: applicationId, ...validatedData } },
       });
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { type, ...permitHolderData } = data;
       await updatePermitHolderInformation({
         variables: { input: { id: applicationId, ...permitHolderData } },
       });

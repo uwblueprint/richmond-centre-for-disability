@@ -371,7 +371,7 @@ export default function CreateReplacement() {
                     </Box>
                     <Box>
                       <Stack direction="row" justifyContent="space-between">
-                        <CancelCreateRequestModal type="replacement">
+                        <CancelCreateRequestModal type="REPLACEMENT">
                           <Button
                             bg="secondary.critical"
                             _hover={{ bg: 'secondary.criticalHover' }}
@@ -389,7 +389,7 @@ export default function CreateReplacement() {
                           width="180px"
                           type="submit"
                           isLoading={submitRequestLoading}
-                          isDisabled={!isValid}
+                          isDisabled={submitRequestLoading || !isValid}
                         >
                           <Text textStyle="button-semibold">Create request</Text>
                         </Button>

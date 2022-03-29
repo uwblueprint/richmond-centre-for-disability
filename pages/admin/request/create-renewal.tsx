@@ -445,7 +445,7 @@ export default function CreateRenewal() {
                     </Box>
                     <Box>
                       <Stack direction="row" justifyContent="space-between">
-                        <CancelCreateRequestModal type="renewal">
+                        <CancelCreateRequestModal type="RENEWAL">
                           <Button
                             bg="secondary.critical"
                             _hover={{ bg: 'secondary.criticalHover' }}
@@ -463,7 +463,7 @@ export default function CreateRenewal() {
                           width="180px"
                           type="submit"
                           isLoading={submitRequestLoading}
-                          isDisabled={!isValid}
+                          isDisabled={submitRequestLoading || !isValid}
                         >
                           <Text textStyle="button-semibold">Create request</Text>
                         </Button>

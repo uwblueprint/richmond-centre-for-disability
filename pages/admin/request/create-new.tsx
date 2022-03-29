@@ -314,19 +314,7 @@ export default function CreateNew() {
     await submitNewApplication({
       variables: {
         input: {
-          firstName: permitHolder.firstName,
-          middleName: permitHolder.middleName || null,
-          lastName: permitHolder.lastName,
-          email: permitHolder.email || null,
-          phone: permitHolder.phone,
-          receiveEmailUpdates: permitHolder.receiveEmailUpdates,
-          addressLine1: permitHolder.addressLine1,
-          addressLine2: permitHolder.addressLine2 || null,
-          city: permitHolder.city,
-          postalCode: permitHolder.postalCode,
-          dateOfBirth: permitHolder.dateOfBirth,
-          gender: permitHolder.gender,
-          otherGender: permitHolder.otherGender || null,
+          ...permitHolder,
 
           ...physicianAssessment,
           patientCondition: physicianAssessment.patientCondition,
@@ -641,7 +629,7 @@ export default function CreateNew() {
                     </Box>
                     <Box>
                       <Stack direction="row" justifyContent="space-between">
-                        <CancelCreateRequestModal type="new">
+                        <CancelCreateRequestModal type="NEW">
                           <Button
                             bg="secondary.critical"
                             _hover={{ bg: 'secondary.criticalHover' }}
@@ -659,7 +647,7 @@ export default function CreateNew() {
                           width="180px"
                           type="submit"
                           isLoading={submitRequestLoading}
-                          isDisabled={!isValid}
+                          isDisabled={submitRequestLoading || !isValid}
                         >
                           <Text textStyle="button-semibold">Create request</Text>
                         </Button>

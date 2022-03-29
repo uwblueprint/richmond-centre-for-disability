@@ -33,7 +33,6 @@ export default function EditPermitHolderInformationModal({
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const handleSubmit = (values: { permitHolder: PermitHolderFormData }) => {
-    //TODO: make sure the onSave is working properly, and maybe do backend validation
     onSave(values.permitHolder);
     onClose();
   };

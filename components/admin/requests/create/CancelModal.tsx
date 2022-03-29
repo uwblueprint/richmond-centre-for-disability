@@ -10,11 +10,12 @@ import {
   Box,
   useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
+import { ApplicationType } from '@lib/graphql/types';
 import Link from 'next/link'; // Link
 import { ReactNode } from 'react'; // React JSX Type
 
 type CancelRequestModalProps = {
-  readonly type: 'replacement' | 'renewal' | 'new';
+  readonly type: ApplicationType;
   readonly children: ReactNode;
 };
 /**
@@ -31,7 +32,9 @@ export default function CancelCreateRequestModal({ type, children }: CancelReque
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Discard {type.charAt(0).toUpperCase() + type.slice(1)} Request</ModalHeader>
+          <ModalHeader>
+            Discard {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()} Request
+          </ModalHeader>
           <ModalBody>
             <Text textStyle="body-regular" paddingBottom="39px">
               Are you sure you want to discard this request? You will lose all your changes.

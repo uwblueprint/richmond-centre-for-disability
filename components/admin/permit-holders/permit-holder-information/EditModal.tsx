@@ -13,7 +13,7 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, ReactNode } from 'react'; // React
+import { ReactNode } from 'react'; // React
 import { formatDateYYYYMMDD } from '@lib/utils/format'; // Date formatter util
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 import TextField from '@components/form/TextField';
@@ -27,24 +27,22 @@ type EditUserInformationModalProps = {
   applicant: ApplicantFormData;
   children: ReactNode;
   readonly onSave: (applicationData: ApplicantFormData) => void;
+  loading: boolean;
 };
 
 export default function EditUserInformationModal({
   applicant,
   children,
   onSave,
+  loading,
 }: EditUserInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const [loading, setLoading] = useState(false);
 
   /**
    * Handle edit submission
    */
   const handleSubmit = async (values: ApplicantFormData) => {
-    setLoading(true);
     await onSave(values);
-    setLoading(false);
     onClose();
   };
 
@@ -159,9 +157,7 @@ export default function EditUserInformationModal({
                     <Stack direction="row" spacing="20px">
                       <TextField name="city" label="City" required />
                       <TextField name="postalCode" label="Postal code" required>
-                        <FormHelperText color="text.secondary">
-                          {'Example: X0X 0X0'}{' '}
-                        </FormHelperText>
+                        <FormHelperText color="text.secondary">{'Example: X0X 0X0'}</FormHelperText>
                       </TextField>
                     </Stack>
                   </Box>
@@ -175,7 +171,7 @@ export default function EditUserInformationModal({
                     type="submit"
                     ml={'12px'}
                     isLoading={loading}
-                    isDisabled={!isValid}
+                    isDisabled={loading || !isValid}
                   >
                     {'Save'}
                   </Button>
