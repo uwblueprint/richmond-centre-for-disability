@@ -7,7 +7,6 @@ import { gql } from '@apollo/client';
 // TODO: Add nested resolver support for employees
 export default gql`
   type ApplicationProcessing {
-    id: Int!
     status: ApplicationStatus!
     rejectedReason: String
     appNumber: Int

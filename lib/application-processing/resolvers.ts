@@ -26,7 +26,7 @@ import {
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
-import { randomUUID } from 'crypto';
+import { formatDateYYYYMMDD } from '@lib/utils/format';
 
 /**
  * Approve application
@@ -844,6 +844,10 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     throw new ApolloError('Not authenticated');
   }
 
+  if (!process.env.INVOICE_LINK_DURATION_DAYS) {
+    throw new ApolloError('Invoice link duration not defined');
+  }
+
   // Use the application record to retrieve the applicant name, applicant ID, permit type, current date, and employee initials
   const application = await prisma.application.findUnique({
     where: { id: applicationId },
@@ -885,12 +889,19 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
   );
 
   // Upload pdf to s3
-  const s3InvoiceKey = `invoices/${randomUUID()}/${invoice.invoiceNumber}.pdf`;
+  // file name format: PP-Receipt-P<YYYYMMDD>-<invoice number>.pdf
+  const fileName = `PP-Receipt-P${formatDateYYYYMMDD(invoice.createdAt).split('-').join('')}-${
+    invoice.invoiceNumber
+  }.pdf`;
+  const s3InvoiceKey = `rcd/invoices/${fileName}`;
   let uploadedPdf;
   let signedUrl;
   try {
+    // Upload file to s3
     uploadedPdf = await serverUploadToS3(pdfDoc, s3InvoiceKey);
-    signedUrl = getSignedUrlForS3(uploadedPdf.key);
+    // Generate a signed URL to access the file
+    const durationSeconds = parseInt(process.env.INVOICE_LINK_DURATION_DAYS) * 24 * 60 * 60;
+    signedUrl = getSignedUrlForS3(uploadedPdf.key, durationSeconds);
   } catch (error) {
     throw new ApolloError(`Error uploading invoice pdf to AWS: ${error}`);
   }
@@ -907,7 +918,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
       },
     });
   } catch {
-    // TODO: Error handling
+    throw new ApolloError('Error updating invoice metadata in DB');
   }
 
   if (!updatedInvoice) {

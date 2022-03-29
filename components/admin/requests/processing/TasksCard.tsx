@@ -250,7 +250,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               height="35px"
               bg="background.gray"
               _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
-              disabled={!reviewRequestCompleted}
+              disabled={!reviewRequestCompleted || generateInvoiceLoading}
               color="black"
               onClick={handleGenerateInvoice}
               isLoading={generateInvoiceLoading}
@@ -264,7 +264,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             <Tooltip
               hasArrow
               closeOnClick={false}
-              label="Clicking on this link wil open the document in a new tab"
+              label="Clicking on this link will open the document in a new tab"
               placement="bottom"
               bg="background.grayHover"
               color="black"
@@ -277,6 +277,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 padding="0px 16px"
                 color="primary"
               >
+                {/* File name from the object key e.g "rcd/invoice/invoice-1.pdf" */}
                 {invoice.s3ObjectKey?.split('/').at(-1)}
               </Link>
             </Tooltip>

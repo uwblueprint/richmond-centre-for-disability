@@ -16,6 +16,7 @@ import {
   UpdateApplicationProcessingMailOutResult,
   UpdateApplicationProcessingUploadDocumentsResult,
   UpdateApplicationProcessingReviewRequestInformationResult,
+  Invoice,
 } from '@lib/graphql/types';
 
 /** Get application processing */
@@ -48,11 +49,12 @@ export type GetApplicationProcessingResponse = {
       | 'appNumber'
       | 'appHolepunched'
       | 'walletCardCreated'
-      | 'invoice'
       | 'documentsUrl'
       | 'appMailed'
       | 'reviewRequestCompleted'
-    >;
+    > & {
+      invoice: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl'>;
+    };
   };
 };
 

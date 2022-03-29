@@ -90,7 +90,7 @@ export const clientUploadToS3 = async (file: File, filePath: string): Promise<S3
  * By default, bucket objects should be private so they will only be accessible with this link.
  * ** NOTE: This should only be called on the server side for security purposes **
  * @param objectKey
- * @param duration How long the URL should be good for. If not specified will be max duration of 7 days
+ * @param duration How long the URL should be valid for (in seconds). If not specified, defaults to the max duration of 7 days.
  * @returns
  */
 export const getSignedUrlForS3 = (objectKey: string, duration?: number): string => {
@@ -103,10 +103,14 @@ export const getSignedUrlForS3 = (objectKey: string, duration?: number): string 
   });
 
   const MAX_DURATION = 604800; // 7 days
+  let expires = MAX_DURATION;
+  if (duration && duration > 0 && duration < MAX_DURATION) {
+    expires = duration;
+  }
   const params = {
     Bucket: process.env.S3_UPLOAD_BUCKET,
     Key: objectKey,
-    Expires: duration || MAX_DURATION,
+    Expires: expires,
   };
 
   const url = s3.getSignedUrl('getObject', params);

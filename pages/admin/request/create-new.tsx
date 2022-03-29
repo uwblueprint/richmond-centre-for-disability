@@ -252,7 +252,7 @@ export default function CreateNew() {
     let poaFormS3ObjectKey = '';
     if (guardianPOAFile) {
       try {
-        const { key } = await clientUploadToS3(guardianPOAFile, 'rcd/poaFiles');
+        const { key } = await clientUploadToS3(guardianPOAFile, 'rcd/guardian-forms');
         poaFormS3ObjectKey = key;
       } catch (err) {
         toast({

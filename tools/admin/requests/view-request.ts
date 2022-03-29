@@ -1,5 +1,10 @@
 import { gql } from '@apollo/client'; // GraphQL queries
-import { Application, ApplicationProcessing, QueryApplicationArgs } from '@lib/graphql/types';
+import {
+  Application,
+  ApplicationProcessing,
+  Invoice,
+  QueryApplicationArgs,
+} from '@lib/graphql/types';
 
 // Queries an Application by ID along with the associated permit, replacement, applicationProcessing, and applicant
 export const GET_APPLICATION_QUERY = gql`
@@ -39,10 +44,11 @@ export type GetApplicationResponse = {
       | 'appNumber'
       | 'appHolepunched'
       | 'walletCardCreated'
-      | 'invoice'
       | 'documentsUrl'
       | 'appMailed'
       | 'reviewRequestCompleted'
-    >;
+    > & {
+      invoice: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl'>;
+    };
   };
 };

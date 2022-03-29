@@ -1,6 +1,6 @@
 import { ApolloError } from 'apollo-server-micro';
-import { FieldResolver } from '@lib/graphql/resolvers'; // Resolver type
-import { ApplicationProcessing, Invoice } from '@lib/graphql/types'; // Application type
+import { FieldResolver } from '@lib/graphql/resolvers';
+import { ApplicationProcessing, Invoice } from '@lib/graphql/types';
 import { getSignedUrlForS3 } from '@lib/utils/s3-utils';
 
 /**
@@ -9,7 +9,7 @@ import { getSignedUrlForS3 } from '@lib/utils/s3-utils';
  * @returns generated invoice object
  */
 export const applicationProcessingInvoiceResolver: FieldResolver<
-  ApplicationProcessing,
+  ApplicationProcessing & { id: number },
   Omit<Invoice, 'employee'>
 > = async (parent, _, { prisma }) => {
   const invoice = await prisma.applicationProcessing
@@ -20,10 +20,17 @@ export const applicationProcessingInvoiceResolver: FieldResolver<
     return null;
   }
 
-  // Update signed URL if it has expired
+  if (!process.env.INVOICE_LINK_DURATION_DAYS) {
+    throw new ApolloError('Invoice link duration not defined');
+  }
+
+  // Update the signed S3 URL if it has expired.
+  // Get the valid duration period from env.
+  const invoiceLinkDuration = parseInt(process.env.INVOICE_LINK_DURATION_DAYS);
   const DAY = 24 * 60 * 60 * 1000;
-  const daysDifference = new Date().getTime() - invoice.updatedAt.getTime();
-  if (daysDifference > DAY * 6) {
+  const daysDifference =
+    Math.floor(new Date().getTime() / DAY) - Math.floor(invoice.updatedAt.getTime() / DAY);
+  if (daysDifference > invoiceLinkDuration) {
     let signedUrl;
     try {
       signedUrl = getSignedUrlForS3(invoice.s3ObjectKey as string);

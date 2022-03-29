@@ -114,7 +114,6 @@ export type Application = {
 
 export type ApplicationProcessing = {
   __typename?: 'ApplicationProcessing';
-  id: Scalars['Int'];
   status: ApplicationStatus;
   rejectedReason: Maybe<Scalars['String']>;
   appNumber: Maybe<Scalars['Int']>;
