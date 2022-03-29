@@ -22,14 +22,12 @@ import CheckboxField from '@components/form/CheckboxField';
 
 type PaymentDetailsFormProps = {
   readonly paymentInformation: PaymentInformationFormData;
-  readonly onChange?: (updatedData: PaymentInformationFormData) => void;
 };
 
 /**
  * PaymentDetailsForm Component for allowing users to edit payment details.
  *
  * @param {PaymentInformationFormData} paymentInformation Data Structure that holds all paymentInformation for a client request.
- * @param {onChangeCallback} onChange Function that uses the updated values from form.
  */
 export default function PaymentDetailsForm({ paymentInformation }: PaymentDetailsFormProps) {
   return (
@@ -143,8 +141,15 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
             </Stack>
 
             <Stack direction="row" spacing="20px">
-              {/* TODO: Replace with dropdown */}
-              <TextField name="paymentInformation.shippingCountry" label="Country" required />
+              <SelectField
+                name="paymentInformation.shippingCountry"
+                label="Country"
+                required
+                placeholder="Select country"
+              >
+                {/* TODO: Add more countries? */}
+                <option value={'Canada'}>Canada</option>
+              </SelectField>
 
               <TextField name="paymentInformation.shippingPostalCode" label="Postal code" required>
                 <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
@@ -211,8 +216,15 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
             </Stack>
 
             <Stack direction="row" spacing="20px">
-              {/* TODO: Replace with dropdown */}
-              <TextField name="paymentInformation.billingCountry" label="Country" required />
+              <SelectField
+                name="paymentInformation.billingCountry"
+                label="Country"
+                required
+                placeholder="Select country"
+              >
+                {/* TODO: Add more countries? */}
+                <option value={'Canada'}>Canada</option>
+              </SelectField>
 
               <TextField name="paymentInformation.billingPostalCode" label="Country" required>
                 <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
