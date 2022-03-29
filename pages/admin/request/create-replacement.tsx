@@ -39,7 +39,6 @@ import { useRouter } from 'next/router'; // Router
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
-import { PaymentType } from '@lib/graphql/types';
 import { Form, Formik } from 'formik';
 import { replacementFormSchema as replacementRequestFormSchema } from '@lib/applications/validation';
 
@@ -76,9 +75,7 @@ export default function CreateReplacement() {
   });
 
   /** Payment information section */
-  const [paymentInformation, setPaymentInformation] = useState<
-    PaymentInformationFormData & { paymentMethod: PaymentType | null }
-  >({
+  const initialPaymentInformation: PaymentInformationFormData = {
     paymentMethod: null,
     donationAmount: '',
     shippingAddressSameAsHomeAddress: false,
@@ -97,7 +94,7 @@ export default function CreateReplacement() {
     billingProvince: 'BC',
     billingCountry: '',
     billingPostalCode: '',
-  });
+  };
 
   const toast = useToast();
   const router = useRouter();
@@ -172,7 +169,10 @@ export default function CreateReplacement() {
   });
 
   /** Handle replacement application submission */
-  const handleSubmit = async (values: { permitHolder: PermitHolderFormData }) => {
+  const handleSubmit = async (values: {
+    permitHolder: PermitHolderFormData;
+    paymentInformation: PaymentInformationFormData;
+  }) => {
     if (applicantId === null) {
       toast({
         status: 'error',
@@ -187,7 +187,7 @@ export default function CreateReplacement() {
       return;
     }
 
-    if (!paymentInformation.paymentMethod) {
+    if (!values.paymentInformation.paymentMethod) {
       toast({ status: 'error', description: 'Missing payment method', isClosable: true });
       return;
     }
@@ -202,8 +202,8 @@ export default function CreateReplacement() {
           ...permitHolder,
           ...reasonForReplacement,
           reason: reasonForReplacement.reason,
-          ...paymentInformation,
-          paymentMethod: paymentInformation.paymentMethod,
+          ...values.paymentInformation,
+          paymentMethod: values.paymentInformation.paymentMethod,
         },
       },
     });
@@ -261,6 +261,7 @@ export default function CreateReplacement() {
                 type: 'REPLACEMENT',
                 receiveEmailUpdates: false,
               },
+              paymentInformation: { ...initialPaymentInformation },
             }}
             validationSchema={replacementRequestFormSchema}
             onSubmit={handleSubmit}
@@ -327,10 +328,7 @@ export default function CreateReplacement() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Payment, Shipping, and Billing Information`}
                     </Text>
-                    <PaymentDetailsForm
-                      paymentInformation={paymentInformation}
-                      onChange={setPaymentInformation}
-                    />
+                    <PaymentDetailsForm paymentInformation={values.paymentInformation} />
                   </Box>
                 </GridItem>
                 {/* Footer */}

@@ -80,7 +80,7 @@ export default function CreateRenewal() {
   );
 
   /** Payment information section */
-  const [paymentInformation, setPaymentInformation] = useState<PaymentInformationFormData>({
+  const initialPaymentInformation: PaymentInformationFormData = {
     paymentMethod: null,
     donationAmount: '',
     shippingAddressSameAsHomeAddress: false,
@@ -99,7 +99,7 @@ export default function CreateRenewal() {
     billingProvince: 'BC',
     billingCountry: '',
     billingPostalCode: '',
-  });
+  };
 
   // Toast message
   const toast = useToast();
@@ -198,7 +198,10 @@ export default function CreateRenewal() {
   /**
    * Handle renewal request submission
    */
-  const handleSubmit = async (values: { permitHolder: PermitHolderFormData }) => {
+  const handleSubmit = async (values: {
+    permitHolder: PermitHolderFormData;
+    paymentInformation: PaymentInformationFormData;
+  }) => {
     // event.preventDefault();
     if (!applicantId) {
       toast({
@@ -214,7 +217,7 @@ export default function CreateRenewal() {
       return;
     }
 
-    if (!paymentInformation.paymentMethod) {
+    if (!values.paymentInformation.paymentMethod) {
       toast({ status: 'error', description: 'Missing payment method', isClosable: true });
       return;
     }
@@ -256,8 +259,8 @@ export default function CreateRenewal() {
           ...additionalInformation,
           usesAccessibleConvertedVan: additionalInformation.usesAccessibleConvertedVan,
           requiresWiderParkingSpace: additionalInformation.requiresWiderParkingSpace,
-          ...paymentInformation,
-          paymentMethod: paymentInformation.paymentMethod,
+          ...values.paymentInformation,
+          paymentMethod: values.paymentInformation.paymentMethod,
           // TODO: Replace with dynamic values
           paidThroughShopify: false,
           shopifyPaymentStatus: null,
@@ -318,6 +321,7 @@ export default function CreateRenewal() {
                 ...permitHolderInformation,
                 type: 'RENEWAL',
               },
+              paymentInformation: { ...initialPaymentInformation },
             }}
             validationSchema={renewalRequestFormSchema}
             onSubmit={handleSubmit}
@@ -400,10 +404,7 @@ export default function CreateRenewal() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Payment, Shipping, and Billing Information`}
                     </Text>
-                    <PaymentDetailsForm
-                      paymentInformation={paymentInformation}
-                      onChange={setPaymentInformation}
-                    />
+                    <PaymentDetailsForm paymentInformation={values.paymentInformation} />
                   </Box>
                 </GridItem>
 
