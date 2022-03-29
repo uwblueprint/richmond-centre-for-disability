@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from '@apollo/client';
-import { Divider, VStack, Button, Text, Link, Tooltip } from '@chakra-ui/react'; // Chakra UI
+import { Divider, VStack, Button, Text, useToast } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/processing/AssignNumberModal'; // AssignNumber Modal component
 import ProcessingTaskStep from '@components/admin/requests/processing/TaskStep'; // Processing Task Step
@@ -30,6 +30,9 @@ import {
   UPLOAD_DOCUMENTS_MUTATION,
 } from '@tools/admin/requests/processing-tasks-card';
 import ReviewInformationStep from '@components/admin/requests/processing/ReviewInformationStep';
+import { clientUploadToS3 } from '@lib/utils/s3-utils';
+import { useState, useEffect } from 'react';
+import TaskCardUploadStep from '@components/admin/requests/processing/TaskCardUploadStep';
 
 type ProcessingTasksCardProps = {
   readonly applicationId: number;
@@ -83,18 +86,18 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
-  const [generateInvoice, { loading: generateInvoiceLoading }] =
+  const [generateInvoice] =
     useMutation<GenerateInvoiceResponse, GenerateInvoiceRequest>(GENERATE_INVOICE_MUTATION);
   const handleGenerateInvoice = async () => {
+    // Ideally we call an endpoint to generate it and then pass the returned invoice number
     await generateInvoice({ variables: { input: { applicationId } } });
     refetch();
   };
 
-  // TODO: Hook up to S3 upload
-  const [uploadDocuments] =
+  const [applicationDocumentss] =
     useMutation<UploadDocumentsResponse, UploadDocumentsRequest>(UPLOAD_DOCUMENTS_MUTATION);
   const handleUploadDocuments = async (documentsUrl: string) => {
-    await uploadDocuments({ variables: { input: { applicationId, documentsUrl } } });
+    await applicationDocumentss({ variables: { input: { applicationId, documentsUrl } } });
     refetch();
   };
 
@@ -104,6 +107,31 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
+  const toast = useToast();
+  const [applicationDocuments, setApplicationDocuments] = useState<File | null>(null);
+
+  useEffect(() => {
+    handleSubmit();
+  }, [applicationDocuments]);
+
+  const handleSubmit = async () => {
+    let documentS3ObjectKey = '';
+    if (applicationDocuments) {
+      try {
+        const { key } = await clientUploadToS3(applicationDocuments, 'rcd/application-documents');
+        documentS3ObjectKey = key;
+      } catch (err) {
+        toast({
+          status: 'error',
+          description: `Failed to upload POA file: ${err}`,
+          isClosable: true,
+        });
+        return;
+      }
+    }
+
+    await handleUploadDocuments(documentS3ObjectKey);
+  };
   if (!data?.application.processing) {
     return null;
   }
@@ -114,7 +142,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         appNumber,
         appHolepunched,
         walletCardCreated,
-        invoice,
+        invoiceNumber,
         documentsUrl,
         appMailed,
         reviewRequestCompleted,
@@ -242,46 +270,22 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           id={5}
           label="Generate Invoice"
           description="Invoice number will be automatically assigned"
-          isCompleted={invoice !== null}
+          isCompleted={invoiceNumber !== null}
         >
-          {invoice === null ? (
+          {invoiceNumber === null ? (
             <Button
               marginLeft="auto"
               height="35px"
               bg="background.gray"
               _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
-              disabled={!reviewRequestCompleted || generateInvoiceLoading}
+              disabled={!reviewRequestCompleted}
               color="black"
               onClick={handleGenerateInvoice}
-              isLoading={generateInvoiceLoading}
-              loadingText="Generate document"
-              fontWeight="normal"
-              fontSize="14px"
             >
               <Text textStyle="xsmall-medium">Generate document</Text>
             </Button>
-          ) : (
-            <Tooltip
-              hasArrow
-              closeOnClick={false}
-              label="Clicking on this link will open the document in a new tab"
-              placement="bottom"
-              bg="background.grayHover"
-              color="black"
-            >
-              <Link
-                href={invoice.s3ObjectUrl as string}
-                isExternal={true}
-                textStyle="caption"
-                textDecoration="underline"
-                padding="0px 16px"
-                color="primary"
-              >
-                {/* File name from the object key e.g "rcd/invoice/invoice-1.pdf" */}
-                {invoice.s3ObjectKey?.split('/').at(-1)}
-              </Link>
-            </Tooltip>
-          )}
+          ) : // TODO: Replace with link to download file
+          null}
         </ProcessingTaskStep>
 
         {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
@@ -291,31 +295,12 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           description="Scan all documents and upload as one PDF"
           isCompleted={documentsUrl !== null}
         >
-          {documentsUrl !== null && reviewRequestCompleted ? (
-            <Button
-              variant="ghost"
-              textDecoration="underline black"
-              // TODO: Integrate with document upload
-              onClick={() => {}} // eslint-disable-line @typescript-eslint/no-empty-function
-            >
-              <Text textStyle="caption" color="black">
-                Undo
-              </Text>
-            </Button>
-          ) : (
-            <Button
-              marginLeft="auto"
-              height="35px"
-              bg="background.gray"
-              _hover={invoice === null ? undefined : { bg: 'background.grayHover' }}
-              color="black"
-              disabled={invoice === null}
-              // TODO: Add document upload functionality
-              onClick={() => handleUploadDocuments('placeholder url')}
-            >
-              <Text textStyle="xsmall-medium">Choose document</Text>
-            </Button>
-          )}
+          <TaskCardUploadStep
+            isDisabled={invoiceNumber === null}
+            file={applicationDocuments}
+            onUploadFile={setApplicationDocuments}
+            onUndo={() => setApplicationDocuments(null)}
+          />
         </ProcessingTaskStep>
 
         {/* Task 7: Mail out: Mark as complete (CHECK) */}
@@ -343,7 +328,9 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               _hover={documentsUrl === null ? undefined : { bg: 'background.grayHover' }}
               color="black"
               disabled={documentsUrl === null}
-              onClick={() => handleMailOut(true)}
+              onClick={() => {
+                handleMailOut(true);
+              }}
             >
               <Text textStyle="xsmall-medium">Mark as complete</Text>
             </Button>
