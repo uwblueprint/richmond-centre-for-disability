@@ -3,7 +3,7 @@ import {
   requestPermitHolderInformationSchema,
 } from '@lib/applicants/validation';
 import { physicianAssessmentSchema } from '@lib/physicians/validation';
-import { object } from 'yup';
+import { object, string } from 'yup';
 
 /**
  * Create new request form validation schema
@@ -11,6 +11,7 @@ import { object } from 'yup';
 export const createNewRequestFormSchema = object({
   permitHolder: permitHolderInformationSchema,
   physicianAssessment: physicianAssessmentSchema,
+  paymentInformation: paymentInformationSchema,
 });
 
 /**
@@ -18,6 +19,7 @@ export const createNewRequestFormSchema = object({
  */
 export const renewalRequestFormSchema = object({
   permitHolder: requestPermitHolderInformationSchema,
+  paymentInformation: paymentInformationSchema,
 });
 
 /**
@@ -25,4 +27,5 @@ export const renewalRequestFormSchema = object({
  */
 export const replacementFormSchema = object({
   permitHolder: requestPermitHolderInformationSchema,
+  paymentInformation: paymentInformationSchema,
 });
