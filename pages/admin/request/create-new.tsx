@@ -56,6 +56,8 @@ import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { uploadToS3 } from '@lib/utils/upload-to-s3';
 import { Form, Formik } from 'formik';
 import { createNewRequestFormSchema } from '@lib/applications/validation';
+import { physicianAssessmentSchema } from '@lib/physicians/physician-assessment/validation';
+//TODO: move this file
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -267,16 +269,6 @@ export default function CreateNew() {
 
     const validatedValues = await createNewRequestFormSchema.validate(values);
 
-    if (!physicianAssessment.patientCondition) {
-      toast({ status: 'error', description: 'Missing patient condition', isClosable: true });
-      return;
-    }
-
-    if (!physicianAssessment.permitType) {
-      toast({ status: 'error', description: 'Missing permit type', isClosable: true });
-      return;
-    }
-
     if (additionalQuestions.usesAccessibleConvertedVan === null) {
       toast({
         status: 'error',
@@ -305,18 +297,13 @@ export default function CreateNew() {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const permitHolder = validatedValues.permitHolder;
-
     await submitNewApplication({
       variables: {
         input: {
-          ...permitHolder,
+          ...validatedValues.permitHolder,
 
-          ...physicianAssessment,
-          patientCondition: physicianAssessment.patientCondition,
+          ...validatedValues.physicianAssessment,
           mobilityAids: null, //TODO: get mobility aids when forms are updated to get this data
-          permitType: physicianAssessment.permitType,
 
           physicianFirstName: doctorInformation.firstName,
           physicianLastName: doctorInformation.lastName,
@@ -478,9 +465,8 @@ export default function CreateNew() {
         {step === RequestFlowPageState.SubmittingRequestPage && (
           <Formik
             initialValues={{
-              permitHolder: {
-                ...permitHolderInformation,
-              },
+              permitHolder: permitHolderInformation,
+              physicianAssessment,
             }}
             validationSchema={createNewRequestFormSchema}
             onSubmit={handleSubmit}
@@ -517,7 +503,7 @@ export default function CreateNew() {
                       {`Physician's Assessment`}
                     </Text>
                     <PhysicianAssessmentForm
-                      physicianAssessment={physicianAssessment}
+                      physicianAssessment={values.physicianAssessment}
                       onChange={setPhysicianAssessment}
                     />
                   </Box>

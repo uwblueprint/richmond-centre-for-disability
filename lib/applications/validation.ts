@@ -2,11 +2,12 @@ import {
   newPermitHolderInformationSchema,
   requestPermitHolderInformationSchema,
 } from '@lib/applicants/validation';
+import { physicianAssessmentSchema } from '@lib/physicians/physician-assessment/validation';
 
 /**
  * Create new request form validation schema
  */
-export const createNewRequestFormSchema = newPermitHolderInformationSchema;
+export const createNewRequestFormSchema = newPermitHolderInformationSchema.concat(physicianAssessmentSchema);
 
 /**
  * Create renewal request form validation schema
