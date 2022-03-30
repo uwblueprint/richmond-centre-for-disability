@@ -20,13 +20,13 @@ export const applicationProcessingInvoiceResolver: FieldResolver<
     return null;
   }
 
-  if (!process.env.INVOICE_LINK_DURATION_DAYS) {
+  if (!process.env.INVOICE_LINK_TTL_DAYS) {
     throw new ApolloError('Invoice link duration not defined');
   }
 
   // Update the signed S3 URL if it has expired.
   // Get the valid duration period from env.
-  const invoiceLinkDuration = parseInt(process.env.INVOICE_LINK_DURATION_DAYS);
+  const invoiceLinkDuration = parseInt(process.env.INVOICE_LINK_TTL_DAYS);
   const DAY = 24 * 60 * 60 * 1000;
   const daysDifference =
     Math.floor(new Date().getTime() / DAY) - Math.floor(invoice.updatedAt.getTime() / DAY);

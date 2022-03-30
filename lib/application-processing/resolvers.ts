@@ -844,7 +844,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     throw new ApolloError('Not authenticated');
   }
 
-  if (!process.env.INVOICE_LINK_DURATION_DAYS) {
+  if (!process.env.INVOICE_LINK_TTL_DAYS) {
     throw new ApolloError('Invoice link duration not defined');
   }
 
@@ -888,19 +888,19 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     invoice.invoiceNumber
   );
 
-  // Upload pdf to s3
   // file name format: PP-Receipt-P<YYYYMMDD>-<invoice number>.pdf
-  const fileName = `PP-Receipt-P${formatDateYYYYMMDD(invoice.createdAt).split('-').join('')}-${
-    invoice.invoiceNumber
-  }.pdf`;
+  const createdAtYYYMMDD = formatDateYYYYMMDD(invoice.createdAt).replace(/-/g, '');
+  const fileName = `PP-Receipt-P${createdAtYYYMMDD}-${invoice.invoiceNumber}.pdf`;
   const s3InvoiceKey = `rcd/invoices/${fileName}`;
+
+  // Upload pdf to s3
   let uploadedPdf;
   let signedUrl;
   try {
     // Upload file to s3
     uploadedPdf = await serverUploadToS3(pdfDoc, s3InvoiceKey);
     // Generate a signed URL to access the file
-    const durationSeconds = parseInt(process.env.INVOICE_LINK_DURATION_DAYS) * 24 * 60 * 60;
+    const durationSeconds = parseInt(process.env.INVOICE_LINK_TTL_DAYS) * 24 * 60 * 60;
     signedUrl = getSignedUrlForS3(uploadedPdf.key, durationSeconds);
   } catch (error) {
     throw new ApolloError(`Error uploading invoice pdf to AWS: ${error}`);
