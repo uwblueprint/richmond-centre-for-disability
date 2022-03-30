@@ -94,10 +94,10 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
-  const [applicationDocumentss] =
+  const [uploadDocuments] =
     useMutation<UploadDocumentsResponse, UploadDocumentsRequest>(UPLOAD_DOCUMENTS_MUTATION);
   const handleUploadDocuments = async (documentsUrl: string) => {
-    await applicationDocumentss({ variables: { input: { applicationId, documentsUrl } } });
+    await uploadDocuments({ variables: { input: { applicationId, documentsUrl } } });
     refetch();
   };
 

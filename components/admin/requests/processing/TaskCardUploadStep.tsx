@@ -10,15 +10,15 @@ type Props = {
   file: File | null; // currently uploaded file
   onUploadFile: (selectedFile: File) => void; // handle file upload
   readonly isDisabled: boolean;
+  onUndo: () => void;
 };
 
 /**
  * POA form upload component allowing users to upload POA form PDF file
  */
-export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile }) => {
+export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile, onUndo }) => {
   const hiddenFileInput = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>('error');
-
   /**
    * Handle upload button click
    */
@@ -45,10 +45,8 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile }
     if (uploadedFile && uploadedFile.size > FILE_SIZE_LIMIT) {
       setErrorMessage('File exceeds maximum size');
     }
-
     onUploadFile(uploadedFile);
   };
-
   return (
     <>
       {file ? (
@@ -82,6 +80,7 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile }
                   variant="ghost"
                   size={'xs'}
                   icon={<CloseIcon boxSize={'0.5em'} />}
+                  onClick={onUndo}
                 />
               </HStack>
             </VStack>
