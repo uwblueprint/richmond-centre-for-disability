@@ -53,9 +53,9 @@ import {
 } from '@tools/admin/requests/create-new';
 import { useRouter } from 'next/router';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
-import { uploadToS3 } from '@lib/utils/upload-to-s3';
 import { Form, Formik } from 'formik';
 import { createNewRequestFormSchema } from '@lib/applications/validation';
+import { clientUploadToS3 } from '@lib/utils/s3-utils';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -253,7 +253,7 @@ export default function CreateNew() {
     let poaFormS3ObjectKey = '';
     if (guardianPOAFile) {
       try {
-        const { key } = await uploadToS3(guardianPOAFile);
+        const { key } = await clientUploadToS3(guardianPOAFile, 'rcd/guardian-forms');
         poaFormS3ObjectKey = key;
       } catch (err) {
         toast({

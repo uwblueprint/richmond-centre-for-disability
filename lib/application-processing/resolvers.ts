@@ -25,6 +25,8 @@ import {
 } from '@lib/graphql/types';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
+import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
+import { formatDateYYYYMMDD } from '@lib/utils/format';
 
 /**
  * Approve application
@@ -842,6 +844,10 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     throw new ApolloError('Not authenticated');
   }
 
+  if (!process.env.INVOICE_LINK_TTL_DAYS) {
+    throw new ApolloError('Invoice link duration not defined');
+  }
+
   // Use the application record to retrieve the applicant name, applicant ID, permit type, current date, and employee initials
   const application = await prisma.application.findUnique({
     where: { id: applicationId },
@@ -874,7 +880,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
   }
 
   // Generate application invoice
-  generateApplicationInvoicePdf(
+  const pdfDoc = generateApplicationInvoicePdf(
     application,
     session,
     // TODO: Remove typecast when backend guard is implemented
@@ -882,7 +888,46 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     invoice.invoiceNumber
   );
 
-  return { ok: true };
+  // file name format: PP-Receipt-P<YYYYMMDD>-<invoice number>.pdf
+  const createdAtYYYMMDD = formatDateYYYYMMDD(invoice.createdAt).replace(/-/g, '');
+  const fileName = `PP-Receipt-P${createdAtYYYMMDD}-${invoice.invoiceNumber}.pdf`;
+  const s3InvoiceKey = `rcd/invoices/${fileName}`;
+
+  // Upload pdf to s3
+  let uploadedPdf;
+  let signedUrl;
+  try {
+    // Upload file to s3
+    uploadedPdf = await serverUploadToS3(pdfDoc, s3InvoiceKey);
+    // Generate a signed URL to access the file
+    const durationSeconds = parseInt(process.env.INVOICE_LINK_TTL_DAYS) * 24 * 60 * 60;
+    signedUrl = getSignedUrlForS3(uploadedPdf.key, durationSeconds);
+  } catch (error) {
+    throw new ApolloError(`Error uploading invoice pdf to AWS: ${error}`);
+  }
+
+  let updatedInvoice;
+  try {
+    updatedInvoice = await prisma.applicationInvoice.update({
+      where: {
+        invoiceNumber: invoice.invoiceNumber,
+      },
+      data: {
+        s3ObjectKey: uploadedPdf.key,
+        s3ObjectUrl: signedUrl,
+      },
+    });
+  } catch {
+    throw new ApolloError('Error updating invoice metadata in DB');
+  }
+
+  if (!updatedInvoice) {
+    throw new ApolloError('Error updating invoice record in DB');
+  }
+
+  return {
+    ok: true,
+  };
 };
 
 /**

@@ -44,7 +44,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
       appNumber,
       appHolepunched,
       walletCardCreated,
-      invoiceNumber,
+      invoice,
       documentsUrl,
       appMailed,
       reviewRequestCompleted,
@@ -57,7 +57,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     appHolepunched &&
     walletCardCreated &&
     reviewRequestCompleted &&
-    invoiceNumber !== null &&
+    invoice !== null &&
     documentsUrl !== null &&
     appMailed
   );

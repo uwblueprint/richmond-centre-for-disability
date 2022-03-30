@@ -1,4 +1,3 @@
-import fs from 'fs';
 import pdfPrinter from 'pdfmake';
 import { Application, Prisma } from '@prisma/client';
 import { Session } from 'next-auth';
@@ -17,7 +16,7 @@ export const generateApplicationInvoicePdf = (
   session: Session,
   appNumber: number,
   invoiceNumber: number
-): void => {
+): PDFKit.PDFDocument => {
   const {
     applicantId,
     firstName,
@@ -86,10 +85,9 @@ export const generateApplicationInvoicePdf = (
     },
   });
 
-  const pdfDoc = printer.createPdfKitDocument(definition);
-  // TODO: Upload invoice to S3
-  pdfDoc.pipe(fs.createWriteStream('temp/invoice.pdf'));
-  pdfDoc.end();
+  const pdfDocument = printer.createPdfKitDocument(definition);
+  pdfDocument.end();
+  return pdfDocument;
 };
 
 /** PDF generation schema */
