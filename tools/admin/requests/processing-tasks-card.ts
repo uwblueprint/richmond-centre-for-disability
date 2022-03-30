@@ -16,6 +16,7 @@ import {
   UpdateApplicationProcessingMailOutResult,
   UpdateApplicationProcessingUploadDocumentsResult,
   UpdateApplicationProcessingReviewRequestInformationResult,
+  Invoice,
 } from '@lib/graphql/types';
 
 /** Get application processing */
@@ -26,7 +27,11 @@ export const GET_APPLICATION_PROCESSING = gql`
         appNumber
         appHolepunched
         walletCardCreated
-        invoiceNumber
+        invoice {
+          invoiceNumber
+          s3ObjectUrl
+          s3ObjectKey
+        }
         documentsUrl
         appMailed
         reviewRequestCompleted
@@ -44,11 +49,12 @@ export type GetApplicationProcessingResponse = {
       | 'appNumber'
       | 'appHolepunched'
       | 'walletCardCreated'
-      | 'invoiceNumber'
       | 'documentsUrl'
       | 'appMailed'
       | 'reviewRequestCompleted'
-    >;
+    > & {
+      invoice: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl'>;
+    };
   };
 };
 

@@ -68,6 +68,7 @@ import {
 } from '@lib/reports/resolvers';
 import { permitApplicationResolver } from '@lib/permits/field-resolvers';
 import { invoiceEmployeeResolver } from '@lib/invoices/field-resolvers';
+import { applicationProcessingInvoiceResolver } from '@lib/application-processing/field-resolvers';
 
 /**
  * Resolver return type - accounts for extra fields
@@ -239,6 +240,9 @@ const resolvers = {
   },
   Invoice: {
     employee: invoiceEmployeeResolver,
+  },
+  ApplicationProcessing: {
+    invoice: applicationProcessingInvoiceResolver,
   },
 };
 

@@ -44,8 +44,11 @@ export const formatDate = (date: Date, dateInput = false): string => {
  * @param {Date} date date to be formatted
  * @returns {string} formatted date
  */
-export const formatDateYYYYMMDD = (date: Date): string => {
-  return new Date(date).toISOString().split('T')[0];
+export const formatDateYYYYMMDD = (d: Date): string => {
+  let date = new Date(d);
+  const offset = date.getTimezoneOffset();
+  date = new Date(date.getTime() - offset * 60 * 1000);
+  return date.toISOString().split('T')[0];
 };
 
 /**
