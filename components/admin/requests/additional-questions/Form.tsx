@@ -1,55 +1,85 @@
-import { FormControl, FormLabel, Stack, Radio, RadioGroup } from '@chakra-ui/react'; // Chakra UI
+import { Stack, Radio } from '@chakra-ui/react'; // Chakra UI
+import RadioGroupField from '@components/form/RadioGroupField';
+import TextAreaField from '@components/form/TextAreaField';
+import {
+  AccessibleConvertedVanLoadingMethod,
+  RequiresWiderParkingSpaceReason,
+} from '@prisma/client';
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions'; // AdditionalQuestions type
 
 type AdditionalQuestionsFormProps = {
-  data: AdditionalInformationFormData;
-  onChange: (additionalQuestions: AdditionalInformationFormData) => void;
+  additionalInformation: AdditionalInformationFormData;
 };
 
-export default function AdditionalQuestionsForm({ data, onChange }: AdditionalQuestionsFormProps) {
+export default function AdditionalQuestionsForm({
+  additionalInformation,
+}: AdditionalQuestionsFormProps) {
   return (
     <>
-      <FormControl as="fieldset" isRequired>
-        <FormLabel>{'Is the applicant using an accessible converted van?'}</FormLabel>
-        <RadioGroup
-          value={
-            data.usesAccessibleConvertedVan === null
-              ? undefined
-              : data.usesAccessibleConvertedVan
-              ? '0'
-              : '1'
-          }
-          onChange={value =>
-            onChange({ ...data, usesAccessibleConvertedVan: value === '0' ? true : false })
-          }
-        >
-          <Stack>
-            <Radio value={'0'}>{'Yes'}</Radio>
-            <Radio value={'1'}>{'No'}</Radio>
-          </Stack>
-        </RadioGroup>
-      </FormControl>
+      {/* NOTETOSELF: Check if initial values work */}
+      <RadioGroupField
+        name="additionalInformation.usesAccessibleConvertedVan"
+        label="Is the applicant using an accessible converted van?"
+        required
+      >
+        <Stack>
+          <Radio value={'0'}>{'Yes'}</Radio>
+          <Radio value={'1'}>{'No'}</Radio>
+        </Stack>
+      </RadioGroupField>
 
-      <FormControl as="fieldset" isRequired paddingTop="24px">
-        <FormLabel>{'Does the applicant need a wider accessible parking space?'}</FormLabel>
-        <RadioGroup
-          value={
-            data.requiresWiderParkingSpace === null
-              ? undefined
-              : data.requiresWiderParkingSpace
-              ? '0'
-              : '1'
-          }
-          onChange={value =>
-            onChange({ ...data, requiresWiderParkingSpace: value === '0' ? true : false })
-          }
+      {/* TODO: Fix TypeScript error */}
+      {additionalInformation.usesAccessibleConvertedVan === '0' && (
+        <RadioGroupField
+          name="additionalInformation.accessibleConvertedVanLoadingMethod"
+          label="Please specify their loading method:"
+          required
         >
           <Stack>
-            <Radio value="0">{'Yes'}</Radio>
-            <Radio value="1">{'No'}</Radio>
+            <Radio value={AccessibleConvertedVanLoadingMethod.SIDE_LOADING}>{'Side loading'}</Radio>
+            <Radio value={AccessibleConvertedVanLoadingMethod.END_LOADING}>{'End loading'}</Radio>
           </Stack>
-        </RadioGroup>
-      </FormControl>
+        </RadioGroupField>
+      )}
+
+      <RadioGroupField
+        name="additionalInformation.requiresWiderParkingSpace"
+        label="Does the applicant need a wider accessible parking space?"
+        required
+      >
+        <Stack>
+          <Radio value={'0'}>{'Yes'}</Radio>
+          <Radio value={'1'}>{'No'}</Radio>
+        </Stack>
+      </RadioGroupField>
+
+      {additionalInformation.requiresWiderParkingSpace === '0' && (
+        <RadioGroupField
+          name="additionalInformation.requiresWiderParkingSpaceReason"
+          label="Please specify the reason"
+          required
+        >
+          <Stack>
+            <Radio value={RequiresWiderParkingSpaceReason.HAS_ACCESSIBLE_VAN}>
+              {'Accessible van'}
+            </Radio>
+            <Radio value={RequiresWiderParkingSpaceReason.MEDICAL_REASONS}>
+              {'Medical reason'}
+            </Radio>
+            <Radio value={RequiresWiderParkingSpaceReason.OTHER}>{'Other'}</Radio>
+          </Stack>
+        </RadioGroupField>
+      )}
+
+      {/* TODO: Fix TypeScript error */}
+      {additionalInformation.requiresWiderParkingSpaceReason ===
+        RequiresWiderParkingSpaceReason.OTHER && (
+        <TextAreaField
+          name="additionalInformation.otherRequiresWiderParkingSpaceReason"
+          label="Description of the reason"
+          required
+        />
+      )}
     </>
   );
 }

@@ -4,7 +4,6 @@ import { useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form'; //Doctor information form
 import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form'; //Additional questions form
-import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions'; //Additional questions type
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import Link from 'next/link'; // Link
@@ -70,15 +69,13 @@ export default function CreateRenewal() {
   });
 
   /** Additional information section */
-  const [additionalInformation, setAdditionalInformation] = useState<AdditionalInformationFormData>(
-    {
-      usesAccessibleConvertedVan: null,
-      accessibleConvertedVanLoadingMethod: null,
-      requiresWiderParkingSpace: null,
-      requiresWiderParkingSpaceReason: null,
-      otherRequiresWiderParkingSpaceReason: null,
-    }
-  );
+  const additionalInformation = {
+    usesAccessibleConvertedVan: null,
+    accessibleConvertedVanLoadingMethod: null,
+    requiresWiderParkingSpace: null,
+    requiresWiderParkingSpaceReason: null,
+    otherRequiresWiderParkingSpaceReason: null,
+  };
 
   // Toast message
   const toast = useToast();
@@ -296,6 +293,7 @@ export default function CreateRenewal() {
                 ...permitHolderInformation,
                 type: 'RENEWAL',
               },
+              additionalInformation: { ...additionalInformation },
               paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
             validationSchema={renewalRequestFormSchema}
@@ -358,10 +356,7 @@ export default function CreateRenewal() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Additional Information`}
                     </Text>
-                    <AdditionalQuestionsForm
-                      data={additionalInformation}
-                      onChange={setAdditionalInformation}
-                    />
+                    <AdditionalQuestionsForm additionalInformation={values.additionalInformation} />
                   </Box>
                 </GridItem>
                 {/* Payment Details Form */}
