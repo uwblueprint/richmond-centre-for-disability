@@ -2,9 +2,14 @@ import { APIRoute } from 'next-s3-upload';
 import { NextApiHandler } from 'next';
 import { getSession } from 'next-auth/client';
 
-// Folder structure in s3 can be in the configure if needed
+// Configure folder structure
 // see https://next-s3-upload.codingvalue.com/s3-file-paths
-const uploadHandler = APIRoute.configure({});
+const uploadHandler = APIRoute.configure({
+  key(req, filename) {
+    const filePath = req.query.filePath as string;
+    return `${filePath}/${filename.replace(/\s/g, '-')}`;
+  },
+});
 
 /**
  * Auth wrapper for next-s3-upload API Route

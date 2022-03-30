@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from '@apollo/client';
-import { Divider, VStack, Button, Text } from '@chakra-ui/react'; // Chakra UI
+import { Divider, VStack, Button, Text, Link, Tooltip } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/processing/AssignNumberModal'; // AssignNumber Modal component
 import ProcessingTaskStep from '@components/admin/requests/processing/TaskStep'; // Processing Task Step
@@ -83,10 +83,9 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
-  const [generateInvoice] =
+  const [generateInvoice, { loading: generateInvoiceLoading }] =
     useMutation<GenerateInvoiceResponse, GenerateInvoiceRequest>(GENERATE_INVOICE_MUTATION);
   const handleGenerateInvoice = async () => {
-    // Ideally we call an endpoint to generate it and then pass the returned invoice number
     await generateInvoice({ variables: { input: { applicationId } } });
     refetch();
   };
@@ -115,7 +114,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         appNumber,
         appHolepunched,
         walletCardCreated,
-        invoiceNumber,
+        invoice,
         documentsUrl,
         appMailed,
         reviewRequestCompleted,
@@ -243,22 +242,46 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           id={5}
           label="Generate Invoice"
           description="Invoice number will be automatically assigned"
-          isCompleted={invoiceNumber !== null}
+          isCompleted={invoice !== null}
         >
-          {invoiceNumber === null ? (
+          {invoice === null ? (
             <Button
               marginLeft="auto"
               height="35px"
               bg="background.gray"
               _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
-              disabled={!reviewRequestCompleted}
+              disabled={!reviewRequestCompleted || generateInvoiceLoading}
               color="black"
               onClick={handleGenerateInvoice}
+              isLoading={generateInvoiceLoading}
+              loadingText="Generate document"
+              fontWeight="normal"
+              fontSize="14px"
             >
               <Text textStyle="xsmall-medium">Generate document</Text>
             </Button>
-          ) : // TODO: Replace with link to download file
-          null}
+          ) : (
+            <Tooltip
+              hasArrow
+              closeOnClick={false}
+              label="Clicking on this link will open the document in a new tab"
+              placement="bottom"
+              bg="background.grayHover"
+              color="black"
+            >
+              <Link
+                href={invoice.s3ObjectUrl as string}
+                isExternal={true}
+                textStyle="caption"
+                textDecoration="underline"
+                padding="0px 16px"
+                color="primary"
+              >
+                {/* File name from the object key e.g "rcd/invoice/invoice-1.pdf" */}
+                {invoice.s3ObjectKey?.split('/').at(-1)}
+              </Link>
+            </Tooltip>
+          )}
         </ProcessingTaskStep>
 
         {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
@@ -284,9 +307,9 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               marginLeft="auto"
               height="35px"
               bg="background.gray"
-              _hover={invoiceNumber === null ? undefined : { bg: 'background.grayHover' }}
+              _hover={invoice === null ? undefined : { bg: 'background.grayHover' }}
               color="black"
-              disabled={invoiceNumber === null}
+              disabled={invoice === null}
               // TODO: Add document upload functionality
               onClick={() => handleUploadDocuments('placeholder url')}
             >

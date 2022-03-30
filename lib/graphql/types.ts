@@ -128,7 +128,7 @@ export type ApplicationProcessing = {
   reviewRequestCompleted: Scalars['Boolean'];
   reviewRequestCompletedEmployeeId: Maybe<Scalars['Int']>;
   reviewRequestCompletedUpdatedAt: Maybe<Scalars['Date']>;
-  invoiceNumber: Maybe<Scalars['Int']>;
+  invoice: Maybe<Invoice>;
   documentsUrl: Maybe<Scalars['String']>;
   documentsUrlEmployeeId: Maybe<Scalars['Int']>;
   documentsUrlUpdatedAt: Maybe<Scalars['Date']>;
@@ -497,6 +497,7 @@ export type Invoice = {
   __typename?: 'Invoice';
   invoiceNumber: Scalars['Int'];
   s3ObjectKey: Maybe<Scalars['String']>;
+  s3ObjectUrl: Maybe<Scalars['String']>;
   employee: Employee;
   createdAt: Scalars['Date'];
   updatedAt: Scalars['Date'];

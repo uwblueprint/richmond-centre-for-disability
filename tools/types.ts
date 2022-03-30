@@ -9,3 +9,10 @@ export enum SortOrder {
 
 // Sort options type that contains an array of tuples of the field being sorted and the order
 export type SortOptions = Array<[string, SortOrder]>;
+
+// Type representing an s3 uploaded object
+export type S3UploadedObject = {
+  readonly url: string;
+  readonly bucket: string;
+  readonly key: string;
+};
