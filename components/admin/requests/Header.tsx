@@ -25,6 +25,7 @@ type RequestHeaderProps = {
   readonly applicationType: ApplicationType;
   readonly createdAt: Date;
   readonly allStepsCompleted: boolean;
+  readonly permitHolderId?: number;
 };
 
 /**
@@ -39,6 +40,7 @@ export default function RequestHeader({
   createdAt,
   allStepsCompleted,
   applicationType,
+  permitHolderId,
 }: RequestHeaderProps) {
   /**
    * Returns the appropriate header button(s) to be displayed depending on the current application status
@@ -75,21 +77,23 @@ export default function RequestHeader({
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Box>
                   <Stack direction="row" justifyContent="space-between">
-                    <Link href={`/admin`}>
-                      <a>
-                        <Button
-                          bg="background.gray"
-                          _hover={{ bg: 'background.grayHover' }}
-                          marginRight="20px"
-                          height="48px"
-                          width="225px"
-                        >
-                          <Text textStyle="button-semibold" color="text.default">
-                            View permit holder
-                          </Text>
-                        </Button>
-                      </a>
-                    </Link>
+                    {permitHolderId && (
+                      <Link href={`/admin/permit-holder/` + permitHolderId}>
+                        <a>
+                          <Button
+                            bg="background.gray"
+                            _hover={{ bg: 'background.grayHover' }}
+                            marginRight="20px"
+                            height="48px"
+                            width="225px"
+                          >
+                            <Text textStyle="button-semibold" color="text.default">
+                              View permit holder
+                            </Text>
+                          </Button>
+                        </a>
+                      </Link>
+                    )}
                   </Stack>
                 </Box>
                 <Box>
