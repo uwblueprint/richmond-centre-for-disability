@@ -13,12 +13,8 @@ import {
   GET_APPLICATION_QUERY,
   GetApplicationRequest,
   GetApplicationResponse,
-  GetApplicationApplicantResponse,
-  GetApplicationApplicantRequest,
-  GET_APPLICATION_APPLICANT,
 } from '@tools/admin/requests/view-request'; // Request page GraphQL queries
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
-import { useState } from 'react';
 
 type Props = {
   readonly id: string;
@@ -30,27 +26,17 @@ type Props = {
  */
 const Request: NextPage<Props> = ({ id: idString }: Props) => {
   const id = parseInt(idString);
-  const [permitHolderID, setPermitHolderID] = useState<number | undefined>(undefined);
   // Get request data query
   const { data } = useQuery<GetApplicationResponse, GetApplicationRequest>(GET_APPLICATION_QUERY, {
     variables: { id },
   });
-  useQuery<GetApplicationApplicantResponse, GetApplicationApplicantRequest>(
-    GET_APPLICATION_APPLICANT,
-    {
-      variables: { id },
-      onCompleted: data => {
-        if (data) setPermitHolderID(data.application?.applicant?.id);
-      },
-      notifyOnNetworkStatusChange: true,
-    }
-  );
   // Get Permit Holder ID from Application
 
   if (!data?.application) {
     return null;
   }
 
+  const permitHolderID = data.application.applicant?.id;
   const {
     type,
     createdAt,
@@ -86,7 +72,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           applicationType={type}
           createdAt={new Date(createdAt)}
           allStepsCompleted={allStepsCompleted}
-          permitHolderId={permitHolderID}
+          applicantId={permitHolderID}
         />
       </GridItem>
       <GridItem colStart={1} colSpan={5} textAlign="left">

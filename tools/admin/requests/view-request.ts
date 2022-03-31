@@ -28,6 +28,9 @@ export const GET_APPLICATION_QUERY = gql`
         appMailed
         reviewRequestCompleted
       }
+      applicant {
+        id
+      }
     }
   }
 `;
@@ -51,24 +54,7 @@ export type GetApplicationResponse = {
     > & {
       invoice: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl'>;
     };
-  };
-};
-
-/** Get applicant id from application */
-export const GET_APPLICATION_APPLICANT = gql`
-  query GetApplicationProcessing($id: Int!) {
-    application(id: $id) {
-      applicant {
-        id
-      }
-    }
-  }
-`;
-
-export type GetApplicationApplicantRequest = QueryApplicationArgs;
-
-export type GetApplicationApplicantResponse = {
-  application: {
+  } & {
     applicant: Pick<Applicant, 'id'>;
   };
 };

@@ -9,26 +9,22 @@ import {
   ModalBody,
   Button,
   Text,
-  Box,
 } from '@chakra-ui/react'; // Chakra UI
 import {
   CompleteApplicationRequest,
   CompleteApplicationResponse,
   COMPLETE_APPLICATION_MUTATION,
 } from '@tools/admin/requests/complete-request-modal';
-import { ReactNode } from 'react'; // React JSX Type
 
-type CompleteRequestModalProps = {
+type CompleteRequestModalButtonProps = {
   readonly applicationId: number;
   readonly isDisabled: boolean;
-  readonly children: ReactNode;
 };
 
-export default function CompleteRequestModal({
+export default function CompleteRequestModalButton({
   applicationId,
   isDisabled,
-  children,
-}: CompleteRequestModalProps) {
+}: CompleteRequestModalButtonProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [completeApplication] = useMutation<
@@ -41,15 +37,16 @@ export default function CompleteRequestModal({
 
   return (
     <>
-      <Box
-        onClick={() => {
-          if (!isDisabled) {
-            onOpen();
-          }
-        }}
+      <Button
+        bg="primary"
+        height="48px"
+        width="200px"
+        type="submit"
+        disabled={isDisabled}
+        onClick={onOpen}
       >
-        {children}
-      </Box>
+        <Text textStyle="button-semibold">Complete request</Text>
+      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
