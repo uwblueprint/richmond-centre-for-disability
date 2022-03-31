@@ -110,7 +110,17 @@ export default function EditUserInformationModal({
                     </Text>
 
                     <Stack direction="row" spacing="20px">
-                      <TextField name="email" label="Email address" labelHelperText="(optional)" />
+                      <TextField
+                        name="email"
+                        label={
+                          <>
+                            {'Email address '}
+                            <Box as="span" textStyle="body-regular" fontSize="sm">
+                              {'(optional)'}
+                            </Box>
+                          </>
+                        }
+                      />
                       <TextField name="phone" label="Phone number" required type="tel">
                         <FormHelperText color="text.secondary">
                           {'Example: 000-000-0000'}

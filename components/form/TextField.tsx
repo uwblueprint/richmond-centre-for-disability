@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { useField } from 'formik';
 import {
   FormControl,
@@ -7,30 +7,21 @@ import {
   Text,
   Input,
   InputProps,
-  Box,
 } from '@chakra-ui/react';
 
 type Props = InputProps & {
   readonly name: string;
-  readonly label: string;
-  readonly labelHelperText?: string;
+  readonly label: string | ReactNode;
   readonly required?: boolean;
 };
 
 const TextField: FC<Props> = props => {
-  const { name, label, labelHelperText, required, children, ...inputProps } = props;
+  const { name, label, required, children, ...inputProps } = props;
   const [field, meta] = useField(name);
 
   return (
     <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
-      <FormLabel htmlFor={name}>
-        {label}
-        {labelHelperText && (
-          <Box as="span" textStyle="body-regular" fontSize="sm">
-            {` ${labelHelperText}`}
-          </Box>
-        )}
-      </FormLabel>
+      <FormLabel htmlFor={name}>{label}</FormLabel>
       <Input {...field} {...inputProps} />
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">

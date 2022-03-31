@@ -65,7 +65,17 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
           <TextField name="permitHolder.phone" label="Phone number" required type="tel">
             <FormHelperText color="text.secondary">{'Example: 000-000-0000'}</FormHelperText>
           </TextField>
-          <TextField name="permitHolder.email" label="Email address" labelHelperText="(optional)" />
+          <TextField
+            name="permitHolder.email"
+            label={
+              <>
+                {'Email address'}
+                <Box as="span" textStyle="body-regular" fontSize="sm">
+                  {'(optional)'}
+                </Box>
+              </>
+            }
+          />
         </Stack>
 
         {props.permitHolderInformation.type !== 'REPLACEMENT' && (
@@ -103,8 +113,14 @@ export default function PermitHolderInformationForm(props: PermitHolderInformati
         <Box paddingBottom="24px">
           <TextField
             name="permitHolder.addressLine2"
-            label="Address line 2"
-            labelHelperText="(optional)"
+            label={
+              <>
+                {'Address line 2 '}
+                <Box as="span" textStyle="body-regular" fontSize="sm">
+                  {'(optional)'}
+                </Box>
+              </>
+            }
           >
             <FormHelperText color="text.secondary">
               {'Apartment, suite, unit, building, floor, etc'}
