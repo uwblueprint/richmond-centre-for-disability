@@ -20,7 +20,7 @@ import TextField from '@components/form/TextField';
 import DateField from '@components/form/DateField';
 import SelectField from '@components/form/SelectField';
 import { Form, Formik } from 'formik';
-import { permitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
+import { permitHolderInformationSchema } from '@lib/applicants/validation';
 import CheckboxField from '@components/form/CheckboxField';
 
 type EditUserInformationModalProps = {

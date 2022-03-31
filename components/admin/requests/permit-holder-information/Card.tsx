@@ -20,7 +20,7 @@ import { formatDateYYYYMMDD, formatFullName } from '@lib/utils/format';
 import PermitHolderStatusBadge from '@components/admin/PermitHolderStatusBadge';
 import Updated from '@components/admin/Updated';
 import Address from '@components/admin/Address';
-import { permitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
+import { permitHolderInformationSchema } from '@lib/applicants/validation';
 
 type Props = {
   readonly applicationId: number;

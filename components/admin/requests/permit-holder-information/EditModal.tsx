@@ -14,7 +14,7 @@ import { ReactNode } from 'react'; // React
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form';
 import { Form, Formik } from 'formik';
-import { requestingPermitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
+import { requestPermitHolderInformationSchema } from '@lib/applicants/validation';
 
 /**
  * Props for Edit Permit Information Modal
@@ -44,7 +44,7 @@ export default function EditPermitHolderInformationModal({
         <ModalOverlay />
         <Formik
           initialValues={{ permitHolder: { ...permitHolderInformation } }}
-          validationSchema={requestingPermitHolderInformationSchema}
+          validationSchema={requestPermitHolderInformationSchema}
           onSubmit={handleSubmit}
         >
           {({ values, isValid }) => (

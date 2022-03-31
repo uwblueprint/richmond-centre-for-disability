@@ -55,7 +55,7 @@ import { useRouter } from 'next/router';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { uploadToS3 } from '@lib/utils/upload-to-s3';
 import { Form, Formik } from 'formik';
-import { newPermitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
+import { createNewRequestFormSchema } from '@lib/applications/validation';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -245,9 +245,6 @@ export default function CreateNew() {
     },
   });
 
-  // TODO: move to a different file
-  const createNewFormSchema = newPermitHolderInformationSchema;
-
   /**
    * Handle new APP request submission
    */
@@ -268,7 +265,7 @@ export default function CreateNew() {
       }
     }
 
-    const validatedValues = await newPermitHolderInformationSchema.validate(values);
+    const validatedValues = await createNewRequestFormSchema.validate(values);
 
     if (!physicianAssessment.patientCondition) {
       toast({ status: 'error', description: 'Missing patient condition', isClosable: true });
@@ -485,7 +482,7 @@ export default function CreateNew() {
                 ...permitHolderInformation,
               },
             }}
-            validationSchema={createNewFormSchema}
+            validationSchema={createNewRequestFormSchema}
             onSubmit={handleSubmit}
           >
             {({ values, isValid }) => (

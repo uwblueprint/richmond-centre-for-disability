@@ -31,8 +31,8 @@ import {
 } from '@tools/admin/requests/create-renewal';
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 import { Form, Formik } from 'formik';
-import { requestingPermitHolderInformationSchema } from '@lib/applicants/permit-holder-information/validation';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
+import { renewalRequestFormSchema } from '@lib/applications/validation';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -267,9 +267,6 @@ export default function CreateRenewal() {
     });
   };
 
-  // TODO: move to a different file
-  const renewalFormSchema = requestingPermitHolderInformationSchema;
-
   return (
     <Layout>
       <GridItem display="flex" flexDirection="column" colSpan={12} paddingX="108px">
@@ -322,7 +319,7 @@ export default function CreateRenewal() {
                 type: 'RENEWAL',
               },
             }}
-            validationSchema={renewalFormSchema}
+            validationSchema={renewalRequestFormSchema}
             onSubmit={handleSubmit}
           >
             {({ values, isValid }) => (
