@@ -155,8 +155,14 @@ export default function EditUserInformationModal({
                     <Box paddingBottom="24px">
                       <TextField
                         name="addressLine2"
-                        label="Address line 2"
-                        labelHelperText="(optional)"
+                        label={
+                          <>
+                            {'Address line 2 '}
+                            <Box as="span" textStyle="body-regular" fontSize="sm">
+                              {'(optional)'}
+                            </Box>
+                          </>
+                        }
                       >
                         <FormHelperText color="text.secondary">
                           {'Apartment, suite, unit, building, floor, etc'}
