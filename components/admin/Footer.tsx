@@ -1,11 +1,11 @@
 import { Portal, Box } from '@chakra-ui/react'; // Chakra UI
 import { ReactNode } from 'react'; // React
 
-type ProcessingTasksFooterProps = {
+type FooterProps = {
   readonly children: ReactNode;
 };
 
-export default function ProcessingTasksFooter({ children }: ProcessingTasksFooterProps) {
+export default function Footer({ children }: FooterProps) {
   return (
     <Portal>
       <Box

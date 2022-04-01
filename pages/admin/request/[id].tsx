@@ -36,7 +36,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     return null;
   }
 
-  const permitHolderID = data.application.applicant?.id;
+  const applicantId = data.application.applicant?.id;
   const {
     type,
     createdAt,
@@ -72,7 +72,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           applicationType={type}
           createdAt={new Date(createdAt)}
           allStepsCompleted={allStepsCompleted}
-          applicantId={permitHolderID}
+          applicantId={applicantId}
         />
       </GridItem>
       <GridItem colStart={1} colSpan={5} textAlign="left">

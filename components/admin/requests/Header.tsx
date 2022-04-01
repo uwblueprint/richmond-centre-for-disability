@@ -38,7 +38,7 @@ export default function RequestHeader({
   createdAt,
   allStepsCompleted,
   applicationType,
-  applicantId: permitHolderId,
+  applicantId,
 }: RequestHeaderProps) {
   /**
    * Returns the appropriate header button(s) to be displayed depending on the current application status
@@ -63,7 +63,7 @@ export default function RequestHeader({
         return (
           <ProcessingTasksFooter
             applicationId={applicationId}
-            permitHolderId={permitHolderId}
+            applicantId={applicantId}
             allStepsCompleted={allStepsCompleted}
           />
         );

@@ -4,13 +4,13 @@ import CompleteRequestModalButton from '@components/admin/requests/processing/Co
 import Footer from '@components/admin/Footer';
 type ProcessingTasksFooterProps = {
   readonly applicationId: number;
-  readonly permitHolderId?: number;
+  readonly applicantId?: number;
   readonly allStepsCompleted: boolean;
 };
 
 export default function ProcessingTasksFooter({
   applicationId,
-  permitHolderId,
+  applicantId,
   allStepsCompleted,
 }: ProcessingTasksFooterProps) {
   return (
@@ -18,8 +18,8 @@ export default function ProcessingTasksFooter({
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Box>
           <Stack direction="row" justifyContent="space-between">
-            {permitHolderId && (
-              <Link href={`/admin/permit-holder/` + permitHolderId}>
+            {applicantId && (
+              <Link href={`/admin/permit-holder/` + applicantId}>
                 <a>
                   <Button
                     bg="background.gray"
@@ -39,14 +39,10 @@ export default function ProcessingTasksFooter({
         </Box>
         <Box>
           <Stack direction="row" justifyContent="space-between">
-            <Link href="#">
-              <a>
-                <CompleteRequestModalButton
-                  applicationId={applicationId}
-                  isDisabled={!allStepsCompleted}
-                />
-              </a>
-            </Link>
+            <CompleteRequestModalButton
+              applicationId={applicationId}
+              isDisabled={!allStepsCompleted}
+            />
           </Stack>
         </Box>
       </Stack>
