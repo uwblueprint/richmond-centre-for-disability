@@ -10,11 +10,12 @@ import {
   Box,
   useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
+import { ApplicationType } from '@lib/graphql/types';
 import Link from 'next/link'; // Link
 import { ReactNode } from 'react'; // React JSX Type
 
 type CancelRequestModalProps = {
-  readonly type: 'replacement' | 'renewal';
+  readonly type: ApplicationType;
   readonly children: ReactNode;
 };
 /**
@@ -32,7 +33,7 @@ export default function CancelCreateRequestModal({ type, children }: CancelReque
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            Discard {type === 'replacement' ? 'Replacement' : 'Renewal'} Request
+            Discard {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()} Request
           </ModalHeader>
           <ModalBody>
             <Text textStyle="body-regular" paddingBottom="39px">

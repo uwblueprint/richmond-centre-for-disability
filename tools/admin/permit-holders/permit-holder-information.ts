@@ -16,6 +16,7 @@ export type ApplicantFormData = Pick<
   | 'gender'
   | 'phone'
   | 'email'
+  | 'receiveEmailUpdates'
   | 'addressLine1'
   | 'addressLine2'
   | 'city'

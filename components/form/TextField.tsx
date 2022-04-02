@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { useField } from 'formik';
 import {
   FormControl,
@@ -11,7 +11,7 @@ import {
 
 type Props = InputProps & {
   readonly name: string;
-  readonly label: string;
+  readonly label: string | ReactNode;
   readonly required?: boolean;
 };
 
