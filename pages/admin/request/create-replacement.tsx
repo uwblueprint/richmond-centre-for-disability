@@ -157,6 +157,9 @@ export default function CreateReplacement() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { type, receiveEmailUpdates, ...permitHolder } = values.permitHolder;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { type, receiveEmailUpdates, ...permitHolder } = values.permitHolder;
+
     await submitReplacementApplication({
       variables: {
         input: {
@@ -168,9 +171,6 @@ export default function CreateReplacement() {
       },
     });
   };
-
-  // TODO: move to a different file
-  const replacementFormSchema = object();
 
   return (
     <Layout>

@@ -197,6 +197,9 @@ export default function CreateRenewal() {
     const { type, ...permitHolder } = values.permitHolder;
     const additionalInformation = validatedValues.additionalInformation;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { type, ...permitHolder } = values.permitHolder;
+
     await submitRenewalApplication({
       variables: {
         input: {
@@ -236,9 +239,6 @@ export default function CreateRenewal() {
       },
     });
   };
-
-  // TODO: move to a different file
-  const renewalFormSchema = object();
 
   return (
     <Layout>

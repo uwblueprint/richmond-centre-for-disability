@@ -267,6 +267,9 @@ export default function CreateNew() {
     const validatedValues = await createNewRequestFormSchema.validate(values);
     const additionalInformation = validatedValues.additionalInformation;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const permitHolder = validatedValues.permitHolder;
+
     await submitNewApplication({
       variables: {
         input: {
@@ -316,9 +319,6 @@ export default function CreateNew() {
       },
     });
   };
-
-  // TODO: move to a different file
-  const createNewFormSchema = object();
 
   return (
     <Layout>
