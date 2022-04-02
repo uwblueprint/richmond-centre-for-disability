@@ -58,7 +58,7 @@ import { createNewRequestFormSchema } from '@lib/applications/validation';
 import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 import { clientUploadToS3 } from '@lib/utils/s3-utils';
 import { Form, Formik } from 'formik';
-import { object } from 'yup';
+import { createNewRequestFormSchema } from '@lib/applications/validation';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -317,9 +317,6 @@ export default function CreateNew() {
       },
     });
   };
-
-  // TODO: move to a different file
-  const createNewFormSchema = object();
 
   return (
     <Layout>
