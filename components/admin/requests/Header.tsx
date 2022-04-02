@@ -14,8 +14,8 @@ import Link from 'next/link'; // Link
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Request status badge
 import ApproveRequestModal from '@components/admin/requests/processing/ApproveRequestModal'; // Approve button + modal
 import RejectRequestModal from '@components/admin/requests/processing/RejectRequestModal'; // Reject button + modal
-import CompleteRequestModal from '@components/admin/requests/processing/CompleteModal'; // Mark as complete button + modal
 import { ApplicationStatus, ApplicationType } from '@lib/graphql/types';
+import ProcessingTasksFooter from './processing/ProcessingFooter';
 
 type RequestHeaderProps = {
   readonly applicationId: number;
@@ -23,6 +23,7 @@ type RequestHeaderProps = {
   readonly applicationType: ApplicationType;
   readonly createdAt: Date;
   readonly allStepsCompleted: boolean;
+  readonly applicantId?: number;
 };
 
 /**
@@ -37,6 +38,7 @@ export default function RequestHeader({
   createdAt,
   allStepsCompleted,
   applicationType,
+  applicantId,
 }: RequestHeaderProps) {
   /**
    * Returns the appropriate header button(s) to be displayed depending on the current application status
@@ -59,9 +61,11 @@ export default function RequestHeader({
         );
       case 'IN_PROGRESS':
         return (
-          <CompleteRequestModal applicationId={applicationId}>
-            <Button disabled={!allStepsCompleted}>Mark as complete</Button>
-          </CompleteRequestModal>
+          <ProcessingTasksFooter
+            applicationId={applicationId}
+            applicantId={applicantId}
+            allStepsCompleted={allStepsCompleted}
+          />
         );
       default:
         return null;
@@ -70,7 +74,7 @@ export default function RequestHeader({
 
   /**
    * Returns the appropriate 'More Actions' dropdown to be displayed depending on the current application status
-]   * @returns Rendered 'More Actions' dropdown component or null
+   * @returns Rendered 'More Actions' dropdown component or null
    */
   const _renderMoreActionsDropdown = () => {
     if (applicationStatus === 'IN_PROGRESS' || applicationStatus === 'REJECTED') {

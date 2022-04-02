@@ -3,6 +3,7 @@ import {
   Application,
   ApplicationProcessing,
   Invoice,
+  Applicant,
   QueryApplicationArgs,
 } from '@lib/graphql/types';
 
@@ -27,6 +28,9 @@ export const GET_APPLICATION_QUERY = gql`
         appMailed
         reviewRequestCompleted
       }
+      applicant {
+        id
+      }
     }
   }
 `;
@@ -50,5 +54,7 @@ export type GetApplicationResponse = {
     > & {
       invoice: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl'>;
     };
+  } & {
+    applicant: Pick<Applicant, 'id'>;
   };
 };
