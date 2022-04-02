@@ -7,10 +7,10 @@ const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 
 // File upload button props
 type Props = {
-  file: File | null; // currently uploaded file
-  onUploadFile: (selectedFile: File) => void; // handle file upload
+  readonly file: File | null; // currently uploaded file
+  readonly onUploadFile: (selectedFile: File) => void; // handle file upload
   readonly isDisabled: boolean;
-  onUndo: () => void;
+  readonly onUndo: () => void;
 };
 
 /**
@@ -18,7 +18,7 @@ type Props = {
  */
 export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile, onUndo }) => {
   const hiddenFileInput = useRef<HTMLInputElement>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>('error');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   /**
    * Handle upload button click
    */
