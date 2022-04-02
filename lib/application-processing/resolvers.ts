@@ -947,6 +947,20 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
     throw new ApolloError('Not authenticated');
   }
 
+  if (!process.env.APPLICATION_DOCUMENT_LINK_TTL_DAYS) {
+    throw new ApolloError('Application document link duration not defined');
+  }
+
+  let signedUrl;
+  try {
+    const durationSeconds = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_DAYS) * 24 * 60 * 60;
+    if (documentsUrl) {
+      signedUrl = getSignedUrlForS3(documentsUrl, durationSeconds);
+    }
+  } catch (e) {
+    throw new ApolloError(`Error uploading application document to AWS: ${e}`);
+  }
+
   const { id: employeeId } = session;
 
   let updatedApplicationProcessing;
@@ -956,7 +970,8 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
       data: {
         applicationProcessing: {
           update: {
-            documentsUrl,
+            documentsUrl: signedUrl,
+            documentsS3ObjectKey: documentsUrl,
             documentsUrlUpdatedAt: new Date(),
             documentsUrlEmployee: { connect: { id: employeeId } },
           },

@@ -228,6 +228,7 @@ CREATE TABLE application_processing (
   review_request_completed_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   invoice_number INTEGER UNIQUE,
   documents_url TEXT,
+  documents_s3_object_key TEXT,
   documents_url_employee_id INTEGER,
   documents_url_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   app_mailed BOOLEAN NOT NULL DEFAULT false,

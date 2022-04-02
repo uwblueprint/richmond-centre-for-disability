@@ -11,12 +11,19 @@ type Props = {
   readonly onUploadFile: (selectedFile: File) => void; // handle file upload
   readonly isDisabled: boolean;
   readonly onUndo: () => void;
+  readonly documentUrl: string | null;
 };
 
 /**
  * POA form upload component allowing users to upload POA form PDF file
  */
-export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile, onUndo }) => {
+export const TaskCardUploadStep: FC<Props> = ({
+  isDisabled,
+  file,
+  onUploadFile,
+  onUndo,
+  documentUrl,
+}) => {
   const hiddenFileInput = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   /**
@@ -49,7 +56,7 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile, 
   };
   return (
     <>
-      {file ? (
+      {file && documentUrl ? (
         errorMessage ? (
           <VStack align="flex-start" spacing="8px">
             <HStack>
@@ -67,8 +74,8 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile, 
             <VStack align="flex-start">
               <HStack>
                 <Link
-                  href={URL.createObjectURL(file)}
-                  download={file.name}
+                  href={documentUrl as string}
+                  isExternal={true}
                   textStyle="caption"
                   color="primary"
                   textDecoration="underline"

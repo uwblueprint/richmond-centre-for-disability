@@ -327,6 +327,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           <TaskCardUploadStep
             isDisabled={invoice === null}
             file={applicationDocuments}
+            documentUrl={documentsUrl}
             onUploadFile={handleSubmitDocuments}
             onUndo={handleUndoDocumentsUpload}
           />
