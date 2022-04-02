@@ -26,16 +26,17 @@ type Props = {
  */
 const Request: NextPage<Props> = ({ id: idString }: Props) => {
   const id = parseInt(idString);
-
   // Get request data query
   const { data } = useQuery<GetApplicationResponse, GetApplicationRequest>(GET_APPLICATION_QUERY, {
     variables: { id },
   });
+  // Get Permit Holder ID from Application
 
   if (!data?.application) {
     return null;
   }
 
+  const applicantId = data.application.applicant?.id;
   const {
     type,
     createdAt,
@@ -71,6 +72,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           applicationType={type}
           createdAt={new Date(createdAt)}
           allStepsCompleted={allStepsCompleted}
+          applicantId={applicantId}
         />
       </GridItem>
       <GridItem colStart={1} colSpan={5} textAlign="left">
