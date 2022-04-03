@@ -28,13 +28,8 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, fileUrl, onUploadFil
     }
   };
 
-  /**
-   * Get file name from s3 URL
-   * Decode URL in case of file names with special characters
-   */
-  const getFileName = () => {
-    return fileUrl ? new URL(decodeURI(fileUrl)).pathname.split('/').at(-1) : null;
-  };
+  /** File name retrieved from s3 URL */
+  const fileName = fileUrl ? new URL(decodeURI(fileUrl)).pathname.split('/').at(-1) : null;
 
   /**
    * Handle file selection
@@ -59,9 +54,9 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, fileUrl, onUploadFil
   return (
     <>
       {fileUrl ? (
-        <>
-          <VStack align="flex-start">
-            <HStack>
+        <VStack align="flex-start">
+          <HStack>
+            {fileName ? (
               <Tooltip
                 hasArrow
                 closeOnClick={false}
@@ -77,43 +72,41 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, fileUrl, onUploadFil
                   color="primary"
                   textDecoration="underline"
                 >
-                  {getFileName()}
+                  {fileName}
                 </Link>
               </Tooltip>
-              <IconButton
-                aria-label="undo"
-                variant="ghost"
-                size={'xs'}
-                icon={<CloseIcon boxSize={'0.5em'} />}
-                onClick={onUndo}
-              />
-            </HStack>
-          </VStack>
-        </>
-      ) : (
-        <>
-          <Box align="end">
-            <Button
-              align="end"
-              marginLeft="auto"
-              height="35px"
-              bg="background.gray"
-              _hover={isDisabled ? undefined : { bg: 'background.grayHover' }}
-              color="black"
-              disabled={isDisabled}
-              onClick={handleClick}
-            >
-              <Text textStyle="xsmall-medium">Upload document</Text>
-            </Button>
-            <input
-              type="file"
-              ref={hiddenFileInput}
-              onChange={handleChange}
-              style={{ display: 'none' }}
-              accept=".pdf"
+            ) : null}
+            <IconButton
+              aria-label="undo"
+              variant="ghost"
+              size={'xs'}
+              icon={<CloseIcon boxSize={'0.5em'} />}
+              onClick={onUndo}
             />
-          </Box>
-        </>
+          </HStack>
+        </VStack>
+      ) : (
+        <Box align="end">
+          <Button
+            align="end"
+            marginLeft="auto"
+            height="35px"
+            bg="background.gray"
+            _hover={isDisabled ? undefined : { bg: 'background.grayHover' }}
+            color="black"
+            disabled={isDisabled}
+            onClick={handleClick}
+          >
+            <Text textStyle="xsmall-medium">Upload document</Text>
+          </Button>
+          <input
+            type="file"
+            ref={hiddenFileInput}
+            onChange={handleChange}
+            style={{ display: 'none' }}
+            accept=".pdf"
+          />
+        </Box>
       )}
       {errorMessage && (
         <>
