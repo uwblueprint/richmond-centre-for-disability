@@ -64,9 +64,8 @@ export default function CreateReplacement() {
     postalCode: '',
   });
 
-  // TODO: get rid of this
   /** Reason for replacement section */
-  const [reasonForReplacement, setReasonForReplacement] = useState<ReasonForReplacementFormData>({
+  const reasonForReplacement: ReasonForReplacementFormData = {
     reason: null,
     lostTimestamp: null,
     lostLocation: null,
@@ -74,7 +73,7 @@ export default function CreateReplacement() {
     stolenPoliceOfficerName: null,
     stolenPoliceFileNumber: null,
     eventDescription: null,
-  });
+  };
 
   /** Payment information section */
   const [paymentInformation, setPaymentInformation] = useState<
@@ -307,10 +306,7 @@ export default function CreateReplacement() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Reason for Replacement`}
                     </Text>
-                    <ReasonForReplacementForm
-                      reasonForReplacement={values.reasonForReplacement}
-                      onChange={setReasonForReplacement}
-                    />
+                    <ReasonForReplacementForm reasonForReplacement={values.reasonForReplacement} />
                   </Box>
                 </GridItem>
                 {/* Payment Details Form */}

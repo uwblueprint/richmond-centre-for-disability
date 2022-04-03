@@ -13,14 +13,18 @@ export const reasonForReplacementFormSchema = object({
   reason: mixed<ReasonForReplacement>()
     .oneOf(Object.values(ReasonForReplacement))
     .required('Please seelct reason for replacement'),
-  lostTimestamp: date().when('reason', {
-    is: 'LOST',
-    then: date()
-      .transform(originalValue => {
-        return new Date(originalValue);
-      })
-      .required('Please enter date APP was lost'),
-  }),
+  lostTimestamp: date()
+    .nullable()
+    .default(null)
+    .when('reason', {
+      is: 'LOST',
+      then: date()
+        .transform((_value, originalValue) => {
+          return new Date(originalValue);
+        })
+        .typeError('Please enter date APP was lost')
+        .required('Please enter date APP was lost'),
+    }),
   lostLocation: string()
     .nullable()
     .default(null)
