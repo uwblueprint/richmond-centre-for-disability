@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from '@apollo/client';
-import { Divider, VStack, Button, Text, Link, Tooltip } from '@chakra-ui/react'; // Chakra UI
+import { Divider, VStack, Button, Text, useToast, Link, Tooltip } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/processing/AssignNumberModal'; // AssignNumber Modal component
 import ProcessingTaskStep from '@components/admin/requests/processing/TaskStep'; // Processing Task Step
@@ -30,6 +30,8 @@ import {
   UPLOAD_DOCUMENTS_MUTATION,
 } from '@tools/admin/requests/processing-tasks-card';
 import ReviewInformationStep from '@components/admin/requests/processing/ReviewInformationStep';
+import { clientUploadToS3 } from '@lib/utils/s3-utils';
+import TaskCardUploadStep from '@components/admin/requests/processing/TaskCardUploadStep';
 
 type ProcessingTasksCardProps = {
   readonly applicationId: number;
@@ -90,17 +92,41 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
-  // TODO: Hook up to S3 upload
-  const [uploadDocuments] =
+  const [uploadDocuments, { loading: uploadDocumentsLoading }] =
     useMutation<UploadDocumentsResponse, UploadDocumentsRequest>(UPLOAD_DOCUMENTS_MUTATION);
-  const handleUploadDocuments = async (documentsUrl: string) => {
-    await uploadDocuments({ variables: { input: { applicationId, documentsUrl } } });
-    refetch();
-  };
 
   const [mailOut] = useMutation<MailOutResponse, MailOutRequest>(MAIL_OUT_APP_MUTATION);
   const handleMailOut = async (appMailed: boolean) => {
     await mailOut({ variables: { input: { applicationId, appMailed } } });
+    refetch();
+  };
+
+  const toast = useToast();
+
+  const handleSubmitDocuments = async (applicationDoc: File) => {
+    let documentsS3ObjectKey;
+    try {
+      const { key } = await clientUploadToS3(applicationDoc, 'rcd/application-documents');
+      documentsS3ObjectKey = key;
+    } catch (err) {
+      toast({
+        status: 'error',
+        description: `Failed to upload documents: ${err}`,
+        isClosable: true,
+      });
+      return;
+    }
+
+    await uploadDocuments({
+      variables: { input: { applicationId, documentsS3ObjectKey } },
+    });
+    refetch();
+  };
+
+  const handleUndoDocumentsUpload = async () => {
+    await uploadDocuments({
+      variables: { input: { applicationId, documentsS3ObjectKey: null } },
+    });
     refetch();
   };
 
@@ -291,31 +317,12 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           description="Scan all documents and upload as one PDF"
           isCompleted={documentsUrl !== null}
         >
-          {documentsUrl !== null && reviewRequestCompleted ? (
-            <Button
-              variant="ghost"
-              textDecoration="underline black"
-              // TODO: Integrate with document upload
-              onClick={() => {}} // eslint-disable-line @typescript-eslint/no-empty-function
-            >
-              <Text textStyle="caption" color="black">
-                Undo
-              </Text>
-            </Button>
-          ) : (
-            <Button
-              marginLeft="auto"
-              height="35px"
-              bg="background.gray"
-              _hover={invoice === null ? undefined : { bg: 'background.grayHover' }}
-              color="black"
-              disabled={invoice === null}
-              // TODO: Add document upload functionality
-              onClick={() => handleUploadDocuments('placeholder url')}
-            >
-              <Text textStyle="xsmall-medium">Choose document</Text>
-            </Button>
-          )}
+          <TaskCardUploadStep
+            isDisabled={invoice === null || uploadDocumentsLoading}
+            fileUrl={documentsUrl}
+            onUploadFile={handleSubmitDocuments}
+            onUndo={handleUndoDocumentsUpload}
+          />
         </ProcessingTaskStep>
 
         {/* Task 7: Mail out: Mark as complete (CHECK) */}

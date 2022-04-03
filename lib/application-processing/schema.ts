@@ -23,6 +23,7 @@ export default gql`
     reviewRequestCompletedUpdatedAt: Date
     invoice: Invoice
     documentsUrl: String
+    documentsS3ObjectKey: String
     documentsUrlEmployeeId: Int
     documentsUrlUpdatedAt: Date
     appMailed: Boolean!
@@ -120,7 +121,7 @@ export default gql`
   input UpdateApplicationProcessingUploadDocumentsInput {
     applicationId: Int!
 
-    documentsUrl: String # TODO: Investigate FE vs BE file upload to AWS
+    documentsS3ObjectKey: String # TODO: Investigate FE vs BE file upload to AWS
   }
 
   type UpdateApplicationProcessingUploadDocumentsResult {

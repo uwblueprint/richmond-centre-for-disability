@@ -130,6 +130,7 @@ export type ApplicationProcessing = {
   reviewRequestCompletedUpdatedAt: Maybe<Scalars['Date']>;
   invoice: Maybe<Invoice>;
   documentsUrl: Maybe<Scalars['String']>;
+  documentsS3ObjectKey: Maybe<Scalars['String']>;
   documentsUrlEmployeeId: Maybe<Scalars['Int']>;
   documentsUrlUpdatedAt: Maybe<Scalars['Date']>;
   appMailed: Scalars['Boolean'];
@@ -1291,7 +1292,7 @@ export type UpdateApplicationProcessingReviewRequestInformationResult = {
 
 export type UpdateApplicationProcessingUploadDocumentsInput = {
   applicationId: Scalars['Int'];
-  documentsUrl: Maybe<Scalars['String']>;
+  documentsS3ObjectKey: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingUploadDocumentsResult = {

@@ -215,7 +215,7 @@ model ApplicationProcessing {
   reviewRequestCompletedEmployeeId Int?                @map("review_request_completed_employee_id")
   reviewRequestCompletedUpdatedAt  DateTime            @default(now()) @map("review_request_completed_updated_at") @db.Timestamptz(6)
   invoiceNumber                    Int?                @unique @map("invoice_number")
-  documentsUrl                     String?             @map("documents_url")
+  documentsS3ObjectKey             String?             @map("documents_s3_object_key")
   documentsUrlEmployeeId           Int?                @map("documents_url_employee_id")
   documentsUrlUpdatedAt            DateTime            @default(now()) @map("documents_url_updated_at") @db.Timestamptz(6)
   appMailed                        Boolean             @default(false) @map("app_mailed")
