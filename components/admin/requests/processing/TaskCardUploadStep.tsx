@@ -1,6 +1,6 @@
 import { SyntheticEvent, useRef, useState, FC } from 'react';
 import { WarningTwoIcon, CloseIcon } from '@chakra-ui/icons';
-import { Button, Text, Link, HStack, VStack, IconButton, Box } from '@chakra-ui/react';
+import { Button, Text, Link, HStack, VStack, IconButton, Box, Tooltip } from '@chakra-ui/react';
 
 // 5 MB file size limit
 const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
@@ -62,15 +62,24 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, fileUrl, onUploadFil
         <>
           <VStack align="flex-start">
             <HStack>
-              <Link
-                href={fileUrl as string}
-                isExternal={true}
-                textStyle="caption"
-                color="primary"
-                textDecoration="underline"
+              <Tooltip
+                hasArrow
+                closeOnClick={false}
+                label="Clicking on this link will open the document in a new tab"
+                placement="bottom"
+                bg="background.grayHover"
+                color="black"
               >
-                {getFileName()}
-              </Link>
+                <Link
+                  href={fileUrl}
+                  isExternal={true}
+                  textStyle="caption"
+                  color="primary"
+                  textDecoration="underline"
+                >
+                  {getFileName()}
+                </Link>
+              </Tooltip>
               <IconButton
                 aria-label="undo"
                 variant="ghost"
