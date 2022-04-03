@@ -19,14 +19,12 @@ import { useFormikContext } from 'formik';
 
 type ReasonForReplacementProps = {
   readonly reasonForReplacement: ReasonForReplacementFormData;
-  readonly onChange: (updatedData: ReasonForReplacementFormData) => void;
 };
 
 /**
  * ReasonForReplacementForm Component for allowing users to edit reason for replacement information.
  *
  * @param {ReasonForReplacementFormData} reasonForReplacement Data Structure that holds all reason for replacement information for a client request.
- * @param onChange Function that uses the updated values from form.
  */
 export default function ReasonForReplacementForm({
   reasonForReplacement,

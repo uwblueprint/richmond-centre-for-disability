@@ -10,7 +10,7 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, useEffect, ReactNode } from 'react'; // React
+import { ReactNode } from 'react'; // React
 import ReasonForReplacementForm from '@components/admin/requests/reason-for-replacement/Form'; // ReasonForReplacement form fields
 import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-replacement';
 import { Form, Formik } from 'formik';
@@ -23,21 +23,11 @@ type EditReasonForReplacementModalProps = {
 };
 
 export default function EditReasonForReplacementModal({
-  reasonForReplacement: currentReasonForReplacement,
+  reasonForReplacement,
   onSave,
   children,
 }: EditReasonForReplacementModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // TODO: maybe get rid of this
-  const [reasonForReplacement, setReasonForReplacement] = useState<ReasonForReplacementFormData>(
-    currentReasonForReplacement
-  );
-
-  // TODO: update this
-  useEffect(() => {
-    setReasonForReplacement(currentReasonForReplacement);
-  }, [currentReasonForReplacement, isOpen]);
 
   const handleSubmit = (values: { reasonForReplacement: ReasonForReplacementFormData }) => {
     onSave(values.reasonForReplacement);
@@ -67,10 +57,7 @@ export default function EditReasonForReplacementModal({
                   </Text>
                 </ModalHeader>
                 <ModalBody paddingY="16px" paddingX="4px">
-                  <ReasonForReplacementForm
-                    reasonForReplacement={values.reasonForReplacement}
-                    onChange={setReasonForReplacement}
-                  />
+                  <ReasonForReplacementForm reasonForReplacement={values.reasonForReplacement} />
                 </ModalBody>
                 <ModalFooter paddingBottom="24px" paddingTop="8px">
                   <Button colorScheme="gray" variant="solid" onClick={onClose}>

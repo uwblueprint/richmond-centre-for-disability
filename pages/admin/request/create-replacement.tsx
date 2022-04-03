@@ -186,12 +186,7 @@ export default function CreateReplacement() {
       return;
     }
 
-    // TODO: manually set time
-
-    if (!values.reasonForReplacement.reason) {
-      toast({ status: 'error', description: 'Missing reason for replacement', isClosable: true });
-      return;
-    }
+    const validatedValues = await replacementRequestFormSchema.validate(values);
 
     if (!paymentInformation.paymentMethod) {
       toast({ status: 'error', description: 'Missing payment method', isClosable: true });
@@ -199,15 +194,14 @@ export default function CreateReplacement() {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { type, receiveEmailUpdates, ...permitHolder } = values.permitHolder;
+    const { type, receiveEmailUpdates, ...permitHolder } = validatedValues.permitHolder;
 
     await submitReplacementApplication({
       variables: {
         input: {
           applicantId,
           ...permitHolder,
-          ...values.reasonForReplacement,
-          reason: values.reasonForReplacement.reason,
+          ...validatedValues.reasonForReplacement,
           ...paymentInformation,
           paymentMethod: paymentInformation.paymentMethod,
         },
