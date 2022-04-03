@@ -36,6 +36,9 @@ export const requestPermitHolderInformationSchema = object({
     .max(7, 'Please enter a valid postal code'),
 });
 
+/**
+ * Validation schema for edit permit holder information form
+ */
 export const nestedRequestPermitHolderInformationSchema = object({
   permitHolder: requestPermitHolderInformationSchema,
 });

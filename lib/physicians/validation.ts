@@ -1,6 +1,9 @@
 import { PatientCondition, PermitType } from '@prisma/client';
 import { date, mixed, object, string } from 'yup';
 
+/**
+ * Validation schema for physician assessment form
+ */
 export const physicianAssessmentSchema = object({
   disability: string().required('Please enter a disabling condition'),
   disabilityCertificationDate: date().required('Please enter a valid certification date'),
