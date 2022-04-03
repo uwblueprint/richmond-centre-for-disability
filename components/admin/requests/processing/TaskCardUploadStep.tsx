@@ -1,6 +1,6 @@
 import { SyntheticEvent, useRef, useState, FC } from 'react';
 import { WarningTwoIcon, CloseIcon } from '@chakra-ui/icons';
-import { Button, Text, Link, HStack, VStack, IconButton } from '@chakra-ui/react';
+import { Button, Text, Link, HStack, VStack, IconButton, Box } from '@chakra-ui/react';
 
 // 5 MB file size limit
 const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
@@ -30,9 +30,10 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, fileUrl, onUploadFil
 
   /**
    * Get file name from s3 URL
+   * Decode URL in case of file names with special characters
    */
   const getFileName = () => {
-    return fileUrl ? new URL(fileUrl).pathname.split('/').at(-1) : null;
+    return fileUrl ? new URL(decodeURI(fileUrl)).pathname.split('/').at(-1) : null;
   };
 
   /**
@@ -58,62 +59,61 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, fileUrl, onUploadFil
   return (
     <>
       {fileUrl ? (
-        errorMessage ? (
-          <VStack align="flex-start" spacing="8px">
+        <>
+          <VStack align="flex-start">
             <HStack>
-              <WarningTwoIcon color="secondary.critical" />
-              <Text textStyle="caption" color="text.critical">
+              <Link
+                href={fileUrl as string}
+                isExternal={true}
+                textStyle="caption"
+                color="primary"
+                textDecoration="underline"
+              >
                 {getFileName()}
-              </Text>
+              </Link>
+              <IconButton
+                aria-label="undo"
+                variant="ghost"
+                size={'xs'}
+                icon={<CloseIcon boxSize={'0.5em'} />}
+                onClick={onUndo}
+              />
             </HStack>
+          </VStack>
+        </>
+      ) : (
+        <>
+          <Box align="end">
+            <Button
+              align="end"
+              marginLeft="auto"
+              height="35px"
+              bg="background.gray"
+              _hover={isDisabled ? undefined : { bg: 'background.grayHover' }}
+              color="black"
+              disabled={isDisabled}
+              onClick={handleClick}
+            >
+              <Text textStyle="xsmall-medium">Upload document</Text>
+            </Button>
+            <input
+              type="file"
+              ref={hiddenFileInput}
+              onChange={handleChange}
+              style={{ display: 'none' }}
+              accept=".pdf"
+            />
+          </Box>
+        </>
+      )}
+      {errorMessage && (
+        <>
+          <HStack>
+            <WarningTwoIcon color="secondary.critical" />
             <Text textStyle="caption" color="text.critical">
               {errorMessage}
             </Text>
-          </VStack>
-        ) : (
-          <>
-            <VStack align="flex-start">
-              <HStack>
-                <Link
-                  href={fileUrl as string}
-                  isExternal={true}
-                  textStyle="caption"
-                  color="primary"
-                  textDecoration="underline"
-                >
-                  {getFileName()}
-                </Link>
-                <IconButton
-                  aria-label="undo"
-                  variant="ghost"
-                  size={'xs'}
-                  icon={<CloseIcon boxSize={'0.5em'} />}
-                  onClick={onUndo}
-                />
-              </HStack>
-            </VStack>
-          </>
-        )
-      ) : (
-        <>
-          <Button
-            marginLeft="auto"
-            height="35px"
-            bg="background.gray"
-            _hover={isDisabled ? undefined : { bg: 'background.grayHover' }}
-            color="black"
-            disabled={isDisabled}
-            onClick={handleClick}
-          >
-            <Text textStyle="xsmall-medium">Upload document</Text>
-          </Button>
-          <input
-            type="file"
-            ref={hiddenFileInput}
-            onChange={handleChange}
-            style={{ display: 'none' }}
-            accept=".pdf"
-          />
+          </HStack>
         </>
       )}
     </>
