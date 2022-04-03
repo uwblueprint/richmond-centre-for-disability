@@ -87,9 +87,12 @@ export default gql`
     updateApplicationProcessingCreateWalletCard(
       input: UpdateApplicationProcessingCreateWalletCardInput!
     ): UpdateApplicationProcessingCreateWalletCardResult
-    updateApplicationProcessingAssignInvoiceNumber(
-      input: UpdateApplicationProcessingAssignInvoiceNumberInput!
-    ): UpdateApplicationProcessingAssignInvoiceNumberResult
+    updateApplicationProcessingReviewRequestInformation(
+      input: UpdateApplicationProcessingReviewRequestInformationInput!
+    ): UpdateApplicationProcessingReviewRequestInformationResult
+    updateApplicationProcessingGenerateInvoice(
+      input: UpdateApplicationProcessingGenerateInvoiceInput!
+    ): UpdateApplicationProcessingGenerateInvoiceResult
     updateApplicationProcessingUploadDocuments(
       input: UpdateApplicationProcessingUploadDocumentsInput!
     ): UpdateApplicationProcessingUploadDocumentsResult

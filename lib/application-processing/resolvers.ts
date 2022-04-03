@@ -8,20 +8,23 @@ import {
   MutationCompleteApplicationArgs,
   MutationRejectApplicationArgs,
   MutationUpdateApplicationProcessingAssignAppNumberArgs,
-  MutationUpdateApplicationProcessingAssignInvoiceNumberArgs,
+  MutationUpdateApplicationProcessingGenerateInvoiceArgs,
   MutationUpdateApplicationProcessingCreateWalletCardArgs,
   MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
   MutationUpdateApplicationProcessingMailOutArgs,
   MutationUpdateApplicationProcessingUploadDocumentsArgs,
+  MutationUpdateApplicationProcessingReviewRequestInformationArgs,
   RejectApplicationResult,
   UpdateApplicationProcessingAssignAppNumberResult,
-  UpdateApplicationProcessingAssignInvoiceNumberResult,
+  UpdateApplicationProcessingGenerateInvoiceResult,
   UpdateApplicationProcessingCreateWalletCardResult,
   UpdateApplicationProcessingHolepunchParkingPermitResult,
   UpdateApplicationProcessingMailOutResult,
   UpdateApplicationProcessingUploadDocumentsResult,
+  UpdateApplicationProcessingReviewRequestInformationResult,
 } from '@lib/graphql/types';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
+import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
 
 /**
  * Approve application
@@ -447,18 +450,7 @@ export const completeApplication: Resolver<
           medicalInformation: {
             update: {
               physician: {
-                update: {
-                  firstName: physicianFirstName,
-                  lastName: physicianLastName,
-                  mspNumber: physicianMspNumber,
-                  phone: physicianPhone,
-                  addressLine1: physicianAddressLine1,
-                  addressLine2: physicianAddressLine2,
-                  city: physicianCity,
-                  province: physicianProvince,
-                  country: physicianCountry,
-                  postalCode: physicianPostalCode,
-                },
+                connect: { mspNumber: physicianMspNumber },
               },
             },
           },
@@ -596,8 +588,22 @@ export const updateApplicationProcessingAssignAppNumber: Resolver<
     // TODO: Create error
     throw new ApolloError('Not authenticated');
   }
-
   const { id: employeeId } = session;
+
+  // Prevent assigning APP number if review is complete
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: {
+      applicationProcessing: {
+        select: {
+          reviewRequestCompleted: true,
+        },
+      },
+    },
+  });
+  if (application?.applicationProcessing.reviewRequestCompleted) {
+    throw new ApolloError('Cannot update APP number of already-reviewed application');
+  }
 
   let updatedApplicationProcessing;
   try {
@@ -640,8 +646,22 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
     // TODO: Create error
     throw new ApolloError('Not authenticated');
   }
-
   const { id: employeeId } = session;
+
+  // Prevent changing holepunched status if review is complete
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: {
+      applicationProcessing: {
+        select: {
+          reviewRequestCompleted: true,
+        },
+      },
+    },
+  });
+  if (application?.applicationProcessing.reviewRequestCompleted) {
+    throw new ApolloError('Cannot update APP holepunched status of already-reviewed application');
+  }
 
   let updatedApplicationProcessing;
   try {
@@ -684,8 +704,22 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
     // TODO: Create error
     throw new ApolloError('Not authenticated');
   }
-
   const { id: employeeId } = session;
+
+  // Prevent changing wallet card creation status if review is complete
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: {
+      applicationProcessing: {
+        select: {
+          reviewRequestCompleted: true,
+        },
+      },
+    },
+  });
+  if (application?.applicationProcessing.reviewRequestCompleted) {
+    throw new ApolloError('Cannot update wallet card status of already-reviewed application');
+  }
 
   let updatedApplicationProcessing;
   try {
@@ -713,20 +747,41 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
 };
 
 /**
- * Assign invoice Number to in-progress application
+ * Review application information of in-progress application
  * @returns Status of the operation (ok)
  */
-export const updateApplicationProcessingAssignInvoiceNumber: Resolver<
-  MutationUpdateApplicationProcessingAssignInvoiceNumberArgs,
-  UpdateApplicationProcessingAssignInvoiceNumberResult
+export const updateApplicationProcessingReviewRequestInformation: Resolver<
+  MutationUpdateApplicationProcessingReviewRequestInformationArgs,
+  UpdateApplicationProcessingReviewRequestInformationResult
 > = async (_parent, args, { prisma, session }) => {
-  // TODO: Validation
   const { input } = args;
-  const { applicationId, invoiceNumber } = input;
-
+  const { applicationId, reviewRequestCompleted } = input;
   if (!session) {
     // TODO: Create error
     throw new ApolloError('Not authenticated');
+  }
+  const { id: employeeId } = session;
+
+  // Prevent marking request as reviewed if prior steps are not complete
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: {
+      applicationProcessing: {
+        select: {
+          appNumber: true,
+          appHolepunched: true,
+          walletCardCreated: true,
+        },
+      },
+    },
+  });
+  if (
+    reviewRequestCompleted &&
+    (!application?.applicationProcessing.appNumber ||
+      !application?.applicationProcessing.appHolepunched ||
+      !application?.applicationProcessing.walletCardCreated)
+  ) {
+    throw new ApolloError('Prior steps incomplete');
   }
 
   let updatedApplicationProcessing;
@@ -736,7 +791,25 @@ export const updateApplicationProcessingAssignInvoiceNumber: Resolver<
       data: {
         applicationProcessing: {
           update: {
-            applicationInvoice: { connect: { invoiceNumber: invoiceNumber } },
+            reviewRequestCompleted,
+            reviewRequestEmployee: reviewRequestCompleted
+              ? { connect: { id: employeeId } }
+              : { disconnect: true },
+            reviewRequestCompletedUpdatedAt: new Date(),
+            // Invoice generation and document upload steps should be reset
+            // TODO: Integrate with invoice generation
+            applicationInvoice: {
+              disconnect: true,
+            },
+            // TODO: Integrate with document upload
+            documentsUrl: null,
+            documentsUrlEmployee: {
+              disconnect: true,
+            },
+            documentsUrlUpdatedAt: new Date(),
+            appMailed: false,
+            appMailedEmployee: { disconnect: true },
+            appMailedUpdatedAt: new Date(),
           },
         },
       },
@@ -746,8 +819,68 @@ export const updateApplicationProcessingAssignInvoiceNumber: Resolver<
   }
 
   if (!updatedApplicationProcessing) {
-    throw new ApolloError('Error assigning invoice number to application');
+    throw new ApolloError('Error updating application review status');
   }
+
+  return { ok: true };
+};
+
+/**
+ * Generate invoice for in-progress application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationProcessingGenerateInvoice: Resolver<
+  MutationUpdateApplicationProcessingGenerateInvoiceArgs,
+  UpdateApplicationProcessingGenerateInvoiceResult
+> = async (_parent, args, { prisma, session }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { applicationId } = input;
+
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
+
+  // Use the application record to retrieve the applicant name, applicant ID, permit type, current date, and employee initials
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: { applicant: true, applicationProcessing: true },
+  });
+
+  if (!application) {
+    throw new ApolloError('Application does not exist');
+  }
+
+  // Create invoice record in DB
+  let invoice;
+  try {
+    invoice = await prisma.applicationInvoice.create({
+      data: {
+        applicationProcessing: {
+          connect: { id: applicationId },
+        },
+        employee: {
+          connect: { id: session.id },
+        },
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!invoice) {
+    throw new ApolloError('Error creating invoice record in DB');
+  }
+
+  // Generate application invoice
+  generateApplicationInvoicePdf(
+    application,
+    session,
+    // TODO: Remove typecast when backend guard is implemented
+    application.applicationProcessing.appNumber as number,
+    invoice.invoiceNumber
+  );
 
   return { ok: true };
 };

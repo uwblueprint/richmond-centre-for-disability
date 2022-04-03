@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { HStack, VStack, Text, Divider, Button, useToast } from '@chakra-ui/react'; // Chakra UI
+import { HStack, VStack, Text, Divider, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
 import EditPermitHolderInformationModal from '@components/admin/requests/permit-holder-information/EditModal'; // Edit modal
 import {
@@ -20,12 +20,15 @@ import { formatDateYYYYMMDD, formatFullName } from '@lib/utils/format';
 import PermitHolderStatusBadge from '@components/admin/PermitHolderStatusBadge';
 import Updated from '@components/admin/Updated';
 import Address from '@components/admin/Address';
+import { permitHolderInformationSchema } from '@lib/applicants/validation';
 
 type Props = {
   readonly applicationId: number;
   readonly contactInfoUpdated?: boolean;
   readonly addressInfoUpdated?: boolean;
   readonly editDisabled?: boolean;
+  /** Whether card is a subsection */
+  readonly isSubsection?: boolean;
 };
 
 // TODO: Updated states
@@ -37,7 +40,8 @@ type Props = {
  * @param addressInfoUpdated Whether address information was updated
  */
 const Card: FC<Props> = props => {
-  const { applicationId, contactInfoUpdated, addressInfoUpdated, editDisabled } = props;
+  const { applicationId, contactInfoUpdated, addressInfoUpdated, editDisabled, isSubsection } =
+    props;
 
   const [permitHolderInformation, setPermitHolderInformation] =
     useState<PermitHolderCardData | null>(null);
@@ -62,9 +66,6 @@ const Card: FC<Props> = props => {
     }
   );
 
-  // Toast message
-  const toast = useToast();
-
   const [updatePermitHolderInformation] = useMutation<
     UpdatePermitHolderInformationResponse,
     UpdatePermitHolderInformationRequest
@@ -81,19 +82,15 @@ const Card: FC<Props> = props => {
 
   /** Handler for saving permit holder information */
   const handleSave = async (data: PermitHolderFormData) => {
-    if (data.type === 'NEW') {
-      if (!data.gender) {
-        toast({ status: 'error', description: 'Missing gender', isClosable: true });
-        return;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { type, gender, ...permitHolderData } = data;
+    const { type, ...permitHolderData } = data;
+
+    if (type === 'NEW') {
+      const validatedData = await permitHolderInformationSchema.validate(permitHolderData);
+
       await updateNewPermitHolderInformation({
-        variables: { input: { id: applicationId, ...permitHolderData, gender } },
+        variables: { input: { id: applicationId, ...validatedData } },
       });
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { type, ...permitHolderData } = data;
       await updatePermitHolderInformation({
         variables: { input: { id: applicationId, ...permitHolderData } },
       });
@@ -173,7 +170,12 @@ const Card: FC<Props> = props => {
   );
 
   return (
-    <PermitHolderInfoCard colSpan={5} header={Header} editModal={!editDisabled && EditModal}>
+    <PermitHolderInfoCard
+      colSpan={5}
+      header={Header}
+      editModal={!editDisabled && EditModal}
+      isSubsection={isSubsection}
+    >
       <VStack width="100%" spacing="24px" align="left">
         {/* Permit holder information */}
         <VStack spacing="12px" align="left">

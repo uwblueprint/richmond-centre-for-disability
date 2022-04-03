@@ -8,6 +8,7 @@ import medicalInformationSchema from '@lib/medical-information/schema'; // Medic
 import permitsSchema from '@lib/permits/schema'; // Permits schema
 import physiciansSchema from '@lib/physicians/schema'; // Physicians schema
 import reportsSchema from '@lib/reports/schema'; // Reports schema
+import invoicesSchema from '@lib/invoices/schema'; // Invoices schema
 
 // Merge schemas
 const typeDefs = [
@@ -21,6 +22,7 @@ const typeDefs = [
   permitsSchema,
   physiciansSchema,
   reportsSchema,
+  invoicesSchema,
 ];
 
 export default typeDefs;

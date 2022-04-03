@@ -45,10 +45,9 @@ export const applicationApplicantResolver: FieldResolver<
  * Fetch processing data of application
  * @returns Application processing object
  */
-export const applicationProcessingResolver: FieldResolver<Application, ApplicationProcessing> = (
-  parent,
-  _args,
-  { prisma }
-) => {
-  return prisma.application.findUnique({ where: { id: parent.id } }).applicationProcessing();
-};
+export const applicationProcessingResolver: FieldResolver<Application, ApplicationProcessing> =
+  async (parent, _args, { prisma }) => {
+    return await prisma.application
+      .findUnique({ where: { id: parent.id } })
+      .applicationProcessing();
+  };

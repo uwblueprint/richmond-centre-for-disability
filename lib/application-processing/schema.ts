@@ -18,6 +18,9 @@ export default gql`
     walletCardCreated: Boolean!
     walletCardCreatedEmployeeId: Int
     walletCardCreatedUpdatedAt: Date
+    reviewRequestCompleted: Boolean!
+    reviewRequestCompletedEmployeeId: Int
+    reviewRequestCompletedUpdatedAt: Date
     invoiceNumber: Int
     documentsUrl: String
     documentsUrlEmployeeId: Int
@@ -93,14 +96,23 @@ export default gql`
     ok: Boolean!
   }
 
-  # Assign invoice number to application
-  input UpdateApplicationProcessingAssignInvoiceNumberInput {
+  # Review Request Information
+  input UpdateApplicationProcessingReviewRequestInformationInput {
     applicationId: Int!
 
-    invoiceNumber: Int!
+    reviewRequestCompleted: Boolean!
   }
 
-  type UpdateApplicationProcessingAssignInvoiceNumberResult {
+  type UpdateApplicationProcessingReviewRequestInformationResult {
+    ok: Boolean!
+  }
+
+  # Generate invoice PDF for application
+  input UpdateApplicationProcessingGenerateInvoiceInput {
+    applicationId: Int!
+  }
+
+  type UpdateApplicationProcessingGenerateInvoiceResult {
     ok: Boolean!
   }
 

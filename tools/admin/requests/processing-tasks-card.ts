@@ -2,18 +2,20 @@ import { gql } from '@apollo/client'; // GraphQL queries
 import {
   ApplicationProcessing,
   MutationUpdateApplicationProcessingAssignAppNumberArgs,
-  MutationUpdateApplicationProcessingAssignInvoiceNumberArgs,
+  MutationUpdateApplicationProcessingGenerateInvoiceArgs,
   MutationUpdateApplicationProcessingCreateWalletCardArgs,
   MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
   MutationUpdateApplicationProcessingMailOutArgs,
   MutationUpdateApplicationProcessingUploadDocumentsArgs,
+  MutationUpdateApplicationProcessingReviewRequestInformationArgs,
   QueryApplicationArgs,
   UpdateApplicationProcessingAssignAppNumberResult,
-  UpdateApplicationProcessingAssignInvoiceNumberResult,
+  UpdateApplicationProcessingGenerateInvoiceResult,
   UpdateApplicationProcessingCreateWalletCardResult,
   UpdateApplicationProcessingHolepunchParkingPermitResult,
   UpdateApplicationProcessingMailOutResult,
   UpdateApplicationProcessingUploadDocumentsResult,
+  UpdateApplicationProcessingReviewRequestInformationResult,
 } from '@lib/graphql/types';
 
 /** Get application processing */
@@ -27,6 +29,7 @@ export const GET_APPLICATION_PROCESSING = gql`
         invoiceNumber
         documentsUrl
         appMailed
+        reviewRequestCompleted
       }
     }
   }
@@ -44,6 +47,7 @@ export type GetApplicationProcessingResponse = {
       | 'invoiceNumber'
       | 'documentsUrl'
       | 'appMailed'
+      | 'reviewRequestCompleted'
     >;
   };
 };
@@ -94,19 +98,37 @@ export type CreateWalletCardResponse = {
   updateApplicationProcessingCreateWalletCard: UpdateApplicationProcessingCreateWalletCardResult;
 };
 
-/** Assign invoice number task */
-export const ASSIGN_INVOICE_NUMBER_MUTATION = gql`
-  mutation AssignInvoiceNumber($input: UpdateApplicationProcessingAssignInvoiceNumberInput!) {
-    updateApplicationProcessingAssignInvoiceNumber(input: $input) {
+/** Review request information task */
+export const REVIEW_REQUEST_INFORMATION_MUTATION = gql`
+  mutation ReviewRequestInformation(
+    $input: UpdateApplicationProcessingReviewRequestInformationInput!
+  ) {
+    updateApplicationProcessingReviewRequestInformation(input: $input) {
       ok
     }
   }
 `;
 
-export type AssignInvoiceNumberRequest = MutationUpdateApplicationProcessingAssignInvoiceNumberArgs;
+export type ReviewRequestInformationRequest =
+  MutationUpdateApplicationProcessingReviewRequestInformationArgs;
 
-export type AssignInvoiceNumberResponse = {
-  updateApplicationProcessingAssignInvoiceNumber: UpdateApplicationProcessingAssignInvoiceNumberResult;
+export type ReviewRequestInformationResponse = {
+  updateApplicationProcessingReviewRequestInformation: UpdateApplicationProcessingReviewRequestInformationResult;
+};
+
+/** Assign invoice number task */
+export const GENERATE_INVOICE_MUTATION = gql`
+  mutation AssignInvoiceNumber($input: UpdateApplicationProcessingGenerateInvoiceInput!) {
+    updateApplicationProcessingGenerateInvoice(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type GenerateInvoiceRequest = MutationUpdateApplicationProcessingGenerateInvoiceArgs;
+
+export type GenerateInvoiceResponse = {
+  updateApplicationProcessingGenerateInvoice: UpdateApplicationProcessingGenerateInvoiceResult;
 };
 
 /** Upload documents task */

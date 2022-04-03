@@ -20,6 +20,7 @@
 *.pem
 .eslintcache
 tsconfig.tsbuildinfo
+temp/
 
 # debug
 npm-debug.log*

@@ -125,6 +125,9 @@ export type ApplicationProcessing = {
   walletCardCreated: Scalars['Boolean'];
   walletCardCreatedEmployeeId: Maybe<Scalars['Int']>;
   walletCardCreatedUpdatedAt: Maybe<Scalars['Date']>;
+  reviewRequestCompleted: Scalars['Boolean'];
+  reviewRequestCompletedEmployeeId: Maybe<Scalars['Int']>;
+  reviewRequestCompletedUpdatedAt: Maybe<Scalars['Date']>;
   invoiceNumber: Maybe<Scalars['Int']>;
   documentsUrl: Maybe<Scalars['String']>;
   documentsUrlEmployeeId: Maybe<Scalars['Int']>;
@@ -490,6 +493,15 @@ export type Guardian = {
   postalCode: Scalars['String'];
 };
 
+export type Invoice = {
+  __typename?: 'Invoice';
+  invoiceNumber: Scalars['Int'];
+  s3ObjectKey: Maybe<Scalars['String']>;
+  employee: Employee;
+  createdAt: Scalars['Date'];
+  updatedAt: Scalars['Date'];
+};
+
 export type MedicalInformation = {
   __typename?: 'MedicalInformation';
   id: Scalars['Int'];
@@ -533,7 +545,8 @@ export type Mutation = {
   updateApplicationProcessingAssignAppNumber: Maybe<UpdateApplicationProcessingAssignAppNumberResult>;
   updateApplicationProcessingHolepunchParkingPermit: Maybe<UpdateApplicationProcessingHolepunchParkingPermitResult>;
   updateApplicationProcessingCreateWalletCard: Maybe<UpdateApplicationProcessingCreateWalletCardResult>;
-  updateApplicationProcessingAssignInvoiceNumber: Maybe<UpdateApplicationProcessingAssignInvoiceNumberResult>;
+  updateApplicationProcessingReviewRequestInformation: Maybe<UpdateApplicationProcessingReviewRequestInformationResult>;
+  updateApplicationProcessingGenerateInvoice: Maybe<UpdateApplicationProcessingGenerateInvoiceResult>;
   updateApplicationProcessingUploadDocuments: Maybe<UpdateApplicationProcessingUploadDocumentsResult>;
   updateApplicationProcessingMailOut: Maybe<UpdateApplicationProcessingMailOutResult>;
   createEmployee: CreateEmployeeResult;
@@ -657,8 +670,13 @@ export type MutationUpdateApplicationProcessingCreateWalletCardArgs = {
 };
 
 
-export type MutationUpdateApplicationProcessingAssignInvoiceNumberArgs = {
-  input: UpdateApplicationProcessingAssignInvoiceNumberInput;
+export type MutationUpdateApplicationProcessingReviewRequestInformationArgs = {
+  input: UpdateApplicationProcessingReviewRequestInformationInput;
+};
+
+
+export type MutationUpdateApplicationProcessingGenerateInvoiceArgs = {
+  input: UpdateApplicationProcessingGenerateInvoiceInput;
 };
 
 
@@ -721,17 +739,17 @@ export type NewApplication = Application & {
   physicianProvince: Province;
   physicianCountry: Scalars['String'];
   physicianPostalCode: Scalars['String'];
-  guardianFirstName: Scalars['String'];
+  guardianFirstName: Maybe<Scalars['String']>;
   guardianMiddleName: Maybe<Scalars['String']>;
-  guardianLastName: Scalars['String'];
-  guardianPhone: Scalars['String'];
-  guardianRelationship: Scalars['String'];
-  guardianAddressLine1: Scalars['String'];
+  guardianLastName: Maybe<Scalars['String']>;
+  guardianPhone: Maybe<Scalars['String']>;
+  guardianRelationship: Maybe<Scalars['String']>;
+  guardianAddressLine1: Maybe<Scalars['String']>;
   guardianAddressLine2: Maybe<Scalars['String']>;
-  guardianCity: Scalars['String'];
-  guardianProvince: Province;
-  guardianCountry: Scalars['String'];
-  guardianPostalCode: Scalars['String'];
+  guardianCity: Maybe<Scalars['String']>;
+  guardianProvince: Maybe<Province>;
+  guardianCountry: Maybe<Scalars['String']>;
+  guardianPostalCode: Maybe<Scalars['String']>;
   poaFormS3ObjectKey: Maybe<Scalars['String']>;
   usesAccessibleConvertedVan: Scalars['Boolean'];
   accessibleConvertedVanLoadingMethod: Maybe<AccessibleConvertedVanLoadingMethod>;
@@ -1089,6 +1107,7 @@ export type UpdateApplicantGeneralInformationInput = {
   gender: Gender;
   phone: Scalars['String'];
   email: Maybe<Scalars['String']>;
+  receiveEmailUpdates: Scalars['Boolean'];
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
@@ -1220,16 +1239,6 @@ export type UpdateApplicationProcessingAssignAppNumberResult = {
   ok: Scalars['Boolean'];
 };
 
-export type UpdateApplicationProcessingAssignInvoiceNumberInput = {
-  applicationId: Scalars['Int'];
-  invoiceNumber: Scalars['Int'];
-};
-
-export type UpdateApplicationProcessingAssignInvoiceNumberResult = {
-  __typename?: 'UpdateApplicationProcessingAssignInvoiceNumberResult';
-  ok: Scalars['Boolean'];
-};
-
 export type UpdateApplicationProcessingCreateWalletCardInput = {
   applicationId: Scalars['Int'];
   walletCardCreated: Scalars['Boolean'];
@@ -1237,6 +1246,15 @@ export type UpdateApplicationProcessingCreateWalletCardInput = {
 
 export type UpdateApplicationProcessingCreateWalletCardResult = {
   __typename?: 'UpdateApplicationProcessingCreateWalletCardResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicationProcessingGenerateInvoiceInput = {
+  applicationId: Scalars['Int'];
+};
+
+export type UpdateApplicationProcessingGenerateInvoiceResult = {
+  __typename?: 'UpdateApplicationProcessingGenerateInvoiceResult';
   ok: Scalars['Boolean'];
 };
 
@@ -1257,6 +1275,16 @@ export type UpdateApplicationProcessingMailOutInput = {
 
 export type UpdateApplicationProcessingMailOutResult = {
   __typename?: 'UpdateApplicationProcessingMailOutResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicationProcessingReviewRequestInformationInput = {
+  applicationId: Scalars['Int'];
+  reviewRequestCompleted: Scalars['Boolean'];
+};
+
+export type UpdateApplicationProcessingReviewRequestInformationResult = {
+  __typename?: 'UpdateApplicationProcessingReviewRequestInformationResult';
   ok: Scalars['Boolean'];
 };
 
@@ -1338,7 +1366,8 @@ export type UpsertPhysicianResult = {
 
 export type VerifyIdentityFailureReason =
   | 'IDENTITY_VERIFICATION_FAILED'
-  | 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS';
+  | 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS'
+  | 'USER_HOLDS_TEMPORARY_PERMIT';
 
 export type VerifyIdentityInput = {
   userId: Scalars['Int'];

@@ -1,41 +1,39 @@
-import { FC } from 'react';
-import { useField, useFormikContext } from 'formik';
 import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  NumberInput,
+  NumberInputProps,
   Text,
-  RadioGroup,
-  RadioGroupProps,
+  NumberInputField,
 } from '@chakra-ui/react';
+import { useField } from 'formik';
+import { FC } from 'react';
 
-type Props = RadioGroupProps & {
+type Props = NumberInputProps & {
   readonly name: string;
   readonly label: string;
   readonly required?: boolean;
 };
 
-const RadioGroupField: FC<Props> = props => {
-  const { name, label, required, children, ...radioGroupProps } = props;
+const NumberField: FC<Props> = props => {
+  const { name, label, required, children, ...numberInputProps } = props;
   const [field, meta] = useField(name);
-  const { setFieldValue } = useFormikContext();
-  const handleChange = (value: string) => {
-    setFieldValue(name, value);
-  };
 
   return (
     <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
       <FormLabel htmlFor={name}>{label}</FormLabel>
-      <RadioGroup id={name} {...field} onChange={handleChange} {...radioGroupProps}>
-        {children}
-      </RadioGroup>
+      <NumberInput {...numberInputProps}>
+        <NumberInputField {...field} />
+      </NumberInput>
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">
           {meta.touched && meta.error ? meta.error : null}
         </Text>
       </FormErrorMessage>
+      {children}
     </FormControl>
   );
 };
 
-export default RadioGroupField;
+export default NumberField;

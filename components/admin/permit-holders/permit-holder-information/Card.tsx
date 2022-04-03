@@ -47,7 +47,7 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
     notifyOnNetworkStatusChange: true,
   });
 
-  const [updateGeneralInformation] = useMutation<
+  const [updateGeneralInformation, { loading }] = useMutation<
     UpdateApplicantGeneralInformationResponse,
     UpdateApplicantGeneralInformationRequest
   >(UPDATE_APPLICANT_GENERAL_INFORMATION_MUTATION, {
@@ -108,12 +108,14 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
             gender,
             phone,
             email,
+            receiveEmailUpdates,
             addressLine1,
             addressLine2,
             city,
             postalCode,
           }}
           onSave={handleSave}
+          loading={loading}
         >
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>

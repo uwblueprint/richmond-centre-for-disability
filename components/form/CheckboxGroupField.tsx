@@ -24,7 +24,7 @@ const CheckboxGroupField: FC<Props> = props => {
   };
 
   return (
-    <FormControl isInvalid={!!meta.error} isRequired={required}>
+    <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
       <FormLabel htmlFor={name}>{label}</FormLabel>
       <CheckboxGroup {...field} onChange={handleChange} {...checkboxGroupProps}>
         {children}
