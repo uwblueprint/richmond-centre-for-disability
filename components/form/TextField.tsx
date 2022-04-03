@@ -26,18 +26,14 @@ const TextField: FC<Props> = props => {
     <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
       <FormLabel htmlFor={name}>{label}</FormLabel>
       {monetaryInput ? (
-        <>
-          <InputGroup>
-            <InputLeftElement pointerEvents="none" color="texticon.filler" fontSize="1.2em">
-              {'$'}
-            </InputLeftElement>
-            <Input {...field} {...inputProps} />
-          </InputGroup>
-        </>
-      ) : (
-        <>
+        <InputGroup>
+          <InputLeftElement pointerEvents="none" color="texticon.filler" fontSize="1.2em">
+            {'$'}
+          </InputLeftElement>
           <Input {...field} {...inputProps} />
-        </>
+        </InputGroup>
+      ) : (
+        <Input {...field} {...inputProps} />
       )}
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">

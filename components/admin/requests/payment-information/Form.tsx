@@ -70,7 +70,7 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
 
           <GridItem colSpan={1}>
             <TextField
-              name="paymentInformation.donation"
+              name="paymentInformation.donationAmount"
               label={
                 <>
                   {'Donation '}
@@ -169,7 +169,6 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
         <CheckboxField
           name="paymentInformation.billingAddressSameAsHomeAddress"
           paddingBottom="24px"
-          // isChecked={paymentInformation.billingAddressSameAsHomeAddress}
         >
           {'Same as home address'}
         </CheckboxField>

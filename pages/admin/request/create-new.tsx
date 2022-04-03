@@ -292,10 +292,7 @@ export default function CreateNew() {
       return;
     }
 
-    if (!values.paymentInformation.paymentMethod) {
-      toast({ status: 'error', description: 'Missing payment method', isClosable: true });
-      return;
-    }
+    const paymentInformation = validatedValues.paymentInformation;
 
     await submitNewApplication({
       variables: {
@@ -330,8 +327,8 @@ export default function CreateNew() {
           usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
           requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
 
-          ...values.paymentInformation,
-          paymentMethod: values.paymentInformation.paymentMethod,
+          ...paymentInformation,
+          paymentMethod: paymentInformation.paymentMethod,
 
           applicantId,
         },
