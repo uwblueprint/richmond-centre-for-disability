@@ -92,7 +92,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
-  const [uploadDocuments] =
+  const [uploadDocuments, { loading: uploadDocumentsLoading }] =
     useMutation<UploadDocumentsResponse, UploadDocumentsRequest>(UPLOAD_DOCUMENTS_MUTATION);
 
   const [mailOut] = useMutation<MailOutResponse, MailOutRequest>(MAIL_OUT_APP_MUTATION);
@@ -318,8 +318,8 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           isCompleted={documentsUrl !== null}
         >
           <TaskCardUploadStep
-            isDisabled={invoice === null}
-            file={documentsUrl}
+            isDisabled={invoice === null || uploadDocumentsLoading}
+            fileUrl={documentsUrl}
             onUploadFile={handleSubmitDocuments}
             onUndo={handleUndoDocumentsUpload}
           />

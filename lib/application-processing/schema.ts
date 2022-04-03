@@ -22,6 +22,7 @@ export default gql`
     reviewRequestCompletedEmployeeId: Int
     reviewRequestCompletedUpdatedAt: Date
     invoice: Invoice
+    documentsUrl: String
     documentsS3ObjectKey: String
     documentsUrlEmployeeId: Int
     documentsUrlUpdatedAt: Date

@@ -44,7 +44,7 @@ export const applicationApplicantResolver: FieldResolver<
 
 /**
  * Fetch processing data of application
- * Refresh temporary s3 application document url if it has expired.
+ * Generate temporary s3 application document url if documents have been uploaded.
  * @returns Application processing object
  */
 export const applicationProcessingResolver: FieldResolver<
@@ -59,26 +59,27 @@ export const applicationProcessingResolver: FieldResolver<
     return null;
   }
 
-  if (!process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) {
-    throw new ApolloError('Application document link duration not defined');
-  }
-  // Update the signed S3 URL if it has expired.
-  // Get the valid duration period from env.
+  const applicationProcessingResult: Omit<ApplicationProcessing, 'invoice'> = {
+    ...applicationProcessing,
+    documentsUrl: null,
+  };
+
   if (!process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) {
     throw new ApolloError('Application document link duration not defined');
   }
 
-  let signedUrl;
-  try {
-    const durationSeconds = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) * 60 * 60;
-    if (applicationProcessing.documentsS3ObjectKey) {
-      signedUrl = getSignedUrlForS3(applicationProcessing.documentsS3ObjectKey, durationSeconds);
+  // Generate S3 url for documents if they have already been uploaded.
+  if (applicationProcessing.documentsS3ObjectKey) {
+    try {
+      const durationSeconds = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) * 60 * 60;
+      applicationProcessingResult.documentsUrl = getSignedUrlForS3(
+        applicationProcessing.documentsS3ObjectKey,
+        durationSeconds
+      );
+    } catch (e) {
+      throw new ApolloError(`Error generating AWS URL for application documents: ${e}`);
     }
-  } catch (e) {
-    throw new ApolloError(`Error uploading application document to AWS: ${e}`);
   }
-  return {
-    ...applicationProcessing,
-    documentsUrl: signedUrl || null,
-  };
+
+  return applicationProcessingResult;
 };

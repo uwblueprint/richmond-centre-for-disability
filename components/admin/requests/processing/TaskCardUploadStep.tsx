@@ -7,7 +7,7 @@ const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 
 // File upload button props
 type Props = {
-  readonly file: string | null; // currently uploaded file
+  readonly fileUrl: string | null; // currently uploaded file url
   readonly onUploadFile: (selectedFile: File) => void; // handle file upload
   readonly isDisabled: boolean;
   readonly onUndo: () => void;
@@ -16,7 +16,7 @@ type Props = {
 /**
  * POA form upload component allowing users to upload POA form PDF file
  */
-export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile, onUndo }) => {
+export const TaskCardUploadStep: FC<Props> = ({ isDisabled, fileUrl, onUploadFile, onUndo }) => {
   const hiddenFileInput = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   /**
@@ -26,6 +26,13 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile, 
     if (hiddenFileInput.current) {
       hiddenFileInput.current.click();
     }
+  };
+
+  /**
+   * Get file name from s3 URL
+   */
+  const getFileName = () => {
+    return fileUrl ? new URL(fileUrl).pathname.split('/').at(-1) : null;
   };
 
   /**
@@ -50,13 +57,13 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile, 
   };
   return (
     <>
-      {file ? (
+      {fileUrl ? (
         errorMessage ? (
           <VStack align="flex-start" spacing="8px">
             <HStack>
               <WarningTwoIcon color="secondary.critical" />
               <Text textStyle="caption" color="text.critical">
-                {file}
+                {getFileName()}
               </Text>
             </HStack>
             <Text textStyle="caption" color="text.critical">
@@ -68,13 +75,13 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, file, onUploadFile, 
             <VStack align="flex-start">
               <HStack>
                 <Link
-                  href={file as string}
+                  href={fileUrl as string}
                   isExternal={true}
                   textStyle="caption"
                   color="primary"
                   textDecoration="underline"
                 >
-                  {file}
+                  {getFileName()}
                 </Link>
                 <IconButton
                   aria-label="undo"
