@@ -804,7 +804,7 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
               disconnect: true,
             },
             // TODO: Integrate with document upload
-            documentsUrl: null,
+            documentsS3ObjectKey: null,
             documentsUrlEmployee: {
               disconnect: true,
             },
@@ -940,7 +940,7 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
 > = async (_parent, args, { prisma, session }) => {
   // TODO: Validation
   const { input } = args;
-  const { applicationId, documentsUrl } = input;
+  const { applicationId, documentsS3ObjectKey } = input;
 
   if (!session) {
     // TODO: Create error
@@ -956,7 +956,7 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
       data: {
         applicationProcessing: {
           update: {
-            documentsUrl,
+            documentsS3ObjectKey,
             documentsUrlUpdatedAt: new Date(),
             documentsUrlEmployee: { connect: { id: employeeId } },
           },
