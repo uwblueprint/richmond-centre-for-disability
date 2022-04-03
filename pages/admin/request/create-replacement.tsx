@@ -64,6 +64,7 @@ export default function CreateReplacement() {
     postalCode: '',
   });
 
+  // TODO: get rid of this
   /** Reason for replacement section */
   const [reasonForReplacement, setReasonForReplacement] = useState<ReasonForReplacementFormData>({
     reason: null,
@@ -172,7 +173,10 @@ export default function CreateReplacement() {
   });
 
   /** Handle replacement application submission */
-  const handleSubmit = async (values: { permitHolder: PermitHolderFormData }) => {
+  const handleSubmit = async (values: {
+    permitHolder: PermitHolderFormData;
+    reasonForReplacement: ReasonForReplacementFormData;
+  }) => {
     if (applicantId === null) {
       toast({
         status: 'error',
@@ -182,7 +186,9 @@ export default function CreateReplacement() {
       return;
     }
 
-    if (!reasonForReplacement.reason) {
+    // TODO: manually set time
+
+    if (!values.reasonForReplacement.reason) {
       toast({ status: 'error', description: 'Missing reason for replacement', isClosable: true });
       return;
     }
@@ -200,8 +206,8 @@ export default function CreateReplacement() {
         input: {
           applicantId,
           ...permitHolder,
-          ...reasonForReplacement,
-          reason: reasonForReplacement.reason,
+          ...values.reasonForReplacement,
+          reason: values.reasonForReplacement.reason,
           ...paymentInformation,
           paymentMethod: paymentInformation.paymentMethod,
         },
@@ -261,6 +267,7 @@ export default function CreateReplacement() {
                 type: 'REPLACEMENT',
                 receiveEmailUpdates: false,
               },
+              reasonForReplacement,
             }}
             validationSchema={replacementRequestFormSchema}
             onSubmit={handleSubmit}
@@ -307,7 +314,7 @@ export default function CreateReplacement() {
                       {`Reason for Replacement`}
                     </Text>
                     <ReasonForReplacementForm
-                      reasonForReplacement={reasonForReplacement}
+                      reasonForReplacement={values.reasonForReplacement}
                       onChange={setReasonForReplacement}
                     />
                   </Box>
