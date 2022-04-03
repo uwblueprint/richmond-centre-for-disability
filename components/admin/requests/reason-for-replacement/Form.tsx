@@ -125,7 +125,6 @@ export default function ReasonForReplacementForm({
                     </Box>
                   </>
                 }
-                required
               />
             </Box>
 
@@ -139,7 +138,6 @@ export default function ReasonForReplacementForm({
                   </Box>
                 </>
               }
-              required
             />
           </SimpleGrid>
         </>
