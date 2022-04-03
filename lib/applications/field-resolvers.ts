@@ -51,48 +51,34 @@ export const applicationProcessingResolver: FieldResolver<
   Application,
   Omit<ApplicationProcessing, 'invoice'>
 > = async (parent, _args, { prisma }) => {
-  const application = await prisma.application
+  const applicationProcessing = await prisma.application
     .findUnique({ where: { id: parent.id } })
     .applicationProcessing();
 
-  if (!application) {
+  if (!applicationProcessing) {
     return null;
   }
 
-  if (!process.env.APPLICATION_DOCUMENT_LINK_TTL_DAYS) {
+  if (!process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) {
     throw new ApolloError('Application document link duration not defined');
   }
   // Update the signed S3 URL if it has expired.
   // Get the valid duration period from env.
-  const applicationDocumentLinkDuration = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_DAYS);
-  const DAY = 24 * 60 * 60 * 1000;
-  const daysDifference =
-    Math.floor(new Date().getTime() / DAY) -
-    Math.floor(application?.documentsUrlUpdatedAt.getTime() / DAY);
-  if (daysDifference > applicationDocumentLinkDuration) {
-    let signedUrl;
-    try {
-      signedUrl = getSignedUrlForS3(application.documentsS3ObjectKey as string);
-    } catch (error) {
-      throw new ApolloError(`Failed to get application document URL: ${error}`);
-    }
-    try {
-      await prisma.application.update({
-        where: { id: application.id },
-        data: {
-          applicationProcessing: {
-            update: {
-              documentsUrl: signedUrl,
-            },
-          },
-        },
-      });
-    } catch {
-      throw new ApolloError('Failed to update temporary application document URL');
-    }
-    return await prisma.application
-      .findUnique({ where: { id: parent.id } })
-      .applicationProcessing();
+  if (!process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) {
+    throw new ApolloError('Application document link duration not defined');
   }
-  return application;
+
+  let signedUrl;
+  try {
+    const durationSeconds = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) * 60 * 60;
+    if (applicationProcessing.documentsS3ObjectKey) {
+      signedUrl = getSignedUrlForS3(applicationProcessing.documentsS3ObjectKey, durationSeconds);
+    }
+  } catch (e) {
+    throw new ApolloError(`Error uploading application document to AWS: ${e}`);
+  }
+  return {
+    ...applicationProcessing,
+    documentsUrl: signedUrl || null,
+  };
 };

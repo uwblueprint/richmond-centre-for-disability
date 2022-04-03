@@ -31,7 +31,6 @@ import {
 } from '@tools/admin/requests/processing-tasks-card';
 import ReviewInformationStep from '@components/admin/requests/processing/ReviewInformationStep';
 import { clientUploadToS3 } from '@lib/utils/s3-utils';
-import { useState } from 'react';
 import TaskCardUploadStep from '@components/admin/requests/processing/TaskCardUploadStep';
 
 type ProcessingTasksCardProps = {
@@ -103,36 +102,30 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
   };
 
   const toast = useToast();
-  const [applicationDocuments, setApplicationDocuments] = useState<File | null>(null);
 
   const handleSubmitDocuments = async (applicationDoc: File) => {
-    setApplicationDocuments(applicationDoc);
-    let documentS3ObjectKey = '';
-    if (applicationDoc) {
-      try {
-        const { key } = await clientUploadToS3(applicationDoc, 'rcd/application-documents');
-        documentS3ObjectKey = key;
-      } catch (err) {
-        toast({
-          status: 'error',
-          description: `Failed to upload documents: ${err}`,
-          isClosable: true,
-        });
-        setApplicationDocuments(null);
-        return;
-      }
+    let documentsS3ObjectKey;
+    try {
+      const { key } = await clientUploadToS3(applicationDoc, 'rcd/application-documents');
+      documentsS3ObjectKey = key;
+    } catch (err) {
+      toast({
+        status: 'error',
+        description: `Failed to upload documents: ${err}`,
+        isClosable: true,
+      });
+      return;
     }
 
     await uploadDocuments({
-      variables: { input: { applicationId, documentsUrl: documentS3ObjectKey } },
+      variables: { input: { applicationId, documentsS3ObjectKey } },
     });
     refetch();
   };
 
   const handleUndoDocumentsUpload = async () => {
-    setApplicationDocuments(null);
     await uploadDocuments({
-      variables: { input: { applicationId, documentsUrl: null } },
+      variables: { input: { applicationId, documentsS3ObjectKey: null } },
     });
     refetch();
   };
@@ -326,8 +319,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         >
           <TaskCardUploadStep
             isDisabled={invoice === null}
-            file={applicationDocuments}
-            documentUrl={documentsUrl}
+            file={documentsUrl}
             onUploadFile={handleSubmitDocuments}
             onUndo={handleUndoDocumentsUpload}
           />

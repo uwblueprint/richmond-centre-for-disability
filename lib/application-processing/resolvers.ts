@@ -804,7 +804,7 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
               disconnect: true,
             },
             // TODO: Integrate with document upload
-            documentsUrl: null,
+            documentsS3ObjectKey: null,
             documentsUrlEmployee: {
               disconnect: true,
             },
@@ -940,25 +940,11 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
 > = async (_parent, args, { prisma, session }) => {
   // TODO: Validation
   const { input } = args;
-  const { applicationId, documentsUrl } = input;
+  const { applicationId, documentsS3ObjectKey } = input;
 
   if (!session) {
     // TODO: Create error
     throw new ApolloError('Not authenticated');
-  }
-
-  if (!process.env.APPLICATION_DOCUMENT_LINK_TTL_DAYS) {
-    throw new ApolloError('Application document link duration not defined');
-  }
-
-  let signedUrl;
-  try {
-    const durationSeconds = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_DAYS) * 24 * 60 * 60;
-    if (documentsUrl) {
-      signedUrl = getSignedUrlForS3(documentsUrl, durationSeconds);
-    }
-  } catch (e) {
-    throw new ApolloError(`Error uploading application document to AWS: ${e}`);
   }
 
   const { id: employeeId } = session;
@@ -970,8 +956,7 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
       data: {
         applicationProcessing: {
           update: {
-            documentsUrl: signedUrl,
-            documentsS3ObjectKey: documentsUrl,
+            documentsS3ObjectKey,
             documentsUrlUpdatedAt: new Date(),
             documentsUrlEmployee: { connect: { id: employeeId } },
           },

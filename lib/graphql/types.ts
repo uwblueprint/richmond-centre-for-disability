@@ -1291,7 +1291,7 @@ export type UpdateApplicationProcessingReviewRequestInformationResult = {
 
 export type UpdateApplicationProcessingUploadDocumentsInput = {
   applicationId: Scalars['Int'];
-  documentsUrl: Maybe<Scalars['String']>;
+  documentsS3ObjectKey: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingUploadDocumentsResult = {
