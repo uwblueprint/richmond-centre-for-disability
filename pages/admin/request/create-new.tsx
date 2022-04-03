@@ -56,8 +56,6 @@ import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { uploadToS3 } from '@lib/utils/upload-to-s3';
 import { Form, Formik } from 'formik';
 import { createNewRequestFormSchema } from '@lib/applications/validation';
-import { physicianAssessmentSchema } from '@lib/physicians/physician-assessment/validation';
-//TODO: move this file
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -251,7 +249,10 @@ export default function CreateNew() {
    * Handle new APP request submission
    */
   //TODO: create type for values
-  const handleSubmit = async (values: { permitHolder: NewApplicationPermitHolderInformation }) => {
+  const handleSubmit = async (values: {
+    permitHolder: NewApplicationPermitHolderInformation;
+    physicianAssessment: PhysicianAssessment;
+  }) => {
     let poaFormS3ObjectKey = '';
     if (guardianPOAFile) {
       try {
@@ -502,10 +503,7 @@ export default function CreateNew() {
                     <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
                       {`Physician's Assessment`}
                     </Text>
-                    <PhysicianAssessmentForm
-                      physicianAssessment={values.physicianAssessment}
-                      onChange={setPhysicianAssessment}
-                    />
+                    <PhysicianAssessmentForm physicianAssessment={values.physicianAssessment} />
                   </Box>
                   <Box
                     w="100%"

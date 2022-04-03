@@ -7,14 +7,12 @@ import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment'
 
 type PhysicianAssessmentFormProps = {
   readonly physicianAssessment: PhysicianAssessment;
-  readonly onChange?: (updatedData: PhysicianAssessment) => void;
 };
 
 /**
  * PhysicianAssessmentForm Component for allowing users to edit physician assessment information.
  *
  * @param {PhysicianAssessment} physicianAssessment Object that holds all physician assessment information for a client request.
- * @param onChange Function that uses the updated values from form.
  */
 export default function PhysicianAssessmentForm({
   physicianAssessment,
