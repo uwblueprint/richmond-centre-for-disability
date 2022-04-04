@@ -46,7 +46,7 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
                 <Radio value={'DEBIT' as PaymentType}>{'Debit'}</Radio>
                 <Radio value={'CASH' as PaymentType}>{'Cash'}</Radio>
                 <Radio value={'CHEQUE' as PaymentType}>{'Cheque'}</Radio>
-                <Radio value={'E_TRANSFER' as PaymentType}>{'E-transfer'}</Radio>
+                <Radio value={'ETRANSFER' as PaymentType}>{'E-transfer'}</Radio>
               </Stack>
             </RadioGroupField>
           </GridItem>
