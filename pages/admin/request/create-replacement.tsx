@@ -43,6 +43,17 @@ import { PaymentType } from '@lib/graphql/types';
 import { Form, Formik } from 'formik';
 import { replacementFormSchema as replacementRequestFormSchema } from '@lib/applications/validation';
 
+/** Initial reason for replacement form values */
+const INITIAL_REASON_FOR_REPLACEMENT: ReasonForReplacementFormData = {
+  reason: null,
+  lostTimestamp: null,
+  lostLocation: null,
+  stolenJurisdiction: null,
+  stolenPoliceOfficerName: null,
+  stolenPoliceFileNumber: null,
+  eventDescription: null,
+};
+
 export default function CreateReplacement() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
     RequestFlowPageState.SelectingPermitHolderPage
@@ -63,17 +74,6 @@ export default function CreateReplacement() {
     city: '',
     postalCode: '',
   });
-
-  /** Reason for replacement section */
-  const reasonForReplacement: ReasonForReplacementFormData = {
-    reason: null,
-    lostTimestamp: null,
-    lostLocation: null,
-    stolenJurisdiction: null,
-    stolenPoliceOfficerName: null,
-    stolenPoliceFileNumber: null,
-    eventDescription: null,
-  };
 
   /** Payment information section */
   const [paymentInformation, setPaymentInformation] = useState<
@@ -260,7 +260,7 @@ export default function CreateReplacement() {
                 type: 'REPLACEMENT',
                 receiveEmailUpdates: false,
               },
-              reasonForReplacement,
+              reasonForReplacement: INITIAL_REASON_FOR_REPLACEMENT,
             }}
             validationSchema={replacementRequestFormSchema}
             onSubmit={handleSubmit}

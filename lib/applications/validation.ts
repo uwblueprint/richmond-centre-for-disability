@@ -12,7 +12,7 @@ import { date, mixed, number, object, string } from 'yup';
 export const reasonForReplacementFormSchema = object({
   reason: mixed<ReasonForReplacement>()
     .oneOf(Object.values(ReasonForReplacement))
-    .required('Please seelct reason for replacement'),
+    .required('Please select reason for replacement'),
   lostTimestamp: date()
     .nullable()
     .default(null)
@@ -23,6 +23,7 @@ export const reasonForReplacementFormSchema = object({
           return new Date(originalValue);
         })
         .typeError('Please enter date APP was lost')
+        .max(new Date(), 'Date must be in the past')
         .required('Please enter date APP was lost'),
     }),
   lostLocation: string()
@@ -63,9 +64,9 @@ export const reasonForReplacementFormSchema = object({
 });
 
 /**
- * Nested reason for replacement form validation schema
+ * Validation schema for edit reason for replacement form
  */
-export const nestedReasonForReplacementFormSchema = object({
+export const editReasonForReplacementFormSchema = object({
   reasonForReplacement: reasonForReplacementFormSchema,
 });
 

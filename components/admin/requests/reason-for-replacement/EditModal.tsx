@@ -14,7 +14,7 @@ import { ReactNode } from 'react'; // React
 import ReasonForReplacementForm from '@components/admin/requests/reason-for-replacement/Form'; // ReasonForReplacement form fields
 import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-replacement';
 import { Form, Formik } from 'formik';
-import { nestedReasonForReplacementFormSchema } from '@lib/applications/validation';
+import { editReasonForReplacementFormSchema } from '@lib/applications/validation';
 
 type EditReasonForReplacementModalProps = {
   readonly reasonForReplacement: ReasonForReplacementFormData;
@@ -45,7 +45,7 @@ export default function EditReasonForReplacementModal({
           initialValues={{
             reasonForReplacement,
           }}
-          validationSchema={nestedReasonForReplacementFormSchema}
+          validationSchema={editReasonForReplacementFormSchema}
           onSubmit={handleSubmit}
         >
           {({ values, isValid }) => (
