@@ -6,7 +6,9 @@ import { date, mixed, object, string } from 'yup';
  */
 export const physicianAssessmentSchema = object({
   disability: string().required('Please enter a disabling condition'),
-  disabilityCertificationDate: date().required('Please enter a valid certification date'),
+  disabilityCertificationDate: date()
+    .max(new Date(), 'Date must be in the past')
+    .required('Please enter a valid certification date'),
   patientCondition: mixed<PatientCondition>()
     .oneOf(Object.values(PatientCondition))
     .required('Please select a condition'),
@@ -25,7 +27,10 @@ export const physicianAssessmentSchema = object({
     .required('Please select a mobility impairment type'),
   temporaryPermitExpiry: date().when('permitType', {
     is: 'TEMPORARY',
-    then: date().typeError('Please select an expiry date').required('Please select an expiry date'),
+    then: date()
+      .typeError('Please select an expiry date')
+      .min(new Date(Date.now() - 86400000), 'Date must be in the future') //set min date to yesterday so expiry is on or after current day
+      .required('Please select an expiry date'),
     otherwise: date().nullable().default(null),
   }),
 });

@@ -39,7 +39,7 @@ export const requestPermitHolderInformationSchema = object({
 /**
  * Validation schema for edit permit holder information form
  */
-export const nestedRequestPermitHolderInformationSchema = object({
+export const editRequestPermitHolderInformationSchema = object({
   permitHolder: requestPermitHolderInformationSchema,
 });
 
