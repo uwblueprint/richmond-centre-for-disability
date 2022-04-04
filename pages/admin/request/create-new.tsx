@@ -324,7 +324,6 @@ export default function CreateNew() {
           requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
 
           ...validatedValues.paymentInformation,
-          paymentMethod: validatedValues.paymentInformation.paymentMethod,
 
           applicantId,
         },

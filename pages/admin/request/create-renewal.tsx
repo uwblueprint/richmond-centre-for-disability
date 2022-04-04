@@ -202,7 +202,6 @@ export default function CreateRenewal() {
     permitHolder: PermitHolderFormData;
     paymentInformation: PaymentInformationFormData;
   }) => {
-    // event.preventDefault();
     if (!applicantId) {
       toast({
         status: 'error',
@@ -212,13 +211,10 @@ export default function CreateRenewal() {
       return;
     }
 
+    const validatedValues = await renewalRequestFormSchema.validate(values);
+
     if (!doctorInformation.mspNumber) {
       toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
-      return;
-    }
-
-    if (!values.paymentInformation.paymentMethod) {
-      toast({ status: 'error', description: 'Missing payment method', isClosable: true });
       return;
     }
 
@@ -241,7 +237,7 @@ export default function CreateRenewal() {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { type, ...permitHolder } = values.permitHolder;
+    const { type, ...permitHolder } = validatedValues.permitHolder;
 
     await submitRenewalApplication({
       variables: {
@@ -259,8 +255,8 @@ export default function CreateRenewal() {
           ...additionalInformation,
           usesAccessibleConvertedVan: additionalInformation.usesAccessibleConvertedVan,
           requiresWiderParkingSpace: additionalInformation.requiresWiderParkingSpace,
-          ...values.paymentInformation,
-          paymentMethod: values.paymentInformation.paymentMethod,
+          ...validatedValues.paymentInformation,
+
           // TODO: Replace with dynamic values
           paidThroughShopify: false,
           shopifyPaymentStatus: null,
