@@ -205,6 +205,6 @@ export const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
   billingAddressLine2: '',
   billingCity: '',
   billingProvince: null,
-  billingCountry: '',
+  billingCountry: 'Canada',
   billingPostalCode: '',
 };

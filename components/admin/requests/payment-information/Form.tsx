@@ -141,15 +141,12 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
             </Stack>
 
             <Stack direction="row" spacing="20px">
-              <SelectField
+              <TextField
                 name="paymentInformation.shippingCountry"
                 label="Country"
                 required
-                placeholder="Select country"
-              >
-                {/* TODO: Add more countries? */}
-                <option value={'Canada'}>Canada</option>
-              </SelectField>
+                isDisabled
+              />
 
               <TextField name="paymentInformation.shippingPostalCode" label="Postal code" required>
                 <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
@@ -215,15 +212,12 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
             </Stack>
 
             <Stack direction="row" spacing="20px">
-              <SelectField
+              <TextField
                 name="paymentInformation.billingCountry"
                 label="Country"
                 required
-                placeholder="Select country"
-              >
-                {/* TODO: Add more countries? */}
-                <option value={'Canada'}>Canada</option>
-              </SelectField>
+                isDisabled
+              />
 
               <TextField name="paymentInformation.billingPostalCode" label="Postal code" required>
                 <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>

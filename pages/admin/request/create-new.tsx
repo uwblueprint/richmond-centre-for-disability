@@ -87,8 +87,6 @@ export default function CreateNew() {
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>(
     INITIAL_ADDITIONAL_QUESTIONS
   );
-  // Payment information
-  const initialPaymentInformation = INITIAL_PAYMENT_DETAILS;
 
   // Toast message
   const toast = useToast();
@@ -292,8 +290,6 @@ export default function CreateNew() {
       return;
     }
 
-    const paymentInformation = validatedValues.paymentInformation;
-
     await submitNewApplication({
       variables: {
         input: {
@@ -327,8 +323,8 @@ export default function CreateNew() {
           usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
           requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
 
-          ...paymentInformation,
-          paymentMethod: paymentInformation.paymentMethod,
+          ...validatedValues.paymentInformation,
+          paymentMethod: validatedValues.paymentInformation.paymentMethod,
 
           applicantId,
         },
@@ -464,9 +460,7 @@ export default function CreateNew() {
             initialValues={{
               permitHolder: permitHolderInformation,
               physicianAssessment,
-              paymentInformation: {
-                ...initialPaymentInformation,
-              },
+              paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
             validationSchema={createNewRequestFormSchema}
             onSubmit={handleSubmit}
