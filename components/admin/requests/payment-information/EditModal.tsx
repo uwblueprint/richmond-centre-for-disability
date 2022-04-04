@@ -14,7 +14,7 @@ import {
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
 import { Form, Formik } from 'formik';
-import { paymentInformationSchema } from '@lib/applications/validation';
+import { editPaymentInformationSchema } from '@lib/applications/validation';
 
 type EditPaymentDetailsModalProps = {
   readonly children: ReactNode;
@@ -29,11 +29,30 @@ export default function EditPaymentDetailsModal({
 }: EditPaymentDetailsModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const {
+    paymentMethod,
+    donationAmount,
+    shippingAddressSameAsHomeAddress,
+    shippingFullName,
+    shippingAddressLine1,
+    shippingAddressLine2,
+    shippingCity,
+    shippingProvince,
+    shippingCountry,
+    shippingPostalCode,
+    billingAddressSameAsHomeAddress,
+    billingFullName,
+    billingAddressLine1,
+    billingAddressLine2,
+    billingCity,
+    billingProvince,
+    billingCountry,
+    billingPostalCode,
+  } = paymentInformation;
+
   const handleSubmit = (values: { paymentInformation: PaymentInformationFormData }) => {
-    // TODO FIX: Card is passing in processingFee in object which is breaking request and needs to be removed
-    const { processingFee, ...pickedValues } = values.paymentInformation;
     // TODO: Backend errors
-    onSave(pickedValues);
+    onSave(values.paymentInformation);
     onClose();
   };
 
@@ -49,8 +68,29 @@ export default function EditPaymentDetailsModal({
       >
         <ModalOverlay />
         <Formik
-          initialValues={{ paymentInformation: { ...paymentInformation } }}
-          validationSchema={paymentInformationSchema}
+          initialValues={{
+            paymentInformation: {
+              paymentMethod,
+              donationAmount,
+              shippingAddressSameAsHomeAddress,
+              shippingFullName,
+              shippingAddressLine1,
+              shippingAddressLine2,
+              shippingCity,
+              shippingProvince,
+              shippingCountry,
+              shippingPostalCode,
+              billingAddressSameAsHomeAddress,
+              billingFullName,
+              billingAddressLine1,
+              billingAddressLine2,
+              billingCity,
+              billingProvince,
+              billingCountry,
+              billingPostalCode,
+            },
+          }}
+          validationSchema={editPaymentInformationSchema}
           onSubmit={handleSubmit}
         >
           {({ values, isValid }) => (

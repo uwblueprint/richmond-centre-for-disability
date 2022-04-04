@@ -187,7 +187,7 @@ export const INITIAL_ADDITIONAL_QUESTIONS: AdditionalInformationFormData = {
   otherRequiresWiderParkingSpaceReason: null,
 };
 
-// Initial data for initial payment details in application forms
+// Initial data for payment details in application forms
 export const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
   paymentMethod: null,
   donationAmount: '',

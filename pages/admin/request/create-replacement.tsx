@@ -42,6 +42,28 @@ import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-inf
 import { Form, Formik } from 'formik';
 import { replacementFormSchema as replacementRequestFormSchema } from '@lib/applications/validation';
 
+/** Initial data for payment details form  */
+const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
+  paymentMethod: null,
+  donationAmount: '',
+  shippingAddressSameAsHomeAddress: false,
+  shippingFullName: '',
+  shippingAddressLine1: '',
+  shippingAddressLine2: '',
+  shippingCity: '',
+  shippingProvince: 'BC',
+  shippingCountry: '',
+  shippingPostalCode: '',
+  billingAddressSameAsHomeAddress: false,
+  billingFullName: '',
+  billingAddressLine1: '',
+  billingAddressLine2: '',
+  billingCity: '',
+  billingProvince: 'BC',
+  billingCountry: 'Canada',
+  billingPostalCode: '',
+};
+
 export default function CreateReplacement() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
     RequestFlowPageState.SelectingPermitHolderPage
@@ -73,28 +95,6 @@ export default function CreateReplacement() {
     stolenPoliceFileNumber: null,
     eventDescription: null,
   });
-
-  /** Payment information section */
-  const initialPaymentInformation: PaymentInformationFormData = {
-    paymentMethod: null,
-    donationAmount: '',
-    shippingAddressSameAsHomeAddress: false,
-    shippingFullName: '',
-    shippingAddressLine1: '',
-    shippingAddressLine2: null,
-    shippingCity: '',
-    shippingProvince: 'BC',
-    shippingCountry: '',
-    shippingPostalCode: '',
-    billingAddressSameAsHomeAddress: false,
-    billingFullName: '',
-    billingAddressLine1: '',
-    billingAddressLine2: null,
-    billingCity: '',
-    billingProvince: 'BC',
-    billingCountry: '',
-    billingPostalCode: '',
-  };
 
   const toast = useToast();
   const router = useRouter();
@@ -261,7 +261,7 @@ export default function CreateReplacement() {
                 type: 'REPLACEMENT',
                 receiveEmailUpdates: false,
               },
-              paymentInformation: { ...initialPaymentInformation },
+              paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
             validationSchema={replacementRequestFormSchema}
             onSubmit={handleSubmit}

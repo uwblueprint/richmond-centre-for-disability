@@ -34,6 +34,28 @@ import { Form, Formik } from 'formik';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { renewalRequestFormSchema } from '@lib/applications/validation';
 
+/** Initial data for payment details form  */
+const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
+  paymentMethod: null,
+  donationAmount: '',
+  shippingAddressSameAsHomeAddress: false,
+  shippingFullName: '',
+  shippingAddressLine1: '',
+  shippingAddressLine2: '',
+  shippingCity: '',
+  shippingProvince: 'BC',
+  shippingCountry: '',
+  shippingPostalCode: '',
+  billingAddressSameAsHomeAddress: false,
+  billingFullName: '',
+  billingAddressLine1: '',
+  billingAddressLine2: '',
+  billingCity: '',
+  billingProvince: 'BC',
+  billingCountry: 'Canada',
+  billingPostalCode: '',
+};
+
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
     RequestFlowPageState.SelectingPermitHolderPage
@@ -78,28 +100,6 @@ export default function CreateRenewal() {
       otherRequiresWiderParkingSpaceReason: null,
     }
   );
-
-  /** Payment information section */
-  const initialPaymentInformation: PaymentInformationFormData = {
-    paymentMethod: null,
-    donationAmount: '',
-    shippingAddressSameAsHomeAddress: false,
-    shippingFullName: '',
-    shippingAddressLine1: '',
-    shippingAddressLine2: '',
-    shippingCity: '',
-    shippingProvince: 'BC',
-    shippingCountry: '',
-    shippingPostalCode: '',
-    billingAddressSameAsHomeAddress: false,
-    billingFullName: '',
-    billingAddressLine1: '',
-    billingAddressLine2: '',
-    billingCity: '',
-    billingProvince: 'BC',
-    billingCountry: '',
-    billingPostalCode: '',
-  };
 
   // Toast message
   const toast = useToast();
@@ -321,7 +321,7 @@ export default function CreateRenewal() {
                 ...permitHolderInformation,
                 type: 'RENEWAL',
               },
-              paymentInformation: { ...initialPaymentInformation },
+              paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
             validationSchema={renewalRequestFormSchema}
             onSubmit={handleSubmit}

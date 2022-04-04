@@ -14,6 +14,7 @@ import {
   UPDATE_PAYMENT_INFORMATION,
 } from '@tools/admin/requests/payment-information';
 import Address from '@components/admin/Address';
+import { paymentInformationSchema } from '@lib/applications/validation';
 
 type Props = {
   readonly applicationId: number;
@@ -53,13 +54,10 @@ const Card: FC<Props> = props => {
 
   /** Form save handler */
   const handleSave = async (data: PaymentInformationFormData) => {
-    if (!data.paymentMethod) {
-      // TODO: Improve error handling
-      return;
-    }
+    const validatedData = await paymentInformationSchema.validate(data);
 
     await updatePaymentInformation({
-      variables: { input: { id: applicationId, ...data, paymentMethod: data.paymentMethod } },
+      variables: { input: { id: applicationId, ...validatedData } },
     });
     refetch();
   };
