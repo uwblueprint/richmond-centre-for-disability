@@ -69,10 +69,6 @@ export default function CreateNew() {
   // General information
   const [permitHolderInformation, setPermitHolderInformation] =
     useState<NewApplicationPermitHolderInformation>(INITIAL_PERMIT_HOLDER_INFORMATION);
-  // Physician assessment
-  const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment>(
-    INITIAL_PHYSICIAN_ASSESSMENT
-  );
   // Doctor information
   const [doctorInformation, setDoctorInformation] = useState<DoctorFormData>(
     INITIAL_DOCTOR_INFORMATION
@@ -102,7 +98,6 @@ export default function CreateNew() {
     setApplicantId(null);
     setPermitHolderExists(true);
     setPermitHolderInformation(INITIAL_PERMIT_HOLDER_INFORMATION);
-    setPhysicianAssessment(INITIAL_PHYSICIAN_ASSESSMENT);
     setDoctorInformation(INITIAL_DOCTOR_INFORMATION);
     setGuardianInformation(INITIAL_GUARDIAN_INFORMATION);
     setGuardianPOAFile(null);
@@ -467,7 +462,7 @@ export default function CreateNew() {
           <Formik
             initialValues={{
               permitHolder: permitHolderInformation,
-              physicianAssessment,
+              physicianAssessment: INITIAL_PHYSICIAN_ASSESSMENT,
             }}
             validationSchema={createNewRequestFormSchema}
             onSubmit={handleSubmit}
