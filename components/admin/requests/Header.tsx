@@ -8,9 +8,12 @@ import {
   MenuItem,
   MenuButton,
   Button,
+  Wrap,
+  Badge,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon, ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import Link from 'next/link'; // Link
+import Image from 'next/image'; // Optimized images
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Request status badge
 import ApproveRequestModal from '@components/admin/requests/processing/ApproveRequestModal'; // Approve button + modal
 import RejectRequestModal from '@components/admin/requests/processing/RejectRequestModal'; // Reject button + modal
@@ -24,6 +27,7 @@ type RequestHeaderProps = {
   readonly createdAt: Date;
   readonly allStepsCompleted: boolean;
   readonly applicantId?: number;
+  readonly paidThroughShopify?: boolean;
 };
 
 /**
@@ -39,6 +43,7 @@ export default function RequestHeader({
   allStepsCompleted,
   applicationType,
   applicantId,
+  paidThroughShopify,
 }: RequestHeaderProps) {
   /**
    * Returns the appropriate header button(s) to be displayed depending on the current application status
@@ -122,6 +127,20 @@ export default function RequestHeader({
               {`${applicationType.toLowerCase()} Request`}
             </Text>
             {applicationStatus && <RequestStatusBadge variant={applicationStatus} />}
+            {paidThroughShopify && (
+              <Wrap>
+                <Badge variant={'ACTIVE'}>
+                  <Box pt="5px">
+                    <Image
+                      src="/assets/shopify-icon.svg"
+                      alt="Shopify Icon"
+                      height={70}
+                      width={70}
+                    ></Image>
+                  </Box>
+                </Badge>
+              </Wrap>
+            )}
           </Flex>
           <HStack spacing={3} marginTop={3}>
             <Text textStyle="caption" as="p">

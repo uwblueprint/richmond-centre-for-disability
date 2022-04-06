@@ -40,6 +40,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
   const {
     type,
     createdAt,
+    paidThroughShopify,
     processing: {
       status,
       appNumber,
@@ -73,6 +74,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           createdAt={new Date(createdAt)}
           allStepsCompleted={allStepsCompleted}
           applicantId={applicantId}
+          paidThroughShopify={paidThroughShopify}
         />
       </GridItem>
       <GridItem colStart={1} colSpan={5} textAlign="left">
@@ -85,7 +87,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
         <VStack width="100%" spacing="20px" align="stretch">
           {status === 'IN_PROGRESS' && <ProcessingTasksCard applicationId={id} />}
           {type === 'REPLACEMENT' && <ReasonForReplacementCard applicationId={id} />}
-          <PaymentInformationCard applicationId={id} />
+          <PaymentInformationCard applicationId={id} editDisabled={paidThroughShopify} />
         </VStack>
       </GridItem>
     </Layout>
