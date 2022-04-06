@@ -217,6 +217,8 @@ function populateDb() {
       shippingPostalCode: 'A1B2C3',
       billingFullName: `${data.firstname} ${data.lastname}`,
       applicationProcessingId: index,
+      paidThroughShopify: false,
+      shopifyPaymentStatus: null,
     };
 
     const permit: UpsertPermit = {

@@ -2,7 +2,7 @@
 // Relative paths required, path aliases throw error with seed command
 import prisma from '../index'; // Prisma client
 import { UpsertApplication } from '../types'; // Seeding types
-import { Prisma } from '@prisma/client';
+import { Prisma, ShopifyPaymentStatus } from '@prisma/client';
 
 // Seed data
 const applications: Array<UpsertApplication> = [
@@ -22,7 +22,7 @@ const applications: Array<UpsertApplication> = [
     city: 'Vancouver',
     postalCode: 'A1B2C3',
     permitType: 'PERMANENT',
-    paymentMethod: 'CASH',
+    paymentMethod: 'SHOPIFY',
     processingFee: new Prisma.Decimal(26),
     donationAmount: new Prisma.Decimal(0),
     shippingAddressSameAsHomeAddress: false,
@@ -75,6 +75,9 @@ const applications: Array<UpsertApplication> = [
     },
     renewalApplication: undefined,
     replacementApplication: undefined,
+    paidThroughShopify: true,
+    shopifyPaymentStatus: ShopifyPaymentStatus.RECEIVED,
+    shopifyConfirmationNumber: '12345',
   },
   {
     // Renewal application
@@ -128,6 +131,9 @@ const applications: Array<UpsertApplication> = [
       otherRequiresWiderParkingSpaceReason: null,
     },
     replacementApplication: undefined,
+    paidThroughShopify: false,
+    shopifyConfirmationNumber: null,
+    shopifyPaymentStatus: null,
   },
   {
     // Replacement application
@@ -175,6 +181,9 @@ const applications: Array<UpsertApplication> = [
       stolenPoliceOfficerName: null,
       eventDescription: 'I left my APP on the table and when I came back it was gone',
     },
+    paidThroughShopify: false,
+    shopifyConfirmationNumber: null,
+    shopifyPaymentStatus: null,
   },
   {
     // New application, temporary
@@ -245,6 +254,9 @@ const applications: Array<UpsertApplication> = [
     },
     renewalApplication: undefined,
     replacementApplication: undefined,
+    paidThroughShopify: false,
+    shopifyConfirmationNumber: null,
+    shopifyPaymentStatus: null,
   },
   {
     // Renewal application
@@ -298,6 +310,9 @@ const applications: Array<UpsertApplication> = [
       otherRequiresWiderParkingSpaceReason: null,
     },
     replacementApplication: undefined,
+    paidThroughShopify: false,
+    shopifyConfirmationNumber: null,
+    shopifyPaymentStatus: null,
   },
 ];
 
