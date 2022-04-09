@@ -10,9 +10,10 @@ import {
   Button,
   Wrap,
   Badge,
+  Link,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon, ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI icon
-import Link from 'next/link'; // Link
+import NextLink from 'next/link'; // Link
 import Image from 'next/image'; // Optimized images
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Request status badge
 import ApproveRequestModal from '@components/admin/requests/processing/ApproveRequestModal'; // Approve button + modal
@@ -28,6 +29,8 @@ type RequestHeaderProps = {
   readonly allStepsCompleted: boolean;
   readonly applicantId?: number;
   readonly paidThroughShopify?: boolean;
+  readonly shopifyOrderID?: string;
+  readonly shopifyOrderNumber?: string;
 };
 
 /**
@@ -44,6 +47,8 @@ export default function RequestHeader({
   applicationType,
   applicantId,
   paidThroughShopify,
+  shopifyOrderID,
+  shopifyOrderNumber,
 }: RequestHeaderProps) {
   /**
    * Returns the appropriate header button(s) to be displayed depending on the current application status
@@ -112,14 +117,20 @@ export default function RequestHeader({
     return null;
   };
 
+  const displayShopifyUrl = paidThroughShopify && shopifyOrderID && shopifyOrderNumber;
+
+  const shopifyOrderUrl = displayShopifyUrl
+    ? `https://${process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN}/admin/orders/${shopifyOrderID}`
+    : undefined;
+
   return (
     <Box textAlign="left">
-      <Link href="/admin" passHref>
+      <NextLink href="/admin" passHref>
         <Text textStyle="button-semibold" textColor="primary" as="a">
           <ChevronLeftIcon />
           All requests
         </Text>
-      </Link>
+      </NextLink>
       <Flex marginTop={5} alignItems="center">
         <Box>
           <Flex alignItems="center">
@@ -148,6 +159,20 @@ export default function RequestHeader({
             </Text>
             {_renderMoreActionsDropdown()}
           </HStack>
+          {displayShopifyUrl && (
+            <Text textStyle="caption" as="p">
+              Paid with Shopify: Order{' '}
+              <Link
+                href={shopifyOrderUrl}
+                isExternal={true}
+                textStyle="caption-bold"
+                textDecoration="underline"
+                color="primary"
+              >
+                {`#${shopifyOrderNumber}`}
+              </Link>
+            </Text>
+          )}
         </Box>
         <Box marginLeft="auto">{_renderActionButtons()}</Box>
       </Flex>

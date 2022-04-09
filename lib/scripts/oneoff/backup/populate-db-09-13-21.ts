@@ -219,6 +219,7 @@ function populateDb() {
       applicationProcessingId: index,
       paidThroughShopify: false,
       shopifyPaymentStatus: null,
+      shopifyOrderNumber: null,
     };
 
     const permit: UpsertPermit = {

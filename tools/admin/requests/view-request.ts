@@ -15,6 +15,8 @@ export const GET_APPLICATION_QUERY = gql`
       type
       createdAt
       paidThroughShopify
+      shopifyConfirmationNumber
+      shopifyOrderNumber
       processing {
         status
         appNumber
@@ -42,7 +44,15 @@ export type GetApplicationRequest = QueryApplicationArgs;
 // Get application response type
 // TODO: Account for application types
 export type GetApplicationResponse = {
-  application: Pick<Application, 'id' | 'type' | 'paidThroughShopify' | 'createdAt'> & {
+  application: Pick<
+    Application,
+    | 'id'
+    | 'type'
+    | 'paidThroughShopify'
+    | 'createdAt'
+    | 'shopifyConfirmationNumber'
+    | 'shopifyOrderNumber'
+  > & {
     processing: Pick<
       ApplicationProcessing,
       | 'status'

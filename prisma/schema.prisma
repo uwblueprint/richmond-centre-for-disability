@@ -61,6 +61,7 @@ model Application {
   paidThroughShopify               Boolean                 @default(false) @map("paid_through_shopify")
   shopifyPaymentStatus             ShopifyPaymentStatus?   @default(PENDING) @map("shopify_payment_status")
   shopifyConfirmationNumber        String?                 @unique @map("shopify_confirmation_number") @db.VarChar(255)
+  shopifyOrderNumber               String?                 @map("shopify_order_number") @db.VarChar(255)
   shippingAddressSameAsHomeAddress Boolean                 @map("shipping_address_same_as_home_address")
   shippingFullName                 String?                 @map("shipping_full_name") @db.VarChar(255)
   shippingAddressLine1             String?                 @map("shipping_address_line_1") @db.VarChar(255)

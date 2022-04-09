@@ -101,6 +101,7 @@ export type UpsertApplication = Pick<
   | 'paidThroughShopify'
   | 'shopifyPaymentStatus'
   | 'shopifyConfirmationNumber'
+  | 'shopifyOrderNumber'
 > &
   (
     | {

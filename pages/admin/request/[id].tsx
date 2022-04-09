@@ -41,6 +41,8 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     type,
     createdAt,
     paidThroughShopify,
+    shopifyConfirmationNumber,
+    shopifyOrderNumber,
     processing: {
       status,
       appNumber,
@@ -75,6 +77,8 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           allStepsCompleted={allStepsCompleted}
           applicantId={applicantId}
           paidThroughShopify={paidThroughShopify}
+          shopifyOrderID={shopifyConfirmationNumber || undefined}
+          shopifyOrderNumber={shopifyOrderNumber || undefined}
         />
       </GridItem>
       <GridItem colStart={1} colSpan={5} textAlign="left">
