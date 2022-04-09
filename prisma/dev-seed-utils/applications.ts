@@ -22,7 +22,7 @@ const applications: Array<UpsertApplication> = [
     city: 'Vancouver',
     postalCode: 'A1B2C3',
     permitType: 'PERMANENT',
-    paymentMethod: 'SHOPIFY',
+    paymentMethod: 'CASH',
     processingFee: new Prisma.Decimal(26),
     donationAmount: new Prisma.Decimal(0),
     shippingAddressSameAsHomeAddress: false,
