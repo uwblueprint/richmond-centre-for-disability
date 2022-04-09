@@ -3,8 +3,40 @@ import {
   requestPermitHolderInformationSchema,
 } from '@lib/applicants/validation';
 import { physicianAssessmentSchema } from '@lib/physicians/validation';
-import { PaymentType, Province, ReasonForReplacement } from '@prisma/client';
+import { AccessibleConvertedVanLoadingMethod, PaymentType, Province, ReasonForReplacement, RequiresWiderParkingSpaceReason } from '@prisma/client';
 import { bool, date, mixed, number, object, string } from 'yup';
+
+export const additionalQuestionsSchema = object({
+  usesAccessibleConvertedVan: bool().required('Please select an option'),
+  accessibleConvertedVanLoadingMethod: mixed<AccessibleConvertedVanLoadingMethod>()
+    .oneOf(Object.values(AccessibleConvertedVanLoadingMethod))
+    .nullable()
+    .default(null)
+    .when('usesAccessibleConvertedVan', {
+      is: true,
+      then: mixed<AccessibleConvertedVanLoadingMethod>()
+        .oneOf(Object.values(AccessibleConvertedVanLoadingMethod))
+        .required('Please select an option'),
+    }), //todo: nullable
+  requiresWiderParkingSpace: bool().required('Please select an option'), //TODO: nullable?
+  requiresWiderParkingSpaceReason: mixed<RequiresWiderParkingSpaceReason>()
+    .oneOf(Object.values(RequiresWiderParkingSpaceReason))
+    .nullable()
+    .default(null)
+    .when('requiresWiderParkingSpace', {
+      is: true,
+      then: mixed<RequiresWiderParkingSpaceReason>()
+        .oneOf(Object.values(RequiresWiderParkingSpaceReason))
+        .required('Please select an option'), //TODO: typeerror
+    }),
+  otherRequiresWiderParkingSpaceReason: string()
+    .nullable()
+    .default(null)
+    .when('requiresWiderParkingSpaceReason', {
+      is: RequiresWiderParkingSpaceReason.OTHER,
+      then: string().typeError('Please enter a description').required('Please enter a description'),
+    }),
+});
 
 /**
  * Payment information form validation schema
@@ -196,6 +228,7 @@ export const editReasonForReplacementFormSchema = object({
 export const createNewRequestFormSchema = object({
   permitHolder: permitHolderInformationSchema,
   physicianAssessment: physicianAssessmentSchema,
+  additionalInformation: additionalQuestionsSchema,
   paymentInformation: paymentInformationSchema,
 });
 
@@ -204,6 +237,7 @@ export const createNewRequestFormSchema = object({
  */
 export const renewalRequestFormSchema = object({
   permitHolder: requestPermitHolderInformationSchema,
+  additionalInformation: additionalQuestionsSchema,
   paymentInformation: paymentInformationSchema,
 });
 

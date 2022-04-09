@@ -238,6 +238,7 @@ export default function CreateNew() {
   const handleSubmit = async (values: {
     permitHolder: NewApplicationPermitHolderInformation;
     physicianAssessment: PhysicianAssessment;
+    additionalInformation: AdditionalInformationFormData;
     paymentInformation: PaymentInformationFormData;
   }) => {
     let poaFormS3ObjectKey = '';
@@ -256,24 +257,6 @@ export default function CreateNew() {
     }
 
     const validatedValues = await createNewRequestFormSchema.validate(values);
-
-    if (additionalQuestions.usesAccessibleConvertedVan === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient uses accessible converted van',
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (additionalQuestions.requiresWiderParkingSpace === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient requires wider parking space',
-        isClosable: true,
-      });
-      return;
-    }
 
     if (!doctorInformation.mspNumber) {
       toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
@@ -309,9 +292,7 @@ export default function CreateNew() {
           guardianPostalCode: guardianInformation.postalCode,
           poaFormS3ObjectKey: poaFormS3ObjectKey,
 
-          ...additionalQuestions,
-          usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
-          requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
+          ...validatedValues.additionalInformation,
 
           ...validatedValues.paymentInformation,
 

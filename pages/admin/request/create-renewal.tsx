@@ -68,15 +68,6 @@ export default function CreateRenewal() {
     postalCode: '',
   });
 
-  /** Additional information section */
-  const additionalInformation = {
-    usesAccessibleConvertedVan: null,
-    accessibleConvertedVanLoadingMethod: null,
-    requiresWiderParkingSpace: null,
-    requiresWiderParkingSpaceReason: null,
-    otherRequiresWiderParkingSpaceReason: null,
-  };
-
   // Toast message
   const toast = useToast();
 
@@ -176,6 +167,7 @@ export default function CreateRenewal() {
    */
   const handleSubmit = async (values: {
     permitHolder: PermitHolderFormData;
+    additionalInformation: AdditionalInformationFormData;
     paymentInformation: PaymentInformationFormData;
   }) => {
     if (!applicantId) {
@@ -191,24 +183,6 @@ export default function CreateRenewal() {
 
     if (!doctorInformation.mspNumber) {
       toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
-      return;
-    }
-
-    if (additionalInformation.usesAccessibleConvertedVan === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient uses accessible converted van',
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (additionalInformation.requiresWiderParkingSpace === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient requires wider parking space',
-        isClosable: true,
-      });
       return;
     }
 
@@ -228,9 +202,7 @@ export default function CreateRenewal() {
           physicianAddressLine2: doctorInformation.addressLine2,
           physicianCity: doctorInformation.city,
           physicianPostalCode: doctorInformation.postalCode,
-          ...additionalInformation,
-          usesAccessibleConvertedVan: additionalInformation.usesAccessibleConvertedVan,
-          requiresWiderParkingSpace: additionalInformation.requiresWiderParkingSpace,
+          ...validatedValues.additionalInformation,
           ...validatedValues.paymentInformation,
 
           // TODO: Replace with dynamic values
@@ -293,7 +265,7 @@ export default function CreateRenewal() {
                 ...permitHolderInformation,
                 type: 'RENEWAL',
               },
-              additionalInformation: { ...additionalInformation },
+              additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
               paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
             validationSchema={renewalRequestFormSchema}

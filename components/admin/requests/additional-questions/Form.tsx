@@ -28,8 +28,10 @@ export default function AdditionalQuestionsForm({
         </Stack>
       </RadioGroupField>
 
+      {/* TODO: add padding */}
+
       {/* TODO: Fix TypeScript error */}
-      {additionalInformation.usesAccessibleConvertedVan === '0' && (
+      {additionalInformation.usesAccessibleConvertedVan && (
         <RadioGroupField
           name="additionalInformation.accessibleConvertedVanLoadingMethod"
           label="Please specify their loading method:"
@@ -48,12 +50,12 @@ export default function AdditionalQuestionsForm({
         required
       >
         <Stack>
-          <Radio value={'0'}>{'Yes'}</Radio>
-          <Radio value={'1'}>{'No'}</Radio>
+          <Radio value={1}>{'Yes'}</Radio>
+          <Radio value={0}>{'No'}</Radio>
         </Stack>
       </RadioGroupField>
 
-      {additionalInformation.requiresWiderParkingSpace === '0' && (
+      {additionalInformation.requiresWiderParkingSpace && (
         <RadioGroupField
           name="additionalInformation.requiresWiderParkingSpaceReason"
           label="Please specify the reason"
