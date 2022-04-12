@@ -7,27 +7,30 @@ import { AccessibleConvertedVanLoadingMethod, PaymentType, Province, ReasonForRe
 import { bool, date, mixed, number, object, string } from 'yup';
 
 export const additionalQuestionsSchema = object({
-  usesAccessibleConvertedVan: bool().required('Please select an option'),
+  usesAccessibleConvertedVan: bool()
+    .typeError('Please select an option')
+    .required('Please select an option'),
   accessibleConvertedVanLoadingMethod: mixed<AccessibleConvertedVanLoadingMethod>()
-    .oneOf(Object.values(AccessibleConvertedVanLoadingMethod))
     .nullable()
     .default(null)
     .when('usesAccessibleConvertedVan', {
-      is: true,
+      is: 'YES',
       then: mixed<AccessibleConvertedVanLoadingMethod>()
         .oneOf(Object.values(AccessibleConvertedVanLoadingMethod))
         .required('Please select an option'),
-    }), //todo: nullable
-  requiresWiderParkingSpace: bool().required('Please select an option'), //TODO: nullable?
+      otherwise: mixed<AccessibleConvertedVanLoadingMethod>().nullable().default(null),
+    }),
+  requiresWiderParkingSpace: bool()
+    .typeError('Please select an option')
+    .required('Please select an option'),
   requiresWiderParkingSpaceReason: mixed<RequiresWiderParkingSpaceReason>()
-    .oneOf(Object.values(RequiresWiderParkingSpaceReason))
     .nullable()
     .default(null)
     .when('requiresWiderParkingSpace', {
       is: true,
       then: mixed<RequiresWiderParkingSpaceReason>()
         .oneOf(Object.values(RequiresWiderParkingSpaceReason))
-        .required('Please select an option'), //TODO: typeerror
+        .required('Please select an option'),
     }),
   otherRequiresWiderParkingSpaceReason: string()
     .nullable()

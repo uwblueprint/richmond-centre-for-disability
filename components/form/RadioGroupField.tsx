@@ -19,7 +19,7 @@ const RadioGroupField: FC<Props> = props => {
   const { name, label, required, children, ...radioGroupProps } = props;
   const [field, meta] = useField(name);
   const { setFieldValue } = useFormikContext();
-  const handleChange = (value: string) => {
+  const handleChange = (value: string | number) => {
     setFieldValue(name, value);
   };
 

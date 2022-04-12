@@ -56,6 +56,7 @@ import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { uploadToS3 } from '@lib/utils/upload-to-s3';
 import { Form, Formik } from 'formik';
 import { createNewRequestFormSchema } from '@lib/applications/validation';
+import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -257,6 +258,7 @@ export default function CreateNew() {
     }
 
     const validatedValues = await createNewRequestFormSchema.validate(values);
+    const additionalInformation = validatedValues.additionalInformation;
 
     if (!doctorInformation.mspNumber) {
       toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
@@ -292,7 +294,19 @@ export default function CreateNew() {
           guardianPostalCode: guardianInformation.postalCode,
           poaFormS3ObjectKey: poaFormS3ObjectKey,
 
-          ...validatedValues.additionalInformation,
+          ...additionalInformation,
+          accessibleConvertedVanLoadingMethod: additionalInformation.usesAccessibleConvertedVan
+            ? additionalInformation.accessibleConvertedVanLoadingMethod
+            : null,
+          requiresWiderParkingSpaceReason: additionalInformation.requiresWiderParkingSpace
+            ? additionalInformation.requiresWiderParkingSpaceReason
+            : null,
+          otherRequiresWiderParkingSpaceReason:
+            additionalInformation.requiresWiderParkingSpace &&
+            additionalInformation.requiresWiderParkingSpaceReason ===
+              RequiresWiderParkingSpaceReason.OTHER
+              ? additionalInformation.otherRequiresWiderParkingSpaceReason
+              : null,
 
           ...validatedValues.paymentInformation,
 

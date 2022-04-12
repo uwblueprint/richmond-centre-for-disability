@@ -32,7 +32,9 @@ import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-inf
 import { Form, Formik } from 'formik';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { renewalRequestFormSchema } from '@lib/applications/validation';
-import { INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
+import { INITIAL_ADDITIONAL_QUESTIONS, INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
+import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
+import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -188,6 +190,7 @@ export default function CreateRenewal() {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { type, ...permitHolder } = validatedValues.permitHolder;
+    const additionalInformation = validatedValues.additionalInformation;
 
     await submitRenewalApplication({
       variables: {
@@ -202,7 +205,21 @@ export default function CreateRenewal() {
           physicianAddressLine2: doctorInformation.addressLine2,
           physicianCity: doctorInformation.city,
           physicianPostalCode: doctorInformation.postalCode,
-          ...validatedValues.additionalInformation,
+
+          ...additionalInformation,
+          accessibleConvertedVanLoadingMethod: additionalInformation.usesAccessibleConvertedVan
+            ? additionalInformation.accessibleConvertedVanLoadingMethod
+            : null,
+          requiresWiderParkingSpaceReason: additionalInformation.requiresWiderParkingSpace
+            ? additionalInformation.requiresWiderParkingSpaceReason
+            : null,
+          otherRequiresWiderParkingSpaceReason:
+            additionalInformation.requiresWiderParkingSpace &&
+            additionalInformation.requiresWiderParkingSpaceReason ===
+              RequiresWiderParkingSpaceReason.OTHER
+              ? additionalInformation.otherRequiresWiderParkingSpaceReason
+              : null,
+
           ...validatedValues.paymentInformation,
 
           // TODO: Replace with dynamic values
