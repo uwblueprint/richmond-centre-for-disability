@@ -43,7 +43,6 @@ export const paymentInformationSchema = object({
       then: string().typeError('Please enter a city name').required('Please enter a city name'),
     }),
   shippingProvince: mixed<Province>()
-    .oneOf(Object.values(Province))
     .nullable()
     .default(null)
     .when('shippingAddressSameAsHomeAddress', {
@@ -94,14 +93,13 @@ export const paymentInformationSchema = object({
       then: string().typeError('Please enter a city name').required('Please enter a city name'),
     }),
   billingProvince: mixed<Province>()
-    .oneOf(Object.values(Province))
     .nullable()
     .default(null)
     .when('billingAddressSameAsHomeAddress', {
       is: false,
       then: mixed<Province>()
         .oneOf(Object.values(Province))
-        .required('Please select a province/territory.'),
+        .required('Please select a province/territory'),
     }),
   billingCountry: string()
     .nullable()
