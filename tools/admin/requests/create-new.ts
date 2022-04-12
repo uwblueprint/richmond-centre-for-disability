@@ -197,7 +197,7 @@ export const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
   shippingAddressLine2: '',
   shippingCity: '',
   shippingProvince: null,
-  shippingCountry: '',
+  shippingCountry: 'Canada',
   shippingPostalCode: '',
   billingAddressSameAsHomeAddress: false,
   billingFullName: '',

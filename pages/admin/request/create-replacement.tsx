@@ -52,7 +52,7 @@ const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
   shippingAddressLine2: '',
   shippingCity: '',
   shippingProvince: 'BC',
-  shippingCountry: '',
+  shippingCountry: 'Canada',
   shippingPostalCode: '',
   billingAddressSameAsHomeAddress: false,
   billingFullName: '',
