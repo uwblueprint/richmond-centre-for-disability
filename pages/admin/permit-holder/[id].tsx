@@ -16,6 +16,8 @@ import {
   GET_APPLICANT_QUERY,
 } from '@tools/admin/permit-holders/view-permit-holder';
 import { formatFullName } from '@lib/utils/format';
+import GuardianInformationCard from '@components/admin/permit-holders/guardian-information/Card';
+import CurrentApplicationCard from '@components/admin/permit-holders/current-application/Card';
 
 type Props = {
   readonly id: string;
@@ -46,14 +48,13 @@ export default function PermitHolder({ id: idString }: Props) {
         <Stack spacing={5}>
           <PersonalInformationCard applicantId={id} />
           <DoctorInformationCard applicantId={id} />
-          {/* {data?.applicant.guardian && (
-            <GuardianInformationCard guardian={data?.applicant.guardian} />
-          )} */}
+          <GuardianInformationCard applicantId={id} />
         </Stack>
       </GridItem>
 
       <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
         <Stack spacing={5}>
+          <CurrentApplicationCard applicantId={id} />
           <AppHistoryCard applicantId={id} />
           <AttachedFilesCard applicantId={id} />
           <MedicalHistoryCard applicantId={id} />

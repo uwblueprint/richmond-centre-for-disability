@@ -35,11 +35,27 @@ const Badge: ComponentSingleStyleConfig = {
     EXPIRED: {
       bg: 'badge.expired',
     },
+    // Active permit holder
     ACTIVE: {
       bg: 'badge.active',
+      fontWeight: 'semibold',
+      color: 'text.success',
     },
+    // Inactive permit holder
     INACTIVE: {
       bg: 'badge.inactive',
+      fontWeight: 'semibold',
+      color: 'text.critical',
+    },
+    // Permanent permit type
+    PERMANENT: {
+      bg: '#D0BDF9',
+      fontWeight: 'regular',
+    },
+    // Temporary permit type
+    TEMPORARY: {
+      bg: '#F4B5DF',
+      fontWeight: 'regular',
     },
   },
 };
