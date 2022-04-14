@@ -1,44 +1,22 @@
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  Text,
-  Stack,
-  FormHelperText,
-  Box,
-  Divider,
-  RadioGroup,
-  Radio,
-  Textarea,
-} from '@chakra-ui/react'; // Chakra UI
-import { PatientCondition, PermitType } from '@lib/graphql/types';
+import { Text, Stack, FormHelperText, Box, Divider, Radio } from '@chakra-ui/react'; // Chakra UI
+import DateField from '@components/form/DateField';
+import RadioGroupField from '@components/form/RadioGroupField';
+import TextArea from '@components/form/TextAreaField';
+import TextField from '@components/form/TextField';
 import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment';
-import { ChangeEventHandler } from 'react';
 
 type PhysicianAssessmentFormProps = {
   readonly physicianAssessment: PhysicianAssessment;
-  readonly onChange: (updatedData: PhysicianAssessment) => void;
 };
 
 /**
  * PhysicianAssessmentForm Component for allowing users to edit physician assessment information.
  *
  * @param {PhysicianAssessment} physicianAssessment Object that holds all physician assessment information for a client request.
- * @param onChange Function that uses the updated values from form.
  */
 export default function PhysicianAssessmentForm({
   physicianAssessment,
-  onChange,
 }: PhysicianAssessmentFormProps) {
-  const handleChange =
-    (field: keyof PhysicianAssessment): ChangeEventHandler<HTMLInputElement> =>
-    event => {
-      onChange({
-        ...physicianAssessment,
-        [field]: event.target.value,
-      });
-    };
-
   return (
     <>
       <Box paddingBottom="32px">
@@ -46,20 +24,18 @@ export default function PhysicianAssessmentForm({
           {`Physician’s Assessment`}
         </Text>
         <Stack spacing="20px">
-          <FormControl isRequired>
-            <FormLabel>{'Medical name of disabling condition(s)'}</FormLabel>
-            <Input value={physicianAssessment?.disability} onChange={handleChange('disability')} />
-          </FormControl>
-
-          <FormControl isRequired>
-            <FormLabel>{'Physician’s certification date'}</FormLabel>
-            <Input
-              type="date"
-              value={physicianAssessment.disabilityCertificationDate}
-              onChange={handleChange('disabilityCertificationDate')}
-            />
+          <TextField
+            name="physicianAssessment.disability"
+            label="Medical name of disabling condition(s)"
+            required
+          />
+          <DateField
+            name="physicianAssessment.disabilityCertificationDate"
+            label="Physician’s certification date"
+            required
+          >
             <FormHelperText color="text.secondary">{'Format: YYYY-MM-DD'}</FormHelperText>
-          </FormControl>
+          </DateField>
         </Stack>
       </Box>
 
@@ -73,48 +49,33 @@ export default function PhysicianAssessmentForm({
         </Text>
 
         <Stack spacing="20px">
-          <FormControl isRequired>
-            <FormLabel>{'Please select the condition'}</FormLabel>
-            <RadioGroup
-              value={physicianAssessment.patientCondition || undefined}
-              onChange={value => {
-                // handleChangedPatientEligibility
-                onChange({
-                  ...physicianAssessment,
-                  patientCondition: value as PatientCondition,
-                });
-              }}
-            >
-              <Stack>
-                <Radio value={'AFFECTS_MOBILITY'}>
-                  {
-                    'Applicant has a disability that affects mobility and the ability to walk specifically'
-                  }
-                </Radio>
-                <Radio value={'CANNOT_WALK_100M'}>
-                  {'Applicant can NOT walk 100 meters without risk to health'}
-                </Radio>
-                <Radio value={'MOBILITY_AID_REQUIRED'}>
-                  {'Applicant requires the use of a mobiliy aid in order to travel any distance'}
-                </Radio>
-                <Radio value={'OTHER'}>{'Other'}</Radio>
-              </Stack>
-            </RadioGroup>
-          </FormControl>
+          <RadioGroupField
+            name="physicianAssessment.patientCondition"
+            label="Please select the condition"
+            required
+          >
+            <Stack>
+              <Radio value={'AFFECTS_MOBILITY'}>
+                {
+                  'Applicant has a disability that affects mobility and the ability to walk specifically'
+                }
+              </Radio>
+              <Radio value={'CANNOT_WALK_100M'}>
+                {'Applicant can NOT walk 100 meters without risk to health'}
+              </Radio>
+              <Radio value={'MOBILITY_AID_REQUIRED'}>
+                {'Applicant requires the use of a mobiliy aid in order to travel any distance'}
+              </Radio>
+              <Radio value={'OTHER'}>{'Other'}</Radio>
+            </Stack>
+          </RadioGroupField>
 
           {physicianAssessment.patientCondition === 'OTHER' && (
-            <FormControl isRequired>
-              <FormLabel>{'Description'}</FormLabel>
-              <Textarea
-                value={physicianAssessment.otherPatientCondition || ''}
-                onChange={event =>
-                  onChange({
-                    ...physicianAssessment,
-                    otherPatientCondition: event.target.value,
-                  })
-                }
-              />
-            </FormControl>
+            <TextArea
+              name="physicianAssessment.otherPatientCondition"
+              label="Description"
+              required
+            />
           )}
         </Stack>
       </Box>
@@ -128,38 +89,27 @@ export default function PhysicianAssessmentForm({
           {'Prognosis'}
         </Text>
 
-        <FormControl isRequired paddingBottom="24px">
-          <FormLabel>{'This patient is experiencing a mobility impairment which is'}</FormLabel>
-          <RadioGroup
-            value={physicianAssessment.permitType || undefined}
-            onChange={value =>
-              onChange({
-                ...physicianAssessment,
-                permitType: value as PermitType,
-              })
-            }
+        <Box paddingBottom="24px">
+          <RadioGroupField
+            name="physicianAssessment.permitType"
+            label="This patient is experiencing a mobility impairment which is"
+            required
           >
             <Stack>
               <Radio value={'PERMANENT'}>{'Permanent'}</Radio>
               <Radio value={'TEMPORARY'}>{'Temporary'}</Radio>
             </Stack>
-          </RadioGroup>
-        </FormControl>
+          </RadioGroupField>
+        </Box>
+
         {physicianAssessment.permitType === 'TEMPORARY' && (
-          <FormControl isRequired>
-            <FormLabel>{'Temporary permit will expire on'}</FormLabel>
-            <Input
-              type="date"
-              value={physicianAssessment.temporaryPermitExpiry}
-              onChange={event =>
-                onChange({
-                  ...physicianAssessment,
-                  temporaryPermitExpiry: event.target.value,
-                })
-              }
-            />
+          <DateField
+            name="physicianAssessment.temporaryPermitExpiry"
+            label="Temporary permit will expire on"
+            required
+          >
             <FormHelperText color="text.secondary">{'Format: YYYY-MM-DD'}</FormHelperText>
-          </FormControl>
+          </DateField>
         )}
       </Box>
     </>

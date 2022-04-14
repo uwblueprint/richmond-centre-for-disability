@@ -1,19 +1,28 @@
 import {
-  newPermitHolderInformationSchema,
+  permitHolderInformationSchema,
   requestPermitHolderInformationSchema,
 } from '@lib/applicants/validation';
+import { physicianAssessmentSchema } from '@lib/physicians/validation';
+import { object } from 'yup';
 
 /**
  * Create new request form validation schema
  */
-export const createNewRequestFormSchema = newPermitHolderInformationSchema;
+export const createNewRequestFormSchema = object({
+  permitHolder: permitHolderInformationSchema,
+  physicianAssessment: physicianAssessmentSchema,
+});
 
 /**
  * Create renewal request form validation schema
  */
-export const renewalRequestFormSchema = requestPermitHolderInformationSchema;
+export const renewalRequestFormSchema = object({
+  permitHolder: requestPermitHolderInformationSchema,
+});
 
 /**
  * Create replacement request form validation schema
  */
-export const replacementFormSchema = requestPermitHolderInformationSchema;
+export const replacementFormSchema = object({
+  permitHolder: requestPermitHolderInformationSchema,
+});

@@ -69,10 +69,6 @@ export default function CreateNew() {
   // General information
   const [permitHolderInformation, setPermitHolderInformation] =
     useState<NewApplicationPermitHolderInformation>(INITIAL_PERMIT_HOLDER_INFORMATION);
-  // Physician assessment
-  const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment>(
-    INITIAL_PHYSICIAN_ASSESSMENT
-  );
   // Doctor information
   const [doctorInformation, setDoctorInformation] = useState<DoctorFormData>(
     INITIAL_DOCTOR_INFORMATION
@@ -102,7 +98,6 @@ export default function CreateNew() {
     setApplicantId(null);
     setPermitHolderExists(true);
     setPermitHolderInformation(INITIAL_PERMIT_HOLDER_INFORMATION);
-    setPhysicianAssessment(INITIAL_PHYSICIAN_ASSESSMENT);
     setDoctorInformation(INITIAL_DOCTOR_INFORMATION);
     setGuardianInformation(INITIAL_GUARDIAN_INFORMATION);
     setGuardianPOAFile(null);
@@ -249,7 +244,10 @@ export default function CreateNew() {
    * Handle new APP request submission
    */
   //TODO: create type for values
-  const handleSubmit = async (values: { permitHolder: NewApplicationPermitHolderInformation }) => {
+  const handleSubmit = async (values: {
+    permitHolder: NewApplicationPermitHolderInformation;
+    physicianAssessment: PhysicianAssessment;
+  }) => {
     let poaFormS3ObjectKey = '';
     if (guardianPOAFile) {
       try {
@@ -266,16 +264,6 @@ export default function CreateNew() {
     }
 
     const validatedValues = await createNewRequestFormSchema.validate(values);
-
-    if (!physicianAssessment.patientCondition) {
-      toast({ status: 'error', description: 'Missing patient condition', isClosable: true });
-      return;
-    }
-
-    if (!physicianAssessment.permitType) {
-      toast({ status: 'error', description: 'Missing permit type', isClosable: true });
-      return;
-    }
 
     if (additionalQuestions.usesAccessibleConvertedVan === null) {
       toast({
@@ -305,18 +293,13 @@ export default function CreateNew() {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const permitHolder = validatedValues.permitHolder;
-
     await submitNewApplication({
       variables: {
         input: {
-          ...permitHolder,
+          ...validatedValues.permitHolder,
 
-          ...physicianAssessment,
-          patientCondition: physicianAssessment.patientCondition,
+          ...validatedValues.physicianAssessment,
           mobilityAids: null, //TODO: get mobility aids when forms are updated to get this data
-          permitType: physicianAssessment.permitType,
 
           physicianFirstName: doctorInformation.firstName,
           physicianLastName: doctorInformation.lastName,
@@ -478,9 +461,8 @@ export default function CreateNew() {
         {step === RequestFlowPageState.SubmittingRequestPage && (
           <Formik
             initialValues={{
-              permitHolder: {
-                ...permitHolderInformation,
-              },
+              permitHolder: permitHolderInformation,
+              physicianAssessment: INITIAL_PHYSICIAN_ASSESSMENT,
             }}
             validationSchema={createNewRequestFormSchema}
             onSubmit={handleSubmit}
@@ -516,10 +498,7 @@ export default function CreateNew() {
                     <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
                       {`Physician's Assessment`}
                     </Text>
-                    <PhysicianAssessmentForm
-                      physicianAssessment={physicianAssessment}
-                      onChange={setPhysicianAssessment}
-                    />
+                    <PhysicianAssessmentForm physicianAssessment={values.physicianAssessment} />
                   </Box>
                   <Box
                     w="100%"
