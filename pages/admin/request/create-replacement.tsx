@@ -158,7 +158,7 @@ export default function CreateReplacement() {
     const { type, receiveEmailUpdates, ...permitHolder } = values.permitHolder;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { type, receiveEmailUpdates, ...permitHolder } = values.permitHolder;
+    const { type, receiveEmailUpdates, ...permitHolder } = validatedValues.permitHolder;
 
     await submitReplacementApplication({
       variables: {
