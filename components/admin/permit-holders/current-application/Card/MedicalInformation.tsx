@@ -50,7 +50,7 @@ const MedicalInformationSection: FC<Props> = ({ application }) => {
         </GridItem>
         <GridItem colStart={2} colSpan={1} rowStart={3} rowSpan={1}>
           <Text as="p" textStyle="body-regular">
-            {formatDate(disabilityCertificationDate)}
+            {!!disabilityCertificationDate && formatDate(disabilityCertificationDate)}
           </Text>
         </GridItem>
         {/* Mobility aids */}
@@ -61,7 +61,7 @@ const MedicalInformationSection: FC<Props> = ({ application }) => {
         </GridItem>
         <GridItem colStart={2} colSpan={1} rowStart={4} rowSpan={1}>
           <List>
-            {mobilityAids.map(aid => (
+            {mobilityAids?.map(aid => (
               <ListItem key={aid}>
                 <Text as="p" textStyle="body-regular">
                   {aid}
