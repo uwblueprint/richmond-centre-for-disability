@@ -1,6 +1,6 @@
 import { ApolloError } from 'apollo-server-micro';
 import { FieldResolver } from '@lib/graphql/resolvers';
-import { ApplicationProcessing, Invoice } from '@lib/graphql/types';
+import { ApplicationProcessing, Employee, Invoice } from '@lib/graphql/types';
 import { getSignedUrlForS3 } from '@lib/utils/s3-utils';
 
 /**
@@ -54,4 +54,82 @@ export const applicationProcessingInvoiceResolver: FieldResolver<
   }
 
   return invoice;
+};
+
+/**
+ * Get the employee that assigned the APP number
+ */
+export const applicationProcessingAppNumberEmployeeResolver: FieldResolver<
+  ApplicationProcessing & { id: number },
+  Employee
+> = async (parent, _, { prisma }) => {
+  return await prisma.application
+    .findUnique({ where: { id: parent.id } })
+    .applicationProcessing()
+    .appNumberEmployee();
+};
+
+/**
+ * Get the employee that holepunched the APP
+ */
+export const applicationProcessingAppHolepunchedEmployeeResolver: FieldResolver<
+  ApplicationProcessing & { id: number },
+  Employee
+> = async (parent, _, { prisma }) => {
+  return await prisma.application
+    .findUnique({ where: { id: parent.id } })
+    .applicationProcessing()
+    .appHolepunchedEmployee();
+};
+
+/**
+ * Get the employee that created the wallet card
+ */
+export const applicationProcessingWalletCardCreatedEmployeeResolver: FieldResolver<
+  ApplicationProcessing & { id: number },
+  Employee
+> = async (parent, _, { prisma }) => {
+  return await prisma.application
+    .findUnique({ where: { id: parent.id } })
+    .applicationProcessing()
+    .walletCardCreatedEmployee();
+};
+
+/**
+ * Get the employee that reviewed the request
+ */
+export const applicationProcessingReviewRequestCompletedEmployeeResolver: FieldResolver<
+  ApplicationProcessing & { id: number },
+  Employee
+> = async (parent, _, { prisma }) => {
+  return await prisma.application
+    .findUnique({ where: { id: parent.id } })
+    .applicationProcessing()
+    .reviewRequestEmployee();
+};
+
+/**
+ * Get the employee that uploaded the documents
+ */
+export const applicationProcessingDocumentsUrlEmployeeResolver: FieldResolver<
+  ApplicationProcessing & { id: number },
+  Employee
+> = async (parent, _, { prisma }) => {
+  return await prisma.application
+    .findUnique({ where: { id: parent.id } })
+    .applicationProcessing()
+    .documentsUrlEmployee();
+};
+
+/**
+ * Get the employee that mailed the APP
+ */
+export const applicationProcessingAppMailedEmployeeResolver: FieldResolver<
+  ApplicationProcessing & { id: number },
+  Employee
+> = async (parent, _, { prisma }) => {
+  return await prisma.application
+    .findUnique({ where: { id: parent.id } })
+    .applicationProcessing()
+    .appMailedEmployee();
 };

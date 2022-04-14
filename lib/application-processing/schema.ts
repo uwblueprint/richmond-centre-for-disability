@@ -10,24 +10,24 @@ export default gql`
     status: ApplicationStatus!
     rejectedReason: String
     appNumber: Int
-    appNumberEmployeeId: Int
+    appNumberEmployee: Employee
     appNumberUpdatedAt: Date
     appHolepunched: Boolean!
-    appHolepunchedEmployeeId: Int
+    appHolepunchedEmployee: Employee
     appHolepunchedUpdatedAt: Date
     walletCardCreated: Boolean!
-    walletCardCreatedEmployeeId: Int
+    walletCardCreatedEmployee: Employee
     walletCardCreatedUpdatedAt: Date
     reviewRequestCompleted: Boolean!
-    reviewRequestCompletedEmployeeId: Int
+    reviewRequestCompletedEmployee: Employee
     reviewRequestCompletedUpdatedAt: Date
     invoice: Invoice
     documentsUrl: String
     documentsS3ObjectKey: String
-    documentsUrlEmployeeId: Int
+    documentsUrlEmployee: Employee
     documentsUrlUpdatedAt: Date
     appMailed: Boolean!
-    appMailedEmployeeId: Int
+    appMailedEmployee: Employee
     appMailedUpdatedAt: Date
   }
 
