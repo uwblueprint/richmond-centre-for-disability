@@ -3,9 +3,16 @@ import {
   requestPermitHolderInformationSchema,
 } from '@lib/applicants/validation';
 import { physicianAssessmentSchema } from '@lib/physicians/validation';
-import { AccessibleConvertedVanLoadingMethod, PaymentType, Province, ReasonForReplacement, RequiresWiderParkingSpaceReason } from '@prisma/client';
+import { PaymentType, Province, ReasonForReplacement } from '@prisma/client';
 import { bool, date, mixed, number, object, string } from 'yup';
+import {
+  AccessibleConvertedVanLoadingMethod,
+  RequiresWiderParkingSpaceReason,
+} from '@lib/graphql/types';
 
+/**
+ * Additional Questions form validation schema
+ */
 export const additionalQuestionsSchema = object({
   usesAccessibleConvertedVan: bool()
     .typeError('Please select an option')
@@ -14,9 +21,9 @@ export const additionalQuestionsSchema = object({
     .nullable()
     .default(null)
     .when('usesAccessibleConvertedVan', {
-      is: 'YES',
+      is: true,
       then: mixed<AccessibleConvertedVanLoadingMethod>()
-        .oneOf(Object.values(AccessibleConvertedVanLoadingMethod))
+        .oneOf(Object.values(['SIDE_LOADING', 'END_LOADING']))
         .required('Please select an option'),
       otherwise: mixed<AccessibleConvertedVanLoadingMethod>().nullable().default(null),
     }),
@@ -29,14 +36,14 @@ export const additionalQuestionsSchema = object({
     .when('requiresWiderParkingSpace', {
       is: true,
       then: mixed<RequiresWiderParkingSpaceReason>()
-        .oneOf(Object.values(RequiresWiderParkingSpaceReason))
+        .oneOf(Object.values(['HAS_ACCESSIBLE_VAN', 'MEDICAL_REASONS', 'OTHER']))
         .required('Please select an option'),
     }),
   otherRequiresWiderParkingSpaceReason: string()
     .nullable()
     .default(null)
     .when('requiresWiderParkingSpaceReason', {
-      is: RequiresWiderParkingSpaceReason.OTHER,
+      is: 'OTHER',
       then: string().typeError('Please enter a description').required('Please enter a description'),
     }),
 });

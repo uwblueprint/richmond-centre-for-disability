@@ -1,10 +1,6 @@
 import { Stack, Radio, Box } from '@chakra-ui/react'; // Chakra UI
 import RadioGroupField from '@components/form/RadioGroupField';
 import TextAreaField from '@components/form/TextAreaField';
-import {
-  AccessibleConvertedVanLoadingMethod,
-  RequiresWiderParkingSpaceReason,
-} from '@prisma/client';
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions'; // AdditionalQuestions type
 
 type AdditionalQuestionsFormProps = {
@@ -28,12 +24,8 @@ export default function AdditionalQuestionsForm({
           }
         >
           <Stack>
-            <Radio value={1} isChecked={additionalInformation.usesAccessibleConvertedVan ?? false}>
-              {'Yes'}
-            </Radio>
-            <Radio value={0} isChecked={!additionalInformation.usesAccessibleConvertedVan ?? false}>
-              {'No'}
-            </Radio>
+            <Radio value={1}>{'Yes'}</Radio>
+            <Radio value={0}>{'No'}</Radio>
           </Stack>
         </RadioGroupField>
       </Box>
@@ -46,10 +38,8 @@ export default function AdditionalQuestionsForm({
             required
           >
             <Stack>
-              <Radio value={AccessibleConvertedVanLoadingMethod.SIDE_LOADING}>
-                {'Side loading'}
-              </Radio>
-              <Radio value={AccessibleConvertedVanLoadingMethod.END_LOADING}>{'End loading'}</Radio>
+              <Radio value={'SIDE_LOADING'}>{'Side loading'}</Radio>
+              <Radio value={'END_LOADING'}>{'End loading'}</Radio>
             </Stack>
           </RadioGroupField>
         </Box>
@@ -79,20 +69,15 @@ export default function AdditionalQuestionsForm({
             required
           >
             <Stack>
-              <Radio value={RequiresWiderParkingSpaceReason.HAS_ACCESSIBLE_VAN}>
-                {'Accessible van'}
-              </Radio>
-              <Radio value={RequiresWiderParkingSpaceReason.MEDICAL_REASONS}>
-                {'Medical reason'}
-              </Radio>
-              <Radio value={RequiresWiderParkingSpaceReason.OTHER}>{'Other'}</Radio>
+              <Radio value={'HAS_ACCESSIBLE_VAN'}>{'Accessible van'}</Radio>
+              <Radio value={'MEDICAL_REASONS'}>{'Medical reason'}</Radio>
+              <Radio value={'OTHER'}>{'Other'}</Radio>
             </Stack>
           </RadioGroupField>
         </Box>
       )}
 
-      {additionalInformation.requiresWiderParkingSpaceReason ===
-        RequiresWiderParkingSpaceReason.OTHER && (
+      {additionalInformation.requiresWiderParkingSpaceReason === 'OTHER' && (
         <Box paddingTop="24px">
           <TextAreaField
             name="additionalInformation.otherRequiresWiderParkingSpaceReason"
