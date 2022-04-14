@@ -267,9 +267,6 @@ export default function CreateNew() {
     const validatedValues = await createNewRequestFormSchema.validate(values);
     const additionalInformation = validatedValues.additionalInformation;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const permitHolder = validatedValues.permitHolder;
-
     await submitNewApplication({
       variables: {
         input: {
