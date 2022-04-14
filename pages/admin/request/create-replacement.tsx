@@ -34,6 +34,7 @@ import {
   CREATE_REPLACEMENT_APPLICATION_MUTATION,
   CreateReplacementApplicationRequest,
   CreateReplacementApplicationResponse,
+  INITIAL_REASON_FOR_REPLACEMENT,
 } from '@tools/admin/requests/create-replacement';
 import { useRouter } from 'next/router'; // Router
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
@@ -62,17 +63,6 @@ export default function CreateReplacement() {
     addressLine2: null,
     city: '',
     postalCode: '',
-  });
-
-  /** Reason for replacement section */
-  const [reasonForReplacement, setReasonForReplacement] = useState<ReasonForReplacementFormData>({
-    reason: null,
-    lostTimestamp: null,
-    lostLocation: null,
-    stolenJurisdiction: null,
-    stolenPoliceOfficerName: null,
-    stolenPoliceFileNumber: null,
-    eventDescription: null,
   });
 
   /** Payment information section */
@@ -172,7 +162,10 @@ export default function CreateReplacement() {
   });
 
   /** Handle replacement application submission */
-  const handleSubmit = async (values: { permitHolder: PermitHolderFormData }) => {
+  const handleSubmit = async (values: {
+    permitHolder: PermitHolderFormData;
+    reasonForReplacement: ReasonForReplacementFormData;
+  }) => {
     if (applicantId === null) {
       toast({
         status: 'error',
@@ -182,10 +175,7 @@ export default function CreateReplacement() {
       return;
     }
 
-    if (!reasonForReplacement.reason) {
-      toast({ status: 'error', description: 'Missing reason for replacement', isClosable: true });
-      return;
-    }
+    const validatedValues = await replacementRequestFormSchema.validate(values);
 
     if (!paymentInformation.paymentMethod) {
       toast({ status: 'error', description: 'Missing payment method', isClosable: true });
@@ -193,15 +183,14 @@ export default function CreateReplacement() {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { type, receiveEmailUpdates, ...permitHolder } = values.permitHolder;
+    const { type, receiveEmailUpdates, ...permitHolder } = validatedValues.permitHolder;
 
     await submitReplacementApplication({
       variables: {
         input: {
           applicantId,
           ...permitHolder,
-          ...reasonForReplacement,
-          reason: reasonForReplacement.reason,
+          ...validatedValues.reasonForReplacement,
           ...paymentInformation,
           paymentMethod: paymentInformation.paymentMethod,
         },
@@ -261,6 +250,7 @@ export default function CreateReplacement() {
                 type: 'REPLACEMENT',
                 receiveEmailUpdates: false,
               },
+              reasonForReplacement: INITIAL_REASON_FOR_REPLACEMENT,
             }}
             validationSchema={replacementRequestFormSchema}
             onSubmit={handleSubmit}
@@ -306,10 +296,7 @@ export default function CreateReplacement() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Reason for Replacement`}
                     </Text>
-                    <ReasonForReplacementForm
-                      reasonForReplacement={reasonForReplacement}
-                      onChange={setReasonForReplacement}
-                    />
+                    <ReasonForReplacementForm reasonForReplacement={values.reasonForReplacement} />
                   </Box>
                 </GridItem>
                 {/* Payment Details Form */}
