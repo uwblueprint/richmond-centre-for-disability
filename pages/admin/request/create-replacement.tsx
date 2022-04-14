@@ -34,6 +34,7 @@ import {
   CREATE_REPLACEMENT_APPLICATION_MUTATION,
   CreateReplacementApplicationRequest,
   CreateReplacementApplicationResponse,
+  INITIAL_REASON_FOR_REPLACEMENT,
 } from '@tools/admin/requests/create-replacement';
 import { useRouter } from 'next/router'; // Router
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
@@ -42,17 +43,6 @@ import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-inf
 import { PaymentType } from '@lib/graphql/types';
 import { Form, Formik } from 'formik';
 import { replacementFormSchema as replacementRequestFormSchema } from '@lib/applications/validation';
-
-/** Initial reason for replacement form values */
-const INITIAL_REASON_FOR_REPLACEMENT: ReasonForReplacementFormData = {
-  reason: null,
-  lostTimestamp: null,
-  lostLocation: null,
-  stolenJurisdiction: null,
-  stolenPoliceOfficerName: null,
-  stolenPoliceFileNumber: null,
-  eventDescription: null,
-};
 
 export default function CreateReplacement() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
