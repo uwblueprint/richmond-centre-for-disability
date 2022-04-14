@@ -2,6 +2,7 @@ import {
   permitHolderInformationSchema,
   requestPermitHolderInformationSchema,
 } from '@lib/applicants/validation';
+<<<<<<< HEAD
 import { guardianInformationSchema } from '@lib/guardian/validation';
 import {
   physicianAssessmentSchema,
@@ -199,6 +200,11 @@ export const editPaymentInformationSchema = object({
 export const paymentInformationMutationSchema = paymentInformationSchema.shape({
   id: number().positive('Invalid application ID').required('Application ID missing'),
 });
+=======
+import { physicianAssessmentSchema } from '@lib/physicians/validation';
+import { ReasonForReplacement } from '@prisma/client';
+import { date, mixed, number, object, string } from 'yup';
+>>>>>>> [Feature] Reason For Replacement Form Validation (#167)
 
 /**
  * Reason for replacement form validation schema
@@ -304,6 +310,7 @@ export const renewalRequestMutationSchema = renewalRequestFormSchema.shape({
  */
 export const replacementFormSchema = object({
   permitHolder: requestPermitHolderInformationSchema,
+<<<<<<< HEAD
   paymentInformation: paymentInformationSchema,
   reasonForReplacement: reasonForReplacementFormSchema,
 });
@@ -338,6 +345,9 @@ export const applicantFacingRenewalPersonalAddressSchema = object({
         .required('Please enter a postal code')
         .matches(postalCodeRegex, 'Please enter a valid postal code in the format X0X 0X0'),
     }),
+=======
+  reasonForReplacement: reasonForReplacementFormSchema,
+>>>>>>> [Feature] Reason For Replacement Form Validation (#167)
 });
 
 /**
