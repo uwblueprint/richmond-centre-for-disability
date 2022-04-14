@@ -2,7 +2,7 @@
 // Relative paths required, path aliases throw error with seed command
 import prisma from '../index'; // Prisma client
 import { UpsertApplication } from '../types'; // Seeding types
-import { Prisma, ShopifyPaymentStatus } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 // Seed data
 const applications: Array<UpsertApplication> = [
@@ -315,7 +315,7 @@ const applications: Array<UpsertApplication> = [
     },
     replacementApplication: undefined,
     paidThroughShopify: true,
-    shopifyPaymentStatus: ShopifyPaymentStatus.RECEIVED,
+    shopifyPaymentStatus: 'RECEIVED',
     shopifyConfirmationNumber: '4671298961430',
     shopifyOrderNumber: '1085',
   },
