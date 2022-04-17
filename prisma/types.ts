@@ -98,6 +98,10 @@ export type UpsertApplication = Pick<
   | 'billingPostalCode'
   | 'billingFullName'
   | 'applicantId'
+  | 'paidThroughShopify'
+  | 'shopifyPaymentStatus'
+  | 'shopifyConfirmationNumber'
+  | 'shopifyOrderNumber'
 > &
   (
     | {

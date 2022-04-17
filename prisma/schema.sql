@@ -272,6 +272,7 @@ CREATE TABLE applications (
   paid_through_shopify BOOLEAN NOT NULL DEFAULT false,
   shopify_payment_status ShopifyPaymentStatus DEFAULT 'PENDING',
   shopify_confirmation_number VARCHAR(255) UNIQUE,
+  shopify_order_number VARCHAR(255) UNIQUE,
 
   -- Shipping information
   shipping_address_same_as_home_address BOOLEAN NOT NULL,
