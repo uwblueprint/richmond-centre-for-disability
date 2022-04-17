@@ -80,7 +80,7 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
                 </>
               }
               monetaryInput
-            ></TextField>
+            />
           </GridItem>
         </Grid>
       </Box>

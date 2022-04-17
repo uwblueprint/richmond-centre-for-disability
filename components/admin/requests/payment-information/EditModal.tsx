@@ -29,27 +29,6 @@ export default function EditPaymentDetailsModal({
 }: EditPaymentDetailsModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const {
-    paymentMethod,
-    donationAmount,
-    shippingAddressSameAsHomeAddress,
-    shippingFullName,
-    shippingAddressLine1,
-    shippingAddressLine2,
-    shippingCity,
-    shippingProvince,
-    shippingCountry,
-    shippingPostalCode,
-    billingAddressSameAsHomeAddress,
-    billingFullName,
-    billingAddressLine1,
-    billingAddressLine2,
-    billingCity,
-    billingProvince,
-    billingCountry,
-    billingPostalCode,
-  } = paymentInformation;
-
   const handleSubmit = (values: { paymentInformation: PaymentInformationFormData }) => {
     // TODO: Backend errors
     onSave(values.paymentInformation);
@@ -68,28 +47,7 @@ export default function EditPaymentDetailsModal({
       >
         <ModalOverlay />
         <Formik
-          initialValues={{
-            paymentInformation: {
-              paymentMethod,
-              donationAmount,
-              shippingAddressSameAsHomeAddress,
-              shippingFullName,
-              shippingAddressLine1,
-              shippingAddressLine2,
-              shippingCity,
-              shippingProvince,
-              shippingCountry,
-              shippingPostalCode,
-              billingAddressSameAsHomeAddress,
-              billingFullName,
-              billingAddressLine1,
-              billingAddressLine2,
-              billingCity,
-              billingProvince,
-              billingCountry,
-              billingPostalCode,
-            },
-          }}
+          initialValues={{ paymentInformation }}
           validationSchema={editPaymentInformationSchema}
           onSubmit={handleSubmit}
         >

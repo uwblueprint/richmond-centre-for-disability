@@ -66,12 +66,16 @@ const Card: FC<Props> = props => {
     paymentMethod,
     processingFee,
     donationAmount,
+    shippingAddressSameAsHomeAddress,
+    shippingFullName,
     shippingAddressLine1,
     shippingAddressLine2,
     shippingCity,
     shippingProvince,
     shippingCountry,
     shippingPostalCode,
+    billingAddressSameAsHomeAddress,
+    billingFullName,
     billingAddressLine1,
     billingAddressLine2,
     billingCity,
@@ -89,7 +93,29 @@ const Card: FC<Props> = props => {
       isSubsection={isSubsection}
       editModal={
         !editDisabled && (
-          <EditPaymentDetailsModal paymentInformation={paymentInformation} onSave={handleSave}>
+          <EditPaymentDetailsModal
+            paymentInformation={{
+              paymentMethod,
+              donationAmount,
+              shippingAddressSameAsHomeAddress,
+              shippingFullName,
+              shippingAddressLine1,
+              shippingAddressLine2,
+              shippingCity,
+              shippingProvince,
+              shippingCountry,
+              shippingPostalCode,
+              billingAddressSameAsHomeAddress,
+              billingFullName,
+              billingAddressLine1,
+              billingAddressLine2,
+              billingCity,
+              billingProvince,
+              billingCountry,
+              billingPostalCode,
+            }}
+            onSave={handleSave}
+          >
             <Button color="primary" variant="ghost" textDecoration="underline">
               <Text textStyle="body-bold">Edit</Text>
             </Button>

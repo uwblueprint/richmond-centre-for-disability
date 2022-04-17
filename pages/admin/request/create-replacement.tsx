@@ -41,28 +41,7 @@ import SelectedPermitHolderCard from '@components/admin/requests/create/Selected
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
 import { Form, Formik } from 'formik';
 import { replacementFormSchema as replacementRequestFormSchema } from '@lib/applications/validation';
-
-/** Initial data for payment details form  */
-const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
-  paymentMethod: null,
-  donationAmount: '',
-  shippingAddressSameAsHomeAddress: false,
-  shippingFullName: '',
-  shippingAddressLine1: '',
-  shippingAddressLine2: '',
-  shippingCity: '',
-  shippingProvince: 'BC',
-  shippingCountry: 'Canada',
-  shippingPostalCode: '',
-  billingAddressSameAsHomeAddress: false,
-  billingFullName: '',
-  billingAddressLine1: '',
-  billingAddressLine2: '',
-  billingCity: '',
-  billingProvince: 'BC',
-  billingCountry: 'Canada',
-  billingPostalCode: '',
-};
+import { INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
 
 export default function CreateReplacement() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
