@@ -155,9 +155,6 @@ export default function CreateReplacement() {
     const validatedValues = await replacementRequestFormSchema.validate(values);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { type, receiveEmailUpdates, ...permitHolder } = values.permitHolder;
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { type, receiveEmailUpdates, ...permitHolder } = validatedValues.permitHolder;
 
     await submitReplacementApplication({
