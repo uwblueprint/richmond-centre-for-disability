@@ -14,7 +14,7 @@ export const paymentInformationSchema = object({
     .oneOf(Object.values(PaymentType))
     .required('Please select a payment method'),
   donationAmount: string()
-    .matches(/^([0-9]+\.?[0-9]{0,2}|\.[0-9]{1,2})$/, 'Please enter a valid amount')
+    .matches(/^([0-9]+\.?[0-9]{0,2}|\.[0-9]{1,2}|)$/, 'Please enter a valid amount')
     .nullable()
     .default(null),
   shippingAddressSameAsHomeAddress: bool().default(false),

@@ -65,30 +65,6 @@ export default function CreateReplacement() {
     postalCode: '',
   });
 
-  /** Payment information section */
-  const [paymentInformation, setPaymentInformation] = useState<
-    PaymentInformationFormData & { paymentMethod: PaymentType | null }
-  >({
-    paymentMethod: null,
-    donationAmount: '',
-    shippingAddressSameAsHomeAddress: false,
-    shippingFullName: '',
-    shippingAddressLine1: '',
-    shippingAddressLine2: null,
-    shippingCity: '',
-    shippingProvince: 'BC',
-    shippingCountry: '',
-    shippingPostalCode: '',
-    billingAddressSameAsHomeAddress: false,
-    billingFullName: '',
-    billingAddressLine1: '',
-    billingAddressLine2: null,
-    billingCity: '',
-    billingProvince: 'BC',
-    billingCountry: '',
-    billingPostalCode: '',
-  });
-
   const toast = useToast();
   const router = useRouter();
 

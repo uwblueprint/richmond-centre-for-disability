@@ -453,7 +453,6 @@ export default function CreateNew() {
           <Formik
             initialValues={{
               permitHolder: permitHolderInformation,
-              physicianAssessment,
               paymentInformation: INITIAL_PAYMENT_DETAILS,
               physicianAssessment: INITIAL_PHYSICIAN_ASSESSMENT,
             }}
