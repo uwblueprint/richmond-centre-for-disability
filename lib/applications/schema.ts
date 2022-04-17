@@ -37,6 +37,7 @@ export default gql`
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
+    shopifyOrderNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -139,6 +140,7 @@ export default gql`
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
+    shopifyOrderNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -218,6 +220,7 @@ export default gql`
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
+    shopifyOrderNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -278,6 +281,7 @@ export default gql`
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
+    shopifyOrderNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -446,6 +450,7 @@ export default gql`
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
+    shopifyOrderNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!

@@ -68,6 +68,11 @@ const textStyles = {
     fontWeight: 'normal',
     lineHeight: '150%',
   },
+  'caption-bold': {
+    fontSize: '16px',
+    fontWeight: 'bold',
+    lineHeight: '150%',
+  },
   'xsmall-medium': {
     fontSize: '14px',
     fontWeight: 'medium',
