@@ -153,52 +153,55 @@ const Requests: NextPage = () => {
   const [recordsCount, setRecordsCount] = useState(0);
 
   // Make query to applications resolver
-  useQuery<GetApplicationsResponse, GetApplicationsRequest>(GET_APPLICATIONS_QUERY, {
-    variables: {
-      filter: {
-        order: sortOrder,
-        permitType: permitTypeFilter || null,
-        requestType: requestTypeFilter || null,
-        status: statusFilter || null,
-        search: debouncedSearchFilter,
-        offset: pageNumber * PAGE_SIZE,
-        limit: PAGE_SIZE,
+  const { refetch } = useQuery<GetApplicationsResponse, GetApplicationsRequest>(
+    GET_APPLICATIONS_QUERY,
+    {
+      variables: {
+        filter: {
+          order: sortOrder,
+          permitType: permitTypeFilter || null,
+          requestType: requestTypeFilter || null,
+          status: statusFilter || null,
+          search: debouncedSearchFilter,
+          offset: pageNumber * PAGE_SIZE,
+          limit: PAGE_SIZE,
+        },
       },
-    },
-    notifyOnNetworkStatusChange: true,
-    onCompleted: ({ applications: { result, totalCount } }) => {
-      setRequestsData(
-        result.map(
-          ({
-            id,
-            firstName,
-            middleName,
-            lastName,
-            createdAt,
-            applicant,
-            processing: { status },
-            ...application
-          }) => ({
-            id,
-            name: {
-              id: applicant?.id || null,
+      onCompleted: ({ applications: { result, totalCount } }) => {
+        setRequestsData(
+          result.map(
+            ({
+              id,
               firstName,
               middleName,
               lastName,
-            },
-            dateReceived: createdAt,
-            status,
-            ...application,
-          })
-        )
-      );
-      setRecordsCount(totalCount);
-    },
-  });
+              createdAt,
+              applicant,
+              processing: { status },
+              ...application
+            }) => ({
+              id,
+              name: {
+                id: applicant?.id || null,
+                firstName,
+                middleName,
+                lastName,
+              },
+              dateReceived: createdAt,
+              status,
+              ...application,
+            })
+          )
+        );
+        setRecordsCount(totalCount);
+      },
+    }
+  );
 
   // Set page number to 0 after every filter or sort change
   useEffect(() => {
     setPageNumber(0);
+    refetch();
   }, [statusFilter, permitTypeFilter, requestTypeFilter, debouncedSearchFilter, sortOrder]);
 
   return (

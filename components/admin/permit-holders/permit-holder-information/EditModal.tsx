@@ -198,18 +198,6 @@ export default function EditUserInformationModal({
                       {'Example: 000-000-0000'}
                     </FormHelperText>
                   </FormControl>
-
-                  <FormControl isRequired>
-                    <FormLabel>{'Phone number'}</FormLabel>
-                    <Input
-                      value={phoneNumber}
-                      onChange={event => setPhoneNumber(event.target.value)}
-                      type="tel"
-                    />
-                    <FormHelperText color="text.secondary">
-                      {'Example: 000-000-0000'}
-                    </FormHelperText>
-                  </FormControl>
                 </Stack>
               </Box>
 
