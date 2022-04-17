@@ -187,7 +187,7 @@ export const INITIAL_ADDITIONAL_QUESTIONS: AdditionalInformationFormData = {
   otherRequiresWiderParkingSpaceReason: null,
 };
 
-// Initial data for initial payment details in application forms
+// Initial data for payment details in application forms
 export const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
   paymentMethod: null,
   donationAmount: '',
@@ -197,7 +197,7 @@ export const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
   shippingAddressLine2: '',
   shippingCity: '',
   shippingProvince: null,
-  shippingCountry: '',
+  shippingCountry: 'Canada',
   shippingPostalCode: '',
   billingAddressSameAsHomeAddress: false,
   billingFullName: '',
@@ -205,6 +205,6 @@ export const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
   billingAddressLine2: '',
   billingCity: '',
   billingProvince: null,
-  billingCountry: '',
+  billingCountry: 'Canada',
   billingPostalCode: '',
 };

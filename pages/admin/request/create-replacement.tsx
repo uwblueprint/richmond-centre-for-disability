@@ -40,9 +40,9 @@ import { useRouter } from 'next/router'; // Router
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import SelectedPermitHolderCard from '@components/admin/requests/create/SelectedPermitHolderCard';
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
-import { PaymentType } from '@lib/graphql/types';
 import { Form, Formik } from 'formik';
 import { replacementFormSchema as replacementRequestFormSchema } from '@lib/applications/validation';
+import { INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
 
 export default function CreateReplacement() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -63,30 +63,6 @@ export default function CreateReplacement() {
     addressLine2: null,
     city: '',
     postalCode: '',
-  });
-
-  /** Payment information section */
-  const [paymentInformation, setPaymentInformation] = useState<
-    PaymentInformationFormData & { paymentMethod: PaymentType | null }
-  >({
-    paymentMethod: null,
-    donationAmount: '',
-    shippingAddressSameAsHomeAddress: false,
-    shippingFullName: '',
-    shippingAddressLine1: '',
-    shippingAddressLine2: null,
-    shippingCity: '',
-    shippingProvince: 'BC',
-    shippingCountry: '',
-    shippingPostalCode: '',
-    billingAddressSameAsHomeAddress: false,
-    billingFullName: '',
-    billingAddressLine1: '',
-    billingAddressLine2: null,
-    billingCity: '',
-    billingProvince: 'BC',
-    billingCountry: '',
-    billingPostalCode: '',
   });
 
   const toast = useToast();
@@ -164,6 +140,7 @@ export default function CreateReplacement() {
   /** Handle replacement application submission */
   const handleSubmit = async (values: {
     permitHolder: PermitHolderFormData;
+    paymentInformation: PaymentInformationFormData;
     reasonForReplacement: ReasonForReplacementFormData;
   }) => {
     if (applicantId === null) {
@@ -177,11 +154,6 @@ export default function CreateReplacement() {
 
     const validatedValues = await replacementRequestFormSchema.validate(values);
 
-    if (!paymentInformation.paymentMethod) {
-      toast({ status: 'error', description: 'Missing payment method', isClosable: true });
-      return;
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { type, receiveEmailUpdates, ...permitHolder } = validatedValues.permitHolder;
 
@@ -191,8 +163,7 @@ export default function CreateReplacement() {
           applicantId,
           ...permitHolder,
           ...validatedValues.reasonForReplacement,
-          ...paymentInformation,
-          paymentMethod: paymentInformation.paymentMethod,
+          ...validatedValues.paymentInformation,
         },
       },
     });
@@ -250,6 +221,7 @@ export default function CreateReplacement() {
                 type: 'REPLACEMENT',
                 receiveEmailUpdates: false,
               },
+              paymentInformation: INITIAL_PAYMENT_DETAILS,
               reasonForReplacement: INITIAL_REASON_FOR_REPLACEMENT,
             }}
             validationSchema={replacementRequestFormSchema}
@@ -314,10 +286,7 @@ export default function CreateReplacement() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Payment, Shipping, and Billing Information`}
                     </Text>
-                    <PaymentDetailsForm
-                      paymentInformation={paymentInformation}
-                      onChange={setPaymentInformation}
-                    />
+                    <PaymentDetailsForm paymentInformation={values.paymentInformation} />
                   </Box>
                 </GridItem>
                 {/* Footer */}

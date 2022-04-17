@@ -14,6 +14,7 @@ import {
   UPDATE_PAYMENT_INFORMATION,
 } from '@tools/admin/requests/payment-information';
 import Address from '@components/admin/Address';
+import { paymentInformationSchema } from '@lib/applications/validation';
 
 type Props = {
   readonly applicationId: number;
@@ -53,13 +54,10 @@ const Card: FC<Props> = props => {
 
   /** Form save handler */
   const handleSave = async (data: PaymentInformationFormData) => {
-    if (!data.paymentMethod) {
-      // TODO: Improve error handling
-      return;
-    }
+    const validatedData = await paymentInformationSchema.validate(data);
 
     await updatePaymentInformation({
-      variables: { input: { id: applicationId, ...data, paymentMethod: data.paymentMethod } },
+      variables: { input: { id: applicationId, ...validatedData } },
     });
     refetch();
   };
@@ -68,12 +66,16 @@ const Card: FC<Props> = props => {
     paymentMethod,
     processingFee,
     donationAmount,
+    shippingAddressSameAsHomeAddress,
+    shippingFullName,
     shippingAddressLine1,
     shippingAddressLine2,
     shippingCity,
     shippingProvince,
     shippingCountry,
     shippingPostalCode,
+    billingAddressSameAsHomeAddress,
+    billingFullName,
     billingAddressLine1,
     billingAddressLine2,
     billingCity,
@@ -91,7 +93,29 @@ const Card: FC<Props> = props => {
       isSubsection={isSubsection}
       editModal={
         !editDisabled && (
-          <EditPaymentDetailsModal paymentInformation={paymentInformation} onSave={handleSave}>
+          <EditPaymentDetailsModal
+            paymentInformation={{
+              paymentMethod,
+              donationAmount,
+              shippingAddressSameAsHomeAddress,
+              shippingFullName,
+              shippingAddressLine1,
+              shippingAddressLine2,
+              shippingCity,
+              shippingProvince,
+              shippingCountry,
+              shippingPostalCode,
+              billingAddressSameAsHomeAddress,
+              billingFullName,
+              billingAddressLine1,
+              billingAddressLine2,
+              billingCity,
+              billingProvince,
+              billingCountry,
+              billingPostalCode,
+            }}
+            onSave={handleSave}
+          >
             <Button color="primary" variant="ghost" textDecoration="underline">
               <Text textStyle="body-bold">Edit</Text>
             </Button>

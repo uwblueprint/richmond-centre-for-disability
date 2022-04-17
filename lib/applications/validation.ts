@@ -3,8 +3,128 @@ import {
   requestPermitHolderInformationSchema,
 } from '@lib/applicants/validation';
 import { physicianAssessmentSchema } from '@lib/physicians/validation';
-import { ReasonForReplacement } from '@prisma/client';
-import { date, mixed, number, object, string } from 'yup';
+import { PaymentType, Province, ReasonForReplacement } from '@prisma/client';
+import { bool, date, mixed, number, object, string } from 'yup';
+
+/**
+ * Payment information form validation schema
+ */
+export const paymentInformationSchema = object({
+  paymentMethod: mixed<PaymentType>()
+    .oneOf(Object.values(PaymentType))
+    .required('Please select a payment method'),
+  donationAmount: string()
+    .matches(/^([0-9]+\.?[0-9]{0,2}|\.[0-9]{1,2}|)$/, 'Please enter a valid amount')
+    .nullable()
+    .default(null),
+  shippingAddressSameAsHomeAddress: bool().default(false),
+  shippingFullName: string()
+    .nullable()
+    .default(null)
+    .when('shippingAddressSameAsHomeAddress', {
+      is: false,
+      then: string()
+        .typeError('Please enter the recipient’s full name')
+        .required('Please enter the recipient’s full name'),
+    }),
+  shippingAddressLine1: string()
+    .nullable()
+    .default(null)
+    .when('shippingAddressSameAsHomeAddress', {
+      is: false,
+      then: string().typeError('Please enter an address').required('Please enter an address'),
+    }),
+  shippingAddressLine2: string().nullable().default(null),
+  shippingCity: string()
+    .nullable()
+    .default(null)
+    .when('shippingAddressSameAsHomeAddress', {
+      is: false,
+      then: string().typeError('Please enter a city name').required('Please enter a city name'),
+    }),
+  shippingProvince: mixed<Province>()
+    .nullable()
+    .default(null)
+    .when('shippingAddressSameAsHomeAddress', {
+      is: false,
+      then: mixed<Province>()
+        .oneOf(Object.values(Province))
+        .required('Please select a province/territory'),
+    }),
+  shippingCountry: string()
+    .nullable()
+    .default(null)
+    .when('shippingAddressSameAsHomeAddress', {
+      is: false,
+      then: string()
+        .typeError('Please enter a country/region')
+        .required('Please enter a country/region'),
+    }),
+  shippingPostalCode: string()
+    .nullable()
+    .default(null)
+    .when('shippingAddressSameAsHomeAddress', {
+      is: false,
+      then: string().typeError('Please enter a postal code').required('Please enter a postal code'),
+    }),
+  billingAddressSameAsHomeAddress: bool().default(false),
+  billingFullName: string()
+    .nullable()
+    .default(null)
+    .when('billingAddressSameAsHomeAddress', {
+      is: false,
+      then: string()
+        .typeError('Please enter the recipient’s full name')
+        .required('Please enter the recipient’s full name'),
+    }),
+  billingAddressLine1: string()
+    .nullable()
+    .default(null)
+    .when('billingAddressSameAsHomeAddress', {
+      is: false,
+      then: string().typeError('Please enter an address').required('Please enter an address'),
+    }),
+  billingAddressLine2: string().nullable().default(null),
+  billingCity: string()
+    .nullable()
+    .default(null)
+    .when('billingAddressSameAsHomeAddress', {
+      is: false,
+      then: string().typeError('Please enter a city name').required('Please enter a city name'),
+    }),
+  billingProvince: mixed<Province>()
+    .nullable()
+    .default(null)
+    .when('billingAddressSameAsHomeAddress', {
+      is: false,
+      then: mixed<Province>()
+        .oneOf(Object.values(Province))
+        .required('Please select a province/territory'),
+    }),
+  billingCountry: string()
+    .nullable()
+    .default(null)
+    .when('billingAddressSameAsHomeAddress', {
+      is: false,
+      then: string()
+        .typeError('Please select a country/region')
+        .required('Please select a country/region'),
+    }),
+  billingPostalCode: string()
+    .nullable()
+    .default(null)
+    .when('billingAddressSameAsHomeAddress', {
+      is: false,
+      then: string().typeError('Please enter a postal code').required('Please enter a postal code'),
+    }),
+});
+
+/**
+ * Validation schema for edit payment information form
+ */
+export const editPaymentInformationSchema = object({
+  paymentInformation: paymentInformationSchema,
+});
 
 /**
  * Reason for replacement form validation schema
@@ -76,6 +196,7 @@ export const editReasonForReplacementFormSchema = object({
 export const createNewRequestFormSchema = object({
   permitHolder: permitHolderInformationSchema,
   physicianAssessment: physicianAssessmentSchema,
+  paymentInformation: paymentInformationSchema,
 });
 
 /**
@@ -83,6 +204,7 @@ export const createNewRequestFormSchema = object({
  */
 export const renewalRequestFormSchema = object({
   permitHolder: requestPermitHolderInformationSchema,
+  paymentInformation: paymentInformationSchema,
 });
 
 /**
@@ -90,5 +212,6 @@ export const renewalRequestFormSchema = object({
  */
 export const replacementFormSchema = object({
   permitHolder: requestPermitHolderInformationSchema,
+  paymentInformation: paymentInformationSchema,
   reasonForReplacement: reasonForReplacementFormSchema,
 });

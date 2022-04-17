@@ -34,7 +34,6 @@ import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment'
 import { DoctorFormData } from '@tools/admin/requests/doctor-information';
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 import { RequestFlowPageState } from '@tools/admin/requests/types';
-import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
 import { NewApplicationPermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
 import {
@@ -56,6 +55,7 @@ import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { uploadToS3 } from '@lib/utils/upload-to-s3';
 import { Form, Formik } from 'formik';
 import { createNewRequestFormSchema } from '@lib/applications/validation';
+import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -83,9 +83,6 @@ export default function CreateNew() {
   const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>(
     INITIAL_ADDITIONAL_QUESTIONS
   );
-  // Payment information
-  const [paymentDetails, setPaymentDetails] =
-    useState<PaymentInformationFormData>(INITIAL_PAYMENT_DETAILS);
 
   // Toast message
   const toast = useToast();
@@ -102,7 +99,6 @@ export default function CreateNew() {
     setGuardianInformation(INITIAL_GUARDIAN_INFORMATION);
     setGuardianPOAFile(null);
     setAdditionalQuestions(INITIAL_ADDITIONAL_QUESTIONS);
-    setPaymentDetails(INITIAL_PAYMENT_DETAILS);
   };
 
   /**
@@ -247,6 +243,7 @@ export default function CreateNew() {
   const handleSubmit = async (values: {
     permitHolder: NewApplicationPermitHolderInformation;
     physicianAssessment: PhysicianAssessment;
+    paymentInformation: PaymentInformationFormData;
   }) => {
     let poaFormS3ObjectKey = '';
     if (guardianPOAFile) {
@@ -288,11 +285,6 @@ export default function CreateNew() {
       return;
     }
 
-    if (!paymentDetails.paymentMethod) {
-      toast({ status: 'error', description: 'Missing payment method', isClosable: true });
-      return;
-    }
-
     await submitNewApplication({
       variables: {
         input: {
@@ -326,8 +318,7 @@ export default function CreateNew() {
           usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
           requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
 
-          ...paymentDetails,
-          paymentMethod: paymentDetails.paymentMethod,
+          ...validatedValues.paymentInformation,
 
           applicantId,
         },
@@ -462,6 +453,7 @@ export default function CreateNew() {
           <Formik
             initialValues={{
               permitHolder: permitHolderInformation,
+              paymentInformation: INITIAL_PAYMENT_DETAILS,
               physicianAssessment: INITIAL_PHYSICIAN_ASSESSMENT,
             }}
             validationSchema={createNewRequestFormSchema}
@@ -565,10 +557,7 @@ export default function CreateNew() {
                     <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
                       {`Payment, Shipping and Billing Information`}
                     </Text>
-                    <PaymentDetailsForm
-                      paymentInformation={paymentDetails}
-                      onChange={setPaymentDetails}
-                    />
+                    <PaymentDetailsForm paymentInformation={values.paymentInformation} />
                   </Box>
                 </VStack>
                 <Box

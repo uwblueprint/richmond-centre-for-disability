@@ -33,6 +33,7 @@ import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-inf
 import { Form, Formik } from 'formik';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { renewalRequestFormSchema } from '@lib/applications/validation';
+import { INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -78,28 +79,6 @@ export default function CreateRenewal() {
       otherRequiresWiderParkingSpaceReason: null,
     }
   );
-
-  /** Payment information section */
-  const [paymentInformation, setPaymentInformation] = useState<PaymentInformationFormData>({
-    paymentMethod: null,
-    donationAmount: '',
-    shippingAddressSameAsHomeAddress: false,
-    shippingFullName: '',
-    shippingAddressLine1: '',
-    shippingAddressLine2: '',
-    shippingCity: '',
-    shippingProvince: 'BC',
-    shippingCountry: '',
-    shippingPostalCode: '',
-    billingAddressSameAsHomeAddress: false,
-    billingFullName: '',
-    billingAddressLine1: '',
-    billingAddressLine2: '',
-    billingCity: '',
-    billingProvince: 'BC',
-    billingCountry: '',
-    billingPostalCode: '',
-  });
 
   // Toast message
   const toast = useToast();
@@ -198,8 +177,10 @@ export default function CreateRenewal() {
   /**
    * Handle renewal request submission
    */
-  const handleSubmit = async (values: { permitHolder: PermitHolderFormData }) => {
-    // event.preventDefault();
+  const handleSubmit = async (values: {
+    permitHolder: PermitHolderFormData;
+    paymentInformation: PaymentInformationFormData;
+  }) => {
     if (!applicantId) {
       toast({
         status: 'error',
@@ -209,13 +190,10 @@ export default function CreateRenewal() {
       return;
     }
 
+    const validatedValues = await renewalRequestFormSchema.validate(values);
+
     if (!doctorInformation.mspNumber) {
       toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
-      return;
-    }
-
-    if (!paymentInformation.paymentMethod) {
-      toast({ status: 'error', description: 'Missing payment method', isClosable: true });
       return;
     }
 
@@ -238,7 +216,7 @@ export default function CreateRenewal() {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { type, ...permitHolder } = values.permitHolder;
+    const { type, ...permitHolder } = validatedValues.permitHolder;
 
     await submitRenewalApplication({
       variables: {
@@ -256,8 +234,8 @@ export default function CreateRenewal() {
           ...additionalInformation,
           usesAccessibleConvertedVan: additionalInformation.usesAccessibleConvertedVan,
           requiresWiderParkingSpace: additionalInformation.requiresWiderParkingSpace,
-          ...paymentInformation,
-          paymentMethod: paymentInformation.paymentMethod,
+          ...validatedValues.paymentInformation,
+
           // TODO: Replace with dynamic values
           paidThroughShopify: false,
           shopifyPaymentStatus: null,
@@ -318,6 +296,7 @@ export default function CreateRenewal() {
                 ...permitHolderInformation,
                 type: 'RENEWAL',
               },
+              paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
             validationSchema={renewalRequestFormSchema}
             onSubmit={handleSubmit}
@@ -400,10 +379,7 @@ export default function CreateRenewal() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Payment, Shipping, and Billing Information`}
                     </Text>
-                    <PaymentDetailsForm
-                      paymentInformation={paymentInformation}
-                      onChange={setPaymentInformation}
-                    />
+                    <PaymentDetailsForm paymentInformation={values.paymentInformation} />
                   </Box>
                 </GridItem>
 
