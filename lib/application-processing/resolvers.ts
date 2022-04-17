@@ -617,7 +617,7 @@ export const updateApplicationProcessingAssignAppNumber: Resolver<
             appNumber,
             appNumberUpdatedAt: new Date(),
             appNumberEmployee:
-              appNumber === null ? { disconnect: true } : { connect: { id: employeeId } },
+              appNumber !== null ? { connect: { id: employeeId } } : { disconnect: true },
           },
         },
       },
@@ -962,9 +962,9 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
             documentsS3ObjectKey,
             documentsUrlUpdatedAt: new Date(),
             documentsUrlEmployee:
-              documentsS3ObjectKey === null
-                ? { disconnect: true }
-                : { connect: { id: employeeId } },
+              documentsS3ObjectKey !== null
+                ? { connect: { id: employeeId } }
+                : { disconnect: true },
           },
         },
       },
