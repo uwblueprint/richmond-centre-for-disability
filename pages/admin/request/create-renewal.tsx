@@ -198,7 +198,7 @@ export default function CreateRenewal() {
     const additionalInformation = validatedValues.additionalInformation;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { type, ...permitHolder } = values.permitHolder;
+    const { type, ...permitHolder } = validatedValues.permitHolder;
 
     await submitRenewalApplication({
       variables: {
