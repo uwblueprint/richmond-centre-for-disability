@@ -74,59 +74,65 @@ const PermitHolders: NextPage = () => {
   // This will avoid firing a query for each key the user presses
   const debouncedSearchFilter = useDebounce<string>(searchFilter, 500);
 
-  // Set page number to 0 after every filter or sort change
-  useEffect(() => {
-    setPageNumber(0);
-  }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, dateRange]);
-
   // GQL Query
-  useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(GET_PERMIT_HOLDERS_QUERY, {
-    variables: {
-      filter: {
-        userStatus: userStatusFilter,
-        permitStatus: permitStatusFilter,
-        expiryDateRangeFrom: dateRange.from?.getTime(),
-        expiryDateRangeTo: dateRange.to?.getTime(),
-        search: debouncedSearchFilter,
-        offset: pageNumber * PAGE_SIZE,
-        limit: PAGE_SIZE,
-        order: sortOrder,
+  const { refetch } = useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(
+    GET_PERMIT_HOLDERS_QUERY,
+    {
+      variables: {
+        filter: {
+          userStatus: userStatusFilter,
+          permitStatus: permitStatusFilter,
+          expiryDateRangeFrom: dateRange.from?.getTime(),
+          expiryDateRangeTo: dateRange.to?.getTime(),
+          search: debouncedSearchFilter,
+          offset: pageNumber * PAGE_SIZE,
+          limit: PAGE_SIZE,
+          order: sortOrder,
+        },
       },
-    },
-    onCompleted: ({ applicants: { result, totalCount } }) => {
-      setPermitHolderData(
-        result.map(
-          ({
-            id,
-            firstName,
-            middleName,
-            lastName,
-            addressLine1,
-            addressLine2,
-            city,
-            postalCode,
-            ...applicant
-          }) => ({
-            id,
-            name: {
+      // ! Temporary fix to force permit holder row updates when navigating (skip cache)
+      fetchPolicy: 'network-only',
+      onCompleted: ({ applicants: { result, totalCount } }) => {
+        setPermitHolderData(
+          result.map(
+            ({
               id,
               firstName,
-              lastName,
               middleName,
-            },
-            homeAddress: {
+              lastName,
               addressLine1,
               addressLine2,
               city,
               postalCode,
-            },
-            ...applicant,
-          })
-        )
-      );
-      setRecordsCount(totalCount);
-    },
-  });
+              ...applicant
+            }) => ({
+              id,
+              name: {
+                id,
+                firstName,
+                lastName,
+                middleName,
+              },
+              homeAddress: {
+                addressLine1,
+                addressLine2,
+                city,
+                postalCode,
+              },
+              ...applicant,
+            })
+          )
+        );
+        setRecordsCount(totalCount);
+      },
+    }
+  );
+
+  // Set page number to 0 after every filter or sort change
+  useEffect(() => {
+    setPageNumber(0);
+    refetch();
+  }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, dateRange]);
 
   // Set Permit Holder Inactive/Active modal state
   const {
