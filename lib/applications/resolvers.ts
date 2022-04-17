@@ -931,7 +931,10 @@ export const updateApplicationPaymentInformation: Resolver<
   const { input } = args;
   const { id, donationAmount, shippingPostalCode, billingPostalCode, ...data } = input;
 
-  const application = await prisma.application.findUnique({ where: { id } });
+  const application = await prisma.application.findUnique({
+    where: { id },
+    select: { paidThroughShopify: true },
+  });
   if (!application) {
     throw new ApolloError('Application does not exist');
   }
