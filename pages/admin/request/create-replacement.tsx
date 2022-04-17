@@ -34,6 +34,7 @@ import {
   CREATE_REPLACEMENT_APPLICATION_MUTATION,
   CreateReplacementApplicationRequest,
   CreateReplacementApplicationResponse,
+  INITIAL_REASON_FOR_REPLACEMENT,
 } from '@tools/admin/requests/create-replacement';
 import { useRouter } from 'next/router'; // Router
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
@@ -64,15 +65,28 @@ export default function CreateReplacement() {
     postalCode: '',
   });
 
-  /** Reason for replacement section */
-  const [reasonForReplacement, setReasonForReplacement] = useState<ReasonForReplacementFormData>({
-    reason: null,
-    lostTimestamp: null,
-    lostLocation: null,
-    stolenJurisdiction: null,
-    stolenPoliceOfficerName: null,
-    stolenPoliceFileNumber: null,
-    eventDescription: null,
+  /** Payment information section */
+  const [paymentInformation, setPaymentInformation] = useState<
+    PaymentInformationFormData & { paymentMethod: PaymentType | null }
+  >({
+    paymentMethod: null,
+    donationAmount: '',
+    shippingAddressSameAsHomeAddress: false,
+    shippingFullName: '',
+    shippingAddressLine1: '',
+    shippingAddressLine2: null,
+    shippingCity: '',
+    shippingProvince: 'BC',
+    shippingCountry: '',
+    shippingPostalCode: '',
+    billingAddressSameAsHomeAddress: false,
+    billingFullName: '',
+    billingAddressLine1: '',
+    billingAddressLine2: null,
+    billingCity: '',
+    billingProvince: 'BC',
+    billingCountry: '',
+    billingPostalCode: '',
   });
 
   const toast = useToast();
@@ -151,6 +165,7 @@ export default function CreateReplacement() {
   const handleSubmit = async (values: {
     permitHolder: PermitHolderFormData;
     paymentInformation: PaymentInformationFormData;
+    reasonForReplacement: ReasonForReplacementFormData;
   }) => {
     if (applicantId === null) {
       toast({
@@ -163,11 +178,6 @@ export default function CreateReplacement() {
 
     const validatedValues = await replacementRequestFormSchema.validate(values);
 
-    if (!reasonForReplacement.reason) {
-      toast({ status: 'error', description: 'Missing reason for replacement', isClosable: true });
-      return;
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { type, receiveEmailUpdates, ...permitHolder } = validatedValues.permitHolder;
 
@@ -176,8 +186,7 @@ export default function CreateReplacement() {
         input: {
           applicantId,
           ...permitHolder,
-          ...reasonForReplacement,
-          reason: reasonForReplacement.reason,
+          ...validatedValues.reasonForReplacement,
           ...validatedValues.paymentInformation,
         },
       },
@@ -237,6 +246,7 @@ export default function CreateReplacement() {
                 receiveEmailUpdates: false,
               },
               paymentInformation: INITIAL_PAYMENT_DETAILS,
+              reasonForReplacement: INITIAL_REASON_FOR_REPLACEMENT,
             }}
             validationSchema={replacementRequestFormSchema}
             onSubmit={handleSubmit}
@@ -282,10 +292,7 @@ export default function CreateReplacement() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Reason for Replacement`}
                     </Text>
-                    <ReasonForReplacementForm
-                      reasonForReplacement={reasonForReplacement}
-                      onChange={setReasonForReplacement}
-                    />
+                    <ReasonForReplacementForm reasonForReplacement={values.reasonForReplacement} />
                   </Box>
                 </GridItem>
                 {/* Payment Details Form */}

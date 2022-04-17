@@ -1,17 +1,8 @@
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  Text,
-  Stack,
-  FormHelperText,
-  Box,
-  Divider,
-  Checkbox,
-} from '@chakra-ui/react'; // Chakra UI
+import { Text, Stack, FormHelperText, Box, Divider, Checkbox } from '@chakra-ui/react'; // Chakra UI
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 import { ChangeEventHandler } from 'react';
 import PoaFormUploadField from '@components/admin/requests/guardian-information/PoaFormUploadField';
+import TextField from '@components/form/TextField';
 
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
@@ -56,43 +47,21 @@ export default function GuardianInformationForm({
         {!guardianInformation.omitGuardianPoa && (
           <>
             <Stack direction="row" spacing="20px" paddingTop="24px">
-              <FormControl isRequired>
-                <FormLabel>{'First name'}</FormLabel>
-                <Input value={guardianInformation.firstName} onChange={handleChange('firstName')} />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>{'Middle name'}</FormLabel>
-                <Input
-                  value={guardianInformation.middleName || ''}
-                  onChange={handleChange('middleName')}
-                />
-              </FormControl>
-
-              <FormControl isRequired>
-                <FormLabel>{'Last name'}</FormLabel>
-                <Input value={guardianInformation.lastName} onChange={handleChange('lastName')} />
-              </FormControl>
+              <TextField name="firstName" label="First Name" required={true} />
+              <TextField name="middleName" label="Middle Name" />
+              <TextField name="lastName" label="Last Name" required={true} />
             </Stack>
 
             <Stack direction="row" spacing="20px" paddingTop="20px">
-              <FormControl isRequired>
-                <FormLabel>{'Phone number'}</FormLabel>
-                <Input
-                  value={guardianInformation.phone}
-                  type="tel"
-                  onChange={handleChange('phone')}
-                />
+              <TextField name="phoneNumber" label="Phone Number" required={true}>
                 <FormHelperText color="text.secondary">{'Example: 000-000-0000'}</FormHelperText>
-              </FormControl>
+              </TextField>
 
-              <FormControl isRequired>
-                <FormLabel>{'Relationship to applicant'}</FormLabel>
-                <Input
-                  value={guardianInformation.relationship}
-                  onChange={handleChange('relationship')}
-                />
-              </FormControl>
+              <TextField
+                name="relationshipToApplicant"
+                label="Relationship to Applicant"
+                required={true}
+              />
             </Stack>
           </>
         )}
@@ -108,48 +77,23 @@ export default function GuardianInformationForm({
             <Text as="h3" textStyle="heading" paddingBottom="24px">
               {'Address '}
             </Text>
-
-            <FormControl isRequired paddingBottom="24px">
-              <FormLabel>{'Address line 1'}</FormLabel>
-              <Input
-                value={guardianInformation.addressLine1}
-                onChange={handleChange('addressLine1')}
-              />
+            <TextField name="addressLine1" label="Address Line 1" required={true}>
               <FormHelperText color="text.secondary">
                 {'Street Address, P.O. Box, Company Name, c/o'}
               </FormHelperText>
-            </FormControl>
-
-            <FormControl paddingBottom="24px">
-              <FormLabel>
-                {'Address line 2 '}
-                <Box as="span" textStyle="caption" fontSize="sm">
-                  {'(optional)'}
-                </Box>
-              </FormLabel>
-              <Input
-                value={guardianInformation.addressLine2 || ''}
-                onChange={handleChange('addressLine2')}
-              />
+            </TextField>
+            <TextField name="addressLine2" label="Address Line 2">
+              {/* TODO: add optional prop for (optional) in header */}
               <FormHelperText color="text.secondary">
                 {'Apartment, suite, unit, building, floor, etc'}
               </FormHelperText>
-            </FormControl>
+            </TextField>
 
             <Stack direction="row" spacing="20px">
-              <FormControl isRequired>
-                <FormLabel>{'City'}</FormLabel>
-                <Input value={guardianInformation.city} onChange={handleChange('city')} />
-              </FormControl>
-
-              <FormControl isRequired>
-                <FormLabel>{'Postal code'}</FormLabel>
-                <Input
-                  value={guardianInformation.postalCode}
-                  onChange={handleChange('postalCode')}
-                />
-                <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
-              </FormControl>
+              <TextField name="city" label="City" required={true} />
+              <TextField name="postalCode" label="Postal Code" required={true}>
+                <FormHelperText color="text.secondary">{'Example: X0X 0X0'}</FormHelperText>
+              </TextField>
             </Stack>
 
             <PoaFormUploadField file={file} onUploadFile={onUploadFile} />
