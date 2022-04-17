@@ -1,5 +1,15 @@
 import { useQuery, useMutation } from '@apollo/client';
-import { Divider, VStack, Button, Text, useToast, Link, Tooltip } from '@chakra-ui/react'; // Chakra UI
+import {
+  Divider,
+  VStack,
+  Button,
+  Text,
+  useToast,
+  Link,
+  Tooltip,
+  HStack,
+  Switch,
+} from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import AssignNumberModal from '@components/admin/requests/processing/AssignNumberModal'; // AssignNumber Modal component
 import ProcessingTaskStep from '@components/admin/requests/processing/TaskStep'; // Processing Task Step
@@ -32,6 +42,8 @@ import {
 import ReviewInformationStep from '@components/admin/requests/processing/ReviewInformationStep';
 import { clientUploadToS3 } from '@lib/utils/s3-utils';
 import TaskCardUploadStep from '@components/admin/requests/processing/TaskCardUploadStep';
+import { useMemo, useState } from 'react';
+import { formatFullName } from '@lib/utils/format';
 
 type ProcessingTasksCardProps = {
   readonly applicationId: number;
@@ -49,10 +61,12 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     variables: { id: applicationId },
   });
 
+  const [showTaskLog, setShowTaskLog] = useState(false);
+
   const [assignAppNumber] = useMutation<AssignAppNumberResponse, AssignAppNumberRequest>(
     ASSIGN_APP_NUMBER_MUTATION
   );
-  const handleAssignAppNumber = async (appNumber: number) => {
+  const handleAssignAppNumber = async (appNumber: number | null) => {
     await assignAppNumber({ variables: { input: { applicationId, appNumber } } });
     refetch();
   };
@@ -130,6 +144,24 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
+  /** Processing tasks header */
+  const _header = useMemo(
+    () => (
+      <HStack width="100%" justify="space-between">
+        <Text as="h5" textStyle="display-small-semibold">
+          Processing Tasks
+        </Text>
+        <HStack align="flex-start">
+          <Text as="p" textStyle="xsmall">
+            Show task log
+          </Text>
+          <Switch isChecked={showTaskLog} onChange={e => setShowTaskLog(e.target.checked)} />
+        </HStack>
+      </HStack>
+    ),
+    [showTaskLog, setShowTaskLog]
+  );
+
   if (!data?.application.processing) {
     return null;
   }
@@ -138,32 +170,53 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     application: {
       processing: {
         appNumber,
+        appNumberEmployee,
+        appNumberUpdatedAt,
         appHolepunched,
+        appHolepunchedEmployee,
+        appHolepunchedUpdatedAt,
         walletCardCreated,
+        walletCardCreatedEmployee,
+        walletCardCreatedUpdatedAt,
         invoice,
         documentsUrl,
+        documentsUrlEmployee,
+        documentsUrlUpdatedAt,
         appMailed,
+        appMailedEmployee,
+        appMailedUpdatedAt,
         reviewRequestCompleted,
+        reviewRequestCompletedEmployee,
+        reviewRequestCompletedUpdatedAt,
       },
     },
   } = data;
 
   return (
-    <PermitHolderInfoCard colSpan={7} header={`Processing Tasks`}>
-      <Divider mt="20px" />
+    <PermitHolderInfoCard colSpan={7} header={_header}>
+      <Divider mt="8px" />
       <VStack marginTop={5} spacing={10} alignItems="left" width="100%">
         {/* Task 1: Assign new APP number: Assign number (MODAL) */}
         <ProcessingTaskStep
           id={1}
           label={`Assign new APP number${appNumber === null ? '' : `: ${appNumber}`}`}
           isCompleted={appNumber !== null}
+          showLog={showTaskLog}
+          log={
+            showTaskLog && appNumberEmployee
+              ? {
+                  name: formatFullName(appNumberEmployee.firstName, appNumberEmployee.lastName),
+                  date: appNumberUpdatedAt,
+                }
+              : null
+          }
         >
-          <AssignNumberModal
-            modalTitle="Assign New APP Number"
-            fieldName="New APP number"
-            onAssign={handleAssignAppNumber}
-          >
-            {appNumber === null && !reviewRequestCompleted ? (
+          {appNumber === null && !reviewRequestCompleted ? (
+            <AssignNumberModal
+              modalTitle="Assign New APP Number"
+              fieldName="New APP number"
+              onAssign={handleAssignAppNumber}
+            >
               <Button
                 marginLeft="auto"
                 height="35px"
@@ -173,22 +226,38 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               >
                 <Text textStyle="xsmall-medium">Assign number</Text>
               </Button>
-            ) : appNumber !== null && !reviewRequestCompleted ? (
-              <Button variant="ghost" textDecoration="underline black">
-                <Text textStyle="caption" color="black">
-                  Edit number
-                </Text>
-              </Button>
-            ) : null}
-          </AssignNumberModal>
+            </AssignNumberModal>
+          ) : appNumber !== null && !reviewRequestCompleted ? (
+            <Button
+              variant="ghost"
+              textDecoration="underline black"
+              onClick={() => handleAssignAppNumber(null)}
+            >
+              <Text textStyle="caption" color="black">
+                Undo
+              </Text>
+            </Button>
+          ) : null}
         </ProcessingTaskStep>
 
         {/* Task 2: Hole punch parking permit: Mark as complete (CHECK) */}
         <ProcessingTaskStep
           id={2}
           label="Hole punch parking permit"
-          description="Gender, Year and Month"
+          description="Gender, Expiry Year and Month"
           isCompleted={appHolepunched}
+          showLog={showTaskLog}
+          log={
+            showTaskLog && appHolepunchedEmployee
+              ? {
+                  name: formatFullName(
+                    appHolepunchedEmployee.firstName,
+                    appHolepunchedEmployee.lastName
+                  ),
+                  date: appHolepunchedUpdatedAt,
+                }
+              : null
+          }
         >
           {appHolepunched && !reviewRequestCompleted ? (
             <Button
@@ -218,8 +287,20 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         <ProcessingTaskStep
           id={3}
           label="Create a new wallet card"
-          description="Include permit number, expiry date, full name, and birth month"
+          description="Include permit number, expiry date, full name and birth month"
           isCompleted={walletCardCreated}
+          showLog={showTaskLog}
+          log={
+            showTaskLog && walletCardCreatedEmployee
+              ? {
+                  name: formatFullName(
+                    walletCardCreatedEmployee.firstName,
+                    walletCardCreatedEmployee.lastName
+                  ),
+                  date: walletCardCreatedUpdatedAt,
+                }
+              : null
+          }
         >
           {walletCardCreated && !reviewRequestCompleted ? (
             <Button
@@ -251,6 +332,18 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           label={'Review request information'}
           description="Editing will be disabled upon completion of this step"
           isCompleted={reviewRequestCompleted}
+          showLog={showTaskLog}
+          log={
+            showTaskLog && reviewRequestCompletedEmployee
+              ? {
+                  name: formatFullName(
+                    reviewRequestCompletedEmployee.firstName,
+                    reviewRequestCompletedEmployee.lastName
+                  ),
+                  date: reviewRequestCompletedUpdatedAt,
+                }
+              : null
+          }
         >
           <ReviewInformationStep
             isCompleted={reviewRequestCompleted}
@@ -266,9 +359,18 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         {/* Task 5: Generate Invoice */}
         <ProcessingTaskStep
           id={5}
-          label="Generate Invoice"
+          label="Generate invoice"
           description="Invoice number will be automatically assigned"
           isCompleted={invoice !== null}
+          showLog={showTaskLog}
+          log={
+            showTaskLog && invoice
+              ? {
+                  name: formatFullName(invoice.employee.firstName, invoice.employee.lastName),
+                  date: invoice.updatedAt,
+                }
+              : null
+          }
         >
           {invoice === null ? (
             <Button
@@ -313,9 +415,21 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
         <ProcessingTaskStep
           id={6}
-          label="Upload document"
+          label="Upload documents"
           description="Scan all documents and upload as one PDF"
           isCompleted={documentsUrl !== null}
+          showLog={showTaskLog}
+          log={
+            showTaskLog && documentsUrlEmployee
+              ? {
+                  name: formatFullName(
+                    documentsUrlEmployee.firstName,
+                    documentsUrlEmployee.lastName
+                  ),
+                  date: documentsUrlUpdatedAt,
+                }
+              : null
+          }
         >
           <TaskCardUploadStep
             isDisabled={invoice === null || uploadDocumentsLoading}
@@ -331,6 +445,15 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
           label="Mail out"
           description="Include returning envelope and previous permit number"
           isCompleted={appMailed}
+          showLog={showTaskLog}
+          log={
+            showTaskLog && appMailedEmployee
+              ? {
+                  name: formatFullName(appMailedEmployee.firstName, appMailedEmployee.lastName),
+                  date: appMailedUpdatedAt,
+                }
+              : null
+          }
         >
           {appMailed ? (
             <Button

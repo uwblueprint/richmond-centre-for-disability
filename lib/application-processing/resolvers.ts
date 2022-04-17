@@ -616,7 +616,8 @@ export const updateApplicationProcessingAssignAppNumber: Resolver<
           update: {
             appNumber,
             appNumberUpdatedAt: new Date(),
-            appNumberEmployee: { connect: { id: employeeId } },
+            appNumberEmployee:
+              appNumber !== null ? { connect: { id: employeeId } } : { disconnect: true },
           },
         },
       },
@@ -674,7 +675,9 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
           update: {
             appHolepunched,
             appHolepunchedUpdatedAt: new Date(),
-            appHolepunchedEmployee: { connect: { id: employeeId } },
+            appHolepunchedEmployee: appHolepunched
+              ? { connect: { id: employeeId } }
+              : { disconnect: true },
           },
         },
       },
@@ -732,7 +735,9 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
           update: {
             walletCardCreated,
             walletCardCreatedUpdatedAt: new Date(),
-            walletCardCreatedEmployee: { connect: { id: employeeId } },
+            walletCardCreatedEmployee: walletCardCreated
+              ? { connect: { id: employeeId } }
+              : { disconnect: true },
           },
         },
       },
@@ -799,11 +804,9 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
               : { disconnect: true },
             reviewRequestCompletedUpdatedAt: new Date(),
             // Invoice generation and document upload steps should be reset
-            // TODO: Integrate with invoice generation
             applicationInvoice: {
               disconnect: true,
             },
-            // TODO: Integrate with document upload
             documentsS3ObjectKey: null,
             documentsUrlEmployee: {
               disconnect: true,
@@ -958,7 +961,10 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
           update: {
             documentsS3ObjectKey,
             documentsUrlUpdatedAt: new Date(),
-            documentsUrlEmployee: { connect: { id: employeeId } },
+            documentsUrlEmployee:
+              documentsS3ObjectKey !== null
+                ? { connect: { id: employeeId } }
+                : { disconnect: true },
           },
         },
       },
@@ -1002,7 +1008,7 @@ export const updateApplicationProcessingMailOut: Resolver<
           update: {
             appMailed,
             appMailedUpdatedAt: new Date(),
-            appMailedEmployee: { connect: { id: employeeId } },
+            appMailedEmployee: appMailed ? { connect: { id: employeeId } } : { disconnect: true },
           },
         },
       },

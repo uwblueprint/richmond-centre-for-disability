@@ -54,9 +54,10 @@ export const formatDateYYYYMMDD = (d: Date): string => {
 /**
  * Format date to be in written in the following format: Sep 11 2021, 03:07 pm
  * @param {Date} date date to be formatted
+ * @param {boolean} omitTime whether to omit time from date (eg. Sep 11 2021)
  * @returns {string} formatted verbose date
  */
-export const formatDateVerbose = (date: Date): string => {
+export const formatDateVerbose = (date: Date, omitTime = false): string => {
   const localeDateString = new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -66,10 +67,11 @@ export const formatDateVerbose = (date: Date): string => {
   });
 
   // Removes first comma and writes am/pm in lowercase
-  const formattedDate =
-    localeDateString.replace(',', '').substring(0, localeDateString.length - 3) +
-    localeDateString[localeDateString.length - 2].toLowerCase() +
-    localeDateString[localeDateString.length - 1].toLowerCase();
+  const formattedDate = omitTime
+    ? localeDateString.replace(',', '').substring(0, localeDateString.length - 11)
+    : localeDateString.replace(',', '').substring(0, localeDateString.length - 3) +
+      localeDateString[localeDateString.length - 2].toLowerCase() +
+      localeDateString[localeDateString.length - 1].toLowerCase();
 
   return formattedDate;
 };

@@ -49,7 +49,16 @@ export const applicationApplicantResolver: FieldResolver<
  */
 export const applicationProcessingResolver: FieldResolver<
   Application,
-  Omit<ApplicationProcessing, 'invoice'>
+  Omit<
+    ApplicationProcessing,
+    | 'invoice'
+    | 'appNumberEmployee'
+    | 'appHolepunchedEmployee'
+    | 'walletCardCreatedEmployee'
+    | 'reviewRequestCompletedEmployee'
+    | 'documentsUrlEmployee'
+    | 'appMailedEmployee'
+  >
 > = async (parent, _args, { prisma }) => {
   const applicationProcessing = await prisma.application
     .findUnique({ where: { id: parent.id } })
@@ -59,11 +68,6 @@ export const applicationProcessingResolver: FieldResolver<
     return null;
   }
 
-  const applicationProcessingResult: Omit<ApplicationProcessing, 'invoice'> = {
-    ...applicationProcessing,
-    documentsUrl: null,
-  };
-
   if (!process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) {
     throw new ApolloError('Application document link duration not defined');
   }
@@ -72,14 +76,17 @@ export const applicationProcessingResolver: FieldResolver<
   if (applicationProcessing.documentsS3ObjectKey) {
     try {
       const durationSeconds = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) * 60 * 60;
-      applicationProcessingResult.documentsUrl = getSignedUrlForS3(
-        applicationProcessing.documentsS3ObjectKey,
-        durationSeconds
-      );
+      return {
+        ...applicationProcessing,
+        documentsUrl: getSignedUrlForS3(
+          applicationProcessing.documentsS3ObjectKey,
+          durationSeconds
+        ),
+      };
     } catch (e) {
       throw new ApolloError(`Error generating AWS URL for application documents: ${e}`);
     }
   }
 
-  return applicationProcessingResult;
+  return { ...applicationProcessing, documentsUrl: null };
 };
