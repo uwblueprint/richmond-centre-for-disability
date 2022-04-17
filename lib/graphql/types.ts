@@ -90,6 +90,7 @@ export type Application = {
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
+  shopifyOrderNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];
@@ -341,6 +342,7 @@ export type CreateRenewalApplicationInput = {
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
+  shopifyOrderNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;
@@ -764,6 +766,7 @@ export type NewApplication = Application & {
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
+  shopifyOrderNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];
@@ -977,6 +980,7 @@ export type RenewalApplication = Application & {
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
+  shopifyOrderNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];
@@ -1021,6 +1025,7 @@ export type ReplacementApplication = Application & {
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
+  shopifyOrderNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];

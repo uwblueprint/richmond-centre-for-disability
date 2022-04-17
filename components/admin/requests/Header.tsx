@@ -8,12 +8,14 @@ import {
   MenuItem,
   MenuButton,
   Button,
+  Link,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon, ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI icon
-import Link from 'next/link'; // Link
+import NextLink from 'next/link'; // Link
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Request status badge
 import ApproveRequestModal from '@components/admin/requests/processing/ApproveRequestModal'; // Approve button + modal
 import RejectRequestModal from '@components/admin/requests/processing/RejectRequestModal'; // Reject button + modal
+import ShopifyBadge from '@components/admin/ShopifyBadge';
 import { ApplicationStatus, ApplicationType } from '@lib/graphql/types';
 import ProcessingTasksFooter from './processing/ProcessingFooter';
 
@@ -24,6 +26,9 @@ type RequestHeaderProps = {
   readonly createdAt: Date;
   readonly allStepsCompleted: boolean;
   readonly applicantId?: number;
+  readonly paidThroughShopify?: boolean;
+  readonly shopifyOrderID?: string;
+  readonly shopifyOrderNumber?: string;
 };
 
 /**
@@ -39,6 +44,9 @@ export default function RequestHeader({
   allStepsCompleted,
   applicationType,
   applicantId,
+  paidThroughShopify,
+  shopifyOrderID,
+  shopifyOrderNumber,
 }: RequestHeaderProps) {
   /**
    * Returns the appropriate header button(s) to be displayed depending on the current application status
@@ -107,21 +115,27 @@ export default function RequestHeader({
     return null;
   };
 
+  const displayShopifyUrl = paidThroughShopify && shopifyOrderID && shopifyOrderNumber;
+  const shopifyOrderUrl = `https://${process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN}/admin/orders/${shopifyOrderID}`;
+
   return (
     <Box textAlign="left">
-      <Link href="/admin" passHref>
+      <NextLink href="/admin" passHref>
         <Text textStyle="button-semibold" textColor="primary" as="a">
           <ChevronLeftIcon />
           All requests
         </Text>
-      </Link>
+      </NextLink>
       <Flex marginTop={5} alignItems="center">
         <Box>
           <Flex alignItems="center">
             <Text textStyle="display-large" as="h1" marginRight={3} textTransform="capitalize">
               {`${applicationType.toLowerCase()} Request`}
             </Text>
-            {applicationStatus && <RequestStatusBadge variant={applicationStatus} />}
+            <HStack spacing={3}>
+              {applicationStatus && <RequestStatusBadge variant={applicationStatus} />}
+              {paidThroughShopify && <ShopifyBadge />}
+            </HStack>
           </Flex>
           <HStack spacing={3} marginTop={3}>
             <Text textStyle="caption" as="p">
@@ -129,6 +143,20 @@ export default function RequestHeader({
             </Text>
             {_renderMoreActionsDropdown()}
           </HStack>
+          {displayShopifyUrl && (
+            <Text textStyle="caption" as="p">
+              Paid with Shopify: Order{' '}
+              <Link
+                href={shopifyOrderUrl}
+                isExternal={true}
+                textStyle="caption-bold"
+                textDecoration="underline"
+                color="primary"
+              >
+                {`#${shopifyOrderNumber}`}
+              </Link>
+            </Text>
+          )}
         </Box>
         <Box marginLeft="auto">{_renderActionButtons()}</Box>
       </Flex>
