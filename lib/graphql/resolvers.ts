@@ -68,7 +68,15 @@ import {
 } from '@lib/reports/resolvers';
 import { permitApplicationResolver } from '@lib/permits/field-resolvers';
 import { invoiceEmployeeResolver } from '@lib/invoices/field-resolvers';
-import { applicationProcessingInvoiceResolver } from '@lib/application-processing/field-resolvers';
+import {
+  applicationProcessingAppHolepunchedEmployeeResolver,
+  applicationProcessingAppMailedEmployeeResolver,
+  applicationProcessingAppNumberEmployeeResolver,
+  applicationProcessingDocumentsUrlEmployeeResolver,
+  applicationProcessingInvoiceResolver,
+  applicationProcessingReviewRequestCompletedEmployeeResolver,
+  applicationProcessingWalletCardCreatedEmployeeResolver,
+} from '@lib/application-processing/field-resolvers';
 
 /**
  * Resolver return type - accounts for extra fields
@@ -243,6 +251,12 @@ const resolvers = {
   },
   ApplicationProcessing: {
     invoice: applicationProcessingInvoiceResolver,
+    appNumberEmployee: applicationProcessingAppNumberEmployeeResolver,
+    appHolepunchedEmployee: applicationProcessingAppHolepunchedEmployeeResolver,
+    walletCardCreatedEmployee: applicationProcessingWalletCardCreatedEmployeeResolver,
+    reviewRequestCompletedEmployee: applicationProcessingReviewRequestCompletedEmployeeResolver,
+    documentsUrlEmployee: applicationProcessingDocumentsUrlEmployeeResolver,
+    appMailedEmployee: applicationProcessingAppMailedEmployeeResolver,
   },
 };
 

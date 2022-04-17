@@ -15,7 +15,7 @@ export default function ProcessingTasksFooter({
 }: ProcessingTasksFooterProps) {
   return (
     <Footer>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
+      <Stack width="100%" direction="row" justifyContent="space-between" alignItems="center">
         <Box>
           <Stack direction="row" justifyContent="space-between">
             {applicantId && (
