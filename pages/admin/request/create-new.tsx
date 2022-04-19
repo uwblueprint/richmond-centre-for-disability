@@ -35,6 +35,7 @@ import { DoctorFormData } from '@tools/admin/requests/doctor-information';
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 import { RequestFlowPageState } from '@tools/admin/requests/types';
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
+import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import { NewApplicationPermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
 import {
   CreateNewApplicationRequest,
@@ -55,7 +56,7 @@ import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { uploadToS3 } from '@lib/utils/upload-to-s3';
 import { Form, Formik } from 'formik';
 import { createNewRequestFormSchema } from '@lib/applications/validation';
-import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
+import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -79,10 +80,6 @@ export default function CreateNew() {
   );
   // Guardian/POA File
   const [guardianPOAFile, setGuardianPOAFile] = useState<File | null>(null);
-  // Additional questions
-  const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>(
-    INITIAL_ADDITIONAL_QUESTIONS
-  );
 
   // Toast message
   const toast = useToast();
@@ -98,7 +95,6 @@ export default function CreateNew() {
     setDoctorInformation(INITIAL_DOCTOR_INFORMATION);
     setGuardianInformation(INITIAL_GUARDIAN_INFORMATION);
     setGuardianPOAFile(null);
-    setAdditionalQuestions(INITIAL_ADDITIONAL_QUESTIONS);
   };
 
   /**
@@ -243,6 +239,7 @@ export default function CreateNew() {
   const handleSubmit = async (values: {
     permitHolder: NewApplicationPermitHolderInformation;
     physicianAssessment: PhysicianAssessment;
+    additionalInformation: AdditionalInformationFormData;
     paymentInformation: PaymentInformationFormData;
   }) => {
     let poaFormS3ObjectKey = '';
@@ -261,24 +258,7 @@ export default function CreateNew() {
     }
 
     const validatedValues = await createNewRequestFormSchema.validate(values);
-
-    if (additionalQuestions.usesAccessibleConvertedVan === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient uses accessible converted van',
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (additionalQuestions.requiresWiderParkingSpace === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient requires wider parking space',
-        isClosable: true,
-      });
-      return;
-    }
+    const additionalInformation = validatedValues.additionalInformation;
 
     if (!doctorInformation.mspNumber) {
       toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
@@ -314,9 +294,19 @@ export default function CreateNew() {
           guardianPostalCode: guardianInformation.postalCode,
           poaFormS3ObjectKey: poaFormS3ObjectKey,
 
-          ...additionalQuestions,
-          usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
-          requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
+          ...additionalInformation,
+          accessibleConvertedVanLoadingMethod: additionalInformation.usesAccessibleConvertedVan
+            ? additionalInformation.accessibleConvertedVanLoadingMethod
+            : null,
+          requiresWiderParkingSpaceReason: additionalInformation.requiresWiderParkingSpace
+            ? additionalInformation.requiresWiderParkingSpaceReason
+            : null,
+          otherRequiresWiderParkingSpaceReason:
+            additionalInformation.requiresWiderParkingSpace &&
+            additionalInformation.requiresWiderParkingSpaceReason ===
+              RequiresWiderParkingSpaceReason.OTHER
+              ? additionalInformation.otherRequiresWiderParkingSpaceReason
+              : null,
 
           ...validatedValues.paymentInformation,
 
@@ -455,6 +445,7 @@ export default function CreateNew() {
               permitHolder: permitHolderInformation,
               paymentInformation: INITIAL_PAYMENT_DETAILS,
               physicianAssessment: INITIAL_PHYSICIAN_ASSESSMENT,
+              additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
             }}
             validationSchema={createNewRequestFormSchema}
             onSubmit={handleSubmit}
@@ -540,10 +531,7 @@ export default function CreateNew() {
                     <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
                       {`Additional Information`}
                     </Text>
-                    <AdditionalQuestionsForm
-                      data={additionalQuestions}
-                      onChange={setAdditionalQuestions}
-                    />
+                    <AdditionalQuestionsForm additionalInformation={values.additionalInformation} />
                   </Box>
                   <Box
                     w="100%"

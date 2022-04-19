@@ -4,7 +4,6 @@ import { useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form'; //Doctor information form
 import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form'; //Additional questions form
-import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions'; //Additional questions type
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import Link from 'next/link'; // Link
@@ -33,7 +32,9 @@ import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-inf
 import { Form, Formik } from 'formik';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { renewalRequestFormSchema } from '@lib/applications/validation';
-import { INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
+import { INITIAL_ADDITIONAL_QUESTIONS, INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
+import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
+import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -68,17 +69,6 @@ export default function CreateRenewal() {
     city: '',
     postalCode: '',
   });
-
-  /** Additional information section */
-  const [additionalInformation, setAdditionalInformation] = useState<AdditionalInformationFormData>(
-    {
-      usesAccessibleConvertedVan: null,
-      accessibleConvertedVanLoadingMethod: null,
-      requiresWiderParkingSpace: null,
-      requiresWiderParkingSpaceReason: null,
-      otherRequiresWiderParkingSpaceReason: null,
-    }
-  );
 
   // Toast message
   const toast = useToast();
@@ -179,6 +169,7 @@ export default function CreateRenewal() {
    */
   const handleSubmit = async (values: {
     permitHolder: PermitHolderFormData;
+    additionalInformation: AdditionalInformationFormData;
     paymentInformation: PaymentInformationFormData;
   }) => {
     if (!applicantId) {
@@ -197,26 +188,9 @@ export default function CreateRenewal() {
       return;
     }
 
-    if (additionalInformation.usesAccessibleConvertedVan === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient uses accessible converted van',
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (additionalInformation.requiresWiderParkingSpace === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient requires wider parking space',
-        isClosable: true,
-      });
-      return;
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { type, ...permitHolder } = validatedValues.permitHolder;
+    const additionalInformation = validatedValues.additionalInformation;
 
     await submitRenewalApplication({
       variables: {
@@ -231,9 +205,21 @@ export default function CreateRenewal() {
           physicianAddressLine2: doctorInformation.addressLine2,
           physicianCity: doctorInformation.city,
           physicianPostalCode: doctorInformation.postalCode,
+
           ...additionalInformation,
-          usesAccessibleConvertedVan: additionalInformation.usesAccessibleConvertedVan,
-          requiresWiderParkingSpace: additionalInformation.requiresWiderParkingSpace,
+          accessibleConvertedVanLoadingMethod: additionalInformation.usesAccessibleConvertedVan
+            ? additionalInformation.accessibleConvertedVanLoadingMethod
+            : null,
+          requiresWiderParkingSpaceReason: additionalInformation.requiresWiderParkingSpace
+            ? additionalInformation.requiresWiderParkingSpaceReason
+            : null,
+          otherRequiresWiderParkingSpaceReason:
+            additionalInformation.requiresWiderParkingSpace &&
+            additionalInformation.requiresWiderParkingSpaceReason ===
+              RequiresWiderParkingSpaceReason.OTHER
+              ? additionalInformation.otherRequiresWiderParkingSpaceReason
+              : null,
+
           ...validatedValues.paymentInformation,
 
           // TODO: Replace with dynamic values
@@ -296,6 +282,7 @@ export default function CreateRenewal() {
                 ...permitHolderInformation,
                 type: 'RENEWAL',
               },
+              additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
               paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
             validationSchema={renewalRequestFormSchema}
@@ -358,10 +345,7 @@ export default function CreateRenewal() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Additional Information`}
                     </Text>
-                    <AdditionalQuestionsForm
-                      data={additionalInformation}
-                      onChange={setAdditionalInformation}
-                    />
+                    <AdditionalQuestionsForm additionalInformation={values.additionalInformation} />
                   </Box>
                 </GridItem>
                 {/* Payment Details Form */}
