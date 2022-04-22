@@ -3,6 +3,7 @@ import { getSession } from 'next-auth/client'; // Session management
 import { GridItem, VStack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import RequestHeader from '@components/admin/requests/Header'; // Request header
+import RequestFooter from '@components/admin/requests/Footer'; // Request footer
 import DoctorInformationCard from '@components/admin/requests/doctor-information/Card'; // Doctor information card
 import PaymentInformationCard from '@components/admin/requests/payment-information/Card'; // Payment information card
 import PersonalInformationCard from '@components/admin/requests/permit-holder-information/Card'; // Personal information card
@@ -44,6 +45,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     paidThroughShopify,
     shopifyConfirmationNumber,
     shopifyOrderNumber,
+    permitType,
     processing: {
       status,
       appNumber,
@@ -71,12 +73,10 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3} marginBottom="12px">
         <RequestHeader
-          applicationId={id}
           applicationStatus={status}
           applicationType={type}
+          permitType={permitType}
           createdAt={new Date(createdAt)}
-          allStepsCompleted={allStepsCompleted}
-          applicantId={applicantId}
           paidThroughShopify={paidThroughShopify}
           shopifyOrderID={shopifyConfirmationNumber || undefined}
           shopifyOrderNumber={shopifyOrderNumber || undefined}
@@ -103,6 +103,12 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           />
         </VStack>
       </GridItem>
+      <RequestFooter
+        applicationId={id}
+        applicationStatus={status}
+        allStepsCompleted={allStepsCompleted}
+        applicantId={applicantId}
+      />
     </Layout>
   );
 };

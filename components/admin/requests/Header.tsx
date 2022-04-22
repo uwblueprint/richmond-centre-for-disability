@@ -1,31 +1,16 @@
-import {
-  Box,
-  Flex,
-  HStack,
-  Text,
-  Menu,
-  MenuList,
-  MenuItem,
-  MenuButton,
-  Button,
-  Link,
-} from '@chakra-ui/react'; // Chakra UI
-import { ChevronLeftIcon, ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI icon
+import { Box, Flex, HStack, Text, Link } from '@chakra-ui/react'; // Chakra UI
+import { ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import NextLink from 'next/link'; // Link
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Request status badge
-import ApproveRequestModal from '@components/admin/requests/processing/ApproveRequestModal'; // Approve button + modal
-import RejectRequestModal from '@components/admin/requests/processing/RejectRequestModal'; // Reject button + modal
 import ShopifyBadge from '@components/admin/ShopifyBadge';
-import { ApplicationStatus, ApplicationType } from '@lib/graphql/types';
-import ProcessingTasksFooter from './processing/ProcessingFooter';
+import PermitTypeBadge from '@components/admin/PermitTypeBadge';
+import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/types';
 
 type RequestHeaderProps = {
-  readonly applicationId: number;
-  readonly applicationStatus?: ApplicationStatus;
   readonly applicationType: ApplicationType;
+  readonly permitType: PermitType;
   readonly createdAt: Date;
-  readonly allStepsCompleted: boolean;
-  readonly applicantId?: number;
+  readonly applicationStatus?: ApplicationStatus;
   readonly paidThroughShopify?: boolean;
   readonly shopifyOrderID?: string;
   readonly shopifyOrderNumber?: string;
@@ -38,83 +23,14 @@ type RequestHeaderProps = {
  * @param allStepsCompleted Whether all processing tasks are complete
  */
 export default function RequestHeader({
-  applicationId,
-  applicationStatus,
-  createdAt,
-  allStepsCompleted,
   applicationType,
-  applicantId,
+  permitType,
+  createdAt,
+  applicationStatus,
   paidThroughShopify,
   shopifyOrderID,
   shopifyOrderNumber,
 }: RequestHeaderProps) {
-  /**
-   * Returns the appropriate header button(s) to be displayed depending on the current application status
-   * @returns Rendered button component(s) or null.
-   */
-  const _renderActionButtons = () => {
-    switch (applicationStatus) {
-      case 'PENDING':
-        return (
-          <HStack spacing={3}>
-            <RejectRequestModal applicationId={applicationId}>
-              <Button bg="secondary.critical" _hover={{ bg: 'secondary.criticalHover' }}>
-                Reject
-              </Button>
-            </RejectRequestModal>
-            <ApproveRequestModal applicationId={applicationId}>
-              <Button>Approve</Button>
-            </ApproveRequestModal>
-          </HStack>
-        );
-      case 'IN_PROGRESS':
-        return (
-          <ProcessingTasksFooter
-            applicationId={applicationId}
-            applicantId={applicantId}
-            allStepsCompleted={allStepsCompleted}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
-  /**
-   * Returns the appropriate 'More Actions' dropdown to be displayed depending on the current application status
-   * @returns Rendered 'More Actions' dropdown component or null
-   */
-  const _renderMoreActionsDropdown = () => {
-    if (applicationStatus === 'IN_PROGRESS') {
-      return (
-        <Menu>
-          <MenuButton
-            as={Button}
-            rightIcon={<ChevronDownIcon />}
-            height="30px"
-            bg="background.gray"
-            _hover={{ bg: 'background.grayHover' }}
-            color="black"
-          >
-            <Text textStyle="caption">More Actions</Text>
-          </MenuButton>
-          <MenuList>
-            {applicationStatus === 'IN_PROGRESS' ? (
-              <RejectRequestModal applicationId={applicationId}>
-                <MenuItem>Reject request</MenuItem>
-              </RejectRequestModal>
-            ) : (
-              <ApproveRequestModal applicationId={applicationId}>
-                <MenuItem>Approve request</MenuItem>
-              </ApproveRequestModal>
-            )}
-          </MenuList>
-        </Menu>
-      );
-    }
-    return null;
-  };
-
   const displayShopifyUrl = paidThroughShopify && shopifyOrderID && shopifyOrderNumber;
   const shopifyOrderUrl = `https://${process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN}/admin/orders/${shopifyOrderID}`;
 
@@ -139,9 +55,8 @@ export default function RequestHeader({
           </Flex>
           <HStack spacing={3} marginTop={3}>
             <Text textStyle="caption" as="p">
-              Received date: {createdAt.toDateString()}
+              Received on {createdAt.toDateString()}
             </Text>
-            {_renderMoreActionsDropdown()}
           </HStack>
           {displayShopifyUrl && (
             <Text textStyle="caption" as="p">
@@ -158,7 +73,19 @@ export default function RequestHeader({
             </Text>
           )}
         </Box>
-        <Box marginLeft="auto">{_renderActionButtons()}</Box>
+        <Box marginLeft="auto">
+          <Flex alignItems="center">
+            <Text textStyle="heading" as="h2" marginRight={3} textTransform="capitalize">
+              Permit Type:
+            </Text>
+            <PermitTypeBadge variant={permitType} />
+          </Flex>
+          <HStack spacing={3} marginTop={3}>
+            <Text textStyle="caption" as="p" marginLeft="auto">
+              Expiry Date: {createdAt.toDateString()}
+            </Text>
+          </HStack>
+        </Box>
       </Flex>
     </Box>
   );

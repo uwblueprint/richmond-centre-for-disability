@@ -17,6 +17,7 @@ export const GET_APPLICATION_QUERY = gql`
       paidThroughShopify
       shopifyConfirmationNumber
       shopifyOrderNumber
+      permitType
       processing {
         status
         appNumber
@@ -52,6 +53,7 @@ export type GetApplicationResponse = {
     | 'createdAt'
     | 'shopifyConfirmationNumber'
     | 'shopifyOrderNumber'
+    | 'permitType'
   > & {
     processing: Pick<
       ApplicationProcessing,
