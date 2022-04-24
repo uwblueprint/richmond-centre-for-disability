@@ -42,10 +42,15 @@ export default function RequestHeader({
           All requests
         </Text>
       </NextLink>
-      <Flex marginTop={5} alignItems="center">
+      <Flex marginTop={5} alignItems="baseline" justifyContent="space-between">
         <Box>
           <Flex alignItems="center">
-            <Text textStyle="display-large" as="h1" marginRight={3} textTransform="capitalize">
+            <Text
+              textStyle="display-medium-bold"
+              as="h1"
+              marginRight={3}
+              textTransform="capitalize"
+            >
               {`${applicationType.toLowerCase()} Request`}
             </Text>
             <HStack spacing={3}>
@@ -73,18 +78,13 @@ export default function RequestHeader({
             </Text>
           )}
         </Box>
-        <Box marginLeft="auto">
+        <Box>
           <Flex alignItems="center">
-            <Text textStyle="heading" as="h2" marginRight={3} textTransform="capitalize">
+            <Text textStyle="heading" as="h3" marginRight={3} textTransform="capitalize">
               Permit Type:
             </Text>
             <PermitTypeBadge variant={permitType} />
           </Flex>
-          <HStack spacing={3} marginTop={3}>
-            <Text textStyle="caption" as="p" marginLeft="auto">
-              Expiry Date: {createdAt.toDateString()}
-            </Text>
-          </HStack>
         </Box>
       </Flex>
     </Box>

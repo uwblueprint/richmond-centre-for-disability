@@ -9,6 +9,7 @@ import PaymentInformationCard from '@components/admin/requests/payment-informati
 import PersonalInformationCard from '@components/admin/requests/permit-holder-information/Card'; // Personal information card
 import ProcessingTasksCard from '@components/admin/requests/processing/TasksCard'; // Processing tasks card
 import PhysicianAssessmentCard from '@components/admin/requests/physician-assessment/Card'; // Physician assessment card
+import AdditionalInformationCard from '@components/admin/requests/additional-questions/Card'; // Additional Information card
 import { authorize } from '@tools/authorization'; // Page authorization
 import { useQuery } from '@apollo/client'; // Apollo Client hooks
 import {
@@ -97,6 +98,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           {type === 'REPLACEMENT' && (
             <ReasonForReplacementCard applicationId={id} editDisabled={reviewRequestCompleted} />
           )}
+          {type !== 'REPLACEMENT' && <AdditionalInformationCard applicationId={id} />}
           <PaymentInformationCard
             applicationId={id}
             editDisabled={paidThroughShopify || reviewRequestCompleted}
