@@ -18,9 +18,13 @@ type RequestHeaderProps = {
 
 /**
  * Header of View Request page
+ * @param applicationType Type of application
+ * @param permitType Type of permit
+ * @param createdAt Date permit was created at
  * @param applicationStatus Status of application
- * @param createdAt Date of application creation
- * @param allStepsCompleted Whether all processing tasks are complete
+ * @param paidThroughShopify If the permit fee was paid through Shopify
+ * @param shopifyOrderID Order ID of Shopify payment if paid through Shopify
+ * @param shopifyOrderNumber Order number of Shopify payment if paid through Shopify
  */
 export default function RequestHeader({
   applicationType,

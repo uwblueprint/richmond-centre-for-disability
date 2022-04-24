@@ -5,7 +5,7 @@ import { ApplicationStatus } from '@lib/graphql/types';
 import Footer from '@components/admin/Footer';
 import CompleteRequestModalButton from './processing/CompleteModalButton';
 
-type RequestHeaderProps = {
+type RequestFooterProps = {
   readonly applicationId: number;
   readonly applicationStatus?: ApplicationStatus;
   readonly allStepsCompleted: boolean;
@@ -13,17 +13,18 @@ type RequestHeaderProps = {
 };
 
 /**
- * Header of View Request page
- * @param applicationStatus Status of application
- * @param createdAt Date of application creation
+ * Footer of View Request page
+ * @param applicationId ID of application
+ * @param applicationStatus Status of application creation
  * @param allStepsCompleted Whether all processing tasks are complete
+ * @param applicantId ID of applicant
  */
-export default function RequestHeader({
+export default function RequestFooter({
   applicationId,
   applicationStatus,
   allStepsCompleted,
   applicantId,
-}: RequestHeaderProps) {
+}: RequestFooterProps) {
   /**
    * Returns the appropriate footer button(s) to be displayed depending on the current application status
    * @returns Rendered button component(s) or null.
