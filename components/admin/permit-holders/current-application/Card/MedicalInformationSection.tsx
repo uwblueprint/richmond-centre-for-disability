@@ -37,7 +37,7 @@ const MedicalInformationSection: FC<Props> = ({ application }) => {
             <Text as="p" textStyle="body-regular">
               {disability}
             </Text>
-            <Badge bgColor="background.informative">{titlecase(patientCondition)}</Badge>
+            <Badge bgColor="background.informative">{titlecase(patientCondition as string)}</Badge>
           </HStack>
         </GridItem>
         {patientCondition === 'OTHER' && (
