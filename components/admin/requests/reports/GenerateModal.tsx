@@ -1,8 +1,8 @@
 import { ChangeEvent, useState, useMemo } from 'react'; // React
 import {
   Modal,
-  ModalOverlay,
   ModalContent,
+  ModalOverlay,
   ModalHeader,
   ModalFooter,
   ModalBody,
@@ -79,6 +79,13 @@ export default function GenerateReportModal(props: Props) {
   >(GENERATE_APPLICATIONS_REPORT_QUERY, {
     onCompleted: data => {
       if (data.generateApplicationsReport.ok) {
+        const link = document.createElement('a');
+        link.setAttribute('href', data.generateApplicationsReport.link as string);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
         toast({
           status: 'success',
           description: `A CSV requests report has been successfully generated.`,

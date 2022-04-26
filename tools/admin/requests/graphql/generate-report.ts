@@ -8,6 +8,7 @@ export const GENERATE_APPLICATIONS_REPORT_QUERY = gql`
   query GenerateApplicationsReportQuery($input: GenerateApplicationsReportInput!) {
     generateApplicationsReport(input: $input) {
       ok
+      link
     }
   }
 `;

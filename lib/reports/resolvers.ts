@@ -1,4 +1,4 @@
-import { createObjectCsvWriter } from 'csv-writer';
+import { createObjectCsvStringifier, createObjectCsvWriter } from 'csv-writer';
 import { Resolver } from '@lib/graphql/resolvers';
 import {
   QueryGeneratePermitHoldersReportArgs,
@@ -13,6 +13,9 @@ import { SortOrder } from '@tools/types';
 import { formatAddress, formatDate, formatFullName } from '@lib/utils/format'; // Formatting utils
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
 import { Prisma } from '@prisma/client';
+import { randomUUID } from 'crypto';
+import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
+import { ApolloError } from 'apollo-server-micro';
 
 /**
  * Generates csv with permit holders' info, given a start date, end date, and values from
@@ -141,7 +144,7 @@ export const generatePermitHoldersReport: Resolver<
 /**
  * Generates csv with applications' info, given a start date, end date, and values from
  * ApplicationsReportColumn that the user would like to have on the generated csv
- * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
+ * @returns Whether a csv could be generated (ok), and an AWS S3 file link
  */
 export const generateApplicationsReport: Resolver<
   QueryGenerateApplicationsReportArgs,
@@ -237,15 +240,31 @@ export const generateApplicationsReport: Resolver<
     ({ name, reportColumnId }) => ({ id: reportColumnId, title: name })
   );
 
-  const csvWriter = createObjectCsvWriter({
-    path: 'temp/file.csv',
+  const csvStringifier = createObjectCsvStringifier({
     header: csvHeaders,
   });
+  const csvStringRecords = csvStringifier.stringifyRecords(csvApplications);
+  const csvStringHeader = csvStringifier.getHeaderString();
+  const csvString = csvStringHeader + csvStringRecords;
 
-  await csvWriter.writeRecords(csvApplications);
+  const fileName = `report-${randomUUID()}.csv`;
+  const s3InvoiceKey = `rcd/reports/applications-reports/${fileName}`;
+
+  // Upload csv to s3
+  let uploadedCSV;
+  let signedUrl;
+  try {
+    // Upload file to s3
+    uploadedCSV = await serverUploadToS3(csvString, s3InvoiceKey);
+    // Generate a signed URL to access the file
+    signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
+  } catch (error) {
+    throw new ApolloError(`Error uploading applications report to AWS: ${error}`);
+  }
 
   return {
     ok: true,
+    link: signedUrl,
   };
 };
 
