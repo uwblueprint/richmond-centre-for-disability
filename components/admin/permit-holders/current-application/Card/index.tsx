@@ -8,9 +8,9 @@ import {
 } from '@tools/admin/permit-holders/current-application';
 import { FC } from 'react';
 import Header from '@components/admin/permit-holders/current-application/Card/Header';
-import AttachedFilesSection from './AttachedFilesSection';
-import MedicalInformationSection from './MedicalInformation';
-import AdditionalQuestionsSection from '@components/admin/requests/additional-questions/Card';
+import AttachedFilesSection from '@components/admin/permit-holders/current-application/Card/AttachedFilesSection';
+import MedicalInformationSection from '@components/admin/permit-holders/current-application/Card/MedicalInformationSection';
+import AdditionalInformationSection from '@components/admin/permit-holders/current-application/Card/AdditionalInformationSection';
 
 type Props = {
   readonly applicantId: number;
@@ -19,25 +19,27 @@ type Props = {
 /**
  * Card for displaying current APP request information of permit holder
  */
-const CurrentApplicationCard: FC<Props> = _ => {
+const CurrentApplicationCard: FC<Props> = ({ applicantId }) => {
   const { data } = useQuery<GetCurrentApplicationResponse, GetCurrentApplicationRequest>(
     GET_CURRENT_APPLICATION,
-    // TODO: Replace
-    { variables: { id: 4 } }
+    { variables: { id: applicantId } }
   );
 
   if (!data?.application) {
     return null;
   }
 
+  const { application } = data;
+  const { type } = application;
+
   return (
-    <PermitHolderInfoCard colSpan={7} header={<Header application={data.application} />} divider>
+    <PermitHolderInfoCard colSpan={7} header={<Header application={application} />} divider>
       <VStack width="100%" align="stretch" spacing="24px">
-        <AttachedFilesSection application={data.application} />
-        {data.application.type === 'NEW' && (
-          <MedicalInformationSection application={data.application} />
+        <AttachedFilesSection application={application} />
+        {type === 'NEW' && <MedicalInformationSection application={application} />}
+        {(type === 'NEW' || type === 'RENEWAL') && (
+          <AdditionalInformationSection application={application} />
         )}
-        <AdditionalQuestionsSection applicationId={4} isSubsection />
       </VStack>
     </PermitHolderInfoCard>
   );

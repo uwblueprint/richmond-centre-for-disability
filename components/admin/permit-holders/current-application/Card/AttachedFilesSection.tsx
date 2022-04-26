@@ -14,13 +14,13 @@ const AttachedFilesSection: FC<Props> = ({ application }) => {
 
   return (
     <CurrentApplicationCardSection title="Attached Files">
-      <Grid gap="24px">
-        <GridItem colStart={1} colSpan={1} rowStart={1} rowSpan={1}>
+      <Grid gridRowGap="12px" gridColumnGap="20px" templateColumns="200px 1fr" gridAutoRows="32px">
+        <GridItem>
           <Text as="p" textStyle="body-regular">
             Application package
           </Text>
         </GridItem>
-        <GridItem colStart={2} colSpan={1} rowStart={1} rowSpan={1}>
+        <GridItem>
           {documentsUrl === null ? (
             <Text as="p" textStyle="body-regular" color="text.filler">
               Not uploaded or file pending upload
@@ -33,12 +33,12 @@ const AttachedFilesSection: FC<Props> = ({ application }) => {
             </FileLink>
           )}
         </GridItem>
-        <GridItem colStart={1} colSpan={1} rowStart={2} rowSpan={1}>
+        <GridItem>
           <Text as="p" textStyle="body-regular">
             Invoice report
           </Text>
         </GridItem>
-        <GridItem colStart={2} colSpan={1} rowStart={2} rowSpan={1}>
+        <GridItem>
           {invoice === null ? (
             <Text as="p" textStyle="body-regular" color="text.filler">
               Not generated yet

@@ -4,6 +4,7 @@ import {
   ApplicationProcessing,
   Invoice,
   QueryApplicationArgs,
+  RenewalApplication,
 } from '@lib/graphql/types';
 import { NewApplication } from '@prisma/client';
 
@@ -27,8 +28,21 @@ export const GET_CURRENT_APPLICATION = gql`
         disability
         disabilityCertificationDate
         patientCondition
+        otherPatientCondition
         mobilityAids
         temporaryPermitExpiry
+        usesAccessibleConvertedVan
+        accessibleConvertedVanLoadingMethod
+        requiresWiderParkingSpace
+        requiresWiderParkingSpaceReason
+        otherRequiresWiderParkingSpaceReason
+      }
+      ... on RenewalApplication {
+        usesAccessibleConvertedVan
+        accessibleConvertedVanLoadingMethod
+        requiresWiderParkingSpace
+        requiresWiderParkingSpaceReason
+        otherRequiresWiderParkingSpaceReason
       }
     }
   }
@@ -47,15 +61,42 @@ export type GetCurrentApplicationResponse = {
           | 'disability'
           | 'disabilityCertificationDate'
           | 'patientCondition'
+          | 'otherPatientCondition'
           | 'mobilityAids'
           | 'temporaryPermitExpiry'
+          | 'usesAccessibleConvertedVan'
+          | 'accessibleConvertedVanLoadingMethod'
+          | 'requiresWiderParkingSpace'
+          | 'requiresWiderParkingSpaceReason'
+          | 'otherRequiresWiderParkingSpaceReason'
         >)
-      | ({ type: 'RENEWAL' | 'REPLACEMENT' } & {
+      | ({ type: 'RENEWAL' } & {
           disability: undefined;
           disabilityCertificationDate: undefined;
           patientCondition: undefined;
+          otherPatientCondition: undefined;
           mobilityAids: undefined;
           temporaryPermitExpiry: undefined;
+        } & Pick<
+            RenewalApplication,
+            | 'usesAccessibleConvertedVan'
+            | 'accessibleConvertedVanLoadingMethod'
+            | 'requiresWiderParkingSpace'
+            | 'requiresWiderParkingSpaceReason'
+            | 'otherRequiresWiderParkingSpaceReason'
+          >)
+      | ({ type: 'REPLACEMENT' } & {
+          disability: undefined;
+          disabilityCertificationDate: undefined;
+          patientCondition: undefined;
+          otherPatientCondition: undefined;
+          mobilityAids: undefined;
+          temporaryPermitExpiry: undefined;
+          usesAccessibleConvertedVan: undefined;
+          accessibleConvertedVanLoadingMethod: undefined;
+          requiresWiderParkingSpace: undefined;
+          requiresWiderParkingSpaceReason: undefined;
+          otherRequiresWiderParkingSpaceReason: undefined;
         })
     );
 };

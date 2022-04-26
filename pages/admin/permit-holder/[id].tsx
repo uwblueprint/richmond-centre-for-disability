@@ -8,8 +8,6 @@ import PermitHolderHeader from '@components/admin/permit-holders/Header'; // Per
 import DoctorInformationCard from '@components/admin/permit-holders/doctor-information/Card'; // Doctor information card
 import PersonalInformationCard from '@components/admin/permit-holders/permit-holder-information/Card'; // Personal information card
 import AppHistoryCard from '@components/admin/permit-holders/app-history/Card'; // APP History card
-import AttachedFilesCard from '@components/admin/permit-holders/attached-files/Card'; // Attached Files card
-import MedicalHistoryCard from '@components/admin/permit-holders/medical-history/Card'; // Medical History card
 import {
   GetApplicantRequest,
   GetApplicantResponse,
@@ -56,8 +54,6 @@ export default function PermitHolder({ id: idString }: Props) {
         <Stack spacing={5}>
           <CurrentApplicationCard applicantId={id} />
           <AppHistoryCard applicantId={id} />
-          <AttachedFilesCard applicantId={id} />
-          <MedicalHistoryCard applicantId={id} />
         </Stack>
       </GridItem>
     </Layout>

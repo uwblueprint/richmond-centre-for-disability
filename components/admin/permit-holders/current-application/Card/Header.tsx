@@ -3,6 +3,7 @@ import PermitTypeBadge from '@components/admin/PermitTypeBadge';
 import RequestStatusBadge from '@components/admin/RequestStatusBadge';
 import { formatDate } from '@lib/utils/format';
 import { GetCurrentApplicationResponse } from '@tools/admin/permit-holders/current-application';
+import { titlecase } from '@tools/string';
 import Link from 'next/link';
 import { FC } from 'react';
 
@@ -22,7 +23,7 @@ const Header: FC<Props> = ({ application }) => {
   return (
     <HStack width="100%" justify="space-between" align="flex-start">
       <VStack align="flex-start">
-        <HStack>
+        <HStack spacing="12px">
           <Text as="h2" textStyle="display-large">
             Permit Request
           </Text>
@@ -31,7 +32,7 @@ const Header: FC<Props> = ({ application }) => {
         </HStack>
         <HStack spacing="24px">
           <Text as="p" textStyle="body-regular">
-            Request Type: {type}
+            Request Type: {titlecase(type)}
           </Text>
           {!!temporaryPermitExpiry && (
             <Text as="p" textStyle="body-regular">
@@ -41,7 +42,7 @@ const Header: FC<Props> = ({ application }) => {
         </HStack>
       </VStack>
       <Link href={`/admin/request/${id}`}>
-        <Button height="50px" variant="outline">
+        <Button height="48px" variant="outline">
           Go to request page
         </Button>
       </Link>
