@@ -468,7 +468,11 @@ export type GenerateApplicationsReportInput = {
 export type GenerateApplicationsReportResult = {
   __typename?: 'GenerateApplicationsReportResult';
   ok: Scalars['Boolean'];
+<<<<<<< HEAD
   url: Maybe<Scalars['String']>;
+=======
+  link: Maybe<Scalars['String']>;
+>>>>>>> e275dfe (upload csv to string and auto download)
 };
 
 export type GeneratePermitHoldersReportInput = {
