@@ -78,9 +78,9 @@ export default function GenerateReportModal(props: Props) {
     GenerateApplicationsReportRequest
   >(GENERATE_APPLICATIONS_REPORT_QUERY, {
     onCompleted: data => {
-      if (data.generateApplicationsReport.ok) {
+      if (data.generateApplicationsReport.ok && !!data.generateApplicationsReport.url) {
         const link = document.createElement('a');
-        link.setAttribute('href', data.generateApplicationsReport.link as string);
+        link.setAttribute('href', data.generateApplicationsReport.url);
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();

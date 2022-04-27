@@ -10,10 +10,14 @@ import {
   PaymentType,
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
-import { formatAddress, formatDate, formatFullName } from '@lib/utils/format'; // Formatting utils
+import {
+  formatAddress,
+  formatDate,
+  formatDateTimeYYYYMMDDHHMMSS,
+  formatFullName,
+} from '@lib/utils/format'; // Formatting utils
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
 import { Prisma } from '@prisma/client';
-import { randomUUID } from 'crypto';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { ApolloError } from 'apollo-server-micro';
 
@@ -149,10 +153,15 @@ export const generatePermitHoldersReport: Resolver<
 export const generateApplicationsReport: Resolver<
   QueryGenerateApplicationsReportArgs,
   GenerateApplicationsReportResult
-> = async (_, args, { prisma }) => {
+> = async (_, args, { prisma, session }) => {
   const {
     input: { startDate, endDate, columns },
   } = args;
+
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
 
   const columnsSet = new Set(columns);
 
@@ -240,6 +249,7 @@ export const generateApplicationsReport: Resolver<
     ({ name, reportColumnId }) => ({ id: reportColumnId, title: name })
   );
 
+  // Generate CSV string from csv object.
   const csvStringifier = createObjectCsvStringifier({
     header: csvHeaders,
   });
@@ -247,8 +257,11 @@ export const generateApplicationsReport: Resolver<
   const csvStringHeader = csvStringifier.getHeaderString();
   const csvString = csvStringHeader + csvStringRecords;
 
-  const fileName = `report-${randomUUID()}.csv`;
-  const s3InvoiceKey = `rcd/reports/applications-reports/${fileName}`;
+  // CSV naming format applications/permit-holders/accounting-report-{employeeID}-{timestamp}.csv
+  const employeeID = session.id;
+  const timestamp = formatDateTimeYYYYMMDDHHMMSS(new Date());
+  const fileName = `accounting-report-${employeeID}-${timestamp}.csv`;
+  const s3InvoiceKey = `rcd/applications/permit-holders/${fileName}`;
 
   // Upload csv to s3
   let uploadedCSV;
@@ -264,7 +277,7 @@ export const generateApplicationsReport: Resolver<
 
   return {
     ok: true,
-    link: signedUrl,
+    url: signedUrl,
   };
 };
 

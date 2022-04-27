@@ -468,7 +468,7 @@ export type GenerateApplicationsReportInput = {
 export type GenerateApplicationsReportResult = {
   __typename?: 'GenerateApplicationsReportResult';
   ok: Scalars['Boolean'];
-  link: Maybe<Scalars['String']>;
+  url: Maybe<Scalars['String']>;
 };
 
 export type GeneratePermitHoldersReportInput = {
