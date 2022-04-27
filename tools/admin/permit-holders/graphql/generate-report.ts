@@ -26,6 +26,7 @@ export const GENERATE_ACCOUNTANT_REPORT_QUERY = gql`
   query GenerateAccountantReportQuery($input: GenerateAccountantReportInput!) {
     generateAccountantReport(input: $input) {
       ok
+      url
     }
   }
 `;

@@ -283,15 +283,20 @@ export const generateApplicationsReport: Resolver<
 
 /**
  * Generates csv with accountants' info, given a start date and end date
- * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
+ * @returns Whether a csv could be generated (ok), and an AWS S3 file link
  */
 export const generateAccountantReport: Resolver<
   QueryGenerateAccountantReportArgs,
   GenerateAccountantReportResult
-> = async (_, args, { prisma }) => {
+> = async (_, args, { prisma, session }) => {
   const {
     input: { startDate, endDate },
   } = args;
+
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
 
   const paymentTypeToString: Record<PaymentType, string> = {
     MASTERCARD: 'Mastercard (Office)',
@@ -367,13 +372,37 @@ export const generateAccountantReport: Resolver<
     { id: 'donationAmount', title: 'Donation' },
     { id: 'totalAmount', title: 'Total' },
   ];
-  const csvWriter = createObjectCsvWriter({
-    path: 'temp/file.csv',
+
+  // Generate CSV string from csv object.
+  const csvStringifier = createObjectCsvStringifier({
     header: csvHeaders,
   });
-  await csvWriter.writeRecords(csvAccountantReportRows);
+  const csvStringRecords = csvStringifier.stringifyRecords(csvAccountantReportRows);
+  const csvStringHeader = csvStringifier.getHeaderString();
+  const csvString = csvStringHeader + csvStringRecords;
+
+  // NOTETOSELF: Change name
+  // CSV naming format applications/permit-holders/accounting-report-{employeeID}-{timestamp}.csv
+  const employeeID = session.id;
+  const timestamp = formatDateTimeYYYYMMDDHHMMSS(new Date());
+  // NOTETOSELF: Change fileName and s3InvoiceKey
+  const fileName = `accounting-report-${employeeID}-${timestamp}.csv`;
+  const s3InvoiceKey = `rcd/applications/permit-holderss/${fileName}`;
+
+  // Upload csv to s3
+  let uploadedCSV;
+  let signedUrl;
+  try {
+    // Upload file to s3
+    uploadedCSV = await serverUploadToS3(csvString, s3InvoiceKey);
+    // Generate a signed URL to access the file
+    signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
+  } catch (error) {
+    throw new ApolloError(`Error uploading accountant report to AWS: ${error}`);
+  }
 
   return {
     ok: true,
+    url: signedUrl,
   };
 };

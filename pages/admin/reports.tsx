@@ -24,7 +24,14 @@ export default function Reports() {
     GenerateAccountantReportRequest
   >(GENERATE_ACCOUNTANT_REPORT_QUERY, {
     onCompleted: data => {
-      if (data.generateAccountantReport.ok) {
+      if (data.generateAccountantReport.ok && !!data.generateAccountantReport.url) {
+        const link = document.createElement('a');
+        link.setAttribute('href', data.generateAccountantReport.url);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
         toast({
           status: 'success',
           description: `A CSV permit holders report has been successfully generated.`,
