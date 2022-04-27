@@ -107,7 +107,7 @@ const GuardianInformationCard: FC<Props> = props => {
                 Attached POA Form
               </Text>
               <FileLink href={poaFormS3ObjectUrl} target="_blank" rel="noopener noreferrer">
-                <Text as="p" textStyle="body-regular" color="primary">
+                <Text as="p" textStyle="body-regular" color="primary" textDecoration="underline">
                   {!!poaFormS3ObjectKey && getFileName(poaFormS3ObjectKey)}
                 </Text>
               </FileLink>

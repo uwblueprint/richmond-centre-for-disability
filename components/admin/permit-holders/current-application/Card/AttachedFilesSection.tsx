@@ -28,7 +28,7 @@ const AttachedFilesSection: FC<Props> = ({ application }) => {
             </Text>
           ) : (
             <FileLink href={documentsUrl} target="_blank" rel="noopener noreferrer">
-              <Text as="p" textStyle="body-regular" color="primary">
+              <Text as="p" textStyle="body-regular" color="primary" textDecoration="underline">
                 {!!documentsS3ObjectKey && getFileName(documentsS3ObjectKey)}
               </Text>
             </FileLink>
@@ -47,7 +47,7 @@ const AttachedFilesSection: FC<Props> = ({ application }) => {
           ) : (
             invoice.s3ObjectUrl && (
               <FileLink href={invoice.s3ObjectUrl} target="_blank" rel="noopener noreferrer">
-                <Text as="p" textStyle="body-regular" color="primary">
+                <Text as="p" textStyle="body-regular" color="primary" textDecoration="underline">
                   {!!invoice.s3ObjectKey && getFileName(invoice.s3ObjectKey)}
                 </Text>
               </FileLink>
