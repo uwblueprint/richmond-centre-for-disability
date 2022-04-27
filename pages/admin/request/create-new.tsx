@@ -178,7 +178,9 @@ export default function CreateNew() {
             addressLine2: guardian.addressLine2,
             city: guardian.city,
             postalCode: guardian.postalCode,
+            // TODO: Replace with real values
             poaFormS3ObjectKey: '',
+            poaFormS3ObjectUrl: '',
           });
         } else {
           setGuardianInformation({
@@ -193,6 +195,7 @@ export default function CreateNew() {
             city: '',
             postalCode: '',
             poaFormS3ObjectKey: '',
+            poaFormS3ObjectUrl: '',
           });
         }
       }

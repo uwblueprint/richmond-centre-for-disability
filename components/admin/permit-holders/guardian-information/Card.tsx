@@ -13,10 +13,9 @@ import { FC, useCallback } from 'react';
 import { Text } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { formatFullName } from '@lib/utils/format';
-import { Guardian } from '@lib/graphql/types';
+import { Guardian, UpdateApplicantGuardianInformationInput } from '@lib/graphql/types';
 import Address from '@components/admin/Address';
 import EditGuardianInformationModal from '@components/admin/requests/guardian-information/EditModal';
-import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 
 type Props = {
   readonly applicantId: number;
@@ -115,13 +114,11 @@ const GuardianInformationCard: FC<Props> = props => {
   }
 
   /** Handler for saving guardian information */
-  const handleSave = async (data: GuardianInformation) => {
+  const handleSave = async (data: Omit<UpdateApplicantGuardianInformationInput, 'id'>) => {
     // ! Temporarily remove omitGuardianPoa field
     // TODO: Support omitting guardian/POA
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { omitGuardianPoa: _, ...rest } = data;
     await updateGuardianInformation({
-      variables: { input: { id: applicantId, ...rest } },
+      variables: { input: { id: applicantId, ...data } },
     });
     refetch();
   };
@@ -135,7 +132,7 @@ const GuardianInformationCard: FC<Props> = props => {
       divider
       editModal={
         guardian && (
-          <EditGuardianInformationModal guardianInformation={{ ...guardian }} onSave={handleSave}>
+          <EditGuardianInformationModal guardianInformation={guardian} onSave={handleSave}>
             <Button color="primary" variant="ghost" textDecoration="underline">
               <Text textStyle="body-bold">Edit</Text>
             </Button>

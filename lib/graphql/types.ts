@@ -498,6 +498,8 @@ export type Guardian = {
   province: Province;
   country: Scalars['String'];
   postalCode: Scalars['String'];
+  poaFormS3ObjectKey: Maybe<Scalars['String']>;
+  poaFormS3ObjectUrl: Maybe<Scalars['String']>;
 };
 
 export type Invoice = {
@@ -1141,6 +1143,7 @@ export type UpdateApplicantGuardianInformationInput = {
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
   postalCode: Scalars['String'];
+  poaFormS3ObjectKey: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicantGuardianInformationResult = {

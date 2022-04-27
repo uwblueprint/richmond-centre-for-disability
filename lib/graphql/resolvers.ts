@@ -78,6 +78,7 @@ import {
   applicationProcessingReviewRequestCompletedEmployeeResolver,
   applicationProcessingWalletCardCreatedEmployeeResolver,
 } from '@lib/application-processing/field-resolvers';
+import { guardianPoaFormS3ObjectUrlResolver } from '@lib/guardian/field-resolvers';
 
 /**
  * Resolver return type - accounts for extra fields
@@ -241,6 +242,9 @@ const resolvers = {
     __resolveType: __resolveApplicationType,
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
+  },
+  Guardian: {
+    poaFormS3ObjectUrl: guardianPoaFormS3ObjectUrlResolver,
   },
   MedicalInformation: {
     physician: medicalInformationPhysicianResolver,

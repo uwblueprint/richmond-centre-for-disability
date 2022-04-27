@@ -2,13 +2,13 @@ import { HStack, VStack, Text, Button } from '@chakra-ui/react';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
 import RequestStatusBadge from '@components/admin/RequestStatusBadge';
 import { formatDate } from '@lib/utils/format';
-import { GetCurrentApplicationResponse } from '@tools/admin/permit-holders/current-application';
+import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 import { titlecase } from '@tools/string';
 import Link from 'next/link';
 import { FC } from 'react';
 
 type Props = {
-  readonly application: GetCurrentApplicationResponse['application'];
+  readonly application: CurrentApplication;
 };
 
 const Header: FC<Props> = ({ application }) => {

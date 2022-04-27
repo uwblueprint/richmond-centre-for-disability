@@ -33,7 +33,16 @@ export default function PermitHolder({ id: idString }: Props) {
     return null;
   }
 
-  const { firstName, middleName, lastName, status, inactiveReason } = data.applicant;
+  const {
+    firstName,
+    middleName,
+    lastName,
+    status,
+    inactiveReason,
+    completedApplications,
+    permits: appHistory,
+  } = data.applicant;
+  const currentApplication = completedApplications.length > 0 ? completedApplications[0] : null;
 
   return (
     <Layout>
@@ -57,8 +66,8 @@ export default function PermitHolder({ id: idString }: Props) {
 
       <GridItem rowSpan={12} colSpan={7} textAlign="left">
         <Stack spacing={5}>
-          <CurrentApplicationCard applicantId={id} />
-          <AppHistoryCard applicantId={id} />
+          {currentApplication && <CurrentApplicationCard application={currentApplication} />}
+          <AppHistoryCard appHistory={appHistory} />
         </Stack>
       </GridItem>
     </Layout>

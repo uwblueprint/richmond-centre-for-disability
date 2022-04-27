@@ -6,18 +6,11 @@ import { Button, Text, Box, Link, HStack, VStack } from '@chakra-ui/react';
 const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 
 // File upload button props
-type Props = (
-  | {
-      readonly initialFileUrl: string;
-      readonly initialFileName: string;
-    }
-  | {
-      readonly initialFileUrl: undefined;
-      readonly initialFileName: undefined;
-    }
-) & {
+type Props = {
   readonly file: File | null; // currently uploaded file
   readonly onUploadFile: (selectedFile: File) => void; // handle file upload
+  readonly initialFileUrl?: string;
+  readonly initialFileName?: string;
 };
 
 /**
@@ -30,7 +23,7 @@ export const PoaFormUploadField: FC<Props> = ({
   onUploadFile,
 }) => {
   const hiddenFileInput = useRef<HTMLInputElement>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>('error');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   /**
    * Handle upload button click

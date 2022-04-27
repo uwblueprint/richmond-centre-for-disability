@@ -22,6 +22,8 @@ export const GET_GUARDIAN_INFORMATION = gql`
         province
         country
         postalCode
+        poaFormS3ObjectKey
+        poaFormS3ObjectUrl
       }
     }
   }
@@ -44,6 +46,8 @@ export type GetGuardianInformationResponse = {
       | 'province'
       | 'country'
       | 'postalCode'
+      | 'poaFormS3ObjectKey'
+      | 'poaFormS3ObjectUrl'
     > | null;
   };
 };

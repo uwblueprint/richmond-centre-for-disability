@@ -128,7 +128,7 @@ model Guardian {
   country            String     @default("Canada") @db.VarChar(255)
   postalCode         String     @map("postal_code") @db.VarChar(6)
   relationship       String     @db.VarChar(255)
-  poaFormS3ObjectKey String?    @db.VarChar(255)
+  poaFormS3ObjectKey String?    @map("poa_form_s3_object_key") @db.VarChar(255)
   notes              String?
   createdAt          DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)

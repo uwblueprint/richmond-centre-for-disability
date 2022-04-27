@@ -1,27 +1,14 @@
 import { StackDivider, VStack } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
-import {
-  GetAppHistoryRequest,
-  GetAppHistoryResponse,
-  GET_APP_HISTORY,
-} from '@tools/admin/permit-holders/app-history';
-import { useQuery } from '@apollo/client';
+import { PermitRecord } from '@tools/admin/permit-holders/app-history';
 import AppHistoryRecord from '@components/admin/permit-holders/app-history/Card/AppHistoryRecord';
 
 type Props = {
-  readonly applicantId: number;
+  readonly appHistory: ReadonlyArray<PermitRecord>;
 };
 
 /** Card for displaying past permits of an applicant */
-export default function AppHistoryCard({ applicantId }: Props) {
-  const { data } = useQuery<GetAppHistoryResponse, GetAppHistoryRequest>(GET_APP_HISTORY, {
-    variables: { id: applicantId },
-  });
-
-  if (!data?.applicant.permits) {
-    return null;
-  }
-
+export default function AppHistoryCard({ appHistory }: Props) {
   return (
     <PermitHolderInfoCard header={`Past APPs`} alignGridItems="normal" divider>
       <VStack
@@ -31,7 +18,7 @@ export default function AppHistoryCard({ applicantId }: Props) {
         spacing="16px"
         divider={<StackDivider borderColor="border.secondary" />}
       >
-        {data.applicant.permits.map(permit => (
+        {appHistory.map(permit => (
           <AppHistoryRecord key={permit.application.id} permit={permit} />
         ))}
       </VStack>

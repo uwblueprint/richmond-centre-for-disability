@@ -9,14 +9,17 @@ import {
   Text,
   Box,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, SyntheticEvent, useEffect, FC } from 'react'; // React
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 import GuardianInformationForm from './Form';
+import { clientUploadToS3 } from '@lib/utils/s3-utils';
+import { UpdateApplicantGuardianInformationInput } from '@lib/graphql/types';
 
 type Props = {
   readonly guardianInformation: Omit<GuardianInformation, 'omitGuardianPoa'>;
-  readonly onSave: (physicianData: GuardianInformation) => void; // Callback that accepts the inputs defined in this page
+  readonly onSave: (physicianData: Omit<UpdateApplicantGuardianInformationInput, 'id'>) => void; // Callback that accepts the inputs defined in this page
 };
 
 const EditGuardianInformationModal: FC<Props> = ({
@@ -36,6 +39,9 @@ const EditGuardianInformationModal: FC<Props> = ({
   // Modal state
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  // Toast message
+  const toast = useToast();
+
   useEffect(() => {
     setGuardianInformation({
       omitGuardianPoa: false,
@@ -46,9 +52,49 @@ const EditGuardianInformationModal: FC<Props> = ({
   /**
    * Handle edit submission
    */
-  const handleSubmit = (event: SyntheticEvent) => {
+  const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    onSave(guardianInformation);
+
+    let poaFormS3ObjectKey = '';
+    if (poaFile) {
+      try {
+        // TODO: Rename folder to rcd/poa-forms
+        const { key } = await clientUploadToS3(poaFile, 'rcd/guardian-forms');
+        poaFormS3ObjectKey = key;
+      } catch (err) {
+        toast({
+          status: 'error',
+          description: `Failed to upload POA file: ${err}`,
+          isClosable: true,
+        });
+        return;
+      }
+    }
+
+    const {
+      firstName,
+      middleName,
+      lastName,
+      phone,
+      relationship,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+    } = guardianInformation;
+
+    onSave({
+      firstName,
+      middleName,
+      lastName,
+      phone,
+      relationship,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+      poaFormS3ObjectKey,
+    });
     onClose();
   };
 

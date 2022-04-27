@@ -1,11 +1,11 @@
 import { Grid, GridItem, Text } from '@chakra-ui/react';
-import { GetCurrentApplicationResponse } from '@tools/admin/permit-holders/current-application';
+import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 import { titlecase } from '@tools/string';
 import { FC } from 'react';
 import CurrentApplicationCardSection from './CardSection';
 
 type Props = {
-  readonly application: Required<GetCurrentApplicationResponse['application']>;
+  readonly application: Required<CurrentApplication>;
 };
 
 const AdditionalInformationSection: FC<Props> = ({ application }) => {

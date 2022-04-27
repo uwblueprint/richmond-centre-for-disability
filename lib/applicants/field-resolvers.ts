@@ -82,11 +82,10 @@ export const applicantCompletedApplicationsResolver: FieldResolver<
  * Field resolver to fetch the guardian associated with an applicant
  * @returns Guardian object
  */
-export const applicantGuardianResolver: FieldResolver<Applicant, Guardian | null> = async (
-  parent,
-  _args,
-  { prisma }
-) => {
+export const applicantGuardianResolver: FieldResolver<
+  Applicant,
+  Omit<Guardian, 'poaFormS3ObjectUrl'> | null
+> = async (parent, _args, { prisma }) => {
   return await prisma.applicant.findUnique({ where: { id: parent.id } }).guardian();
 };
 

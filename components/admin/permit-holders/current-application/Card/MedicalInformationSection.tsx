@@ -1,12 +1,12 @@
 import { Grid, GridItem, Text, List, ListItem, HStack, Badge } from '@chakra-ui/react';
 import { formatDate } from '@lib/utils/format';
-import { GetCurrentApplicationResponse } from '@tools/admin/permit-holders/current-application';
+import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 import { titlecase } from '@tools/string';
 import { FC } from 'react';
 import CurrentApplicationCardSection from './CardSection';
 
 type Props = {
-  readonly application: Required<GetCurrentApplicationResponse['application']>;
+  readonly application: Required<CurrentApplication>;
 };
 
 const MedicalInformationSection: FC<Props> = ({ application }) => {
