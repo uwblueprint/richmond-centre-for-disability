@@ -9,6 +9,7 @@ export const GET_APPLICANT_QUERY = gql`
       middleName
       lastName
       status
+      inactiveReason
     }
   }
 `;
@@ -16,5 +17,5 @@ export const GET_APPLICANT_QUERY = gql`
 export type GetApplicantRequest = QueryApplicantArgs;
 
 export type GetApplicantResponse = {
-  applicant: Pick<Applicant, 'firstName' | 'middleName' | 'lastName' | 'status'>;
+  applicant: Pick<Applicant, 'firstName' | 'middleName' | 'lastName' | 'status' | 'inactiveReason'>;
 };

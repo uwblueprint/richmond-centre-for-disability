@@ -1,6 +1,7 @@
 import { Button, Grid, GridItem, HStack, Text, VStack, Link as FileLink } from '@chakra-ui/react';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
 import { formatDate } from '@lib/utils/format';
+import { getFileName } from '@lib/utils/s3-utils';
 import { PermitRecord } from '@tools/admin/permit-holders/app-history';
 import { titlecase } from '@tools/string';
 import Link from 'next/link';
@@ -19,7 +20,7 @@ const AppHistoryRecord: FC<Props> = ({ permit }) => {
       id: applicationId,
       type,
       permitType,
-      processing: { documentsUrl, invoice },
+      processing: { documentsUrl, documentsS3ObjectKey, invoice },
     },
   } = permit;
 
@@ -75,9 +76,9 @@ const AppHistoryRecord: FC<Props> = ({ permit }) => {
                 Not uploaded or file pending upload
               </Text>
             ) : (
-              <FileLink>
-                <Text as="p" textStyle="body-regular">
-                  {documentsUrl}
+              <FileLink href={documentsUrl} target="_blank" rel="noopener noreferrer">
+                <Text as="p" textStyle="body-regular" color="primary">
+                  {!!documentsS3ObjectKey && getFileName(documentsS3ObjectKey)}
                 </Text>
               </FileLink>
             )}
@@ -93,11 +94,13 @@ const AppHistoryRecord: FC<Props> = ({ permit }) => {
                 Not generated yet
               </Text>
             ) : (
-              <FileLink>
-                <Text as="p" textStyle="body-regular">
-                  {invoice.s3ObjectUrl}
-                </Text>
-              </FileLink>
+              invoice.s3ObjectUrl && (
+                <FileLink href={invoice.s3ObjectUrl} target="_blank" rel="noopener noreferrer">
+                  <Text as="p" textStyle="body-regular" color="primary">
+                    {!!invoice.s3ObjectKey && getFileName(invoice.s3ObjectKey)}
+                  </Text>
+                </FileLink>
+              )
             )}
           </GridItem>
         </Grid>

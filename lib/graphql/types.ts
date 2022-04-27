@@ -40,6 +40,7 @@ export type Applicant = {
   country: Scalars['String'];
   postalCode: Scalars['String'];
   status: ApplicantStatus;
+  inactiveReason: Maybe<Scalars['String']>;
   mostRecentPermit: Maybe<Permit>;
   activePermit: Maybe<Permit>;
   permits: Array<Permit>;
@@ -758,6 +759,7 @@ export type NewApplication = Application & {
   guardianCountry: Maybe<Scalars['String']>;
   guardianPostalCode: Maybe<Scalars['String']>;
   poaFormS3ObjectKey: Maybe<Scalars['String']>;
+  poaFormS3ObjectUrl: Maybe<Scalars['String']>;
   usesAccessibleConvertedVan: Scalars['Boolean'];
   accessibleConvertedVanLoadingMethod: Maybe<AccessibleConvertedVanLoadingMethod>;
   requiresWiderParkingSpace: Scalars['Boolean'];

@@ -1,5 +1,10 @@
 import { gql } from '@apollo/client';
-import { Guardian, QueryApplicantArgs } from '@lib/graphql/types';
+import {
+  Guardian,
+  MutationUpdateApplicantGuardianInformationArgs,
+  QueryApplicantArgs,
+  UpdateApplicantGuardianInformationResult,
+} from '@lib/graphql/types';
 
 /** Get guardian information of an applicant */
 export const GET_GUARDIAN_INFORMATION = gql`
@@ -41,4 +46,19 @@ export type GetGuardianInformationResponse = {
       | 'postalCode'
     > | null;
   };
+};
+
+/** Update guardian information of an applicant */
+export const UPDATE_GUARDIAN_INFORMATION = gql`
+  mutation UpdateApplicantGuardianInformation($input: UpdateApplicantGuardianInformationInput!) {
+    updateApplicantGuardianInformation(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type UpdateGuardianInformationRequest = MutationUpdateApplicantGuardianInformationArgs;
+
+export type UpdateGuardianInformationResponse = {
+  updateApplicantGuardianInformation: UpdateApplicantGuardianInformationResult;
 };

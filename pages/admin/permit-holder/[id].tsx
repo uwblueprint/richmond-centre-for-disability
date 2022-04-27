@@ -33,16 +33,21 @@ export default function PermitHolder({ id: idString }: Props) {
     return null;
   }
 
-  const { firstName, middleName, lastName, status } = data.applicant;
+  const { firstName, middleName, lastName, status, inactiveReason } = data.applicant;
 
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3}>
         <PermitHolderHeader
-          applicant={{ name: formatFullName(firstName, middleName, lastName), status, id }}
+          applicant={{
+            id,
+            name: formatFullName(firstName, middleName, lastName),
+            status,
+            inactiveReason: inactiveReason || undefined,
+          }}
         />
       </GridItem>
-      <GridItem rowSpan={12} colSpan={5} marginTop={5} textAlign="left">
+      <GridItem rowSpan={12} colSpan={5} textAlign="left">
         <Stack spacing={5}>
           <PersonalInformationCard applicantId={id} />
           <DoctorInformationCard applicantId={id} />
@@ -50,7 +55,7 @@ export default function PermitHolder({ id: idString }: Props) {
         </Stack>
       </GridItem>
 
-      <GridItem rowSpan={12} colSpan={7} marginTop={5} textAlign="left">
+      <GridItem rowSpan={12} colSpan={7} textAlign="left">
         <Stack spacing={5}>
           <CurrentApplicationCard applicantId={id} />
           <AppHistoryCard applicantId={id} />

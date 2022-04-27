@@ -1,10 +1,13 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { Button, Divider, VStack } from '@chakra-ui/react';
 import PermitHolderInfoCard from '@components/admin/LayoutCard';
 import {
   GetGuardianInformationRequest,
   GetGuardianInformationResponse,
   GET_GUARDIAN_INFORMATION,
+  UpdateGuardianInformationRequest,
+  UpdateGuardianInformationResponse,
+  UPDATE_GUARDIAN_INFORMATION,
 } from '@tools/admin/permit-holders/guardian-information';
 import { FC, useCallback } from 'react';
 import { Text } from '@chakra-ui/react';
@@ -12,6 +15,8 @@ import { AddIcon } from '@chakra-ui/icons';
 import { formatFullName } from '@lib/utils/format';
 import { Guardian } from '@lib/graphql/types';
 import Address from '@components/admin/Address';
+import EditGuardianInformationModal from '@components/admin/requests/guardian-information/EditModal';
+import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 
 type Props = {
   readonly applicantId: number;
@@ -23,7 +28,7 @@ type Props = {
 const GuardianInformationCard: FC<Props> = props => {
   const { applicantId } = props;
 
-  const { data } = useQuery<GetGuardianInformationResponse, GetGuardianInformationRequest>(
+  const { data, refetch } = useQuery<GetGuardianInformationResponse, GetGuardianInformationRequest>(
     GET_GUARDIAN_INFORMATION,
     {
       variables: {
@@ -31,6 +36,11 @@ const GuardianInformationCard: FC<Props> = props => {
       },
     }
   );
+
+  const [updateGuardianInformation] = useMutation<
+    UpdateGuardianInformationResponse,
+    UpdateGuardianInformationRequest
+  >(UPDATE_GUARDIAN_INFORMATION);
 
   /** Render add Guardian view */
   const _renderAddGuardian = useCallback(() => {
@@ -104,8 +114,35 @@ const GuardianInformationCard: FC<Props> = props => {
     return null;
   }
 
+  /** Handler for saving guardian information */
+  const handleSave = async (data: GuardianInformation) => {
+    // ! Temporarily remove omitGuardianPoa field
+    // TODO: Support omitting guardian/POA
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { omitGuardianPoa: _, ...rest } = data;
+    await updateGuardianInformation({
+      variables: { input: { id: applicantId, ...rest } },
+    });
+    refetch();
+  };
+
+  const { guardian } = data.applicant;
+
   return (
-    <PermitHolderInfoCard colSpan={5} header="Guardian/POA Information" divider>
+    <PermitHolderInfoCard
+      colSpan={5}
+      header="Guardian/POA Information"
+      divider
+      editModal={
+        guardian && (
+          <EditGuardianInformationModal guardianInformation={{ ...guardian }} onSave={handleSave}>
+            <Button color="primary" variant="ghost" textDecoration="underline">
+              <Text textStyle="body-bold">Edit</Text>
+            </Button>
+          </EditGuardianInformationModal>
+        )
+      }
+    >
       {data.applicant.guardian === null
         ? _renderAddGuardian()
         : _renderGuardianInformation(data.applicant.guardian)}

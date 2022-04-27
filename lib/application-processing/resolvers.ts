@@ -198,6 +198,7 @@ export const completeApplication: Resolver<
         guardianProvince,
         guardianCountry,
         guardianPostalCode,
+        poaFormS3ObjectKey,
       } = newApplication;
 
       // Only create a guardian record if all required fields are filled
@@ -225,6 +226,7 @@ export const completeApplication: Resolver<
           province: guardianProvince,
           country: guardianCountry,
           postalCode: guardianPostalCode,
+          poaFormS3ObjectKey,
         };
       } else {
         guardian = undefined;

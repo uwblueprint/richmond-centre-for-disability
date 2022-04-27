@@ -25,11 +25,15 @@ const CurrentApplicationCard: FC<Props> = ({ applicantId }) => {
     { variables: { id: applicantId } }
   );
 
-  if (!data?.application) {
+  if (
+    !data?.applicant?.completedApplications ||
+    data.applicant.completedApplications.length === 0
+  ) {
     return null;
   }
 
-  const { application } = data;
+  const { completedApplications } = data.applicant;
+  const application = completedApplications[0];
   const { type } = application;
 
   return (

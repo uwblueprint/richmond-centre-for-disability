@@ -125,6 +125,7 @@ export default gql`
     guardianCountry: String
     guardianPostalCode: String
     poaFormS3ObjectKey: String
+    poaFormS3ObjectUrl: String
 
     # Additional information
     usesAccessibleConvertedVan: Boolean!

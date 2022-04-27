@@ -12,8 +12,8 @@ import {
 /** APP history entry row in APP history table */
 export type PermitRecord = Pick<Permit, 'rcdPermitId' | 'expiryDate'> & {
   application: Pick<Application, 'id' | 'type'> & {
-    processing: Pick<ApplicationProcessing, 'documentsUrl'> & {
-      invoice: Pick<Invoice, 's3ObjectUrl'>;
+    processing: Pick<ApplicationProcessing, 'documentsUrl' | 'documentsS3ObjectKey'> & {
+      invoice: Pick<Invoice, 's3ObjectUrl' | 's3ObjectKey'>;
     };
     permitType: PermitType | undefined;
   };
@@ -31,8 +31,10 @@ export const GET_APP_HISTORY = gql`
           type
           processing {
             documentsUrl
+            documentsS3ObjectKey
             invoice {
               s3ObjectUrl
+              s3ObjectKey
             }
           }
           ... on NewApplication {

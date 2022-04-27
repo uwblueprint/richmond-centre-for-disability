@@ -116,22 +116,23 @@ model Employee {
 }
 
 model Guardian {
-  id           Int        @id @default(autoincrement())
-  firstName    String     @map("first_name") @db.VarChar(255)
-  middleName   String?    @map("middle_name") @db.VarChar(255)
-  lastName     String     @map("last_name") @db.VarChar(255)
-  phone        String     @db.VarChar(50)
-  addressLine1 String     @map("address_line_1") @db.VarChar(255)
-  addressLine2 String?    @map("address_line_2") @db.VarChar(255)
-  city         String     @db.VarChar(255)
-  province     Province   @default(BC)
-  country      String     @default("Canada") @db.VarChar(255)
-  postalCode   String     @map("postal_code") @db.VarChar(6)
-  relationship String     @db.VarChar(255)
-  notes        String?
-  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  applicant    Applicant? @relation("applicantsToguardians")
+  id                 Int        @id @default(autoincrement())
+  firstName          String     @map("first_name") @db.VarChar(255)
+  middleName         String?    @map("middle_name") @db.VarChar(255)
+  lastName           String     @map("last_name") @db.VarChar(255)
+  phone              String     @db.VarChar(50)
+  addressLine1       String     @map("address_line_1") @db.VarChar(255)
+  addressLine2       String?    @map("address_line_2") @db.VarChar(255)
+  city               String     @db.VarChar(255)
+  province           Province   @default(BC)
+  country            String     @default("Canada") @db.VarChar(255)
+  postalCode         String     @map("postal_code") @db.VarChar(6)
+  relationship       String     @db.VarChar(255)
+  poaFormS3ObjectKey String?    @db.VarChar(255)
+  notes              String?
+  createdAt          DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  applicant          Applicant? @relation("applicantsToguardians")
 
   @@map("guardians")
 }

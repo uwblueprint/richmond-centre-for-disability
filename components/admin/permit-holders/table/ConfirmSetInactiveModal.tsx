@@ -97,7 +97,15 @@ export default function SetPermitHolderToInactiveModal({
               {`Set Permit Holder as Inactive`}
             </Text>
           </ModalHeader>
-          <ModalBody paddingTop="20px" paddingBottom="0px" paddingX="4px">
+          <ModalBody paddingBottom="0px" paddingX="4px">
+            <Text as="p" textStyle="body-regular" marginBottom="20px">
+              Please enter a reason for setting the permit holder to inactive.{' '}
+              <b>
+                Note that you cannot make any edits to this permit holder until you mark them as
+                active again.
+              </b>
+            </Text>
+
             <FormControl isRequired>
               <FormLabel as="h3" textStyle="button-semibold" color="text.secondary">
                 {'Reason for setting permit holder as inactive'}

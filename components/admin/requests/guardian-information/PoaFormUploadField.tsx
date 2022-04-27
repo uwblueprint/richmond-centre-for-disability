@@ -6,15 +6,29 @@ import { Button, Text, Box, Link, HStack, VStack } from '@chakra-ui/react';
 const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 
 // File upload button props
-type Props = {
-  file: File | null; // currently uploaded file
-  onUploadFile: (selectedFile: File) => void; // handle file upload
+type Props = (
+  | {
+      readonly initialFileUrl: string;
+      readonly initialFileName: string;
+    }
+  | {
+      readonly initialFileUrl: undefined;
+      readonly initialFileName: undefined;
+    }
+) & {
+  readonly file: File | null; // currently uploaded file
+  readonly onUploadFile: (selectedFile: File) => void; // handle file upload
 };
 
 /**
  * POA form upload component allowing users to upload POA form PDF file
  */
-export const PoaFormUploadField: FC<Props> = ({ file, onUploadFile }) => {
+export const PoaFormUploadField: FC<Props> = ({
+  initialFileUrl,
+  initialFileName,
+  file,
+  onUploadFile,
+}) => {
   const hiddenFileInput = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>('error');
 
@@ -48,6 +62,8 @@ export const PoaFormUploadField: FC<Props> = ({ file, onUploadFile }) => {
     onUploadFile(uploadedFile);
   };
 
+  const fileName = file ? file.name : initialFileName || '';
+
   return (
     <>
       <Text as="h3" textStyle="heading" paddingBottom="20px">
@@ -56,7 +72,7 @@ export const PoaFormUploadField: FC<Props> = ({ file, onUploadFile }) => {
       <Text color="text.secondary">
         {'Only ONE file can be added. Files must be .pdf and can be a maximum of 5MB in size.'}{' '}
       </Text>
-      {file && (
+      {(file || initialFileUrl) && (
         <>
           <Text as="h4" textStyle="button-semibold" mt="24px">
             Current File
@@ -67,7 +83,7 @@ export const PoaFormUploadField: FC<Props> = ({ file, onUploadFile }) => {
                 <HStack>
                   <WarningTwoIcon color="secondary.critical" />
                   <Text textStyle="body-regular" color="text.critical">
-                    {file.name}
+                    {fileName}
                   </Text>
                 </HStack>
                 <Text textStyle="caption" color="text.critical">
@@ -76,13 +92,13 @@ export const PoaFormUploadField: FC<Props> = ({ file, onUploadFile }) => {
               </VStack>
             ) : (
               <Link
-                href={URL.createObjectURL(file)}
-                download={file.name}
+                href={file ? URL.createObjectURL(file) : initialFileUrl || '#'}
+                download={fileName}
                 textStyle="body-regular"
                 color="primary"
                 textDecoration="underline"
               >
-                {file.name}
+                {fileName}
               </Link>
             )}
           </Box>

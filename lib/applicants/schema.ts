@@ -30,6 +30,7 @@ export default gql`
     postalCode: String!
 
     status: ApplicantStatus!
+    inactiveReason: String
 
     mostRecentPermit: Permit
     activePermit: Permit

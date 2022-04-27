@@ -59,6 +59,7 @@ import {
   __resolveApplicationType,
   applicationApplicantResolver,
   applicationProcessingResolver,
+  applicationPoaFormS3ObjectUrlResolver,
 } from '@lib/applications/field-resolvers'; // Application field resolvers
 import { medicalInformationPhysicianResolver } from '@lib/medical-information/field-resolvers';
 import {
@@ -229,6 +230,7 @@ const resolvers = {
     __resolveType: __resolveApplicationType,
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
+    poaFormS3ObjectUrl: applicationPoaFormS3ObjectUrlResolver,
   },
   RenewalApplication: {
     __resolveType: __resolveApplicationType,

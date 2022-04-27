@@ -1,15 +1,16 @@
 import { Grid, GridItem, Text, Link as FileLink } from '@chakra-ui/react';
-import { GetCurrentApplicationResponse } from '@tools/admin/permit-holders/current-application';
+import { getFileName } from '@lib/utils/s3-utils';
+import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 import { FC } from 'react';
 import CurrentApplicationCardSection from './CardSection';
 
 type Props = {
-  readonly application: GetCurrentApplicationResponse['application'];
+  readonly application: CurrentApplication;
 };
 
 const AttachedFilesSection: FC<Props> = ({ application }) => {
   const {
-    processing: { documentsUrl, invoice },
+    processing: { documentsUrl, documentsS3ObjectKey, invoice },
   } = application;
 
   return (
@@ -26,9 +27,9 @@ const AttachedFilesSection: FC<Props> = ({ application }) => {
               Not uploaded or file pending upload
             </Text>
           ) : (
-            <FileLink>
-              <Text as="p" textStyle="body-regular">
-                {documentsUrl}
+            <FileLink href={documentsUrl} target="_blank" rel="noopener noreferrer">
+              <Text as="p" textStyle="body-regular" color="primary">
+                {!!documentsS3ObjectKey && getFileName(documentsS3ObjectKey)}
               </Text>
             </FileLink>
           )}
@@ -44,11 +45,13 @@ const AttachedFilesSection: FC<Props> = ({ application }) => {
               Not generated yet
             </Text>
           ) : (
-            <FileLink>
-              <Text as="p" textStyle="body-regular">
-                {invoice.s3ObjectUrl}
-              </Text>
-            </FileLink>
+            invoice.s3ObjectUrl && (
+              <FileLink href={invoice.s3ObjectUrl} target="_blank" rel="noopener noreferrer">
+                <Text as="p" textStyle="body-regular" color="primary">
+                  {!!invoice.s3ObjectKey && getFileName(invoice.s3ObjectKey)}
+                </Text>
+              </FileLink>
+            )
           )}
         </GridItem>
       </Grid>
