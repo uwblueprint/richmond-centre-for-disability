@@ -1,10 +1,8 @@
-import { useMutation, useQuery } from '@apollo/client';
-import { Button, Divider, VStack } from '@chakra-ui/react';
+import { useMutation } from '@apollo/client';
+import { Button, Divider, VStack, Link as FileLink } from '@chakra-ui/react';
 import PermitHolderInfoCard from '@components/admin/LayoutCard';
 import {
-  GetGuardianInformationRequest,
-  GetGuardianInformationResponse,
-  GET_GUARDIAN_INFORMATION,
+  GuardianInformationCardData,
   UpdateGuardianInformationRequest,
   UpdateGuardianInformationResponse,
   UPDATE_GUARDIAN_INFORMATION,
@@ -16,25 +14,19 @@ import { formatFullName } from '@lib/utils/format';
 import { Guardian, UpdateApplicantGuardianInformationInput } from '@lib/graphql/types';
 import Address from '@components/admin/Address';
 import EditGuardianInformationModal from '@components/admin/requests/guardian-information/EditModal';
+import { getFileName } from '@lib/utils/s3-utils';
 
 type Props = {
   readonly applicantId: number;
+  readonly guardian: GuardianInformationCardData | null;
+  readonly refetch: () => void;
 };
 
 /**
  * Card for guardian/POA information of permit holder
  */
 const GuardianInformationCard: FC<Props> = props => {
-  const { applicantId } = props;
-
-  const { data, refetch } = useQuery<GetGuardianInformationResponse, GetGuardianInformationRequest>(
-    GET_GUARDIAN_INFORMATION,
-    {
-      variables: {
-        id: applicantId,
-      },
-    }
-  );
+  const { applicantId, guardian, refetch } = props;
 
   const [updateGuardianInformation] = useMutation<
     UpdateGuardianInformationResponse,
@@ -82,6 +74,8 @@ const GuardianInformationCard: FC<Props> = props => {
       province,
       country,
       postalCode,
+      poaFormS3ObjectKey,
+      poaFormS3ObjectUrl,
     } = guardian;
 
     // TODO: Support POA form section
@@ -105,13 +99,24 @@ const GuardianInformationCard: FC<Props> = props => {
           </Text>
           <Address address={{ addressLine1, addressLine2, city, province, country, postalCode }} />
         </VStack>
+        {poaFormS3ObjectKey && poaFormS3ObjectUrl && (
+          <>
+            <Divider />
+            <VStack spacing="12px" align="left">
+              <Text as="h4" textStyle="body-bold">
+                Attached POA Form
+              </Text>
+              <FileLink href={poaFormS3ObjectUrl} target="_blank" rel="noopener noreferrer">
+                <Text as="p" textStyle="body-regular" color="primary">
+                  {!!poaFormS3ObjectKey && getFileName(poaFormS3ObjectKey)}
+                </Text>
+              </FileLink>
+            </VStack>
+          </>
+        )}
       </VStack>
     );
   }, []);
-
-  if (!data?.applicant) {
-    return null;
-  }
 
   /** Handler for saving guardian information */
   const handleSave = async (data: Omit<UpdateApplicantGuardianInformationInput, 'id'>) => {
@@ -122,8 +127,6 @@ const GuardianInformationCard: FC<Props> = props => {
     });
     refetch();
   };
-
-  const { guardian } = data.applicant;
 
   return (
     <PermitHolderInfoCard
@@ -140,9 +143,7 @@ const GuardianInformationCard: FC<Props> = props => {
         )
       }
     >
-      {data.applicant.guardian === null
-        ? _renderAddGuardian()
-        : _renderGuardianInformation(data.applicant.guardian)}
+      {guardian === null ? _renderAddGuardian() : _renderGuardianInformation(guardian)}
     </PermitHolderInfoCard>
   );
 };

@@ -2,6 +2,7 @@ import { gql } from '@apollo/client';
 import { Applicant, QueryApplicantArgs } from '@lib/graphql/types';
 import { AppHistoryRecord } from '@tools/admin/permit-holders/app-history';
 import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
+import { GuardianInformationCardData } from '@tools/admin/permit-holders/guardian-information';
 
 /** Get basic applicant information */
 export const GET_APPLICANT_QUERY = gql`
@@ -12,6 +13,23 @@ export const GET_APPLICANT_QUERY = gql`
       lastName
       status
       inactiveReason
+
+      # Guardian
+      guardian {
+        firstName
+        middleName
+        lastName
+        phone
+        relationship
+        addressLine1
+        addressLine2
+        city
+        province
+        country
+        postalCode
+        poaFormS3ObjectKey
+        poaFormS3ObjectUrl
+      }
 
       # Current application
       completedApplications {
@@ -81,6 +99,7 @@ export type GetApplicantResponse = {
     Applicant,
     'firstName' | 'middleName' | 'lastName' | 'status' | 'inactiveReason'
   > & {
+    guardian: GuardianInformationCardData;
     completedApplications: Array<CurrentApplication>;
     permits: Array<AppHistoryRecord>;
   };

@@ -25,9 +25,12 @@ type Props = {
 export default function PermitHolder({ id: idString }: Props) {
   const id = parseInt(idString);
 
-  const { data } = useQuery<GetApplicantResponse, GetApplicantRequest>(GET_APPLICANT_QUERY, {
-    variables: { id },
-  });
+  const { data, refetch } = useQuery<GetApplicantResponse, GetApplicantRequest>(
+    GET_APPLICANT_QUERY,
+    {
+      variables: { id },
+    }
+  );
 
   if (!data?.applicant) {
     return null;
@@ -41,6 +44,7 @@ export default function PermitHolder({ id: idString }: Props) {
     inactiveReason,
     completedApplications,
     permits: appHistory,
+    guardian,
   } = data.applicant;
   const currentApplication = completedApplications.length > 0 ? completedApplications[0] : null;
 
@@ -60,7 +64,7 @@ export default function PermitHolder({ id: idString }: Props) {
         <Stack spacing={5}>
           <PersonalInformationCard applicantId={id} />
           <DoctorInformationCard applicantId={id} />
-          <GuardianInformationCard applicantId={id} />
+          <GuardianInformationCard applicantId={id} guardian={guardian} refetch={refetch} />
         </Stack>
       </GridItem>
 
