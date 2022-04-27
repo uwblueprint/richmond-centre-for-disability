@@ -488,6 +488,7 @@ export type GeneratePermitHoldersReportInput = {
 export type GeneratePermitHoldersReportResult = {
   __typename?: 'GeneratePermitHoldersReportResult';
   ok: Scalars['Boolean'];
+  url: Maybe<Scalars['String']>;
 };
 
 export type Guardian = {
