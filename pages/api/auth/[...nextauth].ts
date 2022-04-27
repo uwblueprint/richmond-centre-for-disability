@@ -87,12 +87,19 @@ export default NextAuth({
         const validatedUser = await loginSchema.validate(user);
 
         // Check if user email exists in DB (throw error if not found)
-        await prisma.employee.findUnique({
+        const employee = await prisma.employee.findUnique({
           where: {
             email: validatedUser.email,
           },
+          select: {
+            active: true,
+          },
           rejectOnNotFound: true,
         });
+
+        if (!employee.active) {
+          throw new VerifySignInError('This employee is not active');
+        }
 
         return true;
       } catch (err) {
