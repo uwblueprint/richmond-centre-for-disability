@@ -11,11 +11,20 @@ import {
   FormControl,
   FormLabel,
   Textarea,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
+import { useMutation } from '@apollo/client';
+import {
+  SetApplicantAsInactiveRequest,
+  SetApplicantAsInactiveResponse,
+  SET_APPLICANT_AS_INACTIVE,
+} from '@tools/admin/permit-holders/permit-holders-table';
 
 //Props
 type SetPermitHolderToInactiveModalProps = {
   readonly isOpen: boolean;
+  readonly applicantId: number;
+  readonly refetch: () => void;
   readonly onClose: () => void;
 };
 
@@ -24,11 +33,35 @@ type SetPermitHolderToInactiveModalProps = {
  */
 export default function SetPermitHolderToInactiveModal({
   isOpen,
+  applicantId,
+  refetch,
   onClose,
 }: SetPermitHolderToInactiveModalProps) {
   // Reason for setting permit holder as inactive state
   const [inactiveReason, setInactiveReason] = useState<string>('');
 
+  const toast = useToast();
+
+  // API Call to setApplicantAsInactive
+  const [setApplicantAsInactive] = useMutation<
+    SetApplicantAsInactiveResponse,
+    SetApplicantAsInactiveRequest
+  >(SET_APPLICANT_AS_INACTIVE, {
+    onCompleted: data => {
+      if (data.setApplicantAsInactive.ok) {
+        toast({
+          status: 'success',
+          description: `Applicant status has been set to inactive.`,
+        });
+      }
+    },
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
   // Close modal handler
   const handleClose = () => {
     setInactiveReason('');
@@ -37,8 +70,20 @@ export default function SetPermitHolderToInactiveModal({
 
   // Sets permit holder status to inactive and closes modal
   // TODO: API hookup
-  const handleSubmit = (event: SyntheticEvent) => {
+  const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
+    if (inactiveReason) {
+      await setApplicantAsInactive({
+        variables: { input: { id: applicantId, reason: inactiveReason } },
+      });
+    } else {
+      toast({
+        status: 'error',
+        description: 'Inactive reason cannot be blank.',
+      });
+    }
+    setInactiveReason('');
+    refetch();
     onClose();
   };
 

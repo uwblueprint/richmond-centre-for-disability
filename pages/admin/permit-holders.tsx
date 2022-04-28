@@ -92,6 +92,7 @@ const PermitHolders: NextPage = () => {
       },
       // ! Temporary fix to force permit holder row updates when navigating (skip cache)
       fetchPolicy: 'network-only',
+      notifyOnNetworkStatusChange: true,
       onCompleted: ({ applicants: { result, totalCount } }) => {
         setPermitHolderData(
           result.map(
@@ -448,6 +449,8 @@ const PermitHolders: NextPage = () => {
       {permitHolderToUpdateStatus?.status === 'ACTIVE' && (
         <SetPermitHolderToInactiveModal
           isOpen={isSetPermitHolderStatusModalOpen}
+          applicantId={permitHolderToUpdateStatus.id}
+          refetch={refetch}
           onClose={onCloseSetPermitHolderStatusModal}
         />
       )}
