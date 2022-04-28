@@ -77,6 +77,25 @@ export const formatDateVerbose = (date: Date, omitTime = false): string => {
 };
 
 /**
+ * Format date to be in YYYYMMDD-HHMMSS format
+ * @param {Date} d date to be formatted
+ * @returns {string} formatted date
+ */
+export const formatDateTimeYYYYMMDDHHMMSS = (d: Date): string => {
+  // offset timezone to locale timezone
+  const date = new Date(d);
+  const offset = date.getTimezoneOffset();
+  const dateTimeParts = new Date(date.getTime() - offset * 60 * 1000).toISOString().split('T');
+
+  // create YYYYMMDD from ISOString
+  const day = dateTimeParts[0].replace(/\D/g, '');
+  // create HHMMSS from ISOString
+  const time = dateTimeParts[1].split('.')[0].replace(/\D/g, '');
+
+  return `${day}-${time}`;
+};
+
+/**
  * Format first name, middle name, and last name into a single string for full name
  * @example formatFullName('John', undefined, 'Kennedy') => 'John Kennedy'
  * @param args Components of name to be concatenated

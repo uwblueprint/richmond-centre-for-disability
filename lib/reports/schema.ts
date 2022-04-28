@@ -15,6 +15,7 @@ export default gql`
   # TODO: Return link to AWS S3 file
   type GenerateApplicationsReportResult {
     ok: Boolean!
+    url: String
   }
 
   # Selectable columns in requests report

@@ -1,4 +1,4 @@
-import { createObjectCsvWriter } from 'csv-writer';
+import { createObjectCsvStringifier, createObjectCsvWriter } from 'csv-writer';
 import { Resolver } from '@lib/graphql/resolvers';
 import {
   QueryGeneratePermitHoldersReportArgs,
@@ -10,9 +10,16 @@ import {
   PaymentType,
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
-import { formatAddress, formatDate, formatFullName } from '@lib/utils/format'; // Formatting utils
+import {
+  formatAddress,
+  formatDate,
+  formatDateTimeYYYYMMDDHHMMSS,
+  formatFullName,
+} from '@lib/utils/format'; // Formatting utils
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
 import { Prisma } from '@prisma/client';
+import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
+import { ApolloError } from 'apollo-server-micro';
 
 /**
  * Generates csv with permit holders' info, given a start date, end date, and values from
@@ -141,15 +148,20 @@ export const generatePermitHoldersReport: Resolver<
 /**
  * Generates csv with applications' info, given a start date, end date, and values from
  * ApplicationsReportColumn that the user would like to have on the generated csv
- * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
+ * @returns Whether a csv could be generated (ok), and an AWS S3 file link
  */
 export const generateApplicationsReport: Resolver<
   QueryGenerateApplicationsReportArgs,
   GenerateApplicationsReportResult
-> = async (_, args, { prisma }) => {
+> = async (_, args, { prisma, session }) => {
   const {
     input: { startDate, endDate, columns },
   } = args;
+
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
 
   const columnsSet = new Set(columns);
 
@@ -237,15 +249,35 @@ export const generateApplicationsReport: Resolver<
     ({ name, reportColumnId }) => ({ id: reportColumnId, title: name })
   );
 
-  const csvWriter = createObjectCsvWriter({
-    path: 'temp/file.csv',
+  // Generate CSV string from csv object.
+  const csvStringifier = createObjectCsvStringifier({
     header: csvHeaders,
   });
+  const csvStringRecords = csvStringifier.stringifyRecords(csvApplications);
+  const csvStringHeader = csvStringifier.getHeaderString();
+  const csvString = csvStringHeader + csvStringRecords;
 
-  await csvWriter.writeRecords(csvApplications);
+  // CSV naming format reports/applications-report-{employeeID}-{timestamp}.csv
+  const employeeID = session.id;
+  const timestamp = formatDateTimeYYYYMMDDHHMMSS(new Date());
+  const fileName = `applications-report-${employeeID}-${timestamp}.csv`;
+  const s3ObjectKey = `rcd/reports/${fileName}`;
+
+  // Upload csv to s3
+  let uploadedCSV;
+  let signedUrl;
+  try {
+    // Upload file to s3
+    uploadedCSV = await serverUploadToS3(csvString, s3ObjectKey);
+    // Generate a signed URL to access the file
+    signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
+  } catch (error) {
+    throw new ApolloError(`Error uploading applications report to AWS: ${error}`);
+  }
 
   return {
     ok: true,
+    url: signedUrl,
   };
 };
 

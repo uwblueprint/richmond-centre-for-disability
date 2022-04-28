@@ -6,7 +6,7 @@ import mime from 'mime-types';
  * Helper function for server side file uploads to s3.
  * ** NOTE: This should only be called on the server side for security purposes **
  * @param body Body to upload
- * @param key File path of object in s3 bucket e.g invoices/.../invoice_1.pdf.
+ * @param objectKey File path of object in s3 bucket e.g invoices/.../invoice_1.pdf.
  * @returns promise of an object with url, bucket and key
  */
 export const serverUploadToS3 = async (
@@ -91,9 +91,14 @@ export const clientUploadToS3 = async (file: File, filePath: string): Promise<S3
  * ** NOTE: This should only be called on the server side for security purposes **
  * @param objectKey
  * @param duration How long the URL should be valid for (in seconds). If not specified, defaults to the max duration of 7 days.
+ * @param autoDownload If the file should be automatically downloaded when the link is clicked
  * @returns
  */
-export const getSignedUrlForS3 = (objectKey: string, duration?: number): string => {
+export const getSignedUrlForS3 = (
+  objectKey: string,
+  duration?: number,
+  autoDownload?: boolean
+): string => {
   const s3 = new S3({
     credentials: {
       accessKeyId: process.env.S3_UPLOAD_KEY as string,
@@ -111,6 +116,7 @@ export const getSignedUrlForS3 = (objectKey: string, duration?: number): string 
     Bucket: process.env.S3_UPLOAD_BUCKET,
     Key: objectKey,
     Expires: expires,
+    ResponseContentDisposition: autoDownload ? 'attachment' : 'inline',
   };
 
   const url = s3.getSignedUrl('getObject', params);
