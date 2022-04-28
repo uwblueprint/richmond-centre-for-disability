@@ -23,7 +23,7 @@ import {
 //Props
 type SetPermitHolderToInactiveModalProps = {
   readonly isOpen: boolean;
-  readonly permitHolderId: number;
+  readonly applicantId: number;
   readonly refetch: () => void;
   readonly onClose: () => void;
 };
@@ -33,7 +33,7 @@ type SetPermitHolderToInactiveModalProps = {
  */
 export default function SetPermitHolderToInactiveModal({
   isOpen,
-  permitHolderId,
+  applicantId,
   refetch,
   onClose,
 }: SetPermitHolderToInactiveModalProps) {
@@ -72,10 +72,16 @@ export default function SetPermitHolderToInactiveModal({
   // TODO: API hookup
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    if (inactiveReason)
+    if (inactiveReason) {
       await setApplicantAsInactive({
-        variables: { input: { id: permitHolderId, reason: inactiveReason } },
+        variables: { input: { id: applicantId, reason: inactiveReason } },
       });
+    } else {
+      toast({
+        status: 'error',
+        description: 'Inactive reason cannot be blank.',
+      });
+    }
     setInactiveReason('');
     refetch();
     onClose();

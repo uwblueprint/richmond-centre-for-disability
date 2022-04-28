@@ -449,7 +449,7 @@ const PermitHolders: NextPage = () => {
       {permitHolderToUpdateStatus?.status === 'ACTIVE' && (
         <SetPermitHolderToInactiveModal
           isOpen={isSetPermitHolderStatusModalOpen}
-          permitHolderId={permitHolderToUpdateStatus.id}
+          applicantId={permitHolderToUpdateStatus.id}
           refetch={refetch}
           onClose={onCloseSetPermitHolderStatusModal}
         />
