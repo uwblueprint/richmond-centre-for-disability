@@ -78,14 +78,7 @@ export default function GenerateReportModal(props: Props) {
     GeneratePermitHoldersReportRequest
   >(GENERATE_PERMIT_HOLDERS_REPORT_QUERY, {
     onCompleted: data => {
-      if (data.generatePermitHoldersReport.ok && !!data.generatePermitHoldersReport.url) {
-        const link = document.createElement('a');
-        link.setAttribute('href', data.generatePermitHoldersReport.url);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
+      if (data.generatePermitHoldersReport.ok) {
         toast({
           status: 'success',
           description: `A CSV permit holders report has been successfully generated.`,

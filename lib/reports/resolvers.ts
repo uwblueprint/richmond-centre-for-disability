@@ -284,19 +284,11 @@ export const generateApplicationsReport: Resolver<
   const csvStringHeader = csvStringifier.getHeaderString();
   const csvString = csvStringHeader + csvStringRecords;
 
-<<<<<<< HEAD
   // CSV naming format reports/applications-report-{employeeID}-{timestamp}.csv
   const employeeID = session.id;
   const timestamp = formatDateTimeYYYYMMDDHHMMSS(new Date());
   const fileName = `applications-report-${employeeID}-${timestamp}.csv`;
   const s3ObjectKey = `rcd/reports/${fileName}`;
-=======
-  // CSV naming format applications/permit-holders/accounting-report-{employeeID}-{timestamp}.csv
-  const employeeID = session.id;
-  const timestamp = formatDateTimeYYYYMMDDHHMMSS(new Date());
-  const fileName = `accounting-report-${employeeID}-${timestamp}.csv`;
-  const s3InvoiceKey = `rcd/applications/permit-holders/${fileName}`;
->>>>>>> 416f796 (pr comments)
 
   // Upload csv to s3
   let uploadedCSV;

@@ -10,7 +10,6 @@ export const GENERATE_PERMIT_HOLDERS_REPORT_QUERY = gql`
   query GeneratePermitHoldersReportQuery($input: GeneratePermitHoldersReportInput!) {
     generatePermitHoldersReport(input: $input) {
       ok
-      url
     }
   }
 `;
