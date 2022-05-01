@@ -925,11 +925,22 @@ export const updateApplicationAdditionalInformation: Resolver<
   // Get existing application type (should be NEW/RENEWAL)
   const application = await prisma.application.findUnique({
     where: { id },
-    select: { type: true },
+    select: {
+      type: true,
+      applicationProcessing: {
+        select: {
+          reviewRequestCompleted: true,
+        },
+      },
+    },
   });
   if (!application) {
     // TODO: Improve validation
     throw new ApolloError('Application not found');
+  }
+  // Prevent reviewed requests from being updated
+  if (application.applicationProcessing.reviewRequestCompleted) {
+    throw new ApolloError('Reviewed requests cannot be updated');
   }
 
   const { type } = application;
@@ -1090,6 +1101,24 @@ export const updateApplicationPhysicianAssessment: Resolver<
   // TODO: Validation
   const { input } = args;
   const { id, mobilityAids, ...data } = input;
+
+  // Prevent reviewed requests from being updated
+  const application = await prisma.application.findUnique({
+    where: { id },
+    select: {
+      applicationProcessing: {
+        select: {
+          reviewRequestCompleted: true,
+        },
+      },
+    },
+  });
+  if (!application) {
+    throw new ApplicationNotFoundError(`Application with ID ${id} not found`);
+  }
+  if (application.applicationProcessing.reviewRequestCompleted) {
+    throw new ApolloError('Reviewed requests cannot be updated');
+  }
 
   let updatedApplication;
   try {
