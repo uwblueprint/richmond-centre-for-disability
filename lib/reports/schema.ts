@@ -38,9 +38,9 @@ export default gql`
     columns: [PermitHoldersReportColumn!]!
   }
 
-  # TODO: Return link to AWS S3 file
   type GeneratePermitHoldersReportResult {
     ok: Boolean!
+    url: String
   }
 
   # Selectable columns in permit holders report
