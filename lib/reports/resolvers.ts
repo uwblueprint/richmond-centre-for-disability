@@ -147,11 +147,9 @@ export const generatePermitHoldersReport: Resolver<
   const csvStringHeader = csvStringifier.getHeaderString();
   const csvString = csvStringHeader + csvStringRecords;
 
-  // NOTETOSELF: Change name
-  // CSV naming format reports/permit-holders-report-{employeeID}-{timestamp}.csv
+  // CSV naming format permit-holders-report-{employeeID}-{timestamp}.csv
   const employeeID = session.id;
   const timestamp = formatDateTimeYYYYMMDDHHMMSS(new Date());
-  // NOTETOSELF: Change fileName and s3InvoiceKey
   const fileName = `permit-holders-report-${employeeID}-${timestamp}.csv`;
   const s3ObjectKey = `rcd/reports/${fileName}`;
 
