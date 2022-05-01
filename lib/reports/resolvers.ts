@@ -381,20 +381,18 @@ export const generateAccountantReport: Resolver<
   const csvStringHeader = csvStringifier.getHeaderString();
   const csvString = csvStringHeader + csvStringRecords;
 
-  // NOTETOSELF: Change name
   // CSV naming format applications/permit-holders/accounting-report-{employeeID}-{timestamp}.csv
   const employeeID = session.id;
   const timestamp = formatDateTimeYYYYMMDDHHMMSS(new Date());
-  // NOTETOSELF: Change fileName and s3InvoiceKey
   const fileName = `accounting-report-${employeeID}-${timestamp}.csv`;
-  const s3InvoiceKey = `rcd/applications/permit-holderss/${fileName}`;
+  const s3ObjectKey = `rcd/reports/${fileName}`;
 
   // Upload csv to s3
   let uploadedCSV;
   let signedUrl;
   try {
     // Upload file to s3
-    uploadedCSV = await serverUploadToS3(csvString, s3InvoiceKey);
+    uploadedCSV = await serverUploadToS3(csvString, s3ObjectKey);
     // Generate a signed URL to access the file
     signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
   } catch (error) {
