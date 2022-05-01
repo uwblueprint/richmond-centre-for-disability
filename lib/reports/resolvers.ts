@@ -24,17 +24,22 @@ import { ApolloError } from 'apollo-server-micro';
 /**
  * Generates csv with permit holders' info, given a start date, end date, and values from
  * PermitHoldersReportColumn that the user would like to have on the generated csv
- * @returns Whether a csv could be generated (ok), and in the future an AWS S3 file link
+ * @returns Whether a csv could be generated (ok), and an AWS S3 file link
  */
 export const generatePermitHoldersReport: Resolver<
   QueryGeneratePermitHoldersReportArgs,
   GeneratePermitHoldersReportResult
-> = async (_, args, { prisma }) => {
+> = async (_, args, { prisma, session }) => {
   const {
     input: { startDate, endDate, columns },
   } = args;
 
   const columnsSet = new Set(columns);
+
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
 
   const applicants = await prisma.applicant.findMany({
     where: {
@@ -133,15 +138,35 @@ export const generatePermitHoldersReport: Resolver<
     ({ name, reportColumnId }) => ({ id: reportColumnId, title: name })
   );
 
-  const csvWriter = createObjectCsvWriter({
-    path: 'temp/file-permit-holders.csv',
+  // Generate CSV string from csv object.
+  const csvStringifier = createObjectCsvStringifier({
     header: csvHeaders,
   });
 
-  await csvWriter.writeRecords(csvApplicants);
+  const csvStringRecords = csvStringifier.stringifyRecords(csvApplicants);
+  const csvStringHeader = csvStringifier.getHeaderString();
+  const csvString = csvStringHeader + csvStringRecords;
 
+  // CSV naming format permit-holders-report-{employeeID}-{timestamp}.csv
+  const employeeID = session.id;
+  const timestamp = formatDateTimeYYYYMMDDHHMMSS(new Date());
+  const fileName = `permit-holders-report-${employeeID}-${timestamp}.csv`;
+  const s3ObjectKey = `rcd/reports/${fileName}`;
+
+  // Upload csv to s3
+  let uploadedCSV;
+  let signedUrl;
+  try {
+    // Upload file to s3
+    uploadedCSV = await serverUploadToS3(csvString, s3ObjectKey);
+    // Generate a signed URL to access the file
+    signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
+  } catch (error) {
+    throw new ApolloError(`Error uploading permit holders report to AWS: ${error}`);
+  }
   return {
     ok: true,
+    url: signedUrl,
   };
 };
 
