@@ -85,7 +85,7 @@ export default function RequestHeader({
    * @returns Rendered 'More Actions' dropdown component or null
    */
   const _renderMoreActionsDropdown = () => {
-    if (applicationStatus === 'IN_PROGRESS' || applicationStatus === 'REJECTED') {
+    if (applicationStatus === 'IN_PROGRESS') {
       return (
         <Menu>
           <MenuButton
