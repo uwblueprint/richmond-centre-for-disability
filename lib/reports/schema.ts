@@ -65,8 +65,8 @@ export default gql`
     endDate: Date!
   }
 
-  # TODO: Return link to AWS S3 file
   type GenerateAccountantReportResult {
     ok: Boolean!
+    url: String
   }
 `;

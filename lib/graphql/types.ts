@@ -457,6 +457,7 @@ export type GenerateAccountantReportInput = {
 export type GenerateAccountantReportResult = {
   __typename?: 'GenerateAccountantReportResult';
   ok: Scalars['Boolean'];
+  url: Maybe<Scalars['String']>;
 };
 
 export type GenerateApplicationsReportInput = {
