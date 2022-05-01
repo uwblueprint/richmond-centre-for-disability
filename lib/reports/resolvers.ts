@@ -381,7 +381,7 @@ export const generateAccountantReport: Resolver<
   const csvStringHeader = csvStringifier.getHeaderString();
   const csvString = csvStringHeader + csvStringRecords;
 
-  // CSV naming format applications/permit-holders/accounting-report-{employeeID}-{timestamp}.csv
+  // CSV naming format accounting-report-{employeeID}-{timestamp}.csv
   const employeeID = session.id;
   const timestamp = formatDateTimeYYYYMMDDHHMMSS(new Date());
   const fileName = `accounting-report-${employeeID}-${timestamp}.csv`;
