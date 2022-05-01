@@ -1,4 +1,4 @@
-import { createObjectCsvStringifier, createObjectCsvWriter } from 'csv-writer';
+import { createObjectCsvStringifier } from 'csv-writer';
 import { Resolver } from '@lib/graphql/resolvers';
 import {
   QueryGeneratePermitHoldersReportArgs,
