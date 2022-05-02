@@ -64,7 +64,11 @@ const AppHistoryRecord: FC<Props> = ({ permit }) => {
         borderStyle="dashed"
         borderRadius="4px"
       >
-        <Grid gridColumnGap="20px" gridTemplateColumns="200px 1fr" gridAutoRows="28px">
+        <Grid
+          gridColumnGap="20px"
+          gridTemplateColumns="200px 1fr"
+          gridAutoRows="minmax(28px, auto)"
+        >
           <GridItem>
             <Text as="p" textStyle="body-regular">
               Application package

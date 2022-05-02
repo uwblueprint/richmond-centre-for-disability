@@ -54,12 +54,14 @@ import {
   applicantCompletedApplicationsResolver,
   applicantGuardianResolver,
   applicantMedicalInformationResolver,
+  applicantMostRecentApplicationResolver,
 } from '@lib/applicants/field-resolvers'; // Applicant field resolvers
 import {
   __resolveApplicationType,
   applicationApplicantResolver,
   applicationProcessingResolver,
   applicationPoaFormS3ObjectUrlResolver,
+  applicationPermitResolver,
 } from '@lib/applications/field-resolvers'; // Application field resolvers
 import { medicalInformationPhysicianResolver } from '@lib/medical-information/field-resolvers';
 import {
@@ -218,6 +220,7 @@ const resolvers = {
     mostRecentPermit: applicantMostRecentPermitResolver,
     activePermit: applicantActivePermitResolver,
     permits: applicantPermitsResolver,
+    mostRecentApplication: applicantMostRecentApplicationResolver,
     completedApplications: applicantCompletedApplicationsResolver,
     guardian: applicantGuardianResolver,
     medicalInformation: applicantMedicalInformationResolver,
@@ -226,6 +229,7 @@ const resolvers = {
     __resolveType: __resolveApplicationType,
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
+    permit: applicationPermitResolver,
   },
   NewApplication: {
     __resolveType: __resolveApplicationType,

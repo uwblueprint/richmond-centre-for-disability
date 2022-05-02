@@ -49,7 +49,10 @@ import { flattenApplication } from '@lib/applications/utils';
  */
 export const application: Resolver<
   QueryApplicationArgs,
-  Omit<NewApplication | RenewalApplication | ReplacementApplication, 'processing' | 'applicant'>
+  Omit<
+    NewApplication | RenewalApplication | ReplacementApplication,
+    'processing' | 'applicant' | 'permit'
+  >
 > = async (_parent, args, { prisma }) => {
   const { id } = args;
   const application = await prisma.application.findUnique({
@@ -89,7 +92,7 @@ export const application: Resolver<
  */
 export const applications: Resolver<
   QueryApplicationsArgs,
-  { result: Array<Omit<Application, 'processing' | 'applicant'>>; totalCount: number }
+  { result: Array<Omit<Application, 'processing' | 'applicant' | 'permit'>>; totalCount: number }
 > = async (_parent, { filter }, { prisma }) => {
   let where = {};
   let orderBy = undefined;

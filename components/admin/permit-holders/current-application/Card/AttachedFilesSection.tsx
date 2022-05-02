@@ -15,7 +15,12 @@ const AttachedFilesSection: FC<Props> = ({ application }) => {
 
   return (
     <CurrentApplicationCardSection title="Attached Files">
-      <Grid gridRowGap="12px" gridColumnGap="20px" templateColumns="200px 1fr" gridAutoRows="32px">
+      <Grid
+        gridRowGap="12px"
+        gridColumnGap="20px"
+        templateColumns="200px 1fr"
+        gridAutoRows="minmax(32px, auto)"
+      >
         <GridItem>
           <Text as="p" textStyle="body-regular">
             Application package

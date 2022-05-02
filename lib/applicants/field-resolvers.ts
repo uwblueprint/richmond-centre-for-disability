@@ -60,12 +60,33 @@ export const applicantPermitsResolver: FieldResolver<
 };
 
 /**
+ * Field resolver to fetch most recent application of an applicant, regardless of status
+ * @returns Most recent application of an applicant (by created timestamp)
+ */
+export const applicantMostRecentApplicationResolver: FieldResolver<
+  Applicant,
+  Omit<Application, 'processing' | 'applicant' | 'permit'>
+> = async (parent, _args, { prisma }) => {
+  const mostRecentApplications = await prisma.applicant
+    .findUnique({
+      where: { id: parent.id },
+    })
+    .applications({
+      include: { newApplication: true, renewalApplication: true, replacementApplication: true },
+      orderBy: { createdAt: SortOrder.DESC },
+      take: 1,
+    });
+
+  return mostRecentApplications.length === 0 ? null : flattenApplication(mostRecentApplications[0]);
+};
+
+/**
  * Fetch all completed applications belonging to an applicant ordered by application date (most recent first)
  * @returns Array of completed applications
  */
 export const applicantCompletedApplicationsResolver: FieldResolver<
   Applicant,
-  Array<Omit<Application, 'processing' | 'applicant'>>
+  Array<Omit<Application, 'processing' | 'applicant' | 'permit'>>
 > = async (parent, _args, { prisma }) => {
   const applications = await prisma.applicant
     .findUnique({ where: { id: parent.id } })

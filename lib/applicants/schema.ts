@@ -35,6 +35,7 @@ export default gql`
     mostRecentPermit: Permit
     activePermit: Permit
     permits: [Permit!]!
+    mostRecentApplication: Application
     completedApplications: [Application!]!
     guardian: Guardian
     medicalInformation: MedicalInformation!

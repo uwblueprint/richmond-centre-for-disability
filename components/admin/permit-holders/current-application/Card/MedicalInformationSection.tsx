@@ -1,31 +1,31 @@
 import { Grid, GridItem, Text, List, ListItem, HStack, Badge } from '@chakra-ui/react';
 import { formatDate } from '@lib/utils/format';
-import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
+import { MedicalInformationSectionData } from '@tools/admin/permit-holders/current-application';
 import { titlecase } from '@tools/string';
 import { FC } from 'react';
 import CurrentApplicationCardSection from './CardSection';
 
 type Props = {
-  readonly application: Required<CurrentApplication>;
+  readonly medicalInformation: MedicalInformationSectionData;
 };
 
-const MedicalInformationSection: FC<Props> = ({ application }) => {
+const MedicalInformationSection: FC<Props> = ({ medicalInformation }) => {
   const {
-    type,
     disability,
     patientCondition,
     otherPatientCondition,
     disabilityCertificationDate,
     mobilityAids,
-  } = application;
-
-  if (type !== 'NEW') {
-    return null;
-  }
+  } = medicalInformation;
 
   return (
     <CurrentApplicationCardSection title="Medical Information">
-      <Grid gridRowGap="12px" gridColumnGap="20px" templateColumns="200px 1fr" gridAutoRows="32px">
+      <Grid
+        gridRowGap="12px"
+        gridColumnGap="20px"
+        templateColumns="200px 1fr"
+        gridAutoRows="minmax(32px, auto)"
+      >
         {/* Disabling condition */}
         <GridItem>
           <Text as="p" textStyle="body-regular">

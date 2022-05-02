@@ -28,10 +28,12 @@ type PermitHolderHeaderProps = {
     status: ApplicantStatus;
     inactiveReason?: string;
   };
+  readonly refetch: () => void;
 };
 
 export default function PermitHolderHeader({
   applicant: { id, name, status, inactiveReason },
+  refetch,
 }: PermitHolderHeaderProps) {
   // Set Permit Holder Inactive/Active modal state
   const {
@@ -114,6 +116,8 @@ export default function PermitHolderHeader({
       {status === 'ACTIVE' && (
         <SetPermitHolderToInactiveModal
           isOpen={isSetPermitHolderStatusModalOpen}
+          applicantId={id}
+          refetch={refetch}
           onClose={onCloseSetPermitHolderStatusModal}
         />
       )}

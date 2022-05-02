@@ -42,11 +42,11 @@ export default function PermitHolder({ id: idString }: Props) {
     lastName,
     status,
     inactiveReason,
-    completedApplications,
+    mostRecentApplication: currentApplication,
     permits: appHistory,
+    medicalInformation,
     guardian,
   } = data.applicant;
-  const currentApplication = completedApplications.length > 0 ? completedApplications[0] : null;
 
   return (
     <Layout>
@@ -58,6 +58,7 @@ export default function PermitHolder({ id: idString }: Props) {
             status,
             inactiveReason: inactiveReason || undefined,
           }}
+          refetch={refetch}
         />
       </GridItem>
       <GridItem rowSpan={12} colSpan={5} textAlign="left">
@@ -70,7 +71,12 @@ export default function PermitHolder({ id: idString }: Props) {
 
       <GridItem rowSpan={12} colSpan={7} textAlign="left">
         <Stack spacing={5}>
-          {currentApplication && <CurrentApplicationCard application={currentApplication} />}
+          {currentApplication && (
+            <CurrentApplicationCard
+              application={currentApplication}
+              applicantMedicalInformation={medicalInformation}
+            />
+          )}
           <AppHistoryCard appHistory={appHistory} />
         </Stack>
       </GridItem>

@@ -17,8 +17,10 @@ const Header: FC<Props> = ({ application }) => {
     type,
     permitType,
     processing: { status },
+    permit,
     temporaryPermitExpiry,
   } = application;
+  const permitExpiryDate = permit ? permit.expiryDate : temporaryPermitExpiry || null;
 
   return (
     <HStack width="100%" justify="space-between" align="flex-start">
@@ -34,11 +36,9 @@ const Header: FC<Props> = ({ application }) => {
           <Text as="p" textStyle="body-regular">
             Request Type: {titlecase(type)}
           </Text>
-          {!!temporaryPermitExpiry && (
-            <Text as="p" textStyle="body-regular">
-              Expiry Date: {formatDate(temporaryPermitExpiry)}
-            </Text>
-          )}
+          <Text as="p" textStyle="body-regular">
+            Expiry Date: {permitExpiryDate ? formatDate(permitExpiryDate) : 'N/A'}
+          </Text>
         </HStack>
       </VStack>
       <Link href={`/admin/request/${id}`}>

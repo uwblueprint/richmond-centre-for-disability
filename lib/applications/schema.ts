@@ -63,6 +63,7 @@ export default gql`
 
     processing: ApplicationProcessing!
     applicant: Applicant
+    permit: Permit
 
     createdAt: Date!
   }
@@ -167,6 +168,7 @@ export default gql`
 
     processing: ApplicationProcessing!
     applicant: Applicant
+    permit: Permit
 
     createdAt: Date!
   }
@@ -247,6 +249,7 @@ export default gql`
 
     processing: ApplicationProcessing!
     applicant: Applicant!
+    permit: Permit
 
     createdAt: Date!
   }
@@ -317,6 +320,7 @@ export default gql`
 
     processing: ApplicationProcessing!
     applicant: Applicant!
+    permit: Permit
 
     createdAt: Date!
   }

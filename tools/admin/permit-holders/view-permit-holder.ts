@@ -1,7 +1,10 @@
 import { gql } from '@apollo/client';
 import { Applicant, QueryApplicantArgs } from '@lib/graphql/types';
 import { AppHistoryRecord } from '@tools/admin/permit-holders/app-history';
-import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
+import {
+  CurrentApplication,
+  MedicalInformationSectionData,
+} from '@tools/admin/permit-holders/current-application';
 import { GuardianInformationCardData } from '@tools/admin/permit-holders/guardian-information';
 
 /** Get basic applicant information */
@@ -13,6 +16,15 @@ export const GET_APPLICANT_QUERY = gql`
       lastName
       status
       inactiveReason
+
+      # Medical information
+      medicalInformation {
+        disability
+        disabilityCertificationDate
+        patientCondition
+        otherPatientCondition
+        mobilityAids
+      }
 
       # Guardian
       guardian {
@@ -32,7 +44,7 @@ export const GET_APPLICANT_QUERY = gql`
       }
 
       # Current application
-      completedApplications {
+      mostRecentApplication {
         __typename
         id
         type
@@ -45,6 +57,9 @@ export const GET_APPLICANT_QUERY = gql`
             s3ObjectUrl
             s3ObjectKey
           }
+        }
+        permit {
+          expiryDate
         }
         ... on NewApplication {
           disability
@@ -99,8 +114,9 @@ export type GetApplicantResponse = {
     Applicant,
     'firstName' | 'middleName' | 'lastName' | 'status' | 'inactiveReason'
   > & {
+    medicalInformation: MedicalInformationSectionData;
     guardian: GuardianInformationCardData;
-    completedApplications: Array<CurrentApplication>;
+    mostRecentApplication: CurrentApplication | null;
     permits: Array<AppHistoryRecord>;
   };
 };

@@ -10,6 +10,6 @@
 export const titlecase = (s: string): string => {
   return s
     .toLowerCase()
-    .replace('_', ' ')
+    .replace(/_/g, ' ')
     .replace(/^\w/, c => c.toUpperCase());
 };

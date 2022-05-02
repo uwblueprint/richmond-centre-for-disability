@@ -44,6 +44,7 @@ export type Applicant = {
   mostRecentPermit: Maybe<Permit>;
   activePermit: Maybe<Permit>;
   permits: Array<Permit>;
+  mostRecentApplication: Maybe<Application>;
   completedApplications: Array<Application>;
   guardian: Maybe<Guardian>;
   medicalInformation: MedicalInformation;
@@ -111,6 +112,7 @@ export type Application = {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Maybe<Applicant>;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
@@ -793,6 +795,7 @@ export type NewApplication = Application & {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Maybe<Applicant>;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
@@ -1007,6 +1010,7 @@ export type RenewalApplication = Application & {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Applicant;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
@@ -1059,6 +1063,7 @@ export type ReplacementApplication = Application & {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Applicant;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
