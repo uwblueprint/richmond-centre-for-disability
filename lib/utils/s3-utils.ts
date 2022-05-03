@@ -122,3 +122,12 @@ export const getSignedUrlForS3 = (
   const url = s3.getSignedUrl('getObject', params);
   return url;
 };
+
+/**
+ * Get the file name of a file stored in S3 from its object key
+ * @param objectKey S3 object key
+ * @returns name of file stored in S3
+ */
+export const getFileName = (objectKey: string): string | undefined => {
+  return objectKey.split('/').at(-1);
+};

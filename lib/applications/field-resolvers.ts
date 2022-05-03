@@ -1,7 +1,8 @@
 import { ApolloError } from 'apollo-server-micro';
 import { FieldResolver } from '@lib/graphql/resolvers'; // Resolver type
-import { Applicant, Application, ApplicationProcessing } from '@lib/graphql/types'; // Application type
+import { Applicant, Application, ApplicationProcessing, NewApplication } from '@lib/graphql/types'; // Application type
 import { getSignedUrlForS3 } from '@lib/utils/s3-utils';
+import { Permit } from '@prisma/client';
 
 /**
  * Field resolver to return the type of application
@@ -34,6 +35,7 @@ export const applicationApplicantResolver: FieldResolver<
     | 'mostRecentPermit'
     | 'activePermit'
     | 'permits'
+    | 'mostRecentApplication'
     | 'completedApplications'
     | 'guardian'
     | 'medicalInformation'
@@ -90,3 +92,39 @@ export const applicationProcessingResolver: FieldResolver<
 
   return { ...applicationProcessing, documentsUrl: null };
 };
+
+/**
+ * Fetch the permit that was granted as the result of the completion of an application
+ * @returns permit that was administered after application completion
+ */
+export const applicationPermitResolver: FieldResolver<
+  Application,
+  Omit<Permit, 'application'> | null
+> = async (parent, _args, { prisma }) => {
+  return await prisma.application.findUnique({ where: { id: parent.id } }).permit();
+};
+
+/**
+ * Get POA form S3 object URL (new applications)
+ * @returns URL for POA form of new application
+ */
+export const applicationPoaFormS3ObjectUrlResolver: FieldResolver<NewApplication, string | null> =
+  async parent => {
+    if (!process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) {
+      throw new ApolloError('Application document link duration not defined');
+    }
+
+    if (!parent.poaFormS3ObjectKey) {
+      return null;
+    }
+
+    let url: string;
+    try {
+      const durationSeconds = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) * 60 * 60;
+      url = getSignedUrlForS3(parent.poaFormS3ObjectKey, durationSeconds);
+    } catch (e) {
+      throw new ApolloError(`Error generating AWS URL for POA form: ${e}`);
+    }
+
+    return url;
+  };

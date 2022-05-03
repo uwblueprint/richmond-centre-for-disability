@@ -12,6 +12,7 @@ import {
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 import { ChangeEventHandler } from 'react';
 import PoaFormUploadField from '@components/admin/requests/guardian-information/PoaFormUploadField';
+import { getFileName } from '@lib/utils/s3-utils';
 
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
@@ -32,6 +33,8 @@ export default function GuardianInformationForm({
   file,
   onUploadFile,
 }: GuardianInformationFormProps) {
+  const { poaFormS3ObjectKey, poaFormS3ObjectUrl } = guardianInformation;
+
   const handleChange =
     (field: keyof GuardianInformation): ChangeEventHandler<HTMLInputElement> =>
     event => {
@@ -152,7 +155,12 @@ export default function GuardianInformationForm({
               </FormControl>
             </Stack>
 
-            <PoaFormUploadField file={file} onUploadFile={onUploadFile} />
+            <PoaFormUploadField
+              file={file}
+              onUploadFile={onUploadFile}
+              initialFileName={poaFormS3ObjectKey ? getFileName(poaFormS3ObjectKey) : undefined}
+              initialFileUrl={poaFormS3ObjectUrl || undefined}
+            />
           </Box>
         </>
       )}

@@ -14,6 +14,7 @@ export type GuardianInformation = {
   city: string;
   postalCode: string;
   poaFormS3ObjectKey: string | null;
+  poaFormS3ObjectUrl: string | null;
 };
 
 /** Guardian information for cards */

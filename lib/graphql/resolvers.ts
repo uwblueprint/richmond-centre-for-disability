@@ -54,11 +54,14 @@ import {
   applicantCompletedApplicationsResolver,
   applicantGuardianResolver,
   applicantMedicalInformationResolver,
+  applicantMostRecentApplicationResolver,
 } from '@lib/applicants/field-resolvers'; // Applicant field resolvers
 import {
   __resolveApplicationType,
   applicationApplicantResolver,
   applicationProcessingResolver,
+  applicationPoaFormS3ObjectUrlResolver,
+  applicationPermitResolver,
 } from '@lib/applications/field-resolvers'; // Application field resolvers
 import { medicalInformationPhysicianResolver } from '@lib/medical-information/field-resolvers';
 import {
@@ -77,6 +80,7 @@ import {
   applicationProcessingReviewRequestCompletedEmployeeResolver,
   applicationProcessingWalletCardCreatedEmployeeResolver,
 } from '@lib/application-processing/field-resolvers';
+import { guardianPoaFormS3ObjectUrlResolver } from '@lib/guardian/field-resolvers';
 
 /**
  * Resolver return type - accounts for extra fields
@@ -216,6 +220,7 @@ const resolvers = {
     mostRecentPermit: applicantMostRecentPermitResolver,
     activePermit: applicantActivePermitResolver,
     permits: applicantPermitsResolver,
+    mostRecentApplication: applicantMostRecentApplicationResolver,
     completedApplications: applicantCompletedApplicationsResolver,
     guardian: applicantGuardianResolver,
     medicalInformation: applicantMedicalInformationResolver,
@@ -224,11 +229,13 @@ const resolvers = {
     __resolveType: __resolveApplicationType,
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
+    permit: applicationPermitResolver,
   },
   NewApplication: {
     __resolveType: __resolveApplicationType,
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
+    poaFormS3ObjectUrl: applicationPoaFormS3ObjectUrlResolver,
   },
   RenewalApplication: {
     __resolveType: __resolveApplicationType,
@@ -239,6 +246,9 @@ const resolvers = {
     __resolveType: __resolveApplicationType,
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
+  },
+  Guardian: {
+    poaFormS3ObjectUrl: guardianPoaFormS3ObjectUrlResolver,
   },
   MedicalInformation: {
     physician: medicalInformationPhysicianResolver,

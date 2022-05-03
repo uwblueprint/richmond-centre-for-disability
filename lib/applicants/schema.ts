@@ -30,10 +30,12 @@ export default gql`
     postalCode: String!
 
     status: ApplicantStatus!
+    inactiveReason: String
 
     mostRecentPermit: Permit
     activePermit: Permit
     permits: [Permit!]!
+    mostRecentApplication: Application
     completedApplications: [Application!]!
     guardian: Guardian
     medicalInformation: MedicalInformation!
@@ -105,6 +107,9 @@ export default gql`
     addressLine2: String
     city: String!
     postalCode: String!
+
+    # POA form
+    poaFormS3ObjectKey: String
   }
 
   type UpdateApplicantGuardianInformationResult {

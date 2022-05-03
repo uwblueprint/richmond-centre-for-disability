@@ -54,6 +54,7 @@ export const applicants: Resolver<
         | 'permits'
         | 'guardian'
         | 'medicalInformation'
+        | 'mostRecentApplication'
         | 'completedApplications'
       >
     >;
@@ -210,6 +211,7 @@ export const applicant: Resolver<
     | 'permits'
     | 'guardian'
     | 'medicalInformation'
+    | 'mostRecentApplication'
     | 'completedApplications'
   >
 > = async (_parent, args, { prisma }) => {

@@ -176,6 +176,7 @@ export const INITIAL_GUARDIAN_INFORMATION: GuardianInformation = {
   city: '',
   postalCode: '',
   poaFormS3ObjectKey: '',
+  poaFormS3ObjectUrl: '',
 };
 
 // Initial data for additional questions in application forms

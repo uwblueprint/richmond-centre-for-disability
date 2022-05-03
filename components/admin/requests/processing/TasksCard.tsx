@@ -40,7 +40,7 @@ import {
   UPLOAD_DOCUMENTS_MUTATION,
 } from '@tools/admin/requests/processing-tasks-card';
 import ReviewInformationStep from '@components/admin/requests/processing/ReviewInformationStep';
-import { clientUploadToS3 } from '@lib/utils/s3-utils';
+import { clientUploadToS3, getFileName } from '@lib/utils/s3-utils';
 import TaskCardUploadStep from '@components/admin/requests/processing/TaskCardUploadStep';
 import { useMemo, useState } from 'react';
 import { formatFullName } from '@lib/utils/format';
@@ -406,7 +406,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 color="primary"
               >
                 {/* File name from the object key e.g "rcd/invoice/invoice-1.pdf" */}
-                {invoice.s3ObjectKey?.split('/').at(-1)}
+                {invoice.s3ObjectKey && getFileName(invoice.s3ObjectKey)}
               </Link>
             </Tooltip>
           )}

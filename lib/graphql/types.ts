@@ -40,9 +40,11 @@ export type Applicant = {
   country: Scalars['String'];
   postalCode: Scalars['String'];
   status: ApplicantStatus;
+  inactiveReason: Maybe<Scalars['String']>;
   mostRecentPermit: Maybe<Permit>;
   activePermit: Maybe<Permit>;
   permits: Array<Permit>;
+  mostRecentApplication: Maybe<Application>;
   completedApplications: Array<Application>;
   guardian: Maybe<Guardian>;
   medicalInformation: MedicalInformation;
@@ -110,6 +112,7 @@ export type Application = {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Maybe<Applicant>;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
@@ -497,6 +500,8 @@ export type Guardian = {
   province: Province;
   country: Scalars['String'];
   postalCode: Scalars['String'];
+  poaFormS3ObjectKey: Maybe<Scalars['String']>;
+  poaFormS3ObjectUrl: Maybe<Scalars['String']>;
 };
 
 export type Invoice = {
@@ -758,6 +763,7 @@ export type NewApplication = Application & {
   guardianCountry: Maybe<Scalars['String']>;
   guardianPostalCode: Maybe<Scalars['String']>;
   poaFormS3ObjectKey: Maybe<Scalars['String']>;
+  poaFormS3ObjectUrl: Maybe<Scalars['String']>;
   usesAccessibleConvertedVan: Scalars['Boolean'];
   accessibleConvertedVanLoadingMethod: Maybe<AccessibleConvertedVanLoadingMethod>;
   requiresWiderParkingSpace: Scalars['Boolean'];
@@ -789,6 +795,7 @@ export type NewApplication = Application & {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Maybe<Applicant>;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
@@ -1003,6 +1010,7 @@ export type RenewalApplication = Application & {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Applicant;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
@@ -1055,6 +1063,7 @@ export type ReplacementApplication = Application & {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Applicant;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
@@ -1139,6 +1148,7 @@ export type UpdateApplicantGuardianInformationInput = {
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
   postalCode: Scalars['String'];
+  poaFormS3ObjectKey: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicantGuardianInformationResult = {

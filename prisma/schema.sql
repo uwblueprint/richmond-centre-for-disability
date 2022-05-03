@@ -145,6 +145,7 @@ CREATE TABLE guardians (
   country VARCHAR(255) NOT NULL DEFAULT 'Canada',
   postal_code VARCHAR(6) NOT NULL,
   relationship VARCHAR(255) NOT NULL,
+  poa_form_s3_object_key VARCHAR(255),
   notes TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
