@@ -1,6 +1,7 @@
 import { SyntheticEvent, useRef, useState, FC } from 'react';
 import { WarningTwoIcon, CloseIcon } from '@chakra-ui/icons';
 import { Button, Text, Link, HStack, VStack, IconButton, Box, Tooltip } from '@chakra-ui/react';
+import { getFileName } from '@lib/utils/s3-utils';
 
 // 5 MB file size limit
 const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
@@ -29,7 +30,7 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, fileUrl, onUploadFil
   };
 
   /** File name retrieved from s3 URL */
-  const fileName = fileUrl ? new URL(decodeURI(fileUrl)).pathname.split('/').at(-1) : null;
+  const fileName = fileUrl ? getFileName(new URL(decodeURI(fileUrl)).pathname) : null;
 
   /**
    * Handle file selection

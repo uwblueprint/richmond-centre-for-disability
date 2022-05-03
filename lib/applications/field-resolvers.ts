@@ -123,7 +123,7 @@ export const applicationPoaFormS3ObjectUrlResolver: FieldResolver<NewApplication
       const durationSeconds = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) * 60 * 60;
       url = getSignedUrlForS3(parent.poaFormS3ObjectKey, durationSeconds);
     } catch (e) {
-      throw new ApolloError(`Error generating AWS URL for application documents: ${e}`);
+      throw new ApolloError(`Error generating AWS URL for POA form: ${e}`);
     }
 
     return url;
