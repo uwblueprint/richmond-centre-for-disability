@@ -495,10 +495,7 @@ export default function CreateNew() {
                     <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
                       {`Doctor's Information`}
                     </Text>
-                    <DoctorInformationForm
-                      doctorInformation={doctorInformation}
-                      onChange={setDoctorInformation}
-                    />
+                    <DoctorInformationForm doctorInformation={doctorInformation} />
                   </Box>
                   <Box
                     w="100%"

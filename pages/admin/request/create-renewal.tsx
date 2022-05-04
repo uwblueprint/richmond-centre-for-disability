@@ -32,7 +32,10 @@ import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-inf
 import { Form, Formik } from 'formik';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { renewalRequestFormSchema } from '@lib/applications/validation';
-import { INITIAL_ADDITIONAL_QUESTIONS, INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
+import {
+  INITIAL_ADDITIONAL_QUESTIONS,
+  INITIAL_PAYMENT_DETAILS,
+} from '@tools/admin/requests/create-new';
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
 import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 
@@ -325,10 +328,7 @@ export default function CreateRenewal() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Doctor's Information`}
                     </Text>
-                    <DoctorInformationForm
-                      doctorInformation={doctorInformation}
-                      onChange={setDoctorInformation}
-                    />
+                    <DoctorInformationForm doctorInformation={doctorInformation} />
                   </Box>
                 </GridItem>
                 {/* Additional Quesitons Form */}
