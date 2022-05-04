@@ -3,7 +3,7 @@ import { object, bool, string } from 'yup';
  * Entire Guardian/POA validation schema
  */
 
-export const guardianDetailsSchema = object({
+export const guardianInformationSchema = object({
   omitGuardianPoa: bool().default(false),
   firstName: string()
     .nullable()
@@ -78,4 +78,8 @@ export const guardianDetailsSchema = object({
         .max(7, 'Must be a valid postal code')
         .required('Please enter a postal code'),
     }),
+});
+
+export const editGuardianInformationFormSchema = object({
+  guardianInformation: guardianInformationSchema,
 });

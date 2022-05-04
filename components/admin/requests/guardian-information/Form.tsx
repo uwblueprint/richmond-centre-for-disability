@@ -1,12 +1,11 @@
 import { Text, Stack, FormHelperText, Box, Divider, Checkbox } from '@chakra-ui/react'; // Chakra UI
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
-import { ChangeEventHandler } from 'react';
 import PoaFormUploadField from '@components/admin/requests/guardian-information/PoaFormUploadField';
 import TextField from '@components/form/TextField';
+import CheckboxField from '@components/form/CheckboxField';
 
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
-  readonly onChange: (updatedData: GuardianInformation) => void;
   readonly file: File | null;
   onUploadFile: (selectedFile: File) => void;
 };
@@ -15,34 +14,19 @@ type GuardianInformationFormProps = {
  * GuardianInformationForm Component for allowing users to edit guardian information.
  *
  * @param {GuardianInformation} guardianInformation Object that holds all guardian information for a client request.
- * @param onChange Function that uses the updated values from form.
  */
 export default function GuardianInformationForm({
   guardianInformation,
-  onChange,
   file,
   onUploadFile,
 }: GuardianInformationFormProps) {
-  const handleChange =
-    (field: keyof GuardianInformation): ChangeEventHandler<HTMLInputElement> =>
-    event => {
-      onChange({
-        ...guardianInformation,
-        [field]: event.target.type === 'checkbox' ? event.target.checked : event.target.value,
-      });
-    };
-
   return (
     <>
       {/* Personal Information Section */}
       <Box paddingBottom="32px">
         <Stack direction="row" spacing="20px">
-          <Checkbox
-            isChecked={guardianInformation.omitGuardianPoa}
-            onChange={handleChange('omitGuardianPoa')}
-          >
-            {'No Guardian/POA'}
-          </Checkbox>
+          <CheckboxField name="" />
+          <Checkbox isChecked={guardianInformation.omitGuardianPoa}>{'No Guardian/POA'}</Checkbox>
         </Stack>
         {!guardianInformation.omitGuardianPoa && (
           <>
