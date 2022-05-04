@@ -514,7 +514,6 @@ export default function CreateNew() {
                     </Text>
                     <GuardianInformationForm
                       guardianInformation={guardianInformation}
-                      onChange={setGuardianInformation}
                       file={guardianPOAFile}
                       onUploadFile={setGuardianPOAFile}
                     />
