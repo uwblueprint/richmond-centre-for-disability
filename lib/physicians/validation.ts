@@ -40,7 +40,7 @@ export const physicianAssessmentSchema = object({
  * Create New / Doctor's Information validation schema
  */
 
-export const physicianSchema = object({
+export const physicianInformationSchema = object({
   firstName: string()
     .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
     .required('Please enter a first name'),
@@ -61,4 +61,8 @@ export const physicianSchema = object({
   postalCode: string()
     .length(7, 'Must be a valid postal code')
     .required('Please enter a postal code'),
+});
+
+export const editPhysicianInformationSchema = object({
+  physician: physicianInformationSchema,
 });
