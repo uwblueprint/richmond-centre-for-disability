@@ -1,7 +1,6 @@
 import { Text, Stack, FormHelperText, Box, Divider, VStack } from '@chakra-ui/react'; // Chakra UI
-import TextField from '@components/form/TextField';
-import NumberField from '@components/form/NumberField';
 import { DoctorFormData } from '@tools/admin/requests/doctor-information';
+import TextField from '@components/form/TextField';
 
 type DoctorInformationFormProps = {
   readonly doctorInformation: DoctorFormData;
@@ -11,27 +10,29 @@ type DoctorInformationFormProps = {
  * Form component for editing doctor information of request.
  * @param props - Props
  * @returns doctor information form.
- * @param onChange Function that uses the updated values from form.
  */
-export default function DoctorInformationForm(props: DoctorInformationFormProps) {
+export default function DoctorInformationForm({ doctorInformation }: DoctorInformationFormProps) {
   return (
     <>
       {/* Personal Information Section */}
       <VStack spacing="24px" align="left" paddingBottom="32px">
         <Stack direction="row" spacing="20px">
-          <TextField name="doctor.firstName" label="First name" required />
-          <TextField name="doctor.lastName" label="Last name" required />
+          <TextField name="doctorInformation.firstName" label="First name" isRequired />
+          <TextField name="doctorInformation.lastName" label="Last name" isRequired />
         </Stack>
         <Stack direction="row" spacing="20px">
-          <NumberField name="doctor.mspNumber" label="Medical services plan number" isRequired />
-          <TextField name="doctor.phoneNumber" label="Phone number" isRequired>
+          <TextField
+            name="doctorInformation.mspNumber"
+            label="Medical services plan number"
+            isRequired
+          />
+          <TextField name="doctorInformation.phoneNumber" label="Phone number" isRequired>
             <FormHelperText color="text.secondary">{'Example: 000-000-0000'}</FormHelperText>
           </TextField>
         </Stack>
       </VStack>
 
-      {props.doctorInformation && <Divider />}
-      {/* TODO: DELETE ^^ LATER */}
+      {doctorInformation && <Divider />}
 
       {/* Address Section */}
 
@@ -43,13 +44,13 @@ export default function DoctorInformationForm(props: DoctorInformationFormProps)
           </Box>
         </Text>
 
-        <TextField name="doctor.addressLine1" label="Address line 1" required>
+        <TextField name="doctorInformation.addressLine1" label="Address line 1" isRequired>
           <FormHelperText color="text.secondary">
             {'Street Address, P.O. Box, Company Name, c/o'}
           </FormHelperText>
         </TextField>
 
-        <TextField name="doctor.addressLine2" label="Address line 2">
+        <TextField name="doctorInformation.addressLine2" label="Address line 2">
           <Box as="span" textStyle="caption">
             {'(optional)'}
           </Box>
@@ -59,8 +60,8 @@ export default function DoctorInformationForm(props: DoctorInformationFormProps)
         </TextField>
 
         <Stack direction="row" spacing="20px">
-          <TextField name="doctor.city" label="City" required />
-          <TextField name="doctor.postalCode" label="Postal code" required>
+          <TextField name="doctorInformation.city" label="City" isRequired />
+          <TextField name="doctorInformation.postalCode" label="Postal code" isRequired>
             <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
           </TextField>
         </Stack>
