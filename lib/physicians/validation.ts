@@ -35,7 +35,6 @@ export const physicianAssessmentSchema = object({
   }),
 });
 
-
 /**
  * Create New / Doctor's Information validation schema
  */
