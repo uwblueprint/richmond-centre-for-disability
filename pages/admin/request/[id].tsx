@@ -7,6 +7,7 @@ import DoctorInformationCard from '@components/admin/requests/doctor-information
 import PaymentInformationCard from '@components/admin/requests/payment-information/Card'; // Payment information card
 import PersonalInformationCard from '@components/admin/requests/permit-holder-information/Card'; // Personal information card
 import ProcessingTasksCard from '@components/admin/requests/processing/TasksCard'; // Processing tasks card
+import PhysicianAssessmentCard from '@components/admin/requests/physician-assessment/Card'; // Physician assessment card
 import { authorize } from '@tools/authorization'; // Page authorization
 import { useQuery } from '@apollo/client'; // Apollo Client hooks
 import {
@@ -92,6 +93,8 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
       <GridItem colStart={6} colSpan={7}>
         <VStack width="100%" spacing="20px" align="stretch">
           {status === 'IN_PROGRESS' && <ProcessingTasksCard applicationId={id} />}
+          {/* NOTETOSELF: Remove if conflicts with Emilio's PR */}
+          {type === 'NEW' && <PhysicianAssessmentCard applicationId={id} />}
           {type === 'REPLACEMENT' && (
             <ReasonForReplacementCard applicationId={id} editDisabled={reviewRequestCompleted} />
           )}
