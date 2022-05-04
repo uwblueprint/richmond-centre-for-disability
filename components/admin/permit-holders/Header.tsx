@@ -124,6 +124,8 @@ export default function PermitHolderHeader({
       {status === 'INACTIVE' && (
         <SetPermitHolderToActiveModal
           isOpen={isSetPermitHolderStatusModalOpen}
+          applicantId={id}
+          refetch={refetch}
           onClose={onCloseSetPermitHolderStatusModal}
         />
       )}
