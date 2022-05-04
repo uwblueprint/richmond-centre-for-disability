@@ -27,8 +27,7 @@ export default function DoctorInformationForm() {
         </Stack>
       </VStack>
 
-      {props.doctorInformation && <Divider />}
-      {/* TODO: DELETE ^^ LATER */}
+      {doctorInformation && <Divider />}
 
       {/* Address Section */}
 
