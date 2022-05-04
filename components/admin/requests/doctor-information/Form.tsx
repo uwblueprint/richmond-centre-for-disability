@@ -32,6 +32,7 @@ export default function DoctorInformationForm({ doctorInformation }: DoctorInfor
         </Stack>
       </VStack>
 
+      {/* TODO: figure out a better fix for this prop thing */}
       {doctorInformation && <Divider />}
 
       {/* Address Section */}

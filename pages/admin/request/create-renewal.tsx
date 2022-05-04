@@ -172,6 +172,7 @@ export default function CreateRenewal() {
    */
   const handleSubmit = async (values: {
     permitHolder: PermitHolderFormData;
+    doctorInformation: DoctorFormData;
     additionalInformation: AdditionalInformationFormData;
     paymentInformation: PaymentInformationFormData;
   }) => {
