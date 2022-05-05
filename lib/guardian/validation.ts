@@ -11,6 +11,7 @@ export const guardianInformationSchema = object({
     .when('omitGuardianPoa', {
       is: false,
       then: string()
+        .typeError('Please enter a first name')
         .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
         .required('Please enter a first name'),
     }),
@@ -19,7 +20,10 @@ export const guardianInformationSchema = object({
     .default(null)
     .when('omitGuardianPoa', {
       is: false,
-      then: string().matches(/^[a-zA-Z]*$/, 'Must only contain letters'),
+      then: string()
+        .nullable()
+        .default(null)
+        .matches(/^[a-zA-Z]*$/, 'Must only contain letters'),
     }),
   lastName: string()
     .nullable()
@@ -27,6 +31,7 @@ export const guardianInformationSchema = object({
     .when('omitGuardianPoa', {
       is: false,
       then: string()
+        .typeError('Please enter a last name')
         .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
         .required('Please enter a last name'),
     }),
@@ -37,7 +42,7 @@ export const guardianInformationSchema = object({
       is: false,
       then: string()
         .min(10, 'Must be a valid phone number')
-        .typeError('Please enter a valid phone number')
+        .typeError('Please enter a phone number')
         .required('Please enter a phone number'),
     }),
   relationshipToApplicant: string()
@@ -54,7 +59,7 @@ export const guardianInformationSchema = object({
     .default(null)
     .when('omitGuardianPoa', {
       is: false,
-      then: string().typeError('Please enter a valid address').required('Please enter an address'),
+      then: string().typeError('Please enter an address').required('Please enter an address'),
     }),
   addressLine2: string().nullable().default(null),
   city: string()
@@ -63,7 +68,7 @@ export const guardianInformationSchema = object({
     .when('omitGuardianPoa', {
       is: false,
       then: string()
-        .typeError('Please enter a valid city')
+        .typeError('Please enter a city')
         .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
         .required('Please enter a city'),
     }),
@@ -73,14 +78,9 @@ export const guardianInformationSchema = object({
     .when('omitGuardianPoa', {
       is: false,
       then: string()
-        .typeError('Please enter a valid postal code')
+        .typeError('Please enter a postal code')
         .min(6, 'Must be a valid postal code')
         .max(7, 'Must be a valid postal code')
         .required('Please enter a postal code'),
     }),
-});
-
-// TODO: evaluate whether this is necessary
-export const editGuardianInformationFormSchema = object({
-  guardianInformation: guardianInformationSchema,
 });
