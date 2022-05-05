@@ -54,7 +54,7 @@ export default function EditDoctorInformationModal({
           validationSchema={editPhysicianInformationSchema}
           onSubmit={handleSubmit}
         >
-          {({ values, isValid }) => (
+          {({ isValid }) => (
             <Form style={{ width: '100%' }} noValidate>
               <ModalContent paddingX="36px">
                 <ModalHeader
@@ -68,7 +68,7 @@ export default function EditDoctorInformationModal({
                   </Text>
                 </ModalHeader>
                 <ModalBody paddingY="20px" paddingX="4px">
-                  <DoctorInformationForm doctorInformation={values.doctorInformation} />
+                  <DoctorInformationForm />
                 </ModalBody>
                 <ModalFooter paddingBottom="24px" paddingX="4px">
                   <Button colorScheme="gray" variant="solid" onClick={onClose}>
