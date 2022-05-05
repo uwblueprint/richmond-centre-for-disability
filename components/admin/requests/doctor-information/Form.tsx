@@ -17,16 +17,16 @@ export default function DoctorInformationForm({ doctorInformation }: DoctorInfor
       {/* Personal Information Section */}
       <VStack spacing="24px" align="left" paddingBottom="32px">
         <Stack direction="row" spacing="20px">
-          <TextField name="doctorInformation.firstName" label="First name" isRequired />
-          <TextField name="doctorInformation.lastName" label="Last name" isRequired />
+          <TextField name="doctorInformation.firstName" label="First name" required />
+          <TextField name="doctorInformation.lastName" label="Last name" required />
         </Stack>
         <Stack direction="row" spacing="20px">
           <TextField
             name="doctorInformation.mspNumber"
             label="Medical services plan number"
-            isRequired
+            required
           />
-          <TextField name="doctorInformation.phoneNumber" label="Phone number" isRequired>
+          <TextField name="doctorInformation.phone" label="Phone number" required>
             <FormHelperText color="text.secondary">{'Example: 000-000-0000'}</FormHelperText>
           </TextField>
         </Stack>
@@ -45,7 +45,7 @@ export default function DoctorInformationForm({ doctorInformation }: DoctorInfor
           </Box>
         </Text>
 
-        <TextField name="doctorInformation.addressLine1" label="Address line 1" isRequired>
+        <TextField name="doctorInformation.addressLine1" label="Address line 1" required>
           <FormHelperText color="text.secondary">
             {'Street Address, P.O. Box, Company Name, c/o'}
           </FormHelperText>
@@ -61,8 +61,8 @@ export default function DoctorInformationForm({ doctorInformation }: DoctorInfor
         </TextField>
 
         <Stack direction="row" spacing="20px">
-          <TextField name="doctorInformation.city" label="City" isRequired />
-          <TextField name="doctorInformation.postalCode" label="Postal code" isRequired>
+          <TextField name="doctorInformation.city" label="City" required />
+          <TextField name="doctorInformation.postalCode" label="Postal code" required>
             <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
           </TextField>
         </Stack>

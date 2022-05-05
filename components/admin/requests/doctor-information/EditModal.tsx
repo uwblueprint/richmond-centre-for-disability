@@ -31,7 +31,10 @@ export default function EditDoctorInformationModal({
 
   const handleSubmit = (values: { doctorInformation: DoctorFormData }) => {
     // TODO: Backend errors
-    onSave(values.doctorInformation);
+    onSave({
+      ...values.doctorInformation,
+      // mspNumber: values.doctorInformation.mspNumber === null ? null : parseInt(values.doctorInformation.mspNumber)});
+    });
     onClose();
   };
 
@@ -71,7 +74,7 @@ export default function EditDoctorInformationModal({
                   <Button colorScheme="gray" variant="solid" onClick={onClose}>
                     {'Cancel'}
                   </Button>
-                  <Button variant="solid" type="submit" ml={'12px'} isDisabled={!isValid}>
+                  <Button variant="solid" type="submit" ml={'12px'} isDisabled={isValid}>
                     {'Save'}
                   </Button>
                 </ModalFooter>
