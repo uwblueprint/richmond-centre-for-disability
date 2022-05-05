@@ -1,5 +1,11 @@
 import { gql } from '@apollo/client';
-import { NewApplication, QueryApplicationArgs, RenewalApplication } from '@lib/graphql/types';
+import {
+  MutationUpdateApplicationAdditionalInformationArgs,
+  NewApplication,
+  QueryApplicationArgs,
+  RenewalApplication,
+  UpdateApplicationAdditionalInformationResult,
+} from '@lib/graphql/types';
 
 /** Additional questions in forms */
 export type AdditionalInformationFormData = Pick<
@@ -46,4 +52,21 @@ export type GetAdditionalInformationResponse = {
     | 'requiresWiderParkingSpaceReason'
     | 'otherRequiresWiderParkingSpaceReason'
   >;
+};
+
+/** Update additional information of application */
+export const UPDATE_ADDITIONAL_INFORMATION = gql`
+  mutation UpdateAdditionalInformationInformation(
+    $input: UpdateApplicationAdditionalInformationInput!
+  ) {
+    updateApplicationAdditionalInformation(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type UpdateAdditionalInformationRequest = MutationUpdateApplicationAdditionalInformationArgs;
+
+export type UpdateAdditionalInformationResponse = {
+  updateApplicationAdditionaltInformation: UpdateApplicationAdditionalInformationResult;
 };
