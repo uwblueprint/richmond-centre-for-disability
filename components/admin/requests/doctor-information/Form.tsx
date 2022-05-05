@@ -1,17 +1,12 @@
 import { Text, Stack, FormHelperText, Box, Divider, VStack } from '@chakra-ui/react'; // Chakra UI
-import { DoctorFormData } from '@tools/admin/requests/doctor-information';
 import TextField from '@components/form/TextField';
-
-type DoctorInformationFormProps = {
-  readonly doctorInformation: DoctorFormData;
-};
 
 /**
  * Form component for editing doctor information of request.
  * @param props - Props
  * @returns doctor information form.
  */
-export default function DoctorInformationForm({ doctorInformation }: DoctorInformationFormProps) {
+export default function DoctorInformationForm() {
   return (
     <>
       {/* Personal Information Section */}
@@ -32,8 +27,7 @@ export default function DoctorInformationForm({ doctorInformation }: DoctorInfor
         </Stack>
       </VStack>
 
-      {/* TODO: figure out a better fix for this prop thing */}
-      {doctorInformation && <Divider />}
+      <Divider />
 
       {/* Address Section */}
 
