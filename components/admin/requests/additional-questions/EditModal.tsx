@@ -17,7 +17,7 @@ import AdditionalQuestionsForm from '@components/admin/requests/additional-quest
 type Props = {
   readonly children: ReactNode;
   readonly additionalInformation: AdditionalInformationFormData;
-  readonly onSave: (applicationData: any) => void;
+  readonly onSave: (additionalInformation: AdditionalInformationFormData) => void;
 };
 
 export default function EditAdditionalInformationModal({
@@ -43,20 +43,7 @@ export default function EditAdditionalInformationModal({
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     // TODO: Refactor to work with form validation (wrap in a Formik component)
-    const {
-      usesAccessibleConvertedVan,
-      accessibleConvertedVanLoadingMethod,
-      requiresWiderParkingSpace,
-      requiresWiderParkingSpaceReason,
-      otherRequiresWiderParkingSpaceReason,
-    } = additionalInformation;
-    onSave({
-      usesAccessibleConvertedVan,
-      accessibleConvertedVanLoadingMethod,
-      requiresWiderParkingSpace,
-      requiresWiderParkingSpaceReason,
-      otherRequiresWiderParkingSpaceReason,
-    });
+    onSave(additionalInformation);
     onClose();
   };
 

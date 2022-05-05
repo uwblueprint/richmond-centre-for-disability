@@ -84,7 +84,13 @@ const Card: FC<Props> = props => {
       editModal={
         !editDisabled && (
           <EditAdditionalInformationModal
-            additionalInformation={additionalInformation}
+            additionalInformation={{
+              usesAccessibleConvertedVan,
+              accessibleConvertedVanLoadingMethod,
+              requiresWiderParkingSpace,
+              requiresWiderParkingSpaceReason,
+              otherRequiresWiderParkingSpaceReason,
+            }}
             onSave={handleSave}
           >
             <Button color="primary" variant="ghost" textDecoration="underline">
