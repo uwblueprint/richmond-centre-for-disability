@@ -239,6 +239,7 @@ export default function CreateNew() {
   const handleSubmit = async (values: {
     permitHolder: NewApplicationPermitHolderInformation;
     physicianAssessment: PhysicianAssessment;
+    guardianInformation: GuardianInformation;
     additionalInformation: AdditionalInformationFormData;
     paymentInformation: PaymentInformationFormData;
   }) => {
@@ -445,6 +446,7 @@ export default function CreateNew() {
               permitHolder: permitHolderInformation,
               paymentInformation: INITIAL_PAYMENT_DETAILS,
               physicianAssessment: INITIAL_PHYSICIAN_ASSESSMENT,
+              guardianInformation: guardianInformation,
               additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
             }}
             validationSchema={createNewRequestFormSchema}
