@@ -80,6 +80,7 @@ export const guardianInformationSchema = object({
     }),
 });
 
+// TODO: evaluate whether this is necessary
 export const editGuardianInformationFormSchema = object({
   guardianInformation: guardianInformationSchema,
 });
