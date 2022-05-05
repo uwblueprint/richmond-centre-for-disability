@@ -68,7 +68,9 @@ export default function GuardianInformationForm({
               </FormHelperText>
             </TextField>
             <TextField name="guardianInformation.addressLine2" label="Address Line 2">
-              {/* TODO: add optional prop for (optional) in header */}
+              <Box as="span" textStyle="caption" fontSize="sm">
+                {'(optional)'}
+              </Box>
               <FormHelperText color="text.secondary">
                 {'Apartment, suite, unit, building, floor, etc'}
               </FormHelperText>
