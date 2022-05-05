@@ -49,19 +49,18 @@ export const requestPhysicianInformationSchema = object({
   mspNumber: string()
     .matches(/^\d+$/, 'Must only contain numbers')
     .required('Please enter the MSP number'),
-  phoneNumber: string()
-    .min(10, 'Must be a valid phone number')
-    .required('Please enter a phone number'),
+  phone: string().min(10, 'Must be a valid phone number').required('Please enter a phone number'),
   addressLine1: string().required('Please enter an address'),
-  addressLine2: string(),
+  addressLine2: string().nullable().default(null),
   city: string()
     .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
     .required('Please enter a city'),
   postalCode: string()
-    .length(7, 'Must be a valid postal code')
+    .min(6, 'Must be a valid postal code')
+    .max(7, 'Must be a valid postal code')
     .required('Please enter a postal code'),
 });
 
 export const editPhysicianInformationSchema = object({
-  physician: requestPhysicianInformationSchema,
+  doctorInformation: requestPhysicianInformationSchema,
 });

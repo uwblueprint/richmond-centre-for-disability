@@ -444,6 +444,7 @@ export default function CreateNew() {
             initialValues={{
               permitHolder: permitHolderInformation,
               paymentInformation: INITIAL_PAYMENT_DETAILS,
+              doctorInformation,
               physicianAssessment: INITIAL_PHYSICIAN_ASSESSMENT,
               additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
             }}
