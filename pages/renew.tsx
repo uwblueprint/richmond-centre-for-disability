@@ -573,7 +573,7 @@ export default function Renew() {
               <Button
                 variant="solid"
                 onClick={handleSubmit}
-                loading={loading}
+                isLoading={loading}
                 disabled={
                   !applicantId ||
                   !certified ||
