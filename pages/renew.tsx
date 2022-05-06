@@ -571,9 +571,10 @@ export default function Renew() {
             <Flex width="100%" justifyContent="flex-end">
               <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
               <Button
+                type="submit"
                 variant="solid"
                 onClick={handleSubmit}
-                loading={loading}
+                isLoading={loading}
                 disabled={
                   !applicantId ||
                   !certified ||
