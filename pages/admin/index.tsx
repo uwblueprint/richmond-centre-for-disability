@@ -153,7 +153,7 @@ const Requests: NextPage = () => {
   const [recordsCount, setRecordsCount] = useState(0);
 
   // Make query to applications resolver
-  const { refetch } = useQuery<GetApplicationsResponse, GetApplicationsRequest>(
+  const { refetch, loading } = useQuery<GetApplicationsResponse, GetApplicationsRequest>(
     GET_APPLICATIONS_QUERY,
     {
       variables: {
@@ -383,6 +383,7 @@ const Requests: NextPage = () => {
             <Table
               columns={COLUMNS}
               data={requestsData}
+              loading={loading}
               onChangeSortOrder={setSortOrder}
               onRowClick={({ id }) => router.push(`/admin/request/${id}`)}
             />
