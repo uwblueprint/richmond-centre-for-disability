@@ -36,5 +36,13 @@ export const GET_PHYSICIAN_ASSESSMENT = gql`
 export type GetPhysicianAssessmentRequest = QueryApplicationArgs;
 
 export type GetPhysicianAssessmentResponse = {
-  application: PhysicianAssessment;
+  application: Pick<
+    NewApplication,
+    | 'patientCondition'
+    | 'permitType'
+    | 'disability'
+    | 'disabilityCertificationDate'
+    | 'otherPatientCondition'
+    | 'temporaryPermitExpiry'
+  >;
 };
