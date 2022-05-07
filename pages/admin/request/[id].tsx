@@ -93,7 +93,6 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
       <GridItem colStart={6} colSpan={7}>
         <VStack width="100%" spacing="20px" align="stretch">
           {status === 'IN_PROGRESS' && <ProcessingTasksCard applicationId={id} />}
-          {/* NOTETOSELF: Remove if conflicts with Emilio's PR */}
           {type === 'NEW' && <PhysicianAssessmentCard applicationId={id} />}
           {type === 'REPLACEMENT' && (
             <ReasonForReplacementCard applicationId={id} editDisabled={reviewRequestCompleted} />

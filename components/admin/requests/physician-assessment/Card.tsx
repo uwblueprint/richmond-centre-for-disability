@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { Box, Text, SimpleGrid, VStack, Badge } from '@chakra-ui/react'; // Chakra UI
+import { Text, VStack, Badge, Wrap, Grid, GridItem } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
 import {
   GetPhysicianAssessmentRequest,
@@ -8,6 +8,9 @@ import {
   GET_PHYSICIAN_ASSESSMENT,
   PhysicianAssessment,
 } from '@tools/admin/requests/physician-assessment';
+import PermitTypeBadge from '@components/admin/PermitTypeBadge';
+import { formatDate } from '@lib/utils/format';
+import { titlecase } from '@tools/string';
 
 type Props = {
   readonly applicationId: number;
@@ -46,7 +49,6 @@ const Card: FC<Props> = props => {
     temporaryPermitExpiry,
     permitType,
   } = physicianAssessment;
-
   return (
     <PermitHolderInfoCard
       colSpan={7}
@@ -57,80 +59,78 @@ const Card: FC<Props> = props => {
       editModal={false}
     >
       <VStack align="left" spacing="12px">
-        <SimpleGrid columns={2} spacingX="70px" spacingY="12px">
-          <Box>
+        <Grid
+          gridRowGap="12px"
+          gridColumnGap="20px"
+          templateColumns="200px 1fr"
+          gridAutoRows="minmax(32px, auto)"
+        >
+          <GridItem>
             <Text as="p" textStyle="body-regular" textAlign="left">
               Medical name of disabling condition(s)
             </Text>
-          </Box>
-          <Box>
+          </GridItem>
+          <GridItem>
             <Text as="p" textStyle="body-regular" textAlign="left">
-              {/* NOTETOSELF: Should disability be an array? */}
               {disability}
             </Text>
-          </Box>
-          <Box>
+          </GridItem>
+          <GridItem>
             <Text as="p" textStyle="body-regular" textAlign="left">
               Certification date
             </Text>
-          </Box>
-          <Box>
+          </GridItem>
+          <GridItem>
             <Text as="p" textStyle="body-regular" textAlign="left">
-              {/* NOTETOSELF: Format date */}
-              {disabilityCertificationDate}
+              {formatDate(disabilityCertificationDate)}
             </Text>
-          </Box>
-          <Box>
+          </GridItem>
+          <GridItem>
             <Text as="p" textStyle="body-regular" textAlign="left">
               Condition
             </Text>
-          </Box>
-          <Box>
-            {/* NOTETOSELF: Verify this */}
-            {/* Can we have multiple since we have patientCondition and otherPatientCondition */}
-            {/* NOTETOSELF: How is badge colour determined */}
-            <Badge as="p" textStyle="body-regular" textAlign="left">
-              {patientCondition}
-            </Badge>
-            <Badge as="p" textStyle="body-regular" textAlign="left">
-              {otherPatientCondition}
-            </Badge>
-          </Box>
-          <Box>
-            <Text as="p" textStyle="body-regular" textAlign="left">
-              Condition description
-            </Text>
-          </Box>
-          <Box>
-            <Text as="p" textStyle="body-regular" textAlign="left">
-              {/* NOTETOSELF: What's the condition description? Is it notes from the MedicalInformation table */}
-              {patientCondition} {/* placeholder */}
-            </Text>
-          </Box>
-          <Box>
+          </GridItem>
+          <Wrap>
+            <Badge bgColor="background.informative">{titlecase(patientCondition as string)}</Badge>
+          </Wrap>
+          {patientCondition === 'OTHER' && (
+            <>
+              {/* Condition description */}
+              <GridItem>
+                <Text as="p" textStyle="body-regular" textAlign="left">
+                  Condition description
+                </Text>
+              </GridItem>
+              <GridItem>
+                <Text as="p" textStyle="body-regular" textAlign="left">
+                  {otherPatientCondition}
+                </Text>
+              </GridItem>
+            </>
+          )}
+          <GridItem>
             <Text as="p" textStyle="body-regular" textAlign="left">
               Impairment type
             </Text>
-          </Box>
-          <Box>
-            {/* NOTETOSELF: How is badge colour determined */}
-            <Badge as="p" textStyle="body-regular" textAlign="left">
-              {permitType}
-            </Badge>
-          </Box>
-          {/* NOTETOSELF: Should this be rendered for permanent permits */}
-          <Box>
-            <Text as="p" textStyle="body-regular" textAlign="left">
-              Permit expiry date
-            </Text>
-          </Box>
-          <Box>
-            <Text as="p" textStyle="body-regular" textAlign="left">
-              {/* NOTETOSELF: Format date */}
-              {temporaryPermitExpiry}
-            </Text>
-          </Box>
-        </SimpleGrid>
+          </GridItem>
+          <GridItem>
+            <PermitTypeBadge variant={permitType || 'PERMANENT'} />
+          </GridItem>
+          {permitType === 'TEMPORARY' && (
+            <>
+              <GridItem>
+                <Text as="p" textStyle="body-regular" textAlign="left">
+                  Permit expiry date
+                </Text>
+              </GridItem>
+              <GridItem>
+                <Text as="p" textStyle="body-regular" textAlign="left">
+                  {formatDate(temporaryPermitExpiry)}
+                </Text>
+              </GridItem>
+            </>
+          )}
+        </Grid>
       </VStack>
     </PermitHolderInfoCard>
   );

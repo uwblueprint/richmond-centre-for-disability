@@ -15,7 +15,7 @@ export type PhysicianAssessment = Pick<
   permitType: PermitType | null;
 };
 
-/** Get payment information of an application */
+/** Get physician assessment information of an application */
 export const GET_PHYSICIAN_ASSESSMENT = gql`
   query GetPhysicianAssessment($id: Int!) {
     application(id: $id) {
