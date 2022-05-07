@@ -30,7 +30,6 @@ import Request from '@containers/Request'; // Request state
 import { Form, Formik } from 'formik';
 import TextField from '@components/form/TextField';
 import CheckboxField from '@components/form/CheckboxField';
-import NumberField from '@components/form/NumberField';
 import {
   applicantFacingRenewalContactSchema,
   applicantFacingRenewalDoctorSchema,
@@ -505,18 +504,16 @@ export default function Renew() {
                           <TextField name="doctorLastName" label="Last name" required />
                         </HStack>
                         <Box marginBottom="24px">
-                          <NumberField
+                          <TextField
                             name="doctorMspNumber"
                             label="Your Doctor's Medical Services Plan (MSP) Number"
                             required
-                            width="184px"
-                            min={1}
                           >
                             <FormHelperText>
                               {`Your Doctor has a unique Medical Services Plan Number. If you do not know
                               where to find it, please contact your doctor.`}
                             </FormHelperText>
-                          </NumberField>
+                          </TextField>
                         </Box>
                         <Box marginBottom="24px">
                           <TextField name="doctorAddressLine1" label="Address Line 1" required>
