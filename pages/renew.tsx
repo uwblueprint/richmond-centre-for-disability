@@ -9,9 +9,6 @@ import {
   GridItem,
   Text,
   Button,
-  FormControl,
-  FormLabel,
-  RadioGroup,
   Radio,
   FormHelperText,
   Checkbox,
@@ -34,7 +31,12 @@ import { Form, Formik } from 'formik';
 import TextField from '@components/form/TextField';
 import CheckboxField from '@components/form/CheckboxField';
 import NumberField from '@components/form/NumberField';
-import { applicantFacingRenewalSchema } from '@lib/applications/validation';
+import {
+  applicantFacingRenewalContactSchema,
+  applicantFacingRenewalDoctorSchema,
+  applicantFacingRenewalPersonalAddressSchema,
+} from '@lib/applications/validation';
+import RadioGroupField from '@components/form/RadioGroupField';
 
 export default function Renew() {
   // Request state
@@ -52,45 +54,31 @@ export default function Renew() {
   const [updatedDoctor, setUpdatedDoctor] = useState(false); // Whether doctor info was updated
 
   // Personal address information state
-  const [personalAddressLine1] = useState('');
-  const [personalAddressLine2] = useState('');
-  const [personalCity] = useState('');
-  const [personalPostalCode] = useState('');
+  const [personalAddressLine1, setPersonalAddressLine1] = useState('');
+  const [personalAddressLine2, setPersonalAddressLine2] = useState('');
+  const [personalCity, setPersonalCity] = useState('');
+  const [personalPostalCode, setPersonalPostalCode] = useState('');
 
   // Contact information state
-  const [contactPhoneNumber] = useState('');
-  const [contactEmailAddress] = useState('');
+  const [contactPhoneNumber, setContactPhoneNumber] = useState('');
+  const [contactEmailAddress, setContactEmailAddress] = useState('');
+  const [receiveEmailUpdates, setReceiveEmailUpdates] = useState(false);
 
   // Doctor information state
-  const [doctorFirstName] = useState('');
-  const [doctorLastName] = useState('');
-  const [doctorMspNumber] = useState('');
-  const [doctorAddressLine1] = useState('');
-  const [doctorAddressLine2] = useState('');
-  const [doctorCity] = useState('');
-  const [doctorPostalCode] = useState('');
-  const [doctorPhoneNumber] = useState('');
+  const [doctorFirstName, setDoctorFirstName] = useState('');
+  const [doctorLastName, setDoctorLastName] = useState('');
+  const [doctorMspNumber, setDoctorMspNumber] = useState('');
+  const [doctorAddressLine1, setDoctorAddressLine1] = useState('');
+  const [doctorAddressLine2, setDoctorAddressLine2] = useState('');
+  const [doctorCity, setDoctorCity] = useState('');
+  const [doctorPostalCode, setDoctorPostalCode] = useState('');
+  const [doctorPhoneNumber, setDoctorPhoneNumber] = useState('');
 
   // Confirmation/certification state
   const [certified, setCertified] = useState(false);
 
   // Whether user is reviewing the form
   const [isReviewing, setIsReviewing] = useState(false);
-
-  //TODO: update these??
-  // Whether each section has invalid inputs
-  const invalidPersonalAddress =
-    updatedAddress && (!personalAddressLine1 || !personalCity || !personalPostalCode);
-  const invalidContact = updatedContactInfo && !contactPhoneNumber && !contactEmailAddress;
-  const invalidDoctor =
-    updatedDoctor &&
-    (!doctorFirstName ||
-      !doctorLastName ||
-      !doctorMspNumber ||
-      !doctorAddressLine1 ||
-      !doctorCity ||
-      !doctorPostalCode ||
-      !doctorPhoneNumber);
 
   const shopifyCheckout = async (applicationId: number) => {
     /* Setup Shopify Checkout on success. */
@@ -170,6 +158,80 @@ export default function Renew() {
     }
   }, [activeStep, isReviewing]);
 
+  const handleCompletePersonalInformationStep = (values: {
+    updatedAddress: boolean;
+    personalAddressLine1: string;
+    personalAddressLine2: string;
+    personalCity: string;
+    personalPostalCode: string;
+  }) => {
+    setUpdatedAddress(!!Number(values.updatedAddress));
+    if (values.updatedAddress) {
+      setPersonalAddressLine1(values.personalAddressLine1);
+      setPersonalAddressLine2(values.personalAddressLine2);
+      setPersonalCity(values.personalCity);
+      setPersonalPostalCode(values.personalPostalCode);
+    }
+
+    if (isReviewing) {
+      goToReview();
+    } else {
+      nextStep();
+    }
+  };
+
+  const handleCompleteContactInformationStep = (values: {
+    updatedContactInfo: boolean;
+    contactPhoneNumber: string;
+    contactEmailAddress: string;
+    receiveEmailUpdates: boolean;
+  }) => {
+    setUpdatedContactInfo(!!Number(values.updatedContactInfo));
+    if (values.updatedContactInfo) {
+      setContactPhoneNumber(values.contactPhoneNumber);
+      setContactEmailAddress(values.contactEmailAddress);
+      if (values.contactEmailAddress) {
+        setReceiveEmailUpdates(values.receiveEmailUpdates);
+      }
+    }
+
+    if (isReviewing) {
+      goToReview();
+    } else {
+      nextStep();
+    }
+  };
+
+  const handleCompleteDoctorInformationStep = (values: {
+    updatedDoctor: boolean;
+    doctorFirstName: string;
+    doctorLastName: string;
+    doctorMspNumber: string;
+    doctorAddressLine1: string;
+    doctorAddressLine2: string;
+    doctorCity: string;
+    doctorPostalCode: string;
+    doctorPhoneNumber: string;
+  }) => {
+    setUpdatedDoctor(!!Number(values.updatedDoctor));
+    if (values.updatedDoctor) {
+      setDoctorFirstName(values.doctorFirstName);
+      setDoctorLastName(values.doctorLastName);
+      setDoctorMspNumber(values.doctorMspNumber);
+      setDoctorAddressLine1(values.doctorAddressLine1);
+      setDoctorAddressLine2(values.doctorAddressLine2);
+      setDoctorCity(values.doctorCity);
+      setDoctorPostalCode(values.doctorPostalCode);
+      setDoctorPhoneNumber(values.doctorPhoneNumber);
+    }
+
+    if (isReviewing) {
+      goToReview();
+    } else {
+      nextStep();
+    }
+  };
+
   /**
    * Handle application submission
    */
@@ -206,8 +268,8 @@ export default function Renew() {
           physicianCity: updatedDoctor ? doctorCity : null,
           physicianPostalCode: updatedDoctor ? doctorPostalCode : null,
           physicianPhone: updatedDoctor ? doctorPhoneNumber : null,
+          receiveEmailUpdates,
           //TODO: Replace with dynamic values
-          receiveEmailUpdates: false,
           usesAccessibleConvertedVan: false,
           accessibleConvertedVanLoadingMethod: null,
           requiresWiderParkingSpace: false,
@@ -224,31 +286,38 @@ export default function Renew() {
         <Text as="h1" textStyle="display-xlarge" textAlign="left" marginBottom="48px">
           Renewal Form
         </Text>
-        <Formik
-          initialValues={{}}
-          validationSchema={applicantFacingRenewalSchema}
-          onSubmit={handleSubmit}
-        >
-          {() => (
-            <Form noValidate>
-              <Steps orientation="vertical" activeStep={activeStep}>
-                <Step label={`Personal Address Information`}>
+        <Steps orientation="vertical" activeStep={activeStep}>
+          <Step label={`Personal Address Information`}>
+            <Formik
+              initialValues={{
+                updatedAddress: false,
+                personalAddressLine1,
+                personalAddressLine2,
+                personalCity,
+                personalPostalCode,
+              }}
+              validationSchema={applicantFacingRenewalPersonalAddressSchema}
+              onSubmit={handleCompletePersonalInformationStep}
+            >
+              {({ values, isValid }) => (
+                <Form noValidate>
                   <Box marginLeft="8px">
                     {/* Check whether applicant has updated address */}
-                    <FormControl isRequired textAlign="left">
-                      <FormLabel>{`Has your address changed since you received your last parking pass?`}</FormLabel>
-                      <RadioGroup
-                        value={updatedAddress ? '0' : '1'}
-                        onChange={value => setUpdatedAddress(value === '0' ? true : false)}
-                      >
-                        <Stack direction="row">
-                          <Radio value="0">{`Yes, it has`}</Radio>
-                          <Radio value="1">{`No, it has not`}</Radio>
-                        </Stack>
-                      </RadioGroup>
-                    </FormControl>
+                    <RadioGroupField
+                      name="updatedAddress"
+                      label="Has your address changed since you received your last parking pass?"
+                      required
+                      value={
+                        values.updatedAddress === null ? undefined : Number(values.updatedAddress)
+                      }
+                    >
+                      <Stack>
+                        <Radio value={1}>{'Yes, it has'}</Radio>
+                        <Radio value={0}>{'No, it has not'}</Radio>
+                      </Stack>
+                    </RadioGroupField>
                     {/* Conditionally render form based on whether address was updated */}
-                    {updatedAddress && (
+                    {!!Number(values.updatedAddress) && (
                       <Box marginY="16px">
                         <Text
                           as="p"
@@ -297,7 +366,7 @@ export default function Renew() {
                         </Box>
                       </Box>
                     )}
-                    {invalidPersonalAddress && <IncompleteSectionAlert />}
+                    {!isValid && <IncompleteSectionAlert />}
                     <Flex width="100%" justifyContent="flex-end">
                       <Link href="/">
                         <Button
@@ -305,36 +374,47 @@ export default function Renew() {
                           marginRight="32px"
                         >{`Go back to home page`}</Button>
                       </Link>
-                      <Button
-                        variant="solid"
-                        onClick={isReviewing ? goToReview : nextStep}
-                        disabled={invalidPersonalAddress}
-                      >
+                      <Button variant="solid" type="submit">
                         {isReviewing ? `Review request` : `Next`}
                       </Button>
                     </Flex>
                   </Box>
-                </Step>
-                <Step label={`Personal Contact Information`}>
+                </Form>
+              )}
+            </Formik>
+          </Step>
+          <Step label={`Personal Contact Information`}>
+            <Formik
+              initialValues={{
+                updatedContactInfo: false,
+                contactPhoneNumber,
+                contactEmailAddress,
+                receiveEmailUpdates,
+              }}
+              validationSchema={applicantFacingRenewalContactSchema}
+              onSubmit={handleCompleteContactInformationStep}
+            >
+              {({ values, isValid }) => (
+                <Form noValidate>
                   <Box marginLeft="8px">
                     {/* Check whether applicant has updated contact info */}
-                    <FormControl isRequired textAlign="left">
-                      <FormLabel>
-                        {`Have you changed your contact information since you received or renewed your last
-                  parking pass?`}
-                      </FormLabel>
-                      <RadioGroup
-                        value={updatedContactInfo ? '0' : '1'}
-                        onChange={value => setUpdatedContactInfo(value === '0' ? true : false)}
-                      >
-                        <Stack direction="row">
-                          <Radio value="0">{`Yes, I have`}</Radio>
-                          <Radio value="1">{`No, I have not`}</Radio>
-                        </Stack>
-                      </RadioGroup>
-                    </FormControl>
+                    <RadioGroupField
+                      name="updatedContactInfo"
+                      label="Have you changed your contact information since you received or renewed your last parking pass?"
+                      required
+                      value={
+                        values.updatedContactInfo === null
+                          ? undefined
+                          : Number(values.updatedContactInfo)
+                      }
+                    >
+                      <Stack>
+                        <Radio value={1}>{`Yes, I have`}</Radio>
+                        <Radio value={0}>{'No, I have not'}</Radio>
+                      </Stack>
+                    </RadioGroupField>
                     {/* Conditionally render form based on whether contact info was updated */}
-                    {updatedContactInfo && (
+                    {!!Number(values.updatedContactInfo) && (
                       <Box marginY="16px">
                         <Text
                           as="p"
@@ -352,49 +432,67 @@ export default function Renew() {
                             <FormHelperText>{`e.g. example@gmail.com`}</FormHelperText>
                           </TextField>
                         </Box>
-                        <CheckboxField name="receiveEmailUpdates" textAlign="left">
-                          {/* TODO: disable if email not filled out */}
+                        <CheckboxField
+                          name="receiveEmailUpdates"
+                          textAlign="left"
+                          isDisabled={!values.contactEmailAddress}
+                        >
                           {`I would like to receive notifications to renew my permit through email`}
                         </CheckboxField>
                       </Box>
                     )}
-                    {invalidContact && <IncompleteSectionAlert />}
+                    {!isValid && <IncompleteSectionAlert />}
                     <Flex width="100%" justifyContent="flex-end">
                       <Button
                         variant="outline"
                         onClick={prevStep}
                         marginRight="32px"
+                        isDisabled={!isValid}
                       >{`Previous`}</Button>
-                      <Button
-                        variant="solid"
-                        onClick={isReviewing ? goToReview : nextStep}
-                        disabled={invalidContact}
-                      >
+                      <Button variant="solid" type="submit">
                         {isReviewing ? `Review request` : `Next`}
                       </Button>
                     </Flex>
                   </Box>
-                </Step>
-                <Step label={`Doctor's Information`}>
+                </Form>
+              )}
+            </Formik>
+          </Step>
+          <Step label={`Doctor's Information`}>
+            <Formik
+              initialValues={{
+                updatedDoctor: false,
+                doctorFirstName,
+                doctorLastName,
+                doctorMspNumber,
+                doctorAddressLine1,
+                doctorAddressLine2,
+                doctorCity,
+                doctorPostalCode,
+                doctorPhoneNumber,
+              }}
+              validationSchema={applicantFacingRenewalDoctorSchema}
+              onSubmit={handleCompleteDoctorInformationStep}
+            >
+              {({ values, isValid }) => (
+                <Form noValidate>
                   <Box marginLeft="8px">
                     {/* Check whether applicant has updated doctor info */}
-                    <FormControl isRequired textAlign="left">
-                      <FormLabel>
-                        {`Have you changed your doctor since you last received or renewed your parking
-                  permit?`}
-                      </FormLabel>
-                      <RadioGroup
-                        value={updatedDoctor ? '0' : '1'}
-                        onChange={value => setUpdatedDoctor(value === '0' ? true : false)}
-                      >
-                        <Stack direction="row">
-                          <Radio value="0">{`Yes, I have`}</Radio>
-                          <Radio value="1">{`No, I have not`}</Radio>
-                        </Stack>
-                      </RadioGroup>
-                    </FormControl>
+                    <RadioGroupField
+                      name="updatedDoctor"
+                      label="Have you changed your doctor since you last received or renewed your parking permit?"
+                      required
+                      value={
+                        values.updatedDoctor === null ? undefined : Number(values.updatedDoctor)
+                      }
+                    >
+                      <Stack>
+                        <Radio value={1}>{'Yes, I have'}</Radio>
+                        <Radio value={0}>{'No, I have not'}</Radio>
+                      </Stack>
+                    </RadioGroupField>
                     {/* Conditionally render form based on whether doctor info was updated */}
-                    {updatedDoctor && (
+                    {!!Number(values.updatedDoctor) && (
                       <Box marginY="16px">
                         <Text
                           as="p"
@@ -447,132 +545,119 @@ export default function Renew() {
                         </Box>
                       </Box>
                     )}
-                    {invalidDoctor && <IncompleteSectionAlert />}
+                    {!isValid && <IncompleteSectionAlert />}
                     <Flex width="100%" justifyContent="flex-end">
                       <Button
                         variant="outline"
                         onClick={prevStep}
                         marginRight="32px"
+                        isDisabled={!isValid}
                       >{`Previous`}</Button>
-                      <Button
-                        variant="solid"
-                        onClick={isReviewing ? goToReview : nextStep}
-                        disabled={invalidDoctor}
-                      >
+                      <Button variant="solid" type="submit">
                         {isReviewing ? `Review request` : `Next`}
                       </Button>
                     </Flex>
                   </Box>
-                </Step>
-                <Step label={`Review Request`}>
-                  <Box marginTop="24px" marginBottom="40px">
-                    <Flex minWidth="700px" justifyContent="space-between">
-                      <Text as="h3" textStyle="heading">{`Address Information`}</Text>
-                      <Button variant="outline" onClick={() => goToStep(0)}>{`Edit`}</Button>
-                    </Flex>
-                    {updatedAddress ? (
-                      <>
-                        <ReviewRequestField
-                          name={`Address`}
-                          value={`${personalAddressLine1} ${personalAddressLine2}`}
-                        />
-                        <ReviewRequestField name={`City`} value={personalCity} />
-                        <ReviewRequestField name={`Postal Code`} value={personalPostalCode} />
-                      </>
-                    ) : (
-                      <Text
-                        as="p"
-                        textStyle="body-regular"
-                        textAlign="left"
-                      >{`Has not changed since last renewal.`}</Text>
-                    )}
-                  </Box>
-                  <Divider />
-                  <Box marginTop="24px" marginBottom="40px">
-                    <Flex minWidth="700px" justifyContent="space-between">
-                      <Text as="h3" textStyle="heading">{`Contact Information`}</Text>
-                      <Button variant="outline" onClick={() => goToStep(1)}>{`Edit`}</Button>
-                    </Flex>
-                    {updatedContactInfo ? (
-                      <>
-                        <ReviewRequestField name={`Phone Number`} value={contactPhoneNumber} />
-                        <ReviewRequestField name={`Email Address`} value={contactEmailAddress} />
-                      </>
-                    ) : (
-                      <Text
-                        as="p"
-                        textStyle="body-regular"
-                        textAlign="left"
-                      >{`Has not changed since last renewal.`}</Text>
-                    )}
-                  </Box>
-                  <Divider />
-                  <Box marginTop="24px" marginBottom="40px">
-                    <Flex minWidth="700px" justifyContent="space-between">
-                      <Text as="h3" textStyle="heading">{`Doctor's Information`}</Text>
-                      <Button variant="outline" onClick={() => goToStep(2)}>{`Edit`}</Button>
-                    </Flex>
-                    {updatedDoctor ? (
-                      <>
-                        <ReviewRequestField name={`Name`} value={doctorFirstName} />
-                        <ReviewRequestField name={`MSP Number`} value={doctorMspNumber} />
-                        <ReviewRequestField
-                          name={`Address`}
-                          value={`${doctorAddressLine1} ${doctorAddressLine2}`}
-                        />
-                        <ReviewRequestField name={`City`} value={doctorCity} />
-                        <ReviewRequestField name={`Postal Code`} value={doctorPostalCode} />
-                        <ReviewRequestField name={`Phone Number`} value={doctorPhoneNumber} />
-                      </>
-                    ) : (
-                      <Text
-                        as="p"
-                        textStyle="body-regular"
-                        textAlign="left"
-                      >{`Has not changed since last renewal.`}</Text>
-                    )}
-                  </Box>
-                  <Box marginTop="24px" marginBottom="40px">
-                    <Text
-                      as="h4"
-                      textStyle="body-bold"
-                      textAlign="left"
-                      marginBottom="12px"
-                    >{`Please check to confirm the following statements before you proceed:`}</Text>
-                    <Checkbox
-                      textAlign="left"
-                      isChecked={certified}
-                      onChange={event => setCertified(event.target.checked)}
-                    >
-                      {`I certify that I am the holder of the accessible parking pass for which this
-                application for renewal is submitted, and that I have personally provided all of the
-                information required in this application.`}
-                    </Checkbox>
-                  </Box>
-                  <Flex width="100%" justifyContent="flex-end">
-                    <Button
-                      variant="outline"
-                      onClick={prevStep}
-                      marginRight="32px"
-                    >{`Previous`}</Button>
-                    <Button
-                      variant="solid"
-                      onClick={handleSubmit}
-                      loading={loading}
-                      disabled={
-                        !applicantId ||
-                        !certified ||
-                        invalidPersonalAddress ||
-                        invalidContact ||
-                        invalidDoctor
-                      }
-                    >{`Proceed to payment`}</Button>
-                  </Flex>
-                </Step>
-              </Steps>
-            </Form>
-          )}
-        </Formik>
+                </Form>
+              )}
+            </Formik>
+          </Step>
+          <Step label={`Review Request`}>
+            <Box marginTop="24px" marginBottom="40px">
+              <Flex minWidth="700px" justifyContent="space-between">
+                <Text as="h3" textStyle="heading">{`Address Information`}</Text>
+                <Button variant="outline" onClick={() => goToStep(0)}>{`Edit`}</Button>
+              </Flex>
+              {updatedAddress ? (
+                <>
+                  <ReviewRequestField
+                    name={`Address`}
+                    value={`${personalAddressLine1} ${personalAddressLine2}`}
+                  />
+                  <ReviewRequestField name={`City`} value={personalCity} />
+                  <ReviewRequestField name={`Postal Code`} value={personalPostalCode} />
+                </>
+              ) : (
+                <Text
+                  as="p"
+                  textStyle="body-regular"
+                  textAlign="left"
+                >{`Has not changed since last renewal.`}</Text>
+              )}
+            </Box>
+            <Divider />
+            <Box marginTop="24px" marginBottom="40px">
+              <Flex minWidth="700px" justifyContent="space-between">
+                <Text as="h3" textStyle="heading">{`Contact Information`}</Text>
+                <Button variant="outline" onClick={() => goToStep(1)}>{`Edit`}</Button>
+              </Flex>
+              {updatedContactInfo ? (
+                <>
+                  <ReviewRequestField name={`Phone Number`} value={contactPhoneNumber} />
+                  <ReviewRequestField name={`Email Address`} value={contactEmailAddress} />
+                </>
+              ) : (
+                <Text
+                  as="p"
+                  textStyle="body-regular"
+                  textAlign="left"
+                >{`Has not changed since last renewal.`}</Text>
+              )}
+            </Box>
+            <Divider />
+            <Box marginTop="24px" marginBottom="40px">
+              <Flex minWidth="700px" justifyContent="space-between">
+                <Text as="h3" textStyle="heading">{`Doctor's Information`}</Text>
+                <Button variant="outline" onClick={() => goToStep(2)}>{`Edit`}</Button>
+              </Flex>
+              {updatedDoctor ? (
+                <>
+                  <ReviewRequestField name={`Name`} value={doctorFirstName} />
+                  <ReviewRequestField name={`MSP Number`} value={doctorMspNumber} />
+                  <ReviewRequestField
+                    name={`Address`}
+                    value={`${doctorAddressLine1} ${doctorAddressLine2}`}
+                  />
+                  <ReviewRequestField name={`City`} value={doctorCity} />
+                  <ReviewRequestField name={`Postal Code`} value={doctorPostalCode} />
+                  <ReviewRequestField name={`Phone Number`} value={doctorPhoneNumber} />
+                </>
+              ) : (
+                <Text
+                  as="p"
+                  textStyle="body-regular"
+                  textAlign="left"
+                >{`Has not changed since last renewal.`}</Text>
+              )}
+            </Box>
+            <Box marginTop="24px" marginBottom="40px">
+              <Text
+                as="h4"
+                textStyle="body-bold"
+                textAlign="left"
+                marginBottom="12px"
+              >{`Please check to confirm the following statements before you proceed:`}</Text>
+              <Checkbox
+                textAlign="left"
+                isChecked={certified}
+                onChange={event => setCertified(event.target.checked)}
+              >
+                {`I certify that I am the holder of the accessible parking pass for which this
+          application for renewal is submitted, and that I have personally provided all of the
+          information required in this application.`}
+              </Checkbox>
+            </Box>
+            <Flex width="100%" justifyContent="flex-end">
+              <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
+              <Button
+                variant="solid"
+                onClick={handleSubmit}
+                loading={loading}
+                disabled={!applicantId || !certified}
+              >{`Proceed to payment`}</Button>
+            </Flex>
+          </Step>
+        </Steps>
       </GridItem>
     </Layout>
   );

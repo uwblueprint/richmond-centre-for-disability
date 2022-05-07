@@ -261,9 +261,9 @@ export const replacementFormSchema = object({
 });
 
 /**
- * Applicant facing renewal request form validation schema
+ * Applicant facing renewal request personal address form validation schema
  */
-export const applicantFacingRenewalSchema = object({
+export const applicantFacingRenewalPersonalAddressSchema = object({
   updatedAddress: bool().required(),
   personalAddressLine1: string()
     .nullable()
@@ -291,44 +291,69 @@ export const applicantFacingRenewalSchema = object({
         .min(6, 'Please enter a valid postal code')
         .max(7, 'Please enter a valid postal code'),
     }),
-  updatedContactInfo: bool().required(),
-  contactPhoneNumber: string()
-    .nullable()
-    .default(null)
-    .when('updatedContactInfo', {
+});
+
+/**
+ * Applicant facing renewal request contact information form validation schema
+ */
+export const applicantFacingRenewalContactSchema = object().shape(
+  {
+    updatedContactInfo: bool().required(),
+    contactPhoneNumber: string()
+      .nullable()
+      .default(null)
+      .when(['updatedContactInfo', 'contactEmailAddress'], {
+        is: (updatedContactInfo: boolean, contactEmailAddress: string) => {
+          return updatedContactInfo && !contactEmailAddress;
+        },
+        then: string()
+          .typeError('Please enter a valid phone number')
+          .required('Please enter a valid phone number')
+          .max(12, 'Please enter a valid phone number in the format 555-555-5555'),
+      }),
+    contactEmailAddress: string()
+      .email('Please enter a valid email address')
+      .nullable()
+      .default(null)
+      .when(['updatedContactInfo', 'contactPhoneNumber'], {
+        is: (updatedContactInfo: boolean, contactPhoneNumber: string) => {
+          return updatedContactInfo && !contactPhoneNumber;
+        },
+        then: string()
+          .typeError('Please enter a valid email address')
+          .email('Please enter a valid email address')
+          .required('Please enter a valid phone number'),
+      }),
+    receiveEmailUpdates: bool().when('updatedContactInfo', {
       is: true,
-      then: string()
-        .required('Please enter a valid phone number')
-        .max(12, 'Please enter a valid phone number in the format 555-555-5555'),
+      then: bool().required(),
     }),
-  contactEmailAddress: string()
-    .email('Please enter a valid email address')
-    .nullable()
-    .default(null)
-    .when('updatedContactInfo', {
-      is: true,
-      then: string()
-        .email('Please enter a valid email address')
-        .required('Please enter a valid phone number'),
-    }),
-  receiveEmailUpdates: bool().when('updatedContactInfo', {
-    is: true,
-    then: bool().required(),
-  }),
+  },
+  [
+    ['updatedContactInfo', 'contactEmailAddress'],
+    ['updatedContactInfo', 'contactPhoneNumber'],
+    ['contactEmailAddress', 'contactPhoneNumber'],
+  ]
+);
+
+/**
+ * Applicant facing renewal request doctor information form validation schema
+ */
+export const applicantFacingRenewalDoctorSchema = object().shape({
   updatedDoctor: bool().required(),
   doctorFirstName: string()
     .nullable()
     .default(null)
     .when('updatedDoctor', {
       is: true,
-      then: string().required('Please enter a first name'),
+      then: string().typeError('Please enter a first name').required('Please enter a first name'),
     }),
   doctorLastName: string()
     .nullable()
     .default(null)
     .when('updatedDoctor', {
       is: true,
-      then: string().required('Please enter a last name'),
+      then: string().typeError('Please enter a last name').required('Please enter a last name'),
     }),
   //TODO: doctorMspNumber
   doctorAddressLine1: string()
@@ -336,7 +361,7 @@ export const applicantFacingRenewalSchema = object({
     .default(null)
     .when('updatedDoctor', {
       is: true,
-      then: string().required('Please enter an address'),
+      then: string().typeError('Please enter an address').required('Please enter an address'),
     }),
   doctorAddressLine2: string().nullable().default(null),
   doctorCity: string()
@@ -344,7 +369,14 @@ export const applicantFacingRenewalSchema = object({
     .default(null)
     .when('updatedDoctor', {
       is: true,
-      then: string().required('Please enter a city name'),
+      then: string().typeError('Please enter a city name').required('Please enter a city name'),
+    }),
+  doctorPostalCode: string()
+    .nullable()
+    .default(null)
+    .when('updatedDoctor', {
+      is: true,
+      then: string().typeError('Please enter a postal code').required('Please enter a postal code'),
     }),
   doctorPhoneNumber: string()
     .nullable()
@@ -352,6 +384,7 @@ export const applicantFacingRenewalSchema = object({
     .when('updatedDoctor', {
       is: true,
       then: string()
+        .typeError('Please enter a valid phone number')
         .required('Please enter a valid phone number')
         .max(12, 'Please enter a valid phone number in the format 555-555-5555'),
     }),
