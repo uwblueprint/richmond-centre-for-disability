@@ -33,7 +33,6 @@ export default function EditDoctorInformationModal({
     // TODO: Backend errors
     onSave({
       ...values.doctorInformation,
-      // mspNumber: values.doctorInformation.mspNumber === null ? null : parseInt(values.doctorInformation.mspNumber)});
     });
     onClose();
   };
