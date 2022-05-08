@@ -221,7 +221,7 @@ export type CreateExternalRenewalApplicationInput = {
   updatedPhysician: Scalars['Boolean'];
   physicianFirstName: Maybe<Scalars['String']>;
   physicianLastName: Maybe<Scalars['String']>;
-  physicianMspNumber: Maybe<Scalars['Int']>;
+  physicianMspNumber: Maybe<Scalars['String']>;
   physicianPhone: Maybe<Scalars['String']>;
   physicianAddressLine1: Maybe<Scalars['String']>;
   physicianAddressLine2: Maybe<Scalars['String']>;
@@ -264,7 +264,7 @@ export type CreateNewApplicationInput = {
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
   physicianFirstName: Scalars['String'];
   physicianLastName: Scalars['String'];
-  physicianMspNumber: Scalars['Int'];
+  physicianMspNumber: Scalars['String'];
   physicianPhone: Scalars['String'];
   physicianAddressLine1: Scalars['String'];
   physicianAddressLine2: Maybe<Scalars['String']>;
@@ -326,7 +326,7 @@ export type CreateRenewalApplicationInput = {
   postalCode: Scalars['String'];
   physicianFirstName: Scalars['String'];
   physicianLastName: Scalars['String'];
-  physicianMspNumber: Scalars['Int'];
+  physicianMspNumber: Scalars['String'];
   physicianPhone: Scalars['String'];
   physicianAddressLine1: Scalars['String'];
   physicianAddressLine2: Maybe<Scalars['String']>;
@@ -738,7 +738,7 @@ export type NewApplication = Application & {
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
   physicianFirstName: Scalars['String'];
   physicianLastName: Scalars['String'];
-  physicianMspNumber: Scalars['Int'];
+  physicianMspNumber: Scalars['String'];
   physicianPhone: Scalars['String'];
   physicianAddressLine1: Scalars['String'];
   physicianAddressLine2: Maybe<Scalars['String']>;
@@ -964,7 +964,7 @@ export type RenewalApplication = Application & {
   permitType: PermitType;
   physicianFirstName: Scalars['String'];
   physicianLastName: Scalars['String'];
-  physicianMspNumber: Scalars['Int'];
+  physicianMspNumber: Scalars['String'];
   physicianPhone: Scalars['String'];
   physicianAddressLine1: Scalars['String'];
   physicianAddressLine2: Maybe<Scalars['String']>;
