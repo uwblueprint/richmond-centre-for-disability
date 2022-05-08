@@ -113,7 +113,7 @@ CREATE TABLE verification_requests (
 
 -- Create physicians table
 CREATE TABLE physicians (
-  msp_number INTEGER UNIQUE NOT NULL,
+  msp_number VARCHAR(50) UNIQUE NOT NULL,
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255) NOT NULL,
   phone VARCHAR(50) NOT NULL,
@@ -159,7 +159,7 @@ CREATE TABLE medical_information (
   mobility_aids MobilityAid ARRAY,
   other_patient_condition VARCHAR(255),
   notes TEXT,
-  physician_msp_number INTEGER NOT NULL,
+  physician_msp_number VARCHAR(50) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -347,7 +347,7 @@ CREATE TABLE renewal_applications (
   -- Physician information
   physician_first_name VARCHAR(255) NOT NULL,
   physician_last_name VARCHAR(255) NOT NULL,
-  physician_msp_number INTEGER NOT NULL,
+  physician_msp_number VARCHAR(50) NOT NULL,
   physician_phone VARCHAR(50) NOT NULL,
   physician_address_line_1 VARCHAR(255) NOT NULL,
   physician_address_line_2 VARCHAR(255),
@@ -388,7 +388,7 @@ CREATE TABLE new_applications (
   -- Physician information
   physician_first_name VARCHAR(255) NOT NULL,
   physician_last_name VARCHAR(255) NOT NULL,
-  physician_msp_number INTEGER NOT NULL,
+  physician_msp_number VARCHAR(50) NOT NULL,
   physician_phone VARCHAR(50) NOT NULL,
   physician_address_line_1 VARCHAR(255) NOT NULL,
   physician_address_line_2 VARCHAR(255),

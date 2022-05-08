@@ -653,7 +653,7 @@ export default gql`
 
     firstName: String!
     lastName: String!
-    mspNumber: Int!
+    mspNumber: String!
     phone: String!
     addressLine1: String!
     addressLine2: String

@@ -330,7 +330,7 @@ export default function CreateRenewal() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Doctor's Information`}
                     </Text>
-                    <DoctorInformationForm doctorInformation={doctorInformation} />
+                    <DoctorInformationForm />
                   </Box>
                 </GridItem>
                 {/* Additional Quesitons Form */}

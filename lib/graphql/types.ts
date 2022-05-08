@@ -841,7 +841,7 @@ export type PermitType =
 
 export type Physician = {
   __typename?: 'Physician';
-  mspNumber: Scalars['Int'];
+  mspNumber: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   phone: Scalars['String'];
@@ -1095,7 +1095,7 @@ export type UpdateApplicantDoctorInformationInput = {
   id: Scalars['Int'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
-  mspNumber: Scalars['Int'];
+  mspNumber: Scalars['String'];
   phone: Scalars['String'];
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
@@ -1165,7 +1165,7 @@ export type UpdateApplicationDoctorInformationInput = {
   id: Scalars['Int'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
-  mspNumber: Scalars['Int'];
+  mspNumber: Scalars['String'];
   phone: Scalars['String'];
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
@@ -1356,7 +1356,7 @@ export type UpdateNewApplicationGeneralInformationInput = {
 };
 
 export type UpsertPhysicianInput = {
-  mspNumber: Scalars['Int'];
+  mspNumber: Scalars['String'];
   name: Scalars['String'];
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
