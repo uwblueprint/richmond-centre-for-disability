@@ -283,16 +283,7 @@ export default function CreateNew() {
           physicianCity: doctorInformation.city,
           physicianPostalCode: doctorInformation.postalCode,
 
-          omitGuardianPoa: guardianInformation.omitGuardianPoa,
-          guardianFirstName: guardianInformation.firstName,
-          guardianMiddleName: guardianInformation.middleName,
-          guardianLastName: guardianInformation.lastName,
-          guardianPhone: guardianInformation.phone,
-          guardianRelationship: guardianInformation.relationship,
-          guardianAddressLine1: guardianInformation.addressLine1,
-          guardianAddressLine2: guardianInformation.addressLine2,
-          guardianCity: guardianInformation.city,
-          guardianPostalCode: guardianInformation.postalCode,
+          ...validatedValues.guardianInformation,
           poaFormS3ObjectKey: poaFormS3ObjectKey,
 
           ...additionalInformation,
@@ -515,7 +506,7 @@ export default function CreateNew() {
                       {`Guardian/POA Information`}
                     </Text>
                     <GuardianInformationForm
-                      guardianInformation={guardianInformation}
+                      guardianInformation={values.guardianInformation}
                       file={guardianPOAFile}
                       onUploadFile={setGuardianPOAFile}
                     />

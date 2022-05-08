@@ -5,7 +5,7 @@ import { object, bool, string } from 'yup';
 
 export const guardianInformationSchema = object({
   omitGuardianPoa: bool().default(false),
-  firstName: string()
+  guardianFirstName: string()
     .nullable()
     .default(null)
     .when('omitGuardianPoa', {
@@ -15,7 +15,7 @@ export const guardianInformationSchema = object({
         .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
         .required('Please enter a first name'),
     }),
-  middleName: string()
+  guardianMiddleName: string()
     .nullable()
     .default(null)
     .when('omitGuardianPoa', {
@@ -25,7 +25,7 @@ export const guardianInformationSchema = object({
         .default(null)
         .matches(/^[a-zA-Z]*$/, 'Must only contain letters'),
     }),
-  lastName: string()
+  guardianLastName: string()
     .nullable()
     .default(null)
     .when('omitGuardianPoa', {
@@ -35,7 +35,7 @@ export const guardianInformationSchema = object({
         .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
         .required('Please enter a last name'),
     }),
-  phoneNumber: string()
+  guardianPhone: string()
     .nullable()
     .default(null)
     .when('omitGuardianPoa', {
@@ -45,7 +45,7 @@ export const guardianInformationSchema = object({
         .typeError('Please enter a phone number')
         .required('Please enter a phone number'),
     }),
-  relationshipToApplicant: string()
+  guardianRelationship: string()
     .nullable()
     .default(null)
     .when('omitGuardianPoa', {
@@ -54,15 +54,15 @@ export const guardianInformationSchema = object({
         .typeError('Please enter a relationship to applicant')
         .required('Please enter a relationship to applicant'),
     }),
-  addressLine1: string()
+  guardianAddressLine1: string()
     .nullable()
     .default(null)
     .when('omitGuardianPoa', {
       is: false,
       then: string().typeError('Please enter an address').required('Please enter an address'),
     }),
-  addressLine2: string().nullable().default(null),
-  city: string()
+  guardianAddressLine2: string().nullable().default(null),
+  guardianCity: string()
     .nullable()
     .default(null)
     .when('omitGuardianPoa', {
@@ -72,7 +72,7 @@ export const guardianInformationSchema = object({
         .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
         .required('Please enter a city'),
     }),
-  postalCode: string()
+  guardianPostalCode: string()
     .nullable()
     .default(null)
     .when('omitGuardianPoa', {
