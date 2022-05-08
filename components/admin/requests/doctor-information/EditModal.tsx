@@ -33,7 +33,6 @@ export default function EditDoctorInformationModal({
     // TODO: Backend errors
     onSave({
       ...values.doctorInformation,
-      // mspNumber: values.doctorInformation.mspNumber === null ? null : parseInt(values.doctorInformation.mspNumber)});
     });
     onClose();
   };
@@ -82,29 +81,6 @@ export default function EditDoctorInformationModal({
             </Form>
           )}
         </Formik>
-        {/* <form onSubmit={handleSubmit}>
-          <ModalContent paddingX="36px">
-            <ModalHeader paddingBottom="12px" paddingTop="24px" paddingX="4px">
-              <Text as="h2" textStyle="display-medium-bold">
-                {"Edit Doctor's Information"}
-              </Text>
-            </ModalHeader>
-            <ModalBody paddingTop="20px" paddingX="4px">
-              <DoctorInformationForm
-                doctorInformation={doctorInformation}
-                onChange={setDoctorInformation}
-              />
-            </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingTop="20px" paddingX="4px">
-              <Button colorScheme="gray" variant="solid" onClick={onClose}>
-                {'Cancel'}
-              </Button>
-              <Button variant="solid" type="submit" ml={'12px'}>
-                {'Save'}
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </form> */}
       </Modal>
     </>
   );
