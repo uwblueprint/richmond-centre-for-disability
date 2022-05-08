@@ -5,6 +5,8 @@ import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Reques
 import ShopifyBadge from '@components/admin/ShopifyBadge';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
 import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/types';
+import { titlecase } from '@tools/string';
+import { formatDateYYYYMMDD } from '@lib/utils/format';
 
 type RequestHeaderProps = {
   readonly applicationType: ApplicationType;
@@ -14,6 +16,7 @@ type RequestHeaderProps = {
   readonly paidThroughShopify?: boolean;
   readonly shopifyOrderID?: string;
   readonly shopifyOrderNumber?: string;
+  readonly temporaryPermitExpiry: Date | null;
 };
 
 /**
@@ -34,6 +37,7 @@ export default function RequestHeader({
   paidThroughShopify,
   shopifyOrderID,
   shopifyOrderNumber,
+  temporaryPermitExpiry,
 }: RequestHeaderProps) {
   const displayShopifyUrl = paidThroughShopify && shopifyOrderID && shopifyOrderNumber;
   const shopifyOrderUrl = `https://${process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN}/admin/orders/${shopifyOrderID}`;
@@ -49,13 +53,8 @@ export default function RequestHeader({
       <Flex marginTop={5} alignItems="baseline" justifyContent="space-between">
         <Box>
           <Flex alignItems="center">
-            <Text
-              textStyle="display-medium-bold"
-              as="h1"
-              marginRight={3}
-              textTransform="capitalize"
-            >
-              {`${applicationType.toLowerCase()} Request`}
+            <Text textStyle="display-large" as="h1" marginRight={3} textTransform="capitalize">
+              {`${titlecase(applicationType)} Request`}
             </Text>
             <HStack spacing={3}>
               {applicationStatus && <RequestStatusBadge variant={applicationStatus} />}
@@ -64,7 +63,7 @@ export default function RequestHeader({
           </Flex>
           <HStack spacing={3} marginTop={3}>
             <Text textStyle="caption" as="p">
-              Received on {createdAt.toDateString()}
+              Received on {createdAt.toDateString()} at {createdAt.toLocaleTimeString('en-CA')}
             </Text>
           </HStack>
           {displayShopifyUrl && (
@@ -89,6 +88,13 @@ export default function RequestHeader({
             </Text>
             <PermitTypeBadge variant={permitType} />
           </Flex>
+          <HStack justifyContent="flex-end">
+            {permitType === 'TEMPORARY' && !!temporaryPermitExpiry && (
+              <Text textStyle="caption" as="p" mt="12px">
+                This permit will expire: {formatDateYYYYMMDD(temporaryPermitExpiry)}
+              </Text>
+            )}
+          </HStack>
         </Box>
       </Flex>
     </Box>

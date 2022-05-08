@@ -47,6 +47,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     shopifyConfirmationNumber,
     shopifyOrderNumber,
     permitType,
+    temporaryPermitExpiry,
     processing: {
       status,
       appNumber,
@@ -81,6 +82,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           paidThroughShopify={paidThroughShopify}
           shopifyOrderID={shopifyConfirmationNumber || undefined}
           shopifyOrderNumber={shopifyOrderNumber || undefined}
+          temporaryPermitExpiry={temporaryPermitExpiry || null}
         />
       </GridItem>
       <GridItem colStart={1} colSpan={5} textAlign="left">
