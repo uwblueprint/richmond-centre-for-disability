@@ -73,7 +73,7 @@ export default function EditDoctorInformationModal({
                   <Button colorScheme="gray" variant="solid" onClick={onClose}>
                     {'Cancel'}
                   </Button>
-                  <Button variant="solid" type="submit" ml={'12px'} isDisabled={isValid}>
+                  <Button variant="solid" type="submit" ml={'12px'} isDisabled={!isValid}>
                     {'Save'}
                   </Button>
                 </ModalFooter>
