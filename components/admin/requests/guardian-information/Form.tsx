@@ -32,18 +32,18 @@ export default function GuardianInformationForm({
         {!guardianInformation.omitGuardianPoa && (
           <>
             <Stack direction="row" spacing="20px" paddingTop="24px">
-              <TextField name="guardianInformation.guardianFirstName" label="First name" required />
-              <TextField name="guardianInformation.guardianMiddleName" label="Middle name" />
-              <TextField name="guardianInformation.guardianLastName" label="Last name" required />
+              <TextField name="guardianInformation.firstName" label="First name" required />
+              <TextField name="guardianInformation.middleName" label="Middle name" />
+              <TextField name="guardianInformation.lastName" label="Last name" required />
             </Stack>
 
             <Stack direction="row" spacing="20px" paddingTop="20px">
-              <TextField name="guardianInformation.guardianPhone" label="Phone Number" required>
+              <TextField name="guardianInformation.phone" label="Phone Number" required>
                 <FormHelperText color="text.secondary">{'Example: 000-000-0000'}</FormHelperText>
               </TextField>
 
               <TextField
-                name="guardianInformation.guardianRelationship"
+                name="guardianInformation.relationship"
                 label="Relationship to applicant"
                 required
               />
@@ -62,16 +62,12 @@ export default function GuardianInformationForm({
             <Text as="h3" textStyle="heading" paddingBottom="24px">
               {'Address '}
             </Text>
-            <TextField
-              name="guardianInformation.guardianAddressLine1"
-              label="Address line 1"
-              required
-            >
+            <TextField name="guardianInformation.addressLine1" label="Address line 1" required>
               <FormHelperText color="text.secondary">
                 {'Street Address, P.O. Box, Company Name, c/o'}
               </FormHelperText>
             </TextField>
-            <TextField name="guardianInformation.guardianAddressLine2" label="Address Line 2">
+            <TextField name="guardianInformation.addressLine2" label="Address Line 2">
               <Box as="span" textStyle="caption" fontSize="sm">
                 {'(optional)'}
               </Box>
@@ -81,8 +77,8 @@ export default function GuardianInformationForm({
             </TextField>
 
             <Stack direction="row" spacing="20px">
-              <TextField name="guardianInformation.guardianCity" label="City" required />
-              <TextField name="guardianInformation.guardianPostalCode" label="Postal Code" required>
+              <TextField name="guardianInformation.city" label="City" required />
+              <TextField name="guardianInformation.postalCode" label="Postal Code" required>
                 <FormHelperText color="text.secondary">{'Example: X0X 0X0'}</FormHelperText>
               </TextField>
             </Stack>

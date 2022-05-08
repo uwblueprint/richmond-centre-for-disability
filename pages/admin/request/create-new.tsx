@@ -283,7 +283,16 @@ export default function CreateNew() {
           physicianCity: doctorInformation.city,
           physicianPostalCode: doctorInformation.postalCode,
 
-          ...validatedValues.guardianInformation,
+          omitGuardianPoa: validatedValues.guardianInformation.omitGuardianPoa,
+          guardianFirstName: validatedValues.guardianInformation.firstName,
+          guardianMiddleName: validatedValues.guardianInformation.middleName,
+          guardianLastName: validatedValues.guardianInformation.lastName,
+          guardianPhone: validatedValues.guardianInformation.phone,
+          guardianRelationship: validatedValues.guardianInformation.relationship,
+          guardianAddressLine1: validatedValues.guardianInformation.addressLine1,
+          guardianAddressLine2: validatedValues.guardianInformation.addressLine2,
+          guardianCity: validatedValues.guardianInformation.city,
+          guardianPostalCode: validatedValues.guardianInformation.postalCode,
           poaFormS3ObjectKey: poaFormS3ObjectKey,
 
           ...additionalInformation,
