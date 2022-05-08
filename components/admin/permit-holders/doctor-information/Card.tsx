@@ -78,7 +78,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       physicianFirstName: string;
       physicianLastName: string;
       physicianPhone: string;
-      physicianMspNumber: number;
+      physicianMspNumber: string;
     }>;
 
     return filteredApplications.map(
