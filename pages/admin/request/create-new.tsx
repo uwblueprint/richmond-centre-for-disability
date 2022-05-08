@@ -275,14 +275,14 @@ export default function CreateNew() {
           ...validatedValues.physicianAssessment,
           mobilityAids: null, //TODO: get mobility aids when forms are updated to get this data
 
-          physicianFirstName: doctorInformation.firstName,
-          physicianLastName: doctorInformation.lastName,
-          physicianMspNumber: doctorInformation.mspNumber,
-          physicianPhone: doctorInformation.phone,
-          physicianAddressLine1: doctorInformation.addressLine1,
-          physicianAddressLine2: doctorInformation.addressLine2,
-          physicianCity: doctorInformation.city,
-          physicianPostalCode: doctorInformation.postalCode,
+          physicianFirstName: validatedValues.doctorInformation.firstName,
+          physicianLastName: validatedValues.doctorInformation.lastName,
+          physicianMspNumber: validatedValues.doctorInformation.mspNumber,
+          physicianPhone: validatedValues.doctorInformation.phone,
+          physicianAddressLine1: validatedValues.doctorInformation.addressLine1,
+          physicianAddressLine2: validatedValues.doctorInformation.addressLine2,
+          physicianCity: validatedValues.doctorInformation.city,
+          physicianPostalCode: validatedValues.doctorInformation.postalCode,
 
           omitGuardianPoa: validatedValues.guardianInformation.omitGuardianPoa,
           guardianFirstName: validatedValues.guardianInformation.firstName,

@@ -102,7 +102,7 @@ export default gql`
     # Doctor information
     physicianFirstName: String!
     physicianLastName: String!
-    physicianMspNumber: Int!
+    physicianMspNumber: String!
     physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
@@ -195,7 +195,7 @@ export default gql`
     # Doctor information
     physicianFirstName: String!
     physicianLastName: String!
-    physicianMspNumber: Int!
+    physicianMspNumber: String!
     physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
@@ -348,7 +348,7 @@ export default gql`
     # Doctor information
     physicianFirstName: String!
     physicianLastName: String!
-    physicianMspNumber: Int!
+    physicianMspNumber: String!
     physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
@@ -426,7 +426,7 @@ export default gql`
     # Doctor information
     physicianFirstName: String!
     physicianLastName: String!
-    physicianMspNumber: Int!
+    physicianMspNumber: String!
     physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
@@ -494,7 +494,7 @@ export default gql`
     updatedPhysician: Boolean!
     physicianFirstName: String
     physicianLastName: String
-    physicianMspNumber: Int
+    physicianMspNumber: String
     physicianPhone: String
     physicianAddressLine1: String
     physicianAddressLine2: String
@@ -648,7 +648,7 @@ export default gql`
 
     firstName: String!
     lastName: String!
-    mspNumber: Int!
+    mspNumber: String!
     phone: String!
     addressLine1: String!
     addressLine2: String
