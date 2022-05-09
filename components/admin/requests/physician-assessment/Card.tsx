@@ -1,30 +1,45 @@
 import { FC, useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { Text, VStack, Badge, Wrap, Grid, GridItem } from '@chakra-ui/react'; // Chakra UI
+import { useMutation, useQuery } from '@apollo/client';
+import {
+  Text,
+  VStack,
+  Badge,
+  Wrap,
+  Grid,
+  GridItem,
+  List,
+  ListItem,
+  Button,
+} from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
 import {
   GetPhysicianAssessmentRequest,
   GetPhysicianAssessmentResponse,
   GET_PHYSICIAN_ASSESSMENT,
   PhysicianAssessment,
+  UpdatePhysicianAssessmentRequest,
+  UpdatePhysicianAssessmentResponse,
+  UPDATE_PHYSICIAN_ASSESSMENT,
 } from '@tools/admin/requests/physician-assessment';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { titlecase } from '@tools/string';
+import EditPhysicianAssessmentModal from './EditModal';
 
 type Props = {
   readonly applicationId: number;
   readonly isUpdated?: boolean;
+  readonly editDisabled?: boolean;
   /** Whether card is a subsection */
   readonly isSubsection?: boolean;
 };
 
 const Card: FC<Props> = props => {
-  const { applicationId, isUpdated, isSubsection } = props;
+  const { applicationId, isUpdated, editDisabled, isSubsection } = props;
 
   const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment | null>(null);
 
-  useQuery<GetPhysicianAssessmentResponse, GetPhysicianAssessmentRequest>(
+  const { refetch } = useQuery<GetPhysicianAssessmentResponse, GetPhysicianAssessmentRequest>(
     GET_PHYSICIAN_ASSESSMENT,
     {
       variables: { id: applicationId },
@@ -37,9 +52,34 @@ const Card: FC<Props> = props => {
     }
   );
 
+  const [updatePhysicianAssessment] = useMutation<
+    UpdatePhysicianAssessmentResponse,
+    UpdatePhysicianAssessmentRequest
+  >(UPDATE_PHYSICIAN_ASSESSMENT);
+
   if (!physicianAssessment) {
     return null;
   }
+
+  /** Handler for saving physician assessment */
+  const handleSave = async (data: PhysicianAssessment) => {
+    if (data.patientCondition === null || data.permitType === null) {
+      // TODO: Improve error handling
+      return;
+    }
+
+    await updatePhysicianAssessment({
+      variables: {
+        input: {
+          id: applicationId,
+          ...data,
+          patientCondition: data.patientCondition,
+          permitType: data.permitType,
+        },
+      },
+    });
+    refetch();
+  };
 
   const {
     disability,
@@ -48,6 +88,7 @@ const Card: FC<Props> = props => {
     otherPatientCondition,
     temporaryPermitExpiry,
     permitType,
+    mobilityAids,
   } = physicianAssessment;
   return (
     <PermitHolderInfoCard
@@ -56,7 +97,26 @@ const Card: FC<Props> = props => {
       updated={isUpdated}
       divider
       isSubsection={isSubsection}
-      editModal={false}
+      editModal={
+        !editDisabled && (
+          <EditPhysicianAssessmentModal
+            physicianAssessment={{
+              disability,
+              disabilityCertificationDate,
+              otherPatientCondition,
+              temporaryPermitExpiry,
+              patientCondition,
+              permitType,
+              mobilityAids,
+            }}
+            onSave={handleSave}
+          >
+            <Button color="primary" variant="ghost" textDecoration="underline">
+              <Text textStyle="body-bold">Edit</Text>
+            </Button>
+          </EditPhysicianAssessmentModal>
+        )
+      }
     >
       <VStack align="left" spacing="12px">
         <Grid
@@ -108,6 +168,23 @@ const Card: FC<Props> = props => {
               </GridItem>
             </>
           )}
+          {/* NOTETOSELF: I think this is conditionally rendered? Will ask designers */}
+          <GridItem>
+            <Text as="p" textStyle="body-regular" textAlign="left">
+              Mobility aids
+            </Text>
+          </GridItem>
+          <GridItem>
+            <List>
+              {mobilityAids?.map(aid => (
+                <ListItem key={aid}>
+                  <Text as="p" textStyle="body-regular" textAlign="left">
+                    {titlecase(aid)}
+                  </Text>
+                </ListItem>
+              ))}
+            </List>
+          </GridItem>
           <GridItem>
             <Text as="p" textStyle="body-regular" textAlign="left">
               Impairment type
