@@ -62,11 +62,14 @@ export default function GuardianInformationForm({
             <Text as="h3" textStyle="heading" paddingBottom="24px">
               {'Address '}
             </Text>
-            <TextField name="guardianInformation.addressLine1" label="Address line 1" required>
-              <FormHelperText color="text.secondary">
-                {'Street Address, P.O. Box, Company Name, c/o'}
-              </FormHelperText>
-            </TextField>
+
+            <Box paddingBottom="24px">
+              <TextField name="guardianInformation.addressLine1" label="Address line 1" required>
+                <FormHelperText color="text.secondary">
+                  {'Street Address, P.O. Box, Company Name, c/o'}
+                </FormHelperText>
+              </TextField>
+            </Box>
 
             <Box paddingBottom="24px">
               <TextField
