@@ -38,21 +38,31 @@ export default function DoctorInformationForm() {
             {' (must be in British Columbia)'}
           </Box>
         </Text>
+        <Box paddingBottom="24px">
+          <TextField name="doctorInformation.addressLine1" label="Address line 1" required>
+            <FormHelperText color="text.secondary">
+              {'Street Address, P.O. Box, Company Name, c/o'}
+            </FormHelperText>
+          </TextField>
+        </Box>
 
-        <TextField name="doctorInformation.addressLine1" label="Address line 1" required>
-          <FormHelperText color="text.secondary">
-            {'Street Address, P.O. Box, Company Name, c/o'}
-          </FormHelperText>
-        </TextField>
-
-        <TextField name="doctorInformation.addressLine2" label="Address line 2">
-          <Box as="span" textStyle="caption">
-            {'(optional)'}
-          </Box>
-          <FormHelperText color="text.secondary">
-            {'Apartment, suite, unit, building, floor, etc'}
-          </FormHelperText>
-        </TextField>
+        <Box paddingBottom="24px">
+          <TextField
+            name="doctorInformation.addressLine2"
+            label={
+              <>
+                {'Address line 2 '}
+                <Box as="span" textStyle="body-regular" fontSize="sm">
+                  {'(optional)'}
+                </Box>
+              </>
+            }
+          >
+            <FormHelperText color="text.secondary">
+              {'Apartment, suite, unit, building, floor, etc'}
+            </FormHelperText>
+          </TextField>
+        </Box>
 
         <Stack direction="row" spacing="20px">
           <TextField name="doctorInformation.city" label="City" required />
