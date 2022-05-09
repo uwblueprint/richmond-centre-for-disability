@@ -156,7 +156,7 @@ export default function GuardianInformationCard({
   }
 
   /** Handler for saving doctor information */
-  const handleSave = async (data: GuardianInformation) => {
+  const handleSave = async (data: Omit<GuardianInformation, 'poaFormS3ObjectUrl'>) => {
     await updateGuardianInformation({
       variables: { input: { id: applicationId, ...data } },
     });
