@@ -170,6 +170,11 @@ export default function Renew() {
       setPersonalAddressLine2(values.personalAddressLine2);
       setPersonalCity(values.personalCity);
       setPersonalPostalCode(values.personalPostalCode);
+    } else {
+      setPersonalAddressLine1('');
+      setPersonalAddressLine2('');
+      setPersonalCity('');
+      setPersonalPostalCode('');
     }
 
     if (isReviewing) {
@@ -191,7 +196,12 @@ export default function Renew() {
       setContactEmailAddress(values.contactEmailAddress);
       if (values.contactEmailAddress) {
         setReceiveEmailUpdates(values.receiveEmailUpdates);
+      } else {
+        setReceiveEmailUpdates(false);
       }
+    } else {
+      setContactPhoneNumber('');
+      setContactEmailAddress('');
     }
 
     if (isReviewing) {
@@ -222,6 +232,15 @@ export default function Renew() {
       setDoctorCity(values.doctorCity);
       setDoctorPostalCode(values.doctorPostalCode);
       setDoctorPhoneNumber(values.doctorPhoneNumber);
+    } else {
+      setDoctorFirstName('');
+      setDoctorLastName('');
+      setDoctorMspNumber('');
+      setDoctorAddressLine1('');
+      setDoctorAddressLine2('');
+      setDoctorCity('');
+      setDoctorPostalCode('');
+      setDoctorPhoneNumber('');
     }
 
     if (isReviewing) {

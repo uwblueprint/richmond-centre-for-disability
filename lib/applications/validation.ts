@@ -322,7 +322,7 @@ export const applicantFacingRenewalContactSchema = object().shape(
         then: string()
           .typeError('Please enter a valid email address')
           .email('Please enter a valid email address')
-          .required('Please enter a valid phone number'),
+          .required('Please enter a valid email address'),
       }),
     receiveEmailUpdates: bool().when('updatedContactInfo', {
       is: true,
@@ -385,7 +385,11 @@ export const applicantFacingRenewalDoctorSchema = object().shape({
     .default(null)
     .when('updatedDoctor', {
       is: true,
-      then: string().typeError('Please enter a postal code').required('Please enter a postal code'),
+      then: string()
+        .typeError('Please enter a postal code')
+        .required('Please enter a postal code')
+        .min(6, 'Please enter a valid postal code')
+        .max(7, 'Please enter a valid postal code'),
     }),
   doctorPhoneNumber: string()
     .nullable()
