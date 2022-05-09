@@ -168,7 +168,11 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
 
   const {
     application: {
+      paidThroughShopify,
+      shopifyConfirmationNumber,
+      shopifyOrderNumber,
       processing: {
+        status,
         appNumber,
         appNumberEmployee,
         appNumberUpdatedAt,
@@ -191,294 +195,367 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
       },
     },
   } = data;
+  const shopifyOrderUrl = `https://${process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN}/admin/orders/${shopifyConfirmationNumber}`;
+
+  /** Placeholder boolean status for customer refund */
+  const customerRefunded = false;
 
   return (
     <PermitHolderInfoCard colSpan={7} header={_header}>
       <Divider mt="8px" />
       <VStack marginTop={5} spacing={10} alignItems="left" width="100%">
-        {/* Task 1: Assign new APP number: Assign number (MODAL) */}
-        <ProcessingTaskStep
-          id={1}
-          label={`Assign new APP number${appNumber === null ? '' : `: ${appNumber}`}`}
-          isCompleted={appNumber !== null}
-          showLog={showTaskLog}
-          log={
-            showTaskLog && appNumberEmployee
-              ? {
-                  name: formatFullName(appNumberEmployee.firstName, appNumberEmployee.lastName),
-                  date: appNumberUpdatedAt,
-                }
-              : null
-          }
-        >
-          {appNumber === null && !reviewRequestCompleted ? (
-            <AssignNumberModal
-              modalTitle="Assign New APP Number"
-              fieldName="New APP number"
-              onAssign={handleAssignAppNumber}
-            >
+        {status === 'REJECTED' ? (
+          // TODO: API Hookup
+          <ProcessingTaskStep
+            id={1}
+            label="Refund customer"
+            description={
+              paidThroughShopify ? (
+                <>
+                  <Text as="p" textStyle="caption">
+                    Refund through Shopify for online payments
+                  </Text>
+                  <Text as="p" textStyle="caption">
+                    Paid with Shopify: Order{' '}
+                    <Link
+                      href={shopifyOrderUrl}
+                      isExternal={true}
+                      textStyle="caption-bold"
+                      textDecoration="underline"
+                      color="primary"
+                    >
+                      {`#${shopifyOrderNumber}`}
+                    </Link>
+                  </Text>
+                </>
+              ) : undefined
+            }
+            isCompleted={false}
+            showLog={showTaskLog}
+            log={
+              showTaskLog && appHolepunchedEmployee
+                ? {
+                    name: formatFullName(
+                      appHolepunchedEmployee.firstName,
+                      appHolepunchedEmployee.lastName
+                    ),
+                    date: appHolepunchedUpdatedAt,
+                  }
+                : null
+            }
+          >
+            {customerRefunded ? (
+              <Button
+                variant="ghost"
+                textDecoration="underline black"
+                // TODO: Add click handler
+                // onClick={() => {}}
+              >
+                <Text textStyle="caption" color="black">
+                  Undo
+                </Text>
+              </Button>
+            ) : (
               <Button
                 marginLeft="auto"
                 height="35px"
                 bg="background.gray"
                 _hover={{ bg: 'background.grayHover' }}
                 color="black"
+                // TODO: Add click handler
+                // onClick={() => {}}
               >
-                <Text textStyle="xsmall-medium">Assign number</Text>
+                <Text textStyle="xsmall-medium">Mark as complete</Text>
               </Button>
-            </AssignNumberModal>
-          ) : appNumber !== null && !reviewRequestCompleted ? (
-            <Button
-              variant="ghost"
-              textDecoration="underline black"
-              onClick={() => handleAssignAppNumber(null)}
+            )}
+          </ProcessingTaskStep>
+        ) : (
+          <>
+            {/* Task 1: Assign new APP number: Assign number (MODAL) */}
+            <ProcessingTaskStep
+              id={1}
+              label={`Assign new APP number${appNumber === null ? '' : `: ${appNumber}`}`}
+              isCompleted={appNumber !== null}
+              showLog={showTaskLog}
+              log={
+                showTaskLog && appNumberEmployee
+                  ? {
+                      name: formatFullName(appNumberEmployee.firstName, appNumberEmployee.lastName),
+                      date: appNumberUpdatedAt,
+                    }
+                  : null
+              }
             >
-              <Text textStyle="caption" color="black">
-                Undo
-              </Text>
-            </Button>
-          ) : null}
-        </ProcessingTaskStep>
+              {appNumber === null && !reviewRequestCompleted ? (
+                <AssignNumberModal
+                  modalTitle="Assign New APP Number"
+                  fieldName="New APP number"
+                  onAssign={handleAssignAppNumber}
+                >
+                  <Button
+                    marginLeft="auto"
+                    height="35px"
+                    bg="background.gray"
+                    _hover={{ bg: 'background.grayHover' }}
+                    color="black"
+                  >
+                    <Text textStyle="xsmall-medium">Assign number</Text>
+                  </Button>
+                </AssignNumberModal>
+              ) : appNumber !== null && !reviewRequestCompleted ? (
+                <Button
+                  variant="ghost"
+                  textDecoration="underline black"
+                  onClick={() => handleAssignAppNumber(null)}
+                >
+                  <Text textStyle="caption" color="black">
+                    Undo
+                  </Text>
+                </Button>
+              ) : null}
+            </ProcessingTaskStep>
 
-        {/* Task 2: Hole punch parking permit: Mark as complete (CHECK) */}
-        <ProcessingTaskStep
-          id={2}
-          label="Hole punch parking permit"
-          description="Gender, Expiry Year and Month"
-          isCompleted={appHolepunched}
-          showLog={showTaskLog}
-          log={
-            showTaskLog && appHolepunchedEmployee
-              ? {
-                  name: formatFullName(
-                    appHolepunchedEmployee.firstName,
-                    appHolepunchedEmployee.lastName
-                  ),
-                  date: appHolepunchedUpdatedAt,
-                }
-              : null
-          }
-        >
-          {appHolepunched && !reviewRequestCompleted ? (
-            <Button
-              variant="ghost"
-              textDecoration="underline black"
-              onClick={() => handleHolepunchParkingPermit(false)}
+            {/* Task 2: Hole punch parking permit: Mark as complete (CHECK) */}
+            <ProcessingTaskStep
+              id={2}
+              label="Hole punch parking permit"
+              description="Gender, Expiry Year and Month"
+              isCompleted={appHolepunched}
+              showLog={showTaskLog}
+              log={
+                showTaskLog && appHolepunchedEmployee
+                  ? {
+                      name: formatFullName(
+                        appHolepunchedEmployee.firstName,
+                        appHolepunchedEmployee.lastName
+                      ),
+                      date: appHolepunchedUpdatedAt,
+                    }
+                  : null
+              }
             >
-              <Text textStyle="caption" color="black">
-                Undo
-              </Text>
-            </Button>
-          ) : !appHolepunched && !reviewRequestCompleted ? (
-            <Button
-              marginLeft="auto"
-              height="35px"
-              bg="background.gray"
-              _hover={{ bg: 'background.grayHover' }}
-              color="black"
-              onClick={() => handleHolepunchParkingPermit(true)}
-            >
-              <Text textStyle="xsmall-medium">Mark as complete</Text>
-            </Button>
-          ) : null}
-        </ProcessingTaskStep>
+              {appHolepunched && !reviewRequestCompleted ? (
+                <Button
+                  variant="ghost"
+                  textDecoration="underline black"
+                  onClick={() => handleHolepunchParkingPermit(false)}
+                >
+                  <Text textStyle="caption" color="black">
+                    Undo
+                  </Text>
+                </Button>
+              ) : !appHolepunched && !reviewRequestCompleted ? (
+                <Button
+                  marginLeft="auto"
+                  height="35px"
+                  bg="background.gray"
+                  _hover={{ bg: 'background.grayHover' }}
+                  color="black"
+                  onClick={() => handleHolepunchParkingPermit(true)}
+                >
+                  <Text textStyle="xsmall-medium">Mark as complete</Text>
+                </Button>
+              ) : null}
+            </ProcessingTaskStep>
 
-        {/* Task 3: Create a new wallet card: Mark as complete (CHECK) */}
-        <ProcessingTaskStep
-          id={3}
-          label="Create a new wallet card"
-          description="Include permit number, expiry date, full name and birth month"
-          isCompleted={walletCardCreated}
-          showLog={showTaskLog}
-          log={
-            showTaskLog && walletCardCreatedEmployee
-              ? {
-                  name: formatFullName(
-                    walletCardCreatedEmployee.firstName,
-                    walletCardCreatedEmployee.lastName
-                  ),
-                  date: walletCardCreatedUpdatedAt,
-                }
-              : null
-          }
-        >
-          {walletCardCreated && !reviewRequestCompleted ? (
-            <Button
-              variant="ghost"
-              textDecoration="underline black"
-              onClick={() => handleCreateWalletCard(false)}
+            {/* Task 3: Create a new wallet card: Mark as complete (CHECK) */}
+            <ProcessingTaskStep
+              id={3}
+              label="Create a new wallet card"
+              description="Include permit number, expiry date, full name and birth month"
+              isCompleted={walletCardCreated}
+              showLog={showTaskLog}
+              log={
+                showTaskLog && walletCardCreatedEmployee
+                  ? {
+                      name: formatFullName(
+                        walletCardCreatedEmployee.firstName,
+                        walletCardCreatedEmployee.lastName
+                      ),
+                      date: walletCardCreatedUpdatedAt,
+                    }
+                  : null
+              }
             >
-              <Text textStyle="caption" color="black">
-                Undo
-              </Text>
-            </Button>
-          ) : !walletCardCreated && !reviewRequestCompleted ? (
-            <Button
-              marginLeft="auto"
-              height="35px"
-              bg="background.gray"
-              _hover={{ bg: 'background.grayHover' }}
-              color="black"
-              onClick={() => handleCreateWalletCard(true)}
-            >
-              <Text textStyle="xsmall-medium">Mark as complete</Text>
-            </Button>
-          ) : null}
-        </ProcessingTaskStep>
+              {walletCardCreated && !reviewRequestCompleted ? (
+                <Button
+                  variant="ghost"
+                  textDecoration="underline black"
+                  onClick={() => handleCreateWalletCard(false)}
+                >
+                  <Text textStyle="caption" color="black">
+                    Undo
+                  </Text>
+                </Button>
+              ) : !walletCardCreated && !reviewRequestCompleted ? (
+                <Button
+                  marginLeft="auto"
+                  height="35px"
+                  bg="background.gray"
+                  _hover={{ bg: 'background.grayHover' }}
+                  color="black"
+                  onClick={() => handleCreateWalletCard(true)}
+                >
+                  <Text textStyle="xsmall-medium">Mark as complete</Text>
+                </Button>
+              ) : null}
+            </ProcessingTaskStep>
 
-        {/* Task 4: Review Information: Review Information (MODAL) */}
-        <ProcessingTaskStep
-          id={4}
-          label={'Review request information'}
-          description="Editing will be disabled upon completion of this step"
-          isCompleted={reviewRequestCompleted}
-          showLog={showTaskLog}
-          log={
-            showTaskLog && reviewRequestCompletedEmployee
-              ? {
-                  name: formatFullName(
-                    reviewRequestCompletedEmployee.firstName,
-                    reviewRequestCompletedEmployee.lastName
-                  ),
-                  date: reviewRequestCompletedUpdatedAt,
-                }
-              : null
-          }
-        >
-          <ReviewInformationStep
-            isCompleted={reviewRequestCompleted}
-            isDisabled={!appNumber || !appHolepunched || !walletCardCreated}
-            applicationId={applicationId}
-            onConfirmed={() => handleReviewRequestInformation(true)}
-            onUndo={() => {
-              handleReviewRequestInformation(false);
-            }}
-          />
-        </ProcessingTaskStep>
+            {/* Task 4: Review Information: Review Information (MODAL) */}
+            <ProcessingTaskStep
+              id={4}
+              label={'Review request information'}
+              description="Editing will be disabled upon completion of this step"
+              isCompleted={reviewRequestCompleted}
+              showLog={showTaskLog}
+              log={
+                showTaskLog && reviewRequestCompletedEmployee
+                  ? {
+                      name: formatFullName(
+                        reviewRequestCompletedEmployee.firstName,
+                        reviewRequestCompletedEmployee.lastName
+                      ),
+                      date: reviewRequestCompletedUpdatedAt,
+                    }
+                  : null
+              }
+            >
+              <ReviewInformationStep
+                isCompleted={reviewRequestCompleted}
+                isDisabled={!appNumber || !appHolepunched || !walletCardCreated}
+                applicationId={applicationId}
+                onConfirmed={() => handleReviewRequestInformation(true)}
+                onUndo={() => {
+                  handleReviewRequestInformation(false);
+                }}
+              />
+            </ProcessingTaskStep>
 
-        {/* Task 5: Generate Invoice */}
-        <ProcessingTaskStep
-          id={5}
-          label="Generate invoice"
-          description="Invoice number will be automatically assigned"
-          isCompleted={invoice !== null}
-          showLog={showTaskLog}
-          log={
-            showTaskLog && invoice
-              ? {
-                  name: formatFullName(invoice.employee.firstName, invoice.employee.lastName),
-                  date: invoice.updatedAt,
-                }
-              : null
-          }
-        >
-          {invoice === null ? (
-            <Button
-              marginLeft="auto"
-              height="35px"
-              bg="background.gray"
-              _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
-              disabled={!reviewRequestCompleted || generateInvoiceLoading}
-              color="black"
-              onClick={handleGenerateInvoice}
-              isLoading={generateInvoiceLoading}
-              loadingText="Generate document"
-              fontWeight="normal"
-              fontSize="14px"
+            {/* Task 5: Generate Invoice */}
+            <ProcessingTaskStep
+              id={5}
+              label="Generate invoice"
+              description="Invoice number will be automatically assigned"
+              isCompleted={invoice !== null}
+              showLog={showTaskLog}
+              log={
+                showTaskLog && invoice
+                  ? {
+                      name: formatFullName(invoice.employee.firstName, invoice.employee.lastName),
+                      date: invoice.updatedAt,
+                    }
+                  : null
+              }
             >
-              <Text textStyle="xsmall-medium">Generate document</Text>
-            </Button>
-          ) : (
-            <Tooltip
-              hasArrow
-              closeOnClick={false}
-              label="Clicking on this link will open the document in a new tab"
-              placement="bottom"
-              bg="background.grayHover"
-              color="black"
-            >
-              <Link
-                href={invoice.s3ObjectUrl as string}
-                isExternal={true}
-                textStyle="caption"
-                textDecoration="underline"
-                padding="0px 16px"
-                color="primary"
-              >
-                {/* File name from the object key e.g "rcd/invoice/invoice-1.pdf" */}
-                {invoice.s3ObjectKey && getFileName(invoice.s3ObjectKey)}
-              </Link>
-            </Tooltip>
-          )}
-        </ProcessingTaskStep>
+              {invoice === null ? (
+                <Button
+                  marginLeft="auto"
+                  height="35px"
+                  bg="background.gray"
+                  _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
+                  disabled={!reviewRequestCompleted || generateInvoiceLoading}
+                  color="black"
+                  onClick={handleGenerateInvoice}
+                  isLoading={generateInvoiceLoading}
+                  loadingText="Generate document"
+                  fontWeight="normal"
+                  fontSize="14px"
+                >
+                  <Text textStyle="xsmall-medium">Generate document</Text>
+                </Button>
+              ) : (
+                <Tooltip
+                  hasArrow
+                  closeOnClick={false}
+                  label="Clicking on this link will open the document in a new tab"
+                  placement="bottom"
+                  bg="background.grayHover"
+                  color="black"
+                >
+                  <Link
+                    href={invoice.s3ObjectUrl as string}
+                    isExternal={true}
+                    textStyle="caption"
+                    textDecoration="underline"
+                    padding="0px 16px"
+                    color="primary"
+                  >
+                    {/* File name from the object key e.g "rcd/invoice/invoice-1.pdf" */}
+                    {invoice.s3ObjectKey && getFileName(invoice.s3ObjectKey)}
+                  </Link>
+                </Tooltip>
+              )}
+            </ProcessingTaskStep>
 
-        {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
-        <ProcessingTaskStep
-          id={6}
-          label="Upload documents"
-          description="Scan all documents and upload as one PDF"
-          isCompleted={documentsUrl !== null}
-          showLog={showTaskLog}
-          log={
-            showTaskLog && documentsUrlEmployee
-              ? {
-                  name: formatFullName(
-                    documentsUrlEmployee.firstName,
-                    documentsUrlEmployee.lastName
-                  ),
-                  date: documentsUrlUpdatedAt,
-                }
-              : null
-          }
-        >
-          <TaskCardUploadStep
-            isDisabled={invoice === null || uploadDocumentsLoading}
-            fileUrl={documentsUrl}
-            onUploadFile={handleSubmitDocuments}
-            onUndo={handleUndoDocumentsUpload}
-          />
-        </ProcessingTaskStep>
+            {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
+            <ProcessingTaskStep
+              id={6}
+              label="Upload documents"
+              description="Scan all documents and upload as one PDF"
+              isCompleted={documentsUrl !== null}
+              showLog={showTaskLog}
+              log={
+                showTaskLog && documentsUrlEmployee
+                  ? {
+                      name: formatFullName(
+                        documentsUrlEmployee.firstName,
+                        documentsUrlEmployee.lastName
+                      ),
+                      date: documentsUrlUpdatedAt,
+                    }
+                  : null
+              }
+            >
+              <TaskCardUploadStep
+                isDisabled={invoice === null || uploadDocumentsLoading}
+                fileUrl={documentsUrl}
+                onUploadFile={handleSubmitDocuments}
+                onUndo={handleUndoDocumentsUpload}
+              />
+            </ProcessingTaskStep>
 
-        {/* Task 7: Mail out: Mark as complete (CHECK) */}
-        <ProcessingTaskStep
-          id={7}
-          label="Mail out"
-          description="Include returning envelope and previous permit number"
-          isCompleted={appMailed}
-          showLog={showTaskLog}
-          log={
-            showTaskLog && appMailedEmployee
-              ? {
-                  name: formatFullName(appMailedEmployee.firstName, appMailedEmployee.lastName),
-                  date: appMailedUpdatedAt,
-                }
-              : null
-          }
-        >
-          {appMailed ? (
-            <Button
-              variant="ghost"
-              textDecoration="underline black"
-              onClick={() => handleMailOut(false)}
+            {/* Task 7: Mail out: Mark as complete (CHECK) */}
+            <ProcessingTaskStep
+              id={7}
+              label="Mail out"
+              description="Include returning envelope and previous permit number"
+              isCompleted={appMailed}
+              showLog={showTaskLog}
+              log={
+                showTaskLog && appMailedEmployee
+                  ? {
+                      name: formatFullName(appMailedEmployee.firstName, appMailedEmployee.lastName),
+                      date: appMailedUpdatedAt,
+                    }
+                  : null
+              }
             >
-              <Text textStyle="caption" color="black">
-                Undo
-              </Text>
-            </Button>
-          ) : (
-            <Button
-              marginLeft="auto"
-              height="35px"
-              bg="background.gray"
-              _hover={documentsUrl === null ? undefined : { bg: 'background.grayHover' }}
-              color="black"
-              disabled={documentsUrl === null}
-              onClick={() => handleMailOut(true)}
-            >
-              <Text textStyle="xsmall-medium">Mark as complete</Text>
-            </Button>
-          )}
-        </ProcessingTaskStep>
+              {appMailed ? (
+                <Button
+                  variant="ghost"
+                  textDecoration="underline black"
+                  onClick={() => handleMailOut(false)}
+                >
+                  <Text textStyle="caption" color="black">
+                    Undo
+                  </Text>
+                </Button>
+              ) : (
+                <Button
+                  marginLeft="auto"
+                  height="35px"
+                  bg="background.gray"
+                  _hover={documentsUrl === null ? undefined : { bg: 'background.grayHover' }}
+                  color="black"
+                  disabled={documentsUrl === null}
+                  onClick={() => handleMailOut(true)}
+                >
+                  <Text textStyle="xsmall-medium">Mark as complete</Text>
+                </Button>
+              )}
+            </ProcessingTaskStep>
+          </>
+        )}
       </VStack>
     </PermitHolderInfoCard>
   );

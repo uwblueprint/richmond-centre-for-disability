@@ -670,6 +670,28 @@ export default gql`
     ok: Boolean!
   }
 
+  # Update guardian information section of application
+  input UpdateApplicationGuardianInformationInput {
+    # Application ID
+    id: Int!
+
+    omitGuardianPoa: Boolean!
+    firstName: String!
+    middleName: String
+    lastName: String!
+    phone: String!
+    relationship: String!
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    postalCode: String!
+    poaFormS3ObjectKey: String
+  }
+
+  type UpdateApplicationGuardianInformationResult {
+    ok: Boolean!
+  }
+
   # Update additional information section of application
   input UpdateApplicationAdditionalInformationInput {
     # Application ID

@@ -61,6 +61,9 @@ export default gql`
     updateApplicationDoctorInformation(
       input: UpdateApplicationDoctorInformationInput!
     ): UpdateApplicationDoctorInformationResult
+    updateApplicationGuardianInformation(
+      input: UpdateApplicationGuardianInformationInput!
+    ): UpdateApplicationGuardianInformationResult
     updateApplicationAdditionalInformation(
       input: UpdateApplicationAdditionalInformationInput!
     ): UpdateApplicationAdditionalInformationResult

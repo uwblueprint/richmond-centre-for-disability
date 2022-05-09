@@ -102,7 +102,7 @@ const Card: FC<Props> = props => {
       isSubsection={isSubsection}
     >
       <VStack align="left" spacing="12px">
-        <SimpleGrid columns={2} spacingX="70px" spacingY="12px">
+        <SimpleGrid columns={2} spacingX="12px" spacingY="20px" templateColumns="200px 1fr">
           <Box>
             <Text as="p" textStyle="body-regular" textAlign="left">
               Converted Van

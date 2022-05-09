@@ -12,13 +12,19 @@ export const GET_APPLICATION_QUERY = gql`
   query GetApplication($id: Int!) {
     application(id: $id) {
       id
+      __typename
       type
       createdAt
       paidThroughShopify
       shopifyConfirmationNumber
       shopifyOrderNumber
+      permitType
+      ... on NewApplication {
+        temporaryPermitExpiry
+      }
       processing {
         status
+        rejectedReason
         appNumber
         appHolepunched
         walletCardCreated
@@ -52,10 +58,12 @@ export type GetApplicationResponse = {
     | 'createdAt'
     | 'shopifyConfirmationNumber'
     | 'shopifyOrderNumber'
+    | 'permitType'
   > & {
     processing: Pick<
       ApplicationProcessing,
       | 'status'
+      | 'rejectedReason'
       | 'appNumber'
       | 'appHolepunched'
       | 'walletCardCreated'
@@ -65,7 +73,7 @@ export type GetApplicationResponse = {
     > & {
       invoice: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl'>;
     };
-  } & {
     applicant: Pick<Applicant, 'id'>;
+    temporaryPermitExpiry?: Date;
   };
 };

@@ -11,7 +11,7 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { formatPhoneNumber, formatFullName, formatPostalCode } from '@lib/utils/format'; // Formatting utils
+import { stripPhoneNumber, formatFullName, formatPostalCode } from '@lib/utils/format'; // Formatting utils
 import {
   Application,
   CreateExternalRenewalApplicationResult,
@@ -25,6 +25,7 @@ import {
   MutationUpdateApplicationAdditionalInformationArgs,
   MutationUpdateApplicationDoctorInformationArgs,
   MutationUpdateApplicationGeneralInformationArgs,
+  MutationUpdateApplicationGuardianInformationArgs,
   MutationUpdateApplicationPaymentInformationArgs,
   MutationUpdateApplicationPhysicianAssessmentArgs,
   MutationUpdateApplicationReasonForReplacementArgs,
@@ -37,6 +38,7 @@ import {
   UpdateApplicationAdditionalInformationResult,
   UpdateApplicationDoctorInformationResult,
   UpdateApplicationGeneralInformationResult,
+  UpdateApplicationGuardianInformationResult,
   UpdateApplicationPaymentInformationResult,
   UpdateApplicationPhysicianAssessmentResult,
   UpdateApplicationReasonForReplacementResult,
@@ -512,7 +514,7 @@ export const createExternalRenewalApplication: Resolver<
         firstName: applicant.firstName,
         middleName: applicant.middleName,
         lastName: applicant.lastName,
-        phone: updatedContactInfo && phone ? formatPhoneNumber(phone) : applicant.phone,
+        phone: updatedContactInfo && phone ? stripPhoneNumber(phone) : applicant.phone,
         email: updatedContactInfo ? email || null : applicant.email,
         receiveEmailUpdates: updatedContactInfo
           ? receiveEmailUpdates
@@ -907,10 +909,82 @@ export const updateApplicationDoctorInformation: Resolver<
   }
 
   if (!updatedApplication) {
-    throw new ApolloError('Application doctor information was unable to be created');
+    throw new ApolloError('Application doctor information was unable to be updated');
   }
 
   return { ok: true };
+};
+
+/**
+ * Update the guardian information section of an application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationGuardianInformation: Resolver<
+  MutationUpdateApplicationGuardianInformationArgs,
+  UpdateApplicationGuardianInformationResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, omitGuardianPoa } = input;
+
+  let updatedApplication;
+  try {
+    if (omitGuardianPoa) {
+      const {
+        firstName,
+        middleName,
+        lastName,
+        phone,
+        relationship,
+        addressLine1,
+        addressLine2,
+        city,
+        postalCode,
+        poaFormS3ObjectKey,
+      } = input;
+      updatedApplication = await prisma.newApplication.update({
+        where: { applicationId: id },
+        data: {
+          guardianFirstName: firstName,
+          guardianMiddleName: middleName,
+          guardianLastName: lastName,
+          guardianPhone: phone,
+          guardianRelationship: relationship,
+          guardianAddressLine1: addressLine1,
+          guardianAddressLine2: addressLine2,
+          guardianCity: city,
+          guardianPostalCode: postalCode,
+          poaFormS3ObjectKey,
+        },
+      });
+    } else {
+      updatedApplication = await prisma.newApplication.update({
+        where: { applicationId: id },
+        data: {
+          guardianFirstName: null,
+          guardianMiddleName: null,
+          guardianLastName: null,
+          guardianPhone: null,
+          guardianRelationship: null,
+          guardianAddressLine1: null,
+          guardianAddressLine2: null,
+          guardianCity: null,
+          guardianPostalCode: null,
+          poaFormS3ObjectKey: null,
+        },
+      });
+    }
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplication) {
+    throw new ApolloError('Application guardian information was unable to be updated');
+  }
+
+  return {
+    ok: true,
+  };
 };
 
 /**

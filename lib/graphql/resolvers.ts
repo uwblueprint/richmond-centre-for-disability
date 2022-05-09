@@ -31,6 +31,7 @@ import {
   updateApplicationReasonForReplacement,
   updateApplicationPhysicianAssessment,
   updateNewApplicationGeneralInformation,
+  updateApplicationGuardianInformation,
 } from '@lib/applications/resolvers'; // Application resolvers
 import {
   approveApplication,
@@ -163,6 +164,9 @@ const resolvers = {
       'SECRETARY',
     ]),
     updateApplicationDoctorInformation: authorize(updateApplicationDoctorInformation, [
+      'SECRETARY',
+    ]),
+    updateApplicationGuardianInformation: authorize(updateApplicationGuardianInformation, [
       'SECRETARY',
     ]),
     updateApplicationAdditionalInformation: authorize(updateApplicationAdditionalInformation, [

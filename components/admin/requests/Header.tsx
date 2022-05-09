@@ -1,120 +1,48 @@
-import {
-  Box,
-  Flex,
-  HStack,
-  Text,
-  Menu,
-  MenuList,
-  MenuItem,
-  MenuButton,
-  Button,
-  Link,
-} from '@chakra-ui/react'; // Chakra UI
-import { ChevronLeftIcon, ChevronDownIcon } from '@chakra-ui/icons'; // Chakra UI icon
+import { Box, Flex, HStack, Text, Link, VStack, Alert, AlertIcon } from '@chakra-ui/react'; // Chakra UI
+import { ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import NextLink from 'next/link'; // Link
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Request status badge
-import ApproveRequestModal from '@components/admin/requests/processing/ApproveRequestModal'; // Approve button + modal
-import RejectRequestModal from '@components/admin/requests/processing/RejectRequestModal'; // Reject button + modal
 import ShopifyBadge from '@components/admin/ShopifyBadge';
-import { ApplicationStatus, ApplicationType } from '@lib/graphql/types';
-import ProcessingTasksFooter from './processing/ProcessingFooter';
+import PermitTypeBadge from '@components/admin/PermitTypeBadge';
+import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/types';
+import { titlecase } from '@tools/string';
+import { formatDateYYYYMMDD } from '@lib/utils/format';
 
 type RequestHeaderProps = {
-  readonly applicationId: number;
-  readonly applicationStatus?: ApplicationStatus;
   readonly applicationType: ApplicationType;
+  readonly permitType: PermitType;
   readonly createdAt: Date;
-  readonly allStepsCompleted: boolean;
-  readonly applicantId?: number;
+  readonly applicationStatus?: ApplicationStatus;
   readonly paidThroughShopify?: boolean;
   readonly shopifyOrderID?: string;
   readonly shopifyOrderNumber?: string;
+  readonly temporaryPermitExpiry: Date | null;
+  readonly reasonForRejection?: string;
 };
 
 /**
  * Header of View Request page
+ * @param applicationType Type of application
+ * @param permitType Type of permit
+ * @param createdAt Date permit was created at
  * @param applicationStatus Status of application
- * @param createdAt Date of application creation
- * @param allStepsCompleted Whether all processing tasks are complete
+ * @param paidThroughShopify If the permit fee was paid through Shopify
+ * @param shopifyOrderID Order ID of Shopify payment if paid through Shopify
+ * @param shopifyOrderNumber Order number of Shopify payment if paid through Shopify
+ * @param temporaryPermitExpiry Permit expiry if application is for a temporary permit
+ * @param reasonForRejection Reason for rejecting application
  */
 export default function RequestHeader({
-  applicationId,
-  applicationStatus,
-  createdAt,
-  allStepsCompleted,
   applicationType,
-  applicantId,
+  permitType,
+  createdAt,
+  applicationStatus,
   paidThroughShopify,
   shopifyOrderID,
   shopifyOrderNumber,
+  temporaryPermitExpiry,
+  reasonForRejection,
 }: RequestHeaderProps) {
-  /**
-   * Returns the appropriate header button(s) to be displayed depending on the current application status
-   * @returns Rendered button component(s) or null.
-   */
-  const _renderActionButtons = () => {
-    switch (applicationStatus) {
-      case 'PENDING':
-        return (
-          <HStack spacing={3}>
-            <RejectRequestModal applicationId={applicationId}>
-              <Button bg="secondary.critical" _hover={{ bg: 'secondary.criticalHover' }}>
-                Reject
-              </Button>
-            </RejectRequestModal>
-            <ApproveRequestModal applicationId={applicationId}>
-              <Button>Approve</Button>
-            </ApproveRequestModal>
-          </HStack>
-        );
-      case 'IN_PROGRESS':
-        return (
-          <ProcessingTasksFooter
-            applicationId={applicationId}
-            applicantId={applicantId}
-            allStepsCompleted={allStepsCompleted}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
-  /**
-   * Returns the appropriate 'More Actions' dropdown to be displayed depending on the current application status
-   * @returns Rendered 'More Actions' dropdown component or null
-   */
-  const _renderMoreActionsDropdown = () => {
-    if (applicationStatus === 'IN_PROGRESS') {
-      return (
-        <Menu>
-          <MenuButton
-            as={Button}
-            rightIcon={<ChevronDownIcon />}
-            height="30px"
-            bg="background.gray"
-            _hover={{ bg: 'background.grayHover' }}
-            color="black"
-          >
-            <Text textStyle="caption">More Actions</Text>
-          </MenuButton>
-          <MenuList>
-            {applicationStatus === 'IN_PROGRESS' ? (
-              <RejectRequestModal applicationId={applicationId}>
-                <MenuItem>Reject request</MenuItem>
-              </RejectRequestModal>
-            ) : (
-              <ApproveRequestModal applicationId={applicationId}>
-                <MenuItem>Approve request</MenuItem>
-              </ApproveRequestModal>
-            )}
-          </MenuList>
-        </Menu>
-      );
-    }
-    return null;
-  };
-
   const displayShopifyUrl = paidThroughShopify && shopifyOrderID && shopifyOrderNumber;
   const shopifyOrderUrl = `https://${process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN}/admin/orders/${shopifyOrderID}`;
 
@@ -126,40 +54,64 @@ export default function RequestHeader({
           All requests
         </Text>
       </NextLink>
-      <Flex marginTop={5} alignItems="center">
-        <Box>
-          <Flex alignItems="center">
-            <Text textStyle="display-large" as="h1" marginRight={3} textTransform="capitalize">
-              {`${applicationType.toLowerCase()} Request`}
-            </Text>
-            <HStack spacing={3}>
-              {applicationStatus && <RequestStatusBadge variant={applicationStatus} />}
-              {paidThroughShopify && <ShopifyBadge />}
+      <VStack alignItems="stretch">
+        <Flex marginTop={5} alignItems="baseline" justifyContent="space-between">
+          <Box>
+            <Flex alignItems="center">
+              <Text textStyle="display-large" as="h1" marginRight={3} textTransform="capitalize">
+                {`${titlecase(applicationType)} Request`}
+              </Text>
+              <HStack spacing={3}>
+                {applicationStatus && <RequestStatusBadge variant={applicationStatus} />}
+                {paidThroughShopify && <ShopifyBadge />}
+              </HStack>
+            </Flex>
+            <HStack spacing={3} marginTop={3}>
+              <Text textStyle="caption" as="p">
+                Received on {createdAt.toDateString()} at {createdAt.toLocaleTimeString('en-CA')}
+              </Text>
             </HStack>
-          </Flex>
-          <HStack spacing={3} marginTop={3}>
-            <Text textStyle="caption" as="p">
-              Received date: {createdAt.toDateString()}
+            {displayShopifyUrl && (
+              <Text textStyle="caption" as="p">
+                Paid with Shopify: Order{' '}
+                <Link
+                  href={shopifyOrderUrl}
+                  isExternal={true}
+                  textStyle="caption-bold"
+                  textDecoration="underline"
+                  color="primary"
+                >
+                  {`#${shopifyOrderNumber}`}
+                </Link>
+              </Text>
+            )}
+          </Box>
+          <Box>
+            <Flex alignItems="center">
+              <Text textStyle="heading" as="h3" marginRight={3} textTransform="capitalize">
+                Permit Type:
+              </Text>
+              <PermitTypeBadge variant={permitType} />
+            </Flex>
+            <HStack justifyContent="flex-end">
+              {permitType === 'TEMPORARY' && !!temporaryPermitExpiry && (
+                <Text textStyle="caption" as="p" mt="12px">
+                  This permit will expire: {formatDateYYYYMMDD(temporaryPermitExpiry)}
+                </Text>
+              )}
+            </HStack>
+          </Box>
+        </Flex>
+        {applicationStatus === 'REJECTED' && (
+          <Alert status="error">
+            <AlertIcon />
+            <Text as="p" textStyle="caption">
+              <b>Reason for Rejection: </b>
+              {reasonForRejection || ''}
             </Text>
-            {_renderMoreActionsDropdown()}
-          </HStack>
-          {displayShopifyUrl && (
-            <Text textStyle="caption" as="p">
-              Paid with Shopify: Order{' '}
-              <Link
-                href={shopifyOrderUrl}
-                isExternal={true}
-                textStyle="caption-bold"
-                textDecoration="underline"
-                color="primary"
-              >
-                {`#${shopifyOrderNumber}`}
-              </Link>
-            </Text>
-          )}
-        </Box>
-        <Box marginLeft="auto">{_renderActionButtons()}</Box>
-      </Flex>
+          </Alert>
+        )}
+      </VStack>
     </Box>
   );
 }

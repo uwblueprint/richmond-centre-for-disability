@@ -71,7 +71,7 @@ export const rejectApplication: Resolver<MutationRejectApplicationArgs, RejectAp
   async (_parent, args, { prisma }) => {
     // TODO: Validation
     const { input } = args;
-    const { id } = input;
+    const { id, reason } = input;
 
     let updatedApplication;
     try {
@@ -81,6 +81,7 @@ export const rejectApplication: Resolver<MutationRejectApplicationArgs, RejectAp
           applicationProcessing: {
             update: {
               status: 'REJECTED',
+              rejectedReason: reason,
             },
           },
         },

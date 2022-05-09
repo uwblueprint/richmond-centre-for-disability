@@ -16,10 +16,11 @@ import {
   UPDATE_PERMIT_HOLDER_INFORMATION,
 } from '@tools/admin/requests/permit-holder-information'; // Applicant type
 import { getPermitExpiryStatus } from '@lib/utils/permit-expiry'; // Get variant of PermitHolderStatusBadge
-import { formatDateYYYYMMDD, formatFullName } from '@lib/utils/format';
+import { formatDateYYYYMMDD, formatFullName, formatPhoneNumber } from '@lib/utils/format';
 import PermitHolderStatusBadge from '@components/admin/PermitHolderStatusBadge';
 import Updated from '@components/admin/Updated';
 import Address from '@components/admin/Address';
+import { titlecase } from '@tools/string';
 
 type Props = {
   readonly applicationId: number;
@@ -175,6 +176,16 @@ const Card: FC<Props> = props => {
     </EditPermitHolderInformationModal>
   );
 
+  /** Gender */
+  const gender =
+    type === 'NEW'
+      ? permitHolderInformation.gender === 'OTHER'
+        ? permitHolderInformation.otherGender
+        : permitHolderInformation.gender
+      : permitHolderInformation.applicant.gender === 'OTHER'
+      ? permitHolderInformation.applicant.otherGender
+      : permitHolderInformation.applicant.gender;
+
   return (
     <PermitHolderInfoCard
       colSpan={5}
@@ -230,14 +241,7 @@ const Card: FC<Props> = props => {
             ) || 'N/A'}
           </Text>
           <Text as="p" textStyle="body-regular">
-            Gender:{' '}
-            {type === 'NEW'
-              ? permitHolderInformation.gender === 'OTHER'
-                ? permitHolderInformation.otherGender
-                : permitHolderInformation.gender
-              : permitHolderInformation.applicant.gender === 'OTHER'
-              ? permitHolderInformation.applicant.otherGender
-              : permitHolderInformation.applicant.gender}
+            Gender: {gender ? titlecase(gender) : 'N/A'}
           </Text>
         </VStack>
         <Divider />
@@ -246,7 +250,7 @@ const Card: FC<Props> = props => {
             Contact Information {contactInfoUpdated && <Updated />}
           </Text>
           <Text as="p" textStyle="body-regular">
-            {phone}
+            {formatPhoneNumber(phone)}
           </Text>
           {email && (
             <a href={`mailto:${email}`}>

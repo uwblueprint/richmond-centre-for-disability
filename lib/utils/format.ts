@@ -1,12 +1,21 @@
 import { Province } from '@lib/graphql/types';
 
 /**
- * Format North American phone number by removing all non-numeric characters.
+ * Strip North American phone number by removing all non-numeric characters.
+ * @param {string} phone phone number to be formatted
+ * @returns {string} formatted phone number
+ */
+export const stripPhoneNumber = (phone: string): string => {
+  return phone.replace(/\D/g, '');
+};
+
+/**
+ * Format North American phone number adding hyphens.
  * @param {string} phone phone number to be formatted
  * @returns {string} formatted phone number
  */
 export const formatPhoneNumber = (phone: string): string => {
-  return phone?.replace(/\D/g, '');
+  return `${phone.substring(0, 3)}-${phone.substring(3, 6)}-${phone.substring(6)}`;
 };
 
 /**

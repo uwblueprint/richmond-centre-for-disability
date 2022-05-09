@@ -14,6 +14,7 @@ import {
   UPDATE_PAYMENT_INFORMATION,
 } from '@tools/admin/requests/payment-information';
 import Address from '@components/admin/Address';
+import { titlecase } from '@tools/string';
 
 type Props = {
   readonly applicationId: number;
@@ -128,7 +129,7 @@ const Card: FC<Props> = props => {
           </Box>
           <Box>
             <Text as="p" textStyle="caption" textAlign="left">
-              Paid with {paymentMethod}
+              Paid with {titlecase(paymentMethod)}
             </Text>
           </Box>
         </SimpleGrid>
