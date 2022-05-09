@@ -67,10 +67,17 @@ export default function GuardianInformationForm({
                 {'Street Address, P.O. Box, Company Name, c/o'}
               </FormHelperText>
             </TextField>
-            <TextField name="guardianInformation.addressLine2" label="Address Line 2">
-              <Box as="span" textStyle="caption" fontSize="sm">
-                {'(optional)'}
-              </Box>
+            <TextField
+              name="guardianInformation.addressLine2"
+              label={
+                <>
+                  {'Address line 2 '}
+                  <Box as="span" textStyle="body-regular" fontSize="sm">
+                    {'(optional)'}
+                  </Box>
+                </>
+              }
+            >
               <FormHelperText color="text.secondary">
                 {'Apartment, suite, unit, building, floor, etc'}
               </FormHelperText>
