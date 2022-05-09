@@ -59,7 +59,7 @@ export default function Table<T extends object>(props: Props<T>) {
 
   return (
     <Box>
-      {loading && (
+      {loading ? (
         <Center height="240px">
           <VStack>
             <Spinner color="primary" boxSize="100px" thickness="8px" speed="0.65s" mb="10px" />
@@ -68,8 +68,7 @@ export default function Table<T extends object>(props: Props<T>) {
             </Text>
           </VStack>
         </Center>
-      )}
-      {!loading && (
+      ) : (
         <ChakraTable {...getTableProps()}>
           <Thead>
             {headerGroups.map(headerGroup => (
