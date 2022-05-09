@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client';
 import {
   Button,
   Modal,
@@ -8,21 +9,48 @@ import {
   ModalOverlay,
   Textarea,
   Text,
+  useToast,
 } from '@chakra-ui/react';
+import {
+  UpdateApplicantNotesRequest,
+  UpdateApplicantNotesResponse,
+  UPDATE_APPLICANT_NOTES,
+} from '@tools/admin/permit-holders/additional-notes';
 import { FC, useEffect, useState } from 'react';
 
 type Props = {
   readonly isOpen: boolean;
   readonly notes: string;
+  readonly applicantId: number;
   readonly onClose: () => void;
 };
 
-const AdditionalNotesModal: FC<Props> = ({ isOpen, notes: notesInput, onClose }) => {
+const AdditionalNotesModal: FC<Props> = ({ isOpen, notes: notesInput, applicantId, onClose }) => {
   const [notes, setNotes] = useState('');
 
   useEffect(() => {
     setNotes(notesInput);
   }, [isOpen, notesInput]);
+
+  const toast = useToast();
+
+  const [updateApplicantNotes, { loading: submitting }] = useMutation<
+    UpdateApplicantNotesResponse,
+    UpdateApplicantNotesRequest
+  >(UPDATE_APPLICANT_NOTES, {
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+        isClosable: true,
+      });
+    },
+  });
+
+  const handleSave = async () => {
+    await updateApplicantNotes({ variables: { input: { id: applicantId, notes } } });
+    onClose();
+  };
 
   return (
     <Modal isCentered={true} isOpen={isOpen} onClose={onClose} size="3xl">
@@ -45,11 +73,10 @@ const AdditionalNotesModal: FC<Props> = ({ isOpen, notes: notesInput, onClose })
           />
         </ModalBody>
         <ModalFooter paddingY="16px" paddingX="4px">
-          <Button onClick={onClose} colorScheme="gray" variant="solid">
+          <Button onClick={onClose} colorScheme="gray" variant="solid" isLoading={submitting}>
             Cancel
           </Button>
-          {/* TODO: Add submit functionality */}
-          <Button _hover={{ bg: 'secondary.criticalHover' }} ml={'12px'}>
+          <Button _hover={{ bg: 'secondary.criticalHover' }} ml={'12px'} onClick={handleSave}>
             Save Note
           </Button>
         </ModalFooter>

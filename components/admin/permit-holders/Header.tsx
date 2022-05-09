@@ -129,7 +129,12 @@ export default function PermitHolderHeader({
       )}
 
       {/* Additional notes modal */}
-      <AdditionalNotesModal isOpen={isNotesModalOpen} notes="" onClose={onCloseNotesModal} />
+      <AdditionalNotesModal
+        isOpen={isNotesModalOpen}
+        notes=""
+        applicantId={id}
+        onClose={onCloseNotesModal}
+      />
     </>
   );
 }

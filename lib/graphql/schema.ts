@@ -42,6 +42,7 @@ export default gql`
     setApplicantAsActive(input: SetApplicantAsActiveInput!): SetApplicantAsActiveResult
     setApplicantAsInactive(input: SetApplicantAsInactiveInput!): SetApplicantAsInactiveResult
     verifyIdentity(input: VerifyIdentityInput!): VerifyIdentityResult!
+    updateApplicantNotes(input: UpdateApplicantNotesInput!): UpdateApplicantNotesResult!
 
     # Applications
     createNewApplication(input: CreateNewApplicationInput!): CreateNewApplicationResult
