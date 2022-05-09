@@ -1285,6 +1285,7 @@ export type UpdateApplicationPhysicianAssessmentInput = {
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherPatientCondition: Maybe<Scalars['String']>;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
+  permitType: PermitType;
 };
 
 export type UpdateApplicationPhysicianAssessmentResult = {
