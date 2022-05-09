@@ -547,6 +547,7 @@ export type Mutation = {
   updateApplicationGeneralInformation: Maybe<UpdateApplicationGeneralInformationResult>;
   updateNewApplicationGeneralInformation: Maybe<UpdateApplicationGeneralInformationResult>;
   updateApplicationDoctorInformation: Maybe<UpdateApplicationDoctorInformationResult>;
+  updateApplicationGuardianInformation: Maybe<UpdateApplicationGuardianInformationResult>;
   updateApplicationAdditionalInformation: Maybe<UpdateApplicationAdditionalInformationResult>;
   updateApplicationPaymentInformation: Maybe<UpdateApplicationPaymentInformationResult>;
   updateApplicationReasonForReplacement: Maybe<UpdateApplicationReasonForReplacementResult>;
@@ -629,6 +630,11 @@ export type MutationUpdateNewApplicationGeneralInformationArgs = {
 
 export type MutationUpdateApplicationDoctorInformationArgs = {
   input: UpdateApplicationDoctorInformationInput;
+};
+
+
+export type MutationUpdateApplicationGuardianInformationArgs = {
+  input: UpdateApplicationGuardianInformationInput;
 };
 
 
@@ -1203,6 +1209,26 @@ export type UpdateApplicationGeneralInformationInput = {
 
 export type UpdateApplicationGeneralInformationResult = {
   __typename?: 'UpdateApplicationGeneralInformationResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicationGuardianInformationInput = {
+  id: Scalars['Int'];
+  omitGuardianPoa: Scalars['Boolean'];
+  firstName: Scalars['String'];
+  middleName: Maybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  phone: Scalars['String'];
+  relationship: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  postalCode: Scalars['String'];
+  poaFormS3ObjectKey: Maybe<Scalars['String']>;
+};
+
+export type UpdateApplicationGuardianInformationResult = {
+  __typename?: 'UpdateApplicationGuardianInformationResult';
   ok: Scalars['Boolean'];
 };
 

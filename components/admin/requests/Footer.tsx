@@ -64,17 +64,16 @@ export default function RequestFooter({
         <Box>
           <Stack direction="row" justifyContent="space-between">
             {applicantId && (
-              <Link href={`/admin/permit-holder/` + applicantId}>
+              <Link href={`/admin/permit-holder/` + applicantId} isExternal>
                 <a>
                   <Button
                     bg="background.gray"
                     _hover={{ bg: 'background.grayHover' }}
                     marginRight="20px"
                     height="48px"
-                    width="225px"
                   >
                     <Text textStyle="button-semibold" color="text.default">
-                      View permit holder
+                      View permit holder page
                     </Text>
                   </Button>
                 </a>

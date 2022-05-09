@@ -9,7 +9,7 @@ import {
   PhysicianAssessment,
 } from '@tools/admin/requests/physician-assessment';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
-import { formatDate } from '@lib/utils/format';
+import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { titlecase } from '@tools/string';
 
 type Props = {
@@ -82,7 +82,7 @@ const Card: FC<Props> = props => {
           </GridItem>
           <GridItem>
             <Text as="p" textStyle="body-regular" textAlign="left">
-              {formatDate(disabilityCertificationDate)}
+              {formatDateYYYYMMDD(disabilityCertificationDate)}
             </Text>
           </GridItem>
           <GridItem>
@@ -125,7 +125,7 @@ const Card: FC<Props> = props => {
               </GridItem>
               <GridItem>
                 <Text as="p" textStyle="body-regular" textAlign="left">
-                  {formatDate(temporaryPermitExpiry)}
+                  {formatDateYYYYMMDD(temporaryPermitExpiry)}
                 </Text>
               </GridItem>
             </>

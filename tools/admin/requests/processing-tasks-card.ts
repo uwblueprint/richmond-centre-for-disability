@@ -18,13 +18,18 @@ import {
   UpdateApplicationProcessingReviewRequestInformationResult,
   Invoice,
   Employee,
+  Application,
 } from '@lib/graphql/types';
 
 /** Get application processing */
 export const GET_APPLICATION_PROCESSING = gql`
   query GetApplicationProcessing($id: Int!) {
     application(id: $id) {
+      paidThroughShopify
+      shopifyConfirmationNumber
+      shopifyOrderNumber
       processing {
+        status
         appNumber
         appNumberEmployee {
           firstName
@@ -79,9 +84,13 @@ export const GET_APPLICATION_PROCESSING = gql`
 export type GetApplicationProcessingRequest = QueryApplicationArgs;
 
 export type GetApplicationProcessingResponse = {
-  application: {
+  application: Pick<
+    Application,
+    'paidThroughShopify' | 'shopifyConfirmationNumber' | 'shopifyOrderNumber'
+  > & {
     processing: Pick<
       ApplicationProcessing,
+      | 'status'
       | 'appNumber'
       | 'appNumberUpdatedAt'
       | 'appHolepunched'

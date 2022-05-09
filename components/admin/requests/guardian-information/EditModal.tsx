@@ -15,11 +15,11 @@ import { useState, SyntheticEvent, useEffect, FC } from 'react'; // React
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 import GuardianInformationForm from './Form';
 import { clientUploadToS3 } from '@lib/utils/s3-utils';
-import { UpdateApplicantGuardianInformationInput } from '@lib/graphql/types';
+import { UpdateApplicationGuardianInformationInput } from '@lib/graphql/types';
 
 type Props = {
   readonly guardianInformation: Omit<GuardianInformation, 'omitGuardianPoa'>;
-  readonly onSave: (physicianData: Omit<UpdateApplicantGuardianInformationInput, 'id'>) => void; // Callback that accepts the inputs defined in this page
+  readonly onSave: (data: Omit<UpdateApplicationGuardianInformationInput, 'id'>) => void; // Callback that accepts the inputs defined in this page
 };
 
 const EditGuardianInformationModal: FC<Props> = ({
@@ -72,6 +72,7 @@ const EditGuardianInformationModal: FC<Props> = ({
     }
 
     const {
+      omitGuardianPoa,
       firstName,
       middleName,
       lastName,
@@ -84,6 +85,7 @@ const EditGuardianInformationModal: FC<Props> = ({
     } = guardianInformation;
 
     onSave({
+      omitGuardianPoa,
       firstName,
       middleName,
       lastName,

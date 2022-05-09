@@ -18,6 +18,7 @@ import {
   GetApplicationResponse,
 } from '@tools/admin/requests/view-request'; // Request page GraphQL queries
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
+import GuardianInformationCard from '@components/admin/requests/guardian-information/Card';
 
 type Props = {
   readonly id: string;
@@ -50,6 +51,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     temporaryPermitExpiry,
     processing: {
       status,
+      rejectedReason,
       appNumber,
       appHolepunched,
       walletCardCreated,
@@ -71,6 +73,9 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     appMailed
   );
 
+  /** Whether application is rejected */
+  const isRejected = status === 'REJECTED';
+
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3} marginBottom="12px">
@@ -83,24 +88,47 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           shopifyOrderID={shopifyConfirmationNumber || undefined}
           shopifyOrderNumber={shopifyOrderNumber || undefined}
           temporaryPermitExpiry={temporaryPermitExpiry || null}
+          reasonForRejection={rejectedReason || undefined}
         />
       </GridItem>
       <GridItem colStart={1} colSpan={5} textAlign="left">
         <VStack width="100%" spacing="20px" align="stretch">
-          <PersonalInformationCard applicationId={id} editDisabled={reviewRequestCompleted} />
+          <PersonalInformationCard
+            applicationId={id}
+            editDisabled={reviewRequestCompleted || isRejected}
+          />
           {type !== 'REPLACEMENT' && (
-            <DoctorInformationCard applicationId={id} editDisabled={reviewRequestCompleted} />
+            <DoctorInformationCard
+              applicationId={id}
+              editDisabled={reviewRequestCompleted || isRejected}
+            />
+          )}
+          {type === 'NEW' && (
+            <GuardianInformationCard
+              applicationId={id}
+              editDisabled={reviewRequestCompleted || isRejected}
+            />
           )}
         </VStack>
       </GridItem>
       <GridItem colStart={6} colSpan={7}>
         <VStack width="100%" spacing="20px" align="stretch">
-          {status === 'IN_PROGRESS' && <ProcessingTasksCard applicationId={id} />}
+          {(status === 'IN_PROGRESS' || status === 'REJECTED') && (
+            <ProcessingTasksCard applicationId={id} />
+          )}
           {type === 'NEW' && <PhysicianAssessmentCard applicationId={id} />}
           {type === 'REPLACEMENT' && (
-            <ReasonForReplacementCard applicationId={id} editDisabled={reviewRequestCompleted} />
+            <ReasonForReplacementCard
+              applicationId={id}
+              editDisabled={reviewRequestCompleted || isRejected}
+            />
           )}
-          {type !== 'REPLACEMENT' && <AdditionalInformationCard applicationId={id} />}
+          {type !== 'REPLACEMENT' && (
+            <AdditionalInformationCard
+              applicationId={id}
+              editDisabled={reviewRequestCompleted || isRejected}
+            />
+          )}
           <PaymentInformationCard
             applicationId={id}
             editDisabled={paidThroughShopify || reviewRequestCompleted}

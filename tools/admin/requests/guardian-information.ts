@@ -1,5 +1,10 @@
 import { gql } from '@apollo/client';
-import { Province, QueryApplicationArgs } from '@lib/graphql/types';
+import {
+  MutationUpdateApplicationGuardianInformationArgs,
+  Province,
+  QueryApplicationArgs,
+  UpdateApplicationGuardianInformationResult,
+} from '@lib/graphql/types';
 
 /** Guardian information in forms */
 export type GuardianInformation = {
@@ -14,22 +19,22 @@ export type GuardianInformation = {
   city: string;
   postalCode: string;
   poaFormS3ObjectKey: string | null;
-  poaFormS3ObjectUrl: string | null;
 };
 
 /** Guardian information for cards */
 export type GuardianCardData = {
-  firstName: string | null;
+  firstName: string;
   middleName: string | null;
-  lastName: string | null;
-  relationship: string | null;
-  phone: string | null;
-  addressLine1: string | null;
+  lastName: string;
+  relationship: string;
+  phone: string;
+  addressLine1: string;
   addressLine2: string | null;
-  city: string | null;
-  province: Province | null;
-  country: string | null;
-  postalCode: string | null;
+  city: string;
+  province: Province;
+  country: string;
+  postalCode: string;
+  poaFormS3ObjectKey: string | null;
 };
 
 /**
@@ -54,6 +59,7 @@ export const GET_GUARDIAN_INFORMATION = gql`
         province: guardianProvince
         country: guardianCountry
         postalCode: guardianPostalCode
+        poaFormS3ObjectKey
       }
     }
   }
@@ -63,4 +69,21 @@ export type GetGuardianInformationRequest = QueryApplicationArgs;
 
 export type GetGuardianInformationResponse = {
   application: GuardianCardData;
+};
+
+/** Update guardian information of application */
+export const UPDATE_GUARDIAN_INFORMATION = gql`
+  mutation UpdateApplicationGuardianInformation(
+    $input: UpdateApplicationGuardianInformationInput!
+  ) {
+    updateApplicationGuardianInformation(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type UpdateGuardianInformationRequest = MutationUpdateApplicationGuardianInformationArgs;
+
+export type UpdateGuardianInformationResponse = {
+  updateApplicationGuardianInformation: UpdateApplicationGuardianInformationResult;
 };

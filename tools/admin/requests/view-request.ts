@@ -24,6 +24,7 @@ export const GET_APPLICATION_QUERY = gql`
       }
       processing {
         status
+        rejectedReason
         appNumber
         appHolepunched
         walletCardCreated
@@ -62,6 +63,7 @@ export type GetApplicationResponse = {
     processing: Pick<
       ApplicationProcessing,
       | 'status'
+      | 'rejectedReason'
       | 'appNumber'
       | 'appHolepunched'
       | 'walletCardCreated'
