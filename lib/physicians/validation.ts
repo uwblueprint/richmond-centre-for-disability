@@ -35,27 +35,20 @@ export const physicianAssessmentSchema = object({
   }),
 });
 
-
 /**
  * Create New / Doctor's Information validation schema
  */
 
 export const requestPhysicianInformationSchema = object({
-  firstName: string()
-    .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
-    .required('Please enter a first name'),
-  lastName: string()
-    .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
-    .required('Please enter a last name'),
+  firstName: string().required('Please enter a first name'),
+  lastName: string().required('Please enter a last name'),
   mspNumber: string()
     .matches(/^\d+$/, 'Must only contain numbers')
     .required('Please enter the MSP number'),
   phone: string().min(10, 'Must be a valid phone number').required('Please enter a phone number'),
   addressLine1: string().required('Please enter an address'),
   addressLine2: string().nullable().default(null),
-  city: string()
-    .matches(/^[a-zA-Z]*$/, 'Must only contain letters')
-    .required('Please enter a city'),
+  city: string().required('Please enter a city'),
   postalCode: string()
     .min(6, 'Must be a valid postal code')
     .max(7, 'Must be a valid postal code')
