@@ -388,6 +388,7 @@ CREATE TABLE new_applications (
   other_mobility_aids VARCHAR(255),
   other_patient_condition VARCHAR(255),
   temporary_permit_expiry DATE,
+  permit_type PermitType NOT NULL DEFAULT 'PERMANENT',
 
   -- Physician information
   physician_first_name VARCHAR(255) NOT NULL,
