@@ -239,6 +239,7 @@ export default function CreateNew() {
   const handleSubmit = async (values: {
     permitHolder: NewApplicationPermitHolderInformation;
     physicianAssessment: PhysicianAssessment;
+    guardianInformation: GuardianInformation;
     additionalInformation: AdditionalInformationFormData;
     paymentInformation: PaymentInformationFormData;
   }) => {
@@ -282,16 +283,16 @@ export default function CreateNew() {
           physicianCity: doctorInformation.city,
           physicianPostalCode: doctorInformation.postalCode,
 
-          omitGuardianPoa: guardianInformation.omitGuardianPoa,
-          guardianFirstName: guardianInformation.firstName,
-          guardianMiddleName: guardianInformation.middleName,
-          guardianLastName: guardianInformation.lastName,
-          guardianPhone: guardianInformation.phone,
-          guardianRelationship: guardianInformation.relationship,
-          guardianAddressLine1: guardianInformation.addressLine1,
-          guardianAddressLine2: guardianInformation.addressLine2,
-          guardianCity: guardianInformation.city,
-          guardianPostalCode: guardianInformation.postalCode,
+          omitGuardianPoa: validatedValues.guardianInformation.omitGuardianPoa,
+          guardianFirstName: validatedValues.guardianInformation.firstName,
+          guardianMiddleName: validatedValues.guardianInformation.middleName,
+          guardianLastName: validatedValues.guardianInformation.lastName,
+          guardianPhone: validatedValues.guardianInformation.phone,
+          guardianRelationship: validatedValues.guardianInformation.relationship,
+          guardianAddressLine1: validatedValues.guardianInformation.addressLine1,
+          guardianAddressLine2: validatedValues.guardianInformation.addressLine2,
+          guardianCity: validatedValues.guardianInformation.city,
+          guardianPostalCode: validatedValues.guardianInformation.postalCode,
           poaFormS3ObjectKey: poaFormS3ObjectKey,
 
           ...additionalInformation,
@@ -445,6 +446,7 @@ export default function CreateNew() {
               permitHolder: permitHolderInformation,
               paymentInformation: INITIAL_PAYMENT_DETAILS,
               physicianAssessment: INITIAL_PHYSICIAN_ASSESSMENT,
+              guardianInformation: guardianInformation,
               additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
             }}
             validationSchema={createNewRequestFormSchema}
@@ -513,8 +515,7 @@ export default function CreateNew() {
                       {`Guardian/POA Information`}
                     </Text>
                     <GuardianInformationForm
-                      guardianInformation={guardianInformation}
-                      onChange={setGuardianInformation}
+                      guardianInformation={values.guardianInformation}
                       file={guardianPOAFile}
                       onUploadFile={setGuardianPOAFile}
                     />
