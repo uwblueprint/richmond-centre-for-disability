@@ -55,12 +55,9 @@ import { useRouter } from 'next/router';
 import { Form, Formik } from 'formik';
 import { createNewRequestFormSchema } from '@lib/applications/validation';
 import { RequiresWiderParkingSpaceReason } from '@prisma/client';
-<<<<<<< HEAD
 import { clientUploadToS3 } from '@lib/utils/s3-utils';
 import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 import { formatDateYYYYMMDD } from '@lib/utils/date';
-=======
->>>>>>> [Feature] Additional Information Form Validation (#166)
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -84,11 +81,8 @@ export default function CreateNew() {
   );
   // Guardian/POA File
   const [guardianPOAFile, setGuardianPOAFile] = useState<File | null>(null);
-<<<<<<< HEAD
   // Backend form validation error
   const [error, setError] = useState<string>('');
-=======
->>>>>>> [Feature] Additional Information Form Validation (#166)
 
   // Toast message
   const toast = useToast();
@@ -251,10 +245,7 @@ export default function CreateNew() {
   const handleSubmit = async (values: {
     permitHolder: NewApplicationPermitHolderInformation;
     physicianAssessment: PhysicianAssessment;
-<<<<<<< HEAD
     guardianInformation: GuardianInformation;
-=======
->>>>>>> [Feature] Additional Information Form Validation (#166)
     additionalInformation: AdditionalInformationFormData;
     paymentInformation: PaymentInformationFormData;
   }) => {
@@ -275,14 +266,6 @@ export default function CreateNew() {
 
     const validatedValues = await createNewRequestFormSchema.validate(values);
     const additionalInformation = validatedValues.additionalInformation;
-<<<<<<< HEAD
-=======
-
-    if (!doctorInformation.mspNumber) {
-      toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
-      return;
-    }
->>>>>>> [Feature] Additional Information Form Validation (#166)
 
     await submitNewApplication({
       variables: {
@@ -464,10 +447,7 @@ export default function CreateNew() {
               paymentInformation: INITIAL_PAYMENT_DETAILS,
               doctorInformation,
               physicianAssessment: INITIAL_PHYSICIAN_ASSESSMENT,
-<<<<<<< HEAD
               guardianInformation: guardianInformation,
-=======
->>>>>>> [Feature] Additional Information Form Validation (#166)
               additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
             }}
             validationSchema={createNewRequestFormSchema}
