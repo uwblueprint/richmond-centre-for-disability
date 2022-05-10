@@ -16,6 +16,7 @@ import {
 import { formatFullName } from '@lib/utils/format';
 import GuardianInformationCard from '@components/admin/permit-holders/guardian-information/Card';
 import CurrentApplicationCard from '@components/admin/permit-holders/current-application/Card';
+import LoadingSpinner from '@components/admin/LoadingSpinner';
 
 type Props = {
   readonly id: string;
@@ -25,7 +26,7 @@ type Props = {
 export default function PermitHolder({ id: idString }: Props) {
   const id = parseInt(idString);
 
-  const { data, refetch } = useQuery<GetApplicantResponse, GetApplicantRequest>(
+  const { data, loading, refetch } = useQuery<GetApplicantResponse, GetApplicantRequest>(
     GET_APPLICANT_QUERY,
     {
       variables: { id },
@@ -61,25 +62,31 @@ export default function PermitHolder({ id: idString }: Props) {
           refetch={refetch}
         />
       </GridItem>
-      <GridItem rowSpan={12} colSpan={5} textAlign="left">
-        <Stack spacing={5}>
-          <PersonalInformationCard applicantId={id} />
-          <DoctorInformationCard applicantId={id} />
-          <GuardianInformationCard applicantId={id} guardian={guardian} refetch={refetch} />
-        </Stack>
-      </GridItem>
+      {loading ? (
+        <LoadingSpinner message={'Loading Data...'} />
+      ) : (
+        <>
+          <GridItem rowSpan={12} colSpan={5} textAlign="left">
+            <Stack spacing={5}>
+              <PersonalInformationCard applicantId={id} />
+              <DoctorInformationCard applicantId={id} />
+              <GuardianInformationCard applicantId={id} guardian={guardian} refetch={refetch} />
+            </Stack>
+          </GridItem>
 
-      <GridItem rowSpan={12} colSpan={7} textAlign="left">
-        <Stack spacing={5}>
-          {currentApplication && (
-            <CurrentApplicationCard
-              application={currentApplication}
-              applicantMedicalInformation={medicalInformation}
-            />
-          )}
-          <AppHistoryCard appHistory={appHistory} />
-        </Stack>
-      </GridItem>
+          <GridItem rowSpan={12} colSpan={7} textAlign="left">
+            <Stack spacing={5}>
+              {currentApplication && (
+                <CurrentApplicationCard
+                  application={currentApplication}
+                  applicantMedicalInformation={medicalInformation}
+                />
+              )}
+              <AppHistoryCard appHistory={appHistory} />
+            </Stack>
+          </GridItem>
+        </>
+      )}
     </Layout>
   );
 }

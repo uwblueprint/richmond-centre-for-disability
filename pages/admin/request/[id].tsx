@@ -15,6 +15,7 @@ import {
   GetApplicationResponse,
 } from '@tools/admin/requests/view-request'; // Request page GraphQL queries
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
+import LoadingSpinner from '@components/admin/LoadingSpinner';
 
 type Props = {
   readonly id: string;
@@ -27,9 +28,12 @@ type Props = {
 const Request: NextPage<Props> = ({ id: idString }: Props) => {
   const id = parseInt(idString);
   // Get request data query
-  const { data } = useQuery<GetApplicationResponse, GetApplicationRequest>(GET_APPLICATION_QUERY, {
-    variables: { id },
-  });
+  const { data, loading } = useQuery<GetApplicationResponse, GetApplicationRequest>(
+    GET_APPLICATION_QUERY,
+    {
+      variables: { id },
+    }
+  );
   // Get Permit Holder ID from Application
 
   if (!data?.application) {
@@ -81,26 +85,35 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           shopifyOrderNumber={shopifyOrderNumber || undefined}
         />
       </GridItem>
-      <GridItem colStart={1} colSpan={5} textAlign="left">
-        <VStack width="100%" spacing="20px" align="stretch">
-          <PersonalInformationCard applicationId={id} editDisabled={reviewRequestCompleted} />
-          {type !== 'REPLACEMENT' && (
-            <DoctorInformationCard applicationId={id} editDisabled={reviewRequestCompleted} />
-          )}
-        </VStack>
-      </GridItem>
-      <GridItem colStart={6} colSpan={7}>
-        <VStack width="100%" spacing="20px" align="stretch">
-          {status === 'IN_PROGRESS' && <ProcessingTasksCard applicationId={id} />}
-          {type === 'REPLACEMENT' && (
-            <ReasonForReplacementCard applicationId={id} editDisabled={reviewRequestCompleted} />
-          )}
-          <PaymentInformationCard
-            applicationId={id}
-            editDisabled={paidThroughShopify || reviewRequestCompleted}
-          />
-        </VStack>
-      </GridItem>
+      {loading ? (
+        <LoadingSpinner message={'Loading Data...'} />
+      ) : (
+        <>
+          <GridItem colStart={1} colSpan={5} textAlign="left">
+            <VStack width="100%" spacing="20px" align="stretch">
+              <PersonalInformationCard applicationId={id} editDisabled={reviewRequestCompleted} />
+              {type !== 'REPLACEMENT' && (
+                <DoctorInformationCard applicationId={id} editDisabled={reviewRequestCompleted} />
+              )}
+            </VStack>
+          </GridItem>
+          <GridItem colStart={6} colSpan={7}>
+            <VStack width="100%" spacing="20px" align="stretch">
+              {status === 'IN_PROGRESS' && <ProcessingTasksCard applicationId={id} />}
+              {type === 'REPLACEMENT' && (
+                <ReasonForReplacementCard
+                  applicationId={id}
+                  editDisabled={reviewRequestCompleted}
+                />
+              )}
+              <PaymentInformationCard
+                applicationId={id}
+                editDisabled={paidThroughShopify || reviewRequestCompleted}
+              />
+            </VStack>
+          </GridItem>
+        </>
+      )}
     </Layout>
   );
 };
