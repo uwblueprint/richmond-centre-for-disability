@@ -530,7 +530,9 @@ export type MobilityAid =
   | 'ELECTRIC_CHAIR'
   | 'MANUAL_CHAIR'
   | 'SCOOTER'
-  | 'WALKER';
+  | 'WALKER'
+  | 'CRUTCHES'
+  | 'OTHERS';
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -753,6 +755,7 @@ export type NewApplication = Application & {
   otherPatientCondition: Maybe<Scalars['String']>;
   permitType: PermitType;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
+  otherMobilityAids: Maybe<Scalars['String']>;
   physicianFirstName: Scalars['String'];
   physicianLastName: Scalars['String'];
   physicianMspNumber: Scalars['String'];
