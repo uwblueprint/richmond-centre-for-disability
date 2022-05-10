@@ -16,6 +16,7 @@ export type PhysicianAssessment = Pick<
   | 'otherPatientCondition'
   | 'temporaryPermitExpiry'
   | 'mobilityAids'
+  | 'otherMobilityAids'
 > & {
   patientCondition: PatientCondition | null;
   permitType: PermitType | null;
@@ -35,6 +36,7 @@ export const GET_PHYSICIAN_ASSESSMENT = gql`
         patientCondition
         permitType
         mobilityAids
+        otherMobilityAids
       }
     }
   }
@@ -52,6 +54,7 @@ export type GetPhysicianAssessmentResponse = {
     | 'otherPatientCondition'
     | 'temporaryPermitExpiry'
     | 'mobilityAids'
+    | 'otherMobilityAids'
   >;
 };
 

@@ -38,7 +38,9 @@ CREATE TYPE MobilityAid as ENUM(
   'ELECTRIC_CHAIR',
   'MANUAL_CHAIR',
   'SCOOTER',
-  'WALKER'
+  'WALKER',
+  'CRUTCHES',
+  'OTHERS'
 );
 
 -- Create physician status enum
@@ -383,6 +385,7 @@ CREATE TABLE new_applications (
   disability_certification_date DATE NOT NULL,
   patient_condition PatientCondition NOT NULL,
   mobility_aids MobilityAid ARRAY,
+  other_mobility_aids VARCHAR(255),
   other_patient_condition VARCHAR(255),
   temporary_permit_expiry DATE,
   permit_type PermitType NOT NULL DEFAULT 'PERMANENT',

@@ -152,7 +152,6 @@ export default function PhysicianAssessmentForm({
                   <Checkbox value={'ELECTRIC_CHAIR'}>{'Power Wheelchair'}</Checkbox>
                   <Checkbox value={'SCOOTER'}>{'Scooter'}</Checkbox>
                   <Checkbox value={'WALKER'}>{'Walker'}</Checkbox>
-                  {/* NOTETOSELF: Crutches is not in db */}
                   <Checkbox value={'CRUTCHES'}>{'Crutches'}</Checkbox>
                   <Checkbox value={'CANE'}>{'Cane'}</Checkbox>
                   <Checkbox value={'OTHERS'}>{'Others'}</Checkbox>
@@ -165,14 +164,13 @@ export default function PhysicianAssessmentForm({
             <FormControl isRequired>
               <FormLabel>{'Description'}</FormLabel>
               <Textarea
-              // NOTETOSELF: Not in db
-              // value={}
-              // onChange={event =>
-              //   onChange({
-              //     ...physicianAssessment,
-              //     otherPatientCondition: event.target.value,
-              //   })
-              // }
+                value={physicianAssessment.otherMobilityAids || undefined}
+                onChange={event =>
+                  onChange({
+                    ...physicianAssessment,
+                    otherMobilityAids: event.target.value,
+                  })
+                }
               />
             </FormControl>
           )}

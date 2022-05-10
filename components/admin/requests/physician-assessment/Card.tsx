@@ -89,6 +89,7 @@ const Card: FC<Props> = props => {
     temporaryPermitExpiry,
     permitType,
     mobilityAids,
+    otherMobilityAids,
   } = physicianAssessment;
   return (
     <PermitHolderInfoCard
@@ -108,6 +109,7 @@ const Card: FC<Props> = props => {
               patientCondition,
               permitType,
               mobilityAids,
+              otherMobilityAids,
             }}
             onSave={handleSave}
           >
