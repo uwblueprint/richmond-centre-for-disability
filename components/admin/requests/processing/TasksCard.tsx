@@ -63,15 +63,16 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
 
   const [showTaskLog, setShowTaskLog] = useState(false);
 
-  const [assignAppNumber] = useMutation<AssignAppNumberResponse, AssignAppNumberRequest>(
-    ASSIGN_APP_NUMBER_MUTATION
-  );
+  const [assignAppNumber, { loading: assignAppNumberLoading }] = useMutation<
+    AssignAppNumberResponse,
+    AssignAppNumberRequest
+  >(ASSIGN_APP_NUMBER_MUTATION);
   const handleAssignAppNumber = async (appNumber: number | null) => {
     await assignAppNumber({ variables: { input: { applicationId, appNumber } } });
     refetch();
   };
 
-  const [holepunchParkingPermit] =
+  const [holepunchParkingPermit, { loading: holepunchParkingPermitLoading }] =
     useMutation<HolepunchParkingPermitResponse, HolepunchParkingPermitRequest>(
       HOLEPUNCH_APP_MUTATION
     );
@@ -80,15 +81,16 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
-  const [createWalletCard] = useMutation<CreateWalletCardResponse, CreateWalletCardRequest>(
-    CREATE_WALLET_CARD_MUTATION
-  );
+  const [createWalletCard, { loading: createWalletCardLoading }] = useMutation<
+    CreateWalletCardResponse,
+    CreateWalletCardRequest
+  >(CREATE_WALLET_CARD_MUTATION);
   const handleCreateWalletCard = async (walletCardCreated: boolean) => {
     await createWalletCard({ variables: { input: { applicationId, walletCardCreated } } });
     refetch();
   };
 
-  const [reviewRequestInformation] = useMutation<
+  const [reviewRequestInformation, { loading: reviewRequestInformationLoading }] = useMutation<
     ReviewRequestInformationResponse,
     ReviewRequestInformationRequest
   >(REVIEW_REQUEST_INFORMATION_MUTATION);
@@ -109,7 +111,8 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
   const [uploadDocuments, { loading: uploadDocumentsLoading }] =
     useMutation<UploadDocumentsResponse, UploadDocumentsRequest>(UPLOAD_DOCUMENTS_MUTATION);
 
-  const [mailOut] = useMutation<MailOutResponse, MailOutRequest>(MAIL_OUT_APP_MUTATION);
+  const [mailOut, { loading: mailOutLoading }] =
+    useMutation<MailOutResponse, MailOutRequest>(MAIL_OUT_APP_MUTATION);
   const handleMailOut = async (appMailed: boolean) => {
     await mailOut({ variables: { input: { applicationId, appMailed } } });
     refetch();
@@ -298,6 +301,11 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                     bg="background.gray"
                     _hover={{ bg: 'background.grayHover' }}
                     color="black"
+                    disabled={assignAppNumberLoading}
+                    isLoading={assignAppNumberLoading}
+                    loadingText="Assign number"
+                    fontWeight="normal"
+                    fontSize="14px"
                   >
                     <Text textStyle="xsmall-medium">Assign number</Text>
                   </Button>
@@ -307,6 +315,10 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   variant="ghost"
                   textDecoration="underline black"
                   onClick={() => handleAssignAppNumber(null)}
+                  isLoading={assignAppNumberLoading}
+                  loadingText="Undo"
+                  fontWeight="normal"
+                  fontSize="14px"
                 >
                   <Text textStyle="caption" color="black">
                     Undo
@@ -339,6 +351,11 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   variant="ghost"
                   textDecoration="underline black"
                   onClick={() => handleHolepunchParkingPermit(false)}
+                  isDisabled={holepunchParkingPermitLoading}
+                  isLoading={holepunchParkingPermitLoading}
+                  loadingText="Undo"
+                  fontWeight="normal"
+                  fontSize="14px"
                 >
                   <Text textStyle="caption" color="black">
                     Undo
@@ -352,6 +369,10 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   _hover={{ bg: 'background.grayHover' }}
                   color="black"
                   onClick={() => handleHolepunchParkingPermit(true)}
+                  isLoading={holepunchParkingPermitLoading}
+                  loadingText="Mark as complete"
+                  fontWeight="normal"
+                  fontSize="14px"
                 >
                   <Text textStyle="xsmall-medium">Mark as complete</Text>
                 </Button>
@@ -382,6 +403,11 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   variant="ghost"
                   textDecoration="underline black"
                   onClick={() => handleCreateWalletCard(false)}
+                  isDisabled={createWalletCardLoading}
+                  isLoading={createWalletCardLoading}
+                  loadingText="Undo"
+                  fontWeight="normal"
+                  fontSize="14px"
                 >
                   <Text textStyle="caption" color="black">
                     Undo
@@ -395,6 +421,10 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   _hover={{ bg: 'background.grayHover' }}
                   color="black"
                   onClick={() => handleCreateWalletCard(true)}
+                  isLoading={createWalletCardLoading}
+                  loadingText="Mark as complete"
+                  fontWeight="normal"
+                  fontSize="14px"
                 >
                   <Text textStyle="xsmall-medium">Mark as complete</Text>
                 </Button>
@@ -428,6 +458,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 onUndo={() => {
                   handleReviewRequestInformation(false);
                 }}
+                loading={reviewRequestInformationLoading}
               />
             </ProcessingTaskStep>
 
@@ -511,6 +542,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 fileUrl={documentsUrl}
                 onUploadFile={handleSubmitDocuments}
                 onUndo={handleUndoDocumentsUpload}
+                loading={uploadDocumentsLoading}
               />
             </ProcessingTaskStep>
 
@@ -535,6 +567,11 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   variant="ghost"
                   textDecoration="underline black"
                   onClick={() => handleMailOut(false)}
+                  disabled={mailOutLoading}
+                  isLoading={mailOutLoading}
+                  loadingText="Undo"
+                  fontWeight="normal"
+                  fontSize="14px"
                 >
                   <Text textStyle="caption" color="black">
                     Undo
@@ -547,8 +584,12 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   bg="background.gray"
                   _hover={documentsUrl === null ? undefined : { bg: 'background.grayHover' }}
                   color="black"
-                  disabled={documentsUrl === null}
+                  disabled={documentsUrl === null || mailOutLoading}
                   onClick={() => handleMailOut(true)}
+                  isLoading={mailOutLoading}
+                  loadingText="Mark as complete"
+                  fontWeight="normal"
+                  fontSize="14px"
                 >
                   <Text textStyle="xsmall-medium">Mark as complete</Text>
                 </Button>

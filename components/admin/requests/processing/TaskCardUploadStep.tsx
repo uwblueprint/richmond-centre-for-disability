@@ -12,12 +12,19 @@ type Props = {
   readonly onUploadFile: (selectedFile: File) => void; // handle file upload
   readonly isDisabled: boolean;
   readonly onUndo: () => void;
+  readonly loading: boolean;
 };
 
 /**
  * POA form upload component allowing users to upload POA form PDF file
  */
-export const TaskCardUploadStep: FC<Props> = ({ isDisabled, fileUrl, onUploadFile, onUndo }) => {
+export const TaskCardUploadStep: FC<Props> = ({
+  isDisabled,
+  fileUrl,
+  loading,
+  onUploadFile,
+  onUndo,
+}) => {
   const hiddenFileInput = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   /**
@@ -83,6 +90,7 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, fileUrl, onUploadFil
               size={'xs'}
               icon={<CloseIcon boxSize={'0.5em'} />}
               onClick={onUndo}
+              isLoading={loading}
             />
           </HStack>
         </VStack>
@@ -97,6 +105,11 @@ export const TaskCardUploadStep: FC<Props> = ({ isDisabled, fileUrl, onUploadFil
             color="black"
             disabled={isDisabled}
             onClick={handleClick}
+            isDisabled={loading}
+            isLoading={loading}
+            loadingText="Upload document"
+            fontWeight="normal"
+            fontSize="14px"
           >
             <Text textStyle="xsmall-medium">Upload document</Text>
           </Button>
