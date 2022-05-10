@@ -43,6 +43,7 @@ import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatDateVerbose, formatFullName } from '@lib/utils/format'; // Verbose date formatter util
 import GenerateReportModal from '@components/admin/requests/reports/GenerateModal'; // Generate report modal
+import EmptyStateComponent from '@components/admin/EmptyStateComponent';
 
 // Placeholder columns
 const COLUMNS: Column<ApplicationRow>[] = [
@@ -380,21 +381,30 @@ const Requests: NextPage = () => {
                 </InputGroup>
               </Box>
             </Flex>
-            <Table
-              columns={COLUMNS}
-              data={requestsData}
-              loading={loading}
-              onChangeSortOrder={setSortOrder}
-              onRowClick={({ id }) => router.push(`/admin/request/${id}`)}
-            />
-            <Flex justifyContent="flex-end">
-              <Pagination
-                pageNumber={pageNumber}
-                pageSize={PAGE_SIZE}
-                totalCount={recordsCount}
-                onPageChange={setPageNumber}
+            {requestsData.length > 0 ? (
+              <>
+                <Table
+                  columns={COLUMNS}
+                  data={requestsData}
+                  loading={loading}
+                  onChangeSortOrder={setSortOrder}
+                  onRowClick={({ id }) => router.push(`/admin/request/${id}`)}
+                />
+                <Flex justifyContent="flex-end">
+                  <Pagination
+                    pageNumber={pageNumber}
+                    pageSize={PAGE_SIZE}
+                    totalCount={recordsCount}
+                    onPageChange={setPageNumber}
+                  />
+                </Flex>
+              </>
+            ) : (
+              <EmptyStateComponent
+                titleMessage="No Requests Found"
+                subMessage="Try changing the filter or search term"
               />
-            </Flex>
+            )}
           </Box>
         </Box>
       </GridItem>
