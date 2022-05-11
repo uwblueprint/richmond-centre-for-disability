@@ -540,6 +540,7 @@ export type Mutation = {
   setApplicantAsActive: Maybe<SetApplicantAsActiveResult>;
   setApplicantAsInactive: Maybe<SetApplicantAsInactiveResult>;
   verifyIdentity: VerifyIdentityResult;
+  updateApplicantNotes: UpdateApplicantNotesResult;
   createNewApplication: Maybe<CreateNewApplicationResult>;
   createRenewalApplication: Maybe<CreateRenewalApplicationResult>;
   createExternalRenewalApplication: CreateExternalRenewalApplicationResult;
@@ -595,6 +596,11 @@ export type MutationSetApplicantAsInactiveArgs = {
 
 export type MutationVerifyIdentityArgs = {
   input: VerifyIdentityInput;
+};
+
+
+export type MutationUpdateApplicantNotesArgs = {
+  input: UpdateApplicantNotesInput;
 };
 
 
@@ -1159,6 +1165,16 @@ export type UpdateApplicantGuardianInformationInput = {
 
 export type UpdateApplicantGuardianInformationResult = {
   __typename?: 'UpdateApplicantGuardianInformationResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicantNotesInput = {
+  id: Scalars['Int'];
+  notes: Scalars['String'];
+};
+
+export type UpdateApplicantNotesResult = {
+  __typename?: 'UpdateApplicantNotesResult';
   ok: Scalars['Boolean'];
 };
 

@@ -15,6 +15,7 @@ import {
   updateApplicantGuardianInformation,
   setApplicantAsActive,
   setApplicantAsInactive,
+  updateApplicantNotes,
   verifyIdentity,
 } from '@lib/applicants/resolvers'; // Applicant resolvers
 import {
@@ -145,6 +146,7 @@ const resolvers = {
     // Applicants
     updateApplicantGeneralInformation: authorize(updateApplicantGeneralInformation, ['SECRETARY']),
     updateApplicantDoctorInformation: authorize(updateApplicantDoctorInformation, ['SECRETARY']),
+    updateApplicantNotes: authorize(updateApplicantNotes, ['SECRETARY']),
     updateApplicantGuardianInformation: authorize(updateApplicantGuardianInformation, [
       'SECRETARY',
     ]),

@@ -182,4 +182,14 @@ export default gql`
     APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS
     USER_HOLDS_TEMPORARY_PERMIT
   }
+
+  # Update Additional Notes for Applicant
+  input UpdateApplicantNotesInput {
+    id: Int!
+    notes: String!
+  }
+
+  type UpdateApplicantNotesResult {
+    ok: Boolean!
+  }
 `;

@@ -8,6 +8,7 @@ import {
   MutationUpdateApplicantDoctorInformationArgs,
   MutationUpdateApplicantGeneralInformationArgs,
   MutationUpdateApplicantGuardianInformationArgs,
+  MutationUpdateApplicantNotesArgs,
   MutationVerifyIdentityArgs,
   QueryApplicantArgs,
   QueryApplicantsArgs,
@@ -16,6 +17,7 @@ import {
   UpdateApplicantDoctorInformationResult,
   UpdateApplicantGeneralInformationResult,
   UpdateApplicantGuardianInformationResult,
+  UpdateApplicantNotesResult,
   VerifyIdentityResult,
 } from '@lib/graphql/types'; // GraphQL types
 import { DateUtils } from 'react-day-picker'; // Date utils
@@ -482,4 +484,35 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     failureReason: null,
     applicantId: applicant.id,
   };
+};
+
+/**
+ * Update Applicant Notes to string provided
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicantNotes: Resolver<
+  MutationUpdateApplicantNotesArgs,
+  UpdateApplicantNotesResult
+> = async (_parent, args, { prisma }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, notes } = input;
+
+  let updatedApplicant;
+  try {
+    updatedApplicant = await prisma.applicant.update({
+      where: { id },
+      data: {
+        notes: notes,
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicant) {
+    throw new ApolloError('Unable to update applicant notes');
+  }
+
+  return { ok: true };
 };
