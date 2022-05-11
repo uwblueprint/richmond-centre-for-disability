@@ -75,7 +75,7 @@ const PermitHolders: NextPage = () => {
   const debouncedSearchFilter = useDebounce<string>(searchFilter, 500);
 
   // GQL Query
-  const { refetch } = useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(
+  const { refetch, loading } = useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(
     GET_PERMIT_HOLDERS_QUERY,
     {
       variables: {
@@ -430,6 +430,7 @@ const PermitHolders: NextPage = () => {
             <Table
               columns={COLUMNS}
               data={permitHolderData || []}
+              loading={loading}
               onChangeSortOrder={sortOrder => {
                 setSortOrder(sortOrder);
               }}
