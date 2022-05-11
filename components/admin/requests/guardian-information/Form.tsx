@@ -1,12 +1,11 @@
-import { Text, Stack, FormHelperText, Box, Divider, Checkbox } from '@chakra-ui/react'; // Chakra UI
+import { Text, Stack, FormHelperText, Box, Divider } from '@chakra-ui/react'; // Chakra UI
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
-import { ChangeEventHandler } from 'react';
 import PoaFormUploadField from '@components/admin/requests/guardian-information/PoaFormUploadField';
 import TextField from '@components/form/TextField';
+import CheckboxField from '@components/form/CheckboxField';
 
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
-  readonly onChange: (updatedData: GuardianInformation) => void;
   readonly file: File | null;
   onUploadFile: (selectedFile: File) => void;
 };
@@ -15,52 +14,38 @@ type GuardianInformationFormProps = {
  * GuardianInformationForm Component for allowing users to edit guardian information.
  *
  * @param {GuardianInformation} guardianInformation Object that holds all guardian information for a client request.
- * @param onChange Function that uses the updated values from form.
  */
 export default function GuardianInformationForm({
   guardianInformation,
-  onChange,
   file,
   onUploadFile,
 }: GuardianInformationFormProps) {
-  const handleChange =
-    (field: keyof GuardianInformation): ChangeEventHandler<HTMLInputElement> =>
-    event => {
-      onChange({
-        ...guardianInformation,
-        [field]: event.target.type === 'checkbox' ? event.target.checked : event.target.value,
-      });
-    };
-
   return (
     <>
       {/* Personal Information Section */}
       <Box paddingBottom="32px">
         <Stack direction="row" spacing="20px">
-          <Checkbox
-            isChecked={guardianInformation.omitGuardianPoa}
-            onChange={handleChange('omitGuardianPoa')}
-          >
+          <CheckboxField name="guardianInformation.omitGuardianPoa">
             {'No Guardian/POA'}
-          </Checkbox>
+          </CheckboxField>
         </Stack>
         {!guardianInformation.omitGuardianPoa && (
           <>
             <Stack direction="row" spacing="20px" paddingTop="24px">
-              <TextField name="firstName" label="First Name" required={true} />
-              <TextField name="middleName" label="Middle Name" />
-              <TextField name="lastName" label="Last Name" required={true} />
+              <TextField name="guardianInformation.firstName" label="First name" required />
+              <TextField name="guardianInformation.middleName" label="Middle name" />
+              <TextField name="guardianInformation.lastName" label="Last name" required />
             </Stack>
 
             <Stack direction="row" spacing="20px" paddingTop="20px">
-              <TextField name="phoneNumber" label="Phone Number" required={true}>
+              <TextField name="guardianInformation.phone" label="Phone Number" required>
                 <FormHelperText color="text.secondary">{'Example: 000-000-0000'}</FormHelperText>
               </TextField>
 
               <TextField
-                name="relationshipToApplicant"
-                label="Relationship to Applicant"
-                required={true}
+                name="guardianInformation.relationship"
+                label="Relationship to applicant"
+                required
               />
             </Stack>
           </>
@@ -105,8 +90,8 @@ export default function GuardianInformationForm({
             </Box>
 
             <Stack direction="row" spacing="20px">
-              <TextField name="city" label="City" required={true} />
-              <TextField name="postalCode" label="Postal Code" required={true}>
+              <TextField name="guardianInformation.city" label="City" required />
+              <TextField name="guardianInformation.postalCode" label="Postal Code" required>
                 <FormHelperText color="text.secondary">{'Example: X0X 0X0'}</FormHelperText>
               </TextField>
             </Stack>
