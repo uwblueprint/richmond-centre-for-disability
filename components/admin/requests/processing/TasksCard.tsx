@@ -301,7 +301,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                     bg="background.gray"
                     _hover={{ bg: 'background.grayHover' }}
                     color="black"
-                    disabled={assignAppNumberLoading}
+                    isDisabled={assignAppNumberLoading}
                     isLoading={assignAppNumberLoading}
                     loadingText="Assign number"
                     fontWeight="normal"
@@ -315,6 +315,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   variant="ghost"
                   textDecoration="underline black"
                   onClick={() => handleAssignAppNumber(null)}
+                  isDisabled={assignAppNumberLoading}
                   isLoading={assignAppNumberLoading}
                   loadingText="Undo"
                   fontWeight="normal"
@@ -369,6 +370,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   _hover={{ bg: 'background.grayHover' }}
                   color="black"
                   onClick={() => handleHolepunchParkingPermit(true)}
+                  isDisabled={holepunchParkingPermitLoading}
                   isLoading={holepunchParkingPermitLoading}
                   loadingText="Mark as complete"
                   fontWeight="normal"
@@ -421,6 +423,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   _hover={{ bg: 'background.grayHover' }}
                   color="black"
                   onClick={() => handleCreateWalletCard(true)}
+                  isDisabled={createWalletCardLoading}
                   isLoading={createWalletCardLoading}
                   loadingText="Mark as complete"
                   fontWeight="normal"
