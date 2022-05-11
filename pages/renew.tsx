@@ -280,7 +280,7 @@ export default function Renew() {
           email: updatedContactInfo ? contactEmailAddress : null,
           physicianFirstName: updatedDoctor ? doctorFirstName : null,
           physicianLastName: updatedDoctor ? doctorLastName : null,
-          physicianMspNumber: updatedDoctor ? parseInt(doctorMspNumber) : null,
+          physicianMspNumber: updatedDoctor ? doctorMspNumber : null,
           physicianAddressLine1: updatedDoctor ? doctorAddressLine1 : null,
           physicianAddressLine2: updatedDoctor ? doctorAddressLine2 : null,
           physicianCity: updatedDoctor ? doctorCity : null,

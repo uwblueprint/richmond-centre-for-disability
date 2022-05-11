@@ -65,7 +65,7 @@ export default function CreateRenewal() {
   const [doctorInformation, setDoctorInformation] = useState<DoctorFormData>({
     firstName: '',
     lastName: '',
-    mspNumber: null,
+    mspNumber: '',
     phone: '',
     addressLine1: '',
     addressLine2: '',

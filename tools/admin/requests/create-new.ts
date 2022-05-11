@@ -155,7 +155,7 @@ export const INITIAL_PHYSICIAN_ASSESSMENT: PhysicianAssessment = {
 export const INITIAL_DOCTOR_INFORMATION: DoctorFormData = {
   firstName: '',
   lastName: '',
-  mspNumber: null,
+  mspNumber: '',
   phone: '',
   addressLine1: '',
   addressLine2: '',
