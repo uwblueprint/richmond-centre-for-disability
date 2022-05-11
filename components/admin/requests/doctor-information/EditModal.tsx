@@ -31,9 +31,7 @@ export default function EditDoctorInformationModal({
 
   const handleSubmit = (values: { doctorInformation: DoctorFormData }) => {
     // TODO: Backend errors
-    onSave({
-      ...values.doctorInformation,
-    });
+    onSave(values.doctorInformation);
     onClose();
   };
 
