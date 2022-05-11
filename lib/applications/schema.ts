@@ -351,6 +351,7 @@ export default gql`
     disabilityCertificationDate: Date!
     patientCondition: PatientCondition!
     mobilityAids: [MobilityAid!]
+    otherMobilityAids: String
     otherPatientCondition: String
     permitType: PermitType!
     temporaryPermitExpiry: Date
@@ -768,7 +769,6 @@ export default gql`
     id: Int!
 
     # Physician assessment (omit permit type)
-    # NOTETOSELF: Why, don't we need it?
     disability: String!
     disabilityCertificationDate: Date!
     patientCondition: PatientCondition!
