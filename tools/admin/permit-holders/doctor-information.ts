@@ -9,7 +9,7 @@ import {
 export type DoctorFormData = Pick<
   Physician,
   'firstName' | 'lastName' | 'phone' | 'addressLine1' | 'addressLine2' | 'city' | 'postalCode'
-> & { mspNumber: string };
+| 'mspNumber' > ;
 
 /** Doctor information in doctor information card */
 export type DoctorCardData = Pick<
