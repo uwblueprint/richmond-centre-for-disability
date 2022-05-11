@@ -36,7 +36,7 @@ type PhysicianAssessmentFormProps = {
 export default function PhysicianAssessmentForm({
   physicianAssessment,
 }: PhysicianAssessmentFormProps) {
-  // State to handle the yes/no mobility aid radio
+  // State to handle the mobility aid radio button
   const [mobilityAidsRequired, setMobilityAidsRequired] = useState<boolean>(
     !!physicianAssessment?.mobilityAids?.length
   );
@@ -137,7 +137,7 @@ export default function PhysicianAssessmentForm({
 
           {mobilityAidsRequired === true && (
             <FormControl isRequired>
-              <FormLabel>{'What mobility are you currently using?'}</FormLabel>
+              <FormLabel>{'What mobility aids are you currently using?'}</FormLabel>
               <CheckboxGroup
                 value={physicianAssessment.mobilityAids || undefined}
                 onChange={value => {

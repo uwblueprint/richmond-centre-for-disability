@@ -35,6 +35,7 @@ export default function EditPhysicianAssessmentModal({
       patientCondition: null,
       permitType: null,
       mobilityAids: null,
+      otherMobilityAids: null,
     }
   );
 
