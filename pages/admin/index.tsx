@@ -43,7 +43,7 @@ import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatDateVerbose, formatFullName } from '@lib/utils/format'; // Verbose date formatter util
 import GenerateReportModal from '@components/admin/requests/reports/GenerateModal'; // Generate report modal
-import EmptyStateComponent from '@components/admin/EmptyStateComponent';
+import EmptyStateComponent from '@components/EmptyMessage';
 
 // Placeholder columns
 const COLUMNS: Column<ApplicationRow>[] = [
@@ -401,8 +401,8 @@ const Requests: NextPage = () => {
               </>
             ) : (
               <EmptyStateComponent
-                titleMessage="No Requests Found"
-                subMessage="Try changing the filter or search term"
+                title="No Requests Found"
+                message="Try changing the filter or search term"
               />
             )}
           </Box>
