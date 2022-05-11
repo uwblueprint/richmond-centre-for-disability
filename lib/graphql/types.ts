@@ -262,6 +262,7 @@ export type CreateNewApplicationInput = {
   disabilityCertificationDate: Scalars['Date'];
   patientCondition: PatientCondition;
   mobilityAids: Maybe<Array<MobilityAid>>;
+  otherMobilityAids: Maybe<Scalars['String']>;
   otherPatientCondition: Maybe<Scalars['String']>;
   permitType: PermitType;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
@@ -1288,6 +1289,7 @@ export type UpdateApplicationPhysicianAssessmentInput = {
   otherPatientCondition: Maybe<Scalars['String']>;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
   permitType: PermitType;
+  otherMobilityAids: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationPhysicianAssessmentResult = {

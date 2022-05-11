@@ -269,7 +269,6 @@ export default function CreateNew() {
           ...validatedValues.permitHolder,
 
           ...validatedValues.physicianAssessment,
-          mobilityAids: null, //TODO: get mobility aids when forms are updated to get this data
 
           physicianFirstName: validatedValues.doctorInformation.firstName,
           physicianLastName: validatedValues.doctorInformation.lastName,
