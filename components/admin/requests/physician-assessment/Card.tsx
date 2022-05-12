@@ -170,23 +170,26 @@ const Card: FC<Props> = props => {
               </GridItem>
             </>
           )}
-          {/* NOTETOSELF: I think this is conditionally rendered? Will ask designers */}
-          <GridItem>
-            <Text as="p" textStyle="body-regular" textAlign="left">
-              Mobility aids
-            </Text>
-          </GridItem>
-          <GridItem>
-            <List>
-              {mobilityAids?.map(aid => (
-                <ListItem key={aid}>
-                  <Text as="p" textStyle="body-regular" textAlign="left">
-                    {titlecase(aid)}
-                  </Text>
-                </ListItem>
-              ))}
-            </List>
-          </GridItem>
+          {mobilityAids?.length !== 0 && (
+            <>
+              <GridItem>
+                <Text as="p" textStyle="body-regular" textAlign="left">
+                  Mobility aids
+                </Text>
+              </GridItem>
+              <GridItem>
+                <List>
+                  {mobilityAids?.map(aid => (
+                    <ListItem key={aid}>
+                      <Text as="p" textStyle="body-regular" textAlign="left">
+                        {titlecase(aid)}
+                      </Text>
+                    </ListItem>
+                  ))}
+                </List>
+              </GridItem>
+            </>
+          )}
           <GridItem>
             <Text as="p" textStyle="body-regular" textAlign="left">
               Impairment type
