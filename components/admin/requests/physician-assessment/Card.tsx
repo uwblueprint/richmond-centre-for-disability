@@ -190,6 +190,21 @@ const Card: FC<Props> = props => {
               </GridItem>
             </>
           )}
+          {mobilityAids?.includes('OTHERS') && (
+            <>
+              {/* Other mobility aids description */}
+              <GridItem>
+                <Text as="p" textStyle="body-regular" textAlign="left">
+                  Other mobility aids
+                </Text>
+              </GridItem>
+              <GridItem>
+                <Text as="p" textStyle="body-regular" textAlign="left">
+                  {otherMobilityAids}
+                </Text>
+              </GridItem>
+            </>
+          )}
           <GridItem>
             <Text as="p" textStyle="body-regular" textAlign="left">
               Impairment type
