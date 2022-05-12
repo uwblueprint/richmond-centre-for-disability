@@ -49,7 +49,7 @@ import SetPermitHolderToActiveModal from '@components/admin/permit-holders/table
 import GenerateReportModal from '@components/admin/permit-holders/reports/GenerateModal'; // Generate report modal
 import { getPermitExpiryStatus } from '@lib/utils/permit-expiry';
 import FilterMenuSelectedText from '@components/admin/permit-holders/table/FilterMenuSelectedText';
-import EmptyStateComponent from '@components/EmptyMessage';
+import EmptyMessage from '@components/EmptyMessage';
 
 const PAGE_SIZE = 20;
 
@@ -449,7 +449,7 @@ const PermitHolders: NextPage = () => {
                 </Flex>
               </>
             ) : (
-              <EmptyStateComponent
+              <EmptyMessage
                 title="No Permit Holders Found"
                 message="Try changing the filter or search term"
               />

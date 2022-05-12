@@ -11,7 +11,7 @@ import {
   GenerateAccountantReportRequest,
   GenerateAccountantReportResponse,
 } from '@tools/admin/permit-holders/graphql/generate-report';
-import EmptyStateComponent from '@components/EmptyMessage';
+import EmptyMessage from '@components/EmptyMessage';
 
 // Internal home page
 export default function Reports() {
@@ -140,7 +140,7 @@ export default function Reports() {
                 </Box>
               )
             ) : (
-              <EmptyStateComponent title="No Payments Found" message="Please select a date range" />
+              <EmptyMessage title="No Payments Found" message="Please select a date range" />
             )}
           </Box>
         </Box>
