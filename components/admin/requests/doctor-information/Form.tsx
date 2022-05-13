@@ -74,6 +74,3 @@ export default function DoctorInformationForm() {
     </>
   );
 }
-
-// TODO: fix spacing between fields
-// TODO: get it to be savable???
