@@ -75,7 +75,7 @@ export default gql`
     # Personal
     firstName: String!
     lastName: String!
-    mspNumber: Int!
+    mspNumber: String!
     phone: String!
 
     # Address

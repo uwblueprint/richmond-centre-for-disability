@@ -2,8 +2,11 @@ import {
   permitHolderInformationSchema,
   requestPermitHolderInformationSchema,
 } from '@lib/applicants/validation';
-import { physicianAssessmentSchema } from '@lib/physicians/validation';
 import { guardianInformationSchema } from '@lib/guardian/validation';
+import {
+  physicianAssessmentSchema,
+  requestPhysicianInformationSchema,
+} from '@lib/physicians/validation';
 import { PaymentType, Province, ReasonForReplacement } from '@prisma/client';
 import { bool, date, mixed, number, object, string } from 'yup';
 import {
@@ -240,6 +243,7 @@ export const createNewRequestFormSchema = object({
   permitHolder: permitHolderInformationSchema,
   physicianAssessment: physicianAssessmentSchema,
   guardianInformation: guardianInformationSchema,
+  doctorInformation: requestPhysicianInformationSchema,
   additionalInformation: additionalQuestionsSchema,
   paymentInformation: paymentInformationSchema,
 });
@@ -249,6 +253,7 @@ export const createNewRequestFormSchema = object({
  */
 export const renewalRequestFormSchema = object({
   permitHolder: requestPermitHolderInformationSchema,
+  doctorInformation: requestPhysicianInformationSchema,
   additionalInformation: additionalQuestionsSchema,
   paymentInformation: paymentInformationSchema,
 });

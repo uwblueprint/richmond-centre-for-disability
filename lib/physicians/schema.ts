@@ -7,7 +7,7 @@ import { gql } from '@apollo/client';
 export default gql`
   type Physician {
     # General information
-    mspNumber: Int!
+    mspNumber: String!
     firstName: String!
     lastName: String!
     phone: String!
@@ -23,7 +23,7 @@ export default gql`
   }
 
   input UpsertPhysicianInput {
-    mspNumber: Int!
+    mspNumber: String!
     name: String!
     addressLine1: String!
     addressLine2: String

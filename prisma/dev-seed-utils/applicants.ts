@@ -37,7 +37,7 @@ const applicants: Array<UpsertApplicant> = [
       mobilityAids: [],
       otherPatientCondition: null,
       physician: {
-        mspNumber: 12345,
+        mspNumber: '12345',
         firstName: 'Doctor',
         lastName: 'One',
         phone: '1234567889',
@@ -81,7 +81,7 @@ const applicants: Array<UpsertApplicant> = [
       mobilityAids: ['WALKER'],
       otherPatientCondition: null,
       physician: {
-        mspNumber: 12346,
+        mspNumber: '12346',
         firstName: 'Doctor',
         lastName: 'Two',
         phone: '234-567-8901',
@@ -116,7 +116,7 @@ const applicants: Array<UpsertApplicant> = [
       otherPatientCondition: null,
       physician: {
         // Same as applicant 2
-        mspNumber: 12346,
+        mspNumber: '12346',
         firstName: 'Doctor',
         lastName: 'Two',
         phone: '234-567-8901',
@@ -160,7 +160,7 @@ const applicants: Array<UpsertApplicant> = [
       mobilityAids: ['WALKER'],
       otherPatientCondition: null,
       physician: {
-        mspNumber: 12344,
+        mspNumber: '12344',
         firstName: 'Doctor',
         lastName: 'Four',
         phone: '234-567-8904',

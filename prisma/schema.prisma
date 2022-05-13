@@ -143,7 +143,7 @@ model MedicalInformation {
   mobilityAids                MobilityAid[]    @map("mobility_aids")
   otherPatientCondition       String?          @map("other_patient_condition") @db.VarChar(255)
   notes                       String?
-  physicianMspNumber          Int              @map("physician_msp_number")
+  physicianMspNumber          String           @map("physician_msp_number") @db.VarChar(50)
   createdAt                   DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                   DateTime         @default(now()) @map("updated_at") @db.Timestamptz(6)
   physician                   Physician        @relation("medical_informationTophysicians", fields: [physicianMspNumber], references: [mspNumber])
@@ -168,7 +168,7 @@ model Permit {
 }
 
 model Physician {
-  mspNumber          Int                  @id @map("msp_number")
+  mspNumber          String               @id @map("msp_number") @db.VarChar(50)
   firstName          String               @map("first_name") @db.VarChar(255)
   lastName           String               @map("last_name") @db.VarChar(255)
   phone              String               @db.VarChar(50)
@@ -248,7 +248,7 @@ model NewApplication {
   temporaryPermitExpiry                DateTime?                            @map("temporary_permit_expiry") @db.Date
   physicianFirstName                   String                               @map("physician_first_name") @db.VarChar(255)
   physicianLastName                    String                               @map("physician_last_name") @db.VarChar(255)
-  physicianMspNumber                   Int                                  @map("physician_msp_number")
+  physicianMspNumber                   String                               @map("physician_msp_number") @db.VarChar(50)
   physicianPhone                       String                               @map("physician_phone") @db.VarChar(50)
   physicianAddressLine1                String                               @map("physician_address_line_1") @db.VarChar(255)
   physicianAddressLine2                String?                              @map("physician_address_line_2") @db.VarChar(255)
@@ -284,7 +284,7 @@ model RenewalApplication {
   applicationId                        Int                                  @id @map("application_id")
   physicianFirstName                   String                               @map("physician_first_name") @db.VarChar(255)
   physicianLastName                    String                               @map("physician_last_name") @db.VarChar(255)
-  physicianMspNumber                   Int                                  @map("physician_msp_number")
+  physicianMspNumber                   String                               @map("physician_msp_number") @db.VarChar(50)
   physicianPhone                       String                               @map("physician_phone") @db.VarChar(50)
   physicianAddressLine1                String                               @map("physician_address_line_1") @db.VarChar(255)
   physicianAddressLine2                String?                              @map("physician_address_line_2") @db.VarChar(255)

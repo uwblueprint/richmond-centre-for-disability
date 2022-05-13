@@ -75,15 +75,22 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
       </GridItem>
       <GridItem colStart={1} colSpan={5} textAlign="left">
         <VStack width="100%" spacing="20px" align="stretch">
-          <PersonalInformationCard applicationId={id} />
-          {type !== 'REPLACEMENT' && <DoctorInformationCard applicationId={id} />}
+          <PersonalInformationCard applicationId={id} editDisabled={reviewRequestCompleted} />
+          {type !== 'REPLACEMENT' && (
+            <DoctorInformationCard applicationId={id} editDisabled={reviewRequestCompleted} />
+          )}
         </VStack>
       </GridItem>
       <GridItem colStart={6} colSpan={7}>
         <VStack width="100%" spacing="20px" align="stretch">
           {status === 'IN_PROGRESS' && <ProcessingTasksCard applicationId={id} />}
-          {type === 'REPLACEMENT' && <ReasonForReplacementCard applicationId={id} />}
-          <PaymentInformationCard applicationId={id} />
+          {type === 'REPLACEMENT' && (
+            <ReasonForReplacementCard applicationId={id} editDisabled={reviewRequestCompleted} />
+          )}
+          <PaymentInformationCard
+            applicationId={id}
+            editDisabled={paidThroughShopify || reviewRequestCompleted}
+          />
         </VStack>
       </GridItem>
     </Layout>

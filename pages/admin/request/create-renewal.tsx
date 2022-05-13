@@ -32,7 +32,10 @@ import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-inf
 import { Form, Formik } from 'formik';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { renewalRequestFormSchema } from '@lib/applications/validation';
-import { INITIAL_ADDITIONAL_QUESTIONS, INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
+import {
+  INITIAL_ADDITIONAL_QUESTIONS,
+  INITIAL_PAYMENT_DETAILS,
+} from '@tools/admin/requests/create-new';
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
 import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 
@@ -62,7 +65,7 @@ export default function CreateRenewal() {
   const [doctorInformation, setDoctorInformation] = useState<DoctorFormData>({
     firstName: '',
     lastName: '',
-    mspNumber: null,
+    mspNumber: '',
     phone: '',
     addressLine1: '',
     addressLine2: '',
@@ -169,6 +172,7 @@ export default function CreateRenewal() {
    */
   const handleSubmit = async (values: {
     permitHolder: PermitHolderFormData;
+    doctorInformation: DoctorFormData;
     additionalInformation: AdditionalInformationFormData;
     paymentInformation: PaymentInformationFormData;
   }) => {
@@ -282,6 +286,7 @@ export default function CreateRenewal() {
                 ...permitHolderInformation,
                 type: 'RENEWAL',
               },
+              doctorInformation,
               additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
               paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
@@ -324,10 +329,7 @@ export default function CreateRenewal() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Doctor's Information`}
                     </Text>
-                    <DoctorInformationForm
-                      doctorInformation={doctorInformation}
-                      onChange={setDoctorInformation}
-                    />
+                    <DoctorInformationForm />
                   </Box>
                 </GridItem>
                 {/* Additional Quesitons Form */}
