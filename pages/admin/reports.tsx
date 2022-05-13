@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/client'; // Session management
 import { Text, GridItem, Box, Flex, Input, Button, Spinner, useToast } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import { authorize } from '@tools/authorization'; // Page authorization
-import { DownloadIcon, SearchIcon } from '@chakra-ui/icons'; // Chakra UI icons
+import { DownloadIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import { useState } from 'react'; // React
 import { useLazyQuery } from '@apollo/client';
 import {
@@ -11,6 +11,8 @@ import {
   GenerateAccountantReportRequest,
   GenerateAccountantReportResponse,
 } from '@tools/admin/permit-holders/graphql/generate-report';
+import EmptyMessage from '@components/EmptyMessage';
+
 // Internal home page
 export default function Reports() {
   // const { dateRange, addDayToDateRange, dateRangeString } = useDateRangePicker();
@@ -138,13 +140,7 @@ export default function Reports() {
                 </Box>
               )
             ) : (
-              <Box padding="180px">
-                <SearchIcon w={20} h={20} color="#8C9196" />
-                <Text padding="12px 0 12px" textStyle="display-large">
-                  No Payments Found
-                </Text>
-                <Text fontSize="18px">Please select a date range</Text>
-              </Box>
+              <EmptyMessage title="No Payments Found" message="Please select a date range" />
             )}
           </Box>
         </Box>

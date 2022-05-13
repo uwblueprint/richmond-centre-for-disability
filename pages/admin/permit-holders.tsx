@@ -49,6 +49,7 @@ import SetPermitHolderToActiveModal from '@components/admin/permit-holders/table
 import GenerateReportModal from '@components/admin/permit-holders/reports/GenerateModal'; // Generate report modal
 import { getPermitExpiryStatus } from '@lib/utils/permit-expiry';
 import FilterMenuSelectedText from '@components/admin/permit-holders/table/FilterMenuSelectedText';
+import EmptyMessage from '@components/EmptyMessage';
 
 const PAGE_SIZE = 20;
 
@@ -427,23 +428,32 @@ const PermitHolders: NextPage = () => {
                 </InputGroup>
               </Box>
             </Flex>
-            <Table
-              columns={COLUMNS}
-              data={permitHolderData || []}
-              loading={loading}
-              onChangeSortOrder={sortOrder => {
-                setSortOrder(sortOrder);
-              }}
-              onRowClick={({ id }) => router.push(`/admin/permit-holder/${id}`)}
-            />
-            <Flex justifyContent="flex-end">
-              <Pagination
-                pageNumber={pageNumber}
-                pageSize={PAGE_SIZE}
-                totalCount={recordsCount}
-                onPageChange={setPageNumber}
+            {permitHolderData && permitHolderData.length > 0 ? (
+              <>
+                <Table
+                  columns={COLUMNS}
+                  data={permitHolderData || []}
+                  loading={loading}
+                  onChangeSortOrder={sortOrder => {
+                    setSortOrder(sortOrder);
+                  }}
+                  onRowClick={({ id }) => router.push(`/admin/permit-holder/${id}`)}
+                />
+                <Flex justifyContent="flex-end">
+                  <Pagination
+                    pageNumber={pageNumber}
+                    pageSize={PAGE_SIZE}
+                    totalCount={recordsCount}
+                    onPageChange={setPageNumber}
+                  />
+                </Flex>
+              </>
+            ) : (
+              <EmptyMessage
+                title="No Permit Holders Found"
+                message="Try changing the filter or search term"
               />
-            </Flex>
+            )}
           </Box>
         </Box>
       </GridItem>
