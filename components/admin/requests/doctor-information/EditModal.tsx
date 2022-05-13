@@ -19,7 +19,7 @@ import { editPhysicianInformationSchema } from '@lib/physicians/validation';
 type EditDoctorInformationModalProps = {
   children: ReactNode;
   readonly doctorInformation: DoctorFormData;
-  readonly onSave: (applicationData: any) => void;
+  readonly onSave: (applicationData: DoctorFormData) => void;
 };
 
 export default function EditDoctorInformationModal({
