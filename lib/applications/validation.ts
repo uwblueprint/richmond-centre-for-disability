@@ -53,6 +53,13 @@ export const additionalQuestionsSchema = object({
 });
 
 /**
+ * Validation schema for edit additional questions form
+ */
+export const editAdditionalQuestionsSchema = object({
+  additionalInformation: additionalQuestionsSchema,
+});
+
+/**
  * Payment information form validation schema
  */
 export const paymentInformationSchema = object({
