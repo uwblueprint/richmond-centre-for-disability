@@ -53,7 +53,6 @@ import {
 } from '@tools/admin/requests/create-new';
 import { useRouter } from 'next/router';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
-import { uploadToS3 } from '@lib/utils/upload-to-s3';
 import { Form, Formik } from 'formik';
 import { createNewRequestFormSchema } from '@lib/applications/validation';
 import { RequiresWiderParkingSpaceReason } from '@prisma/client';
