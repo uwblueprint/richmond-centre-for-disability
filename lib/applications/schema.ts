@@ -37,6 +37,7 @@ export default gql`
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
+    shopifyOrderNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -62,6 +63,7 @@ export default gql`
 
     processing: ApplicationProcessing!
     applicant: Applicant
+    permit: Permit
 
     createdAt: Date!
   }
@@ -124,6 +126,7 @@ export default gql`
     guardianCountry: String
     guardianPostalCode: String
     poaFormS3ObjectKey: String
+    poaFormS3ObjectUrl: String
 
     # Additional information
     usesAccessibleConvertedVan: Boolean!
@@ -139,6 +142,7 @@ export default gql`
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
+    shopifyOrderNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -164,6 +168,7 @@ export default gql`
 
     processing: ApplicationProcessing!
     applicant: Applicant
+    permit: Permit
 
     createdAt: Date!
   }
@@ -218,6 +223,7 @@ export default gql`
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
+    shopifyOrderNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -243,6 +249,7 @@ export default gql`
 
     processing: ApplicationProcessing!
     applicant: Applicant!
+    permit: Permit
 
     createdAt: Date!
   }
@@ -278,6 +285,7 @@ export default gql`
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
+    shopifyOrderNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -312,6 +320,7 @@ export default gql`
 
     processing: ApplicationProcessing!
     applicant: Applicant!
+    permit: Permit
 
     createdAt: Date!
   }
@@ -446,6 +455,7 @@ export default gql`
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
+    shopifyOrderNumber: String
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -657,6 +667,28 @@ export default gql`
   }
 
   type UpdateApplicationDoctorInformationResult {
+    ok: Boolean!
+  }
+
+  # Update guardian information section of application
+  input UpdateApplicationGuardianInformationInput {
+    # Application ID
+    id: Int!
+
+    omitGuardianPoa: Boolean!
+    firstName: String!
+    middleName: String
+    lastName: String!
+    phone: String!
+    relationship: String!
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    postalCode: String!
+    poaFormS3ObjectKey: String
+  }
+
+  type UpdateApplicationGuardianInformationResult {
     ok: Boolean!
   }
 

@@ -43,6 +43,7 @@ import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatDateVerbose, formatFullName } from '@lib/utils/format'; // Verbose date formatter util
 import GenerateReportModal from '@components/admin/requests/reports/GenerateModal'; // Generate report modal
+import EmptyMessage from '@components/EmptyMessage';
 
 // Placeholder columns
 const COLUMNS: Column<ApplicationRow>[] = [
@@ -153,52 +154,55 @@ const Requests: NextPage = () => {
   const [recordsCount, setRecordsCount] = useState(0);
 
   // Make query to applications resolver
-  useQuery<GetApplicationsResponse, GetApplicationsRequest>(GET_APPLICATIONS_QUERY, {
-    variables: {
-      filter: {
-        order: sortOrder,
-        permitType: permitTypeFilter || null,
-        requestType: requestTypeFilter || null,
-        status: statusFilter || null,
-        search: debouncedSearchFilter,
-        offset: pageNumber * PAGE_SIZE,
-        limit: PAGE_SIZE,
+  const { refetch, loading } = useQuery<GetApplicationsResponse, GetApplicationsRequest>(
+    GET_APPLICATIONS_QUERY,
+    {
+      variables: {
+        filter: {
+          order: sortOrder,
+          permitType: permitTypeFilter || null,
+          requestType: requestTypeFilter || null,
+          status: statusFilter || null,
+          search: debouncedSearchFilter,
+          offset: pageNumber * PAGE_SIZE,
+          limit: PAGE_SIZE,
+        },
       },
-    },
-    notifyOnNetworkStatusChange: true,
-    onCompleted: ({ applications: { result, totalCount } }) => {
-      setRequestsData(
-        result.map(
-          ({
-            id,
-            firstName,
-            middleName,
-            lastName,
-            createdAt,
-            applicant,
-            processing: { status },
-            ...application
-          }) => ({
-            id,
-            name: {
-              id: applicant?.id || null,
+      onCompleted: ({ applications: { result, totalCount } }) => {
+        setRequestsData(
+          result.map(
+            ({
+              id,
               firstName,
               middleName,
               lastName,
-            },
-            dateReceived: createdAt,
-            status,
-            ...application,
-          })
-        )
-      );
-      setRecordsCount(totalCount);
-    },
-  });
+              createdAt,
+              applicant,
+              processing: { status },
+              ...application
+            }) => ({
+              id,
+              name: {
+                id: applicant?.id || null,
+                firstName,
+                middleName,
+                lastName,
+              },
+              dateReceived: createdAt,
+              status,
+              ...application,
+            })
+          )
+        );
+        setRecordsCount(totalCount);
+      },
+    }
+  );
 
   // Set page number to 0 after every filter or sort change
   useEffect(() => {
     setPageNumber(0);
+    refetch();
   }, [statusFilter, permitTypeFilter, requestTypeFilter, debouncedSearchFilter, sortOrder]);
 
   return (
@@ -377,20 +381,30 @@ const Requests: NextPage = () => {
                 </InputGroup>
               </Box>
             </Flex>
-            <Table
-              columns={COLUMNS}
-              data={requestsData}
-              onChangeSortOrder={setSortOrder}
-              onRowClick={({ id }) => router.push(`/admin/request/${id}`)}
-            />
-            <Flex justifyContent="flex-end">
-              <Pagination
-                pageNumber={pageNumber}
-                pageSize={PAGE_SIZE}
-                totalCount={recordsCount}
-                onPageChange={setPageNumber}
+            {requestsData.length > 0 ? (
+              <>
+                <Table
+                  columns={COLUMNS}
+                  data={requestsData}
+                  loading={loading}
+                  onChangeSortOrder={setSortOrder}
+                  onRowClick={({ id }) => router.push(`/admin/request/${id}`)}
+                />
+                <Flex justifyContent="flex-end">
+                  <Pagination
+                    pageNumber={pageNumber}
+                    pageSize={PAGE_SIZE}
+                    totalCount={recordsCount}
+                    onPageChange={setPageNumber}
+                  />
+                </Flex>
+              </>
+            ) : (
+              <EmptyMessage
+                title="No Requests Found"
+                message="Try changing the filter or search term"
               />
-            </Flex>
+            )}
           </Box>
         </Box>
       </GridItem>

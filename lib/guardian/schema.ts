@@ -20,5 +20,9 @@ export default gql`
     province: Province!
     country: String!
     postalCode: String!
+
+    # POA form
+    poaFormS3ObjectKey: String
+    poaFormS3ObjectUrl: String
   }
 `;

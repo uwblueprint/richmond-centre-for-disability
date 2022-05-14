@@ -49,6 +49,7 @@ import SetPermitHolderToActiveModal from '@components/admin/permit-holders/table
 import GenerateReportModal from '@components/admin/permit-holders/reports/GenerateModal'; // Generate report modal
 import { getPermitExpiryStatus } from '@lib/utils/permit-expiry';
 import FilterMenuSelectedText from '@components/admin/permit-holders/table/FilterMenuSelectedText';
+import EmptyMessage from '@components/EmptyMessage';
 
 const PAGE_SIZE = 20;
 
@@ -74,59 +75,66 @@ const PermitHolders: NextPage = () => {
   // This will avoid firing a query for each key the user presses
   const debouncedSearchFilter = useDebounce<string>(searchFilter, 500);
 
-  // Set page number to 0 after every filter or sort change
-  useEffect(() => {
-    setPageNumber(0);
-  }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, dateRange]);
-
   // GQL Query
-  useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(GET_PERMIT_HOLDERS_QUERY, {
-    variables: {
-      filter: {
-        userStatus: userStatusFilter,
-        permitStatus: permitStatusFilter,
-        expiryDateRangeFrom: dateRange.from?.getTime(),
-        expiryDateRangeTo: dateRange.to?.getTime(),
-        search: debouncedSearchFilter,
-        offset: pageNumber * PAGE_SIZE,
-        limit: PAGE_SIZE,
-        order: sortOrder,
+  const { refetch, loading } = useQuery<GetPermitHoldersResponse, GetPermitHoldersRequest>(
+    GET_PERMIT_HOLDERS_QUERY,
+    {
+      variables: {
+        filter: {
+          userStatus: userStatusFilter,
+          permitStatus: permitStatusFilter,
+          expiryDateRangeFrom: dateRange.from?.getTime(),
+          expiryDateRangeTo: dateRange.to?.getTime(),
+          search: debouncedSearchFilter,
+          offset: pageNumber * PAGE_SIZE,
+          limit: PAGE_SIZE,
+          order: sortOrder,
+        },
       },
-    },
-    onCompleted: ({ applicants: { result, totalCount } }) => {
-      setPermitHolderData(
-        result.map(
-          ({
-            id,
-            firstName,
-            middleName,
-            lastName,
-            addressLine1,
-            addressLine2,
-            city,
-            postalCode,
-            ...applicant
-          }) => ({
-            id,
-            name: {
+      // ! Temporary fix to force permit holder row updates when navigating (skip cache)
+      fetchPolicy: 'network-only',
+      notifyOnNetworkStatusChange: true,
+      onCompleted: ({ applicants: { result, totalCount } }) => {
+        setPermitHolderData(
+          result.map(
+            ({
               id,
               firstName,
-              lastName,
               middleName,
-            },
-            homeAddress: {
+              lastName,
               addressLine1,
               addressLine2,
               city,
               postalCode,
-            },
-            ...applicant,
-          })
-        )
-      );
-      setRecordsCount(totalCount);
-    },
-  });
+              ...applicant
+            }) => ({
+              id,
+              name: {
+                id,
+                firstName,
+                lastName,
+                middleName,
+              },
+              homeAddress: {
+                addressLine1,
+                addressLine2,
+                city,
+                postalCode,
+              },
+              ...applicant,
+            })
+          )
+        );
+        setRecordsCount(totalCount);
+      },
+    }
+  );
+
+  // Set page number to 0 after every filter or sort change
+  useEffect(() => {
+    setPageNumber(0);
+    refetch();
+  }, [permitStatusFilter, userStatusFilter, debouncedSearchFilter, dateRange]);
 
   // Set Permit Holder Inactive/Active modal state
   const {
@@ -420,34 +428,48 @@ const PermitHolders: NextPage = () => {
                 </InputGroup>
               </Box>
             </Flex>
-            <Table
-              columns={COLUMNS}
-              data={permitHolderData || []}
-              onChangeSortOrder={sortOrder => {
-                setSortOrder(sortOrder);
-              }}
-              onRowClick={({ id }) => router.push(`/admin/permit-holder/${id}`)}
-            />
-            <Flex justifyContent="flex-end">
-              <Pagination
-                pageNumber={pageNumber}
-                pageSize={PAGE_SIZE}
-                totalCount={recordsCount}
-                onPageChange={setPageNumber}
+            {permitHolderData && permitHolderData.length > 0 ? (
+              <>
+                <Table
+                  columns={COLUMNS}
+                  data={permitHolderData || []}
+                  loading={loading}
+                  onChangeSortOrder={sortOrder => {
+                    setSortOrder(sortOrder);
+                  }}
+                  onRowClick={({ id }) => router.push(`/admin/permit-holder/${id}`)}
+                />
+                <Flex justifyContent="flex-end">
+                  <Pagination
+                    pageNumber={pageNumber}
+                    pageSize={PAGE_SIZE}
+                    totalCount={recordsCount}
+                    onPageChange={setPageNumber}
+                  />
+                </Flex>
+              </>
+            ) : (
+              <EmptyMessage
+                title="No Permit Holders Found"
+                message="Try changing the filter or search term"
               />
-            </Flex>
+            )}
           </Box>
         </Box>
       </GridItem>
       {permitHolderToUpdateStatus?.status === 'ACTIVE' && (
         <SetPermitHolderToInactiveModal
           isOpen={isSetPermitHolderStatusModalOpen}
+          applicantId={permitHolderToUpdateStatus.id}
+          refetch={refetch}
           onClose={onCloseSetPermitHolderStatusModal}
         />
       )}
       {permitHolderToUpdateStatus?.status === 'INACTIVE' && (
         <SetPermitHolderToActiveModal
           isOpen={isSetPermitHolderStatusModalOpen}
+          applicantId={permitHolderToUpdateStatus.id}
+          refetch={refetch}
           onClose={onCloseSetPermitHolderStatusModal}
         />
       )}

@@ -11,6 +11,7 @@ import PersonalInformationCard from '@components/admin/requests/permit-holder-in
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
 import AdditionalInformationCard from '@components/admin/requests/additional-questions/Card';
 import GuardianInformationCard from '@components/admin/requests/guardian-information/Card';
+import UndoReviewRequestModal from '@components/admin/requests/processing/UndoReviewRequestModal';
 
 import {
   Modal,
@@ -32,6 +33,7 @@ type Props = {
   readonly applicationId: number;
   readonly onConfirmed: () => void;
   readonly onUndo: () => void;
+  readonly loading: boolean;
 };
 
 export default function ReviewInformationStep({
@@ -40,6 +42,7 @@ export default function ReviewInformationStep({
   applicationId,
   onConfirmed,
   onUndo,
+  loading,
 }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -96,11 +99,22 @@ export default function ReviewInformationStep({
   return (
     <>
       {isCompleted ? (
-        <Button color={'black'} variant="ghost" textDecoration="underline black" onClick={onUndo}>
-          <Text textStyle="caption" color="black">
-            Undo Review
-          </Text>
-        </Button>
+        <UndoReviewRequestModal onUndoConfirmed={onUndo}>
+          <Button
+            color={'black'}
+            variant="ghost"
+            textDecoration="underline black"
+            isDisabled={loading}
+            isLoading={loading}
+            loadingText="Undo Review"
+            fontWeight="normal"
+            fontSize="14px"
+          >
+            <Text textStyle="caption" color="black">
+              Undo Review
+            </Text>
+          </Button>
+        </UndoReviewRequestModal>
       ) : (
         <Button
           marginLeft="auto"
@@ -108,8 +122,12 @@ export default function ReviewInformationStep({
           bg="background.gray"
           _hover={isDisabled ? undefined : { bg: 'background.grayHover' }}
           color="black"
-          disabled={isDisabled}
+          disabled={isDisabled || loading}
           onClick={onOpen}
+          isLoading={loading}
+          loadingText="Review information"
+          fontWeight="normal"
+          fontSize="14px"
         >
           <Text textStyle="xsmall-medium">Review information</Text>
         </Button>

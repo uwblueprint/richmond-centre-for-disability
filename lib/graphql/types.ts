@@ -40,9 +40,11 @@ export type Applicant = {
   country: Scalars['String'];
   postalCode: Scalars['String'];
   status: ApplicantStatus;
+  inactiveReason: Maybe<Scalars['String']>;
   mostRecentPermit: Maybe<Permit>;
   activePermit: Maybe<Permit>;
   permits: Array<Permit>;
+  mostRecentApplication: Maybe<Application>;
   completedApplications: Array<Application>;
   guardian: Maybe<Guardian>;
   medicalInformation: MedicalInformation;
@@ -90,6 +92,7 @@ export type Application = {
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
+  shopifyOrderNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];
@@ -109,6 +112,7 @@ export type Application = {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Maybe<Applicant>;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
@@ -117,23 +121,24 @@ export type ApplicationProcessing = {
   status: ApplicationStatus;
   rejectedReason: Maybe<Scalars['String']>;
   appNumber: Maybe<Scalars['Int']>;
-  appNumberEmployeeId: Maybe<Scalars['Int']>;
+  appNumberEmployee: Maybe<Employee>;
   appNumberUpdatedAt: Maybe<Scalars['Date']>;
   appHolepunched: Scalars['Boolean'];
-  appHolepunchedEmployeeId: Maybe<Scalars['Int']>;
+  appHolepunchedEmployee: Maybe<Employee>;
   appHolepunchedUpdatedAt: Maybe<Scalars['Date']>;
   walletCardCreated: Scalars['Boolean'];
-  walletCardCreatedEmployeeId: Maybe<Scalars['Int']>;
+  walletCardCreatedEmployee: Maybe<Employee>;
   walletCardCreatedUpdatedAt: Maybe<Scalars['Date']>;
   reviewRequestCompleted: Scalars['Boolean'];
-  reviewRequestCompletedEmployeeId: Maybe<Scalars['Int']>;
+  reviewRequestCompletedEmployee: Maybe<Employee>;
   reviewRequestCompletedUpdatedAt: Maybe<Scalars['Date']>;
-  invoiceNumber: Maybe<Scalars['Int']>;
+  invoice: Maybe<Invoice>;
   documentsUrl: Maybe<Scalars['String']>;
-  documentsUrlEmployeeId: Maybe<Scalars['Int']>;
+  documentsS3ObjectKey: Maybe<Scalars['String']>;
+  documentsUrlEmployee: Maybe<Employee>;
   documentsUrlUpdatedAt: Maybe<Scalars['Date']>;
   appMailed: Scalars['Boolean'];
-  appMailedEmployeeId: Maybe<Scalars['Int']>;
+  appMailedEmployee: Maybe<Employee>;
   appMailedUpdatedAt: Maybe<Scalars['Date']>;
 };
 
@@ -340,6 +345,7 @@ export type CreateRenewalApplicationInput = {
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
+  shopifyOrderNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;
@@ -454,6 +460,7 @@ export type GenerateAccountantReportInput = {
 export type GenerateAccountantReportResult = {
   __typename?: 'GenerateAccountantReportResult';
   ok: Scalars['Boolean'];
+  url: Maybe<Scalars['String']>;
 };
 
 export type GenerateApplicationsReportInput = {
@@ -465,6 +472,7 @@ export type GenerateApplicationsReportInput = {
 export type GenerateApplicationsReportResult = {
   __typename?: 'GenerateApplicationsReportResult';
   ok: Scalars['Boolean'];
+  url: Maybe<Scalars['String']>;
 };
 
 export type GeneratePermitHoldersReportInput = {
@@ -476,6 +484,7 @@ export type GeneratePermitHoldersReportInput = {
 export type GeneratePermitHoldersReportResult = {
   __typename?: 'GeneratePermitHoldersReportResult';
   ok: Scalars['Boolean'];
+  url: Maybe<Scalars['String']>;
 };
 
 export type Guardian = {
@@ -491,12 +500,15 @@ export type Guardian = {
   province: Province;
   country: Scalars['String'];
   postalCode: Scalars['String'];
+  poaFormS3ObjectKey: Maybe<Scalars['String']>;
+  poaFormS3ObjectUrl: Maybe<Scalars['String']>;
 };
 
 export type Invoice = {
   __typename?: 'Invoice';
   invoiceNumber: Scalars['Int'];
   s3ObjectKey: Maybe<Scalars['String']>;
+  s3ObjectUrl: Maybe<Scalars['String']>;
   employee: Employee;
   createdAt: Scalars['Date'];
   updatedAt: Scalars['Date'];
@@ -528,6 +540,7 @@ export type Mutation = {
   setApplicantAsActive: Maybe<SetApplicantAsActiveResult>;
   setApplicantAsInactive: Maybe<SetApplicantAsInactiveResult>;
   verifyIdentity: VerifyIdentityResult;
+  updateApplicantNotes: UpdateApplicantNotesResult;
   createNewApplication: Maybe<CreateNewApplicationResult>;
   createRenewalApplication: Maybe<CreateRenewalApplicationResult>;
   createExternalRenewalApplication: CreateExternalRenewalApplicationResult;
@@ -535,6 +548,7 @@ export type Mutation = {
   updateApplicationGeneralInformation: Maybe<UpdateApplicationGeneralInformationResult>;
   updateNewApplicationGeneralInformation: Maybe<UpdateApplicationGeneralInformationResult>;
   updateApplicationDoctorInformation: Maybe<UpdateApplicationDoctorInformationResult>;
+  updateApplicationGuardianInformation: Maybe<UpdateApplicationGuardianInformationResult>;
   updateApplicationAdditionalInformation: Maybe<UpdateApplicationAdditionalInformationResult>;
   updateApplicationPaymentInformation: Maybe<UpdateApplicationPaymentInformationResult>;
   updateApplicationReasonForReplacement: Maybe<UpdateApplicationReasonForReplacementResult>;
@@ -585,6 +599,11 @@ export type MutationVerifyIdentityArgs = {
 };
 
 
+export type MutationUpdateApplicantNotesArgs = {
+  input: UpdateApplicantNotesInput;
+};
+
+
 export type MutationCreateNewApplicationArgs = {
   input: CreateNewApplicationInput;
 };
@@ -617,6 +636,11 @@ export type MutationUpdateNewApplicationGeneralInformationArgs = {
 
 export type MutationUpdateApplicationDoctorInformationArgs = {
   input: UpdateApplicationDoctorInformationInput;
+};
+
+
+export type MutationUpdateApplicationGuardianInformationArgs = {
+  input: UpdateApplicationGuardianInformationInput;
 };
 
 
@@ -751,6 +775,7 @@ export type NewApplication = Application & {
   guardianCountry: Maybe<Scalars['String']>;
   guardianPostalCode: Maybe<Scalars['String']>;
   poaFormS3ObjectKey: Maybe<Scalars['String']>;
+  poaFormS3ObjectUrl: Maybe<Scalars['String']>;
   usesAccessibleConvertedVan: Scalars['Boolean'];
   accessibleConvertedVanLoadingMethod: Maybe<AccessibleConvertedVanLoadingMethod>;
   requiresWiderParkingSpace: Scalars['Boolean'];
@@ -762,6 +787,7 @@ export type NewApplication = Application & {
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
+  shopifyOrderNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];
@@ -781,6 +807,7 @@ export type NewApplication = Application & {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Maybe<Applicant>;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
@@ -975,6 +1002,7 @@ export type RenewalApplication = Application & {
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
+  shopifyOrderNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];
@@ -994,6 +1022,7 @@ export type RenewalApplication = Application & {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Applicant;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
@@ -1019,6 +1048,7 @@ export type ReplacementApplication = Application & {
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
+  shopifyOrderNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];
@@ -1045,6 +1075,7 @@ export type ReplacementApplication = Application & {
   type: ApplicationType;
   processing: ApplicationProcessing;
   applicant: Applicant;
+  permit: Maybe<Permit>;
   createdAt: Scalars['Date'];
 };
 
@@ -1130,10 +1161,21 @@ export type UpdateApplicantGuardianInformationInput = {
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
   postalCode: Scalars['String'];
+  poaFormS3ObjectKey: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicantGuardianInformationResult = {
   __typename?: 'UpdateApplicantGuardianInformationResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicantNotesInput = {
+  id: Scalars['Int'];
+  notes: Scalars['String'];
+};
+
+export type UpdateApplicantNotesResult = {
+  __typename?: 'UpdateApplicantNotesResult';
   ok: Scalars['Boolean'];
 };
 
@@ -1184,6 +1226,26 @@ export type UpdateApplicationGeneralInformationInput = {
 
 export type UpdateApplicationGeneralInformationResult = {
   __typename?: 'UpdateApplicationGeneralInformationResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicationGuardianInformationInput = {
+  id: Scalars['Int'];
+  omitGuardianPoa: Scalars['Boolean'];
+  firstName: Scalars['String'];
+  middleName: Maybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  phone: Scalars['String'];
+  relationship: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  postalCode: Scalars['String'];
+  poaFormS3ObjectKey: Maybe<Scalars['String']>;
+};
+
+export type UpdateApplicationGuardianInformationResult = {
+  __typename?: 'UpdateApplicationGuardianInformationResult';
   ok: Scalars['Boolean'];
 };
 
@@ -1290,7 +1352,7 @@ export type UpdateApplicationProcessingReviewRequestInformationResult = {
 
 export type UpdateApplicationProcessingUploadDocumentsInput = {
   applicationId: Scalars['Int'];
-  documentsUrl: Maybe<Scalars['String']>;
+  documentsS3ObjectKey: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingUploadDocumentsResult = {

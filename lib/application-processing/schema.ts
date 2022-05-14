@@ -10,23 +10,24 @@ export default gql`
     status: ApplicationStatus!
     rejectedReason: String
     appNumber: Int
-    appNumberEmployeeId: Int
+    appNumberEmployee: Employee
     appNumberUpdatedAt: Date
     appHolepunched: Boolean!
-    appHolepunchedEmployeeId: Int
+    appHolepunchedEmployee: Employee
     appHolepunchedUpdatedAt: Date
     walletCardCreated: Boolean!
-    walletCardCreatedEmployeeId: Int
+    walletCardCreatedEmployee: Employee
     walletCardCreatedUpdatedAt: Date
     reviewRequestCompleted: Boolean!
-    reviewRequestCompletedEmployeeId: Int
+    reviewRequestCompletedEmployee: Employee
     reviewRequestCompletedUpdatedAt: Date
-    invoiceNumber: Int
+    invoice: Invoice
     documentsUrl: String
-    documentsUrlEmployeeId: Int
+    documentsS3ObjectKey: String
+    documentsUrlEmployee: Employee
     documentsUrlUpdatedAt: Date
     appMailed: Boolean!
-    appMailedEmployeeId: Int
+    appMailedEmployee: Employee
     appMailedUpdatedAt: Date
   }
 
@@ -120,7 +121,7 @@ export default gql`
   input UpdateApplicationProcessingUploadDocumentsInput {
     applicationId: Int!
 
-    documentsUrl: String # TODO: Investigate FE vs BE file upload to AWS
+    documentsS3ObjectKey: String # TODO: Investigate FE vs BE file upload to AWS
   }
 
   type UpdateApplicationProcessingUploadDocumentsResult {

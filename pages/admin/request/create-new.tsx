@@ -57,6 +57,7 @@ import { uploadToS3 } from '@lib/utils/upload-to-s3';
 import { Form, Formik } from 'formik';
 import { createNewRequestFormSchema } from '@lib/applications/validation';
 import { RequiresWiderParkingSpaceReason } from '@prisma/client';
+import { clientUploadToS3 } from '@lib/utils/s3-utils';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -167,7 +168,9 @@ export default function CreateNew() {
             addressLine2: guardian.addressLine2,
             city: guardian.city,
             postalCode: guardian.postalCode,
+            // TODO: Replace with real values
             poaFormS3ObjectKey: '',
+            poaFormS3ObjectUrl: '',
           });
         } else {
           setGuardianInformation({
@@ -182,6 +185,7 @@ export default function CreateNew() {
             city: '',
             postalCode: '',
             poaFormS3ObjectKey: '',
+            poaFormS3ObjectUrl: '',
           });
         }
       }
@@ -246,7 +250,7 @@ export default function CreateNew() {
     let poaFormS3ObjectKey = '';
     if (guardianPOAFile) {
       try {
-        const { key } = await uploadToS3(guardianPOAFile);
+        const { key } = await clientUploadToS3(guardianPOAFile, 'rcd/guardian-forms');
         poaFormS3ObjectKey = key;
       } catch (err) {
         toast({

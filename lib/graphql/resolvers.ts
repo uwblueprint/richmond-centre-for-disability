@@ -15,6 +15,7 @@ import {
   updateApplicantGuardianInformation,
   setApplicantAsActive,
   setApplicantAsInactive,
+  updateApplicantNotes,
   verifyIdentity,
 } from '@lib/applicants/resolvers'; // Applicant resolvers
 import {
@@ -31,6 +32,7 @@ import {
   updateApplicationReasonForReplacement,
   updateApplicationPhysicianAssessment,
   updateNewApplicationGeneralInformation,
+  updateApplicationGuardianInformation,
 } from '@lib/applications/resolvers'; // Application resolvers
 import {
   approveApplication,
@@ -54,11 +56,14 @@ import {
   applicantCompletedApplicationsResolver,
   applicantGuardianResolver,
   applicantMedicalInformationResolver,
+  applicantMostRecentApplicationResolver,
 } from '@lib/applicants/field-resolvers'; // Applicant field resolvers
 import {
   __resolveApplicationType,
   applicationApplicantResolver,
   applicationProcessingResolver,
+  applicationPoaFormS3ObjectUrlResolver,
+  applicationPermitResolver,
 } from '@lib/applications/field-resolvers'; // Application field resolvers
 import { medicalInformationPhysicianResolver } from '@lib/medical-information/field-resolvers';
 import {
@@ -68,6 +73,16 @@ import {
 } from '@lib/reports/resolvers';
 import { permitApplicationResolver } from '@lib/permits/field-resolvers';
 import { invoiceEmployeeResolver } from '@lib/invoices/field-resolvers';
+import {
+  applicationProcessingAppHolepunchedEmployeeResolver,
+  applicationProcessingAppMailedEmployeeResolver,
+  applicationProcessingAppNumberEmployeeResolver,
+  applicationProcessingDocumentsUrlEmployeeResolver,
+  applicationProcessingInvoiceResolver,
+  applicationProcessingReviewRequestCompletedEmployeeResolver,
+  applicationProcessingWalletCardCreatedEmployeeResolver,
+} from '@lib/application-processing/field-resolvers';
+import { guardianPoaFormS3ObjectUrlResolver } from '@lib/guardian/field-resolvers';
 
 /**
  * Resolver return type - accounts for extra fields
@@ -131,6 +146,7 @@ const resolvers = {
     // Applicants
     updateApplicantGeneralInformation: authorize(updateApplicantGeneralInformation, ['SECRETARY']),
     updateApplicantDoctorInformation: authorize(updateApplicantDoctorInformation, ['SECRETARY']),
+    updateApplicantNotes: authorize(updateApplicantNotes, ['SECRETARY']),
     updateApplicantGuardianInformation: authorize(updateApplicantGuardianInformation, [
       'SECRETARY',
     ]),
@@ -150,6 +166,9 @@ const resolvers = {
       'SECRETARY',
     ]),
     updateApplicationDoctorInformation: authorize(updateApplicationDoctorInformation, [
+      'SECRETARY',
+    ]),
+    updateApplicationGuardianInformation: authorize(updateApplicationGuardianInformation, [
       'SECRETARY',
     ]),
     updateApplicationAdditionalInformation: authorize(updateApplicationAdditionalInformation, [
@@ -207,6 +226,7 @@ const resolvers = {
     mostRecentPermit: applicantMostRecentPermitResolver,
     activePermit: applicantActivePermitResolver,
     permits: applicantPermitsResolver,
+    mostRecentApplication: applicantMostRecentApplicationResolver,
     completedApplications: applicantCompletedApplicationsResolver,
     guardian: applicantGuardianResolver,
     medicalInformation: applicantMedicalInformationResolver,
@@ -215,11 +235,13 @@ const resolvers = {
     __resolveType: __resolveApplicationType,
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
+    permit: applicationPermitResolver,
   },
   NewApplication: {
     __resolveType: __resolveApplicationType,
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
+    poaFormS3ObjectUrl: applicationPoaFormS3ObjectUrlResolver,
   },
   RenewalApplication: {
     __resolveType: __resolveApplicationType,
@@ -231,6 +253,9 @@ const resolvers = {
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
   },
+  Guardian: {
+    poaFormS3ObjectUrl: guardianPoaFormS3ObjectUrlResolver,
+  },
   MedicalInformation: {
     physician: medicalInformationPhysicianResolver,
   },
@@ -239,6 +264,15 @@ const resolvers = {
   },
   Invoice: {
     employee: invoiceEmployeeResolver,
+  },
+  ApplicationProcessing: {
+    invoice: applicationProcessingInvoiceResolver,
+    appNumberEmployee: applicationProcessingAppNumberEmployeeResolver,
+    appHolepunchedEmployee: applicationProcessingAppHolepunchedEmployeeResolver,
+    walletCardCreatedEmployee: applicationProcessingWalletCardCreatedEmployeeResolver,
+    reviewRequestCompletedEmployee: applicationProcessingReviewRequestCompletedEmployeeResolver,
+    documentsUrlEmployee: applicationProcessingDocumentsUrlEmployeeResolver,
+    appMailedEmployee: applicationProcessingAppMailedEmployeeResolver,
   },
 };
 

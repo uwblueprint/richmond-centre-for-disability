@@ -1,4 +1,4 @@
-import { useRef } from 'react'; // React
+import { SyntheticEvent, useRef } from 'react'; // React
 import {
   AlertDialog,
   AlertDialogOverlay,
@@ -7,12 +7,21 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   Button,
+  useToast,
 } from '@chakra-ui/react'; // Chakra UI
+import { useMutation } from '@apollo/client';
+import {
+  SetApplicantAsActiveRequest,
+  SetApplicantAsActiveResponse,
+  SET_APPLICANT_AS_ACTIVE,
+} from '@tools/admin/permit-holders/permit-holders-table';
 
 // Props
 type Props = {
+  readonly applicantId: number;
   readonly isOpen: boolean;
   readonly onClose: () => void;
+  readonly refetch: () => void;
 };
 
 /**
@@ -22,7 +31,38 @@ export default function SetPermitHolderToActiveModal(props: Props) {
   // Ref to least destructive element (Cancel button), required for a11y
   const cancelButtonRef = useRef(null);
 
-  const { isOpen, onClose } = props;
+  const { applicantId, isOpen, onClose, refetch } = props;
+  const toast = useToast();
+
+  const [setApplicantAsActive] = useMutation<
+    SetApplicantAsActiveResponse,
+    SetApplicantAsActiveRequest
+  >(SET_APPLICANT_AS_ACTIVE, {
+    onCompleted: data => {
+      if (data.setApplicantAsActive.ok) {
+        toast({
+          status: 'success',
+          description: `Applicant status has been set to active.`,
+        });
+      }
+    },
+    onError: error => {
+      toast({
+        status: 'error',
+        description: error.message,
+      });
+    },
+  });
+
+  // Sets permit holder status to active and closes modal
+  const handleSubmit = async (event: SyntheticEvent) => {
+    event.preventDefault();
+    await setApplicantAsActive({
+      variables: { input: { id: applicantId } },
+    });
+    refetch();
+    onClose();
+  };
 
   return (
     <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={cancelButtonRef} isCentered>
@@ -47,7 +87,7 @@ export default function SetPermitHolderToActiveModal(props: Props) {
           >
             {'Cancel'}
           </Button>
-          <Button onClick={onClose}>{'Set as Active'}</Button>
+          <Button onClick={handleSubmit}>{'Set as Active'}</Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -75,6 +75,10 @@ const applications: Array<UpsertApplication> = [
     },
     renewalApplication: undefined,
     replacementApplication: undefined,
+    paidThroughShopify: false,
+    shopifyConfirmationNumber: null,
+    shopifyPaymentStatus: null,
+    shopifyOrderNumber: null,
   },
   {
     // Renewal application
@@ -128,6 +132,10 @@ const applications: Array<UpsertApplication> = [
       otherRequiresWiderParkingSpaceReason: null,
     },
     replacementApplication: undefined,
+    paidThroughShopify: false,
+    shopifyConfirmationNumber: null,
+    shopifyPaymentStatus: null,
+    shopifyOrderNumber: null,
   },
   {
     // Replacement application
@@ -175,6 +183,10 @@ const applications: Array<UpsertApplication> = [
       stolenPoliceOfficerName: null,
       eventDescription: 'I left my APP on the table and when I came back it was gone',
     },
+    paidThroughShopify: false,
+    shopifyConfirmationNumber: null,
+    shopifyPaymentStatus: null,
+    shopifyOrderNumber: null,
   },
   {
     // New application, temporary
@@ -245,9 +257,13 @@ const applications: Array<UpsertApplication> = [
     },
     renewalApplication: undefined,
     replacementApplication: undefined,
+    paidThroughShopify: false,
+    shopifyConfirmationNumber: null,
+    shopifyPaymentStatus: null,
+    shopifyOrderNumber: null,
   },
   {
-    // Renewal application
+    // Renewal application, paid through shopify
     type: 'RENEWAL',
     id: 5,
     applicantId: 4,
@@ -262,9 +278,9 @@ const applications: Array<UpsertApplication> = [
     city: 'Surrey',
     postalCode: 'A1B2C3',
     permitType: 'PERMANENT',
-    paymentMethod: 'CHEQUE',
+    paymentMethod: 'SHOPIFY',
     processingFee: new Prisma.Decimal(26),
-    donationAmount: new Prisma.Decimal(10),
+    donationAmount: new Prisma.Decimal(20),
     shippingAddressSameAsHomeAddress: true,
     shippingFullName: null,
     shippingAddressLine1: null,
@@ -298,6 +314,10 @@ const applications: Array<UpsertApplication> = [
       otherRequiresWiderParkingSpaceReason: null,
     },
     replacementApplication: undefined,
+    paidThroughShopify: true,
+    shopifyPaymentStatus: 'RECEIVED',
+    shopifyConfirmationNumber: '4671298961430',
+    shopifyOrderNumber: '1085',
   },
 ];
 

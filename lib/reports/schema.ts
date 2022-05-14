@@ -15,6 +15,7 @@ export default gql`
   # TODO: Return link to AWS S3 file
   type GenerateApplicationsReportResult {
     ok: Boolean!
+    url: String
   }
 
   # Selectable columns in requests report
@@ -37,9 +38,9 @@ export default gql`
     columns: [PermitHoldersReportColumn!]!
   }
 
-  # TODO: Return link to AWS S3 file
   type GeneratePermitHoldersReportResult {
     ok: Boolean!
+    url: String
   }
 
   # Selectable columns in permit holders report
@@ -64,8 +65,8 @@ export default gql`
     endDate: Date!
   }
 
-  # TODO: Return link to AWS S3 file
   type GenerateAccountantReportResult {
     ok: Boolean!
+    url: String
   }
 `;

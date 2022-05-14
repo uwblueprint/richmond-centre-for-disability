@@ -3,6 +3,7 @@ import { GuardianInformation } from '@tools/admin/requests/guardian-information'
 import PoaFormUploadField from '@components/admin/requests/guardian-information/PoaFormUploadField';
 import TextField from '@components/form/TextField';
 import CheckboxField from '@components/form/CheckboxField';
+import { getFileName } from '@lib/utils/s3-utils';
 
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
@@ -20,6 +21,8 @@ export default function GuardianInformationForm({
   file,
   onUploadFile,
 }: GuardianInformationFormProps) {
+  const { poaFormS3ObjectKey, poaFormS3ObjectUrl } = guardianInformation;
+
   return (
     <>
       {/* Personal Information Section */}
@@ -96,7 +99,12 @@ export default function GuardianInformationForm({
               </TextField>
             </Stack>
 
-            <PoaFormUploadField file={file} onUploadFile={onUploadFile} />
+            <PoaFormUploadField
+              file={file}
+              onUploadFile={onUploadFile}
+              initialFileName={poaFormS3ObjectKey ? getFileName(poaFormS3ObjectKey) : undefined}
+              initialFileUrl={poaFormS3ObjectUrl || undefined}
+            />
           </Box>
         </>
       )}

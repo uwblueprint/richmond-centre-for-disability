@@ -16,20 +16,66 @@ import {
   UpdateApplicationProcessingMailOutResult,
   UpdateApplicationProcessingUploadDocumentsResult,
   UpdateApplicationProcessingReviewRequestInformationResult,
+  Invoice,
+  Employee,
+  Application,
 } from '@lib/graphql/types';
 
 /** Get application processing */
 export const GET_APPLICATION_PROCESSING = gql`
   query GetApplicationProcessing($id: Int!) {
     application(id: $id) {
+      paidThroughShopify
+      shopifyConfirmationNumber
+      shopifyOrderNumber
       processing {
+        status
         appNumber
+        appNumberEmployee {
+          firstName
+          lastName
+        }
+        appNumberUpdatedAt
         appHolepunched
+        appHolepunchedEmployee {
+          firstName
+          lastName
+        }
+        appHolepunchedUpdatedAt
         walletCardCreated
-        invoiceNumber
+        walletCardCreatedEmployee {
+          firstName
+          lastName
+        }
+        walletCardCreatedUpdatedAt
+        invoice {
+          invoiceNumber
+          s3ObjectUrl
+          s3ObjectKey
+          employee {
+            firstName
+            lastName
+          }
+          updatedAt
+        }
         documentsUrl
+        documentsUrlEmployee {
+          firstName
+          lastName
+        }
+        documentsUrlUpdatedAt
         appMailed
+        appMailedEmployee {
+          firstName
+          lastName
+        }
+        appMailedUpdatedAt
         reviewRequestCompleted
+        reviewRequestCompletedEmployee {
+          firstName
+          lastName
+        }
+        reviewRequestCompletedUpdatedAt
       }
     }
   }
@@ -38,17 +84,36 @@ export const GET_APPLICATION_PROCESSING = gql`
 export type GetApplicationProcessingRequest = QueryApplicationArgs;
 
 export type GetApplicationProcessingResponse = {
-  application: {
+  application: Pick<
+    Application,
+    'paidThroughShopify' | 'shopifyConfirmationNumber' | 'shopifyOrderNumber'
+  > & {
     processing: Pick<
       ApplicationProcessing,
+      | 'status'
       | 'appNumber'
+      | 'appNumberUpdatedAt'
       | 'appHolepunched'
+      | 'appHolepunchedUpdatedAt'
       | 'walletCardCreated'
-      | 'invoiceNumber'
+      | 'walletCardCreatedUpdatedAt'
       | 'documentsUrl'
+      | 'documentsUrlUpdatedAt'
       | 'appMailed'
+      | 'appMailedUpdatedAt'
       | 'reviewRequestCompleted'
-    >;
+      | 'reviewRequestCompletedUpdatedAt'
+    > & {
+      invoice: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl' | 'updatedAt'> & {
+        employee: Pick<Employee, 'firstName' | 'lastName'>;
+      };
+      appNumberEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
+      appHolepunchedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
+      walletCardCreatedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
+      documentsUrlEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
+      appMailedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
+      reviewRequestCompletedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
+    };
   };
 };
 

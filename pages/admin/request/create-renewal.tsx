@@ -230,6 +230,7 @@ export default function CreateRenewal() {
           paidThroughShopify: false,
           shopifyPaymentStatus: null,
           shopifyConfirmationNumber: null,
+          shopifyOrderNumber: null,
         },
       },
     });

@@ -5,6 +5,10 @@ import {
   Permit,
   PermitStatus,
   ApplicantStatus,
+  MutationSetApplicantAsInactiveArgs,
+  SetApplicantAsInactiveResult,
+  MutationSetApplicantAsActiveArgs,
+  SetApplicantAsActiveResult,
 } from '@lib/graphql/types';
 
 /** Array of permit statuses */
@@ -101,4 +105,32 @@ export type GetPermitHoldersResponse = {
     result: ReadonlyArray<PermitHolder>;
     totalCount: number;
   };
+};
+
+export const SET_APPLICANT_AS_INACTIVE = gql`
+  mutation setApplicantAsInactive($input: SetApplicantAsInactiveInput!) {
+    setApplicantAsInactive(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type SetApplicantAsInactiveRequest = MutationSetApplicantAsInactiveArgs;
+
+export type SetApplicantAsInactiveResponse = {
+  setApplicantAsInactive: SetApplicantAsInactiveResult;
+};
+
+export const SET_APPLICANT_AS_ACTIVE = gql`
+  mutation setApplicantAsActive($input: SetApplicantAsActiveInput!) {
+    setApplicantAsActive(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type SetApplicantAsActiveRequest = MutationSetApplicantAsActiveArgs;
+
+export type SetApplicantAsActiveResponse = {
+  setApplicantAsActive: SetApplicantAsActiveResult;
 };

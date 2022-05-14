@@ -3,10 +3,13 @@ import { getSession } from 'next-auth/client'; // Session management
 import { GridItem, VStack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import RequestHeader from '@components/admin/requests/Header'; // Request header
+import RequestFooter from '@components/admin/requests/Footer'; // Request footer
 import DoctorInformationCard from '@components/admin/requests/doctor-information/Card'; // Doctor information card
 import PaymentInformationCard from '@components/admin/requests/payment-information/Card'; // Payment information card
 import PersonalInformationCard from '@components/admin/requests/permit-holder-information/Card'; // Personal information card
 import ProcessingTasksCard from '@components/admin/requests/processing/TasksCard'; // Processing tasks card
+import PhysicianAssessmentCard from '@components/admin/requests/physician-assessment/Card'; // Physician assessment card
+import AdditionalInformationCard from '@components/admin/requests/additional-questions/Card'; // Additional Information card
 import { authorize } from '@tools/authorization'; // Page authorization
 import { useQuery } from '@apollo/client'; // Apollo Client hooks
 import {
@@ -15,6 +18,7 @@ import {
   GetApplicationResponse,
 } from '@tools/admin/requests/view-request'; // Request page GraphQL queries
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
+import GuardianInformationCard from '@components/admin/requests/guardian-information/Card';
 
 type Props = {
   readonly id: string;
@@ -26,25 +30,32 @@ type Props = {
  */
 const Request: NextPage<Props> = ({ id: idString }: Props) => {
   const id = parseInt(idString);
-
   // Get request data query
   const { data } = useQuery<GetApplicationResponse, GetApplicationRequest>(GET_APPLICATION_QUERY, {
     variables: { id },
   });
+  // Get Permit Holder ID from Application
 
   if (!data?.application) {
     return null;
   }
 
+  const applicantId = data.application.applicant?.id;
   const {
     type,
     createdAt,
+    paidThroughShopify,
+    shopifyConfirmationNumber,
+    shopifyOrderNumber,
+    permitType,
+    temporaryPermitExpiry,
     processing: {
       status,
+      rejectedReason,
       appNumber,
       appHolepunched,
       walletCardCreated,
-      invoiceNumber,
+      invoice,
       documentsUrl,
       appMailed,
       reviewRequestCompleted,
@@ -57,35 +68,66 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     appHolepunched &&
     walletCardCreated &&
     reviewRequestCompleted &&
-    invoiceNumber !== null &&
+    invoice !== null &&
     documentsUrl !== null &&
     appMailed
   );
+
+  /** Whether application is rejected */
+  const isRejected = status === 'REJECTED';
 
   return (
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3} marginBottom="12px">
         <RequestHeader
-          applicationId={id}
           applicationStatus={status}
           applicationType={type}
+          permitType={permitType}
           createdAt={new Date(createdAt)}
-          allStepsCompleted={allStepsCompleted}
+          paidThroughShopify={paidThroughShopify}
+          shopifyOrderID={shopifyConfirmationNumber || undefined}
+          shopifyOrderNumber={shopifyOrderNumber || undefined}
+          temporaryPermitExpiry={temporaryPermitExpiry || null}
+          reasonForRejection={rejectedReason || undefined}
         />
       </GridItem>
       <GridItem colStart={1} colSpan={5} textAlign="left">
         <VStack width="100%" spacing="20px" align="stretch">
-          <PersonalInformationCard applicationId={id} editDisabled={reviewRequestCompleted} />
+          <PersonalInformationCard
+            applicationId={id}
+            editDisabled={reviewRequestCompleted || isRejected}
+          />
           {type !== 'REPLACEMENT' && (
-            <DoctorInformationCard applicationId={id} editDisabled={reviewRequestCompleted} />
+            <DoctorInformationCard
+              applicationId={id}
+              editDisabled={reviewRequestCompleted || isRejected}
+            />
+          )}
+          {type === 'NEW' && (
+            <GuardianInformationCard
+              applicationId={id}
+              editDisabled={reviewRequestCompleted || isRejected}
+            />
           )}
         </VStack>
       </GridItem>
       <GridItem colStart={6} colSpan={7}>
         <VStack width="100%" spacing="20px" align="stretch">
-          {status === 'IN_PROGRESS' && <ProcessingTasksCard applicationId={id} />}
+          {(status === 'IN_PROGRESS' || status === 'REJECTED') && (
+            <ProcessingTasksCard applicationId={id} />
+          )}
+          {type === 'NEW' && <PhysicianAssessmentCard applicationId={id} />}
           {type === 'REPLACEMENT' && (
-            <ReasonForReplacementCard applicationId={id} editDisabled={reviewRequestCompleted} />
+            <ReasonForReplacementCard
+              applicationId={id}
+              editDisabled={reviewRequestCompleted || isRejected}
+            />
+          )}
+          {type !== 'REPLACEMENT' && (
+            <AdditionalInformationCard
+              applicationId={id}
+              editDisabled={reviewRequestCompleted || isRejected}
+            />
           )}
           <PaymentInformationCard
             applicationId={id}
@@ -93,6 +135,12 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           />
         </VStack>
       </GridItem>
+      <RequestFooter
+        applicationId={id}
+        applicationStatus={status}
+        allStepsCompleted={allStepsCompleted}
+        applicantId={applicantId}
+      />
     </Layout>
   );
 };

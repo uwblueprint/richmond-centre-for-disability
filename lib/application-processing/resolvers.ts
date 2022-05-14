@@ -25,6 +25,8 @@ import {
 } from '@lib/graphql/types';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
+import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
+import { formatDateYYYYMMDD } from '@lib/utils/format';
 
 /**
  * Approve application
@@ -69,7 +71,7 @@ export const rejectApplication: Resolver<MutationRejectApplicationArgs, RejectAp
   async (_parent, args, { prisma }) => {
     // TODO: Validation
     const { input } = args;
-    const { id } = input;
+    const { id, reason } = input;
 
     let updatedApplication;
     try {
@@ -79,6 +81,7 @@ export const rejectApplication: Resolver<MutationRejectApplicationArgs, RejectAp
           applicationProcessing: {
             update: {
               status: 'REJECTED',
+              rejectedReason: reason,
             },
           },
         },
@@ -196,6 +199,7 @@ export const completeApplication: Resolver<
         guardianProvince,
         guardianCountry,
         guardianPostalCode,
+        poaFormS3ObjectKey,
       } = newApplication;
 
       // Only create a guardian record if all required fields are filled
@@ -223,6 +227,7 @@ export const completeApplication: Resolver<
           province: guardianProvince,
           country: guardianCountry,
           postalCode: guardianPostalCode,
+          poaFormS3ObjectKey,
         };
       } else {
         guardian = undefined;
@@ -614,7 +619,8 @@ export const updateApplicationProcessingAssignAppNumber: Resolver<
           update: {
             appNumber,
             appNumberUpdatedAt: new Date(),
-            appNumberEmployee: { connect: { id: employeeId } },
+            appNumberEmployee:
+              appNumber !== null ? { connect: { id: employeeId } } : { disconnect: true },
           },
         },
       },
@@ -672,7 +678,9 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
           update: {
             appHolepunched,
             appHolepunchedUpdatedAt: new Date(),
-            appHolepunchedEmployee: { connect: { id: employeeId } },
+            appHolepunchedEmployee: appHolepunched
+              ? { connect: { id: employeeId } }
+              : { disconnect: true },
           },
         },
       },
@@ -730,7 +738,9 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
           update: {
             walletCardCreated,
             walletCardCreatedUpdatedAt: new Date(),
-            walletCardCreatedEmployee: { connect: { id: employeeId } },
+            walletCardCreatedEmployee: walletCardCreated
+              ? { connect: { id: employeeId } }
+              : { disconnect: true },
           },
         },
       },
@@ -797,12 +807,10 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
               : { disconnect: true },
             reviewRequestCompletedUpdatedAt: new Date(),
             // Invoice generation and document upload steps should be reset
-            // TODO: Integrate with invoice generation
             applicationInvoice: {
               disconnect: true,
             },
-            // TODO: Integrate with document upload
-            documentsUrl: null,
+            documentsS3ObjectKey: null,
             documentsUrlEmployee: {
               disconnect: true,
             },
@@ -842,6 +850,10 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     throw new ApolloError('Not authenticated');
   }
 
+  if (!process.env.INVOICE_LINK_TTL_DAYS) {
+    throw new ApolloError('Invoice link duration not defined');
+  }
+
   // Use the application record to retrieve the applicant name, applicant ID, permit type, current date, and employee initials
   const application = await prisma.application.findUnique({
     where: { id: applicationId },
@@ -874,7 +886,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
   }
 
   // Generate application invoice
-  generateApplicationInvoicePdf(
+  const pdfDoc = generateApplicationInvoicePdf(
     application,
     session,
     // TODO: Remove typecast when backend guard is implemented
@@ -882,7 +894,46 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     invoice.invoiceNumber
   );
 
-  return { ok: true };
+  // file name format: PP-Receipt-P<YYYYMMDD>-<invoice number>.pdf
+  const createdAtYYYMMDD = formatDateYYYYMMDD(invoice.createdAt).replace(/-/g, '');
+  const fileName = `PP-Receipt-P${createdAtYYYMMDD}-${invoice.invoiceNumber}.pdf`;
+  const s3InvoiceKey = `rcd/invoices/${fileName}`;
+
+  // Upload pdf to s3
+  let uploadedPdf;
+  let signedUrl;
+  try {
+    // Upload file to s3
+    uploadedPdf = await serverUploadToS3(pdfDoc, s3InvoiceKey);
+    // Generate a signed URL to access the file
+    const durationSeconds = parseInt(process.env.INVOICE_LINK_TTL_DAYS) * 24 * 60 * 60;
+    signedUrl = getSignedUrlForS3(uploadedPdf.key, durationSeconds);
+  } catch (error) {
+    throw new ApolloError(`Error uploading invoice pdf to AWS: ${error}`);
+  }
+
+  let updatedInvoice;
+  try {
+    updatedInvoice = await prisma.applicationInvoice.update({
+      where: {
+        invoiceNumber: invoice.invoiceNumber,
+      },
+      data: {
+        s3ObjectKey: uploadedPdf.key,
+        s3ObjectUrl: signedUrl,
+      },
+    });
+  } catch {
+    throw new ApolloError('Error updating invoice metadata in DB');
+  }
+
+  if (!updatedInvoice) {
+    throw new ApolloError('Error updating invoice record in DB');
+  }
+
+  return {
+    ok: true,
+  };
 };
 
 /**
@@ -895,7 +946,7 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
 > = async (_parent, args, { prisma, session }) => {
   // TODO: Validation
   const { input } = args;
-  const { applicationId, documentsUrl } = input;
+  const { applicationId, documentsS3ObjectKey } = input;
 
   if (!session) {
     // TODO: Create error
@@ -911,9 +962,12 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
       data: {
         applicationProcessing: {
           update: {
-            documentsUrl,
+            documentsS3ObjectKey,
             documentsUrlUpdatedAt: new Date(),
-            documentsUrlEmployee: { connect: { id: employeeId } },
+            documentsUrlEmployee:
+              documentsS3ObjectKey !== null
+                ? { connect: { id: employeeId } }
+                : { disconnect: true },
           },
         },
       },
@@ -957,7 +1011,7 @@ export const updateApplicationProcessingMailOut: Resolver<
           update: {
             appMailed,
             appMailedUpdatedAt: new Date(),
-            appMailedEmployee: { connect: { id: employeeId } },
+            appMailedEmployee: appMailed ? { connect: { id: employeeId } } : { disconnect: true },
           },
         },
       },

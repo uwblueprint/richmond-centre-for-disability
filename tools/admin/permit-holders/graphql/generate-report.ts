@@ -10,6 +10,7 @@ export const GENERATE_PERMIT_HOLDERS_REPORT_QUERY = gql`
   query GeneratePermitHoldersReportQuery($input: GeneratePermitHoldersReportInput!) {
     generatePermitHoldersReport(input: $input) {
       ok
+      url
     }
   }
 `;
@@ -26,6 +27,7 @@ export const GENERATE_ACCOUNTANT_REPORT_QUERY = gql`
   query GenerateAccountantReportQuery($input: GenerateAccountantReportInput!) {
     generateAccountantReport(input: $input) {
       ok
+      url
     }
   }
 `;

@@ -145,6 +145,7 @@ CREATE TABLE guardians (
   country VARCHAR(255) NOT NULL DEFAULT 'Canada',
   postal_code VARCHAR(6) NOT NULL,
   relationship VARCHAR(255) NOT NULL,
+  poa_form_s3_object_key VARCHAR(255),
   notes TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -201,6 +202,7 @@ CREATE TABLE applicants (
 CREATE TABLE application_invoices (
   invoice_number SERIAL PRIMARY KEY,
   s3_object_key VARCHAR(255),
+  s3_object_url TEXT,
   employee_id INTEGER NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -226,7 +228,7 @@ CREATE TABLE application_processing (
   review_request_completed_employee_id INTEGER,
   review_request_completed_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   invoice_number INTEGER UNIQUE,
-  documents_url VARCHAR(255),
+  documents_s3_object_key TEXT,
   documents_url_employee_id INTEGER,
   documents_url_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   app_mailed BOOLEAN NOT NULL DEFAULT false,
@@ -271,6 +273,7 @@ CREATE TABLE applications (
   paid_through_shopify BOOLEAN NOT NULL DEFAULT false,
   shopify_payment_status ShopifyPaymentStatus DEFAULT 'PENDING',
   shopify_confirmation_number VARCHAR(255) UNIQUE,
+  shopify_order_number VARCHAR(255) UNIQUE,
 
   -- Shipping information
   shipping_address_same_as_home_address BOOLEAN NOT NULL,

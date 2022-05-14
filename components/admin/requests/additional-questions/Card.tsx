@@ -1,28 +1,33 @@
 import { FC, useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { Box, Text, SimpleGrid, VStack } from '@chakra-ui/react'; // Chakra UI
+import { useMutation, useQuery } from '@apollo/client';
+import { Box, Text, SimpleGrid, VStack, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
 import {
   GetAdditionalInformationRequest,
   GetAdditionalInformationResponse,
   GET_ADDITIONAL_INFORMATION,
+  UpdateAdditionalInformationResponse,
+  UpdateAdditionalInformationRequest,
+  UPDATE_ADDITIONAL_INFORMATION,
   AdditionalInformationFormData,
 } from '@tools/admin/requests/additional-questions';
+import EditAdditionalInformationModal from './EditModal';
 
 type Props = {
   readonly applicationId: number;
   readonly isUpdated?: boolean;
+  readonly editDisabled?: boolean;
   /** Whether card is a subsection */
   readonly isSubsection?: boolean;
 };
 
 const Card: FC<Props> = props => {
-  const { applicationId, isUpdated, isSubsection } = props;
+  const { applicationId, isUpdated, editDisabled, isSubsection } = props;
 
   const [additionalInformation, setAdditionalInformation] =
     useState<AdditionalInformationFormData | null>(null);
 
-  useQuery<GetAdditionalInformationResponse, GetAdditionalInformationRequest>(
+  const { refetch } = useQuery<GetAdditionalInformationResponse, GetAdditionalInformationRequest>(
     GET_ADDITIONAL_INFORMATION,
     {
       variables: { id: applicationId },
@@ -35,7 +40,32 @@ const Card: FC<Props> = props => {
     }
   );
 
+  const [updateAdditionalInformation] = useMutation<
+    UpdateAdditionalInformationResponse,
+    UpdateAdditionalInformationRequest
+  >(UPDATE_ADDITIONAL_INFORMATION);
+
   if (additionalInformation === null) return null;
+
+  /** Handler for saving additional information */
+  const handleSave = async (data: AdditionalInformationFormData) => {
+    if (data.requiresWiderParkingSpace === null || data.usesAccessibleConvertedVan === null) {
+      // TODO: Improve error handling
+      return;
+    }
+
+    await updateAdditionalInformation({
+      variables: {
+        input: {
+          id: applicationId,
+          ...data,
+          requiresWiderParkingSpace: data.requiresWiderParkingSpace,
+          usesAccessibleConvertedVan: data.usesAccessibleConvertedVan,
+        },
+      },
+    });
+    refetch();
+  };
 
   const {
     usesAccessibleConvertedVan,
@@ -51,11 +81,28 @@ const Card: FC<Props> = props => {
       header={`Additional Information`}
       updated={isUpdated}
       divider
-      editModal={false}
+      editModal={
+        !editDisabled && (
+          <EditAdditionalInformationModal
+            additionalInformation={{
+              usesAccessibleConvertedVan,
+              accessibleConvertedVanLoadingMethod,
+              requiresWiderParkingSpace,
+              requiresWiderParkingSpaceReason,
+              otherRequiresWiderParkingSpaceReason,
+            }}
+            onSave={handleSave}
+          >
+            <Button color="primary" variant="ghost" textDecoration="underline">
+              <Text textStyle="body-bold">Edit</Text>
+            </Button>
+          </EditAdditionalInformationModal>
+        )
+      }
       isSubsection={isSubsection}
     >
       <VStack align="left" spacing="12px">
-        <SimpleGrid columns={2} spacingX="70px" spacingY="12px">
+        <SimpleGrid columns={2} spacingX="12px" spacingY="20px" templateColumns="200px 1fr">
           <Box>
             <Text as="p" textStyle="body-regular" textAlign="left">
               Converted Van

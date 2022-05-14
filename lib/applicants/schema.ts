@@ -30,10 +30,12 @@ export default gql`
     postalCode: String!
 
     status: ApplicantStatus!
+    inactiveReason: String
 
     mostRecentPermit: Permit
     activePermit: Permit
     permits: [Permit!]!
+    mostRecentApplication: Application
     completedApplications: [Application!]!
     guardian: Guardian
     medicalInformation: MedicalInformation!
@@ -106,6 +108,9 @@ export default gql`
     addressLine2: String
     city: String!
     postalCode: String!
+
+    # POA form
+    poaFormS3ObjectKey: String
   }
 
   type UpdateApplicantGuardianInformationResult {
@@ -177,5 +182,15 @@ export default gql`
     IDENTITY_VERIFICATION_FAILED
     APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS
     USER_HOLDS_TEMPORARY_PERMIT
+  }
+
+  # Update Additional Notes for Applicant
+  input UpdateApplicantNotesInput {
+    id: Int!
+    notes: String!
+  }
+
+  type UpdateApplicantNotesResult {
+    ok: Boolean!
   }
 `;

@@ -55,6 +55,7 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     const applicationId = parseInt(rawApplicationId);
 
     const shopifyOrderId = req.body.id;
+    const shopifyOrderNumber = req.body.number;
     const donationAmount = new Prisma.Decimal(req.body.total_tip_received);
     const email = req.body.email; // Applicant email entered in Shopify checkout
 
@@ -78,6 +79,7 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
       data: {
         shopifyPaymentStatus: ShopifyPaymentStatus.RECEIVED,
         shopifyConfirmationNumber: `${shopifyOrderId}`,
+        shopifyOrderNumber: `${shopifyOrderNumber}`,
         paidThroughShopify: true,
         donationAmount: donationAmount,
       },

@@ -13,7 +13,7 @@ import {
   UPDATE_DOCTOR_INFORMATION,
   DoctorFormData,
 } from '@tools/admin/requests/doctor-information'; // Physician type
-import { formatFullName } from '@lib/utils/format';
+import { formatFullName, formatPhoneNumber } from '@lib/utils/format';
 import Address from '@components/admin/Address';
 
 type Props = {
@@ -115,7 +115,7 @@ const Card: FC<Props> = props => {
             MSP Number: {mspNumber}
           </Text>
           <Text as="p" textStyle="body-regular">
-            Phone: {phone}
+            Phone: {formatPhoneNumber(phone)}
           </Text>
         </VStack>
         <Divider />

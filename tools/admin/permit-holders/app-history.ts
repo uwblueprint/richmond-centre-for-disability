@@ -1,43 +1,30 @@
-import { gql } from '@apollo/client';
 import {
   Application,
-  ApplicationType,
+  ApplicationProcessing,
+  Invoice,
+  NewApplication,
   Permit,
-  PermitStatus,
-  QueryApplicantArgs,
+  PermitType,
 } from '@lib/graphql/types';
 
-/** APP history entry row in APP history table */
-export type AppHistoryRow = {
-  applicationId: number;
-  rcdPermitId: number;
-  status: PermitStatus;
-  requestType: ApplicationType;
-  expiryDate: Date;
+/** APP history entry record (API response) */
+export type AppHistoryRecord = Pick<Permit, 'rcdPermitId' | 'expiryDate'> & {
+  application: Pick<Application, 'id'> & {
+    processing: Pick<ApplicationProcessing, 'documentsUrl' | 'documentsS3ObjectKey'> & {
+      invoice: Pick<Invoice, 's3ObjectUrl' | 's3ObjectKey'>;
+    };
+  } & (
+      | ({ type: 'NEW' } & Pick<NewApplication, 'permitType'>)
+      | { type: 'RENEWAL' | 'REPLACEMENT'; permitType: undefined }
+    );
 };
 
-/** Get APP history for applicant */
-export const GET_APP_HISTORY = gql`
-  query GetApplicantAppHistory($id: Int!) {
-    applicant(id: $id) {
-      permits {
-        rcdPermitId
-        expiryDate
-        application {
-          id
-          type
-        }
-      }
-    }
-  }
-`;
-
-export type GetAppHistoryRequest = QueryApplicantArgs;
-
-export type GetAppHistoryResponse = {
-  applicant: {
-    permits: Array<
-      Pick<Permit, 'rcdPermitId' | 'expiryDate'> & { application: Pick<Application, 'id' | 'type'> }
-    >;
+/** APP history entry row in APP history card (FE) */
+export type PermitRecord = Pick<Permit, 'rcdPermitId' | 'expiryDate'> & {
+  application: Pick<Application, 'id' | 'type'> & {
+    processing: Pick<ApplicationProcessing, 'documentsUrl' | 'documentsS3ObjectKey'> & {
+      invoice: Pick<Invoice, 's3ObjectUrl' | 's3ObjectKey'>;
+    };
+    permitType: PermitType | undefined;
   };
 };

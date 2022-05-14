@@ -13,6 +13,7 @@ import {
   UPDATE_REASON_FOR_REPLACEMENT,
 } from '@tools/admin/requests/reason-for-replacement';
 import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-replacement';
+import { titlecase } from '@tools/string';
 
 type ReplacementProps = {
   readonly applicationId: number;
@@ -90,8 +91,8 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
         )
       }
     >
-      <SimpleGrid columns={2} spacingY="12px" spacingX="20px">
-        <InfoSection title={`Cause`}>{reason}</InfoSection>
+      <SimpleGrid columns={2} spacingY="12px" spacingX="20px" templateColumns="200px 1fr">
+        <InfoSection title={`Cause`}>{titlecase(reason)}</InfoSection>
         {lostTimestamp && (
           <InfoSection title={`Event Timestamp`}>
             {formatDateVerbose(new Date(lostTimestamp))}
