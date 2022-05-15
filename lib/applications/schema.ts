@@ -768,7 +768,7 @@ export default gql`
     # Application ID
     id: Int!
 
-    # Physician assessment (omit permit type)
+    # Physician assessment
     disability: String!
     disabilityCertificationDate: Date!
     patientCondition: PatientCondition!
