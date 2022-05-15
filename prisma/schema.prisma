@@ -249,7 +249,6 @@ model NewApplication {
   otherMobilityAids                    String?                              @map("other_mobility_aids") @db.VarChar(255)
   otherPatientCondition                String?                              @map("other_patient_condition") @db.VarChar(255)
   temporaryPermitExpiry                DateTime?                            @map("temporary_permit_expiry") @db.Date
-  permitType                           PermitType                           @default(PERMANENT) @map("permit_type")
   physicianFirstName                   String                               @map("physician_first_name") @db.VarChar(255)
   physicianLastName                    String                               @map("physician_last_name") @db.VarChar(255)
   physicianMspNumber                   String                               @map("physician_msp_number") @db.VarChar(50)
