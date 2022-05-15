@@ -72,3 +72,10 @@ export const guardianInformationSchema = object({
         .required('Please enter a postal code'),
     }),
 });
+
+/**
+ * Validation schema for edit guardian information form
+ */
+export const editGuardianInformationSchema = object({
+  guardianInformation: guardianInformationSchema,
+});
