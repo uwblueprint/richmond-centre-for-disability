@@ -135,7 +135,7 @@ export default function PhysicianAssessmentForm({
             </RadioGroup>
           </FormControl>
 
-          {mobilityAidsRequired === true && (
+          {mobilityAidsRequired && (
             <FormControl isRequired>
               <FormLabel>{'What mobility aids are you currently using?'}</FormLabel>
               <CheckboxGroup

@@ -27,16 +27,7 @@ export default function EditPhysicianAssessmentModal({
 }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment>(
-    currentPhysicianAssessment || {
-      disability: null,
-      disabilityCertificationDate: null,
-      otherPatientCondition: null,
-      temporaryPermitExpiry: null,
-      patientCondition: null,
-      permitType: null,
-      mobilityAids: null,
-      otherMobilityAids: null,
-    }
+    currentPhysicianAssessment
   );
 
   useEffect(() => {
