@@ -179,6 +179,10 @@ export const editPaymentInformationSchema = object({
   paymentInformation: paymentInformationSchema,
 });
 
+export const paymentInformationMutationSchema = paymentInformationSchema.shape({
+  id: number().required(),
+});
+
 /**
  * Reason for replacement form validation schema
  */

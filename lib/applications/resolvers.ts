@@ -44,6 +44,7 @@ import {
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
+import { paymentInformationMutationSchema } from '@lib/applications/validation';
 
 /**
  * Query an application by ID
@@ -1064,12 +1065,14 @@ export const updateApplicationPaymentInformation: Resolver<
   MutationUpdateApplicationPaymentInformationArgs,
   UpdateApplicationPaymentInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, donationAmount, shippingPostalCode, billingPostalCode, ...data } = input;
+
+  const validatedInput = await paymentInformationMutationSchema.validate(input);
+  const { donationAmount, shippingPostalCode, billingPostalCode, ...validatedData } =
+    validatedInput;
 
   const application = await prisma.application.findUnique({
-    where: { id },
+    where: { id: validatedInput.id },
     select: {
       paidThroughShopify: true,
       applicationProcessing: {
@@ -1102,7 +1105,7 @@ export const updateApplicationPaymentInformation: Resolver<
         donationAmount: donationAmount || 0,
         shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
         billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
-        ...data,
+        ...validatedData,
       },
     });
   } catch {
