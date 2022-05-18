@@ -187,11 +187,6 @@ export default function CreateRenewal() {
 
     const validatedValues = await renewalRequestFormSchema.validate(values);
 
-    if (!doctorInformation.mspNumber) {
-      toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
-      return;
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { type, ...permitHolder } = validatedValues.permitHolder;
     const additionalInformation = validatedValues.additionalInformation;

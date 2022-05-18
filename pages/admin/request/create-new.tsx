@@ -238,7 +238,6 @@ export default function CreateNew() {
   /**
    * Handle new APP request submission
    */
-  //TODO: create type for values
   const handleSubmit = async (values: {
     permitHolder: NewApplicationPermitHolderInformation;
     physicianAssessment: PhysicianAssessment;
@@ -263,11 +262,6 @@ export default function CreateNew() {
 
     const validatedValues = await createNewRequestFormSchema.validate(values);
     const additionalInformation = validatedValues.additionalInformation;
-
-    if (!doctorInformation.mspNumber) {
-      toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
-      return;
-    }
 
     await submitNewApplication({
       variables: {
