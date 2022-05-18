@@ -32,8 +32,6 @@ import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-inf
 import { Form, Formik } from 'formik';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { renewalRequestFormSchema } from '@lib/applications/validation';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import {
   INITIAL_ADDITIONAL_QUESTIONS,
   INITIAL_PAYMENT_DETAILS,
@@ -41,14 +39,6 @@ import {
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
 import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
-=======
-import { INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
->>>>>>> [Feature] Payment, Shipping, and Billing Information Form Validation (#163)
-=======
-import { INITIAL_ADDITIONAL_QUESTIONS, INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
-import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
-import { RequiresWiderParkingSpaceReason } from '@prisma/client';
->>>>>>> [Feature] Additional Information Form Validation (#166)
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -87,23 +77,6 @@ export default function CreateRenewal() {
     postalCode: '',
   });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  /** Additional information section */
-  const [additionalInformation, setAdditionalInformation] = useState<AdditionalInformationFormData>(
-    {
-      usesAccessibleConvertedVan: null,
-      accessibleConvertedVanLoadingMethod: null,
-      requiresWiderParkingSpace: null,
-      requiresWiderParkingSpaceReason: null,
-      otherRequiresWiderParkingSpaceReason: null,
-    }
-  );
-
->>>>>>> [Feature] Payment, Shipping, and Billing Information Form Validation (#163)
-=======
->>>>>>> [Feature] Additional Information Form Validation (#166)
   // Toast message
   const toast = useToast();
 
@@ -205,15 +178,8 @@ export default function CreateRenewal() {
    */
   const handleSubmit = async (values: {
     permitHolder: PermitHolderFormData;
-<<<<<<< HEAD
-<<<<<<< HEAD
     doctorInformation: DoctorFormData;
     additionalInformation: AdditionalInformationFormData;
-=======
->>>>>>> [Feature] Payment, Shipping, and Billing Information Form Validation (#163)
-=======
-    additionalInformation: AdditionalInformationFormData;
->>>>>>> [Feature] Additional Information Form Validation (#166)
     paymentInformation: PaymentInformationFormData;
   }) => {
     if (!applicantId) {
@@ -226,34 +192,12 @@ export default function CreateRenewal() {
     }
 
     const validatedValues = await renewalRequestFormSchema.validate(values);
-<<<<<<< HEAD
-=======
-
-    if (!doctorInformation.mspNumber) {
-      toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
-      return;
-    }
-
-<<<<<<< HEAD
-    if (additionalInformation.usesAccessibleConvertedVan === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient uses accessible converted van',
-        isClosable: true,
-      });
-      return;
-    }
->>>>>>> [Feature] Payment, Shipping, and Billing Information Form Validation (#163)
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { type, ...permitHolder } = values.permitHolder;
     const additionalInformation = validatedValues.additionalInformation;
 
-=======
->>>>>>> [Feature] Additional Information Form Validation (#166)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { type, ...permitHolder } = validatedValues.permitHolder;
-    const additionalInformation = validatedValues.additionalInformation;
 
     await submitRenewalApplication({
       variables: {
@@ -270,10 +214,6 @@ export default function CreateRenewal() {
           physicianPostalCode: doctorInformation.postalCode,
 
           ...additionalInformation,
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> [Feature] Additional Information Form Validation (#166)
           accessibleConvertedVanLoadingMethod: additionalInformation.usesAccessibleConvertedVan
             ? additionalInformation.accessibleConvertedVanLoadingMethod
             : null,
@@ -287,13 +227,6 @@ export default function CreateRenewal() {
               ? additionalInformation.otherRequiresWiderParkingSpaceReason
               : null,
 
-<<<<<<< HEAD
-=======
-          usesAccessibleConvertedVan: additionalInformation.usesAccessibleConvertedVan,
-          requiresWiderParkingSpace: additionalInformation.requiresWiderParkingSpace,
->>>>>>> [Feature] Payment, Shipping, and Billing Information Form Validation (#163)
-=======
->>>>>>> [Feature] Additional Information Form Validation (#166)
           ...validatedValues.paymentInformation,
 
           // TODO: Replace with dynamic values
@@ -357,15 +290,8 @@ export default function CreateRenewal() {
                 ...permitHolderInformation,
                 type: 'RENEWAL',
               },
-<<<<<<< HEAD
-<<<<<<< HEAD
               doctorInformation,
               additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
-=======
->>>>>>> [Feature] Payment, Shipping, and Billing Information Form Validation (#163)
-=======
-              additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
->>>>>>> [Feature] Additional Information Form Validation (#166)
               paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
             validationSchema={renewalRequestFormSchema}
