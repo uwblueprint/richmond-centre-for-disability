@@ -280,6 +280,7 @@ export const updateApplicantDoctorInformation: Resolver<
   const { id, mspNumber, ...data } = input;
 
   let updatedApplicant;
+
   try {
     updatedApplicant = await prisma.applicant.update({
       where: { id },
