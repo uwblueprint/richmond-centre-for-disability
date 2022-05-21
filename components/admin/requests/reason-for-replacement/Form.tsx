@@ -11,7 +11,7 @@ import {
   SimpleGrid,
 } from '@chakra-ui/react'; // Chakra UI
 import { ReasonForReplacement as ReasonForReplacementEnum } from '@lib/graphql/types'; // Reason For Replacement Enum
-import { formatDate } from '@lib/utils/format'; // Date formatter util
+import { formatDate } from '@lib/utils/date'; // Date formatter util
 import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-replacement';
 
 type ReasonForReplacementProps = {

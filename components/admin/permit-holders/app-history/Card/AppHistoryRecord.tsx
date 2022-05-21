@@ -1,6 +1,6 @@
 import { Button, Grid, GridItem, HStack, Text, VStack, Link as FileLink } from '@chakra-ui/react';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
-import { formatDate } from '@lib/utils/format';
+import { formatDate } from '@lib/utils/date';
 import { getFileName } from '@lib/utils/s3-utils';
 import { PermitRecord } from '@tools/admin/permit-holders/app-history';
 import { titlecase } from '@tools/string';

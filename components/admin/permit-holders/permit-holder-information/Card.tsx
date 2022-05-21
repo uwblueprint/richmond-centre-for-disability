@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import EditUserInformationModal from '@components/admin/permit-holders/permit-holder-information/EditModal'; // Edit User Information Modal
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
-import { formatDateYYYYMMDD } from '@lib/utils/format'; // Date formatter util
+import { formatDateYYYYMMDD } from '@lib/utils/date'; // Date formatter util
 import {
   ApplicantCardData,
   ApplicantFormData,

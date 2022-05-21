@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { Box, Text, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import EditReasonForReplacementModal from '@components/admin/requests/reason-for-replacement/EditModal'; // Edit modal
-import { formatDateVerbose } from '@lib/utils/format';
+import { formatDateVerbose } from '@lib/utils/date';
 import {
   GetReasonForReplacementRequest,
   GetReasonForReplacementResponse,

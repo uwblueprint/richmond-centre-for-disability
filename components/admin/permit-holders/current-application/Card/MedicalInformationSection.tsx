@@ -1,5 +1,5 @@
 import { Grid, GridItem, Text, List, ListItem, HStack, Badge } from '@chakra-ui/react';
-import { formatDate } from '@lib/utils/format';
+import { formatDate } from '@lib/utils/date';
 import { MedicalInformationSectionData } from '@tools/admin/permit-holders/current-application';
 import { titlecase } from '@tools/string';
 import { FC } from 'react';
