@@ -11,7 +11,7 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { stripPhoneNumber, formatFullName, formatPostalCode } from '@lib/utils/format'; // Formatting utils
+import { stripPhoneNumber, formatFullName, stripPostalCode } from '@lib/utils/format'; // Formatting utils
 import {
   Application,
   CreateExternalRenewalApplicationResult,
@@ -276,9 +276,9 @@ export const createNewApplication: Resolver<
         }),
         ...data,
         phone: stripPhoneNumber(phone),
-        postalCode: formatPostalCode(postalCode),
-        shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
-        billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
+        postalCode: stripPostalCode(postalCode),
+        shippingPostalCode: shippingPostalCode && stripPostalCode(shippingPostalCode),
+        billingPostalCode: billingPostalCode && stripPostalCode(billingPostalCode),
         newApplication: {
           create: {
             dateOfBirth,
@@ -297,7 +297,7 @@ export const createNewApplication: Resolver<
             physicianAddressLine1,
             physicianAddressLine2,
             physicianCity,
-            physicianPostalCode: formatPostalCode(physicianPostalCode),
+            physicianPostalCode: stripPostalCode(physicianPostalCode),
             ...(!omitGuardianPoa && {
               guardianFirstName,
               guardianMiddleName,
@@ -307,7 +307,7 @@ export const createNewApplication: Resolver<
               guardianAddressLine1,
               guardianAddressLine2,
               guardianCity,
-              guardianPostalCode: guardianPostalCode && formatPostalCode(guardianPostalCode),
+              guardianPostalCode: guardianPostalCode && stripPostalCode(guardianPostalCode),
               poaFormS3ObjectKey,
             }),
             usesAccessibleConvertedVan,
@@ -390,9 +390,9 @@ export const createRenewalApplication: Resolver<
         donationAmount: donationAmount || 0,
         ...data,
         phone: stripPhoneNumber(phone),
-        postalCode: formatPostalCode(postalCode),
-        shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
-        billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
+        postalCode: stripPostalCode(postalCode),
+        shippingPostalCode: shippingPostalCode && stripPostalCode(shippingPostalCode),
+        billingPostalCode: billingPostalCode && stripPostalCode(billingPostalCode),
         applicant: {
           connect: { id: applicantId },
         },
@@ -405,7 +405,7 @@ export const createRenewalApplication: Resolver<
             physicianAddressLine1,
             physicianAddressLine2,
             physicianCity,
-            physicianPostalCode: formatPostalCode(physicianPostalCode),
+            physicianPostalCode: stripPostalCode(physicianPostalCode),
             usesAccessibleConvertedVan,
             accessibleConvertedVanLoadingMethod,
             requiresWiderParkingSpace,
@@ -527,7 +527,7 @@ export const createExternalRenewalApplication: Resolver<
         addressLine2: updatedAddress ? addressLine2 : applicant.addressLine2,
         city: updatedAddress && city ? city : applicant.city,
         postalCode:
-          updatedAddress && postalCode ? formatPostalCode(postalCode) : applicant.postalCode,
+          updatedAddress && postalCode ? stripPostalCode(postalCode) : applicant.postalCode,
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: 0, // ? Investigate
         paymentMethod: 'SHOPIFY',
@@ -543,7 +543,7 @@ export const createExternalRenewalApplication: Resolver<
         shippingCity: applicant.city,
         shippingProvince: applicant.province,
         shippingCountry: applicant.country,
-        shippingPostalCode: applicant.postalCode,
+        shippingPostalCode: stripPostalCode(applicant.postalCode),
         // TODO: Replace billing info with Shopify checkout inputs
         billingAddressSameAsHomeAddress: true,
         billingFullName: formatFullName(
@@ -556,7 +556,7 @@ export const createExternalRenewalApplication: Resolver<
         billingCity: applicant.city,
         billingProvince: applicant.province,
         billingCountry: applicant.country,
-        billingPostalCode: applicant.postalCode,
+        billingPostalCode: stripPostalCode(applicant.postalCode),
         applicant: {
           connect: { id: applicantId },
         },
@@ -579,7 +579,7 @@ export const createExternalRenewalApplication: Resolver<
             physicianCity: updatedPhysician && physicianCity ? physicianCity : physician.city,
             physicianPostalCode:
               updatedPhysician && physicianPostalCode
-                ? formatPostalCode(physicianPostalCode)
+                ? stripPostalCode(physicianPostalCode)
                 : physician.postalCode,
             usesAccessibleConvertedVan,
             accessibleConvertedVanLoadingMethod,
@@ -671,9 +671,9 @@ export const createReplacementApplication: Resolver<
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
         phone: stripPhoneNumber(phone),
-        postalCode: formatPostalCode(postalCode),
-        shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
-        billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
+        postalCode: stripPostalCode(postalCode),
+        shippingPostalCode: shippingPostalCode && stripPostalCode(shippingPostalCode),
+        billingPostalCode: billingPostalCode && stripPostalCode(billingPostalCode),
         ...data,
         applicant: {
           connect: { id: applicantId },
@@ -759,7 +759,7 @@ export const updateApplicationGeneralInformation: Resolver<
         // Only set to `undefined` if `receiveEmailUpdates` is null
         receiveEmailUpdates: receiveEmailUpdates ?? undefined,
         phone: stripPhoneNumber(phone),
-        postalCode: formatPostalCode(postalCode),
+        postalCode: stripPostalCode(postalCode),
         ...data,
       },
     });
@@ -813,7 +813,7 @@ export const updateNewApplicationGeneralInformation: Resolver<
         // Only set to `undefined` if `receiveEmailUpdates` is null
         receiveEmailUpdates: receiveEmailUpdates ?? undefined,
         phone: stripPhoneNumber(phone),
-        postalCode: formatPostalCode(postalCode),
+        postalCode: stripPostalCode(postalCode),
         newApplication: {
           update: {
             dateOfBirth,
@@ -895,7 +895,7 @@ export const updateApplicationDoctorInformation: Resolver<
               physicianAddressLine1,
               physicianAddressLine2,
               physicianCity,
-              physicianPostalCode: formatPostalCode(physicianPostalCode),
+              physicianPostalCode: stripPostalCode(physicianPostalCode),
             },
           },
         }),
@@ -909,7 +909,7 @@ export const updateApplicationDoctorInformation: Resolver<
               physicianAddressLine1,
               physicianAddressLine2,
               physicianCity,
-              physicianPostalCode: formatPostalCode(physicianPostalCode),
+              physicianPostalCode: stripPostalCode(physicianPostalCode),
             },
           },
         }),
@@ -964,7 +964,7 @@ export const updateApplicationGuardianInformation: Resolver<
           guardianAddressLine1: addressLine1,
           guardianAddressLine2: addressLine2,
           guardianCity: city,
-          guardianPostalCode: postalCode,
+          guardianPostalCode: stripPostalCode(postalCode),
           poaFormS3ObjectKey,
         },
       });
@@ -1111,8 +1111,8 @@ export const updateApplicationPaymentInformation: Resolver<
       where: { id },
       data: {
         donationAmount: donationAmount || 0,
-        shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
-        billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
+        shippingPostalCode: shippingPostalCode && stripPostalCode(shippingPostalCode),
+        billingPostalCode: billingPostalCode && stripPostalCode(billingPostalCode),
         ...data,
       },
     });

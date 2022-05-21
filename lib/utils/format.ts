@@ -19,12 +19,23 @@ export const formatPhoneNumber = (phone: string): string => {
 };
 
 /**
- * Format Canadian postal code by removing all non-alphanumeric characters.
+ * Strip Canadian postal code by capitalizing alphabetic characters and removing all non-alphanumeric characters.
+ * @param {string} postalCode postal code to be formatted
+ * @returns {string} formatted postal code
+ */
+export const stripPostalCode = (postalCode: string): string => {
+  const upperCasePostalCode = postalCode.toUpperCase();
+  return upperCasePostalCode.replace(/[^A-Za-z\d]/g, '');
+};
+
+/**
+ * Format Canadian postal code by adding space and capitalizing alphabetic characters
  * @param {string} postalCode postal code to be formatted
  * @returns {string} formatted postal code
  */
 export const formatPostalCode = (postalCode: string): string => {
-  return postalCode.replace(/[^A-Za-z\d]/g, '');
+  const upperCasePostalCode = postalCode.toUpperCase();
+  return `${upperCasePostalCode.substring(0, 3)} ${upperCasePostalCode.substring(3)}`;
 };
 
 /**
