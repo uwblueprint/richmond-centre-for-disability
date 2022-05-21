@@ -886,21 +886,83 @@ export const createReplacementApplication: Resolver<
     applicantId,
     phone,
     postalCode,
+
+    paymentMethod,
+    donationAmount,
+    shippingAddressSameAsHomeAddress,
+    shippingFullName,
+    shippingAddressLine1,
+    shippingAddressLine2,
+    shippingCity,
+    shippingProvince,
+    shippingCountry,
+    shippingPostalCode,
+    billingAddressSameAsHomeAddress,
+    billingAddressLine1,
+    billingAddressLine2,
+    billingCity,
+    billingProvince,
+    billingCountry,
+    billingPostalCode,
+
     reason,
     lostTimestamp,
     lostLocation,
+    eventDescription,
     stolenPoliceFileNumber,
     stolenJurisdiction,
     stolenPoliceOfficerName,
-    eventDescription,
-    donationAmount,
-    shippingPostalCode,
-    billingPostalCode,
-    ...data
   } = input;
 
   if (!process.env.PROCESSING_FEE) {
     throw new Error('Processing fee not defined');
+  }
+
+  const validationArgs = {
+    permitHolder: {
+      firstName,
+      middleName,
+      lastName,
+      email,
+      phone,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+    },
+    paymentInformation: {
+      paymentMethod,
+      donationAmount,
+      shippingAddressSameAsHomeAddress,
+      shippingFullName,
+      shippingAddressLine1,
+      shippingAddressLine2,
+      shippingCity,
+      shippingProvince,
+      shippingCountry,
+      shippingPostalCode,
+      billingAddressSameAsHomeAddress,
+      billingAddressLine1,
+      billingAddressLine2,
+      billingCity,
+      billingProvince,
+      billingCountry,
+      billingPostalCode,
+    },
+    reasonForReplacement: {
+      reason,
+      lostTimestamp,
+      lostLocation,
+      eventDescription,
+      stolenPoliceFileNumber,
+      stolenJurisdiction,
+      stolenPoliceOfficerName,
+    },
+  };
+
+  if (!replacementFormSchema.isValidSync(validationArgs)) {
+    // Yup validation failure
+    throw new Error('Invalid input');
   }
 
   // Retrieve applicant record
