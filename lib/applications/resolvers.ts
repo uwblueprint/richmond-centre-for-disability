@@ -215,6 +215,7 @@ export const createNewApplication: Resolver<
   // TODO: Validation
   const { input } = args;
   const {
+    phone,
     dateOfBirth,
     gender,
     otherGender,
@@ -274,6 +275,7 @@ export const createNewApplication: Resolver<
           },
         }),
         ...data,
+        phone: stripPhoneNumber(phone),
         postalCode: formatPostalCode(postalCode),
         shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
         billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
@@ -291,7 +293,7 @@ export const createNewApplication: Resolver<
             physicianFirstName,
             physicianLastName,
             physicianMspNumber,
-            physicianPhone,
+            physicianPhone: stripPhoneNumber(physicianPhone),
             physicianAddressLine1,
             physicianAddressLine2,
             physicianCity,
@@ -300,7 +302,7 @@ export const createNewApplication: Resolver<
               guardianFirstName,
               guardianMiddleName,
               guardianLastName,
-              guardianPhone,
+              guardianPhone: guardianPhone && stripPhoneNumber(guardianPhone),
               guardianRelationship,
               guardianAddressLine1,
               guardianAddressLine2,
@@ -354,6 +356,7 @@ export const createRenewalApplication: Resolver<
   const { input } = args;
   const {
     applicantId,
+    phone,
     postalCode,
     physicianFirstName,
     physicianLastName,
@@ -386,6 +389,7 @@ export const createRenewalApplication: Resolver<
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
         ...data,
+        phone: stripPhoneNumber(phone),
         postalCode: formatPostalCode(postalCode),
         shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
         billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
@@ -397,7 +401,7 @@ export const createRenewalApplication: Resolver<
             physicianFirstName,
             physicianLastName,
             physicianMspNumber,
-            physicianPhone,
+            physicianPhone: stripPhoneNumber(physicianPhone),
             physicianAddressLine1,
             physicianAddressLine2,
             physicianCity,
@@ -564,7 +568,9 @@ export const createExternalRenewalApplication: Resolver<
               updatedPhysician && physicianLastName ? physicianLastName : physician.lastName,
             physicianMspNumber:
               updatedPhysician && physicianMspNumber ? physicianMspNumber : physician.mspNumber,
-            physicianPhone: updatedPhysician && physicianPhone ? physicianPhone : physician.phone,
+            physicianPhone: stripPhoneNumber(
+              updatedPhysician && physicianPhone ? physicianPhone : physician.phone
+            ),
             physicianAddressLine1:
               updatedPhysician && addressLine1 ? addressLine1 : physician.addressLine1,
             physicianAddressLine2: updatedPhysician
@@ -626,6 +632,7 @@ export const createReplacementApplication: Resolver<
   const { input } = args;
   const {
     applicantId,
+    phone,
     postalCode,
     reason,
     lostTimestamp,
@@ -663,6 +670,7 @@ export const createReplacementApplication: Resolver<
         type: 'REPLACEMENT',
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
+        phone: stripPhoneNumber(phone),
         postalCode: formatPostalCode(postalCode),
         shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
         billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
@@ -723,7 +731,7 @@ export const updateApplicationGeneralInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   // TODO: Validation
   const { input } = args;
-  const { id, receiveEmailUpdates, postalCode, ...data } = input;
+  const { id, receiveEmailUpdates, phone, postalCode, ...data } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -750,6 +758,7 @@ export const updateApplicationGeneralInformation: Resolver<
       data: {
         // Only set to `undefined` if `receiveEmailUpdates` is null
         receiveEmailUpdates: receiveEmailUpdates ?? undefined,
+        phone: stripPhoneNumber(phone),
         postalCode: formatPostalCode(postalCode),
         ...data,
       },
@@ -775,7 +784,8 @@ export const updateNewApplicationGeneralInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   // TODO: Validation
   const { input } = args;
-  const { id, receiveEmailUpdates, postalCode, dateOfBirth, gender, otherGender, ...data } = input;
+  const { id, receiveEmailUpdates, phone, postalCode, dateOfBirth, gender, otherGender, ...data } =
+    input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -802,6 +812,7 @@ export const updateNewApplicationGeneralInformation: Resolver<
       data: {
         // Only set to `undefined` if `receiveEmailUpdates` is null
         receiveEmailUpdates: receiveEmailUpdates ?? undefined,
+        phone: stripPhoneNumber(phone),
         postalCode: formatPostalCode(postalCode),
         newApplication: {
           update: {
@@ -880,7 +891,7 @@ export const updateApplicationDoctorInformation: Resolver<
               physicianFirstName,
               physicianLastName,
               physicianMspNumber,
-              physicianPhone,
+              physicianPhone: stripPhoneNumber(physicianPhone),
               physicianAddressLine1,
               physicianAddressLine2,
               physicianCity,
@@ -894,7 +905,7 @@ export const updateApplicationDoctorInformation: Resolver<
               physicianFirstName,
               physicianLastName,
               physicianMspNumber,
-              physicianPhone,
+              physicianPhone: stripPhoneNumber(physicianPhone),
               physicianAddressLine1,
               physicianAddressLine2,
               physicianCity,
@@ -948,7 +959,7 @@ export const updateApplicationGuardianInformation: Resolver<
           guardianFirstName: firstName,
           guardianMiddleName: middleName,
           guardianLastName: lastName,
-          guardianPhone: phone,
+          guardianPhone: stripPhoneNumber(phone),
           guardianRelationship: relationship,
           guardianAddressLine1: addressLine1,
           guardianAddressLine2: addressLine2,
