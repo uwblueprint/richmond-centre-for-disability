@@ -13,7 +13,7 @@ import {
   UpdateDoctorInformationResponse,
   UPDATE_DOCTOR_INFORMATION,
 } from '@tools/admin/permit-holders/doctor-information';
-import { formatFullName } from '@lib/utils/format';
+import { formatFullName, formatPhoneNumber } from '@lib/utils/format';
 import Address from '@components/admin/Address';
 import { useMemo } from 'react';
 
@@ -146,7 +146,7 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
             {`MSP Number: ${mspNumber}`}
           </Text>
           <Text as="p" textStyle="body-regular" textAlign="left">
-            {`Phone: ${phone}`}
+            {`Phone: ${formatPhoneNumber(phone)}`}
           </Text>
         </VStack>
         <Divider />
