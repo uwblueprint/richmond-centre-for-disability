@@ -880,13 +880,14 @@ export const createReplacementApplication: Resolver<
   MutationCreateReplacementApplicationArgs,
   CreateReplacementApplicationResult
 > = async (_, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
+
   const {
     applicantId,
     phone,
     postalCode,
 
+    // Payment Information Fields
     paymentMethod,
     donationAmount,
     shippingAddressSameAsHomeAddress,
@@ -905,6 +906,7 @@ export const createReplacementApplication: Resolver<
     billingCountry,
     billingPostalCode,
 
+    // Reason for Replacement Fields
     reason,
     lostTimestamp,
     lostLocation,
