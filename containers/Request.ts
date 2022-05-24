@@ -1,4 +1,4 @@
-import useSessionStorage from '@tools/hooks/useSessionStorage'; // useSessionStorage hook
+import { useState } from 'react';
 import { createContainer } from 'unstated-next'; // Unstated Next
 
 /**
@@ -7,13 +7,10 @@ import { createContainer } from 'unstated-next'; // Unstated Next
  */
 const useRequest = () => {
   // Timestamp of agreement to TOS
-  const [acceptedTOSTimestamp, setAcceptedTOSTimestamp] = useSessionStorage<Date | null>(
-    'acceptedTOSTimestamp',
-    null
-  );
+  const [acceptedTOSTimestamp, setAcceptedTOSTimestamp] = useState<Date | null>(null);
 
   // ID of applicant after successful identity verification
-  const [applicantId, setApplicantId] = useSessionStorage<number | null>('applicantId', null);
+  const [applicantId, setApplicantId] = useState<number | null>(null);
 
   return {
     acceptedTOSTimestamp,

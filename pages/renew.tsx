@@ -30,7 +30,7 @@ import {
   CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION,
   CreateExternalRenewalApplicationRequest,
   CreateExternalRenewalApplicationResponse,
-} from '@tools/applicant/renew'; // Page tools
+} from '@tools/applicant/renewal-form'; // Page tools
 import useSteps from '@tools/hooks/useSteps'; // Custom hook for managing steps state
 import Request from '@containers/Request'; // Request state
 
