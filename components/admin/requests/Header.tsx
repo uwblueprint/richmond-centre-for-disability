@@ -6,7 +6,7 @@ import ShopifyBadge from '@components/admin/ShopifyBadge';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
 import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/types';
 import { titlecase } from '@tools/string';
-import { formatDateYYYYMMDD } from '@lib/utils/format';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 
 type RequestHeaderProps = {
   readonly applicationType: ApplicationType;

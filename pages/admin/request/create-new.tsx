@@ -52,7 +52,7 @@ import {
   INITIAL_PHYSICIAN_ASSESSMENT,
 } from '@tools/admin/requests/create-new';
 import { useRouter } from 'next/router';
-import { formatDateYYYYMMDD } from '@lib/utils/format';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { clientUploadToS3 } from '@lib/utils/s3-utils';
 
 /** Create New APP page */

@@ -7,8 +7,8 @@ import moment from 'moment';
  * @returns {string} formatted date
  */
 export const formatDate = (date: Date, dateInput = false): string => {
-  const formattedDateUTC = moment.utc(date).toISOString();
-  return dateInput ? formattedDateUTC.substring(0, 10) : formattedDateUTC;
+  const formattedDateUTC = moment.utc(date);
+  return dateInput ? formattedDateUTC.format() : formattedDateUTC.format('MM/DD/YYYY');
 };
 
 /**
@@ -17,8 +17,22 @@ export const formatDate = (date: Date, dateInput = false): string => {
  * @returns {string} formatted date
  */
 export const formatDateYYYYMMDD = (d: Date): string => {
-  const date = moment.utc(d);
-  return date.toISOString().split('T')[0];
+  return moment.utc(d).format('YYYY-MM-DD');
+};
+
+/**
+ * Format date to be in written in the following format: Sep 11 2021, 03:07 pm not converting to the local timezone
+ * @param {Date} date date to be formatted
+ * @param {boolean} omitTime whether to omit time from date (eg. Sep 11 2021)
+ * @returns {string} formatted verbose date
+ */
+export const formatDateVerboseUTC = (date: Date, omitTime = false, includeDay = false): string => {
+  const formatString = omitTime ? 'MMM DD YYYY' : 'MMM DD YYYY, hh:mm a';
+  const localeDateString = includeDay
+    ? moment.utc(date).format('ddd ' + formatString)
+    : moment.utc(date).format(formatString);
+  //   console.log(localeDateString);
+  return localeDateString;
 };
 
 /**
@@ -41,14 +55,5 @@ export const formatDateVerbose = (date: Date, omitTime = false): string => {
  */
 export const formatDateTimeYYYYMMDDHHMMSS = (d: Date): string => {
   // offset timezone to locale timezone
-  const date = new Date(d);
-  const offset = date.getTimezoneOffset();
-  const dateTimeParts = new Date(date.getTime() - offset * 60 * 1000).toISOString().split('T');
-
-  // create YYYYMMDD from ISOString
-  const day = dateTimeParts[0].replace(/\D/g, '');
-  // create HHMMSS from ISOString
-  const time = dateTimeParts[1].split('.')[0].replace(/\D/g, '');
-
-  return `${day}-${time}`;
+  return moment(d).format('YYYYMMDD-HHmmss');
 };
