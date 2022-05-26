@@ -44,7 +44,11 @@ import {
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
-import { paymentInformationMutationSchema } from '@lib/applications/validation';
+import {
+  additionalQuestionsMutationSchema,
+  paymentInformationMutationSchema,
+} from '@lib/applications/validation';
+import { ValidationError } from 'yup';
 
 /**
  * Query an application by ID
@@ -996,9 +1000,10 @@ export const updateApplicationAdditionalInformation: Resolver<
   MutationUpdateApplicationAdditionalInformationArgs,
   UpdateApplicationAdditionalInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, ...data } = input;
+
+  const validatedInput = await additionalQuestionsMutationSchema.validate(input);
+  const { id, ...data } = validatedInput;
 
   // Get existing application type (should be NEW/RENEWAL)
   const application = await prisma.application.findUnique({
@@ -1013,7 +1018,6 @@ export const updateApplicationAdditionalInformation: Resolver<
     },
   });
   if (!application) {
-    // TODO: Improve validation
     throw new ApolloError('Application not found');
   }
   // Prevent reviewed requests from being updated
@@ -1067,12 +1071,21 @@ export const updateApplicationPaymentInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   const { input } = args;
 
-  const validatedInput = await paymentInformationMutationSchema.validate(input);
-  const { donationAmount, shippingPostalCode, billingPostalCode, ...validatedData } =
-    validatedInput;
+  try {
+    await paymentInformationMutationSchema.validate({ ...input, id: 'abcde' });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
+  const { id, donationAmount, shippingPostalCode, billingPostalCode, ...validatedData } = input;
 
   const application = await prisma.application.findUnique({
-    where: { id: validatedInput.id },
+    where: { id },
     select: {
       paidThroughShopify: true,
       applicationProcessing: {
@@ -1082,9 +1095,11 @@ export const updateApplicationPaymentInformation: Resolver<
       },
     },
   });
+
   if (!application) {
     throw new ApolloError('Application does not exist');
   }
+
   // Prevent reviewed requests from being updated
   if (application.applicationProcessing.reviewRequestCompleted) {
     throw new ApolloError('Reviewed requests cannot be updated');

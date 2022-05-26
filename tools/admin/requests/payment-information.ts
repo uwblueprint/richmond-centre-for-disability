@@ -95,6 +95,7 @@ export const UPDATE_PAYMENT_INFORMATION = gql`
   mutation UpdateApplicationPaymentInformation($input: UpdateApplicationPaymentInformationInput!) {
     updateApplicationPaymentInformation(input: $input) {
       ok
+      error
     }
   }
 `;

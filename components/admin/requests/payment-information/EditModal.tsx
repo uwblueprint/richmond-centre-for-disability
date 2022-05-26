@@ -10,6 +10,9 @@ import {
   useDisclosure,
   Text,
   Box,
+  Alert,
+  AlertIcon,
+  AlertTitle,
 } from '@chakra-ui/react'; // Chakra UI
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
@@ -20,19 +23,23 @@ type EditPaymentDetailsModalProps = {
   readonly children: ReactNode;
   readonly paymentInformation: PaymentInformationFormData;
   readonly onSave: (applicationData: any) => void;
+  readonly error?: string; //should the type instead be string | undefined or something?
 };
 
 export default function EditPaymentDetailsModal({
   children,
   paymentInformation,
   onSave,
+  error,
 }: EditPaymentDetailsModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleSubmit = (values: { paymentInformation: PaymentInformationFormData }) => {
     // TODO: Backend errors
     onSave(values.paymentInformation);
-    onClose();
+    if (!error) {
+      onClose();
+    }
   };
 
   return (
@@ -67,6 +74,12 @@ export default function EditPaymentDetailsModal({
                 <ModalBody paddingY="20px" paddingX="4px">
                   <PaymentDetailsForm paymentInformation={values.paymentInformation} />
                 </ModalBody>
+                {error && (
+                  <Alert status="error" marginBottom="24px" pt="8px">
+                    <AlertIcon />
+                    <AlertTitle>{error}</AlertTitle>
+                  </Alert>
+                )}
                 <ModalFooter paddingBottom="24px" paddingX="4px">
                   <Button colorScheme="gray" variant="solid" onClick={onClose}>
                     {'Cancel'}
