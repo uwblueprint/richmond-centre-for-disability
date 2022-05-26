@@ -1161,6 +1161,7 @@ export type UpdateApplicantGuardianInformationInput = {
   city: Scalars['String'];
   postalCode: Scalars['String'];
   poaFormS3ObjectKey: Maybe<Scalars['String']>;
+  omitGuardianPoa: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdateApplicantGuardianInformationResult = {
