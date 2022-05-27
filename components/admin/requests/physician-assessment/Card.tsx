@@ -25,6 +25,7 @@ import PermitTypeBadge from '@components/admin/PermitTypeBadge';
 import { formatDateYYYYMMDD } from '@lib/utils/format';
 import { titlecase } from '@tools/string';
 import EditPhysicianAssessmentModal from './EditModal';
+import { physicianAssessmentSchema } from '@lib/physicians/validation';
 
 type Props = {
   readonly applicationId: number;
@@ -63,18 +64,13 @@ const Card: FC<Props> = props => {
 
   /** Handler for saving physician assessment */
   const handleSave = async (data: PhysicianAssessment) => {
-    if (data.patientCondition === null || data.permitType === null) {
-      // TODO: Improve error handling
-      return;
-    }
+    const validatedData = await physicianAssessmentSchema.validate(data);
 
     await updatePhysicianAssessment({
       variables: {
         input: {
           id: applicationId,
-          ...data,
-          patientCondition: data.patientCondition,
-          permitType: data.permitType,
+          ...validatedData,
         },
       },
     });

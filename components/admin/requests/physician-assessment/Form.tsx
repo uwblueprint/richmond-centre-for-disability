@@ -1,4 +1,3 @@
-import { Text, Stack, FormHelperText, Box, Divider, Radio } from '@chakra-ui/react'; // Chakra UI
 import DateField from '@components/form/DateField';
 import RadioGroupField from '@components/form/RadioGroupField';
 import TextArea from '@components/form/TextAreaField';
@@ -7,7 +6,6 @@ import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment'
 import {
   FormControl,
   FormLabel,
-  Input,
   Text,
   Stack,
   FormHelperText,
@@ -15,14 +13,13 @@ import {
   Divider,
   RadioGroup,
   Radio,
-  Textarea,
-  CheckboxGroup,
   Checkbox,
 } from '@chakra-ui/react'; // Chakra UI
-import { MobilityAid, PatientCondition, PermitType } from '@lib/graphql/types';
-import { formatDateYYYYMMDD } from '@lib/utils/format';
-import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment';
-import { ChangeEventHandler, useState } from 'react';
+import { useState } from 'react';
+import TextAreaField from '@components/form/TextAreaField';
+import CheckboxGroupField from '@components/form/CheckboxGroupField';
+import { useFormikContext } from 'formik';
+import { formatDate } from '@lib/utils/format';
 
 type PhysicianAssessmentFormProps = {
   readonly physicianAssessment: PhysicianAssessment;
@@ -41,6 +38,8 @@ export default function PhysicianAssessmentForm({
     !!physicianAssessment?.mobilityAids?.length
   );
 
+  const { setFieldValue } = useFormikContext();
+
   return (
     <>
       <Box paddingBottom="32px">
@@ -57,6 +56,7 @@ export default function PhysicianAssessmentForm({
             name="physicianAssessment.disabilityCertificationDate"
             label="Physician’s certification date"
             required
+            value={formatDate(new Date(physicianAssessment.disabilityCertificationDate), true)}
           >
             <FormHelperText color="text.secondary">{'Format: YYYY-MM-DD'}</FormHelperText>
           </DateField>
@@ -121,10 +121,7 @@ export default function PhysicianAssessmentForm({
               onChange={value => {
                 setMobilityAidsRequired(value === '1' ? true : false);
                 if (value === '0') {
-                  onChange({
-                    ...physicianAssessment,
-                    mobilityAids: [],
-                  });
+                  setFieldValue('physicianAssessment.mobilityAids', []);
                 }
               }}
             >
@@ -136,43 +133,31 @@ export default function PhysicianAssessmentForm({
           </FormControl>
 
           {mobilityAidsRequired && (
-            <FormControl isRequired>
-              <FormLabel>{'What mobility aids are you currently using?'}</FormLabel>
-              <CheckboxGroup
-                value={physicianAssessment.mobilityAids || undefined}
-                onChange={value => {
-                  onChange({
-                    ...physicianAssessment,
-                    mobilityAids: value as MobilityAid[],
-                  });
-                }}
-              >
-                <Stack>
-                  <Checkbox value={'MANUAL_CHAIR'}>{'Manual Wheelchair'}</Checkbox>
-                  <Checkbox value={'ELECTRIC_CHAIR'}>{'Power Wheelchair'}</Checkbox>
-                  <Checkbox value={'SCOOTER'}>{'Scooter'}</Checkbox>
-                  <Checkbox value={'WALKER'}>{'Walker'}</Checkbox>
-                  <Checkbox value={'CRUTCHES'}>{'Crutches'}</Checkbox>
-                  <Checkbox value={'CANE'}>{'Cane'}</Checkbox>
-                  <Checkbox value={'OTHERS'}>{'Others'}</Checkbox>
-                </Stack>
-              </CheckboxGroup>
-            </FormControl>
+            <CheckboxGroupField
+              name="physicianAssessment.mobilityAids"
+              label="What mobility aids are you currently using?"
+              required
+            >
+              <Stack>
+                <Checkbox value={'MANUAL_CHAIR'}>{'Manual Wheelchair'}</Checkbox>
+                <Checkbox value={'ELECTRIC_CHAIR'}>{'Power Wheelchair'}</Checkbox>
+                <Checkbox value={'SCOOTER'}>{'Scooter'}</Checkbox>
+                <Checkbox value={'WALKER'}>{'Walker'}</Checkbox>
+                <Checkbox value={'CRUTCHES'}>{'Crutches'}</Checkbox>
+                <Checkbox value={'CANE'}>{'Cane'}</Checkbox>
+                <Checkbox value={'OTHERS'}>{'Others'}</Checkbox>
+              </Stack>
+            </CheckboxGroupField>
           )}
 
-          {physicianAssessment?.mobilityAids?.includes('OTHERS') && (
-            <FormControl isRequired>
-              <FormLabel>{'Description'}</FormLabel>
-              <Textarea
-                value={physicianAssessment.otherMobilityAids || undefined}
-                onChange={event =>
-                  onChange({
-                    ...physicianAssessment,
-                    otherMobilityAids: event.target.value,
-                  })
-                }
+          {physicianAssessment.mobilityAids?.includes('OTHERS') && (
+            <Box>
+              <TextAreaField
+                name="physicianAssessment.otherMobilityAids"
+                label="Description"
+                required
               />
-            </FormControl>
+            </Box>
           )}
         </Stack>
       </Box>
@@ -204,6 +189,11 @@ export default function PhysicianAssessmentForm({
             name="physicianAssessment.temporaryPermitExpiry"
             label="Temporary permit will expire on"
             required
+            value={
+              physicianAssessment.temporaryPermitExpiry
+                ? formatDate(new Date(physicianAssessment.temporaryPermitExpiry), true)
+                : ''
+            }
           >
             <FormHelperText color="text.secondary">{'Format: YYYY-MM-DD'}</FormHelperText>
           </DateField>
