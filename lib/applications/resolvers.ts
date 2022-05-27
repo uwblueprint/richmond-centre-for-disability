@@ -44,10 +44,7 @@ import {
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
-import {
-  additionalQuestionsMutationSchema,
-  paymentInformationMutationSchema,
-} from '@lib/applications/validation';
+import { paymentInformationMutationSchema } from '@lib/applications/validation';
 import { ValidationError } from 'yup';
 
 /**
@@ -1000,10 +997,9 @@ export const updateApplicationAdditionalInformation: Resolver<
   MutationUpdateApplicationAdditionalInformationArgs,
   UpdateApplicationAdditionalInformationResult
 > = async (_parent, args, { prisma }) => {
+  // TODO: Validation
   const { input } = args;
-
-  const validatedInput = await additionalQuestionsMutationSchema.validate(input);
-  const { id, ...data } = validatedInput;
+  const { id, ...data } = input;
 
   // Get existing application type (should be NEW/RENEWAL)
   const application = await prisma.application.findUnique({
@@ -1018,6 +1014,7 @@ export const updateApplicationAdditionalInformation: Resolver<
     },
   });
   if (!application) {
+    // TODO: Improve validation
     throw new ApolloError('Application not found');
   }
   // Prevent reviewed requests from being updated

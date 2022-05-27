@@ -60,15 +60,6 @@ export const editAdditionalQuestionsSchema = object({
 });
 
 /**
- * Validation schema for payment information mutation
- */
-export const additionalQuestionsMutationSchema = additionalQuestionsSchema.concat(
-  object({
-    id: number().required(),
-  })
-);
-
-/**
  * Payment information form validation schema
  */
 export const paymentInformationSchema = object({
