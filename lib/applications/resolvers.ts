@@ -1072,7 +1072,7 @@ export const updateApplicationPaymentInformation: Resolver<
   const { input } = args;
 
   try {
-    await paymentInformationMutationSchema.validate({ ...input, id: 'abcde' });
+    await paymentInformationMutationSchema.validate(input);
   } catch (err) {
     if (err instanceof ValidationError) {
       return {

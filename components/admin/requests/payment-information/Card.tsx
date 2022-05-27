@@ -44,7 +44,7 @@ const Card: FC<Props> = props => {
     }
   );
 
-  const [updatePaymentInformation, { data }] = useMutation<
+  const [updatePaymentInformation] = useMutation<
     UpdatePaymentInformationResponse,
     UpdatePaymentInformationRequest
   >(UPDATE_PAYMENT_INFORMATION);
@@ -57,10 +57,12 @@ const Card: FC<Props> = props => {
   const handleSave = async (paymentInformationFormData: PaymentInformationFormData) => {
     const validatedData = await paymentInformationSchema.validate(paymentInformationFormData);
 
-    await updatePaymentInformation({
+    const { data } = await updatePaymentInformation({
       variables: { input: { id: applicationId, ...validatedData } },
     });
+
     refetch();
+    return data;
   };
 
   const {
@@ -116,7 +118,6 @@ const Card: FC<Props> = props => {
               billingPostalCode,
             }}
             onSave={handleSave}
-            error={data?.updateApplicationPaymentInformation.error}
           >
             <Button color="primary" variant="ghost" textDecoration="underline">
               <Text textStyle="body-bold">Edit</Text>
