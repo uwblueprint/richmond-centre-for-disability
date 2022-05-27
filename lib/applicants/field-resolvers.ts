@@ -105,7 +105,7 @@ export const applicantCompletedApplicationsResolver: FieldResolver<
  */
 export const applicantGuardianResolver: FieldResolver<
   Applicant,
-  Omit<Guardian, 'poaFormS3ObjectUrl'> | null
+  Omit<Guardian, 'poaFormS3ObjectUrl' | 'poaFormS3ObjectKey'> | null
 > = async (parent, _args, { prisma }) => {
   return await prisma.applicant.findUnique({ where: { id: parent.id } }).guardian();
 };

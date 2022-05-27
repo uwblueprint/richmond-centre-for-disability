@@ -110,6 +110,8 @@ export default gql`
 
     # POA form
     poaFormS3ObjectKey: String
+
+    omitGuardianPoa: Boolean
   }
 
   type UpdateApplicantGuardianInformationResult {
