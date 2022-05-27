@@ -4,6 +4,11 @@ type ValidationErrorAlertProps = {
   readonly error?: string;
 };
 
+/**
+ * Alert to display backend form validation errors
+ * @param props validation error to be shown
+ * @returns Alert displaying backend form validation error
+ */
 export default function ValidationErrorAlert({ error }: ValidationErrorAlertProps) {
   return (
     <>
