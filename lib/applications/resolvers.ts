@@ -1128,7 +1128,7 @@ export const updateApplicationPaymentInformation: Resolver<
     throw new ApolloError('Application payment information was unable to be updated');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**

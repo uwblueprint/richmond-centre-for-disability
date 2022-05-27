@@ -10,9 +10,6 @@ import {
   useDisclosure,
   Text,
   Box,
-  Alert,
-  AlertIcon,
-  AlertTitle,
 } from '@chakra-ui/react'; // Chakra UI
 import {
   PaymentInformationFormData,
@@ -21,6 +18,7 @@ import {
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
 import { Form, Formik } from 'formik';
 import { editPaymentInformationSchema } from '@lib/applications/validation';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 type EditPaymentDetailsModalProps = {
   readonly children: ReactNode;
@@ -85,12 +83,7 @@ export default function EditPaymentDetailsModal({
                 <ModalBody paddingY="20px" paddingX="4px">
                   <PaymentDetailsForm paymentInformation={values.paymentInformation} />
                 </ModalBody>
-                {error && (
-                  <Alert status="error" mt="12px" pt="20px" pb="20px">
-                    <AlertIcon />
-                    <AlertTitle>{error}</AlertTitle>
-                  </Alert>
-                )}
+                <ValidationErrorAlert error={error} />
                 <ModalFooter paddingBottom="24px" paddingX="4px">
                   <Button colorScheme="gray" variant="solid" onClick={onModalClose}>
                     {'Cancel'}
