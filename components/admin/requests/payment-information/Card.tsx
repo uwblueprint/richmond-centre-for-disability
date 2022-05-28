@@ -54,13 +54,15 @@ const Card: FC<Props> = props => {
   }
 
   /** Form save handler */
-  const handleSave = async (data: PaymentInformationFormData) => {
-    const validatedData = await paymentInformationSchema.validate(data);
+  const handleSave = async (paymentInformationFormData: PaymentInformationFormData) => {
+    const validatedData = await paymentInformationSchema.validate(paymentInformationFormData);
 
-    await updatePaymentInformation({
+    const { data } = await updatePaymentInformation({
       variables: { input: { id: applicationId, ...validatedData } },
     });
+
     refetch();
+    return data;
   };
 
   const {

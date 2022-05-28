@@ -740,6 +740,7 @@ export default gql`
 
   type UpdateApplicationPaymentInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update reason for replacement section of application

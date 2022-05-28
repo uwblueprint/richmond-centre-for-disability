@@ -180,6 +180,13 @@ export const editPaymentInformationSchema = object({
 });
 
 /**
+ * Validation schema for payment information mutation
+ */
+export const paymentInformationMutationSchema = paymentInformationSchema.shape({
+  id: number().positive('Application not found').required('Application not found'),
+});
+
+/**
  * Reason for replacement form validation schema
  */
 export const reasonForReplacementFormSchema = object({

@@ -44,6 +44,8 @@ import {
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
+import { paymentInformationMutationSchema } from '@lib/applications/validation';
+import { ValidationError } from 'yup';
 
 /**
  * Query an application by ID
@@ -1064,9 +1066,20 @@ export const updateApplicationPaymentInformation: Resolver<
   MutationUpdateApplicationPaymentInformationArgs,
   UpdateApplicationPaymentInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, donationAmount, shippingPostalCode, billingPostalCode, ...data } = input;
+
+  try {
+    await paymentInformationMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
+  const { id, donationAmount, shippingPostalCode, billingPostalCode, ...validatedData } = input;
 
   const application = await prisma.application.findUnique({
     where: { id },
@@ -1079,9 +1092,11 @@ export const updateApplicationPaymentInformation: Resolver<
       },
     },
   });
+
   if (!application) {
     throw new ApolloError('Application does not exist');
   }
+
   // Prevent reviewed requests from being updated
   if (application.applicationProcessing.reviewRequestCompleted) {
     throw new ApolloError('Reviewed requests cannot be updated');
@@ -1102,7 +1117,7 @@ export const updateApplicationPaymentInformation: Resolver<
         donationAmount: donationAmount || 0,
         shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
         billingPostalCode: billingPostalCode && formatPostalCode(billingPostalCode),
-        ...data,
+        ...validatedData,
       },
     });
   } catch {
@@ -1113,7 +1128,7 @@ export const updateApplicationPaymentInformation: Resolver<
     throw new ApolloError('Application payment information was unable to be updated');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
