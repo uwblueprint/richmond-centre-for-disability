@@ -28,10 +28,9 @@ export const formatDateYYYYMMDD = (d: Date): string => {
  */
 export const formatDateVerboseUTC = (date: Date, omitTime = false, includeDay = false): string => {
   const formatString = omitTime ? 'MMM DD YYYY' : 'MMM DD YYYY, hh:mm a';
-  const localeDateString = includeDay
-    ? moment.utc(date).format('ddd ' + formatString)
-    : moment.utc(date).format(formatString);
-  //   console.log(localeDateString);
+  const localeDateString = moment
+    .utc(date)
+    .format(includeDay ? 'ddd ' + formatString : formatString);
   return localeDateString;
 };
 
@@ -44,7 +43,6 @@ export const formatDateVerboseUTC = (date: Date, omitTime = false, includeDay = 
 export const formatDateVerbose = (date: Date, omitTime = false): string => {
   const formatString = omitTime ? 'MMM DD YYYY' : 'MMM DD YYYY, hh:mm a';
   const localeDateString = moment(date).format(formatString);
-  //   console.log(localeDateString);
   return localeDateString;
 };
 
