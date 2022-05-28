@@ -60,6 +60,13 @@ export const editAdditionalQuestionsSchema = object({
 });
 
 /**
+ * Validation schema for additional information mutation
+ */
+export const additionalQuestionsMutationSchema = additionalQuestionsSchema.shape({
+  id: number().positive('Application not found').required('Application not found'),
+});
+
+/**
  * Payment information form validation schema
  */
 export const paymentInformationSchema = object({

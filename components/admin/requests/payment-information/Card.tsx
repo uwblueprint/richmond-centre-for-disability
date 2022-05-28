@@ -61,7 +61,10 @@ const Card: FC<Props> = props => {
       variables: { input: { id: applicationId, ...validatedData } },
     });
 
-    refetch();
+    if (data?.updateApplicationPaymentInformation.ok) {
+      refetch();
+    }
+
     return data;
   };
 

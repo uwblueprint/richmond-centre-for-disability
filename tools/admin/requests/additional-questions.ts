@@ -61,6 +61,7 @@ export const UPDATE_ADDITIONAL_INFORMATION = gql`
   ) {
     updateApplicationAdditionalInformation(input: $input) {
       ok
+      error
     }
   }
 `;
@@ -68,5 +69,5 @@ export const UPDATE_ADDITIONAL_INFORMATION = gql`
 export type UpdateAdditionalInformationRequest = MutationUpdateApplicationAdditionalInformationArgs;
 
 export type UpdateAdditionalInformationResponse = {
-  updateApplicationAdditionaltInformation: UpdateApplicationAdditionalInformationResult;
+  updateApplicationAdditionalInformation: UpdateApplicationAdditionalInformationResult;
 };

@@ -44,7 +44,10 @@ import {
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
-import { paymentInformationMutationSchema } from '@lib/applications/validation';
+import {
+  additionalQuestionsMutationSchema,
+  paymentInformationMutationSchema,
+} from '@lib/applications/validation';
 import { ValidationError } from 'yup';
 
 /**
@@ -997,8 +1000,19 @@ export const updateApplicationAdditionalInformation: Resolver<
   MutationUpdateApplicationAdditionalInformationArgs,
   UpdateApplicationAdditionalInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
+
+  try {
+    await additionalQuestionsMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
   const { id, ...data } = input;
 
   // Get existing application type (should be NEW/RENEWAL)
@@ -1014,7 +1028,6 @@ export const updateApplicationAdditionalInformation: Resolver<
     },
   });
   if (!application) {
-    // TODO: Improve validation
     throw new ApolloError('Application not found');
   }
   // Prevent reviewed requests from being updated
@@ -1055,7 +1068,7 @@ export const updateApplicationAdditionalInformation: Resolver<
     throw new ApolloError('Application additional information was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
