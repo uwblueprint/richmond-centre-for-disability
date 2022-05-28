@@ -3,10 +3,7 @@ import { GuardianInformation } from '@tools/admin/requests/guardian-information'
 import PoaFormUploadField from '@components/admin/requests/guardian-information/PoaFormUploadField';
 import TextField from '@components/form/TextField';
 import CheckboxField from '@components/form/CheckboxField';
-<<<<<<< HEAD
 import { getFileName } from '@lib/utils/s3-utils';
-=======
->>>>>>> [Feature] Guardian/POA Form Validation Refactoring (#186)
 
 type GuardianInformationFormProps = {
   readonly guardianInformation: GuardianInformation;
@@ -24,11 +21,8 @@ export default function GuardianInformationForm({
   file,
   onUploadFile,
 }: GuardianInformationFormProps) {
-<<<<<<< HEAD
   const { poaFormS3ObjectKey, poaFormS3ObjectUrl } = guardianInformation;
 
-=======
->>>>>>> [Feature] Guardian/POA Form Validation Refactoring (#186)
   return (
     <>
       {/* Personal Information Section */}
