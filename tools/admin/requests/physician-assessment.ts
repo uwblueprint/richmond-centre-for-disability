@@ -65,6 +65,7 @@ export const UPDATE_PHYSICIAN_ASSESSMENT = gql`
   ) {
     updateApplicationPhysicianAssessment(input: $input) {
       ok
+      error
     }
   }
 `;

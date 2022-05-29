@@ -1,5 +1,5 @@
 import { MobilityAid, PatientCondition, PermitType } from '@prisma/client';
-import { date, mixed, object, string, array } from 'yup';
+import { date, mixed, object, string, array, number } from 'yup';
 
 /**
  * Validation schema for physician assessment form
@@ -62,6 +62,13 @@ export const physicianAssessmentSchema = object({
  */
 export const editPhysicianAssessmentSchema = object({
   physicianAssessment: physicianAssessmentSchema,
+});
+
+/**
+ * Validation schema for physician assessment mutation
+ */
+export const physicianAssessmentMutationSchema = physicianAssessmentSchema.shape({
+  id: number().positive('Application not found').required('Application not found'),
 });
 
 /**
