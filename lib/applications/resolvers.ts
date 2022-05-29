@@ -44,7 +44,10 @@ import {
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
-import { paymentInformationMutationSchema } from '@lib/applications/validation';
+import {
+  createNewRequestMutationSchema,
+  paymentInformationMutationSchema,
+} from '@lib/applications/validation';
 import { ValidationError } from 'yup';
 
 /**
@@ -214,8 +217,20 @@ export const createNewApplication: Resolver<
   MutationCreateNewApplicationArgs,
   CreateNewApplicationResult
 > = async (_, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
+
+  try {
+    await createNewRequestMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        applicationId: null,
+        error: err.message,
+      };
+    }
+  }
+
   const {
     dateOfBirth,
     gender,
@@ -341,6 +356,7 @@ export const createNewApplication: Resolver<
   return {
     ok: true,
     applicationId: application.id,
+    error: null,
   };
 };
 

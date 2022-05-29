@@ -413,6 +413,7 @@ export default gql`
   type CreateNewApplicationResult {
     ok: Boolean!
     applicationId: Int
+    error: String
   }
 
   input CreateRenewalApplicationInput {

@@ -57,6 +57,7 @@ import { Form, Formik } from 'formik';
 import { createNewRequestFormSchema } from '@lib/applications/validation';
 import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 import { clientUploadToS3 } from '@lib/utils/s3-utils';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -80,6 +81,8 @@ export default function CreateNew() {
   );
   // Guardian/POA File
   const [guardianPOAFile, setGuardianPOAFile] = useState<File | null>(null);
+  // Backend form validation error
+  const [error, setError] = useState<string>('');
 
   // Toast message
   const toast = useToast();
@@ -212,7 +215,7 @@ export default function CreateNew() {
   >(CREATE_NEW_APPLICATION_MUTATION, {
     onCompleted: data => {
       if (data) {
-        const { ok, applicationId } = data.createNewApplication;
+        const { ok, applicationId, error } = data.createNewApplication;
         if (ok) {
           toast({
             status: 'success',
@@ -223,6 +226,8 @@ export default function CreateNew() {
           if (applicationId) {
             router.push(`/admin/request/${applicationId}`);
           }
+        } else {
+          setError(error ?? '');
         }
       }
     },
@@ -555,6 +560,7 @@ export default function CreateNew() {
                   boxShadow="dark-lg"
                 >
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <ValidationErrorAlert error={error} />
                     <Box>
                       <Button
                         bg="background.gray"
