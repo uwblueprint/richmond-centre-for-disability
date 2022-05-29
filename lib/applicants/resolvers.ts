@@ -25,6 +25,7 @@ import { SortOrder } from '@tools/types'; // Sorting Type
 import { PermitType } from '@prisma/client';
 import { permitHolderInformationSchema, verifyIdentitySchema } from '@lib/applicants/validation';
 import { ValidationError } from 'yup';
+import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -275,9 +276,24 @@ export const updateApplicantDoctorInformation: Resolver<
   MutationUpdateApplicantDoctorInformationArgs,
   UpdateApplicantDoctorInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
   const { id, mspNumber, ...data } = input;
+  const { firstName, lastName, phone, addressLine1, addressLine2, city, postalCode } = input;
+
+  if (
+    !requestPhysicianInformationSchema.isValidSync({
+      firstName: firstName,
+      lastName: lastName,
+      mspNumber: mspNumber,
+      phone: phone,
+      addressLine1: addressLine1,
+      addressLine2: addressLine2,
+      city: city,
+      postalCode: postalCode,
+    })
+  ) {
+    throw new Error('Invalid input');
+  }
 
   let updatedApplicant;
 
