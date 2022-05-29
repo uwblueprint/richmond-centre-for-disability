@@ -63,10 +63,10 @@ const Card: FC<Props> = props => {
   }
 
   /** Handler for saving physician assessment */
-  const handleSave = async (data: PhysicianAssessment) => {
-    const validatedData = await physicianAssessmentSchema.validate(data);
+  const handleSave = async (physicianAssessment: PhysicianAssessment) => {
+    const validatedData = await physicianAssessmentSchema.validate(physicianAssessment);
 
-    await updatePhysicianAssessment({
+    const { data } = await updatePhysicianAssessment({
       variables: {
         input: {
           id: applicationId,
@@ -74,7 +74,9 @@ const Card: FC<Props> = props => {
         },
       },
     });
+
     refetch();
+    return data;
   };
 
   const {
