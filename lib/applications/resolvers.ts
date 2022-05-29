@@ -49,6 +49,7 @@ import {
   paymentInformationMutationSchema,
 } from '@lib/applications/validation';
 import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
+import { paymentInformationMutationSchema } from '@lib/applicants/validation';
 import { ValidationError } from 'yup';
 
 /**
@@ -729,9 +730,20 @@ export const updateApplicationGeneralInformation: Resolver<
   MutationUpdateApplicationGeneralInformationArgs,
   UpdateApplicationGeneralInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, receiveEmailUpdates, postalCode, ...data } = input;
+
+  try {
+    await paymentInformationMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
+  const { id, receiveEmailUpdates, postalCode, ...validatedData } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -759,7 +771,7 @@ export const updateApplicationGeneralInformation: Resolver<
         // Only set to `undefined` if `receiveEmailUpdates` is null
         receiveEmailUpdates: receiveEmailUpdates ?? undefined,
         postalCode: formatPostalCode(postalCode),
-        ...data,
+        ...validatedData,
       },
     });
   } catch {
@@ -770,7 +782,7 @@ export const updateApplicationGeneralInformation: Resolver<
     throw new ApolloError('Application general information was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -781,9 +793,28 @@ export const updateNewApplicationGeneralInformation: Resolver<
   MutationUpdateNewApplicationGeneralInformationArgs,
   UpdateApplicationGeneralInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, receiveEmailUpdates, postalCode, dateOfBirth, gender, otherGender, ...data } = input;
+
+  try {
+    await paymentInformationMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
+  const {
+    id,
+    receiveEmailUpdates,
+    postalCode,
+    dateOfBirth,
+    gender,
+    otherGender,
+    ...validatedData
+  } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -818,7 +849,7 @@ export const updateNewApplicationGeneralInformation: Resolver<
             otherGender: otherGender ?? undefined,
           },
         },
-        ...data,
+        ...validatedData,
       },
     });
   } catch (err) {
@@ -829,7 +860,7 @@ export const updateNewApplicationGeneralInformation: Resolver<
     throw new ApolloError('Application general information was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**

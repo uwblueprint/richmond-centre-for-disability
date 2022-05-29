@@ -626,6 +626,7 @@ export default gql`
 
   type UpdateApplicationGeneralInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update general information section of a new application (includes date of birth, gender)

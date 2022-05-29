@@ -141,6 +141,7 @@ export const UPDATE_PERMIT_HOLDER_INFORMATION = gql`
   ) {
     updateApplicationGeneralInformation(input: $input) {
       ok
+      error
     }
   }
 `;
@@ -158,6 +159,7 @@ export const UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION = gql`
   ) {
     updateNewApplicationGeneralInformation(input: $input) {
       ok
+      error
     }
   }
 `;

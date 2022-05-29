@@ -1232,6 +1232,7 @@ export type UpdateApplicationGeneralInformationInput = {
 export type UpdateApplicationGeneralInformationResult = {
   __typename?: 'UpdateApplicationGeneralInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationGuardianInformationInput = {

@@ -69,6 +69,13 @@ export const permitHolderInformationSchema = object({
 });
 
 /**
+ * Validation schema for permit holder information mutation
+ */
+export const paymentInformationMutationSchema = permitHolderInformationSchema.shape({
+  id: number().positive('Application not found').required('Application not found'),
+});
+
+/**
  * Verify identity validation schema
  */
 export const verifyIdentitySchema = object({
