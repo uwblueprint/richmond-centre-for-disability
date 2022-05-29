@@ -56,7 +56,11 @@ export default function PhysicianAssessmentForm({
             name="physicianAssessment.disabilityCertificationDate"
             label="Physician’s certification date"
             required
-            value={formatDate(new Date(physicianAssessment.disabilityCertificationDate), true)}
+            value={
+              physicianAssessment.disabilityCertificationDate
+                ? formatDate(new Date(physicianAssessment.disabilityCertificationDate), true)
+                : ''
+            }
           >
             <FormHelperText color="text.secondary">{'Format: YYYY-MM-DD'}</FormHelperText>
           </DateField>

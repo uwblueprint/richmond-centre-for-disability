@@ -57,7 +57,7 @@ export default function EditPhysicianAssessmentModal({
                   paddingX="4px"
                 >
                   <Text as="h2" textStyle="display-medium-bold">
-                    {'Edit Payment, Shipping and Billing Details'}
+                    {`Edit Physician's Assessment`}
                   </Text>
                 </ModalHeader>
                 <ModalBody paddingY="20px" paddingX="4px">
