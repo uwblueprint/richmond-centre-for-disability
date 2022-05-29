@@ -43,7 +43,7 @@ import { SortOptions, SortOrder } from '@tools/types'; // Sorting types
 import { Column } from 'react-table'; // Column type for table
 import useDebounce from '@tools/hooks/useDebounce'; // Debouncer
 import { useEffect } from 'react'; // React
-import { formatFullName } from '@lib/utils/format'; // String formatter util
+import { formatFullName, formatPhoneNumber } from '@lib/utils/format'; // String formatter util
 import { formatDate } from '@lib/utils/date'; // Date formatter util
 import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/table/ConfirmSetInactiveModal'; // Set Permit Holder To Inactive modal
 import SetPermitHolderToActiveModal from '@components/admin/permit-holders/table/ConfirmSetActiveModal'; // Set Permit Holder To Active modal
@@ -226,6 +226,7 @@ const PermitHolders: NextPage = () => {
         disableSortBy: true,
         width: 140,
         maxWidth: 140,
+        Cell: ({ value }) => formatPhoneNumber(value),
       },
       {
         Header: 'Recent APP',

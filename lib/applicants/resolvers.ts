@@ -24,6 +24,7 @@ import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
 import { PermitType } from '@prisma/client';
 import { verifyIdentitySchema } from '@lib/applicants/verify-identity/validation';
+import { stripPhoneNumber } from '@lib/utils/format';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -237,6 +238,7 @@ export const updateApplicantGeneralInformation: Resolver<
   // TODO: Validation
   const { input } = args;
   const { id, ...data } = input;
+  data.phone = stripPhoneNumber(data.phone);
 
   let updatedApplicant;
   try {
@@ -266,6 +268,7 @@ export const updateApplicantDoctorInformation: Resolver<
   // TODO: Validation
   const { input } = args;
   const { id, mspNumber, ...data } = input;
+  data.phone = stripPhoneNumber(data.phone);
 
   let updatedApplicant;
   try {
@@ -305,6 +308,7 @@ export const updateApplicantGuardianInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   const { input } = args;
   const { id, omitGuardianPoa, ...data } = input;
+  data.phone = stripPhoneNumber(data.phone);
 
   let updatedApplicant;
   try {
