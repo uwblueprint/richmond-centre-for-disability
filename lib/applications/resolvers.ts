@@ -225,6 +225,7 @@ export const createNewApplication: Resolver<
     disabilityCertificationDate,
     patientCondition,
     mobilityAids,
+    otherMobilityAids,
     otherPatientCondition,
     temporaryPermitExpiry,
     physicianFirstName,
@@ -288,6 +289,7 @@ export const createNewApplication: Resolver<
             disabilityCertificationDate,
             patientCondition,
             mobilityAids: mobilityAids || [],
+            otherMobilityAids,
             otherPatientCondition,
             temporaryPermitExpiry,
             physicianFirstName,
@@ -1192,7 +1194,7 @@ export const updateApplicationPhysicianAssessment: Resolver<
 > = async (_parent, args, { prisma }) => {
   // TODO: Validation
   const { input } = args;
-  const { id, mobilityAids, ...data } = input;
+  const { id, mobilityAids, permitType, ...data } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -1223,6 +1225,7 @@ export const updateApplicationPhysicianAssessment: Resolver<
             ...data,
           },
         },
+        permitType: permitType,
       },
     });
   } catch {

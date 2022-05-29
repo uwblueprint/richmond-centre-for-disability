@@ -3,13 +3,20 @@ import {
   PermitType,
   PatientCondition,
   QueryApplicationArgs,
+  MutationUpdateApplicationPhysicianAssessmentArgs,
+  UpdateApplicationPhysicianAssessmentResult,
 } from '@lib/graphql/types';
 import { gql } from '@apollo/client';
 
 /** Physician assessment in forms */
 export type PhysicianAssessment = Pick<
   NewApplication,
-  'disability' | 'disabilityCertificationDate' | 'otherPatientCondition' | 'temporaryPermitExpiry'
+  | 'disability'
+  | 'disabilityCertificationDate'
+  | 'otherPatientCondition'
+  | 'temporaryPermitExpiry'
+  | 'mobilityAids'
+  | 'otherMobilityAids'
 > & {
   patientCondition: PatientCondition | null;
   permitType: PermitType | null;
@@ -28,6 +35,8 @@ export const GET_PHYSICIAN_ASSESSMENT = gql`
         temporaryPermitExpiry
         patientCondition
         permitType
+        mobilityAids
+        otherMobilityAids
       }
     }
   }
@@ -44,5 +53,24 @@ export type GetPhysicianAssessmentResponse = {
     | 'disabilityCertificationDate'
     | 'otherPatientCondition'
     | 'temporaryPermitExpiry'
+    | 'mobilityAids'
+    | 'otherMobilityAids'
   >;
+};
+
+/** Update physician assessment of application */
+export const UPDATE_PHYSICIAN_ASSESSMENT = gql`
+  mutation UpdateApplicationPhysicianAssessment(
+    $input: UpdateApplicationPhysicianAssessmentInput!
+  ) {
+    updateApplicationPhysicianAssessment(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type UpdatePhysicianAssessmentRequest = MutationUpdateApplicationPhysicianAssessmentArgs;
+
+export type UpdatePhysicianAssessmentResponse = {
+  updateApplicationPhysicianAssessment: UpdateApplicationPhysicianAssessmentResult;
 };

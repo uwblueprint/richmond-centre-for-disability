@@ -56,7 +56,7 @@ export type GetAdditionalInformationResponse = {
 
 /** Update additional information of application */
 export const UPDATE_ADDITIONAL_INFORMATION = gql`
-  mutation UpdateAdditionalInformationInformation(
+  mutation UpdateApplicationAdditionalInformation(
     $input: UpdateApplicationAdditionalInformationInput!
   ) {
     updateApplicationAdditionalInformation(input: $input) {

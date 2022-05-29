@@ -100,6 +100,7 @@ export default gql`
     otherPatientCondition: String
     permitType: PermitType!
     temporaryPermitExpiry: Date
+    otherMobilityAids: String
 
     # Doctor information
     physicianFirstName: String!
@@ -350,6 +351,7 @@ export default gql`
     disabilityCertificationDate: Date!
     patientCondition: PatientCondition!
     mobilityAids: [MobilityAid!]
+    otherMobilityAids: String
     otherPatientCondition: String
     permitType: PermitType!
     temporaryPermitExpiry: Date
@@ -766,13 +768,15 @@ export default gql`
     # Application ID
     id: Int!
 
-    # Physician assessment (omit permit type)
+    # Physician assessment
     disability: String!
     disabilityCertificationDate: Date!
     patientCondition: PatientCondition!
     mobilityAids: [MobilityAid!]
     otherPatientCondition: String
     temporaryPermitExpiry: Date
+    permitType: PermitType!
+    otherMobilityAids: String
   }
 
   type UpdateApplicationPhysicianAssessmentResult {
