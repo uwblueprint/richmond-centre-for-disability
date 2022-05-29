@@ -10,11 +10,15 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { ReactNode } from 'react'; // React
-import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
+import { ReactNode, useState } from 'react'; // React
+import {
+  PermitHolderFormData,
+  UpdatePermitHolderInformationResponse,
+} from '@tools/admin/requests/permit-holder-information';
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form';
 import { Form, Formik } from 'formik';
 import { editRequestPermitHolderInformationSchema } from '@lib/applicants/validation';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 /**
  * Props for Edit Permit Information Modal
@@ -22,7 +26,9 @@ import { editRequestPermitHolderInformationSchema } from '@lib/applicants/valida
 type EditPermitHolderInformationModalProps = {
   children: ReactNode;
   readonly permitHolderInformation: PermitHolderFormData;
-  readonly onSave: (applicationData: PermitHolderFormData) => void;
+  readonly onSave: (
+    applicationData: any
+  ) => Promise<UpdatePermitHolderInformationResponse | undefined | null>;
 };
 
 export default function EditPermitHolderInformationModal({
@@ -31,16 +37,27 @@ export default function EditPermitHolderInformationModal({
   onSave,
 }: EditPermitHolderInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const [error, setError] = useState<string>('');
 
-  const handleSubmit = (values: { permitHolder: PermitHolderFormData }) => {
-    onSave(values.permitHolder);
+  const onModalClose = () => {
     onClose();
+    setError('');
+  };
+
+  const handleSubmit = async (values: { permitHolder: PermitHolderFormData }) => {
+    const result = await onSave(values.permitHolder);
+
+    if (result?.updateApplicationGeneralInformation.ok) {
+      onModalClose();
+    } else {
+      setError(result?.updateApplicationGeneralInformation.error ?? '');
+    }
   };
 
   return (
     <>
       <Box onClick={onOpen}>{children}</Box>
-      <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
+      <Modal onClose={onModalClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />
         <Formik
           initialValues={{ permitHolder: { ...permitHolderInformation } }}
@@ -63,8 +80,9 @@ export default function EditPermitHolderInformationModal({
                 <ModalBody paddingY="20px" paddingX="4px">
                   <PermitHolderInformationForm permitHolderInformation={values.permitHolder} />
                 </ModalBody>
+                <ValidationErrorAlert error={error} />
                 <ModalFooter paddingBottom="24px" paddingX="4px">
-                  <Button colorScheme="gray" variant="solid" onClick={onClose}>
+                  <Button colorScheme="gray" variant="solid" onClick={onModalClose}>
                     {'Cancel'}
                   </Button>
                   <Button variant="solid" type="submit" ml={'12px'} isDisabled={!isValid}>
