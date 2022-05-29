@@ -11,7 +11,7 @@ import {
   Select,
 } from '@chakra-ui/react'; // Chakra UI
 import { Gender } from '@lib/graphql/types';
-import { formatDateYYYYMMDD } from '@lib/utils/format';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { ChangeEventHandler } from 'react';
 

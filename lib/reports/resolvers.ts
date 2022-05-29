@@ -10,12 +10,9 @@ import {
   PaymentType,
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
-import {
-  formatAddress,
-  formatDate,
-  formatDateTimeYYYYMMDDHHMMSS,
-  formatFullName,
-} from '@lib/utils/format'; // Formatting utils
+import { formatAddress, formatFullName } from '@lib/utils/format'; // Formatting utils
+import { formatDateTimeYYYYMMDDHHMMSS } from '@lib/utils/date'; // Formatting utils
+import { formatDate } from '@lib/utils/date'; // Date formatter util
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
 import { Prisma } from '@prisma/client';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';

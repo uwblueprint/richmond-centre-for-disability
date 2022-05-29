@@ -9,7 +9,7 @@ import {
   PhysicianAssessment,
 } from '@tools/admin/requests/physician-assessment';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
-import { formatDateYYYYMMDD } from '@lib/utils/format';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { titlecase } from '@tools/string';
 
 type Props = {
