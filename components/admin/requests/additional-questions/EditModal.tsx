@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -11,15 +11,21 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
+import {
+  AdditionalInformationFormData,
+  UpdateAdditionalInformationResponse,
+} from '@tools/admin/requests/additional-questions';
 import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form';
 import { Form, Formik } from 'formik';
 import { editAdditionalQuestionsSchema } from '@lib/applications/validation';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 type Props = {
   readonly children: ReactNode;
   readonly additionalInformation: AdditionalInformationFormData;
-  readonly onSave: (additionalInformation: AdditionalInformationFormData) => void;
+  readonly onSave: (
+    additionalInformation: AdditionalInformationFormData
+  ) => Promise<UpdateAdditionalInformationResponse | undefined | null>;
 };
 
 export default function EditAdditionalInformationModal({
@@ -28,11 +34,21 @@ export default function EditAdditionalInformationModal({
   onSave,
 }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [error, setError] = useState<string>('');
+
+  const onModalClose = () => {
+    onClose();
+    setError('');
+  };
 
   const handleSubmit = async (values: { additionalInformation: AdditionalInformationFormData }) => {
-    const validatedValues = await editAdditionalQuestionsSchema.validate(values);
-    onSave(validatedValues.additionalInformation);
-    onClose();
+    const result = await onSave(values.additionalInformation);
+
+    if (result?.updateApplicationAdditionalInformation?.ok) {
+      onModalClose();
+    } else {
+      setError(result?.updateApplicationAdditionalInformation?.error ?? '');
+    }
   };
 
   return (
@@ -62,6 +78,7 @@ export default function EditAdditionalInformationModal({
                 <ModalBody paddingY="20px" paddingX="4px">
                   <AdditionalQuestionsForm additionalInformation={values.additionalInformation} />
                 </ModalBody>
+                <ValidationErrorAlert error={error} />
                 <ModalFooter paddingBottom="24px" paddingX="4px">
                   <Button colorScheme="gray" variant="solid" onClick={onClose}>
                     {'Cancel'}

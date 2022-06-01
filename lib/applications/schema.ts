@@ -708,6 +708,7 @@ export default gql`
 
   type UpdateApplicationAdditionalInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update payment information section of application

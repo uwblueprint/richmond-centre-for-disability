@@ -12,6 +12,7 @@ import {
   AdditionalInformationFormData,
 } from '@tools/admin/requests/additional-questions';
 import EditAdditionalInformationModal from './EditModal';
+import { additionalQuestionsSchema } from '@lib/applications/validation';
 
 type Props = {
   readonly applicationId: number;
@@ -48,23 +49,20 @@ const Card: FC<Props> = props => {
   if (additionalInformation === null) return null;
 
   /** Handler for saving additional information */
-  const handleSave = async (data: AdditionalInformationFormData) => {
-    if (data.requiresWiderParkingSpace === null || data.usesAccessibleConvertedVan === null) {
-      // TODO: Improve error handling
-      return;
-    }
+  const handleSave = async (additionalInformationFormData: AdditionalInformationFormData) => {
+    const validatedData = await additionalQuestionsSchema.validate(additionalInformationFormData);
 
-    await updateAdditionalInformation({
+    const { data } = await updateAdditionalInformation({
       variables: {
         input: {
           id: applicationId,
-          ...data,
-          requiresWiderParkingSpace: data.requiresWiderParkingSpace,
-          usesAccessibleConvertedVan: data.usesAccessibleConvertedVan,
+          ...validatedData,
         },
       },
     });
+
     refetch();
+    return data;
   };
 
   const {
