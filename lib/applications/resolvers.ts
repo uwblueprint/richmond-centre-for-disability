@@ -1224,6 +1224,25 @@ export const updateApplicationGuardianInformation: Resolver<
         postalCode,
         poaFormS3ObjectKey,
       } = input;
+
+      if (
+        !guardianInformationSchema.isValidSync({
+          omitGuardianPoa,
+          firstName,
+          middleName,
+          lastName,
+          phone,
+          relationship,
+          addressLine1,
+          addressLine2,
+          city,
+          postalCode,
+        })
+      ) {
+        // Yup validation failure
+        throw new Error('Invalid input');
+      }
+
       updatedApplication = await prisma.newApplication.update({
         where: { applicationId: id },
         data: {

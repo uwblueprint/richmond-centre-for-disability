@@ -380,7 +380,7 @@ export const updateApplicantGuardianInformation: Resolver<
       },
     });
   } catch {
-    // TODO: Handle error
+    // TODO: handle error
   }
 
   if (!updatedApplicant) {
