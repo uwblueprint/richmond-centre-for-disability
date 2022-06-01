@@ -68,7 +68,7 @@ export const editPhysicianAssessmentSchema = object({
  * Validation schema for physician assessment mutation
  */
 export const physicianAssessmentMutationSchema = physicianAssessmentSchema.shape({
-  id: number().positive('Application not found').required('Application not found'),
+  id: number().positive('Invalid application ID').required('Application ID missing'),
 });
 
 /**
