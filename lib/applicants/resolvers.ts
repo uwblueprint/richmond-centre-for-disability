@@ -26,6 +26,8 @@ import { PermitType } from '@prisma/client';
 import { permitHolderInformationSchema, verifyIdentitySchema } from '@lib/applicants/validation';
 import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
+import { verifyIdentitySchema } from '@lib/applicants/validation';
+import { guardianInformationSchema } from '@lib/guardian/validation';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -339,6 +341,36 @@ export const updateApplicantGuardianInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   const { input } = args;
   const { id, ...data } = input;
+  const {
+    firstName,
+    middleName,
+    lastName,
+    phone,
+    relationship,
+    addressLine1,
+    addressLine2,
+    city,
+    postalCode,
+  } = input;
+  const omitGuardianPoa = false;
+
+  if (
+    !guardianInformationSchema.isValidSync({
+      omitGuardianPoa,
+      firstName,
+      middleName,
+      lastName,
+      phone,
+      relationship,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+    })
+  ) {
+    // Yup validation failure
+    throw new Error('Invalid input');
+  }
 
   let updatedApplicant;
   try {

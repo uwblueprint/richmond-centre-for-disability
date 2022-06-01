@@ -1205,49 +1205,32 @@ export const updateApplicationGuardianInformation: Resolver<
   MutationUpdateApplicationGuardianInformationArgs,
   UpdateApplicationGuardianInformationResult
 > = async (_parent, args, { prisma }) => {
+  // TODO: Validation
   const { input } = args;
-  const {
-    id,
-    omitGuardianPoa,
-    firstName,
-    middleName,
-    lastName,
-    phone,
-    relationship,
-    addressLine1,
-    addressLine2,
-    city,
-    postalCode,
-    poaFormS3ObjectKey,
-  } = input;
-  if (
-    !guardianInformationSchema.isValidSync({
-      omitGuardianPoa,
-      firstName,
-      middleName,
-      lastName,
-      phone,
-      relationship,
-      addressLine1,
-      addressLine2,
-      city,
-      postalCode,
-    })
-  ) {
-    // Yup validation failure
-    throw new Error('Invalid input');
-  }
+  const { id, omitGuardianPoa } = input;
 
   let updatedApplication;
   try {
     if (omitGuardianPoa) {
+      const {
+        firstName,
+        middleName,
+        lastName,
+        phone,
+        relationship,
+        addressLine1,
+        addressLine2,
+        city,
+        postalCode,
+        poaFormS3ObjectKey,
+      } = input;
       updatedApplication = await prisma.newApplication.update({
         where: { applicationId: id },
         data: {
           guardianFirstName: firstName,
           guardianMiddleName: middleName,
           guardianLastName: lastName,
-          guardianPhone: phone,
+          guardianPhone: stripPhoneNumber(phone),
           guardianRelationship: relationship,
           guardianAddressLine1: addressLine1,
           guardianAddressLine2: addressLine2,
