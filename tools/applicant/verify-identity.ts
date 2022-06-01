@@ -21,6 +21,8 @@ export const getErrorMessage = (failureReason: VerifyIdentityFailureReason): str
       Please check back when your permit is expiring within 30 days or less.`;
     case 'USER_HOLDS_TEMPORARY_PERMIT':
       return `Temporary parking permits cannot be renewed. Please apply for a new parking permit at RCD.`;
+    case 'APP_PAST_SIX_MONTHS_EXPIRED':
+      return `Your permit expired over 6 months ago. Please apply for a new parking permit or contact RCD.`;
     default:
       return 'Unknown error';
   }
