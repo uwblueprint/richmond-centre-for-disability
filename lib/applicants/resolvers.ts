@@ -340,7 +340,7 @@ export const updateApplicantGuardianInformation: Resolver<
   UpdateApplicantGuardianInformationResult
 > = async (_parent, args, { prisma }) => {
   const { input } = args;
-  const { id, ...data } = input;
+  const { id, omitGuardianPoa, ...data } = input;
   const {
     firstName,
     middleName,
@@ -352,7 +352,6 @@ export const updateApplicantGuardianInformation: Resolver<
     city,
     postalCode,
   } = input;
-  const omitGuardianPoa = false;
 
   if (
     !guardianInformationSchema.isValidSync({
@@ -377,9 +376,7 @@ export const updateApplicantGuardianInformation: Resolver<
     updatedApplicant = await prisma.applicant.update({
       where: { id },
       data: {
-        guardian: {
-          update: data,
-        },
+        guardian: omitGuardianPoa ? { disconnect: true } : { update: data },
       },
     });
   } catch {
