@@ -63,7 +63,7 @@ export const editAdditionalQuestionsSchema = object({
  * Validation schema for additional information mutation
  */
 export const additionalQuestionsMutationSchema = additionalQuestionsSchema.shape({
-  id: number().positive('Application not found').required('Application not found'),
+  id: number().positive('Invalid application ID').required('Application ID missing'),
 });
 
 /**
@@ -190,7 +190,7 @@ export const editPaymentInformationSchema = object({
  * Validation schema for payment information mutation
  */
 export const paymentInformationMutationSchema = paymentInformationSchema.shape({
-  id: number().positive('Application not found').required('Application not found'),
+  id: number().positive('Invalid application ID').required('Application ID missing'),
 });
 
 /**

@@ -61,10 +61,7 @@ const Card: FC<Props> = props => {
       },
     });
 
-    if (data?.updateApplicationAdditionalInformation?.ok) {
-      refetch();
-    }
-
+    refetch();
     return data;
   };
 
