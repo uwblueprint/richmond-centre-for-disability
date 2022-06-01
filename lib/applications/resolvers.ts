@@ -54,6 +54,7 @@ import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
 import { requestPermitHolderInformationMutationSchema } from '@lib/applicants/validation';
 
 import { ValidationError } from 'yup';
+import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 
 /**
  * Query an application by ID
@@ -1106,6 +1107,21 @@ export const updateApplicationDoctorInformation: Resolver<
     city: physicianCity,
     postalCode: physicianPostalCode,
   } = input;
+
+  if (
+    !requestPhysicianInformationSchema.isValidSync({
+      firstName: physicianFirstName,
+      lastName: physicianLastName,
+      mspNumber: physicianMspNumber,
+      phone: physicianPhone,
+      addressLine1: physicianAddressLine1,
+      addressLine2: physicianAddressLine2,
+      city: physicianCity,
+      postalCode: physicianPostalCode,
+    })
+  ) {
+    throw new Error('Invalid input');
+  }
 
   const application = await prisma.application.findUnique({
     where: { id },
