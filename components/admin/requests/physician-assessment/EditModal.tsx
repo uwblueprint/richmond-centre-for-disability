@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -11,15 +11,21 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment';
+import {
+  PhysicianAssessment,
+  UpdatePhysicianAssessmentResponse,
+} from '@tools/admin/requests/physician-assessment';
 import PhysicianAssessmentForm from './Form';
 import { Form, Formik } from 'formik';
 import { editPhysicianAssessmentSchema } from '@lib/physicians/validation';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 type Props = {
   readonly children: ReactNode;
   readonly physicianAssessment: PhysicianAssessment;
-  readonly onSave: (physicianAssessment: PhysicianAssessment) => void;
+  readonly onSave: (
+    physicianAssessment: PhysicianAssessment
+  ) => Promise<UpdatePhysicianAssessmentResponse | null | undefined>;
 };
 
 export default function EditPhysicianAssessmentModal({
@@ -28,17 +34,28 @@ export default function EditPhysicianAssessmentModal({
   onSave,
 }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [error, setError] = useState<string>('');
+
+  const onModalClose = () => {
+    onClose();
+    setError('');
+  };
 
   const handleSubmit = async (values: { physicianAssessment: PhysicianAssessment }) => {
-    const validatedValues = await editPhysicianAssessmentSchema.validate(values);
-    onSave(validatedValues.physicianAssessment);
-    onClose();
+    const result = await onSave(values.physicianAssessment);
+
+    if (result?.updateApplicationPhysicianAssessment.ok) {
+      onModalClose();
+    } else {
+      setError(result?.updateApplicationPhysicianAssessment.error ?? '');
+    }
   };
+
   return (
     <>
       <Box onClick={onOpen}>{children}</Box>
 
-      <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
+      <Modal onClose={onModalClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />
         <Formik
           initialValues={{
@@ -63,8 +80,9 @@ export default function EditPhysicianAssessmentModal({
                 <ModalBody paddingY="20px" paddingX="4px">
                   <PhysicianAssessmentForm physicianAssessment={values.physicianAssessment} />
                 </ModalBody>
+                <ValidationErrorAlert error={error} />
                 <ModalFooter paddingBottom="24px" paddingX="4px">
-                  <Button colorScheme="gray" variant="solid" onClick={onClose}>
+                  <Button colorScheme="gray" variant="solid" onClick={onModalClose}>
                     {'Cancel'}
                   </Button>
                   <Button variant="solid" type="submit" ml={'12px'} isDisabled={!isValid}>

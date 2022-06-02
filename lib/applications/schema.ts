@@ -782,5 +782,6 @@ export default gql`
 
   type UpdateApplicationPhysicianAssessmentResult {
     ok: Boolean!
+    error: String
   }
 `;

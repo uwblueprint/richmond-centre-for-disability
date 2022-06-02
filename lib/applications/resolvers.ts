@@ -48,6 +48,7 @@ import {
   additionalQuestionsMutationSchema,
   paymentInformationMutationSchema,
 } from '@lib/applications/validation';
+import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
 import { ValidationError } from 'yup';
 
 /**
@@ -1205,9 +1206,20 @@ export const updateApplicationPhysicianAssessment: Resolver<
   MutationUpdateApplicationPhysicianAssessmentArgs,
   UpdateApplicationPhysicianAssessmentResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, mobilityAids, permitType, ...data } = input;
+
+  try {
+    await physicianAssessmentMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
+  const { id, mobilityAids, permitType, ...validatedData } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -1235,7 +1247,7 @@ export const updateApplicationPhysicianAssessment: Resolver<
         newApplication: {
           update: {
             mobilityAids: mobilityAids || [],
-            ...data,
+            ...validatedData,
           },
         },
         permitType: permitType,
@@ -1249,5 +1261,5 @@ export const updateApplicationPhysicianAssessment: Resolver<
     throw new ApolloError('Application physician assessment was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
