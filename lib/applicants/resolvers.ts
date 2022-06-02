@@ -282,14 +282,14 @@ export const updateApplicantDoctorInformation: Resolver<
 
   if (
     !requestPhysicianInformationSchema.isValidSync({
-      firstName: firstName,
-      lastName: lastName,
-      mspNumber: mspNumber,
-      phone: phone,
-      addressLine1: addressLine1,
-      addressLine2: addressLine2,
-      city: city,
-      postalCode: postalCode,
+      firstName,
+      lastName,
+      mspNumber,
+      phone,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
     })
   ) {
     throw new Error('Invalid input');
