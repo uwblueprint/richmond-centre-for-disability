@@ -462,9 +462,8 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     };
   }
 
-  // Note: 30 days = 30 * 24 * 60 * 60 * 1000 milliseconds
   //6 months past expiry date
-  if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') >= moment()) {
+  if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') < moment()) {
     return {
       ok: false,
       failureReason: 'APP_PAST_SIX_MONTHS_EXPIRED',
