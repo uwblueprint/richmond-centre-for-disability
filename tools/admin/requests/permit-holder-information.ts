@@ -167,6 +167,10 @@ export const UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION = gql`
 export type UpdateNewApplicationPermitHolderInformationRequest =
   MutationUpdateNewApplicationGeneralInformationArgs;
 
+export type UpdateNewPermitHolderInformationResponse = {
+  updateNewApplicationGeneralInformation: UpdateApplicationGeneralInformationResult;
+};
+
 /** Get permit holder information for selected permit holder preview card */
 export const GET_SELECTED_APPLICANT_QUERY = gql`
   query GetSelectedApplicant($id: Int!) {

@@ -10,6 +10,7 @@ import {
   PermitHolderCardData,
   PermitHolderFormData,
   UpdateNewApplicationPermitHolderInformationRequest,
+  UpdateNewPermitHolderInformationResponse,
   UpdatePermitHolderInformationRequest,
   UpdatePermitHolderInformationResponse,
   UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION,
@@ -73,7 +74,7 @@ const Card: FC<Props> = props => {
   >(UPDATE_PERMIT_HOLDER_INFORMATION);
 
   const [updateNewPermitHolderInformation] = useMutation<
-    UpdatePermitHolderInformationResponse,
+    UpdateNewPermitHolderInformationResponse,
     UpdateNewApplicationPermitHolderInformationRequest
   >(UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION);
 
@@ -85,7 +86,11 @@ const Card: FC<Props> = props => {
   const handleSave = async (permitHolderFormData: PermitHolderFormData) => {
     const { type, ...permitHolderData } = permitHolderFormData;
 
-    let data: UpdatePermitHolderInformationResponse | undefined | null;
+    let data:
+      | UpdatePermitHolderInformationResponse
+      | UpdateNewPermitHolderInformationResponse
+      | undefined
+      | null;
     if (type === 'NEW') {
       const validatedData = await permitHolderInformationSchema.validate(permitHolderData);
 

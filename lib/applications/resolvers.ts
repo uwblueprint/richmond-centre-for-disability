@@ -49,7 +49,8 @@ import {
   paymentInformationMutationSchema,
 } from '@lib/applications/validation';
 import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
-import { paymentInformationMutationSchema } from '@lib/applicants/validation';
+import { requestPermitHolderInformationMutationSchema } from '@lib/applicants/validation';
+
 import { ValidationError } from 'yup';
 
 /**
@@ -733,7 +734,7 @@ export const updateApplicationGeneralInformation: Resolver<
   const { input } = args;
 
   try {
-    await paymentInformationMutationSchema.validate(input);
+    await requestPermitHolderInformationMutationSchema.validate(input);
   } catch (err) {
     if (err instanceof ValidationError) {
       return {
@@ -796,7 +797,7 @@ export const updateNewApplicationGeneralInformation: Resolver<
   const { input } = args;
 
   try {
-    await paymentInformationMutationSchema.validate(input);
+    await requestPermitHolderInformationMutationSchema.validate(input);
   } catch (err) {
     if (err instanceof ValidationError) {
       return {

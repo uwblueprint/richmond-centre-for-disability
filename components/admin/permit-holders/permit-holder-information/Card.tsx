@@ -24,6 +24,7 @@ import {
 } from '@tools/admin/permit-holders/permit-holder-information';
 import { useMutation, useQuery } from '@apollo/client';
 import Address from '@components/admin/Address';
+import { permitHolderInformationSchema } from '@lib/applicants/validation';
 
 type PersonalInformationProps = {
   readonly applicantId: number;
@@ -61,9 +62,15 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
       }
     },
   });
-  const handleSave = async (data: ApplicantFormData) => {
-    await updateGeneralInformation({ variables: { input: { id: applicantId, ...data } } });
+  const handleSave = async (applicantFormData: ApplicantFormData) => {
+    const validatedData = await permitHolderInformationSchema.validate(applicantFormData);
+
+    const { data } = await updateGeneralInformation({
+      variables: { input: { id: applicantId, ...validatedData } },
+    });
+
     refetch();
+    return data;
   };
 
   const { hasCopied, onCopy } = useClipboard(permitHolderInformation?.email || '');

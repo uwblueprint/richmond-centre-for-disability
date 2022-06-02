@@ -13,20 +13,26 @@ import {
   Box,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { ReactNode } from 'react'; // React
+import { ReactNode, useState } from 'react'; // React
 import { formatDateYYYYMMDD } from '@lib/utils/format'; // Date formatter util
-import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
+import {
+  ApplicantFormData,
+  UpdateApplicantGeneralInformationResponse,
+} from '@tools/admin/permit-holders/permit-holder-information';
 import TextField from '@components/form/TextField';
 import DateField from '@components/form/DateField';
 import SelectField from '@components/form/SelectField';
 import { Form, Formik } from 'formik';
 import { permitHolderInformationSchema } from '@lib/applicants/validation';
 import CheckboxField from '@components/form/CheckboxField';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 type EditUserInformationModalProps = {
   applicant: ApplicantFormData;
   children: ReactNode;
-  readonly onSave: (applicationData: ApplicantFormData) => void;
+  readonly onSave: (
+    applicationData: ApplicantFormData
+  ) => Promise<UpdateApplicantGeneralInformationResponse | null | undefined>;
   loading: boolean;
 };
 
@@ -37,20 +43,31 @@ export default function EditUserInformationModal({
   loading,
 }: EditUserInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const [error, setError] = useState<string>('');
+
+  const onModalClose = () => {
+    onClose();
+    setError('');
+  };
 
   /**
    * Handle edit submission
    */
   const handleSubmit = async (values: ApplicantFormData) => {
-    await onSave(values);
-    onClose();
+    const result = await onSave(values);
+
+    if (result?.updateApplicantGeneralInformation.ok) {
+      onModalClose();
+    } else {
+      setError(result?.updateApplicantGeneralInformation.error ?? '');
+    }
   };
 
   return (
     <>
       <Box onClick={onOpen}>{children}</Box>
 
-      <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
+      <Modal onClose={onModalClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />
         <Formik
           initialValues={{
@@ -178,8 +195,9 @@ export default function EditUserInformationModal({
                     </Stack>
                   </Box>
                 </ModalBody>
+                <ValidationErrorAlert error={error} />
                 <ModalFooter paddingBottom="24px" paddingX="4px">
-                  <Button colorScheme="gray" variant="solid" onClick={onClose}>
+                  <Button colorScheme="gray" variant="solid" onClick={onModalClose}>
                     {'Cancel'}
                   </Button>
                   <Button
