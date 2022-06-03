@@ -7,6 +7,7 @@ import {
   UpdatedFieldsMissingError,
   EmptyFieldsMissingError,
   ApplicationNotFoundError,
+  AppPastSixMonthsExpiredError,
 } from '@lib/applications/errors'; // Application errors
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
@@ -44,6 +45,8 @@ import {
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
+import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
+import moment from 'moment';
 
 /**
  * Query an application by ID
@@ -479,6 +482,13 @@ export const createExternalRenewalApplication: Resolver<
   // Validate updated contact info fields (at least one of phone or email must be provided)
   if (updatedContactInfo && !phone) {
     throw new UpdatedFieldsMissingError('Missing updated contact info fields');
+  }
+
+  const mostRecentPermit = await getMostRecentPermit(applicantId);
+  if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') < moment()) {
+    throw new AppPastSixMonthsExpiredError(
+      'Your permit expired over 6 months ago. Please apply for a new parking permit or contact RCD.'
+    );
   }
 
   // Validate updated doctor info fields
