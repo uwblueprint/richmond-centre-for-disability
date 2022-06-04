@@ -13,7 +13,7 @@ import {
 import { ReactNode, useState } from 'react'; // React
 import {
   PermitHolderFormData,
-  UpdateNewPermitHolderInformationResponse,
+  UpdateNewApplicationPermitHolderInformationResponse,
   UpdatePermitHolderInformationResponse,
 } from '@tools/admin/requests/permit-holder-information';
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form';
@@ -31,7 +31,7 @@ type EditPermitHolderInformationModalProps = {
     applicationData: any
   ) => Promise<
     | UpdatePermitHolderInformationResponse
-    | UpdateNewPermitHolderInformationResponse
+    | UpdateNewApplicationPermitHolderInformationResponse
     | undefined
     | null
   >;
@@ -55,15 +55,15 @@ export default function EditPermitHolderInformationModal({
 
     if (
       (result as UpdatePermitHolderInformationResponse)?.updateApplicationGeneralInformation?.ok ||
-      (result as UpdateNewPermitHolderInformationResponse)?.updateNewApplicationGeneralInformation
-        ?.ok
+      (result as UpdateNewApplicationPermitHolderInformationResponse)
+        ?.updateNewApplicationGeneralInformation?.ok
     ) {
       onModalClose();
     } else {
       setError(
         ((result as UpdatePermitHolderInformationResponse)?.updateApplicationGeneralInformation
           ?.error ||
-          (result as UpdateNewPermitHolderInformationResponse)
+          (result as UpdateNewApplicationPermitHolderInformationResponse)
             ?.updateNewApplicationGeneralInformation?.error) ??
           ''
       );

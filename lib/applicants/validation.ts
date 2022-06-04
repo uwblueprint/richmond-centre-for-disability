@@ -49,7 +49,7 @@ export const editRequestPermitHolderInformationSchema = object({
  */
 export const requestPermitHolderInformationMutationSchema =
   requestPermitHolderInformationSchema.shape({
-    id: number().positive('Application not found').required('Application not found'),
+    id: number().positive('Invalid application ID').required('Application ID missing'),
   });
 
 /**

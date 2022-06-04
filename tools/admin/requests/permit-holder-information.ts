@@ -167,7 +167,7 @@ export const UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION = gql`
 export type UpdateNewApplicationPermitHolderInformationRequest =
   MutationUpdateNewApplicationGeneralInformationArgs;
 
-export type UpdateNewPermitHolderInformationResponse = {
+export type UpdateNewApplicationPermitHolderInformationResponse = {
   updateNewApplicationGeneralInformation: UpdateApplicationGeneralInformationResult;
 };
 

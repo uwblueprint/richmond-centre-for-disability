@@ -239,7 +239,6 @@ export const updateApplicantGeneralInformation: Resolver<
 
   try {
     await permitHolderInformationSchema.validate(input);
-    throw Error;
   } catch (err) {
     if (err instanceof ValidationError) {
       return {

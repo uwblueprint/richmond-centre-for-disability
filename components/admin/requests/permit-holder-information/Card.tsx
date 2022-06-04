@@ -10,7 +10,7 @@ import {
   PermitHolderCardData,
   PermitHolderFormData,
   UpdateNewApplicationPermitHolderInformationRequest,
-  UpdateNewPermitHolderInformationResponse,
+  UpdateNewApplicationPermitHolderInformationResponse,
   UpdatePermitHolderInformationRequest,
   UpdatePermitHolderInformationResponse,
   UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION,
@@ -74,7 +74,7 @@ const Card: FC<Props> = props => {
   >(UPDATE_PERMIT_HOLDER_INFORMATION);
 
   const [updateNewPermitHolderInformation] = useMutation<
-    UpdateNewPermitHolderInformationResponse,
+    UpdateNewApplicationPermitHolderInformationResponse,
     UpdateNewApplicationPermitHolderInformationRequest
   >(UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION);
 
@@ -88,7 +88,7 @@ const Card: FC<Props> = props => {
 
     let data:
       | UpdatePermitHolderInformationResponse
-      | UpdateNewPermitHolderInformationResponse
+      | UpdateNewApplicationPermitHolderInformationResponse
       | undefined
       | null;
     if (type === 'NEW') {
