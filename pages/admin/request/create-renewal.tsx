@@ -38,12 +38,16 @@ import {
 } from '@tools/admin/requests/create-new';
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
 import { RequiresWiderParkingSpaceReason } from '@prisma/client';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
     RequestFlowPageState.SelectingPermitHolderPage
   );
   const [applicantId, setApplicantId] = useState<number | null>(null);
+
+  /**  Backend form validation error */
+  const [error, setError] = useState<string>('');
 
   /** Permit holder information section */
   const [permitHolderInformation, setPermitHolderInformation] = useState<
@@ -144,7 +148,7 @@ export default function CreateRenewal() {
   >(CREATE_RENEWAL_APPLICATION_MUTATION, {
     onCompleted: data => {
       if (data) {
-        const { ok, applicationId } = data.createRenewalApplication;
+        const { ok, applicationId, error } = data.createRenewalApplication;
         if (ok) {
           toast({
             status: 'success',
@@ -155,6 +159,8 @@ export default function CreateRenewal() {
           if (applicationId) {
             router.push(`/admin/request/${data.createRenewalApplication.applicationId}`);
           }
+        } else {
+          setError(error ?? '');
         }
       }
     },
@@ -363,6 +369,7 @@ export default function CreateRenewal() {
                     </Text>
                     <PaymentDetailsForm paymentInformation={values.paymentInformation} />
                   </Box>
+                  <ValidationErrorAlert error={error} />
                 </GridItem>
 
                 {/* Footer */}
