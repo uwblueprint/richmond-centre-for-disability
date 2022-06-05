@@ -23,7 +23,7 @@ export const requestPermitHolderInformationSchema = object({
       then: mixed<Gender>().oneOf(Object.values(Gender)).required('Please select a gender'),
       otherwise: mixed<Gender>().oneOf(Object.values(Gender)).optional(),
     }),
-  otherGender: string().optional(),
+  otherGender: string().nullable().default(null),
   email: string().email('Please enter a valid email address').nullable().default(null),
   phone: string()
     .required('Please enter a valid phone number')
