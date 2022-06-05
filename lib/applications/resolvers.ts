@@ -289,7 +289,6 @@ export const createNewApplication: Resolver<
   const guardianInformation = {
     omitGuardianPoa,
     firstName: guardianFirstName,
-    // firstName: null,
     middleName: guardianMiddleName,
     lastName: guardianLastName,
     phone: guardianPhone,
