@@ -150,6 +150,8 @@ export const INITIAL_PHYSICIAN_ASSESSMENT: PhysicianAssessment = {
   disabilityCertificationDate: '',
   otherPatientCondition: null,
   temporaryPermitExpiry: null,
+  mobilityAids: [],
+  otherMobilityAids: null,
 };
 
 // Initial data for doctor information in application forms

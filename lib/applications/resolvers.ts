@@ -45,9 +45,11 @@ import {
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
 import {
+  additionalQuestionsMutationSchema,
   createNewRequestFormSchema,
   paymentInformationMutationSchema,
 } from '@lib/applications/validation';
+import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
 import { ValidationError } from 'yup';
 
 /**
@@ -228,6 +230,7 @@ export const createNewApplication: Resolver<
     disabilityCertificationDate,
     patientCondition,
     mobilityAids,
+    otherMobilityAids,
     otherPatientCondition,
     temporaryPermitExpiry,
     physicianFirstName,
@@ -389,6 +392,7 @@ export const createNewApplication: Resolver<
             disabilityCertificationDate,
             patientCondition,
             mobilityAids: mobilityAids || [],
+            otherMobilityAids,
             otherPatientCondition,
             temporaryPermitExpiry,
             physicianFirstName,
@@ -1099,8 +1103,19 @@ export const updateApplicationAdditionalInformation: Resolver<
   MutationUpdateApplicationAdditionalInformationArgs,
   UpdateApplicationAdditionalInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
+
+  try {
+    await additionalQuestionsMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
   const { id, ...data } = input;
 
   // Get existing application type (should be NEW/RENEWAL)
@@ -1116,7 +1131,6 @@ export const updateApplicationAdditionalInformation: Resolver<
     },
   });
   if (!application) {
-    // TODO: Improve validation
     throw new ApolloError('Application not found');
   }
   // Prevent reviewed requests from being updated
@@ -1157,7 +1171,7 @@ export const updateApplicationAdditionalInformation: Resolver<
     throw new ApolloError('Application additional information was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -1292,9 +1306,20 @@ export const updateApplicationPhysicianAssessment: Resolver<
   MutationUpdateApplicationPhysicianAssessmentArgs,
   UpdateApplicationPhysicianAssessmentResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, mobilityAids, ...data } = input;
+
+  try {
+    await physicianAssessmentMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
+  const { id, mobilityAids, permitType, ...validatedData } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -1322,9 +1347,10 @@ export const updateApplicationPhysicianAssessment: Resolver<
         newApplication: {
           update: {
             mobilityAids: mobilityAids || [],
-            ...data,
+            ...validatedData,
           },
         },
+        permitType: permitType,
       },
     });
   } catch {
@@ -1335,5 +1361,5 @@ export const updateApplicationPhysicianAssessment: Resolver<
     throw new ApolloError('Application physician assessment was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };

@@ -159,6 +159,8 @@ export default gql`
     MANUAL_CHAIR
     SCOOTER
     WALKER
+    CRUTCHES
+    OTHERS
   }
 
   enum PhysicianStatus {

@@ -262,6 +262,7 @@ export type CreateNewApplicationInput = {
   disabilityCertificationDate: Scalars['Date'];
   patientCondition: PatientCondition;
   mobilityAids: Maybe<Array<MobilityAid>>;
+  otherMobilityAids: Maybe<Scalars['String']>;
   otherPatientCondition: Maybe<Scalars['String']>;
   permitType: PermitType;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
@@ -531,7 +532,9 @@ export type MobilityAid =
   | 'ELECTRIC_CHAIR'
   | 'MANUAL_CHAIR'
   | 'SCOOTER'
-  | 'WALKER';
+  | 'WALKER'
+  | 'CRUTCHES'
+  | 'OTHERS';
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -754,6 +757,7 @@ export type NewApplication = Application & {
   otherPatientCondition: Maybe<Scalars['String']>;
   permitType: PermitType;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
+  otherMobilityAids: Maybe<Scalars['String']>;
   physicianFirstName: Scalars['String'];
   physicianLastName: Scalars['String'];
   physicianMspNumber: Scalars['String'];
@@ -1192,6 +1196,7 @@ export type UpdateApplicationAdditionalInformationInput = {
 export type UpdateApplicationAdditionalInformationResult = {
   __typename?: 'UpdateApplicationAdditionalInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationDoctorInformationInput = {
@@ -1286,11 +1291,14 @@ export type UpdateApplicationPhysicianAssessmentInput = {
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherPatientCondition: Maybe<Scalars['String']>;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
+  permitType: PermitType;
+  otherMobilityAids: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationPhysicianAssessmentResult = {
   __typename?: 'UpdateApplicationPhysicianAssessmentResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingAssignAppNumberInput = {
