@@ -315,6 +315,7 @@ export type CreateNewApplicationResult = {
   __typename?: 'CreateNewApplicationResult';
   ok: Scalars['Boolean'];
   applicationId: Maybe<Scalars['Int']>;
+  error: Maybe<Scalars['String']>;
 };
 
 export type CreateRenewalApplicationInput = {

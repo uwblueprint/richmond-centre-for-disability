@@ -112,6 +112,7 @@ export const CREATE_NEW_APPLICATION_MUTATION = gql`
     createNewApplication(input: $input) {
       ok
       applicationId
+      error
     }
   }
 `;

@@ -46,6 +46,7 @@ import {
 import { flattenApplication } from '@lib/applications/utils';
 import {
   additionalQuestionsMutationSchema,
+  createNewRequestFormSchema,
   paymentInformationMutationSchema,
 } from '@lib/applications/validation';
 import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
@@ -218,8 +219,8 @@ export const createNewApplication: Resolver<
   MutationCreateNewApplicationArgs,
   CreateNewApplicationResult
 > = async (_, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
+
   const {
     dateOfBirth,
     gender,
@@ -262,6 +263,104 @@ export const createNewApplication: Resolver<
     applicantId,
     ...data
   } = input;
+
+  const permitHolder = {
+    firstName: input.firstName,
+    middleName: input.middleName,
+    lastName: input.lastName,
+    dateOfBirth,
+    gender,
+    otherGender,
+    email: input.email,
+    phone: input.phone,
+    receiveEmailUpdates: input.receiveEmailUpdates,
+    addressLine1: input.addressLine1,
+    addressLine2: input.addressLine2,
+    city: input.city,
+    postalCode,
+  };
+
+  const physicianAssessment = {
+    disability,
+    disabilityCertificationDate,
+    patientCondition,
+    otherPatientCondition,
+    permitType: input.permitType,
+    temporaryPermitExpiry,
+  };
+
+  const guardianInformation = {
+    omitGuardianPoa,
+    firstName: guardianFirstName,
+    middleName: guardianMiddleName,
+    lastName: guardianLastName,
+    phone: guardianPhone,
+    relationship: guardianRelationship,
+    addressLine1: guardianAddressLine1,
+    addressLine2: guardianAddressLine2,
+    city: guardianCity,
+    postalCode: guardianPostalCode,
+    poaFormS3ObjectKey,
+  };
+
+  const doctorInformation = {
+    firstName: physicianFirstName,
+    lastName: physicianLastName,
+    mspNumber: physicianMspNumber,
+    phone: physicianPhone,
+    addressLine1: physicianAddressLine1,
+    addressLine2: physicianAddressLine2,
+    city: physicianCity,
+    postalCode: physicianPostalCode,
+  };
+
+  const additionalInformation = {
+    usesAccessibleConvertedVan,
+    accessibleConvertedVanLoadingMethod,
+    requiresWiderParkingSpace,
+    requiresWiderParkingSpaceReason,
+    otherRequiresWiderParkingSpaceReason,
+  };
+
+  const paymentInformation = {
+    paymentMethod: input.paymentMethod,
+    donationAmount,
+    shippingAddressSameAsHomeAddress: input.shippingAddressSameAsHomeAddress,
+    shippingFullName: input.shippingFullName,
+    shippingAddressLine1: input.shippingAddressLine1,
+    shippingAddressLine2: input.shippingAddressLine2,
+    shippingCity: input.shippingCity,
+    shippingProvince: input.shippingProvince,
+    shippingCountry: input.shippingCountry,
+    shippingPostalCode,
+    billingAddressSameAsHomeAddress: input.billingAddressSameAsHomeAddress,
+    billingFullName: input.billingFullName,
+    billingAddressLine1: input.billingAddressLine1,
+    billingAddressLine2: input.billingAddressLine2,
+    billingCity: input.billingCity,
+    billingProvince: input.billingProvince,
+    billingCountry: input.billingCountry,
+    billingPostalCode,
+  };
+
+  try {
+    await createNewRequestFormSchema.validate({
+      permitHolder,
+      physicianAssessment,
+      guardianInformation,
+      doctorInformation,
+      additionalInformation,
+      paymentInformation,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        applicationId: null,
+        error: err.message,
+      };
+    }
+  }
 
   if (!process.env.PROCESSING_FEE) {
     throw new Error('Processing fee not defined');
@@ -347,6 +446,7 @@ export const createNewApplication: Resolver<
   return {
     ok: true,
     applicationId: application.id,
+    error: null,
   };
 };
 
