@@ -423,10 +423,3 @@ export const applicantFacingRenewalDoctorSchema = object().shape({
         .max(12, 'Please enter a valid phone number in the format 555-555-5555'),
     }),
 });
-
-export const createNewRequestMutationSchema = permitHolderInformationSchema
-  .concat(physicianAssessmentSchema)
-  .concat(guardianInformationSchema)
-  .concat(requestPhysicianInformationSchema)
-  .concat(additionalQuestionsSchema)
-  .concat(paymentInformationSchema);

@@ -216,6 +216,7 @@ export default function CreateNew() {
     onCompleted: data => {
       if (data) {
         const { ok, applicationId, error } = data.createNewApplication;
+        setError(error ?? '');
         if (ok) {
           toast({
             status: 'success',
@@ -226,8 +227,6 @@ export default function CreateNew() {
           if (applicationId) {
             router.push(`/admin/request/${applicationId}`);
           }
-        } else {
-          setError(error ?? '');
         }
       }
     },
@@ -559,8 +558,8 @@ export default function CreateNew() {
                   bgColor="white"
                   boxShadow="dark-lg"
                 >
+                  <ValidationErrorAlert error={error} />
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <ValidationErrorAlert error={error} />
                     <Box>
                       <Button
                         bg="background.gray"
