@@ -40,18 +40,18 @@ const Card: FC<Props> = props => {
 
   const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment | null>(null);
 
-  const { refetch } = useQuery<GetPhysicianAssessmentResponse, GetPhysicianAssessmentRequest>(
-    GET_PHYSICIAN_ASSESSMENT,
-    {
-      variables: { id: applicationId },
-      onCompleted: data => {
-        if (data) {
-          setPhysicianAssessment(data.application);
-        }
-      },
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+  const { refetch, loading } = useQuery<
+    GetPhysicianAssessmentResponse,
+    GetPhysicianAssessmentRequest
+  >(GET_PHYSICIAN_ASSESSMENT, {
+    variables: { id: applicationId },
+    onCompleted: data => {
+      if (data) {
+        setPhysicianAssessment(data.application);
+      }
+    },
+    notifyOnNetworkStatusChange: true,
+  });
 
   const [updatePhysicianAssessment] = useMutation<
     UpdatePhysicianAssessmentResponse,
@@ -117,6 +117,7 @@ const Card: FC<Props> = props => {
           </EditPhysicianAssessmentModal>
         )
       }
+      loading={loading}
     >
       <VStack align="left" spacing="12px">
         <Grid

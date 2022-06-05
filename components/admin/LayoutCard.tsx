@@ -1,5 +1,6 @@
 import { GridItem, Flex, Text, Spacer, GridItemProps, Divider } from '@chakra-ui/react'; // Chakra UI
 import { ReactNode } from 'react'; // React
+import LoadingSpinner from './LoadingSpinner';
 
 type PermitHolderInfoCardProps = GridItemProps & {
   children: ReactNode;
@@ -11,6 +12,8 @@ type PermitHolderInfoCardProps = GridItemProps & {
   divider?: boolean;
   /** Whether card is a subsection */
   isSubsection?: boolean;
+  /** Whether card is in loading state */
+  loading?: boolean;
 };
 
 /**
@@ -19,12 +22,13 @@ type PermitHolderInfoCardProps = GridItemProps & {
  * @returns custom Card.
  */
 export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
-  const { children, header, updated, editModal, alignGridItems, divider, isSubsection } = props;
+  const { children, header, updated, editModal, alignGridItems, divider, isSubsection, loading } =
+    props;
   return (
     <GridItem
       display="flex"
       flexDirection="column"
-      alignItems={alignGridItems || 'flex-start'}
+      alignItems={loading ? 'center' : alignGridItems || 'flex-start'}
       padding="20px 24px 24px"
       background="white"
       border="1px solid"
@@ -34,24 +38,33 @@ export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
       borderRadius="8px"
       {...props}
     >
-      <Flex w="100%" justifyContent="flex-start" alignItems="center" mb={divider ? '20px' : '12px'}>
-        {typeof header === 'string' ? (
-          <Text as="h5" textStyle="display-small-semibold">
-            {header}
-          </Text>
-        ) : (
-          <>{header}</>
-        )}
-        {updated && (
-          <Text textStyle="caption" opacity="0.5" ml="12px">
-            updated
-          </Text>
-        )}
-        <Spacer />
-        {editModal}
-      </Flex>
-      {divider && <Divider mb="20px" />}
-      {children}
+      {!loading && (
+        <>
+          <Flex
+            w="100%"
+            justifyContent="flex-start"
+            alignItems="center"
+            mb={divider ? '20px' : '12px'}
+          >
+            {typeof header === 'string' ? (
+              <Text as="h5" textStyle="display-small-semibold">
+                {header}
+              </Text>
+            ) : (
+              <>{header}</>
+            )}
+            {updated && (
+              <Text textStyle="caption" opacity="0.5" ml="12px">
+                updated
+              </Text>
+            )}
+            <Spacer />
+            {editModal}
+          </Flex>
+          {divider && <Divider mb="20px" />}
+        </>
+      )}
+      {loading ? <LoadingSpinner /> : <>{children}</>}
     </GridItem>
   );
 }

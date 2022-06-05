@@ -28,18 +28,18 @@ const Card: FC<Props> = props => {
   const [additionalInformation, setAdditionalInformation] =
     useState<AdditionalInformationFormData | null>(null);
 
-  const { refetch } = useQuery<GetAdditionalInformationResponse, GetAdditionalInformationRequest>(
-    GET_ADDITIONAL_INFORMATION,
-    {
-      variables: { id: applicationId },
-      onCompleted: data => {
-        if (data) {
-          setAdditionalInformation(data.application);
-        }
-      },
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+  const { refetch, loading } = useQuery<
+    GetAdditionalInformationResponse,
+    GetAdditionalInformationRequest
+  >(GET_ADDITIONAL_INFORMATION, {
+    variables: { id: applicationId },
+    onCompleted: data => {
+      if (data) {
+        setAdditionalInformation(data.application);
+      }
+    },
+    notifyOnNetworkStatusChange: true,
+  });
 
   const [updateAdditionalInformation] = useMutation<
     UpdateAdditionalInformationResponse,
@@ -98,6 +98,7 @@ const Card: FC<Props> = props => {
         )
       }
       isSubsection={isSubsection}
+      loading={loading}
     >
       <VStack align="left" spacing="12px">
         <SimpleGrid columns={2} spacingX="12px" spacingY="20px" templateColumns="200px 1fr">

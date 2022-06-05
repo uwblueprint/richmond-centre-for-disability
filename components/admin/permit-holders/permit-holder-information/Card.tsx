@@ -39,15 +39,18 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
   const [permitHolderInformation, setPermitHolderInformation] =
     useState<ApplicantCardData | null>(null);
 
-  const { refetch } = useQuery<GetApplicantResponse, GetApplicantRequest>(GET_APPLICANT_QUERY, {
-    variables: { id: applicantId },
-    onCompleted: data => {
-      if (data) {
-        setPermitHolderInformation(data.applicant);
-      }
-    },
-    notifyOnNetworkStatusChange: true,
-  });
+  const { refetch, loading } = useQuery<GetApplicantResponse, GetApplicantRequest>(
+    GET_APPLICANT_QUERY,
+    {
+      variables: { id: applicantId },
+      onCompleted: data => {
+        if (data) {
+          setPermitHolderInformation(data.applicant);
+        }
+      },
+      notifyOnNetworkStatusChange: true,
+    }
+  );
 
   const [updateGeneralInformation, { loading }] = useMutation<
     UpdateApplicantGeneralInformationResponse,
@@ -130,6 +133,7 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
           </Button>
         </EditUserInformationModal>
       }
+      loading={loading}
     >
       <VStack width="100%" spacing="24px" align="stretch">
         {/* Personal information */}

@@ -31,18 +31,18 @@ const Card: FC<Props> = props => {
   const [paymentInformation, setPaymentInformation] =
     useState<PaymentInformationCardData | null>(null);
 
-  const { refetch } = useQuery<GetPaymentInformationResponse, GetPaymentInformationRequest>(
-    GET_PAYMENT_INFORMATION,
-    {
-      variables: { id: applicationId },
-      onCompleted: data => {
-        if (data) {
-          setPaymentInformation(data.application);
-        }
-      },
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+  const { refetch, loading } = useQuery<
+    GetPaymentInformationResponse,
+    GetPaymentInformationRequest
+  >(GET_PAYMENT_INFORMATION, {
+    variables: { id: applicationId },
+    onCompleted: data => {
+      if (data) {
+        setPaymentInformation(data.application);
+      }
+    },
+    notifyOnNetworkStatusChange: true,
+  });
 
   const [updatePaymentInformation] = useMutation<
     UpdatePaymentInformationResponse,
@@ -125,6 +125,7 @@ const Card: FC<Props> = props => {
           </EditPaymentDetailsModal>
         )
       }
+      loading={loading}
     >
       <VStack align="left" spacing="12px">
         <Box w="200px" h="27px">
