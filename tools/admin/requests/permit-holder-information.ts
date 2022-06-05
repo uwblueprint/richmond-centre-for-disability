@@ -141,6 +141,7 @@ export const UPDATE_PERMIT_HOLDER_INFORMATION = gql`
   ) {
     updateApplicationGeneralInformation(input: $input) {
       ok
+      error
     }
   }
 `;
@@ -158,12 +159,17 @@ export const UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION = gql`
   ) {
     updateNewApplicationGeneralInformation(input: $input) {
       ok
+      error
     }
   }
 `;
 
 export type UpdateNewApplicationPermitHolderInformationRequest =
   MutationUpdateNewApplicationGeneralInformationArgs;
+
+export type UpdateNewApplicationPermitHolderInformationResponse = {
+  updateNewApplicationGeneralInformation: UpdateApplicationGeneralInformationResult;
+};
 
 /** Get permit holder information for selected permit holder preview card */
 export const GET_SELECTED_APPLICANT_QUERY = gql`

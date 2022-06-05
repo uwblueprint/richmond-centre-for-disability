@@ -52,6 +52,7 @@ export default gql`
     lastName: String!
     dateOfBirth: Date!
     gender: Gender!
+    otherGender: String
 
     # Contact
     phone: String!
@@ -67,6 +68,7 @@ export default gql`
 
   type UpdateApplicantGeneralInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update applicant doctor information

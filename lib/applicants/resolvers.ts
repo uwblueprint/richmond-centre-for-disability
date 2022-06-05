@@ -23,7 +23,8 @@ import {
 import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
 import { PermitType } from '@prisma/client';
-import { verifyIdentitySchema } from '@lib/applicants/validation';
+import { permitHolderInformationSchema, verifyIdentitySchema } from '@lib/applicants/validation';
+import { ValidationError } from 'yup';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -234,8 +235,19 @@ export const updateApplicantGeneralInformation: Resolver<
   MutationUpdateApplicantGeneralInformationArgs,
   UpdateApplicantGeneralInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
+
+  try {
+    await permitHolderInformationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
   const { id, ...data } = input;
 
   let updatedApplicant;
@@ -252,7 +264,7 @@ export const updateApplicantGeneralInformation: Resolver<
     throw new ApolloError('Applicant was unable to be updated');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**

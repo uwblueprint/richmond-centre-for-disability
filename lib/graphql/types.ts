@@ -1141,6 +1141,7 @@ export type UpdateApplicantGeneralInformationInput = {
   lastName: Scalars['String'];
   dateOfBirth: Scalars['Date'];
   gender: Gender;
+  otherGender: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   email: Maybe<Scalars['String']>;
   receiveEmailUpdates: Scalars['Boolean'];
@@ -1153,6 +1154,7 @@ export type UpdateApplicantGeneralInformationInput = {
 export type UpdateApplicantGeneralInformationResult = {
   __typename?: 'UpdateApplicantGeneralInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicantGuardianInformationInput = {
@@ -1233,6 +1235,7 @@ export type UpdateApplicationGeneralInformationInput = {
 export type UpdateApplicationGeneralInformationResult = {
   __typename?: 'UpdateApplicationGeneralInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationGuardianInformationInput = {

@@ -77,6 +77,7 @@ export const UPDATE_APPLICANT_GENERAL_INFORMATION_MUTATION = gql`
   mutation UpdateApplicantGeneralInformation($input: UpdateApplicantGeneralInformationInput!) {
     updateApplicantGeneralInformation(input: $input) {
       ok
+      error
     }
   }
 `;

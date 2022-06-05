@@ -5,7 +5,7 @@ import { boolean, date, mixed, number, object, string } from 'yup';
  * Validation schema for permit holder information forms when creating and viewing requests
  */
 export const requestPermitHolderInformationSchema = object({
-  type: mixed<ApplicationType>().oneOf(Object.values(ApplicationType)).required(),
+  type: mixed<ApplicationType>().oneOf(Object.values(ApplicationType)).optional(),
   firstName: string().required('Please enter a first name'),
   middleName: string().nullable().default(null),
   lastName: string().required('Please enter a last name'),
@@ -22,7 +22,7 @@ export const requestPermitHolderInformationSchema = object({
       then: mixed<Gender>().oneOf(Object.values(Gender)).required('Please select a gender'),
       otherwise: mixed<Gender>().oneOf(Object.values(Gender)).optional(),
     }),
-  otherGender: string().optional(),
+  otherGender: string().nullable().default(null),
   email: string().email('Please enter a valid email address').nullable().default(null),
   phone: string()
     .required('Please enter a valid phone number')
@@ -43,6 +43,14 @@ export const requestPermitHolderInformationSchema = object({
 export const editRequestPermitHolderInformationSchema = object({
   permitHolder: requestPermitHolderInformationSchema,
 });
+
+/**
+ * Validation schema for request-side permit holder information mutation
+ */
+export const requestPermitHolderInformationMutationSchema =
+  requestPermitHolderInformationSchema.shape({
+    id: number().positive('Invalid application ID').required('Application ID missing'),
+  });
 
 /**
  * Validation schema for permit holder information forms when viewing a permit holder

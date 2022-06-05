@@ -10,6 +10,7 @@ import {
   PermitHolderCardData,
   PermitHolderFormData,
   UpdateNewApplicationPermitHolderInformationRequest,
+  UpdateNewApplicationPermitHolderInformationResponse,
   UpdatePermitHolderInformationRequest,
   UpdatePermitHolderInformationResponse,
   UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION,
@@ -73,7 +74,7 @@ const Card: FC<Props> = props => {
   >(UPDATE_PERMIT_HOLDER_INFORMATION);
 
   const [updateNewPermitHolderInformation] = useMutation<
-    UpdatePermitHolderInformationResponse,
+    UpdateNewApplicationPermitHolderInformationResponse,
     UpdateNewApplicationPermitHolderInformationRequest
   >(UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION);
 
@@ -82,21 +83,28 @@ const Card: FC<Props> = props => {
   }
 
   /** Handler for saving permit holder information */
-  const handleSave = async (data: PermitHolderFormData) => {
-    const { type, ...permitHolderData } = data;
+  const handleSave = async (permitHolderFormData: PermitHolderFormData) => {
+    const { type, ...permitHolderData } = permitHolderFormData;
 
+    let data:
+      | UpdatePermitHolderInformationResponse
+      | UpdateNewApplicationPermitHolderInformationResponse
+      | undefined
+      | null;
     if (type === 'NEW') {
       const validatedData = await permitHolderInformationSchema.validate(permitHolderData);
 
-      await updateNewPermitHolderInformation({
+      ({ data } = await updateNewPermitHolderInformation({
         variables: { input: { id: applicationId, ...validatedData } },
-      });
+      }));
     } else {
-      await updatePermitHolderInformation({
+      ({ data } = await updatePermitHolderInformation({
         variables: { input: { id: applicationId, ...permitHolderData } },
-      });
+      }));
     }
+
     refetch();
+    return data;
   };
 
   const {
