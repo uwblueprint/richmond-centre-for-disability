@@ -485,6 +485,7 @@ export default gql`
   type CreateRenewalApplicationResult {
     ok: Boolean!
     applicationId: Int
+    error: String
   }
 
   # Renewal application being created from applicant-facing form

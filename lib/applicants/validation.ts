@@ -5,7 +5,7 @@ import { boolean, date, mixed, number, object, string } from 'yup';
  * Validation schema for permit holder information forms when creating and viewing requests
  */
 export const requestPermitHolderInformationSchema = object({
-  type: mixed<ApplicationType>().oneOf(Object.values(ApplicationType)).required(),
+  type: mixed<ApplicationType>().oneOf(Object.values(ApplicationType)).optional(),
   firstName: string().required('Please enter a first name'),
   middleName: string().nullable().default(null),
   lastName: string().required('Please enter a last name'),
