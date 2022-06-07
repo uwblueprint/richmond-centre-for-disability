@@ -392,7 +392,7 @@ export const updateApplicantGuardianInformation: Resolver<
     throw new ApolloError("Applicant's guardian was unable to be updated");
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**

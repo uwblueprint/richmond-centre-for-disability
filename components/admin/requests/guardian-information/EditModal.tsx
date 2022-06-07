@@ -12,16 +12,22 @@ import {
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
 import { useState, FC } from 'react'; // React
-import { GuardianInformation } from '@tools/admin/requests/guardian-information';
+import {
+  GuardianInformation,
+  UpdateGuardianInformationResponse,
+} from '@tools/admin/requests/guardian-information';
 import GuardianInformationForm from './Form';
 import { clientUploadToS3 } from '@lib/utils/s3-utils';
 import { UpdateApplicationGuardianInformationInput } from '@lib/graphql/types';
 import { Form, Formik } from 'formik';
 import { editGuardianInformationSchema } from '@lib/guardian/validation';
+import { ValidationErrorAlert } from '@components/form/ValidationErrorAlert';
 
 type Props = {
   readonly guardianInformation: Omit<GuardianInformation, 'omitGuardianPoa'>;
-  readonly onSave: (data: Omit<UpdateApplicationGuardianInformationInput, 'id'>) => void; // Callback that accepts the inputs defined in this page
+  readonly onSave: (
+    data: Omit<UpdateApplicationGuardianInformationInput, 'id'>
+  ) => Promise<UpdateGuardianInformationResponse | undefined | null>; // Callback that accepts the inputs defined in this page
 };
 
 const EditGuardianInformationModal: FC<Props> = ({ children, guardianInformation, onSave }) => {
@@ -30,6 +36,12 @@ const EditGuardianInformationModal: FC<Props> = ({ children, guardianInformation
 
   // Modal state
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [error, setError] = useState<string>('');
+
+  const onModalClose = () => {
+    onClose();
+    setError('');
+  };
 
   // Toast message
   const toast = useToast();
@@ -67,7 +79,7 @@ const EditGuardianInformationModal: FC<Props> = ({ children, guardianInformation
       postalCode,
     } = values.guardianInformation;
 
-    onSave({
+    const result = await onSave({
       omitGuardianPoa,
       firstName,
       middleName,
@@ -80,6 +92,13 @@ const EditGuardianInformationModal: FC<Props> = ({ children, guardianInformation
       postalCode,
       poaFormS3ObjectKey,
     });
+
+    if (result?.updateApplicationGuardianInformation?.ok) {
+      onModalClose();
+    } else {
+      setError(result?.updateApplicationGuardianInformation?.error ?? '');
+    }
+
     onClose();
   };
 
@@ -116,6 +135,7 @@ const EditGuardianInformationModal: FC<Props> = ({ children, guardianInformation
                     onUploadFile={setPoaFile}
                   />
                 </ModalBody>
+                <ValidationErrorAlert error={error} />
                 <ModalFooter paddingBottom="24px" paddingTop="20px" paddingX="4px">
                   <Button colorScheme="gray" variant="solid" onClick={onClose}>
                     {'Cancel'}

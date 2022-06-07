@@ -1289,6 +1289,7 @@ export const updateApplicationGuardianInformation: Resolver<
 
   return {
     ok: true,
+    error: null,
   };
 };
 

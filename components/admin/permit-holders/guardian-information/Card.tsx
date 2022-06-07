@@ -15,6 +15,7 @@ import { Guardian, UpdateApplicantGuardianInformationInput } from '@lib/graphql/
 import Address from '@components/admin/Address';
 import EditGuardianInformationModal from '@components/admin/requests/guardian-information/EditModal';
 import { getFileName } from '@lib/utils/s3-utils';
+import guardianInformationSchema from '@lib/guardian/validation';
 
 type Props = {
   readonly applicantId: number;
@@ -119,13 +120,19 @@ const GuardianInformationCard: FC<Props> = props => {
   }, []);
 
   /** Handler for saving guardian information */
-  const handleSave = async (data: Omit<UpdateApplicantGuardianInformationInput, 'id'>) => {
+  const handleSave = async (
+    guardianInformationData: Omit<UpdateApplicantGuardianInformationInput, 'id'>
+  ) => {
     // ! Temporarily remove omitGuardianPoa field
     // TODO: Support omitting guardian/POA
-    await updateGuardianInformation({
-      variables: { input: { id: applicantId, ...data } },
+
+    const validatedData = await guardianInformationSchema.validate(guardianInformationData);
+
+    const { data } = await updateGuardianInformation({
+      variables: { input: { id: applicantId, ...validatedData } },
     });
     refetch();
+    return data;
   };
 
   return (
