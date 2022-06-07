@@ -15,6 +15,7 @@ import {
 } from '@tools/admin/requests/doctor-information'; // Physician type
 import { formatFullName, formatPhoneNumber } from '@lib/utils/format';
 import Address from '@components/admin/Address';
+import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 
 type Props = {
   readonly applicationId: number;
@@ -57,12 +58,14 @@ const Card: FC<Props> = props => {
       // TODO: Improve error handling
       return;
     }
+    const validatedData = await requestPhysicianInformationSchema.validate(doctorFormData);
 
     const { data } = await updateDoctorInformation({
       variables: {
-        input: { id: applicationId, ...doctorFormData, mspNumber: doctorFormData.mspNumber },
+        input: { id: applicationId, ...validatedData, mspNumber: validatedData.mspNumber },
       },
     });
+
     refetch();
     return data;
   };
