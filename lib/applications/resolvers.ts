@@ -1094,7 +1094,6 @@ export const updateApplicationDoctorInformation: Resolver<
   MutationUpdateApplicationDoctorInformationArgs,
   UpdateApplicationDoctorInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
   const {
     id,
@@ -1108,8 +1107,8 @@ export const updateApplicationDoctorInformation: Resolver<
     postalCode: physicianPostalCode,
   } = input;
 
-  if (
-    !requestPhysicianInformationSchema.isValidSync({
+  try {
+    await requestPhysicianInformationSchema.validate({
       firstName: physicianFirstName,
       lastName: physicianLastName,
       mspNumber: physicianMspNumber,
@@ -1118,9 +1117,14 @@ export const updateApplicationDoctorInformation: Resolver<
       addressLine2: physicianAddressLine2,
       city: physicianCity,
       postalCode: physicianPostalCode,
-    })
-  ) {
-    throw new Error('Invalid input');
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
   }
 
   const application = await prisma.application.findUnique({
@@ -1189,7 +1193,7 @@ export const updateApplicationDoctorInformation: Resolver<
     throw new ApolloError('Application doctor information was unable to be updated');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**

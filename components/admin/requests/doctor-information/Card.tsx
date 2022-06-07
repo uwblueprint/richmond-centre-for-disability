@@ -52,16 +52,19 @@ const Card: FC<Props> = props => {
   }
 
   /** Handler for saving doctor information */
-  const handleSave = async (data: DoctorFormData) => {
-    if (!data.mspNumber) {
+  const handleSave = async (doctorFormData: DoctorFormData) => {
+    if (!doctorFormData.mspNumber) {
       // TODO: Improve error handling
       return;
     }
 
-    await updateDoctorInformation({
-      variables: { input: { id: applicationId, ...data, mspNumber: data.mspNumber } },
+    const { data } = await updateDoctorInformation({
+      variables: {
+        input: { id: applicationId, ...doctorFormData, mspNumber: doctorFormData.mspNumber },
+      },
     });
     refetch();
+    return data;
   };
 
   const {

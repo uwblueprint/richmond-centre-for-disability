@@ -1217,6 +1217,7 @@ export type UpdateApplicationDoctorInformationInput = {
 export type UpdateApplicationDoctorInformationResult = {
   __typename?: 'UpdateApplicationDoctorInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationGeneralInformationInput = {
