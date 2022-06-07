@@ -91,6 +91,7 @@ export default gql`
 
   type UpdateApplicantDoctorInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update applicant guardian information
