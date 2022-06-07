@@ -28,6 +28,7 @@ import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 import { verifyIdentitySchema } from '@lib/applicants/validation';
 import { guardianInformationSchema } from '@lib/guardian/validation';
+import { ValidationError } from 'yup';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -353,8 +354,8 @@ export const updateApplicantGuardianInformation: Resolver<
     postalCode,
   } = input;
 
-  if (
-    !guardianInformationSchema.isValidSync({
+  try {
+    await guardianInformationSchema.validate({
       omitGuardianPoa,
       firstName,
       middleName,
@@ -365,10 +366,14 @@ export const updateApplicantGuardianInformation: Resolver<
       addressLine2,
       city,
       postalCode,
-    })
-  ) {
-    // Yup validation failure
-    throw new Error('Invalid input');
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
   }
 
   let updatedApplicant;

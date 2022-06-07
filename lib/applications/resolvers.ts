@@ -56,6 +56,7 @@ import { requestPermitHolderInformationMutationSchema } from '@lib/applicants/va
 import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 import { guardianInformationSchema } from '@lib/guardian/validation';
+import { ValidationError } from 'yup';
 
 /**
  * Query an application by ID
@@ -1205,7 +1206,6 @@ export const updateApplicationGuardianInformation: Resolver<
   MutationUpdateApplicationGuardianInformationArgs,
   UpdateApplicationGuardianInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
   const { id, omitGuardianPoa } = input;
 
@@ -1225,8 +1225,8 @@ export const updateApplicationGuardianInformation: Resolver<
         poaFormS3ObjectKey,
       } = input;
 
-      if (
-        !guardianInformationSchema.isValidSync({
+      try {
+        await guardianInformationSchema.validate({
           omitGuardianPoa,
           firstName,
           middleName,
@@ -1237,10 +1237,14 @@ export const updateApplicationGuardianInformation: Resolver<
           addressLine2,
           city,
           postalCode,
-        })
-      ) {
-        // Yup validation failure
-        throw new Error('Invalid input');
+        });
+      } catch (err) {
+        if (err instanceof ValidationError) {
+          return {
+            ok: false,
+            error: err.message,
+          };
+        }
       }
 
       updatedApplication = await prisma.newApplication.update({
