@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import { Province } from '@lib/graphql/types';
+import { formatPostalCode } from '@lib/utils/format';
 
 type Props = {
   readonly address: {
@@ -30,7 +31,7 @@ const Address: FC<Props> = props => {
         {country}
       </Text>
       <Text as="p" textStyle="body-regular" textAlign="left">
-        {postalCode}
+        {formatPostalCode(postalCode)}
       </Text>
     </Box>
   );

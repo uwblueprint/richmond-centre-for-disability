@@ -1407,25 +1407,6 @@ export type UpdateNewApplicationGeneralInformationInput = {
   postalCode: Scalars['String'];
 };
 
-export type UpsertPhysicianInput = {
-  mspNumber: Scalars['Int'];
-  name: Scalars['String'];
-  addressLine1: Scalars['String'];
-  addressLine2: Maybe<Scalars['String']>;
-  city: Scalars['String'];
-  province: Maybe<Province>;
-  postalCode: Scalars['String'];
-  phone: Scalars['String'];
-  status: Maybe<PhysicianStatus>;
-  notes: Maybe<Scalars['String']>;
-};
-
-export type UpsertPhysicianResult = {
-  __typename?: 'UpsertPhysicianResult';
-  ok: Scalars['Boolean'];
-  physicianId: Scalars['Int'];
-};
-
 export type VerifyIdentityFailureReason =
   | 'IDENTITY_VERIFICATION_FAILED'
   | 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS'
