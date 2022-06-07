@@ -1177,6 +1177,7 @@ export type UpdateApplicantGuardianInformationInput = {
 export type UpdateApplicantGuardianInformationResult = {
   __typename?: 'UpdateApplicantGuardianInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicantNotesInput = {
@@ -1260,6 +1261,7 @@ export type UpdateApplicationGuardianInformationInput = {
 export type UpdateApplicationGuardianInformationResult = {
   __typename?: 'UpdateApplicationGuardianInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationPaymentInformationInput = {

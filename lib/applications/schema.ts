@@ -696,6 +696,7 @@ export default gql`
 
   type UpdateApplicationGuardianInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update additional information section of application

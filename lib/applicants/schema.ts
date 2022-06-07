@@ -120,6 +120,7 @@ export default gql`
 
   type UpdateApplicantGuardianInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Set applicant as active
