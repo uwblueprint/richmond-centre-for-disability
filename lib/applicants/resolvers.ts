@@ -26,6 +26,7 @@ import { PermitType } from '@prisma/client';
 import { permitHolderInformationSchema, verifyIdentitySchema } from '@lib/applicants/validation';
 import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
+import { ValidationError } from 'yup';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -280,8 +281,8 @@ export const updateApplicantDoctorInformation: Resolver<
   const { id, mspNumber, ...data } = input;
   const { firstName, lastName, phone, addressLine1, addressLine2, city, postalCode } = input;
 
-  if (
-    !requestPhysicianInformationSchema.isValidSync({
+  try {
+    await requestPhysicianInformationSchema.validate({
       firstName,
       lastName,
       mspNumber,
@@ -290,9 +291,14 @@ export const updateApplicantDoctorInformation: Resolver<
       addressLine2,
       city,
       postalCode,
-    })
-  ) {
-    throw new Error('Invalid input');
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
   }
 
   let updatedApplicant;
@@ -321,7 +327,7 @@ export const updateApplicantDoctorInformation: Resolver<
     throw new ApolloError("Applicant's physician was unable to be updated");
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
