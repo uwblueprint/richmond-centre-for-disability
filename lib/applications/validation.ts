@@ -443,3 +443,13 @@ export const applicantFacingRenewalDoctorSchema = object().shape({
         .max(12, 'Please enter a valid phone number in the format 555-555-5555'),
     }),
 });
+
+/**
+ * Applicant facing renewal request mutation validation schema
+ */
+export const applicantFacingRenewalMutationSchema = applicantFacingRenewalPersonalAddressSchema
+  .shape({
+    applicantId: number().positive('Invalid application ID').required('Application ID missing'),
+  })
+  .concat(applicantFacingRenewalContactSchema)
+  .concat(applicantFacingRenewalDoctorSchema);

@@ -4,7 +4,6 @@ import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
 import {
   ApplicantIdDoesNotExistError,
   ApplicationFieldTooLongError,
-  UpdatedFieldsMissingError,
   EmptyFieldsMissingError,
   ApplicationNotFoundError,
 } from '@lib/applications/errors'; // Application errors
@@ -46,6 +45,7 @@ import {
 import { flattenApplication } from '@lib/applications/utils';
 import {
   additionalQuestionsMutationSchema,
+  applicantFacingRenewalMutationSchema,
   createNewRequestFormSchema,
   paymentInformationMutationSchema,
   renewalRequestMutationSchema,
@@ -695,31 +695,33 @@ export const createExternalRenewalApplication: Resolver<
     throw new Error('Processing fee not defined');
   }
 
-  // TODO: Improve validation
-
-  // Validate that fields are present if address, contact info, or doctor are updated
-  // Validate updated address fields
-  if (updatedAddress && (!addressLine1 || !city || !postalCode)) {
-    throw new UpdatedFieldsMissingError('Missing updated personal address fields');
-  }
-
-  // Validate updated contact info fields (at least one of phone or email must be provided)
-  if (updatedContactInfo && !phone) {
-    throw new UpdatedFieldsMissingError('Missing updated contact info fields');
-  }
-
-  // Validate updated doctor info fields
-  if (
-    updatedPhysician &&
-    (!physicianFirstName ||
-      !physicianLastName ||
-      !physicianMspNumber ||
-      !physicianPhone ||
-      !physicianAddressLine1 ||
-      !physicianCity ||
-      !physicianPostalCode)
-  ) {
-    throw new UpdatedFieldsMissingError('Missing updated physician fields');
+  try {
+    await applicantFacingRenewalMutationSchema.validate({
+      updatedDoctor: updatedPhysician,
+      personalAddressLine1: addressLine1,
+      personalAddressLine2: addressLine2,
+      personalCity: city,
+      personalPostalCode: postalCode,
+      contactPhoneNumber: phone,
+      contactEmailAddress: email,
+      doctorFirstName: physicianFirstName,
+      doctorLastName: physicianLastName,
+      doctorMspNumber: physicianMspNumber,
+      doctorAddressLine1: physicianAddressLine1,
+      doctorAddressLine2: physicianAddressLine2,
+      doctorCity: physicianCity,
+      doctorPostalCode: physicianPostalCode,
+      doctorPhoneNumber: physicianPhone,
+      ...input,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        applicationId: null,
+        error: 'Please enter valid postal code',
+      };
+    }
   }
 
   // Retrieve applicant record
@@ -841,6 +843,7 @@ export const createExternalRenewalApplication: Resolver<
   return {
     ok: true,
     applicationId: application.id,
+    error: null,
   };
 };
 
