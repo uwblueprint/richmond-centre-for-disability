@@ -65,3 +65,14 @@ export class EmptyFieldsMissingError extends ApolloError {
     Object.defineProperty(this, 'name', { value: 'EmptyFieldsMissingError' });
   }
 }
+
+/**
+ * Permit is past 6 months expired
+ */
+export class AppPastSixMonthsExpiredError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'APP_PAST_SIX_MONTHS_EXPIRED');
+
+    Object.defineProperty(this, 'name', { value: 'AppPastSixMonthsExpiredError' });
+  }
+}

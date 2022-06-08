@@ -25,6 +25,7 @@ import { SortOrder } from '@tools/types'; // Sorting Type
 import { PermitType } from '@prisma/client';
 import { verifyIdentitySchema } from '@lib/applicants/verify-identity/validation';
 import { stripPhoneNumber, stripPostalCode } from '@lib/utils/format';
+import moment from 'moment';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -457,6 +458,15 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     return {
       ok: false,
       failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS',
+      applicantId: null,
+    };
+  }
+
+  //6 months past expiry date
+  if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') < moment()) {
+    return {
+      ok: false,
+      failureReason: 'APP_PAST_SIX_MONTHS_EXPIRED',
       applicantId: null,
     };
   }
