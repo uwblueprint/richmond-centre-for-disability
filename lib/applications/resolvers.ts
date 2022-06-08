@@ -719,7 +719,7 @@ export const createExternalRenewalApplication: Resolver<
       return {
         ok: false,
         applicationId: null,
-        error: 'Please enter valid postal code',
+        error: err.message,
       };
     }
   }
