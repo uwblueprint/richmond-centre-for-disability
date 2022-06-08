@@ -48,6 +48,7 @@ import {
   additionalQuestionsMutationSchema,
   createNewRequestFormSchema,
   paymentInformationMutationSchema,
+  renewalRequestMutationSchema,
 } from '@lib/applications/validation';
 import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
 import { requestPermitHolderInformationMutationSchema } from '@lib/applicants/validation';
@@ -460,8 +461,8 @@ export const createRenewalApplication: Resolver<
   MutationCreateRenewalApplicationArgs,
   CreateRenewalApplicationResult
 > = async (_, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
+
   const {
     applicantId,
     postalCode,
@@ -481,8 +482,104 @@ export const createRenewalApplication: Resolver<
     donationAmount,
     shippingPostalCode,
     billingPostalCode,
+    firstName,
+    middleName,
+    lastName,
+    phone,
+    email,
+    receiveEmailUpdates,
+    addressLine1,
+    addressLine2,
+    city,
+    paymentMethod,
+    shippingAddressSameAsHomeAddress,
+    shippingFullName,
+    shippingAddressLine1,
+    shippingAddressLine2,
+    shippingCity,
+    shippingProvince,
+    shippingCountry,
+    billingAddressSameAsHomeAddress,
+    billingFullName,
+    billingAddressLine1,
+    billingAddressLine2,
+    billingCity,
+    billingProvince,
+    billingCountry,
     ...data
   } = input;
+
+  const permitHolder = {
+    firstName,
+    middleName,
+    lastName,
+    email,
+    phone,
+    receiveEmailUpdates,
+    addressLine1,
+    addressLine2,
+    city,
+    postalCode,
+  };
+
+  const doctorInformation = {
+    firstName: physicianFirstName,
+    lastName: physicianLastName,
+    mspNumber: physicianMspNumber,
+    phone: physicianPhone,
+    addressLine1: physicianAddressLine1,
+    addressLine2: physicianAddressLine2,
+    city: physicianCity,
+    postalCode: physicianPostalCode,
+  };
+
+  const additionalInformation = {
+    usesAccessibleConvertedVan,
+    accessibleConvertedVanLoadingMethod,
+    requiresWiderParkingSpace,
+    requiresWiderParkingSpaceReason,
+    otherRequiresWiderParkingSpaceReason,
+  };
+
+  const paymentInformation = {
+    paymentMethod,
+    donationAmount,
+    shippingAddressSameAsHomeAddress,
+    shippingFullName,
+    shippingAddressLine1,
+    shippingAddressLine2,
+    shippingCity,
+    shippingProvince,
+    shippingCountry,
+    shippingPostalCode,
+    billingAddressSameAsHomeAddress,
+    billingFullName,
+    billingAddressLine1,
+    billingAddressLine2,
+    billingCity,
+    billingProvince,
+    billingCountry,
+    billingPostalCode,
+  };
+
+  try {
+    await renewalRequestMutationSchema.validate({
+      applicantId,
+      permitHolder,
+      doctorInformation,
+      additionalInformation,
+      paymentInformation,
+      ...data,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        applicationId: null,
+        error: err.message,
+      };
+    }
+  }
 
   if (!process.env.PROCESSING_FEE) {
     throw new Error('Processing fee not defined');
@@ -495,6 +592,30 @@ export const createRenewalApplication: Resolver<
         type: 'RENEWAL',
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
+        firstName,
+        middleName,
+        lastName,
+        phone,
+        email,
+        receiveEmailUpdates,
+        addressLine1,
+        addressLine2,
+        city,
+        paymentMethod,
+        shippingAddressSameAsHomeAddress,
+        shippingFullName,
+        shippingAddressLine1,
+        shippingAddressLine2,
+        shippingCity,
+        shippingProvince,
+        shippingCountry,
+        billingAddressSameAsHomeAddress,
+        billingFullName,
+        billingAddressLine1,
+        billingAddressLine2,
+        billingCity,
+        billingProvince,
+        billingCountry,
         ...data,
         postalCode: formatPostalCode(postalCode),
         shippingPostalCode: shippingPostalCode && formatPostalCode(shippingPostalCode),
@@ -530,7 +651,7 @@ export const createRenewalApplication: Resolver<
     throw new ApolloError('Renewal application was unable to be created');
   }
 
-  return { ok: true, applicationId: createdRenewalApplication.id };
+  return { ok: true, applicationId: createdRenewalApplication.id, error: null };
 };
 
 /**

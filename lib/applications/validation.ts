@@ -7,7 +7,7 @@ import {
   physicianAssessmentSchema,
   requestPhysicianInformationSchema,
 } from '@lib/physicians/validation';
-import { PaymentType, Province, ReasonForReplacement } from '@prisma/client';
+import { PaymentType, Province, ReasonForReplacement, ShopifyPaymentStatus } from '@prisma/client';
 import { bool, date, mixed, number, object, string } from 'yup';
 import {
   AccessibleConvertedVanLoadingMethod,
@@ -277,6 +277,19 @@ export const renewalRequestFormSchema = object({
   doctorInformation: requestPhysicianInformationSchema,
   additionalInformation: additionalQuestionsSchema,
   paymentInformation: paymentInformationSchema,
+});
+
+/**
+ * Create renewal request mutation validation schema
+ */
+export const renewalRequestMutationSchema = renewalRequestFormSchema.shape({
+  applicantId: number().positive('Invalid application ID').required('Application ID missing'),
+  paidThroughShopify: bool().required(),
+  shopifyPaymentStatus: mixed<ShopifyPaymentStatus>()
+    .oneOf([...Object.values(ShopifyPaymentStatus), null])
+    .nullable(),
+  shopifyConfirmationNumber: string().nullable().default(null),
+  shopifyOrderNumber: string().nullable().default(null),
 });
 
 /**
