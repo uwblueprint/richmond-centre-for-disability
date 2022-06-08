@@ -369,7 +369,6 @@ export default function CreateRenewal() {
                     </Text>
                     <PaymentDetailsForm paymentInformation={values.paymentInformation} />
                   </Box>
-                  <ValidationErrorAlert error={error} />
                 </GridItem>
 
                 {/* Footer */}
@@ -383,6 +382,7 @@ export default function CreateRenewal() {
                   bgColor="white"
                   boxShadow="dark-lg"
                 >
+                  <ValidationErrorAlert error={error} />
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Box>
                       <Button

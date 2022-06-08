@@ -13,7 +13,7 @@ export default function ValidationErrorAlert({ error }: ValidationErrorAlertProp
   return (
     <>
       {error && (
-        <Alert status="error" mt="12px" pt="20px" pb="20px">
+        <Alert status="error" mt="12px" mb="12px" pt="20px" pb="20px">
           <AlertIcon />
           <AlertTitle>{error}</AlertTitle>
         </Alert>
