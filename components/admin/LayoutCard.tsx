@@ -38,7 +38,9 @@ export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
       borderRadius="8px"
       {...props}
     >
-      {!loading && (
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
         <>
           <Flex
             w="100%"
@@ -62,9 +64,9 @@ export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
             {editModal}
           </Flex>
           {divider && <Divider mb="20px" />}
+          {children}
         </>
       )}
-      {loading ? <LoadingSpinner /> : <>{children}</>}
     </GridItem>
   );
 }
