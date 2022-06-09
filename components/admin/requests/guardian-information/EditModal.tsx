@@ -14,8 +14,9 @@ import {
 import { useState, FC } from 'react'; // React
 import {
   GuardianInformation,
-  UpdateGuardianInformationResponse,
+  UpdateGuardianInformationResponse as UpdateApplicationGuardianInformationResponse,
 } from '@tools/admin/requests/guardian-information';
+import { UpdateGuardianInformationResponse as UpdateApplicantGuardianInformationResponse } from '@tools/admin/permit-holders/guardian-information';
 import GuardianInformationForm from './Form';
 import { clientUploadToS3 } from '@lib/utils/s3-utils';
 import { UpdateApplicationGuardianInformationInput } from '@lib/graphql/types';
@@ -27,7 +28,12 @@ type Props = {
   readonly guardianInformation: Omit<GuardianInformation, 'omitGuardianPoa'>;
   readonly onSave: (
     data: Omit<UpdateApplicationGuardianInformationInput, 'id'>
-  ) => Promise<UpdateGuardianInformationResponse | undefined | null>; // Callback that accepts the inputs defined in this page
+  ) => Promise<
+    | UpdateApplicationGuardianInformationResponse
+    | UpdateApplicantGuardianInformationResponse
+    | undefined
+    | null
+  >; // Callback that accepts the inputs defined in this page
 };
 
 const EditGuardianInformationModal: FC<Props> = ({ children, guardianInformation, onSave }) => {
@@ -93,10 +99,21 @@ const EditGuardianInformationModal: FC<Props> = ({ children, guardianInformation
       poaFormS3ObjectKey,
     });
 
-    if (result?.updateApplicationGuardianInformation?.ok) {
+    if (
+      (result as UpdateApplicantGuardianInformationResponse)?.updateApplicantGuardianInformation
+        ?.ok ||
+      (result as UpdateApplicationGuardianInformationResponse)?.updateApplicationGuardianInformation
+        ?.ok
+    ) {
       onModalClose();
     } else {
-      setError(result?.updateApplicationGuardianInformation?.error ?? '');
+      setError(
+        ((result as UpdateApplicantGuardianInformationResponse)?.updateApplicantGuardianInformation
+          ?.error ||
+          (result as UpdateApplicationGuardianInformationResponse)
+            ?.updateApplicationGuardianInformation?.error) ??
+          ''
+      );
     }
 
     onClose();
