@@ -26,7 +26,6 @@ import { PermitType } from '@prisma/client';
 import { permitHolderInformationSchema, verifyIdentitySchema } from '@lib/applicants/validation';
 import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
-import { ValidationError } from 'yup';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
