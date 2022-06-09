@@ -25,6 +25,7 @@ import { SortOrder } from '@tools/types'; // Sorting Type
 import { PermitType } from '@prisma/client';
 import { permitHolderInformationSchema, verifyIdentitySchema } from '@lib/applicants/validation';
 import { ValidationError } from 'yup';
+import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -275,11 +276,32 @@ export const updateApplicantDoctorInformation: Resolver<
   MutationUpdateApplicantDoctorInformationArgs,
   UpdateApplicantDoctorInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
   const { id, mspNumber, ...data } = input;
+  const { firstName, lastName, phone, addressLine1, addressLine2, city, postalCode } = input;
+
+  try {
+    await requestPhysicianInformationSchema.validate({
+      firstName,
+      lastName,
+      mspNumber,
+      phone,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
 
   let updatedApplicant;
+
   try {
     updatedApplicant = await prisma.applicant.update({
       where: { id },
@@ -304,7 +326,7 @@ export const updateApplicantDoctorInformation: Resolver<
     throw new ApolloError("Applicant's physician was unable to be updated");
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**

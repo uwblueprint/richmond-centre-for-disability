@@ -114,6 +114,7 @@ export const UPDATE_DOCTOR_INFORMATION = gql`
   mutation UpdateApplicantDoctorInformation($input: UpdateApplicantDoctorInformationInput!) {
     updateApplicantDoctorInformation(input: $input) {
       ok
+      error
     }
   }
 `;

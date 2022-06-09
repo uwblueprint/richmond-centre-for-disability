@@ -10,16 +10,28 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { ReactNode } from 'react'; // React
+import { ReactNode, useState } from 'react'; // React
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form';
-import { DoctorFormData } from '@tools/admin/requests/doctor-information'; // GraphQL types
+import {
+  DoctorFormData,
+  UpdateDoctorInformationResponse as UpdateApplicationDoctorInformationResponse,
+} from '@tools/admin/requests/doctor-information'; // GraphQL types
+import { UpdateDoctorInformationResponse as UpdateApplicantDoctorInformationResponse } from '@tools/admin/permit-holders/doctor-information'; // GraphQL types}
 import { Form, Formik } from 'formik';
 import { editPhysicianInformationSchema } from '@lib/physicians/validation';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 type EditDoctorInformationModalProps = {
   children: ReactNode;
   readonly doctorInformation: DoctorFormData;
-  readonly onSave: (applicationData: DoctorFormData) => void;
+  readonly onSave: (
+    applicationData: DoctorFormData
+  ) => Promise<
+    | UpdateApplicantDoctorInformationResponse
+    | UpdateApplicationDoctorInformationResponse
+    | undefined
+    | null
+  >;
 };
 
 export default function EditDoctorInformationModal({
@@ -28,13 +40,29 @@ export default function EditDoctorInformationModal({
   onSave,
 }: EditDoctorInformationModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [error, setError] = useState<string>('');
 
-  const handleSubmit = (values: { doctorInformation: DoctorFormData }) => {
-    // TODO: Backend errors
-    onSave({
-      ...values.doctorInformation,
-    });
+  const onModalClose = () => {
     onClose();
+    setError('');
+  };
+
+  const handleSubmit = async (values: { doctorInformation: DoctorFormData }) => {
+    const result = await onSave(values.doctorInformation);
+    if (
+      (result as UpdateApplicantDoctorInformationResponse)?.updateApplicantDoctorInformation?.ok ||
+      (result as UpdateApplicationDoctorInformationResponse)?.updateApplicationDoctorInformation?.ok
+    ) {
+      onModalClose();
+    } else {
+      setError(
+        ((result as UpdateApplicantDoctorInformationResponse)?.updateApplicantDoctorInformation
+          ?.error ||
+          (result as UpdateApplicationDoctorInformationResponse)?.updateApplicationDoctorInformation
+            ?.error) ??
+          ''
+      );
+    }
   };
 
   return (
@@ -69,6 +97,7 @@ export default function EditDoctorInformationModal({
                 <ModalBody paddingY="20px" paddingX="4px">
                   <DoctorInformationForm />
                 </ModalBody>
+                <ValidationErrorAlert error={error} />
                 <ModalFooter paddingBottom="24px" paddingX="4px">
                   <Button colorScheme="gray" variant="solid" onClick={onClose}>
                     {'Cancel'}
