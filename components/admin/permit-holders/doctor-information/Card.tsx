@@ -16,6 +16,7 @@ import {
 import { formatFullName } from '@lib/utils/format';
 import Address from '@components/admin/Address';
 import { useMemo } from 'react';
+import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 
 type DoctorInformationProps = {
   readonly applicantId: number;
@@ -51,16 +52,17 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       });
     },
   });
-  const handleSave = async (data: DoctorFormData) => {
-    if (!data.mspNumber) {
-      // TODO: Improve error handling
-      return;
-    }
+  const handleSave = async (doctorFormData: DoctorFormData) => {
+    const validatedData = await requestPhysicianInformationSchema.validate(doctorFormData);
 
-    await updateDoctorInformation({
-      variables: { input: { id: applicantId, ...data, mspNumber: data.mspNumber } },
+    const { data } = await updateDoctorInformation({
+      variables: {
+        input: { id: applicantId, ...validatedData, mspNumber: validatedData.mspNumber },
+      },
     });
+
     refetch();
+    return data;
   };
 
   /** Previous doctors data */

@@ -279,7 +279,7 @@ export const updateApplicantDoctorInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   const { input } = args;
   const { id, mspNumber, ...data } = input;
-  const { firstName, lastName, phone, addressLine1, addressLine2, city } = input;
+  const { firstName, lastName, phone, addressLine1, addressLine2, city, postalCode } = input;
 
   try {
     await requestPhysicianInformationSchema.validate({
@@ -290,7 +290,7 @@ export const updateApplicantDoctorInformation: Resolver<
       addressLine1,
       addressLine2,
       city,
-      postalCode: null,
+      postalCode,
     });
   } catch (err) {
     if (err instanceof ValidationError) {

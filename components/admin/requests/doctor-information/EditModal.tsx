@@ -14,8 +14,9 @@ import { ReactNode, useState } from 'react'; // React
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form';
 import {
   DoctorFormData,
-  UpdateDoctorInformationResponse,
+  UpdateDoctorInformationResponse as UpdateApplicationDoctorInformationResponse,
 } from '@tools/admin/requests/doctor-information'; // GraphQL types
+import { UpdateDoctorInformationResponse as UpdateApplicantDoctorInformationResponse } from '@tools/admin/permit-holders/doctor-information'; // GraphQL types}
 import { Form, Formik } from 'formik';
 import { editPhysicianInformationSchema } from '@lib/physicians/validation';
 import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
@@ -25,7 +26,12 @@ type EditDoctorInformationModalProps = {
   readonly doctorInformation: DoctorFormData;
   readonly onSave: (
     applicationData: DoctorFormData
-  ) => Promise<UpdateDoctorInformationResponse | undefined | null>;
+  ) => Promise<
+    | UpdateApplicantDoctorInformationResponse
+    | UpdateApplicationDoctorInformationResponse
+    | undefined
+    | null
+  >;
 };
 
 export default function EditDoctorInformationModal({
@@ -43,10 +49,19 @@ export default function EditDoctorInformationModal({
 
   const handleSubmit = async (values: { doctorInformation: DoctorFormData }) => {
     const result = await onSave(values.doctorInformation);
-    if (result?.updateApplicationDoctorInformation.ok) {
+    if (
+      (result as UpdateApplicantDoctorInformationResponse)?.updateApplicantDoctorInformation?.ok ||
+      (result as UpdateApplicationDoctorInformationResponse)?.updateApplicationDoctorInformation?.ok
+    ) {
       onModalClose();
     } else {
-      setError(result?.updateApplicationDoctorInformation.error ?? '');
+      setError(
+        ((result as UpdateApplicantDoctorInformationResponse)?.updateApplicantDoctorInformation
+          ?.error ||
+          (result as UpdateApplicationDoctorInformationResponse)?.updateApplicationDoctorInformation
+            ?.error) ??
+          ''
+      );
     }
   };
 
