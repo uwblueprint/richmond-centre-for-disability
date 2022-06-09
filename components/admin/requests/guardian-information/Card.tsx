@@ -15,6 +15,7 @@ import {
 import { useCallback, useState } from 'react';
 import EditGuardianInformationModal from '@components/admin/requests/guardian-information/EditModal';
 import { AddIcon } from '@chakra-ui/icons';
+import { guardianInformationSchema } from '@lib/guardian/validation';
 
 type GuardianInformationProps = {
   readonly applicationId: number;
@@ -156,11 +157,16 @@ export default function GuardianInformationCard({
   }
 
   /** Handler for saving doctor information */
-  const handleSave = async (data: Omit<GuardianInformation, 'poaFormS3ObjectUrl'>) => {
-    await updateGuardianInformation({
-      variables: { input: { id: applicationId, ...data } },
+  const handleSave = async (
+    guardianInformationData: Omit<GuardianInformation, 'poaFormS3ObjectUrl'>
+  ) => {
+    const validatedData = await guardianInformationSchema.validate(guardianInformationData);
+
+    const { data } = await updateGuardianInformation({
+      variables: { input: { id: applicationId, ...validatedData } },
     });
     refetch();
+    return data;
   };
 
   return (

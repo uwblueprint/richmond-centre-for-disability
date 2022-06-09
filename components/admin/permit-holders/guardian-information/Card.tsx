@@ -15,7 +15,7 @@ import { Guardian, UpdateApplicantGuardianInformationInput } from '@lib/graphql/
 import Address from '@components/admin/Address';
 import EditGuardianInformationModal from '@components/admin/requests/guardian-information/EditModal';
 import { getFileName } from '@lib/utils/s3-utils';
-import guardianInformationSchema from '@lib/guardian/validation';
+import { guardianInformationSchema } from '@lib/guardian/validation';
 
 type Props = {
   readonly applicantId: number;
