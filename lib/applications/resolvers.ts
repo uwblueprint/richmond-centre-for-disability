@@ -56,7 +56,6 @@ import { requestPermitHolderInformationMutationSchema } from '@lib/applicants/va
 import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 import { guardianInformationSchema } from '@lib/guardian/validation';
-import { ValidationError } from 'yup';
 
 /**
  * Query an application by ID
