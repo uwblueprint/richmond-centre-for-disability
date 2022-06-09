@@ -54,10 +54,6 @@ const Card: FC<Props> = props => {
 
   /** Handler for saving doctor information */
   const handleSave = async (doctorFormData: DoctorFormData) => {
-    if (!doctorFormData.mspNumber) {
-      // TODO: Improve error handling
-      return;
-    }
     const validatedData = await requestPhysicianInformationSchema.validate(doctorFormData);
 
     const { data } = await updateDoctorInformation({
