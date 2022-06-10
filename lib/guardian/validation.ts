@@ -32,9 +32,12 @@ export const guardianInformationSchema = object({
     .when('omitGuardianPoa', {
       is: false,
       then: string()
-        .min(10, 'Must be a valid phone number')
         .typeError('Please enter a phone number')
-        .required('Please enter a phone number'),
+        .required('Please enter a phone number')
+        .matches(
+          /(^(\(?\d{3}\)?-?\d{3}-?\d{4}$))/,
+          'Please enter a valid phone number in the format 000-000-0000'
+        ),
     }),
   relationship: string()
     .nullable()

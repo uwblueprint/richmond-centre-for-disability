@@ -351,7 +351,10 @@ export const applicantFacingRenewalContactSchema = object().shape(
         then: string()
           .typeError('Please enter a valid phone number')
           .required('Please enter a valid phone number')
-          .max(12, 'Please enter a valid phone number in the format 555-555-5555'),
+          .matches(
+            /(^(\(?\d{3}\)?-?\d{3}-?\d{4}$))/,
+            'Please enter a valid phone number in the format 555-555-5555'
+          ),
       }),
     contactEmailAddress: string()
       .email('Please enter a valid email address')
@@ -443,6 +446,9 @@ export const applicantFacingRenewalDoctorSchema = object().shape({
       then: string()
         .typeError('Please enter a valid phone number')
         .required('Please enter a valid phone number')
-        .max(12, 'Please enter a valid phone number in the format 555-555-5555'),
+        .matches(
+          /(^(\(?\d{3}\)?-?\d{3}-?\d{4}$))/,
+          'Please enter a valid phone number in the format 555-555-5555'
+        ),
     }),
 });

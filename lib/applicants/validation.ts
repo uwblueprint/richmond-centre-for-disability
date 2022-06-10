@@ -26,7 +26,10 @@ export const requestPermitHolderInformationSchema = object({
   email: string().email('Please enter a valid email address').nullable().default(null),
   phone: string()
     .required('Please enter a valid phone number')
-    .max(12, 'Please enter a valid phone number in the format 000-000-0000'),
+    .matches(
+      /(^(\(?\d{3}\)?-?\d{3}-?\d{4}$))/,
+      'Please enter a valid phone number in the format 000-000-0000'
+    ),
   receiveEmailUpdates: boolean().required(),
   addressLine1: string().required('Please enter an address'),
   addressLine2: string().nullable().default(null),
@@ -59,7 +62,10 @@ export const permitHolderInformationSchema = object({
   email: string().email('Please enter a valid email address').nullable().default(null),
   phone: string()
     .required('Please enter a valid phone number')
-    .max(12, 'Please enter a valid phone number in the format 000-000-0000'),
+    .matches(
+      /(^(\(?\d{3}\)?-?\d{3}-?\d{4}$))/,
+      'Please enter a valid phone number in the format 000-000-0000'
+    ),
   receiveEmailUpdates: boolean().required(),
   addressLine1: string().required('Please enter an address'),
   addressLine2: string().nullable().default(null),

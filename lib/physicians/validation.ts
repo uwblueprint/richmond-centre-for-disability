@@ -81,7 +81,12 @@ export const requestPhysicianInformationSchema = object({
   mspNumber: string()
     .matches(/^\d+$/, 'Must only contain numbers')
     .required('Please enter the MSP number'),
-  phone: string().min(10, 'Must be a valid phone number').required('Please enter a phone number'),
+  phone: string()
+    .required('Please enter a phone number')
+    .matches(
+      /(^(\(?\d{3}\)?-?\d{3}-?\d{4}$))/,
+      'Please enter a valid phone number in the format 000-000-0000'
+    ),
   addressLine1: string().required('Please enter an address'),
   addressLine2: string().nullable().default(null),
   city: string().required('Please enter a city'),
