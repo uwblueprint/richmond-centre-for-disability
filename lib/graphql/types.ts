@@ -242,6 +242,7 @@ export type CreateExternalRenewalApplicationResult = {
   __typename?: 'CreateExternalRenewalApplicationResult';
   ok: Scalars['Boolean'];
   applicationId: Maybe<Scalars['Int']>;
+  error: Maybe<Scalars['String']>;
 };
 
 export type CreateNewApplicationInput = {

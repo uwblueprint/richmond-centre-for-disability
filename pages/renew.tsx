@@ -36,6 +36,7 @@ import {
   applicantFacingRenewalPersonalAddressSchema,
 } from '@lib/applications/validation';
 import RadioGroupField from '@components/form/RadioGroupField';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 export default function Renew() {
   // Request state
@@ -79,6 +80,9 @@ export default function Renew() {
   // Whether user is reviewing the form
   const [isReviewing, setIsReviewing] = useState(false);
 
+  /**  Backend form validation error */
+  const [error, setError] = useState<string>('');
+
   const shopifyCheckout = async (applicationId: number) => {
     /* Setup Shopify Checkout on success. */
     const client = Client.buildClient({
@@ -120,17 +124,20 @@ export default function Renew() {
     CreateExternalRenewalApplicationRequest
   >(CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION, {
     onCompleted: data => {
-      if (
-        data.createExternalRenewalApplication.ok &&
-        data.createExternalRenewalApplication.applicationId
-      ) {
-        toast({
-          status: 'success',
-          description: 'Redirecting to payment page...',
-          isClosable: true,
-        });
+      if (data) {
+        const { ok, applicationId, error } = data.createExternalRenewalApplication;
 
-        shopifyCheckout(data.createExternalRenewalApplication.applicationId);
+        if (ok && applicationId) {
+          toast({
+            status: 'success',
+            description: 'Redirecting to payment page...',
+            isClosable: true,
+          });
+
+          shopifyCheckout(applicationId);
+        } else {
+          setError(error ?? '');
+        }
       }
     },
     onError: error => {
@@ -663,6 +670,7 @@ export default function Renew() {
           information required in this application.`}
               </Checkbox>
             </Box>
+            <ValidationErrorAlert error={error} />
             <Flex width="100%" justifyContent="flex-end">
               <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
               <Button

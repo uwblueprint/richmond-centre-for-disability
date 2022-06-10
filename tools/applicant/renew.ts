@@ -12,6 +12,7 @@ export const CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION = gql`
     createExternalRenewalApplication(input: $input) {
       ok
       applicationId
+      error
     }
   }
 `;
