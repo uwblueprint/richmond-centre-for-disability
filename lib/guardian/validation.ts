@@ -67,9 +67,11 @@ export const guardianInformationSchema = object({
       is: false,
       then: string()
         .typeError('Please enter a postal code')
-        .min(6, 'Must be a valid postal code')
-        .max(7, 'Must be a valid postal code')
-        .required('Please enter a postal code'),
+        .required('Please enter a postal code')
+        .matches(
+          /(^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$)/,
+          'Please enter a valid postal code'
+        ),
     }),
 });
 

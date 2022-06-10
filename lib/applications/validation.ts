@@ -125,7 +125,13 @@ export const paymentInformationSchema = object({
     .default(null)
     .when('shippingAddressSameAsHomeAddress', {
       is: false,
-      then: string().typeError('Please enter a postal code').required('Please enter a postal code'),
+      then: string()
+        .typeError('Please enter a postal code')
+        .required('Please enter a postal code')
+        .matches(
+          /(^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$)/,
+          'Please enter a valid postal code'
+        ),
     }),
   billingAddressSameAsHomeAddress: bool().default(false),
   billingFullName: string()
@@ -175,7 +181,13 @@ export const paymentInformationSchema = object({
     .default(null)
     .when('billingAddressSameAsHomeAddress', {
       is: false,
-      then: string().typeError('Please enter a postal code').required('Please enter a postal code'),
+      then: string()
+        .typeError('Please enter a postal code')
+        .required('Please enter a postal code')
+        .matches(
+          /(^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$)/,
+          'Please enter a valid postal code'
+        ),
     }),
 });
 
@@ -316,8 +328,10 @@ export const applicantFacingRenewalPersonalAddressSchema = object({
       then: string()
         .typeError('Please enter a valid postal code')
         .required('Please enter a valid postal code')
-        .min(6, 'Please enter a valid postal code')
-        .max(7, 'Please enter a valid postal code'),
+        .matches(
+          /(^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$)/,
+          'Please enter a valid postal code'
+        ),
     }),
 });
 
@@ -416,8 +430,10 @@ export const applicantFacingRenewalDoctorSchema = object().shape({
       then: string()
         .typeError('Please enter a postal code')
         .required('Please enter a postal code')
-        .min(6, 'Please enter a valid postal code')
-        .max(7, 'Please enter a valid postal code'),
+        .matches(
+          /(^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$)/,
+          'Please enter a valid postal code'
+        ),
     }),
   doctorPhoneNumber: string()
     .nullable()

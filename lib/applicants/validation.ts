@@ -33,8 +33,10 @@ export const requestPermitHolderInformationSchema = object({
   city: string().required('Please enter a city'),
   postalCode: string()
     .required('Please enter a valid postal code')
-    .min(6, 'Please enter a valid postal code')
-    .max(7, 'Please enter a valid postal code'),
+    .matches(
+      /(^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$)/,
+      'Please enter a valid postal code'
+    ),
 });
 
 /**
@@ -64,8 +66,10 @@ export const permitHolderInformationSchema = object({
   city: string().required('Please enter a city'),
   postalCode: string()
     .required('Please enter a valid postal code')
-    .min(6, 'Please enter a valid postal code')
-    .max(7, 'Please enter a valid postal code'),
+    .matches(
+      /(^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$)/,
+      'Please enter a valid postal code'
+    ),
 });
 
 /**
