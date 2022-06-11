@@ -1,3 +1,4 @@
+import { phoneNumberRegex, postalCodeRegex } from '@lib/utils/validation';
 import { MobilityAid, PatientCondition, PermitType } from '@prisma/client';
 import { date, mixed, object, string, array, number } from 'yup';
 
@@ -83,19 +84,13 @@ export const requestPhysicianInformationSchema = object({
     .required('Please enter the MSP number'),
   phone: string()
     .required('Please enter a phone number')
-    .matches(
-      /(^(\(?\d{3}\)?-?\d{3}-?\d{4}$))/,
-      'Please enter a valid phone number in the format 000-000-0000'
-    ),
+    .matches(phoneNumberRegex, 'Please enter a valid phone number in the format 000-000-0000'),
   addressLine1: string().required('Please enter an address'),
   addressLine2: string().nullable().default(null),
   city: string().required('Please enter a city'),
   postalCode: string()
     .required('Please enter a postal code')
-    .matches(
-      /(^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$)/,
-      'Please enter a valid postal code'
-    ),
+    .matches(postalCodeRegex, 'Please enter a valid postal code in the format X0X 0X0'),
 });
 
 export const editPhysicianInformationSchema = object({
