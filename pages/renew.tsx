@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'; // React
 import Link from 'next/link'; // Next Link
 import { useMutation } from '@apollo/client'; // Apollo Client
-import Client from 'shopify-buy';
 import {
   Flex,
   Box,
@@ -92,41 +91,6 @@ export default function Renew() {
       !doctorPostalCode ||
       !doctorPhoneNumber);
 
-  const shopifyCheckout = async (applicationId: number) => {
-    /* Setup Shopify Checkout on success. */
-    const client = Client.buildClient({
-      domain: process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN as string,
-      storefrontAccessToken: process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN as string,
-    });
-
-    // Product id can be found when viewing URL in Shopify admin (e.g poppy-hazel.myshopify.com/admin/products/6570386915350).
-    // Shopify SDK only accepts encoded product id.
-    const productId = `gid://shopify/Product/${process.env.NEXT_PUBLIC_SHOPIFY_PERMIT_PRODUCT_ID}`;
-    const encodedId = Buffer.from(productId).toString('base64');
-
-    // Fetching product and creating the cart are independent so both can run in parallel.
-    const productPromise = client.product.fetch(encodedId);
-    const cartPromise = client.checkout.create();
-
-    // Wait for product and cart.
-    const [product, cart] = await Promise.all([productPromise, cartPromise]);
-
-    // Add product to cart.
-    // Add custom attributes to be returned by shopify webhook
-    // Attributes with leading _ are hidden in the shopify checkout page
-    const lineItemsToAdd = [
-      {
-        variantId: product.variants[0].id,
-        quantity: 1,
-        customAttributes: [{ key: '_applicationId', value: applicationId.toString() }],
-      },
-    ];
-    await client.checkout.addLineItems(cart.id, lineItemsToAdd);
-
-    // Open checkout window.
-    window.location.href = cart.webUrl;
-  };
-
   // Submit application mutation
   const [submitApplication] = useMutation<
     CreateExternalRenewalApplicationResponse,
@@ -135,7 +99,7 @@ export default function Renew() {
     onCompleted: data => {
       if (
         data.createExternalRenewalApplication.ok &&
-        data.createExternalRenewalApplication.applicationId
+        data.createExternalRenewalApplication.checkoutUrl
       ) {
         toast({
           status: 'success',
@@ -143,7 +107,7 @@ export default function Renew() {
           isClosable: true,
         });
 
-        shopifyCheckout(data.createExternalRenewalApplication.applicationId);
+        window.location.href = data.createExternalRenewalApplication.checkoutUrl;
       }
     },
     onError: error => {
@@ -216,6 +180,8 @@ export default function Renew() {
           requiresWiderParkingSpace: false,
           requiresWiderParkingSpaceReason: null,
           otherRequiresWiderParkingSpaceReason: null,
+          // TODO: Integrate donations
+          donationAmount: 0,
         },
       },
     });

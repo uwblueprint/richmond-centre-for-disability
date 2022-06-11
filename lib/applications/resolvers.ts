@@ -47,6 +47,7 @@ import {
 import { flattenApplication } from '@lib/applications/utils';
 import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import moment from 'moment';
+import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
 
 /**
  * Query an application by ID
@@ -516,9 +517,13 @@ export const createExternalRenewalApplication: Resolver<
     throw new ApplicantNotFoundError(`No applicant with ID ${applicantId} was found`);
   }
 
-  const physician = applicant.medicalInformation.physician;
+  // TODO: Replace validation for donation amount
+  const { donationAmount = 0 } = input;
+  if (donationAmount !== null && ![0, 5, 10, 25, 50, 75, 100].includes(donationAmount)) {
+    throw new Error('Invalid donation amount');
+  }
 
-  // TODO: Integrate with Shopify payments
+  const physician = applicant.medicalInformation.physician;
 
   let application;
   try {
@@ -623,9 +628,17 @@ export const createExternalRenewalApplication: Resolver<
     throw new ApolloError('Application was unable to be created');
   }
 
+  // Set up Shopify checkout
+  const checkout = new ShopifyCheckout();
+  const checkoutUrl = await checkout.setUpCheckout(
+    application.id,
+    donationAmount as DonationAmount
+  );
+
   return {
     ok: true,
     applicationId: application.id,
+    checkoutUrl,
   };
 };
 

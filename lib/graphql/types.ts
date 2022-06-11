@@ -235,6 +235,7 @@ export type CreateExternalRenewalApplicationInput = {
   requiresWiderParkingSpace: Scalars['Boolean'];
   requiresWiderParkingSpaceReason: Maybe<RequiresWiderParkingSpaceReason>;
   otherRequiresWiderParkingSpaceReason: Maybe<Scalars['String']>;
+  donationAmount: Maybe<Scalars['Int']>;
   applicantId: Scalars['Int'];
 };
 
@@ -242,6 +243,7 @@ export type CreateExternalRenewalApplicationResult = {
   __typename?: 'CreateExternalRenewalApplicationResult';
   ok: Scalars['Boolean'];
   applicationId: Maybe<Scalars['Int']>;
+  checkoutUrl: Maybe<Scalars['String']>;
 };
 
 export type CreateNewApplicationInput = {
