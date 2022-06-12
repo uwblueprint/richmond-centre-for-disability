@@ -4,24 +4,42 @@ import prisma from '@prisma/index'; // Prisma client
 import crypto from 'crypto'; // Verifying Shopify Request
 import getRawBody from 'raw-body';
 import sendConfirmationEmail from '@lib/reports/utils';
+import { stripPostalCode } from '@lib/utils/format';
 
 /**
  * Webhook to handle payment submission from Shopify
 
  * Example request body:
     * {
-    *  id: '4646400131094'
-    *  total_tip_received: '26.00'
-    *  order_id: '8'
+    *  id: '4646400131094',
+    *  total_tip_received: '26.00',
+    *  order_id: '8',
+    *  billing_address: {
+    *   address1: '165 University Avenue West',
+    *   city: 'Waterloo',
+    *   zip: 'N2L 3E8',
+    *   country: 'Canada',
+    *   address2: '',
+    *   name: 'Oustan Ding',
+    *   province_code: 'ON'
+    *  }
     *    ...
     *  line_items: [{
     *      ...
-    *      name: 'Tip' // ** If there is no Donation, this line item will not be included
+    *      name: '$XX Donation', // ** If there is no Donation, this line item will not be included
+    *      properties: [
+    *        { name: '_item', 'value: 'donation' },
+    *        { name: '_applicationId', 'value: '7' },
+    *        { name: '_donationAmount', 'value: 'XX' },
+    *      ]
     *      ...
     *    }, {
     *      ...
-    *      name: 'Permit'
-    *      properties: [{name: '_applicationId', 'value: '7'}]
+    *      name: 'Parking Permit'
+    *      properties: [
+    *        { name: '_item', 'value: 'permit' },
+    *        { name: '_applicationId', 'value: '7' },
+    *      ]
     *      ...
     *    }]
     * }
@@ -47,16 +65,45 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     const body = JSON.parse(rawBody);
     req.body = body;
 
-    // There may be 1 or 2 line items in the checkout depending if there was a donation or not.
-    // We cannot assume ordering is deterministic so check both line items for the properties field.
-    const lineItems = req.body.line_items;
-    const rawApplicationId =
-      lineItems[0]?.properties[0]?.value || lineItems[1]?.properties[0]?.value;
-    const applicationId = parseInt(rawApplicationId);
+    const lineItems: Array<any> = req.body.line_items;
+    let applicationId: number;
+    let donationAmount: Prisma.Decimal;
+
+    if (lineItems.length === 1) {
+      // Only one item (permit), so donation is 0
+      const permitItem = lineItems[0];
+      const rawApplicationId: string = permitItem.properties.find(
+        (property: any) => property.name === '_applicationId'
+      ).value;
+      applicationId = parseInt(rawApplicationId);
+      donationAmount = new Prisma.Decimal(0);
+    } else if (lineItems.length === 2) {
+      // Two items (permit, donation), nonzero donation
+      // Either item will have application ID
+      const [item1, item2] = lineItems;
+      const permitItem =
+        item1.properties.find((property: any) => property.name === '_item').value === 'permit'
+          ? item1
+          : item2;
+      const donationItem =
+        item1.properties.find((property: any) => property.name === '_item').value === 'donation'
+          ? item1
+          : item2;
+
+      const rawApplicationId: string = permitItem.properties.find(
+        (property: any) => property.name === '_applicationId'
+      ).value;
+      applicationId = parseInt(rawApplicationId);
+
+      donationAmount = new Prisma.Decimal(
+        donationItem.properties.find((property: any) => property.name === '_donationAmount').value
+      );
+    } else {
+      throw new Error(`Invalid number of line items: ${lineItems.length}`);
+    }
 
     const shopifyOrderId = req.body.id;
     const shopifyOrderNumber = req.body.number;
-    const donationAmount = new Prisma.Decimal(req.body.total_tip_received);
     const email = req.body.email; // Applicant email entered in Shopify checkout
 
     // Get email and first name that were inputted in original application, if exists
@@ -73,6 +120,20 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     const applicationEmail = application.email;
     const applicationFirstName = application.firstName;
 
+    // Parse billing information
+    const rawBillingInformation = req.body.billing_address;
+    const billingInformation = rawBillingInformation
+      ? {
+          billingFullName: rawBillingInformation.name,
+          billingAddressLine1: rawBillingInformation.address1,
+          billingAddressLine2: rawBillingInformation.address2,
+          billingCity: rawBillingInformation.city,
+          billingProvince: rawBillingInformation.province_code,
+          billingCountry: rawBillingInformation.country,
+          billingPostalCode: stripPostalCode(rawBillingInformation.zip),
+        }
+      : {};
+
     // Update application
     await prisma.application.update({
       where: { id: applicationId },
@@ -82,6 +143,9 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
         shopifyOrderNumber: `${shopifyOrderNumber}`,
         paidThroughShopify: true,
         donationAmount: donationAmount,
+        // Billing information
+        billingAddressSameAsHomeAddress: !rawBillingInformation, // Default to true if no billing address in Shopify payload
+        ...billingInformation,
       },
     });
 

@@ -70,7 +70,10 @@ export class ShopifyCheckout {
         {
           variantId: permitProduct.variants[0].id,
           quantity: 1,
-          customAttributes: [{ key: '_applicationId', value: applicationId.toString() }],
+          customAttributes: [
+            { key: '_item', value: 'permit' },
+            { key: '_applicationId', value: applicationId.toString() },
+          ],
         },
       ];
       await this.#client.checkout.addLineItems(cart.id, lineItemsToAdd);
@@ -96,12 +99,19 @@ export class ShopifyCheckout {
       {
         variantId: permitProduct.variants[0].id,
         quantity: 1,
-        customAttributes: [{ key: '_applicationId', value: applicationId.toString() }],
+        customAttributes: [
+          { key: '_item', value: 'permit' },
+          { key: '_applicationId', value: applicationId.toString() },
+        ],
       },
       {
         variantId: donationProduct.variants[0].id,
         quantity: 1,
-        customAttributes: [{ key: '_donationAmount', value: donationAmount.toString() }],
+        customAttributes: [
+          { key: '_item', value: 'donation' },
+          { key: '_applicationId', value: applicationId.toString() },
+          { key: '_donationAmount', value: donationAmount.toString() },
+        ],
       },
     ];
     await this.#client.checkout.addLineItems(cart.id, lineItemsToAdd);

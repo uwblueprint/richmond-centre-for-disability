@@ -12,7 +12,7 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { stripPhoneNumber, formatFullName, stripPostalCode } from '@lib/utils/format'; // Formatting utils
+import { stripPhoneNumber, stripPostalCode } from '@lib/utils/format'; // Formatting utils
 import {
   Application,
   CreateExternalRenewalApplicationResult,
@@ -546,32 +546,24 @@ export const createExternalRenewalApplication: Resolver<
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: 0, // ? Investigate
         paymentMethod: 'SHOPIFY',
-        // TODO: Replace shipping info with Shopify checkout inputs
+        // Set shipping address to be same as home address by default
         shippingAddressSameAsHomeAddress: true,
-        shippingFullName: formatFullName(
-          applicant.firstName,
-          applicant.middleName,
-          applicant.lastName
-        ),
-        shippingAddressLine1: applicant.addressLine1,
-        shippingAddressLine2: applicant.addressLine2,
-        shippingCity: applicant.city,
-        shippingProvince: applicant.province,
-        shippingCountry: applicant.country,
-        shippingPostalCode: stripPostalCode(applicant.postalCode),
-        // TODO: Replace billing info with Shopify checkout inputs
+        shippingFullName: null,
+        shippingAddressLine1: null,
+        shippingAddressLine2: null,
+        shippingCity: null,
+        shippingProvince: null,
+        shippingCountry: null,
+        shippingPostalCode: null,
+        // Set billing address to be same as home address by default - gets updated after Shopify payment is received
         billingAddressSameAsHomeAddress: true,
-        billingFullName: formatFullName(
-          applicant.firstName,
-          applicant.middleName,
-          applicant.lastName
-        ),
-        billingAddressLine1: applicant.addressLine1,
-        billingAddressLine2: applicant.addressLine2,
-        billingCity: applicant.city,
-        billingProvince: applicant.province,
-        billingCountry: applicant.country,
-        billingPostalCode: stripPostalCode(applicant.postalCode),
+        billingFullName: null,
+        billingAddressLine1: null,
+        billingAddressLine2: null,
+        billingCity: null,
+        billingProvince: null,
+        billingCountry: null,
+        billingPostalCode: null,
         applicant: {
           connect: { id: applicantId },
         },
