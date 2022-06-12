@@ -11,6 +11,7 @@ export const CREATE_REPLACEMENT_APPLICATION_MUTATION = gql`
     createReplacementApplication(input: $input) {
       ok
       applicationId
+      error
     }
   }
 `;

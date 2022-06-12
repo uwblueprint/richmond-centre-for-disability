@@ -419,6 +419,7 @@ export type CreateReplacementApplicationResult = {
   __typename?: 'CreateReplacementApplicationResult';
   ok: Scalars['Boolean'];
   applicationId: Maybe<Scalars['Int']>;
+  error: Maybe<Scalars['String']>;
 };
 
 

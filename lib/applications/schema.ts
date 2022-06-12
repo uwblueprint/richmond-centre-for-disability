@@ -591,6 +591,7 @@ export default gql`
   type CreateReplacementApplicationResult {
     ok: Boolean!
     applicationId: Int
+    error: String
   }
 
   # Query for many applications
