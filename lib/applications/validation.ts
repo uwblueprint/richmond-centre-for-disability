@@ -13,6 +13,7 @@ import {
   AccessibleConvertedVanLoadingMethod,
   RequiresWiderParkingSpaceReason,
 } from '@lib/graphql/types';
+import { phoneNumberRegex, postalCodeRegex } from '@lib/utils/validation';
 
 /**
  * Additional Questions form validation schema
@@ -125,7 +126,10 @@ export const paymentInformationSchema = object({
     .default(null)
     .when('shippingAddressSameAsHomeAddress', {
       is: false,
-      then: string().typeError('Please enter a postal code').required('Please enter a postal code'),
+      then: string()
+        .typeError('Please enter a postal code')
+        .required('Please enter a postal code')
+        .matches(postalCodeRegex, 'Please enter a valid postal code in the format X0X 0X0'),
     }),
   billingAddressSameAsHomeAddress: bool().default(false),
   billingFullName: string()
@@ -175,7 +179,10 @@ export const paymentInformationSchema = object({
     .default(null)
     .when('billingAddressSameAsHomeAddress', {
       is: false,
-      then: string().typeError('Please enter a postal code').required('Please enter a postal code'),
+      then: string()
+        .typeError('Please enter a postal code')
+        .required('Please enter a postal code')
+        .matches(postalCodeRegex, 'Please enter a valid postal code in the format X0X 0X0'),
     }),
 });
 
@@ -327,10 +334,9 @@ export const applicantFacingRenewalPersonalAddressSchema = object({
     .when('updatedAddress', {
       is: true,
       then: string()
-        .typeError('Please enter a valid postal code')
-        .required('Please enter a valid postal code')
-        .min(6, 'Please enter a valid postal code')
-        .max(7, 'Please enter a valid postal code'),
+        .typeError('Please enter a postal code')
+        .required('Please enter a postal code')
+        .matches(postalCodeRegex, 'Please enter a valid postal code in the format X0X 0X0'),
     }),
 });
 
@@ -350,7 +356,10 @@ export const applicantFacingRenewalContactSchema = object().shape(
         then: string()
           .typeError('Please enter a valid phone number')
           .required('Please enter a valid phone number')
-          .max(12, 'Please enter a valid phone number in the format 555-555-5555'),
+          .matches(
+            phoneNumberRegex,
+            'Please enter a valid phone number in the format 555-555-5555'
+          ),
       }),
     contactEmailAddress: string()
       .email('Please enter a valid email address')
@@ -429,8 +438,7 @@ export const applicantFacingRenewalDoctorSchema = object().shape({
       then: string()
         .typeError('Please enter a postal code')
         .required('Please enter a postal code')
-        .min(6, 'Please enter a valid postal code')
-        .max(7, 'Please enter a valid postal code'),
+        .matches(postalCodeRegex, 'Please enter a valid postal code in the format X0X 0X0'),
     }),
   doctorPhoneNumber: string()
     .nullable()
@@ -440,7 +448,7 @@ export const applicantFacingRenewalDoctorSchema = object().shape({
       then: string()
         .typeError('Please enter a valid phone number')
         .required('Please enter a valid phone number')
-        .max(12, 'Please enter a valid phone number in the format 555-555-5555'),
+        .matches(phoneNumberRegex, 'Please enter a valid phone number in the format 555-555-5555'),
     }),
 });
 

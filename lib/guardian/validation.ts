@@ -1,3 +1,4 @@
+import { phoneNumberRegex, postalCodeRegex } from '@lib/utils/validation';
 import { object, bool, string } from 'yup';
 /**
  * Entire Guardian/POA validation schema
@@ -32,9 +33,9 @@ export const guardianInformationSchema = object({
     .when('omitGuardianPoa', {
       is: false,
       then: string()
-        .min(10, 'Must be a valid phone number')
         .typeError('Please enter a phone number')
-        .required('Please enter a phone number'),
+        .required('Please enter a phone number')
+        .matches(phoneNumberRegex, 'Please enter a valid phone number in the format 000-000-0000'),
     }),
   relationship: string()
     .nullable()
@@ -67,9 +68,8 @@ export const guardianInformationSchema = object({
       is: false,
       then: string()
         .typeError('Please enter a postal code')
-        .min(6, 'Must be a valid postal code')
-        .max(7, 'Must be a valid postal code')
-        .required('Please enter a postal code'),
+        .required('Please enter a postal code')
+        .matches(postalCodeRegex, 'Please enter a valid postal code in the format X0X 0X0'),
     }),
 });
 

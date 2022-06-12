@@ -1,3 +1,4 @@
+import { phoneNumberRegex, postalCodeRegex } from '@lib/utils/validation';
 import { ApplicationType, Gender } from '@prisma/client';
 import { boolean, date, mixed, number, object, string } from 'yup';
 
@@ -26,15 +27,14 @@ export const requestPermitHolderInformationSchema = object({
   email: string().email('Please enter a valid email address').nullable().default(null),
   phone: string()
     .required('Please enter a valid phone number')
-    .max(12, 'Please enter a valid phone number in the format 000-000-0000'),
+    .matches(phoneNumberRegex, 'Please enter a valid phone number in the format 000-000-0000'),
   receiveEmailUpdates: boolean().required(),
   addressLine1: string().required('Please enter an address'),
   addressLine2: string().nullable().default(null),
   city: string().required('Please enter a city'),
   postalCode: string()
-    .required('Please enter a valid postal code')
-    .min(6, 'Please enter a valid postal code')
-    .max(7, 'Please enter a valid postal code'),
+    .required('Please enter a valid postal code in the format X0X 0X0')
+    .matches(postalCodeRegex, 'Please enter a valid postal code in the format X0X 0X0'),
 });
 
 /**
@@ -65,15 +65,14 @@ export const permitHolderInformationSchema = object({
   email: string().email('Please enter a valid email address').nullable().default(null),
   phone: string()
     .required('Please enter a valid phone number')
-    .max(12, 'Please enter a valid phone number in the format 000-000-0000'),
+    .matches(phoneNumberRegex, 'Please enter a valid phone number in the format 000-000-0000'),
   receiveEmailUpdates: boolean().required(),
   addressLine1: string().required('Please enter an address'),
   addressLine2: string().nullable().default(null),
   city: string().required('Please enter a city'),
   postalCode: string()
-    .required('Please enter a valid postal code')
-    .min(6, 'Please enter a valid postal code')
-    .max(7, 'Please enter a valid postal code'),
+    .required('Please enter a valid postal code in the format X0X 0X0')
+    .matches(postalCodeRegex, 'Please enter a valid postal code in the format X0X 0X0'),
 });
 
 /**
