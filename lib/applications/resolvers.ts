@@ -166,6 +166,9 @@ export const applications: Resolver<
         }
       });
       orderBy = sortingOrder;
+    } else {
+      // Set created at DESC to be default sort order
+      orderBy = [{ createdAt: SortOrder.DESC }];
     }
 
     where = {
