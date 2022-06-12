@@ -388,6 +388,7 @@ const Requests: NextPage = () => {
                   columns={COLUMNS}
                   data={requestsData}
                   loading={loading}
+                  initialSort={sortOrder}
                   onChangeSortOrder={setSortOrder}
                   onRowClick={({ id }) => router.push(`/admin/request/${id}`)}
                 />

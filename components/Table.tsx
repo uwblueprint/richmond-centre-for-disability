@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import { useTable, useSortBy, Column } from 'react-table'; // React Table
-import { SortOptions } from '@tools/types'; // Sorting types
+import { SortOptions, SortOrder } from '@tools/types'; // Sorting types
 import { getSortOptions } from '@tools/admin/table'; // Get the sort options from the React Table sortBy state
 
 // Table Props
@@ -26,12 +26,14 @@ type Props<T extends object> = {
   readonly columns: Array<Column<T>>; // Depends on shape of data
   readonly data: Array<T>; // Depends on shape of data
   readonly loading?: boolean;
+  /** Initial sort options */
+  readonly initialSort?: SortOptions;
   readonly onChangeSortOrder?: (sort: SortOptions) => unknown; // Callback after changing sorting
   readonly onRowClick?: (row: T) => unknown;
 };
 
 export default function Table<T extends object>(props: Props<T>) {
-  const { columns, data, loading, onChangeSortOrder, onRowClick } = props;
+  const { columns, data, loading, initialSort, onChangeSortOrder, onRowClick } = props;
 
   // Table rendering functions
   const {
@@ -46,6 +48,13 @@ export default function Table<T extends object>(props: Props<T>) {
       columns,
       data,
       manualSortBy: true,
+      initialState: {
+        sortBy:
+          initialSort?.map(([field, sortOrder]) => ({
+            id: field,
+            desc: sortOrder === SortOrder.DESC,
+          })) ?? [],
+      },
     },
     useSortBy
   );
