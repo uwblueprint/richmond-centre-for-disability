@@ -126,10 +126,12 @@ const GuardianInformationCard: FC<Props> = props => {
     // ! Temporarily remove omitGuardianPoa field
     // TODO: Support omitting guardian/POA
 
+    const { poaFormS3ObjectKey } = guardianInformationData;
+
     const validatedData = await guardianInformationSchema.validate(guardianInformationData);
 
     const { data } = await updateGuardianInformation({
-      variables: { input: { id: applicantId, ...validatedData } },
+      variables: { input: { id: applicantId, poaFormS3ObjectKey, ...validatedData } },
     });
     refetch();
     return data;

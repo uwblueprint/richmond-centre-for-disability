@@ -1,8 +1,8 @@
 import { object, bool, string } from 'yup';
+
 /**
  * Entire Guardian/POA validation schema
  */
-
 export const guardianInformationSchema = object({
   omitGuardianPoa: bool().default(false),
   firstName: string()

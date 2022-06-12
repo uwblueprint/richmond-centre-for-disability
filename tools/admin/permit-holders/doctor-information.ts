@@ -3,6 +3,7 @@ import {
   MutationUpdateApplicantDoctorInformationArgs,
   Physician,
   QueryApplicantArgs,
+  UpdateApplicantDoctorInformationResult,
 } from '@lib/graphql/types';
 
 /** Doctor information in doctor information form */
@@ -122,5 +123,5 @@ export const UPDATE_DOCTOR_INFORMATION = gql`
 export type UpdateDoctorInformationRequest = MutationUpdateApplicantDoctorInformationArgs;
 
 export type UpdateDoctorInformationResponse = {
-  updateApplicantDoctorInformation: UpdateDoctorInformationRequest;
+  updateApplicantDoctorInformation: UpdateApplicantDoctorInformationResult;
 };

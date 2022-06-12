@@ -22,7 +22,7 @@ import { clientUploadToS3 } from '@lib/utils/s3-utils';
 import { UpdateApplicationGuardianInformationInput } from '@lib/graphql/types';
 import { Form, Formik } from 'formik';
 import { editGuardianInformationSchema } from '@lib/guardian/validation';
-import { ValidationErrorAlert } from '@components/form/ValidationErrorAlert';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 type Props = {
   readonly guardianInformation: Omit<GuardianInformation, 'omitGuardianPoa'>;

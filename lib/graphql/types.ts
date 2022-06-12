@@ -1161,17 +1161,17 @@ export type UpdateApplicantGeneralInformationResult = {
 
 export type UpdateApplicantGuardianInformationInput = {
   id: Scalars['Int'];
-  firstName: Scalars['String'];
+  firstName: Maybe<Scalars['String']>;
   middleName: Maybe<Scalars['String']>;
-  lastName: Scalars['String'];
-  phone: Scalars['String'];
-  relationship: Scalars['String'];
-  addressLine1: Scalars['String'];
+  lastName: Maybe<Scalars['String']>;
+  phone: Maybe<Scalars['String']>;
+  relationship: Maybe<Scalars['String']>;
+  addressLine1: Maybe<Scalars['String']>;
   addressLine2: Maybe<Scalars['String']>;
-  city: Scalars['String'];
-  postalCode: Scalars['String'];
+  city: Maybe<Scalars['String']>;
+  postalCode: Maybe<Scalars['String']>;
   poaFormS3ObjectKey: Maybe<Scalars['String']>;
-  omitGuardianPoa: Maybe<Scalars['Boolean']>;
+  omitGuardianPoa: Scalars['Boolean'];
 };
 
 export type UpdateApplicantGuardianInformationResult = {
@@ -1246,15 +1246,15 @@ export type UpdateApplicationGeneralInformationResult = {
 export type UpdateApplicationGuardianInformationInput = {
   id: Scalars['Int'];
   omitGuardianPoa: Scalars['Boolean'];
-  firstName: Scalars['String'];
+  firstName: Maybe<Scalars['String']>;
   middleName: Maybe<Scalars['String']>;
-  lastName: Scalars['String'];
-  phone: Scalars['String'];
-  relationship: Scalars['String'];
-  addressLine1: Scalars['String'];
+  lastName: Maybe<Scalars['String']>;
+  phone: Maybe<Scalars['String']>;
+  relationship: Maybe<Scalars['String']>;
+  addressLine1: Maybe<Scalars['String']>;
   addressLine2: Maybe<Scalars['String']>;
-  city: Scalars['String'];
-  postalCode: Scalars['String'];
+  city: Maybe<Scalars['String']>;
+  postalCode: Maybe<Scalars['String']>;
   poaFormS3ObjectKey: Maybe<Scalars['String']>;
 };
 

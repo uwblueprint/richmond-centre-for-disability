@@ -682,15 +682,15 @@ export default gql`
     id: Int!
 
     omitGuardianPoa: Boolean!
-    firstName: String!
+    firstName: String
     middleName: String
-    lastName: String!
-    phone: String!
-    relationship: String!
-    addressLine1: String!
+    lastName: String
+    phone: String
+    relationship: String
+    addressLine1: String
     addressLine2: String
-    city: String!
-    postalCode: String!
+    city: String
+    postalCode: String
     poaFormS3ObjectKey: String
   }
 

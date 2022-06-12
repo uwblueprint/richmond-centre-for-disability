@@ -1252,7 +1252,7 @@ export const updateApplicationGuardianInformation: Resolver<
           guardianFirstName: firstName,
           guardianMiddleName: middleName,
           guardianLastName: lastName,
-          guardianPhone: stripPhoneNumber(phone),
+          guardianPhone: phone && stripPhoneNumber(phone),
           guardianRelationship: relationship,
           guardianAddressLine1: addressLine1,
           guardianAddressLine2: addressLine2,
