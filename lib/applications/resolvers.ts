@@ -919,52 +919,60 @@ export const createReplacementApplication: Resolver<
   if (!process.env.PROCESSING_FEE) {
     throw new Error('Processing fee not defined');
   }
-
-  const validationArgs = {
-    permitHolder: {
-      firstName,
-      middleName,
-      lastName,
-      email,
-      phone,
-      addressLine1,
-      addressLine2,
-      city,
-      postalCode,
-    },
-    paymentInformation: {
-      paymentMethod,
-      donationAmount,
-      shippingAddressSameAsHomeAddress,
-      shippingFullName,
-      shippingAddressLine1,
-      shippingAddressLine2,
-      shippingCity,
-      shippingProvince,
-      shippingCountry,
-      shippingPostalCode,
-      billingAddressSameAsHomeAddress,
-      billingAddressLine1,
-      billingAddressLine2,
-      billingCity,
-      billingProvince,
-      billingCountry,
-      billingPostalCode,
-    },
-    reasonForReplacement: {
-      reason,
-      lostTimestamp,
-      lostLocation,
-      eventDescription,
-      stolenPoliceFileNumber,
-      stolenJurisdiction,
-      stolenPoliceOfficerName,
-    },
+  const permitHolder = {
+    firstName,
+    middleName,
+    lastName,
+    email,
+    phone,
+    addressLine1,
+    addressLine2,
+    city,
+    postalCode,
+  };
+  const paymentInformation = {
+    paymentMethod,
+    donationAmount,
+    shippingAddressSameAsHomeAddress,
+    shippingFullName,
+    shippingAddressLine1,
+    shippingAddressLine2,
+    shippingCity,
+    shippingProvince,
+    shippingCountry,
+    shippingPostalCode,
+    billingAddressSameAsHomeAddress,
+    billingAddressLine1,
+    billingAddressLine2,
+    billingCity,
+    billingProvince,
+    billingCountry,
+    billingPostalCode,
+  };
+  const reasonForReplacement = {
+    reason,
+    lostTimestamp,
+    lostLocation,
+    eventDescription,
+    stolenPoliceFileNumber,
+    stolenJurisdiction,
+    stolenPoliceOfficerName,
   };
 
-  if (!replacementFormSchema.isValidSync(validationArgs)) {
-    // Yup validation failure
-    throw new Error('Invalid input');
+  try {
+    await replacementFormSchema.validate({
+      permitHolder,
+      paymentInformation,
+      reasonForReplacement,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        applicationId: null,
+        error: err.message,
+      };
+    }
   }
 
   // Retrieve applicant record
@@ -1034,6 +1042,7 @@ export const createReplacementApplication: Resolver<
   return {
     ok: true,
     applicationId: application.id,
+    error: null,
   };
 };
 
