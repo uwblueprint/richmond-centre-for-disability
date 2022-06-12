@@ -43,12 +43,14 @@ import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-inf
 import { Form, Formik } from 'formik';
 import { replacementFormSchema as replacementRequestFormSchema } from '@lib/applications/validation';
 import { INITIAL_PAYMENT_DETAILS } from '@tools/admin/requests/create-new';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 export default function CreateReplacement() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
     RequestFlowPageState.SelectingPermitHolderPage
   );
   const [applicantId, setApplicantId] = useState<number | null>(null);
+  const [error, setError] = useState<string>('');
 
   /** Permit holder information section */
   const [permitHolderInformation, setPermitHolderInformation] = useState<
@@ -114,7 +116,8 @@ export default function CreateReplacement() {
   >(CREATE_REPLACEMENT_APPLICATION_MUTATION, {
     onCompleted: data => {
       if (data) {
-        const { ok, applicationId } = data.createReplacementApplication;
+        const { ok, applicationId, error } = data.createReplacementApplication;
+        setError(error ?? '');
         if (ok) {
           toast({
             status: 'success',
@@ -303,6 +306,7 @@ export default function CreateReplacement() {
                   bgColor="white"
                   boxShadow="dark-lg"
                 >
+                  <ValidationErrorAlert error={error} />
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Box>
                       <Button
