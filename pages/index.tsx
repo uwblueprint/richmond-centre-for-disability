@@ -53,7 +53,7 @@ export default function Landing() {
             <Text as="p">Complete the online form and pay a $26 processing fee</Text>
           </ListItem>
         </UnorderedList>
-        <Link href="/verify-identity">
+        <Link href="/renew">
           <Button
             colorScheme="primary"
             variant="solid"
