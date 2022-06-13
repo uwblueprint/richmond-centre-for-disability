@@ -62,6 +62,7 @@ export const GET_GUARDIAN_INFORMATION = gql`
         country: guardianCountry
         postalCode: guardianPostalCode
         poaFormS3ObjectKey
+        poaFormS3ObjectUrl
       }
     }
   }

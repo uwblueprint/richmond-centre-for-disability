@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { Box, Text, Divider, VStack, Button } from '@chakra-ui/react'; // Chakra UI
+import { Box, Text, Divider, VStack, Button, Link as FileLink } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import { formatFullName, formatPhoneNumber } from '@lib/utils/format';
 import {
@@ -18,6 +18,7 @@ import { guardianInformationSchema } from '@lib/guardian/validation';
 import { UpdateApplicationGuardianInformationInput } from '@lib/graphql/types';
 import Address from '@components/admin/Address';
 import { INITIAL_GUARDIAN_INFORMATION } from '@tools/admin/requests/create-new';
+import { getFileName } from '@lib/utils/s3-utils';
 
 type GuardianInformationProps = {
   readonly applicationId: number;
@@ -152,6 +153,26 @@ export default function GuardianInformationCard({
             />
           </Box>
         </VStack>
+
+        {guardian.poaFormS3ObjectKey && guardian.poaFormS3ObjectUrl && (
+          <>
+            <Divider my="24px" />
+            <VStack spacing="12px" align="left">
+              <Text as="h4" textStyle="body-bold">
+                Attached POA Form
+              </Text>
+              <FileLink
+                href={guardian.poaFormS3ObjectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Text as="p" textStyle="body-regular" color="primary" textDecoration="underline">
+                  {!!guardian.poaFormS3ObjectKey && getFileName(guardian.poaFormS3ObjectKey)}
+                </Text>
+              </FileLink>
+            </VStack>
+          </>
+        )}
       </>
     );
   }, []);
