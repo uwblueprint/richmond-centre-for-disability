@@ -16,6 +16,7 @@ import Address from '@components/admin/Address';
 import EditGuardianInformationModal from '@components/admin/requests/guardian-information/EditModal';
 import { getFileName } from '@lib/utils/s3-utils';
 import { guardianInformationSchema } from '@lib/guardian/validation';
+import { INITIAL_GUARDIAN_INFORMATION } from '@tools/admin/requests/create-new';
 
 type Props = {
   readonly applicantId: number;
@@ -53,9 +54,14 @@ const GuardianInformationCard: FC<Props> = props => {
         <Text as="p" textStyle="body-regular">
           This permit holder does not have a guardian/POA
         </Text>
-        <Button height="50px" leftIcon={<AddIcon height="14px" width="14px" />}>
-          Add a Guardian/POA
-        </Button>
+        <EditGuardianInformationModal
+          guardianInformation={INITIAL_GUARDIAN_INFORMATION}
+          onSave={handleSave}
+        >
+          <Button height="50px" leftIcon={<AddIcon height="14px" width="14px" />}>
+            Add a Guardian/POA
+          </Button>
+        </EditGuardianInformationModal>
       </VStack>
     );
   }, []);

@@ -387,24 +387,24 @@ export const updateApplicantGuardianInformation: Resolver<
 
   let updatedApplicant;
   try {
+    const upsertData = {
+      firstName: firstName as string,
+      middleName: middleName as string | null,
+      lastName: lastName as string,
+      phone: phone as string,
+      relationship: relationship as string,
+      addressLine1: addressLine1 as string,
+      addressLine2: addressLine2 as string | null,
+      city: city as string,
+      postalCode: postalCode as string,
+    };
+
     updatedApplicant = await prisma.applicant.update({
       where: { id },
       data: {
         guardian: omitGuardianPoa
           ? { disconnect: true }
-          : {
-              update: {
-                firstName: firstName as string,
-                middleName: middleName as string | null,
-                lastName: lastName as string,
-                phone: phone as string,
-                relationship: relationship as string,
-                addressLine1: addressLine1 as string,
-                addressLine2: addressLine2 as string | null,
-                city: city as string,
-                postalCode: postalCode as string,
-              },
-            },
+          : { upsert: { create: upsertData, update: upsertData } },
       },
     });
   } catch {

@@ -17,6 +17,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import { guardianInformationSchema } from '@lib/guardian/validation';
 import { UpdateApplicationGuardianInformationInput } from '@lib/graphql/types';
 import Address from '@components/admin/Address';
+import { INITIAL_GUARDIAN_INFORMATION } from '@tools/admin/requests/create-new';
 
 type GuardianInformationProps = {
   readonly applicationId: number;
@@ -96,9 +97,14 @@ export default function GuardianInformationCard({
         <Text as="p" textStyle="body-regular">
           This permit holder does not have a guardian/POA
         </Text>
-        <Button height="50px" leftIcon={<AddIcon height="14px" width="14px" />}>
-          Add a Guardian/POA
-        </Button>
+        <EditGuardianInformationModal
+          guardianInformation={INITIAL_GUARDIAN_INFORMATION}
+          onSave={handleSave}
+        >
+          <Button height="50px" leftIcon={<AddIcon height="14px" width="14px" />}>
+            Add a Guardian/POA
+          </Button>
+        </EditGuardianInformationModal>
       </VStack>
     );
   }, []);
@@ -150,10 +156,6 @@ export default function GuardianInformationCard({
     );
   }, []);
 
-  if (!guardian) {
-    return null;
-  }
-
   /** Handler for saving doctor information */
   const handleSave = async (
     guardianInformationData: Omit<
@@ -178,7 +180,8 @@ export default function GuardianInformationCard({
       header={`Guardian's Information`}
       isSubsection={isSubsection}
       editModal={
-        !editDisabled && (
+        !editDisabled &&
+        guardian && (
           <EditGuardianInformationModal guardianInformation={guardian} onSave={handleSave}>
             <Button color="primary" variant="ghost" textDecoration="underline">
               <Text textStyle="body-bold">Edit</Text>

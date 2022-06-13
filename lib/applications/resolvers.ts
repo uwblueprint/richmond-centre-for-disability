@@ -1241,6 +1241,22 @@ export const updateApplicationGuardianInformation: Resolver<
   let updatedApplication;
   try {
     if (omitGuardianPoa) {
+      updatedApplication = await prisma.newApplication.update({
+        where: { applicationId: id },
+        data: {
+          guardianFirstName: null,
+          guardianMiddleName: null,
+          guardianLastName: null,
+          guardianPhone: null,
+          guardianRelationship: null,
+          guardianAddressLine1: null,
+          guardianAddressLine2: null,
+          guardianCity: null,
+          guardianPostalCode: null,
+          poaFormS3ObjectKey: null,
+        },
+      });
+    } else {
       const {
         firstName,
         middleName,
@@ -1289,22 +1305,6 @@ export const updateApplicationGuardianInformation: Resolver<
           guardianCity: city,
           guardianPostalCode: postalCode && stripPostalCode(postalCode),
           poaFormS3ObjectKey,
-        },
-      });
-    } else {
-      updatedApplication = await prisma.newApplication.update({
-        where: { applicationId: id },
-        data: {
-          guardianFirstName: null,
-          guardianMiddleName: null,
-          guardianLastName: null,
-          guardianPhone: null,
-          guardianRelationship: null,
-          guardianAddressLine1: null,
-          guardianAddressLine2: null,
-          guardianCity: null,
-          guardianPostalCode: null,
-          poaFormS3ObjectKey: null,
         },
       });
     }
