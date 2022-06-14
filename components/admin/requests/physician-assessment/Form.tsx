@@ -19,7 +19,7 @@ import { useState } from 'react';
 import TextAreaField from '@components/form/TextAreaField';
 import CheckboxGroupField from '@components/form/CheckboxGroupField';
 import { useFormikContext } from 'formik';
-import { formatDate } from '@lib/utils/format';
+import { formatDate } from '@lib/utils/date';
 
 type PhysicianAssessmentFormProps = {
   readonly physicianAssessment: PhysicianAssessment;
