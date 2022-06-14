@@ -1,6 +1,9 @@
 import Client from 'shopify-buy';
 
-/** Possible donation amounts in dollars */
+/**
+ * Possible donation amounts in dollars,
+ * configured in env variable (SHOPIFY_DONATION_PRODUCT_IDS)
+ */
 export type DonationAmount = 0 | 5 | 10 | 25 | 50 | 75 | 100;
 
 /**
