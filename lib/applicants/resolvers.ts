@@ -26,6 +26,7 @@ import { PermitType } from '@prisma/client';
 import { permitHolderInformationSchema, verifyIdentitySchema } from '@lib/applicants/validation';
 import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
+import { guardianInformationSchema } from '@lib/guardian/validation';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -338,27 +339,73 @@ export const updateApplicantGuardianInformation: Resolver<
   UpdateApplicantGuardianInformationResult
 > = async (_parent, args, { prisma }) => {
   const { input } = args;
-  const { id, ...data } = input;
+  const {
+    id,
+    omitGuardianPoa,
+    firstName,
+    middleName,
+    lastName,
+    phone,
+    relationship,
+    addressLine1,
+    addressLine2,
+    city,
+    postalCode,
+  } = input;
+
+  try {
+    await guardianInformationSchema.validate({
+      omitGuardianPoa,
+      firstName,
+      middleName,
+      lastName,
+      phone,
+      relationship,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
 
   let updatedApplicant;
   try {
     updatedApplicant = await prisma.applicant.update({
       where: { id },
       data: {
-        guardian: {
-          update: data,
-        },
+        guardian: omitGuardianPoa
+          ? { disconnect: true }
+          : {
+              update: {
+                firstName: firstName as string,
+                middleName: middleName as string | null,
+                lastName: lastName as string,
+                phone: phone as string,
+                relationship: relationship as string,
+                addressLine1: addressLine1 as string,
+                addressLine2: addressLine2 as string | null,
+                city: city as string,
+                postalCode: postalCode as string,
+              },
+            },
       },
     });
   } catch {
-    // TODO: Handle error
+    // TODO: handle error
   }
 
   if (!updatedApplicant) {
     throw new ApolloError("Applicant's guardian was unable to be updated");
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**

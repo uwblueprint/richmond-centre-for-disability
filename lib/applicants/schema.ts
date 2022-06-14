@@ -100,24 +100,27 @@ export default gql`
     id: Int!
 
     # Personal
-    firstName: String!
+    firstName: String
     middleName: String
-    lastName: String!
-    phone: String!
-    relationship: String!
+    lastName: String
+    phone: String
+    relationship: String
 
     # Address (omit Province, Country)
-    addressLine1: String!
+    addressLine1: String
     addressLine2: String
-    city: String!
-    postalCode: String!
+    city: String
+    postalCode: String
 
     # POA form
     poaFormS3ObjectKey: String
+
+    omitGuardianPoa: Boolean!
   }
 
   type UpdateApplicantGuardianInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Set applicant as active

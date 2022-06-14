@@ -55,6 +55,7 @@ import { requestPermitHolderInformationMutationSchema } from '@lib/applicants/va
 
 import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
+import { guardianInformationSchema } from '@lib/guardian/validation';
 
 /**
  * Query an application by ID
@@ -1207,7 +1208,6 @@ export const updateApplicationGuardianInformation: Resolver<
   MutationUpdateApplicationGuardianInformationArgs,
   UpdateApplicationGuardianInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
   const { id, omitGuardianPoa } = input;
 
@@ -1226,13 +1226,36 @@ export const updateApplicationGuardianInformation: Resolver<
         postalCode,
         poaFormS3ObjectKey,
       } = input;
+
+      try {
+        await guardianInformationSchema.validate({
+          omitGuardianPoa,
+          firstName,
+          middleName,
+          lastName,
+          phone,
+          relationship,
+          addressLine1,
+          addressLine2,
+          city,
+          postalCode,
+        });
+      } catch (err) {
+        if (err instanceof ValidationError) {
+          return {
+            ok: false,
+            error: err.message,
+          };
+        }
+      }
+
       updatedApplication = await prisma.newApplication.update({
         where: { applicationId: id },
         data: {
           guardianFirstName: firstName,
           guardianMiddleName: middleName,
           guardianLastName: lastName,
-          guardianPhone: phone,
+          guardianPhone: phone && stripPhoneNumber(phone),
           guardianRelationship: relationship,
           guardianAddressLine1: addressLine1,
           guardianAddressLine2: addressLine2,
@@ -1268,6 +1291,7 @@ export const updateApplicationGuardianInformation: Resolver<
 
   return {
     ok: true,
+    error: null,
   };
 };
 
