@@ -14,7 +14,6 @@ import {
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
 import { ReactNode, useState } from 'react'; // React
-import { formatDateYYYYMMDD } from '@lib/utils/format'; // Date formatter util
 import {
   ApplicantFormData,
   UpdateApplicantGeneralInformationResponse,
@@ -26,6 +25,7 @@ import { Form, Formik } from 'formik';
 import { permitHolderInformationSchema } from '@lib/applicants/validation';
 import CheckboxField from '@components/form/CheckboxField';
 import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 
 type EditUserInformationModalProps = {
   applicant: ApplicantFormData;

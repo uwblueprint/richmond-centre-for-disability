@@ -22,7 +22,7 @@ import {
   UPDATE_PHYSICIAN_ASSESSMENT,
 } from '@tools/admin/requests/physician-assessment';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
-import { formatDateYYYYMMDD } from '@lib/utils/format';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { titlecase } from '@tools/string';
 import EditPhysicianAssessmentModal from './EditModal';
 import { physicianAssessmentSchema } from '@lib/physicians/validation';

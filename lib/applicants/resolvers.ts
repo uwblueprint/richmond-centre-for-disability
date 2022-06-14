@@ -27,6 +27,8 @@ import { permitHolderInformationSchema, verifyIdentitySchema } from '@lib/applic
 import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 import { guardianInformationSchema } from '@lib/guardian/validation';
+import { stripPhoneNumber, stripPostalCode } from '@lib/utils/format';
+import moment from 'moment';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -251,6 +253,8 @@ export const updateApplicantGeneralInformation: Resolver<
   }
 
   const { id, ...data } = input;
+  data.phone = stripPhoneNumber(data.phone);
+  data.postalCode = stripPostalCode(data.postalCode);
 
   let updatedApplicant;
   try {
@@ -279,7 +283,10 @@ export const updateApplicantDoctorInformation: Resolver<
 > = async (_parent, args, { prisma }) => {
   const { input } = args;
   const { id, mspNumber, ...data } = input;
-  const { firstName, lastName, phone, addressLine1, addressLine2, city, postalCode } = input;
+  const { firstName, lastName, addressLine1, addressLine2, city } = input;
+
+  const phone = stripPhoneNumber(data.phone);
+  const postalCode = stripPostalCode(data.postalCode);
 
   try {
     await requestPhysicianInformationSchema.validate({
@@ -339,19 +346,22 @@ export const updateApplicantGuardianInformation: Resolver<
   UpdateApplicantGuardianInformationResult
 > = async (_parent, args, { prisma }) => {
   const { input } = args;
+
   const {
     id,
     omitGuardianPoa,
     firstName,
     middleName,
     lastName,
-    phone,
     relationship,
     addressLine1,
     addressLine2,
     city,
-    postalCode,
+    ...data
   } = input;
+
+  const phone = data.phone ? stripPhoneNumber(data.phone) : null;
+  const postalCode = data.postalCode ? stripPostalCode(data.postalCode) : null;
 
   try {
     await guardianInformationSchema.validate({
@@ -533,6 +543,15 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     return {
       ok: false,
       failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS',
+      applicantId: null,
+    };
+  }
+
+  //6 months past expiry date
+  if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') < moment()) {
+    return {
+      ok: false,
+      failureReason: 'APP_PAST_SIX_MONTHS_EXPIRED',
       applicantId: null,
     };
   }

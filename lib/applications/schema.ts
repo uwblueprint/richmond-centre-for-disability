@@ -682,7 +682,7 @@ export default gql`
     # Application ID
     id: Int!
 
-    omitGuardianPoa: Boolean!
+    omitGuardianPoa: Boolean
     firstName: String
     middleName: String
     lastName: String

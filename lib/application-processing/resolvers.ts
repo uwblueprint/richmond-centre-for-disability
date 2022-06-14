@@ -26,7 +26,7 @@ import {
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
-import { formatDateYYYYMMDD } from '@lib/utils/format';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 
 /**
  * Approve application

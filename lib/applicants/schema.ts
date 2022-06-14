@@ -115,7 +115,7 @@ export default gql`
     # POA form
     poaFormS3ObjectKey: String
 
-    omitGuardianPoa: Boolean!
+    omitGuardianPoa: Boolean
   }
 
   type UpdateApplicantGuardianInformationResult {
@@ -188,6 +188,7 @@ export default gql`
     IDENTITY_VERIFICATION_FAILED
     APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS
     USER_HOLDS_TEMPORARY_PERMIT
+    APP_PAST_SIX_MONTHS_EXPIRED
   }
 
   # Update Additional Notes for Applicant

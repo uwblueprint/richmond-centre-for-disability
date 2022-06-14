@@ -19,12 +19,23 @@ export const formatPhoneNumber = (phone: string): string => {
 };
 
 /**
- * Format Canadian postal code by removing all non-alphanumeric characters.
+ * Strip Canadian postal code by capitalizing alphabetic characters and removing all non-alphanumeric characters.
+ * @param {string} postalCode postal code to be formatted
+ * @returns {string} formatted postal code
+ */
+export const stripPostalCode = (postalCode: string): string => {
+  const upperCasePostalCode = postalCode.toUpperCase();
+  return upperCasePostalCode.replace(/[^A-Za-z\d]/g, '');
+};
+
+/**
+ * Format Canadian postal code by adding space and capitalizing alphabetic characters
  * @param {string} postalCode postal code to be formatted
  * @returns {string} formatted postal code
  */
 export const formatPostalCode = (postalCode: string): string => {
-  return postalCode.replace(/[^A-Za-z\d]/g, '');
+  const upperCasePostalCode = postalCode.toUpperCase();
+  return `${upperCasePostalCode.substring(0, 3)} ${upperCasePostalCode.substring(3)}`;
 };
 
 /**
@@ -34,74 +45,6 @@ export const formatPostalCode = (postalCode: string): string => {
  */
 export const formatNumberInput = (numberInputString: string): string => {
   return numberInputString.replace(/^\$/, '');
-};
-
-/**
- * Format date to be in MM/DD/YYYY format and in UTC time zone to avoid the date being set back by a day
- * @param {Date} date date to be formatted
- * @param {boolean} dateInput Whether the date is being displayed in Input element of type date
- * @returns {string} formatted date
- */
-export const formatDate = (date: Date, dateInput = false): string => {
-  return dateInput
-    ? new Date(date).toISOString().substring(0, 10)
-    : new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
-};
-
-/**
- * Format date to be in YYYY-MM-DD format
- * @param {Date} date date to be formatted
- * @returns {string} formatted date
- */
-export const formatDateYYYYMMDD = (d: Date): string => {
-  let date = new Date(d);
-  const offset = date.getTimezoneOffset();
-  date = new Date(date.getTime() - offset * 60 * 1000);
-  return date.toISOString().split('T')[0];
-};
-
-/**
- * Format date to be in written in the following format: Sep 11 2021, 03:07 pm
- * @param {Date} date date to be formatted
- * @param {boolean} omitTime whether to omit time from date (eg. Sep 11 2021)
- * @returns {string} formatted verbose date
- */
-export const formatDateVerbose = (date: Date, omitTime = false): string => {
-  const localeDateString = new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: 'numeric',
-  });
-
-  // Removes first comma and writes am/pm in lowercase
-  const formattedDate = omitTime
-    ? localeDateString.replace(',', '').substring(0, localeDateString.length - 11)
-    : localeDateString.replace(',', '').substring(0, localeDateString.length - 3) +
-      localeDateString[localeDateString.length - 2].toLowerCase() +
-      localeDateString[localeDateString.length - 1].toLowerCase();
-
-  return formattedDate;
-};
-
-/**
- * Format date to be in YYYYMMDD-HHMMSS format
- * @param {Date} d date to be formatted
- * @returns {string} formatted date
- */
-export const formatDateTimeYYYYMMDDHHMMSS = (d: Date): string => {
-  // offset timezone to locale timezone
-  const date = new Date(d);
-  const offset = date.getTimezoneOffset();
-  const dateTimeParts = new Date(date.getTime() - offset * 60 * 1000).toISOString().split('T');
-
-  // create YYYYMMDD from ISOString
-  const day = dateTimeParts[0].replace(/\D/g, '');
-  // create HHMMSS from ISOString
-  const time = dateTimeParts[1].split('.')[0].replace(/\D/g, '');
-
-  return `${day}-${time}`;
 };
 
 /**

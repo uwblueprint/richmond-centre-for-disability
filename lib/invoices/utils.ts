@@ -1,7 +1,8 @@
 import pdfPrinter from 'pdfmake';
 import { Application, Prisma } from '@prisma/client';
 import { Session } from 'next-auth';
-import { formatDate, formatFullName, formatPostalCode } from '@lib/utils/format';
+import { formatFullName, formatPostalCode } from '@lib/utils/format';
+import { formatDate } from '@lib/utils/date'; // Date formatter util
 import { PaymentType } from '@lib/graphql/types';
 
 /**

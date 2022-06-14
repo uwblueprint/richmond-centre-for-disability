@@ -48,6 +48,9 @@ export default function Renew() {
   // Toast message
   const toast = useToast();
 
+  // Loading state
+  const [loading, setLoading] = useState(false);
+
   // Whether each section was updated
   const [updatedAddress, setUpdatedAddress] = useState(false); // Whether address was updated
   const [updatedContactInfo, setUpdatedContactInfo] = useState(false); // Whether contact info was updated
@@ -119,7 +122,7 @@ export default function Renew() {
   };
 
   // Submit application mutation
-  const [submitApplication, { loading }] = useMutation<
+  const [submitApplication] = useMutation<
     CreateExternalRenewalApplicationResponse,
     CreateExternalRenewalApplicationRequest
   >(CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION, {
@@ -141,6 +144,7 @@ export default function Renew() {
       }
     },
     onError: error => {
+      setLoading(false);
       toast({
         status: 'error',
         description: error.message,
@@ -271,6 +275,8 @@ export default function Renew() {
       });
       return;
     }
+
+    setLoading(true);
 
     await submitApplication({
       variables: {
@@ -676,7 +682,7 @@ export default function Renew() {
               <Button
                 variant="solid"
                 onClick={handleSubmit}
-                loading={loading}
+                isLoading={loading}
                 disabled={!applicantId || !certified}
               >{`Proceed to payment`}</Button>
             </Flex>

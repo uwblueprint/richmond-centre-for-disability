@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ReactNode } from 'react'; // React
 import { MobilityAid } from '@lib/graphql/types'; // Application type & Aid enum
-import { formatDate } from '@lib/utils/format'; // Date formatter util
+import { formatDate } from '@lib/utils/date'; // Date formatter util
 import { MedicalHistoryRow } from '@tools/admin/permit-holders/medical-history';
 
 type MedicalHistoryModalProps = {

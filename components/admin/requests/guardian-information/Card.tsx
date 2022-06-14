@@ -16,6 +16,7 @@ import EditGuardianInformationModal from '@components/admin/requests/guardian-in
 import { AddIcon } from '@chakra-ui/icons';
 import { guardianInformationSchema } from '@lib/guardian/validation';
 import { UpdateApplicationGuardianInformationInput } from '@lib/graphql/types';
+import Address from '@components/admin/Address';
 
 type GuardianInformationProps = {
   readonly applicationId: number;
@@ -133,19 +134,16 @@ export default function GuardianInformationCard({
             </Text>
           </Box>
           <Box>
-            <Text as="p" textStyle="body-regular">
-              {guardian.addressLine2 ? `${guardian.addressLine2} - ` : ''}
-              {guardian.addressLine1}
-            </Text>
-            <Text as="p" textStyle="body-regular">
-              {`${guardian.city} ${guardian.province}`}
-            </Text>
-            <Text as="p" textStyle="body-regular">
-              {guardian.country}
-            </Text>
-            <Text as="p" textStyle="body-regular">
-              {guardian.postalCode}
-            </Text>
+            <Address
+              address={{
+                addressLine1: guardian.addressLine1,
+                addressLine2: guardian.addressLine2,
+                city: guardian.city,
+                province: guardian.province,
+                country: guardian.country,
+                postalCode: guardian.postalCode,
+              }}
+            />
           </Box>
         </VStack>
       </>

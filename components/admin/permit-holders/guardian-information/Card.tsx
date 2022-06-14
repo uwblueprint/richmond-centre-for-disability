@@ -10,7 +10,7 @@ import {
 import { FC, useCallback } from 'react';
 import { Text } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { formatFullName } from '@lib/utils/format';
+import { formatFullName, formatPhoneNumber } from '@lib/utils/format';
 import { Guardian, UpdateApplicantGuardianInformationInput } from '@lib/graphql/types';
 import Address from '@components/admin/Address';
 import EditGuardianInformationModal from '@components/admin/requests/guardian-information/EditModal';
@@ -87,7 +87,7 @@ const GuardianInformationCard: FC<Props> = props => {
             {formatFullName(firstName, middleName, lastName)}
           </Text>
           <Text as="p" textStyle="body-regular" textAlign="left">
-            {`Phone: ${phone}`}
+            {`Phone: ${formatPhoneNumber(phone)}`}
           </Text>
           <Text as="p" textStyle="body-regular" textAlign="left">
             {`Relationship: ${relationship}`}

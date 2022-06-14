@@ -14,7 +14,8 @@ import {
   Spinner,
   Center,
 } from '@chakra-ui/react'; // Chakra UI
-import { formatDate, formatFullName } from '@lib/utils/format'; // Date formatter util
+import { formatFullName } from '@lib/utils/format'; // Date formatter util
+import { formatDate } from '@lib/utils/date';
 import { useQuery } from '@apollo/client';
 import {
   GetSelectedApplicantRequest,

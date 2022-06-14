@@ -1,7 +1,7 @@
 import { Flex, VStack, Text, Box, Circle } from '@chakra-ui/react'; // Chakra UI
 import { CheckIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import { ReactNode } from 'react'; // React
-import { formatDateVerbose } from '@lib/utils/format';
+import { formatDateVerbose } from '@lib/utils/date';
 
 type ProcessingTaskStepProps = {
   readonly id: number;

@@ -41,7 +41,8 @@ import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
 import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/types'; //GraphQL types
 import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
-import { formatDateVerbose, formatFullName } from '@lib/utils/format'; // Verbose date formatter util
+import { formatFullName } from '@lib/utils/format'; // String formatter util
+import { formatDateVerbose } from '@lib/utils/date'; // Date Formatter Util
 import GenerateReportModal from '@components/admin/requests/reports/GenerateModal'; // Generate report modal
 import EmptyMessage from '@components/EmptyMessage';
 
@@ -387,6 +388,7 @@ const Requests: NextPage = () => {
                   columns={COLUMNS}
                   data={requestsData}
                   loading={loading}
+                  initialSort={sortOrder}
                   onChangeSortOrder={setSortOrder}
                   onRowClick={({ id }) => router.push(`/admin/request/${id}`)}
                 />

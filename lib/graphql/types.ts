@@ -1172,7 +1172,7 @@ export type UpdateApplicantGuardianInformationInput = {
   city: Maybe<Scalars['String']>;
   postalCode: Maybe<Scalars['String']>;
   poaFormS3ObjectKey: Maybe<Scalars['String']>;
-  omitGuardianPoa: Scalars['Boolean'];
+  omitGuardianPoa: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdateApplicantGuardianInformationResult = {
@@ -1246,7 +1246,7 @@ export type UpdateApplicationGeneralInformationResult = {
 
 export type UpdateApplicationGuardianInformationInput = {
   id: Scalars['Int'];
-  omitGuardianPoa: Scalars['Boolean'];
+  omitGuardianPoa: Maybe<Scalars['Boolean']>;
   firstName: Maybe<Scalars['String']>;
   middleName: Maybe<Scalars['String']>;
   lastName: Maybe<Scalars['String']>;
@@ -1449,7 +1449,8 @@ export type UpsertPhysicianResult = {
 export type VerifyIdentityFailureReason =
   | 'IDENTITY_VERIFICATION_FAILED'
   | 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS'
-  | 'USER_HOLDS_TEMPORARY_PERMIT';
+  | 'USER_HOLDS_TEMPORARY_PERMIT'
+  | 'APP_PAST_SIX_MONTHS_EXPIRED';
 
 export type VerifyIdentityInput = {
   userId: Scalars['Int'];

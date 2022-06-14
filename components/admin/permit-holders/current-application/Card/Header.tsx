@@ -1,7 +1,7 @@
 import { HStack, VStack, Text, Button } from '@chakra-ui/react';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
 import RequestStatusBadge from '@components/admin/RequestStatusBadge';
-import { formatDate } from '@lib/utils/format';
+import { formatDate } from '@lib/utils/date';
 import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 import { titlecase } from '@tools/string';
 import Link from 'next/link';
