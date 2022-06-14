@@ -518,12 +518,16 @@ export default gql`
     requiresWiderParkingSpaceReason: RequiresWiderParkingSpaceReason
     otherRequiresWiderParkingSpaceReason: String
 
+    # Donation information
+    donationAmount: Int
+
     applicantId: Int!
   }
 
   type CreateExternalRenewalApplicationResult {
     ok: Boolean!
     applicationId: Int
+    checkoutUrl: String
   }
 
   input CreateReplacementApplicationInput {

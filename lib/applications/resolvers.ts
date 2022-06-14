@@ -12,7 +12,7 @@ import {
 import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
-import { stripPhoneNumber, formatFullName, stripPostalCode } from '@lib/utils/format'; // Formatting utils
+import { stripPhoneNumber, stripPostalCode } from '@lib/utils/format'; // Formatting utils
 import {
   Application,
   CreateExternalRenewalApplicationResult,
@@ -47,6 +47,7 @@ import {
 import { flattenApplication } from '@lib/applications/utils';
 import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import moment from 'moment';
+import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
 
 /**
  * Query an application by ID
@@ -519,9 +520,13 @@ export const createExternalRenewalApplication: Resolver<
     throw new ApplicantNotFoundError(`No applicant with ID ${applicantId} was found`);
   }
 
-  const physician = applicant.medicalInformation.physician;
+  // TODO: Replace validation for donation amount
+  const { donationAmount = 0 } = input;
+  if (donationAmount !== null && ![0, 5, 10, 25, 50, 75, 100].includes(donationAmount)) {
+    throw new Error('Invalid donation amount');
+  }
 
-  // TODO: Integrate with Shopify payments
+  const physician = applicant.medicalInformation.physician;
 
   let application;
   try {
@@ -544,32 +549,24 @@ export const createExternalRenewalApplication: Resolver<
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: 0, // ? Investigate
         paymentMethod: 'SHOPIFY',
-        // TODO: Replace shipping info with Shopify checkout inputs
+        // Set shipping address to be same as home address by default
         shippingAddressSameAsHomeAddress: true,
-        shippingFullName: formatFullName(
-          applicant.firstName,
-          applicant.middleName,
-          applicant.lastName
-        ),
-        shippingAddressLine1: applicant.addressLine1,
-        shippingAddressLine2: applicant.addressLine2,
-        shippingCity: applicant.city,
-        shippingProvince: applicant.province,
-        shippingCountry: applicant.country,
-        shippingPostalCode: stripPostalCode(applicant.postalCode),
-        // TODO: Replace billing info with Shopify checkout inputs
+        shippingFullName: null,
+        shippingAddressLine1: null,
+        shippingAddressLine2: null,
+        shippingCity: null,
+        shippingProvince: null,
+        shippingCountry: null,
+        shippingPostalCode: null,
+        // Set billing address to be same as home address by default - gets updated after Shopify payment is received
         billingAddressSameAsHomeAddress: true,
-        billingFullName: formatFullName(
-          applicant.firstName,
-          applicant.middleName,
-          applicant.lastName
-        ),
-        billingAddressLine1: applicant.addressLine1,
-        billingAddressLine2: applicant.addressLine2,
-        billingCity: applicant.city,
-        billingProvince: applicant.province,
-        billingCountry: applicant.country,
-        billingPostalCode: stripPostalCode(applicant.postalCode),
+        billingFullName: null,
+        billingAddressLine1: null,
+        billingAddressLine2: null,
+        billingCity: null,
+        billingProvince: null,
+        billingCountry: null,
+        billingPostalCode: null,
         applicant: {
           connect: { id: applicantId },
         },
@@ -626,9 +623,17 @@ export const createExternalRenewalApplication: Resolver<
     throw new ApolloError('Application was unable to be created');
   }
 
+  // Set up Shopify checkout
+  const checkout = new ShopifyCheckout();
+  const checkoutUrl = await checkout.setUpCheckout(
+    application.id,
+    donationAmount as DonationAmount
+  );
+
   return {
     ok: true,
     applicationId: application.id,
+    checkoutUrl,
   };
 };
 
