@@ -13,11 +13,7 @@ import NumberField from '@components/form/NumberField';
 import RadioGroupField from '@components/form/RadioGroupField';
 import TextArea from '@components/form/TextAreaField';
 import TextField from '@components/form/TextField';
-<<<<<<< HEAD
 import { formatDate } from '@lib/utils/date'; // Date formatter util
-=======
-import { formatDate } from '@lib/utils/format'; // Date formatter util
->>>>>>> [Feature] Reason For Replacement Form Validation (#167)
 import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-replacement';
 import { useFormikContext } from 'formik';
 

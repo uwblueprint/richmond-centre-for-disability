@@ -3,11 +3,7 @@ import { Box, Text, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import EditReasonForReplacementModal from '@components/admin/requests/reason-for-replacement/EditModal'; // Edit modal
 import { reasonForReplacementFormSchema } from '@lib/applications/validation';
-<<<<<<< HEAD
 import { formatDateVerbose } from '@lib/utils/date';
-=======
-import { formatDateVerbose } from '@lib/utils/format';
->>>>>>> [Feature] Reason For Replacement Form Validation (#167)
 import {
   GetReasonForReplacementRequest,
   GetReasonForReplacementResponse,
