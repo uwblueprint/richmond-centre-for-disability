@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { Box, Text, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import EditReasonForReplacementModal from '@components/admin/requests/reason-for-replacement/EditModal'; // Edit modal
+import { reasonForReplacementFormSchema } from '@lib/applications/validation';
 import { formatDateVerbose } from '@lib/utils/date';
 import {
   GetReasonForReplacementRequest,
@@ -35,7 +36,6 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
     UpdateReasonForReplacementRequest
   >(UPDATE_REASON_FOR_REPLACEMENT);
   const handleSave = async (data: ReasonForReplacementFormData) => {
-    // TODO: Improve validation
     const {
       reason,
       lostTimestamp,
@@ -44,24 +44,24 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
       stolenPoliceFileNumber,
       stolenPoliceOfficerName,
       eventDescription,
-    } = data;
-    if (reason !== null) {
-      await updateReasonForReplacement({
-        variables: {
-          input: {
-            id: applicationId,
-            reason,
-            lostTimestamp,
-            lostLocation,
-            stolenJurisdiction,
-            stolenPoliceFileNumber,
-            stolenPoliceOfficerName,
-            eventDescription,
-          },
+    } = await reasonForReplacementFormSchema.validate(data);
+
+    await updateReasonForReplacement({
+      variables: {
+        input: {
+          id: applicationId,
+          reason,
+          lostTimestamp,
+          lostLocation,
+          stolenJurisdiction,
+          stolenPoliceFileNumber,
+          stolenPoliceOfficerName,
+          eventDescription,
         },
-      });
-      refetch();
-    }
+      },
+    });
+
+    refetch();
   };
 
   if (!data?.application) {

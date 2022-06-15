@@ -100,11 +100,12 @@ export default gql`
     otherPatientCondition: String
     permitType: PermitType!
     temporaryPermitExpiry: Date
+    otherMobilityAids: String
 
     # Doctor information
     physicianFirstName: String!
     physicianLastName: String!
-    physicianMspNumber: Int!
+    physicianMspNumber: String!
     physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
@@ -200,7 +201,7 @@ export default gql`
     # Doctor information
     physicianFirstName: String!
     physicianLastName: String!
-    physicianMspNumber: Int!
+    physicianMspNumber: String!
     physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
@@ -350,6 +351,7 @@ export default gql`
     disabilityCertificationDate: Date!
     patientCondition: PatientCondition!
     mobilityAids: [MobilityAid!]
+    otherMobilityAids: String
     otherPatientCondition: String
     permitType: PermitType!
     temporaryPermitExpiry: Date
@@ -357,7 +359,7 @@ export default gql`
     # Doctor information
     physicianFirstName: String!
     physicianLastName: String!
-    physicianMspNumber: Int!
+    physicianMspNumber: String!
     physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
@@ -413,6 +415,7 @@ export default gql`
   type CreateNewApplicationResult {
     ok: Boolean!
     applicationId: Int
+    error: String
   }
 
   input CreateRenewalApplicationInput {
@@ -435,7 +438,7 @@ export default gql`
     # Doctor information
     physicianFirstName: String!
     physicianLastName: String!
-    physicianMspNumber: Int!
+    physicianMspNumber: String!
     physicianPhone: String!
     physicianAddressLine1: String!
     physicianAddressLine2: String
@@ -483,6 +486,7 @@ export default gql`
   type CreateRenewalApplicationResult {
     ok: Boolean!
     applicationId: Int
+    error: String
   }
 
   # Renewal application being created from applicant-facing form
@@ -504,7 +508,7 @@ export default gql`
     updatedPhysician: Boolean!
     physicianFirstName: String
     physicianLastName: String
-    physicianMspNumber: Int
+    physicianMspNumber: String
     physicianPhone: String
     physicianAddressLine1: String
     physicianAddressLine2: String
@@ -527,6 +531,7 @@ export default gql`
   type CreateExternalRenewalApplicationResult {
     ok: Boolean!
     applicationId: Int
+    error: String
     checkoutUrl: String
   }
 
@@ -628,6 +633,7 @@ export default gql`
 
   type UpdateApplicationGeneralInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update general information section of a new application (includes date of birth, gender)
@@ -662,7 +668,7 @@ export default gql`
 
     firstName: String!
     lastName: String!
-    mspNumber: Int!
+    mspNumber: String!
     phone: String!
     addressLine1: String!
     addressLine2: String
@@ -672,6 +678,7 @@ export default gql`
 
   type UpdateApplicationDoctorInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update guardian information section of application
@@ -679,21 +686,22 @@ export default gql`
     # Application ID
     id: Int!
 
-    omitGuardianPoa: Boolean!
-    firstName: String!
+    omitGuardianPoa: Boolean
+    firstName: String
     middleName: String
-    lastName: String!
-    phone: String!
-    relationship: String!
-    addressLine1: String!
+    lastName: String
+    phone: String
+    relationship: String
+    addressLine1: String
     addressLine2: String
-    city: String!
-    postalCode: String!
+    city: String
+    postalCode: String
     poaFormS3ObjectKey: String
   }
 
   type UpdateApplicationGuardianInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update additional information section of application
@@ -710,6 +718,7 @@ export default gql`
 
   type UpdateApplicationAdditionalInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update payment information section of application
@@ -744,6 +753,7 @@ export default gql`
 
   type UpdateApplicationPaymentInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update reason for replacement section of application
@@ -769,16 +779,19 @@ export default gql`
     # Application ID
     id: Int!
 
-    # Physician assessment (omit permit type)
+    # Physician assessment
     disability: String!
     disabilityCertificationDate: Date!
     patientCondition: PatientCondition!
     mobilityAids: [MobilityAid!]
     otherPatientCondition: String
     temporaryPermitExpiry: Date
+    permitType: PermitType!
+    otherMobilityAids: String
   }
 
   type UpdateApplicationPhysicianAssessmentResult {
     ok: Boolean!
+    error: String
   }
 `;

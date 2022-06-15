@@ -11,7 +11,7 @@ import {
 export type DoctorFormData = {
   firstName: string;
   lastName: string;
-  mspNumber: number | null;
+  mspNumber: string;
   phone: string;
   addressLine1: string;
   addressLine2: string | null;
@@ -83,6 +83,7 @@ export const UPDATE_DOCTOR_INFORMATION = gql`
   mutation UpdateApplicationDoctorInformation($input: UpdateApplicationDoctorInformationInput!) {
     updateApplicationDoctorInformation(input: $input) {
       ok
+      error
     }
   }
 `;

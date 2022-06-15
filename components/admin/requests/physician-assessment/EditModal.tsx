@@ -12,27 +12,27 @@ import {
   Box,
 } from '@chakra-ui/react'; // Chakra UI
 import {
-  PaymentInformationFormData,
-  UpdatePaymentInformationResponse,
-} from '@tools/admin/requests/payment-information';
-import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
+  PhysicianAssessment,
+  UpdatePhysicianAssessmentResponse,
+} from '@tools/admin/requests/physician-assessment';
+import PhysicianAssessmentForm from './Form';
 import { Form, Formik } from 'formik';
-import { editPaymentInformationSchema } from '@lib/applications/validation';
+import { editPhysicianAssessmentSchema } from '@lib/physicians/validation';
 import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
-type EditPaymentDetailsModalProps = {
+type Props = {
   readonly children: ReactNode;
-  readonly paymentInformation: PaymentInformationFormData;
+  readonly physicianAssessment: PhysicianAssessment;
   readonly onSave: (
-    applicationData: any
-  ) => Promise<UpdatePaymentInformationResponse | undefined | null>;
+    physicianAssessment: PhysicianAssessment
+  ) => Promise<UpdatePhysicianAssessmentResponse | null | undefined>;
 };
 
-export default function EditPaymentDetailsModal({
+export default function EditPhysicianAssessmentModal({
   children,
-  paymentInformation,
+  physicianAssessment,
   onSave,
-}: EditPaymentDetailsModalProps) {
+}: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [error, setError] = useState<string>('');
 
@@ -41,13 +41,13 @@ export default function EditPaymentDetailsModal({
     setError('');
   };
 
-  const handleSubmit = async (values: { paymentInformation: PaymentInformationFormData }) => {
-    const result = await onSave(values.paymentInformation);
+  const handleSubmit = async (values: { physicianAssessment: PhysicianAssessment }) => {
+    const result = await onSave(values.physicianAssessment);
 
-    if (result?.updateApplicationPaymentInformation.ok) {
+    if (result?.updateApplicationPhysicianAssessment.ok) {
       onModalClose();
     } else {
-      setError(result?.updateApplicationPaymentInformation.error ?? '');
+      setError(result?.updateApplicationPhysicianAssessment.error ?? '');
     }
   };
 
@@ -55,20 +55,17 @@ export default function EditPaymentDetailsModal({
     <>
       <Box onClick={onOpen}>{children}</Box>
 
-      <Modal
-        onClose={onModalClose}
-        isOpen={isOpen}
-        scrollBehavior="inside"
-        size="3xl" // TODO: change to custom size
-      >
+      <Modal onClose={onModalClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />
         <Formik
-          initialValues={{ paymentInformation }}
-          validationSchema={editPaymentInformationSchema}
+          initialValues={{
+            physicianAssessment,
+          }}
+          validationSchema={editPhysicianAssessmentSchema}
           onSubmit={handleSubmit}
         >
           {({ values, isValid }) => (
-            <Form style={{ width: '100%' }} noValidate>
+            <Form noValidate>
               <ModalContent paddingX="36px">
                 <ModalHeader
                   textStyle="display-medium-bold"
@@ -77,11 +74,11 @@ export default function EditPaymentDetailsModal({
                   paddingX="4px"
                 >
                   <Text as="h2" textStyle="display-medium-bold">
-                    {'Edit Payment, Shipping and Billing Details'}
+                    {`Edit Physician's Assessment`}
                   </Text>
                 </ModalHeader>
                 <ModalBody paddingY="20px" paddingX="4px">
-                  <PaymentDetailsForm paymentInformation={values.paymentInformation} />
+                  <PhysicianAssessmentForm physicianAssessment={values.physicianAssessment} />
                 </ModalBody>
                 <ValidationErrorAlert error={error} />
                 <ModalFooter paddingBottom="24px" paddingX="4px">

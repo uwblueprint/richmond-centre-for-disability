@@ -8,15 +8,9 @@ import {
   GridItem,
   Text,
   Button,
-  FormControl,
-  FormLabel,
-  Input,
-  RadioGroup,
   Radio,
   FormHelperText,
   Checkbox,
-  NumberInput,
-  NumberInputField,
   Divider,
   useToast,
   HStack,
@@ -32,6 +26,16 @@ import {
 } from '@tools/applicant/renew'; // Page tools
 import useSteps from '@tools/hooks/useSteps'; // Custom hook for managing steps state
 import Request from '@containers/Request'; // Request state
+import { Form, Formik } from 'formik';
+import TextField from '@components/form/TextField';
+import CheckboxField from '@components/form/CheckboxField';
+import {
+  applicantFacingRenewalContactSchema,
+  applicantFacingRenewalDoctorSchema,
+  applicantFacingRenewalPersonalAddressSchema,
+} from '@lib/applications/validation';
+import RadioGroupField from '@components/form/RadioGroupField';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 export default function Renew() {
   // Request state
@@ -60,6 +64,7 @@ export default function Renew() {
   // Contact information state
   const [contactPhoneNumber, setContactPhoneNumber] = useState('');
   const [contactEmailAddress, setContactEmailAddress] = useState('');
+  const [receiveEmailUpdates, setReceiveEmailUpdates] = useState(false);
 
   // Doctor information state
   const [doctorFirstName, setDoctorFirstName] = useState('');
@@ -77,19 +82,8 @@ export default function Renew() {
   // Whether user is reviewing the form
   const [isReviewing, setIsReviewing] = useState(false);
 
-  // Whether each section has invalid inputs
-  const invalidPersonalAddress =
-    updatedAddress && (!personalAddressLine1 || !personalCity || !personalPostalCode);
-  const invalidContact = updatedContactInfo && !contactPhoneNumber && !contactEmailAddress;
-  const invalidDoctor =
-    updatedDoctor &&
-    (!doctorFirstName ||
-      !doctorLastName ||
-      !doctorMspNumber ||
-      !doctorAddressLine1 ||
-      !doctorCity ||
-      !doctorPostalCode ||
-      !doctorPhoneNumber);
+  /**  Backend form validation error */
+  const [error, setError] = useState<string>('');
 
   // Submit application mutation
   const [submitApplication] = useMutation<
@@ -97,17 +91,20 @@ export default function Renew() {
     CreateExternalRenewalApplicationRequest
   >(CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION, {
     onCompleted: data => {
-      if (
-        data.createExternalRenewalApplication.ok &&
-        data.createExternalRenewalApplication.checkoutUrl
-      ) {
-        toast({
-          status: 'success',
-          description: 'Redirecting to payment page...',
-          isClosable: true,
-        });
+      if (data) {
+        const { ok, applicationId, error, checkoutUrl } = data.createExternalRenewalApplication;
 
-        window.location.href = data.createExternalRenewalApplication.checkoutUrl;
+        if (ok && applicationId && checkoutUrl) {
+          toast({
+            status: 'success',
+            description: 'Redirecting to payment page...',
+            isClosable: true,
+          });
+
+          window.location.href = checkoutUrl;
+        } else {
+          setError(error ?? '');
+        }
       }
     },
     onError: error => {
@@ -134,6 +131,99 @@ export default function Renew() {
       setIsReviewing(true);
     }
   }, [activeStep, isReviewing]);
+
+  const handleCompletePersonalInformationStep = (values: {
+    updatedAddress: boolean;
+    personalAddressLine1: string;
+    personalAddressLine2: string;
+    personalCity: string;
+    personalPostalCode: string;
+  }) => {
+    setUpdatedAddress(!!Number(values.updatedAddress));
+    if (values.updatedAddress) {
+      setPersonalAddressLine1(values.personalAddressLine1);
+      setPersonalAddressLine2(values.personalAddressLine2);
+      setPersonalCity(values.personalCity);
+      setPersonalPostalCode(values.personalPostalCode);
+    } else {
+      setPersonalAddressLine1('');
+      setPersonalAddressLine2('');
+      setPersonalCity('');
+      setPersonalPostalCode('');
+    }
+
+    if (isReviewing) {
+      goToReview();
+    } else {
+      nextStep();
+    }
+  };
+
+  const handleCompleteContactInformationStep = (values: {
+    updatedContactInfo: boolean;
+    contactPhoneNumber: string;
+    contactEmailAddress: string;
+    receiveEmailUpdates: boolean;
+  }) => {
+    setUpdatedContactInfo(!!Number(values.updatedContactInfo));
+    if (values.updatedContactInfo) {
+      setContactPhoneNumber(values.contactPhoneNumber);
+      setContactEmailAddress(values.contactEmailAddress);
+      if (values.contactEmailAddress) {
+        setReceiveEmailUpdates(values.receiveEmailUpdates);
+      } else {
+        setReceiveEmailUpdates(false);
+      }
+    } else {
+      setContactPhoneNumber('');
+      setContactEmailAddress('');
+    }
+
+    if (isReviewing) {
+      goToReview();
+    } else {
+      nextStep();
+    }
+  };
+
+  const handleCompleteDoctorInformationStep = (values: {
+    updatedDoctor: boolean;
+    doctorFirstName: string;
+    doctorLastName: string;
+    doctorMspNumber: string;
+    doctorAddressLine1: string;
+    doctorAddressLine2: string;
+    doctorCity: string;
+    doctorPostalCode: string;
+    doctorPhoneNumber: string;
+  }) => {
+    setUpdatedDoctor(!!Number(values.updatedDoctor));
+    if (values.updatedDoctor) {
+      setDoctorFirstName(values.doctorFirstName);
+      setDoctorLastName(values.doctorLastName);
+      setDoctorMspNumber(values.doctorMspNumber);
+      setDoctorAddressLine1(values.doctorAddressLine1);
+      setDoctorAddressLine2(values.doctorAddressLine2);
+      setDoctorCity(values.doctorCity);
+      setDoctorPostalCode(values.doctorPostalCode);
+      setDoctorPhoneNumber(values.doctorPhoneNumber);
+    } else {
+      setDoctorFirstName('');
+      setDoctorLastName('');
+      setDoctorMspNumber('');
+      setDoctorAddressLine1('');
+      setDoctorAddressLine2('');
+      setDoctorCity('');
+      setDoctorPostalCode('');
+      setDoctorPhoneNumber('');
+    }
+
+    if (isReviewing) {
+      goToReview();
+    } else {
+      nextStep();
+    }
+  };
 
   /**
    * Handle application submission
@@ -167,14 +257,14 @@ export default function Renew() {
           email: updatedContactInfo ? contactEmailAddress : null,
           physicianFirstName: updatedDoctor ? doctorFirstName : null,
           physicianLastName: updatedDoctor ? doctorLastName : null,
-          physicianMspNumber: updatedDoctor ? parseInt(doctorMspNumber) : null,
+          physicianMspNumber: updatedDoctor ? doctorMspNumber : null,
           physicianAddressLine1: updatedDoctor ? doctorAddressLine1 : null,
           physicianAddressLine2: updatedDoctor ? doctorAddressLine2 : null,
           physicianCity: updatedDoctor ? doctorCity : null,
           physicianPostalCode: updatedDoctor ? doctorPostalCode : null,
           physicianPhone: updatedDoctor ? doctorPhoneNumber : null,
+          receiveEmailUpdates,
           //TODO: Replace with dynamic values
-          receiveEmailUpdates: false,
           usesAccessibleConvertedVan: false,
           accessibleConvertedVanLoadingMethod: null,
           requiresWiderParkingSpace: false,
@@ -195,265 +285,277 @@ export default function Renew() {
         </Text>
         <Steps orientation="vertical" activeStep={activeStep}>
           <Step label={`Personal Address Information`}>
-            <Box marginLeft="8px">
-              {/* Check whether applicant has updated address */}
-              <FormControl isRequired textAlign="left">
-                <FormLabel>{`Has your address changed since you received your last parking pass?`}</FormLabel>
-                <RadioGroup
-                  value={updatedAddress ? '0' : '1'}
-                  onChange={value => setUpdatedAddress(value === '0' ? true : false)}
-                >
-                  <Stack direction="row">
-                    <Radio value="0">{`Yes, it has`}</Radio>
-                    <Radio value="1">{`No, it has not`}</Radio>
-                  </Stack>
-                </RadioGroup>
-              </FormControl>
-              {/* Conditionally render form based on whether address was updated */}
-              {updatedAddress && (
-                <Box marginY="16px">
-                  <Text
-                    as="p"
-                    textAlign="left"
-                    textStyle="body-bold"
-                  >{`Please fill out the form below:`}</Text>
-                  <Text
-                    as="p"
-                    textAlign="left"
-                    textStyle="body-bold"
-                    marginBottom="24px"
-                  >{`Note that your address must be in British Columbia, Canada to qualify for a permit.`}</Text>
-                  <FormControl isRequired marginBottom="24px">
-                    <FormLabel>{`Address Line 1`}</FormLabel>
-                    <Input
-                      value={personalAddressLine1}
-                      onChange={event => setPersonalAddressLine1(event.target.value)}
-                    />
-                    <FormHelperText>{`Street Address, P. O. Box, Company Name, c/o`}</FormHelperText>
-                  </FormControl>
-                  <FormControl marginBottom="24px">
-                    <FormLabel>{`Address Line 2 (optional)`}</FormLabel>
-                    <Input
-                      value={personalAddressLine2}
-                      onChange={event => setPersonalAddressLine2(event.target.value)}
-                    />
-                    <FormHelperText>{`Apartment, suite, unit, building, floor, etc`}</FormHelperText>
-                  </FormControl>
-                  <FormControl isRequired marginBottom="24px">
-                    <FormLabel>{`City`}</FormLabel>
-                    <Input
-                      value={personalCity}
-                      onChange={event => setPersonalCity(event.target.value)}
-                    />
-                  </FormControl>
-                  <FormControl isRequired marginBottom="24px">
-                    <FormLabel>{`Postal Code`}</FormLabel>
-                    <Input
-                      value={personalPostalCode}
-                      onChange={event => setPersonalPostalCode(event.target.value)}
-                    />
-                    <FormHelperText>{`e.g. X0X 0X0`}</FormHelperText>
-                  </FormControl>
-                </Box>
+            <Formik
+              initialValues={{
+                updatedAddress: false,
+                personalAddressLine1,
+                personalAddressLine2,
+                personalCity,
+                personalPostalCode,
+              }}
+              validationSchema={applicantFacingRenewalPersonalAddressSchema}
+              onSubmit={handleCompletePersonalInformationStep}
+            >
+              {({ values, isValid }) => (
+                <Form noValidate>
+                  <Box marginLeft="8px">
+                    {/* Check whether applicant has updated address */}
+                    <RadioGroupField
+                      name="updatedAddress"
+                      label="Has your address changed since you received your last parking pass?"
+                      required
+                      value={
+                        values.updatedAddress === null ? undefined : Number(values.updatedAddress)
+                      }
+                    >
+                      <Stack>
+                        <Radio value={1}>{'Yes, it has'}</Radio>
+                        <Radio value={0}>{'No, it has not'}</Radio>
+                      </Stack>
+                    </RadioGroupField>
+                    {/* Conditionally render form based on whether address was updated */}
+                    {!!Number(values.updatedAddress) && (
+                      <Box marginY="16px">
+                        <Text
+                          as="p"
+                          textAlign="left"
+                          textStyle="body-bold"
+                        >{`Please fill out the form below:`}</Text>
+                        <Text
+                          as="p"
+                          textAlign="left"
+                          textStyle="body-bold"
+                          marginBottom="24px"
+                        >{`Note that your address must be in British Columbia, Canada to qualify for a permit.`}</Text>
+                        <Box paddingBottom="24px">
+                          <TextField name="personalAddressLine1" label="Address line 1" required>
+                            <FormHelperText color="text.secondary">
+                              {'Street Address, P.O. Box, Company Name, c/o'}
+                            </FormHelperText>
+                          </TextField>
+                        </Box>
+                        <Box paddingBottom="24px">
+                          <TextField
+                            name="personalAddressLine2"
+                            label={
+                              <>
+                                {'Address line 2 '}
+                                <Box as="span" textStyle="body-regular" fontSize="sm">
+                                  {'(optional)'}
+                                </Box>
+                              </>
+                            }
+                          >
+                            <FormHelperText color="text.secondary">
+                              {'Apartment, suite, unit, building, floor, etc'}
+                            </FormHelperText>
+                          </TextField>
+                        </Box>
+                        <Box marginBottom="24px">
+                          <TextField name="personalCity" label="City" required />
+                        </Box>
+                        <Box marginBottom="24px">
+                          <TextField name="personalPostalCode" label="Postal code" required>
+                            <FormHelperText color="text.secondary">
+                              {'Example: X0X 0X0'}{' '}
+                            </FormHelperText>
+                          </TextField>
+                        </Box>
+                      </Box>
+                    )}
+                    {!isValid && <IncompleteSectionAlert />}
+                    <Flex width="100%" justifyContent="flex-end">
+                      <Link href="/">
+                        <Button
+                          variant="outline"
+                          marginRight="32px"
+                        >{`Go back to home page`}</Button>
+                      </Link>
+                      <Button variant="solid" type="submit">
+                        {isReviewing ? `Review request` : `Next`}
+                      </Button>
+                    </Flex>
+                  </Box>
+                </Form>
               )}
-              {invalidPersonalAddress && <IncompleteSectionAlert />}
-              <Flex width="100%" justifyContent="flex-end">
-                <Link href="/">
-                  <Button variant="outline" marginRight="32px">{`Go back to home page`}</Button>
-                </Link>
-                <Button
-                  variant="solid"
-                  onClick={isReviewing ? goToReview : nextStep}
-                  disabled={invalidPersonalAddress}
-                >
-                  {isReviewing ? `Review request` : `Next`}
-                </Button>
-              </Flex>
-            </Box>
+            </Formik>
           </Step>
           <Step label={`Personal Contact Information`}>
-            <Box marginLeft="8px">
-              {/* Check whether applicant has updated contact info */}
-              <FormControl isRequired textAlign="left">
-                <FormLabel>
-                  {`Have you changed your contact information since you received or renewed your last
-                  parking pass?`}
-                </FormLabel>
-                <RadioGroup
-                  value={updatedContactInfo ? '0' : '1'}
-                  onChange={value => setUpdatedContactInfo(value === '0' ? true : false)}
-                >
-                  <Stack direction="row">
-                    <Radio value="0">{`Yes, I have`}</Radio>
-                    <Radio value="1">{`No, I have not`}</Radio>
-                  </Stack>
-                </RadioGroup>
-              </FormControl>
-              {/* Conditionally render form based on whether contact info was updated */}
-              {updatedContactInfo && (
-                <Box marginY="16px">
-                  <Text
-                    as="p"
-                    textAlign="left"
-                    textStyle="body-bold"
-                    marginBottom="24px"
-                  >{`Please fill out at least one of the following:`}</Text>
-                  <FormControl marginBottom="24px">
-                    <FormLabel>{`Phone Number`}</FormLabel>
-                    <Input
-                      type="tel"
-                      value={contactPhoneNumber}
-                      onChange={event => setContactPhoneNumber(event.target.value)}
-                    />
-                    <FormHelperText>{`e.g. 555-555-5555`}</FormHelperText>
-                  </FormControl>
-                  <FormControl marginBottom="24px">
-                    <FormLabel>{`Email Address`}</FormLabel>
-                    <Input
-                      value={contactEmailAddress}
-                      onChange={event => setContactEmailAddress(event.target.value)}
-                    />
-                    <FormHelperText>{`e.g. example@gmail.com`}</FormHelperText>
-                  </FormControl>
-                  <FormControl textAlign="left">
-                    <Checkbox>
-                      {`I would like to receive notifications to renew my permit through email`}
-                    </Checkbox>
-                  </FormControl>
-                </Box>
+            <Formik
+              initialValues={{
+                updatedContactInfo: false,
+                contactPhoneNumber,
+                contactEmailAddress,
+                receiveEmailUpdates,
+              }}
+              validationSchema={applicantFacingRenewalContactSchema}
+              onSubmit={handleCompleteContactInformationStep}
+            >
+              {({ values, isValid }) => (
+                <Form noValidate>
+                  <Box marginLeft="8px">
+                    {/* Check whether applicant has updated contact info */}
+                    <RadioGroupField
+                      name="updatedContactInfo"
+                      label="Have you changed your contact information since you received or renewed your last parking pass?"
+                      required
+                      value={
+                        values.updatedContactInfo === null
+                          ? undefined
+                          : Number(values.updatedContactInfo)
+                      }
+                    >
+                      <Stack>
+                        <Radio value={1}>{`Yes, I have`}</Radio>
+                        <Radio value={0}>{'No, I have not'}</Radio>
+                      </Stack>
+                    </RadioGroupField>
+                    {/* Conditionally render form based on whether contact info was updated */}
+                    {!!Number(values.updatedContactInfo) && (
+                      <Box marginY="16px">
+                        <Text
+                          as="p"
+                          textAlign="left"
+                          textStyle="body-bold"
+                          marginBottom="24px"
+                        >{`Please fill out at least one of the following:`}</Text>
+                        <Box marginBottom="24px">
+                          <TextField name="contactPhoneNumber" label="Phone Number">
+                            <FormHelperText>{`e.g. 555-555-5555`}</FormHelperText>
+                          </TextField>
+                        </Box>
+                        <Box marginBottom="24px">
+                          <TextField name="contactEmailAddress" label="Email Address">
+                            <FormHelperText>{`e.g. example@gmail.com`}</FormHelperText>
+                          </TextField>
+                        </Box>
+                        <CheckboxField
+                          name="receiveEmailUpdates"
+                          textAlign="left"
+                          isDisabled={!values.contactEmailAddress}
+                        >
+                          {`I would like to receive notifications to renew my permit through email`}
+                        </CheckboxField>
+                      </Box>
+                    )}
+                    {!isValid && <IncompleteSectionAlert />}
+                    <Flex width="100%" justifyContent="flex-end">
+                      <Button
+                        variant="outline"
+                        onClick={prevStep}
+                        marginRight="32px"
+                        isDisabled={!isValid}
+                      >{`Previous`}</Button>
+                      <Button variant="solid" type="submit">
+                        {isReviewing ? `Review request` : `Next`}
+                      </Button>
+                    </Flex>
+                  </Box>
+                </Form>
               )}
-              {invalidContact && <IncompleteSectionAlert />}
-              <Flex width="100%" justifyContent="flex-end">
-                <Button
-                  variant="outline"
-                  onClick={prevStep}
-                  marginRight="32px"
-                >{`Previous`}</Button>
-                <Button
-                  variant="solid"
-                  onClick={isReviewing ? goToReview : nextStep}
-                  disabled={invalidContact}
-                >
-                  {isReviewing ? `Review request` : `Next`}
-                </Button>
-              </Flex>
-            </Box>
+            </Formik>
           </Step>
           <Step label={`Doctor's Information`}>
-            <Box marginLeft="8px">
-              {/* Check whether applicant has updated doctor info */}
-              <FormControl isRequired textAlign="left">
-                <FormLabel>
-                  {`Have you changed your doctor since you last received or renewed your parking
-                  permit?`}
-                </FormLabel>
-                <RadioGroup
-                  value={updatedDoctor ? '0' : '1'}
-                  onChange={value => setUpdatedDoctor(value === '0' ? true : false)}
-                >
-                  <Stack direction="row">
-                    <Radio value="0">{`Yes, I have`}</Radio>
-                    <Radio value="1">{`No, I have not`}</Radio>
-                  </Stack>
-                </RadioGroup>
-              </FormControl>
-              {/* Conditionally render form based on whether doctor info was updated */}
-              {updatedDoctor && (
-                <Box marginY="16px">
-                  <Text
-                    as="p"
-                    textAlign="left"
-                    textStyle="body-bold"
-                    marginBottom="24px"
-                  >{`Please fill out your doctor's information:`}</Text>
-                  <HStack spacing="48px" marginBottom="24px">
-                    <FormControl isRequired>
-                      <FormLabel>{`First name`}</FormLabel>
-                      <Input
-                        value={doctorFirstName}
-                        onChange={event => setDoctorFirstName(event.target.value)}
-                      />
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel>{`Last name`}</FormLabel>
-                      <Input
-                        value={doctorLastName}
-                        onChange={event => setDoctorLastName(event.target.value)}
-                      />
-                    </FormControl>
-                  </HStack>
-                  <FormControl isRequired marginBottom="24px">
-                    <FormLabel>{`Your Doctor's Medical Services Plan (MSP) Number`}</FormLabel>
-                    <NumberInput width="184px">
-                      <NumberInputField
-                        value={doctorMspNumber}
-                        onChange={event => setDoctorMspNumber(event.target.value)}
-                      />
-                    </NumberInput>
-                    <FormHelperText>
-                      {`Your Doctor has a unique Medical Services Plan Number. If you do not know
-                      where to find it, please contact your doctor.`}
-                    </FormHelperText>
-                  </FormControl>
-                  <FormControl isRequired marginBottom="24px">
-                    <FormLabel>{`Address Line 1`}</FormLabel>
-                    <Input
-                      value={doctorAddressLine1}
-                      onChange={event => setDoctorAddressLine1(event.target.value)}
-                    />
-                    <FormHelperText>{`Street Address, P. O. Box, Company Name, c/o`}</FormHelperText>
-                  </FormControl>
-                  <FormControl marginBottom="24px">
-                    <FormLabel>{`Address Line 2 (optional)`}</FormLabel>
-                    <Input
-                      value={doctorAddressLine2}
-                      onChange={event => setDoctorAddressLine2(event.target.value)}
-                    />
-                    <FormHelperText>{`Apartment, suite, unit, building, floor, etc`}</FormHelperText>
-                  </FormControl>
-                  <FormControl isRequired marginBottom="24px">
-                    <FormLabel>{`City`}</FormLabel>
-                    <Input
-                      value={doctorCity}
-                      onChange={event => setDoctorCity(event.target.value)}
-                    />
-                    <FormHelperText>{`e.g. Vancouver`}</FormHelperText>
-                  </FormControl>
-                  <FormControl isRequired marginBottom="24px">
-                    <FormLabel>{`Postal Code`}</FormLabel>
-                    <Input
-                      value={doctorPostalCode}
-                      onChange={event => setDoctorPostalCode(event.target.value)}
-                    />
-                    <FormHelperText>{`e.g. X0X 0X0`}</FormHelperText>
-                  </FormControl>
-                  <FormControl isRequired marginBottom="24px">
-                    <FormLabel>{`Phone Number`}</FormLabel>
-                    <Input
-                      type="tel"
-                      value={doctorPhoneNumber}
-                      onChange={event => setDoctorPhoneNumber(event.target.value)}
-                    />
-                    <FormHelperText>{`e.g. 555-555-5555`}</FormHelperText>
-                  </FormControl>
-                </Box>
+            <Formik
+              initialValues={{
+                updatedDoctor: false,
+                doctorFirstName,
+                doctorLastName,
+                doctorMspNumber,
+                doctorAddressLine1,
+                doctorAddressLine2,
+                doctorCity,
+                doctorPostalCode,
+                doctorPhoneNumber,
+              }}
+              validationSchema={applicantFacingRenewalDoctorSchema}
+              onSubmit={handleCompleteDoctorInformationStep}
+            >
+              {({ values, isValid }) => (
+                <Form noValidate>
+                  <Box marginLeft="8px">
+                    {/* Check whether applicant has updated doctor info */}
+                    <RadioGroupField
+                      name="updatedDoctor"
+                      label="Have you changed your doctor since you last received or renewed your parking permit?"
+                      required
+                      value={
+                        values.updatedDoctor === null ? undefined : Number(values.updatedDoctor)
+                      }
+                    >
+                      <Stack>
+                        <Radio value={1}>{'Yes, I have'}</Radio>
+                        <Radio value={0}>{'No, I have not'}</Radio>
+                      </Stack>
+                    </RadioGroupField>
+                    {/* Conditionally render form based on whether doctor info was updated */}
+                    {!!Number(values.updatedDoctor) && (
+                      <Box marginY="16px">
+                        <Text
+                          as="p"
+                          textAlign="left"
+                          textStyle="body-bold"
+                          marginBottom="24px"
+                        >{`Please fill out your doctor's information:`}</Text>
+                        <HStack spacing="48px" marginBottom="24px">
+                          <TextField name="doctorFirstName" label="First name" required />
+                          <TextField name="doctorLastName" label="Last name" required />
+                        </HStack>
+                        <Box marginBottom="24px">
+                          <TextField
+                            name="doctorMspNumber"
+                            label="Your Doctor's Medical Services Plan (MSP) Number"
+                            required
+                          >
+                            <FormHelperText>
+                              {`Your Doctor has a unique Medical Services Plan Number. If you do not know
+                              where to find it, please contact your doctor.`}
+                            </FormHelperText>
+                          </TextField>
+                        </Box>
+                        <Box marginBottom="24px">
+                          <TextField name="doctorAddressLine1" label="Address Line 1" required>
+                            <FormHelperText>{`Street Address, P. O. Box, Company Name, c/o`}</FormHelperText>
+                          </TextField>
+                        </Box>
+                        <Box marginBottom="24px">
+                          <TextField name="doctorAddressLine2" label="Address Line 2 (optional)">
+                            <FormHelperText>{`Apartment, suite, unit, building, floor, etc`}</FormHelperText>
+                          </TextField>
+                        </Box>
+                        <Box marginBottom="24px">
+                          <TextField name="doctorCity" label="City" required>
+                            <FormHelperText>{`e.g. Vancouver`}</FormHelperText>
+                          </TextField>
+                        </Box>
+                        <Box marginBottom="24px">
+                          <TextField name="doctorPostalCode" label="Postal Code" required>
+                            <FormHelperText>{`e.g. X0X 0X0`}</FormHelperText>
+                          </TextField>
+                        </Box>
+                        <Box marginBottom="24px">
+                          <TextField name="doctorPhoneNumber" label="Phone Number" required>
+                            <FormHelperText>{`e.g. 555-555-5555`}</FormHelperText>
+                          </TextField>
+                        </Box>
+                      </Box>
+                    )}
+                    {!isValid && <IncompleteSectionAlert />}
+                    <Flex width="100%" justifyContent="flex-end">
+                      <Button
+                        variant="outline"
+                        onClick={prevStep}
+                        marginRight="32px"
+                        isDisabled={!isValid}
+                      >{`Previous`}</Button>
+                      <Button variant="solid" type="submit">
+                        {isReviewing ? `Review request` : `Next`}
+                      </Button>
+                    </Flex>
+                  </Box>
+                </Form>
               )}
-              {invalidDoctor && <IncompleteSectionAlert />}
-              <Flex width="100%" justifyContent="flex-end">
-                <Button
-                  variant="outline"
-                  onClick={prevStep}
-                  marginRight="32px"
-                >{`Previous`}</Button>
-                <Button
-                  variant="solid"
-                  onClick={isReviewing ? goToReview : nextStep}
-                  disabled={invalidDoctor}
-                >
-                  {isReviewing ? `Review request` : `Next`}
-                </Button>
-              </Flex>
-            </Box>
+            </Formik>
           </Step>
           <Step label={`Review Request`}>
             <Box marginTop="24px" marginBottom="40px">
@@ -536,24 +638,18 @@ export default function Renew() {
                 onChange={event => setCertified(event.target.checked)}
               >
                 {`I certify that I am the holder of the accessible parking pass for which this
-                application for renewal is submitted, and that I have personally provided all of the
-                information required in this application.`}
+          application for renewal is submitted, and that I have personally provided all of the
+          information required in this application.`}
               </Checkbox>
             </Box>
+            <ValidationErrorAlert error={error} />
             <Flex width="100%" justifyContent="flex-end">
               <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
               <Button
                 variant="solid"
                 onClick={handleSubmit}
                 isLoading={loading}
-                disabled={
-                  loading ||
-                  !applicantId ||
-                  !certified ||
-                  invalidPersonalAddress ||
-                  invalidContact ||
-                  invalidDoctor
-                }
+                disabled={!applicantId || !certified}
               >{`Proceed to payment`}</Button>
             </Flex>
           </Step>

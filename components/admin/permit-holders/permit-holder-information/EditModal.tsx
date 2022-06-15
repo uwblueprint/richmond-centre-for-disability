@@ -6,259 +6,214 @@ import {
   ModalFooter,
   ModalBody,
   Button,
-  FormControl,
-  FormLabel,
-  Input,
   useDisclosure,
   Text,
   Stack,
   FormHelperText,
   Box,
-  Select,
   Divider,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, useEffect, ReactNode, SyntheticEvent } from 'react'; // React
-import { Gender } from '@lib/graphql/types'; // Gender Enum
-import { formatDate } from '@lib/utils/date'; // Date formatter util
-import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
+import { ReactNode, useState } from 'react'; // React
+import {
+  ApplicantFormData,
+  UpdateApplicantGeneralInformationResponse,
+} from '@tools/admin/permit-holders/permit-holder-information';
+import TextField from '@components/form/TextField';
+import DateField from '@components/form/DateField';
+import SelectField from '@components/form/SelectField';
+import { Form, Formik } from 'formik';
+import { permitHolderInformationSchema } from '@lib/applicants/validation';
+import CheckboxField from '@components/form/CheckboxField';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 
 type EditUserInformationModalProps = {
   applicant: ApplicantFormData;
   children: ReactNode;
-  readonly onSave: (applicationData: ApplicantFormData) => void;
+  readonly onSave: (
+    applicationData: ApplicantFormData
+  ) => Promise<UpdateApplicantGeneralInformationResponse | null | undefined>;
+  loading: boolean;
 };
 
 export default function EditUserInformationModal({
   applicant,
   children,
   onSave,
+  loading,
 }: EditUserInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const [error, setError] = useState<string>('');
 
-  // Personal information state
-  const [firstName, setFirstName] = useState('');
-  const [middleName, setMiddleName] = useState<string | null>('');
-  const [lastName, setLastName] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(formatDate(new Date(), true));
-  const [gender, setGender] = useState<Gender>(applicant.gender);
-
-  // Contact information state
-  const [email, setEmail] = useState<string | null>('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-
-  // Home address information state
-  const [addressLine1, setAddressLine1] = useState('');
-  const [addressLine2, setAddressLine2] = useState('');
-  const [city, setCity] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-
-  //   TODO: Add error states for each field (post-mvp)
-
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setFirstName(applicant.firstName);
-    setMiddleName(applicant.middleName);
-    setLastName(applicant.lastName);
-    setDateOfBirth(formatDate(applicant.dateOfBirth, true));
-    setGender(applicant.gender);
-    setEmail(applicant.email);
-    setPhoneNumber(applicant.phone);
-    setAddressLine1(applicant.addressLine1);
-    setAddressLine2(applicant.addressLine2 || '');
-    setCity(applicant.city);
-    setPostalCode(applicant.postalCode);
-  }, [applicant]);
+  const onModalClose = () => {
+    onClose();
+    setError('');
+  };
 
   /**
    * Handle edit submission
    */
-  const handleSubmit = async (event: SyntheticEvent) => {
-    setLoading(true);
-    event.preventDefault();
-    await onSave({
-      firstName,
-      middleName,
-      lastName,
-      dateOfBirth,
-      gender,
-      email,
-      phone: phoneNumber,
-      addressLine1,
-      addressLine2,
-      city,
-      postalCode,
-    });
-    setLoading(false);
-    onClose();
+  const handleSubmit = async (values: ApplicantFormData) => {
+    const result = await onSave(values);
+
+    if (result?.updateApplicantGeneralInformation.ok) {
+      onModalClose();
+    } else {
+      setError(result?.updateApplicantGeneralInformation.error ?? '');
+    }
   };
 
   return (
     <>
       <Box onClick={onOpen}>{children}</Box>
 
-      <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
+      <Modal onClose={onModalClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />
-        <form onSubmit={handleSubmit}>
-          <ModalContent paddingX="36px">
-            <ModalHeader
-              textStyle="display-medium-bold"
-              paddingBottom="12px"
-              paddingTop="24px"
-              paddingX="4px"
-            >
-              <Text as="h2" textStyle="display-medium-bold">
-                {"Edit User's Information"}
-              </Text>
-            </ModalHeader>
-            <ModalBody paddingY="20px" paddingX="4px">
-              {/* Personal Information Section */}
-              <Box paddingBottom="32px">
-                <Text as="h3" textStyle="heading" paddingBottom="24px">
-                  {'Personal Information'}
-                </Text>
-                <Stack direction="row" spacing="20px" paddingBottom="24px">
-                  <FormControl isRequired>
-                    <FormLabel>{'First name'}</FormLabel>
-                    <Input value={firstName} onChange={event => setFirstName(event.target.value)} />
-                  </FormControl>
+        <Formik
+          initialValues={{
+            ...applicant,
+            dateOfBirth: formatDateYYYYMMDD(new Date(applicant.dateOfBirth)),
+          }}
+          validationSchema={permitHolderInformationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ values, isValid }) => (
+            <Form noValidate>
+              <ModalContent paddingX="36px">
+                <ModalHeader
+                  textStyle="display-medium-bold"
+                  paddingBottom="12px"
+                  paddingTop="24px"
+                  paddingX="4px"
+                >
+                  <Text as="h2" textStyle="display-medium-bold">
+                    {"Edit User's Information"}
+                  </Text>
+                </ModalHeader>
+                <ModalBody paddingY="20px" paddingX="4px">
+                  {/* Personal Information Section */}
+                  <Box paddingBottom="32px">
+                    <Text as="h3" textStyle="heading" paddingBottom="24px">
+                      {'Personal Information'}
+                    </Text>
+                    <Stack direction="row" spacing="20px" paddingBottom="24px">
+                      <TextField name="firstName" label="First name" required />
+                      <TextField name="middleName" label="Middle name" />
+                      <TextField name="lastName" label="Last name" required />
+                    </Stack>
 
-                  <FormControl>
-                    <FormLabel>{'Middle name'}</FormLabel>
-                    <Input
-                      value={middleName || ''}
-                      onChange={event => setMiddleName(event.target.value)}
-                    />
-                  </FormControl>
+                    <Stack direction="row" spacing="20px">
+                      <DateField name="dateOfBirth" label="Date of birth" required />
+                      <SelectField
+                        name="gender"
+                        label="Gender"
+                        required
+                        placeholder="Select gender"
+                      >
+                        <option value={'MALE'}>{'Male'}</option>
+                        <option value={'FEMALE'}>{'Female'}</option>
+                        <option value={'OTHER'}>{'Other'}</option>
+                      </SelectField>
+                    </Stack>
+                  </Box>
 
-                  <FormControl isRequired>
-                    <FormLabel>{'Last name'}</FormLabel>
-                    <Input value={lastName} onChange={event => setLastName(event.target.value)} />
-                  </FormControl>
-                </Stack>
+                  <Divider />
 
-                <Stack direction="row" spacing="20px">
-                  <FormControl isRequired>
-                    <FormLabel>{`Date of birth`}</FormLabel>
-                    <Input
-                      type="date"
-                      value={dateOfBirth}
-                      onChange={event => setDateOfBirth(event.target.value)}
-                    />
-                  </FormControl>
+                  {/* Contact Information Section */}
 
-                  <FormControl isRequired>
-                    <FormLabel>{'Gender'}</FormLabel>
-                    <Select
-                      placeholder="None Selected"
-                      value={gender}
-                      onChange={event => setGender(event.target.value as Gender)}
-                    >
-                      <option value={'MALE'}>{'Male'}</option>
-                      <option value={'FEMALE'}>{'Female'}</option>
-                      <option value={'OTHER'}>{'Other'}</option>
-                    </Select>
-                  </FormControl>
-                </Stack>
-              </Box>
+                  <Box paddingY="32px">
+                    <Text as="h3" textStyle="heading" paddingBottom="24px">
+                      {'Contact Information'}
+                    </Text>
 
-              <Divider />
+                    <Stack direction="row" spacing="20px">
+                      <TextField
+                        name="email"
+                        label={
+                          <>
+                            {'Email address '}
+                            <Box as="span" textStyle="body-regular" fontSize="sm">
+                              {'(optional)'}
+                            </Box>
+                          </>
+                        }
+                      />
+                      <TextField name="phone" label="Phone number" required type="tel">
+                        <FormHelperText color="text.secondary">
+                          {'Example: 000-000-0000'}
+                        </FormHelperText>
+                      </TextField>
+                    </Stack>
 
-              {/* Contact Information Section */}
+                    <Box paddingTop="24px">
+                      <CheckboxField name="receiveEmailUpdates" isDisabled={!values.email}>
+                        {'Permit holder would like to receive renewal updates through email'}
+                      </CheckboxField>
+                    </Box>
+                  </Box>
 
-              <Box paddingY="32px">
-                <Text as="h3" textStyle="heading" paddingBottom="24px">
-                  {'Contact Information'}
-                </Text>
+                  <Divider />
 
-                <Stack direction="row" spacing="20px">
-                  <FormControl>
-                    <FormLabel>
-                      {'Email '}
-                      <Box as="span" textStyle="caption">
-                        {'(optional)'}
-                      </Box>
-                    </FormLabel>
-                    <Input
-                      value={email || ''}
-                      onChange={event =>
-                        setEmail(event.target.value === '' ? null : event.target.value)
-                      }
-                    />
-                  </FormControl>
+                  {/* Home Address Section */}
 
-                  <FormControl isRequired>
-                    <FormLabel>{'Phone number'}</FormLabel>
-                    <Input
-                      value={phoneNumber}
-                      onChange={event => setPhoneNumber(event.target.value)}
-                      type="tel"
-                    />
-                    <FormHelperText color="text.secondary">
-                      {'Example: 000-000-0000'}
-                    </FormHelperText>
-                  </FormControl>
-                </Stack>
-              </Box>
+                  <Box paddingTop="32px">
+                    <Text as="h3" textStyle="heading" paddingBottom="24px">
+                      {'Home Address'}
+                    </Text>
 
-              <Divider />
+                    <Box paddingBottom="24px">
+                      <TextField name="addressLine1" label="Address line 1" required>
+                        <FormHelperText color="text.secondary">
+                          {'Street Address, P.O. Box, Company Name, c/o'}
+                        </FormHelperText>
+                      </TextField>
+                    </Box>
 
-              {/* Home Address Section */}
+                    <Box paddingBottom="24px">
+                      <TextField
+                        name="addressLine2"
+                        label={
+                          <>
+                            {'Address line 2 '}
+                            <Box as="span" textStyle="body-regular" fontSize="sm">
+                              {'(optional)'}
+                            </Box>
+                          </>
+                        }
+                      >
+                        <FormHelperText color="text.secondary">
+                          {'Apartment, suite, unit, building, floor, etc'}
+                        </FormHelperText>
+                      </TextField>
+                    </Box>
 
-              <Box paddingTop="32px">
-                <Text as="h3" textStyle="heading" paddingBottom="24px">
-                  {'Home Address'}
-                </Text>
-
-                <FormControl isRequired paddingBottom="24px">
-                  <FormLabel>{'Address line 1'}</FormLabel>
-                  <Input
-                    value={addressLine1}
-                    onChange={event => setAddressLine1(event.target.value)}
-                  />
-                  <FormHelperText color="text.secondary">
-                    {'Street Address, P.O. Box, Company Name, c/o'}
-                  </FormHelperText>
-                </FormControl>
-
-                <FormControl paddingBottom="24px">
-                  <FormLabel>{'Address line 2 '}</FormLabel>
-                  <Input
-                    value={addressLine2}
-                    onChange={event => setAddressLine2(event.target.value)}
-                  />
-                  <FormHelperText color="text.secondary">
-                    {'Apartment, suite, unit, building, floor, etc'}
-                  </FormHelperText>
-                </FormControl>
-
-                <Stack direction="row" spacing="20px">
-                  <FormControl isRequired>
-                    <FormLabel>{'City'}</FormLabel>
-                    <Input value={city} onChange={event => setCity(event.target.value)} />
-                  </FormControl>
-
-                  <FormControl isRequired>
-                    <FormLabel>{'Postal code'}</FormLabel>
-                    <Input
-                      value={postalCode}
-                      onChange={event => setPostalCode(event.target.value)}
-                    />
-                    <FormHelperText color="text.secondary">{'Example: X0X 0X0'} </FormHelperText>
-                  </FormControl>
-                </Stack>
-              </Box>
-            </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingX="4px">
-              <Button colorScheme="gray" variant="solid" onClick={onClose}>
-                {'Cancel'}
-              </Button>
-              <Button variant="solid" type="submit" ml={'12px'} isLoading={loading}>
-                {'Save'}
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </form>
+                    <Stack direction="row" spacing="20px">
+                      <TextField name="city" label="City" required />
+                      <TextField name="postalCode" label="Postal code" required>
+                        <FormHelperText color="text.secondary">{'Example: X0X 0X0'}</FormHelperText>
+                      </TextField>
+                    </Stack>
+                  </Box>
+                </ModalBody>
+                <ValidationErrorAlert error={error} />
+                <ModalFooter paddingBottom="24px" paddingX="4px">
+                  <Button colorScheme="gray" variant="solid" onClick={onModalClose}>
+                    {'Cancel'}
+                  </Button>
+                  <Button
+                    variant="solid"
+                    type="submit"
+                    ml={'12px'}
+                    isLoading={loading}
+                    isDisabled={loading || !isValid}
+                  >
+                    {'Save'}
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Form>
+          )}
+        </Formik>
       </Modal>
     </>
   );

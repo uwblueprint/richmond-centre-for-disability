@@ -10,9 +10,16 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { useState, useEffect, SyntheticEvent, ReactNode } from 'react'; // React
-import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
+import { ReactNode, useState } from 'react'; // React
+import {
+  PermitHolderFormData,
+  UpdateNewApplicationPermitHolderInformationResponse,
+  UpdatePermitHolderInformationResponse,
+} from '@tools/admin/requests/permit-holder-information';
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form';
+import { Form, Formik } from 'formik';
+import { editRequestPermitHolderInformationSchema } from '@lib/applicants/validation';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 /**
  * Props for Edit Permit Information Modal
@@ -20,79 +27,88 @@ import PermitHolderInformationForm from '@components/admin/requests/permit-holde
 type EditPermitHolderInformationModalProps = {
   children: ReactNode;
   readonly permitHolderInformation: PermitHolderFormData;
-  readonly onSave: (applicationData: PermitHolderFormData) => void;
+  readonly onSave: (
+    applicationData: any
+  ) => Promise<
+    | UpdatePermitHolderInformationResponse
+    | UpdateNewApplicationPermitHolderInformationResponse
+    | undefined
+    | null
+  >;
 };
 
 export default function EditPermitHolderInformationModal({
   children,
-  permitHolderInformation: currentPermitHolderInformation,
+  permitHolderInformation,
   onSave,
 }: EditPermitHolderInformationModalProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const [permitHolderInformation, setPermitHolderInformation] = useState<
-    EditPermitHolderInformationModalProps['permitHolderInformation']
-  >(currentPermitHolderInformation);
+  const [error, setError] = useState<string>('');
 
-  useEffect(() => {
-    setPermitHolderInformation(currentPermitHolderInformation);
-  }, [currentPermitHolderInformation, isOpen]);
-
-  //   TODO: Add error states for each field (post-mvp)
-
-  const handleSubmit = (event: SyntheticEvent) => {
-    event.preventDefault();
-    onSave(permitHolderInformation);
+  const onModalClose = () => {
     onClose();
+    setError('');
   };
 
-  const handleChange = (updatedData: PermitHolderFormData) => {
-    if (permitHolderInformation.type === 'REPLACEMENT') {
-      setPermitHolderInformation({
-        ...permitHolderInformation,
-        ...updatedData,
-        receiveEmailUpdates: false,
-      });
+  const handleSubmit = async (values: { permitHolder: PermitHolderFormData }) => {
+    const result = await onSave(values.permitHolder);
+
+    if (
+      (result as UpdatePermitHolderInformationResponse)?.updateApplicationGeneralInformation?.ok ||
+      (result as UpdateNewApplicationPermitHolderInformationResponse)
+        ?.updateNewApplicationGeneralInformation?.ok
+    ) {
+      onModalClose();
     } else {
-      setPermitHolderInformation({
-        ...permitHolderInformation,
-        ...updatedData,
-      });
+      setError(
+        ((result as UpdatePermitHolderInformationResponse)?.updateApplicationGeneralInformation
+          ?.error ||
+          (result as UpdateNewApplicationPermitHolderInformationResponse)
+            ?.updateNewApplicationGeneralInformation?.error) ??
+          ''
+      );
     }
   };
 
   return (
     <>
       <Box onClick={onOpen}>{children}</Box>
-      <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
+      <Modal onClose={onModalClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />
-        <form onSubmit={handleSubmit}>
-          <ModalContent paddingX="36px">
-            <ModalHeader
-              textStyle="display-medium-bold"
-              paddingBottom="12px"
-              paddingTop="24px"
-              paddingX="4px"
-            >
-              <Text as="h2" textStyle="display-medium-bold">
-                {'Edit Permit Holder Information'}
-              </Text>
-            </ModalHeader>
-            <ModalBody paddingY="20px" paddingX="4px">
-              <PermitHolderInformationForm
-                permitHolderInformation={permitHolderInformation}
-                onChange={handleChange}
-              />
-            </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingX="4px">
-              <Button colorScheme="gray" variant="solid" onClick={onClose}>
-                {'Cancel'}
-              </Button>
-              <Button variant="solid" type="submit" ml={'12px'}>
-                {'Save'}
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </form>
+        <Formik
+          initialValues={{ permitHolder: { ...permitHolderInformation } }}
+          validationSchema={editRequestPermitHolderInformationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ values, isValid }) => (
+            <Form style={{ width: '100%' }} noValidate>
+              <ModalContent paddingX="36px">
+                <ModalHeader
+                  textStyle="display-medium-bold"
+                  paddingBottom="12px"
+                  paddingTop="24px"
+                  paddingX="4px"
+                >
+                  <Text as="h2" textStyle="display-medium-bold">
+                    {'Edit Permit Holder Information'}
+                  </Text>
+                </ModalHeader>
+                <ModalBody paddingY="20px" paddingX="4px">
+                  <PermitHolderInformationForm permitHolderInformation={values.permitHolder} />
+                </ModalBody>
+                <ValidationErrorAlert error={error} />
+                <ModalFooter paddingBottom="24px" paddingX="4px">
+                  <Button colorScheme="gray" variant="solid" onClick={onModalClose}>
+                    {'Cancel'}
+                  </Button>
+                  <Button variant="solid" type="submit" ml={'12px'} isDisabled={!isValid}>
+                    {'Save'}
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Form>
+          )}
+        </Formik>
       </Modal>
     </>
   );

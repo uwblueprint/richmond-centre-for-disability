@@ -52,10 +52,12 @@ export default gql`
     lastName: String!
     dateOfBirth: Date!
     gender: Gender!
+    otherGender: String
 
     # Contact
     phone: String!
     email: String
+    receiveEmailUpdates: Boolean!
 
     # Address (omit Province, Country)
     addressLine1: String!
@@ -66,6 +68,7 @@ export default gql`
 
   type UpdateApplicantGeneralInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update applicant doctor information
@@ -76,7 +79,7 @@ export default gql`
     # Personal
     firstName: String!
     lastName: String!
-    mspNumber: Int!
+    mspNumber: String!
     phone: String!
 
     # Address
@@ -88,6 +91,7 @@ export default gql`
 
   type UpdateApplicantDoctorInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Update applicant guardian information
@@ -96,17 +100,17 @@ export default gql`
     id: Int!
 
     # Personal
-    firstName: String!
+    firstName: String
     middleName: String
-    lastName: String!
-    phone: String!
-    relationship: String!
+    lastName: String
+    phone: String
+    relationship: String
 
     # Address (omit Province, Country)
-    addressLine1: String!
+    addressLine1: String
     addressLine2: String
-    city: String!
-    postalCode: String!
+    city: String
+    postalCode: String
 
     # POA form
     poaFormS3ObjectKey: String
@@ -116,6 +120,7 @@ export default gql`
 
   type UpdateApplicantGuardianInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Set applicant as active

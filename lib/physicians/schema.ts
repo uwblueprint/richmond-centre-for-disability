@@ -7,7 +7,7 @@ import { gql } from '@apollo/client';
 export default gql`
   type Physician {
     # General information
-    mspNumber: Int!
+    mspNumber: String!
     firstName: String!
     lastName: String!
     phone: String!
@@ -20,5 +20,23 @@ export default gql`
     province: Province!
     country: String!
     postalCode: String!
+  }
+
+  input UpsertPhysicianInput {
+    mspNumber: String!
+    name: String!
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    province: Province
+    postalCode: String!
+    phone: String!
+    status: PhysicianStatus
+    notes: String
+  }
+
+  type UpsertPhysicianResult {
+    ok: Boolean!
+    physicianId: Int!
   }
 `;

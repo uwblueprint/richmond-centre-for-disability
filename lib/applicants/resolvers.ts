@@ -23,7 +23,10 @@ import {
 import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
 import { PermitType } from '@prisma/client';
-import { verifyIdentitySchema } from '@lib/applicants/verify-identity/validation';
+import { permitHolderInformationSchema, verifyIdentitySchema } from '@lib/applicants/validation';
+import { ValidationError } from 'yup';
+import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
+import { guardianInformationSchema } from '@lib/guardian/validation';
 import { stripPhoneNumber, stripPostalCode } from '@lib/utils/format';
 import moment from 'moment';
 
@@ -236,8 +239,19 @@ export const updateApplicantGeneralInformation: Resolver<
   MutationUpdateApplicantGeneralInformationArgs,
   UpdateApplicantGeneralInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
+
+  try {
+    await permitHolderInformationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
   const { id, ...data } = input;
   data.phone = stripPhoneNumber(data.phone);
   data.postalCode = stripPostalCode(data.postalCode);
@@ -256,7 +270,7 @@ export const updateApplicantGeneralInformation: Resolver<
     throw new ApolloError('Applicant was unable to be updated');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -267,13 +281,35 @@ export const updateApplicantDoctorInformation: Resolver<
   MutationUpdateApplicantDoctorInformationArgs,
   UpdateApplicantDoctorInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
   const { id, mspNumber, ...data } = input;
-  data.phone = stripPhoneNumber(data.phone);
-  data.postalCode = stripPostalCode(data.postalCode);
+  const { firstName, lastName, addressLine1, addressLine2, city } = input;
+
+  const phone = stripPhoneNumber(data.phone);
+  const postalCode = stripPostalCode(data.postalCode);
+
+  try {
+    await requestPhysicianInformationSchema.validate({
+      firstName,
+      lastName,
+      mspNumber,
+      phone,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
 
   let updatedApplicant;
+
   try {
     updatedApplicant = await prisma.applicant.update({
       where: { id },
@@ -298,7 +334,7 @@ export const updateApplicantDoctorInformation: Resolver<
     throw new ApolloError("Applicant's physician was unable to be updated");
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -310,27 +346,76 @@ export const updateApplicantGuardianInformation: Resolver<
   UpdateApplicantGuardianInformationResult
 > = async (_parent, args, { prisma }) => {
   const { input } = args;
-  const { id, omitGuardianPoa, ...data } = input;
-  data.phone = stripPhoneNumber(data.phone);
-  data.postalCode = stripPostalCode(data.postalCode);
+
+  const {
+    id,
+    omitGuardianPoa,
+    firstName,
+    middleName,
+    lastName,
+    relationship,
+    addressLine1,
+    addressLine2,
+    city,
+    ...data
+  } = input;
+
+  const phone = data.phone ? stripPhoneNumber(data.phone) : null;
+  const postalCode = data.postalCode ? stripPostalCode(data.postalCode) : null;
+
+  try {
+    await guardianInformationSchema.validate({
+      omitGuardianPoa,
+      firstName,
+      middleName,
+      lastName,
+      phone,
+      relationship,
+      addressLine1,
+      addressLine2,
+      city,
+      postalCode,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
 
   let updatedApplicant;
   try {
     updatedApplicant = await prisma.applicant.update({
       where: { id },
       data: {
-        guardian: omitGuardianPoa ? { disconnect: true } : { update: data },
+        guardian: omitGuardianPoa
+          ? { disconnect: true }
+          : {
+              update: {
+                firstName: firstName as string,
+                middleName: middleName as string | null,
+                lastName: lastName as string,
+                phone: phone as string,
+                relationship: relationship as string,
+                addressLine1: addressLine1 as string,
+                addressLine2: addressLine2 as string | null,
+                city: city as string,
+                postalCode: postalCode as string,
+              },
+            },
       },
     });
   } catch {
-    // TODO: Handle error
+    // TODO: handle error
   }
 
   if (!updatedApplicant) {
     throw new ApolloError("Applicant's guardian was unable to be updated");
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**

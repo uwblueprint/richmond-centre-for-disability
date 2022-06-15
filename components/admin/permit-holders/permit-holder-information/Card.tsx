@@ -25,6 +25,7 @@ import {
 } from '@tools/admin/permit-holders/permit-holder-information';
 import { useMutation, useQuery } from '@apollo/client';
 import Address from '@components/admin/Address';
+import { permitHolderInformationSchema } from '@lib/applicants/validation';
 
 type PersonalInformationProps = {
   readonly applicantId: number;
@@ -48,7 +49,7 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
     notifyOnNetworkStatusChange: true,
   });
 
-  const [updateGeneralInformation] = useMutation<
+  const [updateGeneralInformation, { loading }] = useMutation<
     UpdateApplicantGeneralInformationResponse,
     UpdateApplicantGeneralInformationRequest
   >(UPDATE_APPLICANT_GENERAL_INFORMATION_MUTATION, {
@@ -62,9 +63,15 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
       }
     },
   });
-  const handleSave = async (data: ApplicantFormData) => {
-    await updateGeneralInformation({ variables: { input: { id: applicantId, ...data } } });
+  const handleSave = async (applicantFormData: ApplicantFormData) => {
+    const validatedData = await permitHolderInformationSchema.validate(applicantFormData);
+
+    const { data } = await updateGeneralInformation({
+      variables: { input: { id: applicantId, ...validatedData } },
+    });
+
     refetch();
+    return data;
   };
 
   const { hasCopied, onCopy } = useClipboard(permitHolderInformation?.email || '');
@@ -109,12 +116,14 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
             gender,
             phone,
             email,
+            receiveEmailUpdates,
             addressLine1,
             addressLine2,
             city,
             postalCode,
           }}
           onSave={handleSave}
+          loading={loading}
         >
           <Button color="primary" variant="ghost" textDecoration="underline">
             <Text textStyle="body-bold">Edit</Text>

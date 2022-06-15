@@ -8,7 +8,7 @@ import moment from 'moment';
  */
 export const formatDate = (date: Date, dateInput = false): string => {
   const formattedDateUTC = moment.utc(date);
-  return dateInput ? formattedDateUTC.format() : formattedDateUTC.format('MM/DD/YYYY');
+  return dateInput ? formattedDateUTC.format('YYYY-MM-DD') : formattedDateUTC.format('MM/DD/YYYY');
 };
 
 /**

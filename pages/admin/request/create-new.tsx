@@ -1,4 +1,4 @@
-import { useState, useCallback, SyntheticEvent } from 'react';
+import { useState, useCallback } from 'react';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import {
@@ -34,8 +34,8 @@ import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment'
 import { DoctorFormData } from '@tools/admin/requests/doctor-information';
 import { GuardianInformation } from '@tools/admin/requests/guardian-information';
 import { RequestFlowPageState } from '@tools/admin/requests/types';
-import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
+import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import { NewApplicationPermitHolderInformation } from '@tools/admin/requests/permit-holder-information';
 import {
   CreateNewApplicationRequest,
@@ -52,8 +52,12 @@ import {
   INITIAL_PHYSICIAN_ASSESSMENT,
 } from '@tools/admin/requests/create-new';
 import { useRouter } from 'next/router';
-import { formatDateYYYYMMDD } from '@lib/utils/date';
+import { Form, Formik } from 'formik';
+import { createNewRequestFormSchema } from '@lib/applications/validation';
+import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 import { clientUploadToS3 } from '@lib/utils/s3-utils';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 
 /** Create New APP page */
 export default function CreateNew() {
@@ -67,10 +71,6 @@ export default function CreateNew() {
   // General information
   const [permitHolderInformation, setPermitHolderInformation] =
     useState<NewApplicationPermitHolderInformation>(INITIAL_PERMIT_HOLDER_INFORMATION);
-  // Physician assessment
-  const [physicianAssessment, setPhysicianAssessment] = useState<PhysicianAssessment>(
-    INITIAL_PHYSICIAN_ASSESSMENT
-  );
   // Doctor information
   const [doctorInformation, setDoctorInformation] = useState<DoctorFormData>(
     INITIAL_DOCTOR_INFORMATION
@@ -81,13 +81,8 @@ export default function CreateNew() {
   );
   // Guardian/POA File
   const [guardianPOAFile, setGuardianPOAFile] = useState<File | null>(null);
-  // Additional questions
-  const [additionalQuestions, setAdditionalQuestions] = useState<AdditionalInformationFormData>(
-    INITIAL_ADDITIONAL_QUESTIONS
-  );
-  // Payment information
-  const [paymentDetails, setPaymentDetails] =
-    useState<PaymentInformationFormData>(INITIAL_PAYMENT_DETAILS);
+  // Backend form validation error
+  const [error, setError] = useState<string>('');
 
   // Toast message
   const toast = useToast();
@@ -100,12 +95,9 @@ export default function CreateNew() {
     setApplicantId(null);
     setPermitHolderExists(true);
     setPermitHolderInformation(INITIAL_PERMIT_HOLDER_INFORMATION);
-    setPhysicianAssessment(INITIAL_PHYSICIAN_ASSESSMENT);
     setDoctorInformation(INITIAL_DOCTOR_INFORMATION);
     setGuardianInformation(INITIAL_GUARDIAN_INFORMATION);
     setGuardianPOAFile(null);
-    setAdditionalQuestions(INITIAL_ADDITIONAL_QUESTIONS);
-    setPaymentDetails(INITIAL_PAYMENT_DETAILS);
   };
 
   /**
@@ -223,7 +215,8 @@ export default function CreateNew() {
   >(CREATE_NEW_APPLICATION_MUTATION, {
     onCompleted: data => {
       if (data) {
-        const { ok, applicationId } = data.createNewApplication;
+        const { ok, applicationId, error } = data.createNewApplication;
+        setError(error ?? '');
         if (ok) {
           toast({
             status: 'success',
@@ -249,9 +242,13 @@ export default function CreateNew() {
   /**
    * Handle new APP request submission
    */
-  const handleSubmit = async (event: SyntheticEvent) => {
-    event.preventDefault();
-
+  const handleSubmit = async (values: {
+    permitHolder: NewApplicationPermitHolderInformation;
+    physicianAssessment: PhysicianAssessment;
+    guardianInformation: GuardianInformation;
+    additionalInformation: AdditionalInformationFormData;
+    paymentInformation: PaymentInformationFormData;
+  }) => {
     let poaFormS3ObjectKey = '';
     if (guardianPOAFile) {
       try {
@@ -267,98 +264,52 @@ export default function CreateNew() {
       }
     }
 
-    if (!permitHolderInformation.gender) {
-      toast({ status: 'error', description: 'Missing gender', isClosable: true });
-      return;
-    }
-
-    if (!physicianAssessment.patientCondition) {
-      toast({ status: 'error', description: 'Missing patient condition', isClosable: true });
-      return;
-    }
-
-    if (!physicianAssessment.permitType) {
-      toast({ status: 'error', description: 'Missing permit type', isClosable: true });
-      return;
-    }
-
-    if (additionalQuestions.usesAccessibleConvertedVan === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient uses accessible converted van',
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (additionalQuestions.requiresWiderParkingSpace === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient requires wider parking space',
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (!doctorInformation.mspNumber) {
-      toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
-      return;
-    }
-
-    if (!paymentDetails.paymentMethod) {
-      toast({ status: 'error', description: 'Missing payment method', isClosable: true });
-      return;
-    }
+    const validatedValues = await createNewRequestFormSchema.validate(values);
+    const additionalInformation = validatedValues.additionalInformation;
 
     await submitNewApplication({
       variables: {
         input: {
-          firstName: permitHolderInformation.firstName,
-          middleName: permitHolderInformation.middleName,
-          lastName: permitHolderInformation.lastName,
-          email: permitHolderInformation.email,
-          phone: permitHolderInformation.phone,
-          receiveEmailUpdates: permitHolderInformation.receiveEmailUpdates,
-          addressLine1: permitHolderInformation.addressLine1,
-          addressLine2: permitHolderInformation.addressLine2,
-          city: permitHolderInformation.city,
-          postalCode: permitHolderInformation.postalCode,
-          dateOfBirth: permitHolderInformation.dateOfBirth,
-          gender: permitHolderInformation.gender,
-          otherGender: permitHolderInformation.otherGender,
+          ...validatedValues.permitHolder,
 
-          ...physicianAssessment,
-          patientCondition: physicianAssessment.patientCondition,
-          mobilityAids: null, //TODO: get mobility aids when forms are updated to get this data
-          permitType: physicianAssessment.permitType,
+          ...validatedValues.physicianAssessment,
 
-          physicianFirstName: doctorInformation.firstName,
-          physicianLastName: doctorInformation.lastName,
-          physicianMspNumber: doctorInformation.mspNumber,
-          physicianPhone: doctorInformation.phone,
-          physicianAddressLine1: doctorInformation.addressLine1,
-          physicianAddressLine2: doctorInformation.addressLine2,
-          physicianCity: doctorInformation.city,
-          physicianPostalCode: doctorInformation.postalCode,
+          physicianFirstName: validatedValues.doctorInformation.firstName,
+          physicianLastName: validatedValues.doctorInformation.lastName,
+          physicianMspNumber: validatedValues.doctorInformation.mspNumber,
+          physicianPhone: validatedValues.doctorInformation.phone,
+          physicianAddressLine1: validatedValues.doctorInformation.addressLine1,
+          physicianAddressLine2: validatedValues.doctorInformation.addressLine2,
+          physicianCity: validatedValues.doctorInformation.city,
+          physicianPostalCode: validatedValues.doctorInformation.postalCode,
 
-          omitGuardianPoa: guardianInformation.omitGuardianPoa,
-          guardianFirstName: guardianInformation.firstName,
-          guardianMiddleName: guardianInformation.middleName,
-          guardianLastName: guardianInformation.lastName,
-          guardianPhone: guardianInformation.phone,
-          guardianRelationship: guardianInformation.relationship,
-          guardianAddressLine1: guardianInformation.addressLine1,
-          guardianAddressLine2: guardianInformation.addressLine2,
-          guardianCity: guardianInformation.city,
-          guardianPostalCode: guardianInformation.postalCode,
+          omitGuardianPoa: validatedValues.guardianInformation.omitGuardianPoa,
+          guardianFirstName: validatedValues.guardianInformation.firstName,
+          guardianMiddleName: validatedValues.guardianInformation.middleName,
+          guardianLastName: validatedValues.guardianInformation.lastName,
+          guardianPhone: validatedValues.guardianInformation.phone,
+          guardianRelationship: validatedValues.guardianInformation.relationship,
+          guardianAddressLine1: validatedValues.guardianInformation.addressLine1,
+          guardianAddressLine2: validatedValues.guardianInformation.addressLine2,
+          guardianCity: validatedValues.guardianInformation.city,
+          guardianPostalCode: validatedValues.guardianInformation.postalCode,
           poaFormS3ObjectKey: poaFormS3ObjectKey,
 
-          ...additionalQuestions,
-          usesAccessibleConvertedVan: additionalQuestions.usesAccessibleConvertedVan,
-          requiresWiderParkingSpace: additionalQuestions.requiresWiderParkingSpace,
+          ...additionalInformation,
+          accessibleConvertedVanLoadingMethod: additionalInformation.usesAccessibleConvertedVan
+            ? additionalInformation.accessibleConvertedVanLoadingMethod
+            : null,
+          requiresWiderParkingSpaceReason: additionalInformation.requiresWiderParkingSpace
+            ? additionalInformation.requiresWiderParkingSpaceReason
+            : null,
+          otherRequiresWiderParkingSpaceReason:
+            additionalInformation.requiresWiderParkingSpace &&
+            additionalInformation.requiresWiderParkingSpaceReason ===
+              RequiresWiderParkingSpaceReason.OTHER
+              ? additionalInformation.otherRequiresWiderParkingSpaceReason
+              : null,
 
-          ...paymentDetails,
-          paymentMethod: paymentDetails.paymentMethod,
+          ...validatedValues.paymentInformation,
 
           applicantId,
         },
@@ -490,179 +441,176 @@ export default function CreateNew() {
 
         {/* Forms step */}
         {step === RequestFlowPageState.SubmittingRequestPage && (
-          <form onSubmit={handleSubmit}>
-            <VStack spacing="32px">
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Permit Holder's Information`}
-                </Text>
-                <PermitHolderInformationForm
-                  permitHolderInformation={{ ...permitHolderInformation, type: 'NEW' }}
-                  onChange={updatedPermitHolder => {
-                    if (updatedPermitHolder.type === 'NEW') {
-                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                      const { type, ...permitHolder } = updatedPermitHolder;
-                      setPermitHolderInformation(permitHolder);
-                    }
-                  }}
-                />
-              </Box>
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Physician's Assessment`}
-                </Text>
-                <PhysicianAssessmentForm
-                  physicianAssessment={physicianAssessment}
-                  onChange={setPhysicianAssessment}
-                />
-              </Box>
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Doctor's Information`}
-                </Text>
-                <DoctorInformationForm
-                  doctorInformation={doctorInformation}
-                  onChange={setDoctorInformation}
-                />
-              </Box>
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Guardian/POA Information`}
-                </Text>
-                <GuardianInformationForm
-                  guardianInformation={guardianInformation}
-                  onChange={setGuardianInformation}
-                  file={guardianPOAFile}
-                  onUploadFile={setGuardianPOAFile}
-                />
-              </Box>
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Additional Information`}
-                </Text>
-                <AdditionalQuestionsForm
-                  data={additionalQuestions}
-                  onChange={setAdditionalQuestions}
-                />
-              </Box>
-              <Box
-                w="100%"
-                p="40px"
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                align="left"
-              >
-                <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Payment, Shipping and Billing Information`}
-                </Text>
-                <PaymentDetailsForm
-                  paymentInformation={paymentDetails}
-                  onChange={setPaymentDetails}
-                />
-              </Box>
-            </VStack>
-            <Box
-              position="fixed"
-              left="0"
-              bottom="0"
-              right="0"
-              paddingY="20px"
-              paddingX="188px"
-              bgColor="white"
-              boxShadow="dark-lg"
-            >
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Box>
-                  <Button
-                    bg="background.gray"
-                    _hover={{ bg: 'background.grayHover' }}
-                    marginRight="20px"
-                    height="48px"
-                    width="180px"
-                    isDisabled={submitRequestLoading}
+          <Formik
+            initialValues={{
+              permitHolder: permitHolderInformation,
+              paymentInformation: INITIAL_PAYMENT_DETAILS,
+              doctorInformation,
+              physicianAssessment: INITIAL_PHYSICIAN_ASSESSMENT,
+              guardianInformation: guardianInformation,
+              additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
+            }}
+            validationSchema={createNewRequestFormSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ values, isValid }) => (
+              <Form noValidate>
+                <VStack spacing="32px">
+                  <Box
+                    w="100%"
+                    p="40px"
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    align="left"
                   >
-                    <BackToSearchModal
-                      onGoBack={() => {
-                        resetAllFields();
-                        setStep(RequestFlowPageState.SelectingPermitHolderPage);
-                      }}
-                    >
-                      <Text textStyle="button-semibold" color="text.default">
-                        Back to search
-                      </Text>
-                    </BackToSearchModal>
-                  </Button>
-                </Box>
-                <Box>
-                  <Stack direction="row" justifyContent="space-between">
-                    <CancelCreateRequestModal type="renewal">
+                    <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Permit Holder's Information`}
+                    </Text>
+                    <PermitHolderInformationForm
+                      permitHolderInformation={{ ...values.permitHolder, type: 'NEW' }}
+                    />
+                  </Box>
+                  <Box
+                    w="100%"
+                    p="40px"
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    align="left"
+                  >
+                    <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Physician's Assessment`}
+                    </Text>
+                    <PhysicianAssessmentForm physicianAssessment={values.physicianAssessment} />
+                  </Box>
+                  <Box
+                    w="100%"
+                    p="40px"
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    align="left"
+                  >
+                    <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Doctor's Information`}
+                    </Text>
+                    <DoctorInformationForm />
+                  </Box>
+                  <Box
+                    w="100%"
+                    p="40px"
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    align="left"
+                  >
+                    <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Guardian/POA Information`}
+                    </Text>
+                    <GuardianInformationForm
+                      guardianInformation={values.guardianInformation}
+                      file={guardianPOAFile}
+                      onUploadFile={setGuardianPOAFile}
+                    />
+                  </Box>
+                  <Box
+                    w="100%"
+                    p="40px"
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    align="left"
+                  >
+                    <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Additional Information`}
+                    </Text>
+                    <AdditionalQuestionsForm additionalInformation={values.additionalInformation} />
+                  </Box>
+                  <Box
+                    w="100%"
+                    p="40px"
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    align="left"
+                  >
+                    <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Payment, Shipping and Billing Information`}
+                    </Text>
+                    <PaymentDetailsForm paymentInformation={values.paymentInformation} />
+                  </Box>
+                </VStack>
+                <Box
+                  position="fixed"
+                  left="0"
+                  bottom="0"
+                  right="0"
+                  paddingY="20px"
+                  paddingX="188px"
+                  bgColor="white"
+                  boxShadow="dark-lg"
+                >
+                  <ValidationErrorAlert error={error} />
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box>
                       <Button
-                        bg="secondary.critical"
-                        _hover={{ bg: 'secondary.criticalHover' }}
+                        bg="background.gray"
+                        _hover={{ bg: 'background.grayHover' }}
                         marginRight="20px"
                         height="48px"
-                        width="188px"
+                        width="180px"
                         isDisabled={submitRequestLoading}
                       >
-                        <Text textStyle="button-semibold">Discard request</Text>
+                        <BackToSearchModal
+                          onGoBack={() => {
+                            resetAllFields();
+                            setStep(RequestFlowPageState.SelectingPermitHolderPage);
+                          }}
+                        >
+                          <Text textStyle="button-semibold" color="text.default">
+                            Back to search
+                          </Text>
+                        </BackToSearchModal>
                       </Button>
-                    </CancelCreateRequestModal>
-                    <Button
-                      bg="primary"
-                      height="48px"
-                      width="180px"
-                      type="submit"
-                      isLoading={submitRequestLoading}
-                    >
-                      <Text textStyle="button-semibold">Create request</Text>
-                    </Button>
+                    </Box>
+                    <Box>
+                      <Stack direction="row" justifyContent="space-between">
+                        <CancelCreateRequestModal type="NEW">
+                          <Button
+                            bg="secondary.critical"
+                            _hover={{ bg: 'secondary.criticalHover' }}
+                            marginRight="20px"
+                            height="48px"
+                            width="188px"
+                            isDisabled={submitRequestLoading}
+                          >
+                            <Text textStyle="button-semibold">Discard request</Text>
+                          </Button>
+                        </CancelCreateRequestModal>
+                        <Button
+                          bg="primary"
+                          height="48px"
+                          width="180px"
+                          type="submit"
+                          isLoading={submitRequestLoading}
+                          isDisabled={submitRequestLoading || !isValid}
+                        >
+                          <Text textStyle="button-semibold">Create request</Text>
+                        </Button>
+                      </Stack>
+                    </Box>
                   </Stack>
                 </Box>
-              </Stack>
-            </Box>
-          </form>
+              </Form>
+            )}
+          </Formik>
         )}
         {/* Footer on Permit Searcher Page*/}
         {step == RequestFlowPageState.SelectingPermitHolderPage && (

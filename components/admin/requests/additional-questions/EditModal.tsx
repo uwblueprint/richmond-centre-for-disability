@@ -1,4 +1,4 @@
-import { useEffect, useState, ReactNode, SyntheticEvent } from 'react';
+import { ReactNode, useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -11,40 +11,44 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react'; // Chakra UI
-import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
+import {
+  AdditionalInformationFormData,
+  UpdateAdditionalInformationResponse,
+} from '@tools/admin/requests/additional-questions';
 import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form';
+import { Form, Formik } from 'formik';
+import { editAdditionalQuestionsSchema } from '@lib/applications/validation';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 type Props = {
   readonly children: ReactNode;
   readonly additionalInformation: AdditionalInformationFormData;
-  readonly onSave: (additionalInformation: AdditionalInformationFormData) => void;
+  readonly onSave: (
+    additionalInformation: AdditionalInformationFormData
+  ) => Promise<UpdateAdditionalInformationResponse | undefined | null>;
 };
 
 export default function EditAdditionalInformationModal({
   children,
-  additionalInformation: currentAdditionalInformation,
+  additionalInformation,
   onSave,
 }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [additionalInformation, setAdditionalInformation] = useState<AdditionalInformationFormData>(
-    currentAdditionalInformation || {
-      usesAccessibleConvertedVan: null,
-      accessibleConvertedVanLoadingMethod: null,
-      requiresWiderParkingSpace: null,
-      requiresWiderParkingSpaceReason: null,
-      otherRequiresWiderParkingSpaceReason: null,
-    }
-  );
+  const [error, setError] = useState<string>('');
 
-  useEffect(() => {
-    setAdditionalInformation(currentAdditionalInformation);
-  }, [currentAdditionalInformation, isOpen]);
-
-  const handleSubmit = (event: SyntheticEvent) => {
-    event.preventDefault();
-    // TODO: Refactor to work with form validation (wrap in a Formik component)
-    onSave(additionalInformation);
+  const onModalClose = () => {
     onClose();
+    setError('');
+  };
+
+  const handleSubmit = async (values: { additionalInformation: AdditionalInformationFormData }) => {
+    const result = await onSave(values.additionalInformation);
+
+    if (result?.updateApplicationAdditionalInformation?.ok) {
+      onModalClose();
+    } else {
+      setError(result?.updateApplicationAdditionalInformation?.error ?? '');
+    }
   };
 
   return (
@@ -53,34 +57,40 @@ export default function EditAdditionalInformationModal({
 
       <Modal onClose={onClose} isOpen={isOpen} scrollBehavior="inside" size="3xl">
         <ModalOverlay />
-        <form onSubmit={handleSubmit}>
-          <ModalContent paddingX="36px">
-            <ModalHeader
-              textStyle="display-medium-bold"
-              paddingBottom="12px"
-              paddingTop="24px"
-              paddingX="4px"
-            >
-              <Text as="h2" textStyle="display-medium-bold">
-                {'Edit Payment, Shipping and Billing Details'}
-              </Text>
-            </ModalHeader>
-            <ModalBody paddingY="20px" paddingX="4px">
-              <AdditionalQuestionsForm
-                data={additionalInformation}
-                onChange={setAdditionalInformation}
-              />
-            </ModalBody>
-            <ModalFooter paddingBottom="24px" paddingX="4px">
-              <Button colorScheme="gray" variant="solid" onClick={onClose}>
-                {'Cancel'}
-              </Button>
-              <Button variant="solid" type="submit" ml={'12px'}>
-                {'Save'}
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </form>
+        <Formik
+          initialValues={{ additionalInformation: additionalInformation }}
+          validationSchema={editAdditionalQuestionsSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ values, isValid }) => (
+            <Form style={{ width: '100%' }} noValidate>
+              <ModalContent paddingX="36px">
+                <ModalHeader
+                  textStyle="display-medium-bold"
+                  paddingBottom="12px"
+                  paddingTop="24px"
+                  paddingX="4px"
+                >
+                  <Text as="h2" textStyle="display-medium-bold">
+                    {'Edit Additional Information'}
+                  </Text>
+                </ModalHeader>
+                <ModalBody paddingY="20px" paddingX="4px">
+                  <AdditionalQuestionsForm additionalInformation={values.additionalInformation} />
+                </ModalBody>
+                <ValidationErrorAlert error={error} />
+                <ModalFooter paddingBottom="24px" paddingX="4px">
+                  <Button colorScheme="gray" variant="solid" onClick={onClose}>
+                    {'Cancel'}
+                  </Button>
+                  <Button variant="solid" type="submit" ml={'12px'} isDisabled={!isValid}>
+                    {'Save'}
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Form>
+          )}
+        </Formik>
       </Modal>
     </>
   );

@@ -112,6 +112,7 @@ export const CREATE_NEW_APPLICATION_MUTATION = gql`
     createNewApplication(input: $input) {
       ok
       applicationId
+      error
     }
   }
 `;
@@ -149,13 +150,15 @@ export const INITIAL_PHYSICIAN_ASSESSMENT: PhysicianAssessment = {
   disabilityCertificationDate: '',
   otherPatientCondition: null,
   temporaryPermitExpiry: null,
+  mobilityAids: [],
+  otherMobilityAids: null,
 };
 
 // Initial data for doctor information in application forms
 export const INITIAL_DOCTOR_INFORMATION: DoctorFormData = {
   firstName: '',
   lastName: '',
-  mspNumber: null,
+  mspNumber: '',
   phone: '',
   addressLine1: '',
   addressLine2: '',
@@ -188,7 +191,7 @@ export const INITIAL_ADDITIONAL_QUESTIONS: AdditionalInformationFormData = {
   otherRequiresWiderParkingSpaceReason: null,
 };
 
-// Initial data for initial payment details in application forms
+// Initial data for payment details in application forms
 export const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
   paymentMethod: null,
   donationAmount: '',
@@ -198,7 +201,7 @@ export const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
   shippingAddressLine2: '',
   shippingCity: '',
   shippingProvince: null,
-  shippingCountry: '',
+  shippingCountry: 'Canada',
   shippingPostalCode: '',
   billingAddressSameAsHomeAddress: false,
   billingFullName: '',
@@ -206,6 +209,6 @@ export const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
   billingAddressLine2: '',
   billingCity: '',
   billingProvince: null,
-  billingCountry: '',
+  billingCountry: 'Canada',
   billingPostalCode: '',
 };

@@ -4,7 +4,6 @@ import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
 import {
   ApplicantIdDoesNotExistError,
   ApplicationFieldTooLongError,
-  UpdatedFieldsMissingError,
   EmptyFieldsMissingError,
   ApplicationNotFoundError,
   AppPastSixMonthsExpiredError,
@@ -45,6 +44,18 @@ import {
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
+import {
+  additionalQuestionsMutationSchema,
+  applicantFacingRenewalMutationSchema,
+  createNewRequestFormSchema,
+  paymentInformationMutationSchema,
+  renewalRequestMutationSchema,
+} from '@lib/applications/validation';
+import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
+import { requestPermitHolderInformationMutationSchema } from '@lib/applicants/validation';
+import { ValidationError } from 'yup';
+import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
+import { guardianInformationSchema } from '@lib/guardian/validation';
 import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import moment from 'moment';
 import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
@@ -219,8 +230,8 @@ export const createNewApplication: Resolver<
   MutationCreateNewApplicationArgs,
   CreateNewApplicationResult
 > = async (_, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
+
   const {
     phone,
     dateOfBirth,
@@ -231,6 +242,7 @@ export const createNewApplication: Resolver<
     disabilityCertificationDate,
     patientCondition,
     mobilityAids,
+    otherMobilityAids,
     otherPatientCondition,
     temporaryPermitExpiry,
     physicianFirstName,
@@ -264,6 +276,104 @@ export const createNewApplication: Resolver<
     ...data
   } = input;
 
+  const permitHolder = {
+    firstName: input.firstName,
+    middleName: input.middleName,
+    lastName: input.lastName,
+    dateOfBirth,
+    gender,
+    otherGender,
+    email: input.email,
+    phone: input.phone,
+    receiveEmailUpdates: input.receiveEmailUpdates,
+    addressLine1: input.addressLine1,
+    addressLine2: input.addressLine2,
+    city: input.city,
+    postalCode,
+  };
+
+  const physicianAssessment = {
+    disability,
+    disabilityCertificationDate,
+    patientCondition,
+    otherPatientCondition,
+    permitType: input.permitType,
+    temporaryPermitExpiry,
+  };
+
+  const guardianInformation = {
+    omitGuardianPoa,
+    firstName: guardianFirstName,
+    middleName: guardianMiddleName,
+    lastName: guardianLastName,
+    phone: guardianPhone,
+    relationship: guardianRelationship,
+    addressLine1: guardianAddressLine1,
+    addressLine2: guardianAddressLine2,
+    city: guardianCity,
+    postalCode: guardianPostalCode,
+    poaFormS3ObjectKey,
+  };
+
+  const doctorInformation = {
+    firstName: physicianFirstName,
+    lastName: physicianLastName,
+    mspNumber: physicianMspNumber,
+    phone: physicianPhone,
+    addressLine1: physicianAddressLine1,
+    addressLine2: physicianAddressLine2,
+    city: physicianCity,
+    postalCode: physicianPostalCode,
+  };
+
+  const additionalInformation = {
+    usesAccessibleConvertedVan,
+    accessibleConvertedVanLoadingMethod,
+    requiresWiderParkingSpace,
+    requiresWiderParkingSpaceReason,
+    otherRequiresWiderParkingSpaceReason,
+  };
+
+  const paymentInformation = {
+    paymentMethod: input.paymentMethod,
+    donationAmount,
+    shippingAddressSameAsHomeAddress: input.shippingAddressSameAsHomeAddress,
+    shippingFullName: input.shippingFullName,
+    shippingAddressLine1: input.shippingAddressLine1,
+    shippingAddressLine2: input.shippingAddressLine2,
+    shippingCity: input.shippingCity,
+    shippingProvince: input.shippingProvince,
+    shippingCountry: input.shippingCountry,
+    shippingPostalCode,
+    billingAddressSameAsHomeAddress: input.billingAddressSameAsHomeAddress,
+    billingFullName: input.billingFullName,
+    billingAddressLine1: input.billingAddressLine1,
+    billingAddressLine2: input.billingAddressLine2,
+    billingCity: input.billingCity,
+    billingProvince: input.billingProvince,
+    billingCountry: input.billingCountry,
+    billingPostalCode,
+  };
+
+  try {
+    await createNewRequestFormSchema.validate({
+      permitHolder,
+      physicianAssessment,
+      guardianInformation,
+      doctorInformation,
+      additionalInformation,
+      paymentInformation,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        applicationId: null,
+        error: err.message,
+      };
+    }
+  }
+
   if (!process.env.PROCESSING_FEE) {
     throw new Error('Processing fee not defined');
   }
@@ -295,6 +405,7 @@ export const createNewApplication: Resolver<
             disabilityCertificationDate,
             patientCondition,
             mobilityAids: mobilityAids || [],
+            otherMobilityAids,
             otherPatientCondition,
             temporaryPermitExpiry,
             physicianFirstName,
@@ -348,6 +459,7 @@ export const createNewApplication: Resolver<
   return {
     ok: true,
     applicationId: application.id,
+    error: null,
   };
 };
 
@@ -359,12 +471,10 @@ export const createRenewalApplication: Resolver<
   MutationCreateRenewalApplicationArgs,
   CreateRenewalApplicationResult
 > = async (_, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
+
   const {
     applicantId,
-    phone,
-    postalCode,
     physicianFirstName,
     physicianLastName,
     physicianMspNumber,
@@ -381,8 +491,105 @@ export const createRenewalApplication: Resolver<
     donationAmount,
     shippingPostalCode,
     billingPostalCode,
+    firstName,
+    middleName,
+    lastName,
+    phone,
+    email,
+    receiveEmailUpdates,
+    addressLine1,
+    addressLine2,
+    city,
+    postalCode,
+    paymentMethod,
+    shippingAddressSameAsHomeAddress,
+    shippingFullName,
+    shippingAddressLine1,
+    shippingAddressLine2,
+    shippingCity,
+    shippingProvince,
+    shippingCountry,
+    billingAddressSameAsHomeAddress,
+    billingFullName,
+    billingAddressLine1,
+    billingAddressLine2,
+    billingCity,
+    billingProvince,
+    billingCountry,
     ...data
   } = input;
+
+  const permitHolder = {
+    firstName,
+    middleName,
+    lastName,
+    email,
+    phone,
+    receiveEmailUpdates,
+    addressLine1,
+    addressLine2,
+    city,
+    postalCode,
+  };
+
+  const doctorInformation = {
+    firstName: physicianFirstName,
+    lastName: physicianLastName,
+    mspNumber: physicianMspNumber,
+    phone: physicianPhone,
+    addressLine1: physicianAddressLine1,
+    addressLine2: physicianAddressLine2,
+    city: physicianCity,
+    postalCode: physicianPostalCode,
+  };
+
+  const additionalInformation = {
+    usesAccessibleConvertedVan,
+    accessibleConvertedVanLoadingMethod,
+    requiresWiderParkingSpace,
+    requiresWiderParkingSpaceReason,
+    otherRequiresWiderParkingSpaceReason,
+  };
+
+  const paymentInformation = {
+    paymentMethod,
+    donationAmount,
+    shippingAddressSameAsHomeAddress,
+    shippingFullName,
+    shippingAddressLine1,
+    shippingAddressLine2,
+    shippingCity,
+    shippingProvince,
+    shippingCountry,
+    shippingPostalCode,
+    billingAddressSameAsHomeAddress,
+    billingFullName,
+    billingAddressLine1,
+    billingAddressLine2,
+    billingCity,
+    billingProvince,
+    billingCountry,
+    billingPostalCode,
+  };
+
+  try {
+    await renewalRequestMutationSchema.validate({
+      applicantId,
+      permitHolder,
+      doctorInformation,
+      additionalInformation,
+      paymentInformation,
+      ...data,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        applicationId: null,
+        error: err.message,
+      };
+    }
+  }
 
   if (!process.env.PROCESSING_FEE) {
     throw new Error('Processing fee not defined');
@@ -395,8 +602,31 @@ export const createRenewalApplication: Resolver<
         type: 'RENEWAL',
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
-        ...data,
+        firstName,
+        middleName,
+        lastName,
         phone: stripPhoneNumber(phone),
+        email,
+        receiveEmailUpdates,
+        addressLine1,
+        addressLine2,
+        city,
+        paymentMethod,
+        shippingAddressSameAsHomeAddress,
+        shippingFullName,
+        shippingAddressLine1,
+        shippingAddressLine2,
+        shippingCity,
+        shippingProvince,
+        shippingCountry,
+        billingAddressSameAsHomeAddress,
+        billingFullName,
+        billingAddressLine1,
+        billingAddressLine2,
+        billingCity,
+        billingProvince,
+        billingCountry,
+        ...data,
         postalCode: stripPostalCode(postalCode),
         shippingPostalCode: shippingPostalCode && stripPostalCode(shippingPostalCode),
         billingPostalCode: billingPostalCode && stripPostalCode(billingPostalCode),
@@ -431,7 +661,7 @@ export const createRenewalApplication: Resolver<
     throw new ApolloError('Renewal application was unable to be created');
   }
 
-  return { ok: true, applicationId: createdRenewalApplication.id };
+  return { ok: true, applicationId: createdRenewalApplication.id, error: null };
 };
 
 /**
@@ -475,17 +705,34 @@ export const createExternalRenewalApplication: Resolver<
     throw new Error('Processing fee not defined');
   }
 
-  // TODO: Improve validation
-
-  // Validate that fields are present if address, contact info, or doctor are updated
-  // Validate updated address fields
-  if (updatedAddress && (!addressLine1 || !city || !postalCode)) {
-    throw new UpdatedFieldsMissingError('Missing updated personal address fields');
-  }
-
-  // Validate updated contact info fields (at least one of phone or email must be provided)
-  if (updatedContactInfo && !phone) {
-    throw new UpdatedFieldsMissingError('Missing updated contact info fields');
+  try {
+    await applicantFacingRenewalMutationSchema.validate({
+      updatedDoctor: updatedPhysician,
+      personalAddressLine1: addressLine1,
+      personalAddressLine2: addressLine2,
+      personalCity: city,
+      personalPostalCode: postalCode,
+      contactPhoneNumber: phone,
+      contactEmailAddress: email,
+      doctorFirstName: physicianFirstName,
+      doctorLastName: physicianLastName,
+      doctorMspNumber: physicianMspNumber,
+      doctorAddressLine1: physicianAddressLine1,
+      doctorAddressLine2: physicianAddressLine2,
+      doctorCity: physicianCity,
+      doctorPostalCode: physicianPostalCode,
+      doctorPhoneNumber: physicianPhone,
+      ...input,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        applicationId: null,
+        error: err.message,
+        checkoutUrl: null,
+      };
+    }
   }
 
   const mostRecentPermit = await getMostRecentPermit(applicantId);
@@ -493,20 +740,6 @@ export const createExternalRenewalApplication: Resolver<
     throw new AppPastSixMonthsExpiredError(
       'Your permit expired over 6 months ago. Please apply for a new parking permit or contact RCD.'
     );
-  }
-
-  // Validate updated doctor info fields
-  if (
-    updatedPhysician &&
-    (!physicianFirstName ||
-      !physicianLastName ||
-      !physicianMspNumber ||
-      !physicianPhone ||
-      !physicianAddressLine1 ||
-      !physicianCity ||
-      !physicianPostalCode)
-  ) {
-    throw new UpdatedFieldsMissingError('Missing updated physician fields');
   }
 
   // Retrieve applicant record
@@ -633,6 +866,7 @@ export const createExternalRenewalApplication: Resolver<
   return {
     ok: true,
     applicationId: application.id,
+    error: null,
     checkoutUrl,
   };
 };
@@ -747,9 +981,20 @@ export const updateApplicationGeneralInformation: Resolver<
   MutationUpdateApplicationGeneralInformationArgs,
   UpdateApplicationGeneralInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, receiveEmailUpdates, phone, postalCode, ...data } = input;
+
+  try {
+    await requestPermitHolderInformationMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
+  const { id, receiveEmailUpdates, phone, postalCode, ...validatedData } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -778,7 +1023,7 @@ export const updateApplicationGeneralInformation: Resolver<
         receiveEmailUpdates: receiveEmailUpdates ?? undefined,
         phone: stripPhoneNumber(phone),
         postalCode: stripPostalCode(postalCode),
-        ...data,
+        ...validatedData,
       },
     });
   } catch {
@@ -789,7 +1034,7 @@ export const updateApplicationGeneralInformation: Resolver<
     throw new ApolloError('Application general information was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -800,10 +1045,29 @@ export const updateNewApplicationGeneralInformation: Resolver<
   MutationUpdateNewApplicationGeneralInformationArgs,
   UpdateApplicationGeneralInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, receiveEmailUpdates, phone, postalCode, dateOfBirth, gender, otherGender, ...data } =
-    input;
+
+  try {
+    await requestPermitHolderInformationMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
+  const {
+    id,
+    receiveEmailUpdates,
+    phone,
+    postalCode,
+    dateOfBirth,
+    gender,
+    otherGender,
+    ...validatedData
+  } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -839,7 +1103,7 @@ export const updateNewApplicationGeneralInformation: Resolver<
             otherGender: otherGender ?? undefined,
           },
         },
-        ...data,
+        ...validatedData,
       },
     });
   } catch (err) {
@@ -850,7 +1114,7 @@ export const updateNewApplicationGeneralInformation: Resolver<
     throw new ApolloError('Application general information was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -861,7 +1125,6 @@ export const updateApplicationDoctorInformation: Resolver<
   MutationUpdateApplicationDoctorInformationArgs,
   UpdateApplicationDoctorInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
   const {
     id,
@@ -874,6 +1137,26 @@ export const updateApplicationDoctorInformation: Resolver<
     city: physicianCity,
     postalCode: physicianPostalCode,
   } = input;
+
+  try {
+    await requestPhysicianInformationSchema.validate({
+      firstName: physicianFirstName,
+      lastName: physicianLastName,
+      mspNumber: physicianMspNumber,
+      phone: physicianPhone,
+      addressLine1: physicianAddressLine1,
+      addressLine2: physicianAddressLine2,
+      city: physicianCity,
+      postalCode: physicianPostalCode,
+    });
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
 
   const application = await prisma.application.findUnique({
     where: { id },
@@ -941,7 +1224,7 @@ export const updateApplicationDoctorInformation: Resolver<
     throw new ApolloError('Application doctor information was unable to be updated');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -952,7 +1235,6 @@ export const updateApplicationGuardianInformation: Resolver<
   MutationUpdateApplicationGuardianInformationArgs,
   UpdateApplicationGuardianInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
   const { id, omitGuardianPoa } = input;
 
@@ -971,18 +1253,41 @@ export const updateApplicationGuardianInformation: Resolver<
         postalCode,
         poaFormS3ObjectKey,
       } = input;
+
+      try {
+        await guardianInformationSchema.validate({
+          omitGuardianPoa,
+          firstName,
+          middleName,
+          lastName,
+          phone,
+          relationship,
+          addressLine1,
+          addressLine2,
+          city,
+          postalCode,
+        });
+      } catch (err) {
+        if (err instanceof ValidationError) {
+          return {
+            ok: false,
+            error: err.message,
+          };
+        }
+      }
+
       updatedApplication = await prisma.newApplication.update({
         where: { applicationId: id },
         data: {
           guardianFirstName: firstName,
           guardianMiddleName: middleName,
           guardianLastName: lastName,
-          guardianPhone: stripPhoneNumber(phone),
+          guardianPhone: phone && stripPhoneNumber(phone),
           guardianRelationship: relationship,
           guardianAddressLine1: addressLine1,
           guardianAddressLine2: addressLine2,
           guardianCity: city,
-          guardianPostalCode: stripPostalCode(postalCode),
+          guardianPostalCode: postalCode && stripPostalCode(postalCode),
           poaFormS3ObjectKey,
         },
       });
@@ -1013,6 +1318,7 @@ export const updateApplicationGuardianInformation: Resolver<
 
   return {
     ok: true,
+    error: null,
   };
 };
 
@@ -1024,8 +1330,19 @@ export const updateApplicationAdditionalInformation: Resolver<
   MutationUpdateApplicationAdditionalInformationArgs,
   UpdateApplicationAdditionalInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
+
+  try {
+    await additionalQuestionsMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
   const { id, ...data } = input;
 
   // Get existing application type (should be NEW/RENEWAL)
@@ -1041,7 +1358,6 @@ export const updateApplicationAdditionalInformation: Resolver<
     },
   });
   if (!application) {
-    // TODO: Improve validation
     throw new ApolloError('Application not found');
   }
   // Prevent reviewed requests from being updated
@@ -1082,7 +1398,7 @@ export const updateApplicationAdditionalInformation: Resolver<
     throw new ApolloError('Application additional information was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -1093,9 +1409,20 @@ export const updateApplicationPaymentInformation: Resolver<
   MutationUpdateApplicationPaymentInformationArgs,
   UpdateApplicationPaymentInformationResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, donationAmount, shippingPostalCode, billingPostalCode, ...data } = input;
+
+  try {
+    await paymentInformationMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
+  const { id, donationAmount, shippingPostalCode, billingPostalCode, ...validatedData } = input;
 
   const application = await prisma.application.findUnique({
     where: { id },
@@ -1108,9 +1435,11 @@ export const updateApplicationPaymentInformation: Resolver<
       },
     },
   });
+
   if (!application) {
     throw new ApolloError('Application does not exist');
   }
+
   // Prevent reviewed requests from being updated
   if (application.applicationProcessing.reviewRequestCompleted) {
     throw new ApolloError('Reviewed requests cannot be updated');
@@ -1131,7 +1460,7 @@ export const updateApplicationPaymentInformation: Resolver<
         donationAmount: donationAmount || 0,
         shippingPostalCode: shippingPostalCode && stripPostalCode(shippingPostalCode),
         billingPostalCode: billingPostalCode && stripPostalCode(billingPostalCode),
-        ...data,
+        ...validatedData,
       },
     });
   } catch {
@@ -1142,7 +1471,7 @@ export const updateApplicationPaymentInformation: Resolver<
     throw new ApolloError('Application payment information was unable to be updated');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -1204,9 +1533,20 @@ export const updateApplicationPhysicianAssessment: Resolver<
   MutationUpdateApplicationPhysicianAssessmentArgs,
   UpdateApplicationPhysicianAssessmentResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, mobilityAids, ...data } = input;
+
+  try {
+    await physicianAssessmentMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
+  const { id, mobilityAids, permitType, ...validatedData } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -1234,9 +1574,10 @@ export const updateApplicationPhysicianAssessment: Resolver<
         newApplication: {
           update: {
             mobilityAids: mobilityAids || [],
-            ...data,
+            ...validatedData,
           },
         },
+        permitType: permitType,
       },
     });
   } catch {
@@ -1247,5 +1588,5 @@ export const updateApplicationPhysicianAssessment: Resolver<
     throw new ApolloError('Application physician assessment was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };

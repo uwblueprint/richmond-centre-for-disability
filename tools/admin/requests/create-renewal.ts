@@ -83,6 +83,7 @@ export const CREATE_RENEWAL_APPLICATION_MUTATION = gql`
     createRenewalApplication(input: $input) {
       ok
       applicationId
+      error
     }
   }
 `;

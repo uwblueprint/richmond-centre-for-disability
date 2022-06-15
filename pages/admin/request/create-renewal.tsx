@@ -1,10 +1,9 @@
 import Layout from '@components/admin/Layout'; // Layout component
 import { Text, Box, Flex, Stack, Button, GridItem, useToast } from '@chakra-ui/react'; // Chakra UI
-import { SyntheticEvent, useState } from 'react'; // React
+import { useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form'; //Doctor information form
 import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form'; //Additional questions form
-import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions'; //Additional questions type
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import Link from 'next/link'; // Link
@@ -30,12 +29,25 @@ import {
   GET_RENEWAL_APPLICANT,
 } from '@tools/admin/requests/create-renewal';
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
+import { Form, Formik } from 'formik';
+import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
+import { renewalRequestFormSchema } from '@lib/applications/validation';
+import {
+  INITIAL_ADDITIONAL_QUESTIONS,
+  INITIAL_PAYMENT_DETAILS,
+} from '@tools/admin/requests/create-new';
+import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
+import { RequiresWiderParkingSpaceReason } from '@prisma/client';
+import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
     RequestFlowPageState.SelectingPermitHolderPage
   );
   const [applicantId, setApplicantId] = useState<number | null>(null);
+
+  /**  Backend form validation error */
+  const [error, setError] = useState<string>('');
 
   /** Permit holder information section */
   const [permitHolderInformation, setPermitHolderInformation] = useState<
@@ -57,45 +69,12 @@ export default function CreateRenewal() {
   const [doctorInformation, setDoctorInformation] = useState<DoctorFormData>({
     firstName: '',
     lastName: '',
-    mspNumber: null,
+    mspNumber: '',
     phone: '',
     addressLine1: '',
     addressLine2: '',
     city: '',
     postalCode: '',
-  });
-
-  /** Additional information section */
-  const [additionalInformation, setAdditionalInformation] = useState<AdditionalInformationFormData>(
-    {
-      usesAccessibleConvertedVan: null,
-      accessibleConvertedVanLoadingMethod: null,
-      requiresWiderParkingSpace: null,
-      requiresWiderParkingSpaceReason: null,
-      otherRequiresWiderParkingSpaceReason: null,
-    }
-  );
-
-  /** Payment information section */
-  const [paymentInformation, setPaymentInformation] = useState<PaymentInformationFormData>({
-    paymentMethod: null,
-    donationAmount: '',
-    shippingAddressSameAsHomeAddress: false,
-    shippingFullName: '',
-    shippingAddressLine1: '',
-    shippingAddressLine2: '',
-    shippingCity: '',
-    shippingProvince: 'BC',
-    shippingCountry: '',
-    shippingPostalCode: '',
-    billingAddressSameAsHomeAddress: false,
-    billingFullName: '',
-    billingAddressLine1: '',
-    billingAddressLine2: '',
-    billingCity: '',
-    billingProvince: 'BC',
-    billingCountry: '',
-    billingPostalCode: '',
   });
 
   // Toast message
@@ -169,7 +148,7 @@ export default function CreateRenewal() {
   >(CREATE_RENEWAL_APPLICATION_MUTATION, {
     onCompleted: data => {
       if (data) {
-        const { ok, applicationId } = data.createRenewalApplication;
+        const { ok, applicationId, error } = data.createRenewalApplication;
         if (ok) {
           toast({
             status: 'success',
@@ -180,6 +159,8 @@ export default function CreateRenewal() {
           if (applicationId) {
             router.push(`/admin/request/${data.createRenewalApplication.applicationId}`);
           }
+        } else {
+          setError(error ?? '');
         }
       }
     },
@@ -195,8 +176,12 @@ export default function CreateRenewal() {
   /**
    * Handle renewal request submission
    */
-  const handleSubmit = async (event: SyntheticEvent) => {
-    event.preventDefault();
+  const handleSubmit = async (values: {
+    permitHolder: PermitHolderFormData;
+    doctorInformation: DoctorFormData;
+    additionalInformation: AdditionalInformationFormData;
+    paymentInformation: PaymentInformationFormData;
+  }) => {
     if (!applicantId) {
       toast({
         status: 'error',
@@ -206,39 +191,17 @@ export default function CreateRenewal() {
       return;
     }
 
-    if (!doctorInformation.mspNumber) {
-      toast({ status: 'error', description: 'Missing physician MSP number', isClosable: true });
-      return;
-    }
+    const validatedValues = await renewalRequestFormSchema.validate(values);
 
-    if (!paymentInformation.paymentMethod) {
-      toast({ status: 'error', description: 'Missing payment method', isClosable: true });
-      return;
-    }
-
-    if (additionalInformation.usesAccessibleConvertedVan === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient uses accessible converted van',
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (additionalInformation.requiresWiderParkingSpace === null) {
-      toast({
-        status: 'error',
-        description: 'Missing if patient requires wider parking space',
-        isClosable: true,
-      });
-      return;
-    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { type, ...permitHolder } = values.permitHolder;
+    const additionalInformation = validatedValues.additionalInformation;
 
     await submitRenewalApplication({
       variables: {
         input: {
           applicantId,
-          ...permitHolderInformation,
+          ...permitHolder,
           physicianFirstName: doctorInformation.firstName,
           physicianLastName: doctorInformation.lastName,
           physicianMspNumber: doctorInformation.mspNumber,
@@ -247,11 +210,23 @@ export default function CreateRenewal() {
           physicianAddressLine2: doctorInformation.addressLine2,
           physicianCity: doctorInformation.city,
           physicianPostalCode: doctorInformation.postalCode,
+
           ...additionalInformation,
-          usesAccessibleConvertedVan: additionalInformation.usesAccessibleConvertedVan,
-          requiresWiderParkingSpace: additionalInformation.requiresWiderParkingSpace,
-          ...paymentInformation,
-          paymentMethod: paymentInformation.paymentMethod,
+          accessibleConvertedVanLoadingMethod: additionalInformation.usesAccessibleConvertedVan
+            ? additionalInformation.accessibleConvertedVanLoadingMethod
+            : null,
+          requiresWiderParkingSpaceReason: additionalInformation.requiresWiderParkingSpace
+            ? additionalInformation.requiresWiderParkingSpaceReason
+            : null,
+          otherRequiresWiderParkingSpaceReason:
+            additionalInformation.requiresWiderParkingSpace &&
+            additionalInformation.requiresWiderParkingSpaceReason ===
+              RequiresWiderParkingSpaceReason.OTHER
+              ? additionalInformation.otherRequiresWiderParkingSpaceReason
+              : null,
+
+          ...validatedValues.paymentInformation,
+
           // TODO: Replace with dynamic values
           paidThroughShopify: false,
           shopifyPaymentStatus: null,
@@ -307,156 +282,160 @@ export default function CreateRenewal() {
         )}
         {/* Permit Holder Information Form */}
         {applicantId && currentPageState == RequestFlowPageState.SubmittingRequestPage && (
-          <form onSubmit={handleSubmit}>
-            <GridItem paddingTop="32px">
-              <Box
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                paddingTop="32px"
-                paddingBottom="40px"
-                paddingX="40px"
-                align="left"
-              >
-                <Text textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Permit Holder's Information`}
-                </Text>
-                <PermitHolderInformationForm
-                  permitHolderInformation={{ ...permitHolderInformation, type: 'RENEWAL' }}
-                  onChange={updatedPermitHolder => {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const { type, ...permitHolder } = updatedPermitHolder;
-                    setPermitHolderInformation(permitHolder);
-                  }}
-                />
-              </Box>
-            </GridItem>
-            {/* Doctor's Information Form */}
-            <GridItem paddingTop="32px">
-              <Box
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                paddingTop="32px"
-                paddingBottom="40px"
-                paddingX="40px"
-                align="left"
-              >
-                <Text textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Doctor's Information`}
-                </Text>
-                <DoctorInformationForm
-                  doctorInformation={doctorInformation}
-                  onChange={setDoctorInformation}
-                />
-              </Box>
-            </GridItem>
-            {/* Additional Quesitons Form */}
-            <GridItem paddingTop="32px">
-              <Box
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                paddingTop="32px"
-                paddingBottom="40px"
-                paddingX="40px"
-                align="left"
-              >
-                <Text textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Additional Information`}
-                </Text>
-                <AdditionalQuestionsForm
-                  data={additionalInformation}
-                  onChange={setAdditionalInformation}
-                />
-              </Box>
-            </GridItem>
-            {/* Payment Details Form */}
-            <GridItem paddingTop="32px" paddingBottom="68px">
-              <Box
-                border="1px solid"
-                borderColor="border.secondary"
-                borderRadius="12px"
-                bgColor="white"
-                paddingTop="32px"
-                paddingBottom="40px"
-                paddingX="40px"
-                align="left"
-              >
-                <Text textStyle="display-small-semibold" paddingBottom="20px">
-                  {`Payment, Shipping, and Billing Information`}
-                </Text>
-                <PaymentDetailsForm
-                  paymentInformation={paymentInformation}
-                  onChange={setPaymentInformation}
-                />
-              </Box>
-            </GridItem>
-
-            {/* Footer */}
-            <Box
-              position="fixed"
-              left="0"
-              bottom="0"
-              right="0"
-              paddingY="20px"
-              paddingX="188px"
-              bgColor="white"
-              boxShadow="dark-lg"
-            >
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Box>
-                  <Button
-                    bg="background.gray"
-                    _hover={{ bg: 'background.grayHover' }}
-                    marginRight="20px"
-                    height="48px"
-                    width="180px"
-                    isDisabled={submitRequestLoading}
+          <Formik
+            initialValues={{
+              permitHolder: {
+                ...permitHolderInformation,
+                type: 'RENEWAL',
+              },
+              doctorInformation,
+              additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
+              paymentInformation: INITIAL_PAYMENT_DETAILS,
+            }}
+            validationSchema={renewalRequestFormSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ values, isValid }) => (
+              <Form noValidate>
+                <GridItem paddingTop="32px">
+                  <Box
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    paddingTop="32px"
+                    paddingBottom="40px"
+                    paddingX="40px"
+                    align="left"
                   >
-                    <BackToSearchModal
-                      onGoBack={() => {
-                        setApplicantId(null);
-                        setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
-                      }}
-                    >
-                      <Text textStyle="button-semibold" color="text.default">
-                        Back to search
-                      </Text>
-                    </BackToSearchModal>
-                  </Button>
-                </Box>
-                <Box>
-                  <Stack direction="row" justifyContent="space-between">
-                    <CancelCreateRequestModal type="renewal">
+                    <Text textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Permit Holder's Information`}
+                    </Text>
+                    <PermitHolderInformationForm
+                      permitHolderInformation={{ ...values.permitHolder, type: 'RENEWAL' }}
+                    />
+                  </Box>
+                </GridItem>
+                {/* Doctor's Information Form */}
+                <GridItem paddingTop="32px">
+                  <Box
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    paddingTop="32px"
+                    paddingBottom="40px"
+                    paddingX="40px"
+                    align="left"
+                  >
+                    <Text textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Doctor's Information`}
+                    </Text>
+                    <DoctorInformationForm />
+                  </Box>
+                </GridItem>
+                {/* Additional Quesitons Form */}
+                <GridItem paddingTop="32px">
+                  <Box
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    paddingTop="32px"
+                    paddingBottom="40px"
+                    paddingX="40px"
+                    align="left"
+                  >
+                    <Text textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Additional Information`}
+                    </Text>
+                    <AdditionalQuestionsForm additionalInformation={values.additionalInformation} />
+                  </Box>
+                </GridItem>
+                {/* Payment Details Form */}
+                <GridItem paddingTop="32px" paddingBottom="68px">
+                  <Box
+                    border="1px solid"
+                    borderColor="border.secondary"
+                    borderRadius="12px"
+                    bgColor="white"
+                    paddingTop="32px"
+                    paddingBottom="40px"
+                    paddingX="40px"
+                    align="left"
+                  >
+                    <Text textStyle="display-small-semibold" paddingBottom="20px">
+                      {`Payment, Shipping, and Billing Information`}
+                    </Text>
+                    <PaymentDetailsForm paymentInformation={values.paymentInformation} />
+                  </Box>
+                </GridItem>
+
+                {/* Footer */}
+                <Box
+                  position="fixed"
+                  left="0"
+                  bottom="0"
+                  right="0"
+                  paddingY="20px"
+                  paddingX="188px"
+                  bgColor="white"
+                  boxShadow="dark-lg"
+                >
+                  <ValidationErrorAlert error={error} />
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box>
                       <Button
-                        bg="secondary.critical"
-                        _hover={{ bg: 'secondary.criticalHover' }}
+                        bg="background.gray"
+                        _hover={{ bg: 'background.grayHover' }}
                         marginRight="20px"
                         height="48px"
-                        width="188px"
+                        width="180px"
                         isDisabled={submitRequestLoading}
                       >
-                        <Text textStyle="button-semibold">Discard request</Text>
+                        <BackToSearchModal
+                          onGoBack={() => {
+                            setApplicantId(null);
+                            setNewPageState(RequestFlowPageState.SelectingPermitHolderPage);
+                          }}
+                        >
+                          <Text textStyle="button-semibold" color="text.default">
+                            Back to search
+                          </Text>
+                        </BackToSearchModal>
                       </Button>
-                    </CancelCreateRequestModal>
-                    <Button
-                      bg="primary"
-                      height="48px"
-                      width="180px"
-                      type="submit"
-                      isLoading={submitRequestLoading}
-                    >
-                      <Text textStyle="button-semibold">Create request</Text>
-                    </Button>
+                    </Box>
+                    <Box>
+                      <Stack direction="row" justifyContent="space-between">
+                        <CancelCreateRequestModal type="RENEWAL">
+                          <Button
+                            bg="secondary.critical"
+                            _hover={{ bg: 'secondary.criticalHover' }}
+                            marginRight="20px"
+                            height="48px"
+                            width="188px"
+                            isDisabled={submitRequestLoading}
+                          >
+                            <Text textStyle="button-semibold">Discard request</Text>
+                          </Button>
+                        </CancelCreateRequestModal>
+                        <Button
+                          bg="primary"
+                          height="48px"
+                          width="180px"
+                          type="submit"
+                          isLoading={submitRequestLoading}
+                          isDisabled={submitRequestLoading || !isValid}
+                        >
+                          <Text textStyle="button-semibold">Create request</Text>
+                        </Button>
+                      </Stack>
+                    </Box>
                   </Stack>
                 </Box>
-              </Stack>
-            </Box>
-          </form>
+              </Form>
+            )}
+          </Formik>
         )}
         {/* Footer on Permit Searcher Page*/}
         {currentPageState == RequestFlowPageState.SelectingPermitHolderPage && (

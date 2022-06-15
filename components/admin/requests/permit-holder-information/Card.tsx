@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { HStack, VStack, Text, Divider, Button, useToast } from '@chakra-ui/react'; // Chakra UI
+import { HStack, VStack, Text, Divider, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
 import EditPermitHolderInformationModal from '@components/admin/requests/permit-holder-information/EditModal'; // Edit modal
 import {
@@ -10,6 +10,7 @@ import {
   PermitHolderCardData,
   PermitHolderFormData,
   UpdateNewApplicationPermitHolderInformationRequest,
+  UpdateNewApplicationPermitHolderInformationResponse,
   UpdatePermitHolderInformationRequest,
   UpdatePermitHolderInformationResponse,
   UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION,
@@ -21,6 +22,7 @@ import { formatDateYYYYMMDD, formatDateVerboseUTC } from '@lib/utils/date';
 import PermitHolderStatusBadge from '@components/admin/PermitHolderStatusBadge';
 import Updated from '@components/admin/Updated';
 import Address from '@components/admin/Address';
+import { permitHolderInformationSchema } from '@lib/applicants/validation';
 import { titlecase } from '@tools/string';
 
 type Props = {
@@ -67,16 +69,13 @@ const Card: FC<Props> = props => {
     }
   );
 
-  // Toast message
-  const toast = useToast();
-
   const [updatePermitHolderInformation] = useMutation<
     UpdatePermitHolderInformationResponse,
     UpdatePermitHolderInformationRequest
   >(UPDATE_PERMIT_HOLDER_INFORMATION);
 
   const [updateNewPermitHolderInformation] = useMutation<
-    UpdatePermitHolderInformationResponse,
+    UpdateNewApplicationPermitHolderInformationResponse,
     UpdateNewApplicationPermitHolderInformationRequest
   >(UPDATE_NEW_APPLICATION_PERMIT_HOLDER_INFORMATION);
 
@@ -85,25 +84,28 @@ const Card: FC<Props> = props => {
   }
 
   /** Handler for saving permit holder information */
-  const handleSave = async (data: PermitHolderFormData) => {
-    if (data.type === 'NEW') {
-      if (!data.gender) {
-        toast({ status: 'error', description: 'Missing gender', isClosable: true });
-        return;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { type, gender, ...permitHolderData } = data;
-      await updateNewPermitHolderInformation({
-        variables: { input: { id: applicationId, ...permitHolderData, gender } },
-      });
+  const handleSave = async (permitHolderFormData: PermitHolderFormData) => {
+    const { type, ...permitHolderData } = permitHolderFormData;
+
+    let data:
+      | UpdatePermitHolderInformationResponse
+      | UpdateNewApplicationPermitHolderInformationResponse
+      | undefined
+      | null;
+    if (type === 'NEW') {
+      const validatedData = await permitHolderInformationSchema.validate(permitHolderData);
+
+      ({ data } = await updateNewPermitHolderInformation({
+        variables: { input: { id: applicationId, ...validatedData } },
+      }));
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { type, ...permitHolderData } = data;
-      await updatePermitHolderInformation({
+      ({ data } = await updatePermitHolderInformation({
         variables: { input: { id: applicationId, ...permitHolderData } },
-      });
+      }));
     }
+
     refetch();
+    return data;
   };
 
   const {

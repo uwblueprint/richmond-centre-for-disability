@@ -224,7 +224,7 @@ export type CreateExternalRenewalApplicationInput = {
   updatedPhysician: Scalars['Boolean'];
   physicianFirstName: Maybe<Scalars['String']>;
   physicianLastName: Maybe<Scalars['String']>;
-  physicianMspNumber: Maybe<Scalars['Int']>;
+  physicianMspNumber: Maybe<Scalars['String']>;
   physicianPhone: Maybe<Scalars['String']>;
   physicianAddressLine1: Maybe<Scalars['String']>;
   physicianAddressLine2: Maybe<Scalars['String']>;
@@ -243,6 +243,7 @@ export type CreateExternalRenewalApplicationResult = {
   __typename?: 'CreateExternalRenewalApplicationResult';
   ok: Scalars['Boolean'];
   applicationId: Maybe<Scalars['Int']>;
+  error: Maybe<Scalars['String']>;
   checkoutUrl: Maybe<Scalars['String']>;
 };
 
@@ -264,12 +265,13 @@ export type CreateNewApplicationInput = {
   disabilityCertificationDate: Scalars['Date'];
   patientCondition: PatientCondition;
   mobilityAids: Maybe<Array<MobilityAid>>;
+  otherMobilityAids: Maybe<Scalars['String']>;
   otherPatientCondition: Maybe<Scalars['String']>;
   permitType: PermitType;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
   physicianFirstName: Scalars['String'];
   physicianLastName: Scalars['String'];
-  physicianMspNumber: Scalars['Int'];
+  physicianMspNumber: Scalars['String'];
   physicianPhone: Scalars['String'];
   physicianAddressLine1: Scalars['String'];
   physicianAddressLine2: Maybe<Scalars['String']>;
@@ -316,6 +318,7 @@ export type CreateNewApplicationResult = {
   __typename?: 'CreateNewApplicationResult';
   ok: Scalars['Boolean'];
   applicationId: Maybe<Scalars['Int']>;
+  error: Maybe<Scalars['String']>;
 };
 
 export type CreateRenewalApplicationInput = {
@@ -331,7 +334,7 @@ export type CreateRenewalApplicationInput = {
   postalCode: Scalars['String'];
   physicianFirstName: Scalars['String'];
   physicianLastName: Scalars['String'];
-  physicianMspNumber: Scalars['Int'];
+  physicianMspNumber: Scalars['String'];
   physicianPhone: Scalars['String'];
   physicianAddressLine1: Scalars['String'];
   physicianAddressLine2: Maybe<Scalars['String']>;
@@ -371,6 +374,7 @@ export type CreateRenewalApplicationResult = {
   __typename?: 'CreateRenewalApplicationResult';
   ok: Scalars['Boolean'];
   applicationId: Maybe<Scalars['Int']>;
+  error: Maybe<Scalars['String']>;
 };
 
 export type CreateReplacementApplicationInput = {
@@ -532,7 +536,9 @@ export type MobilityAid =
   | 'ELECTRIC_CHAIR'
   | 'MANUAL_CHAIR'
   | 'SCOOTER'
-  | 'WALKER';
+  | 'WALKER'
+  | 'CRUTCHES'
+  | 'OTHERS';
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -755,9 +761,10 @@ export type NewApplication = Application & {
   otherPatientCondition: Maybe<Scalars['String']>;
   permitType: PermitType;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
+  otherMobilityAids: Maybe<Scalars['String']>;
   physicianFirstName: Scalars['String'];
   physicianLastName: Scalars['String'];
-  physicianMspNumber: Scalars['Int'];
+  physicianMspNumber: Scalars['String'];
   physicianPhone: Scalars['String'];
   physicianAddressLine1: Scalars['String'];
   physicianAddressLine2: Maybe<Scalars['String']>;
@@ -862,7 +869,7 @@ export type PermitType =
 
 export type Physician = {
   __typename?: 'Physician';
-  mspNumber: Scalars['Int'];
+  mspNumber: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   phone: Scalars['String'];
@@ -985,7 +992,7 @@ export type RenewalApplication = Application & {
   permitType: PermitType;
   physicianFirstName: Scalars['String'];
   physicianLastName: Scalars['String'];
-  physicianMspNumber: Scalars['Int'];
+  physicianMspNumber: Scalars['String'];
   physicianPhone: Scalars['String'];
   physicianAddressLine1: Scalars['String'];
   physicianAddressLine2: Maybe<Scalars['String']>;
@@ -1118,7 +1125,7 @@ export type UpdateApplicantDoctorInformationInput = {
   id: Scalars['Int'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
-  mspNumber: Scalars['Int'];
+  mspNumber: Scalars['String'];
   phone: Scalars['String'];
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
@@ -1129,6 +1136,7 @@ export type UpdateApplicantDoctorInformationInput = {
 export type UpdateApplicantDoctorInformationResult = {
   __typename?: 'UpdateApplicantDoctorInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicantGeneralInformationInput = {
@@ -1138,8 +1146,10 @@ export type UpdateApplicantGeneralInformationInput = {
   lastName: Scalars['String'];
   dateOfBirth: Scalars['Date'];
   gender: Gender;
+  otherGender: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   email: Maybe<Scalars['String']>;
+  receiveEmailUpdates: Scalars['Boolean'];
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
@@ -1149,19 +1159,20 @@ export type UpdateApplicantGeneralInformationInput = {
 export type UpdateApplicantGeneralInformationResult = {
   __typename?: 'UpdateApplicantGeneralInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicantGuardianInformationInput = {
   id: Scalars['Int'];
-  firstName: Scalars['String'];
+  firstName: Maybe<Scalars['String']>;
   middleName: Maybe<Scalars['String']>;
-  lastName: Scalars['String'];
-  phone: Scalars['String'];
-  relationship: Scalars['String'];
-  addressLine1: Scalars['String'];
+  lastName: Maybe<Scalars['String']>;
+  phone: Maybe<Scalars['String']>;
+  relationship: Maybe<Scalars['String']>;
+  addressLine1: Maybe<Scalars['String']>;
   addressLine2: Maybe<Scalars['String']>;
-  city: Scalars['String'];
-  postalCode: Scalars['String'];
+  city: Maybe<Scalars['String']>;
+  postalCode: Maybe<Scalars['String']>;
   poaFormS3ObjectKey: Maybe<Scalars['String']>;
   omitGuardianPoa: Maybe<Scalars['Boolean']>;
 };
@@ -1169,6 +1180,7 @@ export type UpdateApplicantGuardianInformationInput = {
 export type UpdateApplicantGuardianInformationResult = {
   __typename?: 'UpdateApplicantGuardianInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicantNotesInput = {
@@ -1193,13 +1205,14 @@ export type UpdateApplicationAdditionalInformationInput = {
 export type UpdateApplicationAdditionalInformationResult = {
   __typename?: 'UpdateApplicationAdditionalInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationDoctorInformationInput = {
   id: Scalars['Int'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
-  mspNumber: Scalars['Int'];
+  mspNumber: Scalars['String'];
   phone: Scalars['String'];
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
@@ -1210,6 +1223,7 @@ export type UpdateApplicationDoctorInformationInput = {
 export type UpdateApplicationDoctorInformationResult = {
   __typename?: 'UpdateApplicationDoctorInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationGeneralInformationInput = {
@@ -1229,26 +1243,28 @@ export type UpdateApplicationGeneralInformationInput = {
 export type UpdateApplicationGeneralInformationResult = {
   __typename?: 'UpdateApplicationGeneralInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationGuardianInformationInput = {
   id: Scalars['Int'];
-  omitGuardianPoa: Scalars['Boolean'];
-  firstName: Scalars['String'];
+  omitGuardianPoa: Maybe<Scalars['Boolean']>;
+  firstName: Maybe<Scalars['String']>;
   middleName: Maybe<Scalars['String']>;
-  lastName: Scalars['String'];
-  phone: Scalars['String'];
-  relationship: Scalars['String'];
-  addressLine1: Scalars['String'];
+  lastName: Maybe<Scalars['String']>;
+  phone: Maybe<Scalars['String']>;
+  relationship: Maybe<Scalars['String']>;
+  addressLine1: Maybe<Scalars['String']>;
   addressLine2: Maybe<Scalars['String']>;
-  city: Scalars['String'];
-  postalCode: Scalars['String'];
+  city: Maybe<Scalars['String']>;
+  postalCode: Maybe<Scalars['String']>;
   poaFormS3ObjectKey: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationGuardianInformationResult = {
   __typename?: 'UpdateApplicationGuardianInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationPaymentInformationInput = {
@@ -1276,6 +1292,7 @@ export type UpdateApplicationPaymentInformationInput = {
 export type UpdateApplicationPaymentInformationResult = {
   __typename?: 'UpdateApplicationPaymentInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationPhysicianAssessmentInput = {
@@ -1286,11 +1303,14 @@ export type UpdateApplicationPhysicianAssessmentInput = {
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherPatientCondition: Maybe<Scalars['String']>;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
+  permitType: PermitType;
+  otherMobilityAids: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationPhysicianAssessmentResult = {
   __typename?: 'UpdateApplicationPhysicianAssessmentResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingAssignAppNumberInput = {
@@ -1407,6 +1427,25 @@ export type UpdateNewApplicationGeneralInformationInput = {
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
   postalCode: Scalars['String'];
+};
+
+export type UpsertPhysicianInput = {
+  mspNumber: Scalars['String'];
+  name: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  province: Maybe<Province>;
+  postalCode: Scalars['String'];
+  phone: Scalars['String'];
+  status: Maybe<PhysicianStatus>;
+  notes: Maybe<Scalars['String']>;
+};
+
+export type UpsertPhysicianResult = {
+  __typename?: 'UpsertPhysicianResult';
+  ok: Scalars['Boolean'];
+  physicianId: Scalars['Int'];
 };
 
 export type VerifyIdentityFailureReason =

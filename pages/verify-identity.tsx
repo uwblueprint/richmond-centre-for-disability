@@ -32,7 +32,7 @@ import DateField from '@components/form/DateField';
 import TextField from '@components/form/TextField';
 import { Form, Formik } from 'formik';
 import NumberField from '@components/form/NumberField';
-import { verifyIdentitySchema } from '@lib/applicants/verify-identity/validation';
+import { verifyIdentitySchema } from '@lib/applicants/validation';
 import { useState } from 'react';
 
 export default function IdentityVerificationForm() {
