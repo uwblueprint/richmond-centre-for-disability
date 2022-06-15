@@ -730,6 +730,7 @@ export const createExternalRenewalApplication: Resolver<
         ok: false,
         applicationId: null,
         error: err.message,
+        checkoutUrl: null,
       };
     }
   }
