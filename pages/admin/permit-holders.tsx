@@ -436,6 +436,7 @@ const PermitHolders: NextPage = () => {
                   columns={COLUMNS}
                   data={permitHolderData || []}
                   loading={loading}
+                  initialSort={sortOrder}
                   onChangeSortOrder={sortOrder => {
                     setSortOrder(sortOrder);
                   }}
