@@ -194,10 +194,8 @@ export default function CreateRenewal() {
     const validatedValues = await renewalRequestFormSchema.validate(values);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { type, ...permitHolder } = values.permitHolder;
     const additionalInformation = validatedValues.additionalInformation;
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { type, ...permitHolder } = validatedValues.permitHolder;
 
     await submitRenewalApplication({
       variables: {
