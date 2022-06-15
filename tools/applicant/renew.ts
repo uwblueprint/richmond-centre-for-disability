@@ -13,6 +13,7 @@ export const CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION = gql`
       ok
       applicationId
       error
+      checkoutUrl
     }
   }
 `;

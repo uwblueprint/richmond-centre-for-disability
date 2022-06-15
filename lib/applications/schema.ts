@@ -522,6 +522,9 @@ export default gql`
     requiresWiderParkingSpaceReason: RequiresWiderParkingSpaceReason
     otherRequiresWiderParkingSpaceReason: String
 
+    # Donation information
+    donationAmount: Int
+
     applicantId: Int!
   }
 
@@ -529,6 +532,7 @@ export default gql`
     ok: Boolean!
     applicationId: Int
     error: String
+    checkoutUrl: String
   }
 
   input CreateReplacementApplicationInput {
