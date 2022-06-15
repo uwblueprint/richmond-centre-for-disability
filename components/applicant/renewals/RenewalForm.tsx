@@ -339,6 +339,8 @@ const RenewalForm: FC = () => {
           requiresWiderParkingSpace: false,
           requiresWiderParkingSpaceReason: null,
           otherRequiresWiderParkingSpaceReason: null,
+          // TODO: Replace donation amount with dynamic value
+          donationAmount: 0,
         },
       },
     });
