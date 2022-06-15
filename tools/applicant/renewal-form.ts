@@ -25,3 +25,9 @@ export type CreateExternalRenewalApplicationRequest = MutationCreateExternalRene
 export type CreateExternalRenewalApplicationResponse = {
   createExternalRenewalApplication: CreateExternalRenewalApplicationResult;
 };
+
+/** Current step of renewal flow */
+export enum Step {
+  IDENTITY_VERIFICATION,
+  RENEWAL_FORM,
+}

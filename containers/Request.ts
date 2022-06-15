@@ -1,4 +1,5 @@
-import useSessionStorage from '@tools/hooks/useSessionStorage'; // useSessionStorage hook
+import { Step } from '@tools/applicant/renewal-form';
+import { useState } from 'react';
 import { createContainer } from 'unstated-next'; // Unstated Next
 
 /**
@@ -7,19 +8,26 @@ import { createContainer } from 'unstated-next'; // Unstated Next
  */
 const useRequest = () => {
   // Timestamp of agreement to TOS
-  const [acceptedTOSTimestamp, setAcceptedTOSTimestamp] = useSessionStorage<Date | null>(
-    'acceptedTOSTimestamp',
-    null
-  );
+  const [acceptedTOSTimestamp, setAcceptedTOSTimestamp] = useState<Date | null>(null);
 
   // ID of applicant after successful identity verification
-  const [applicantId, setApplicantId] = useSessionStorage<number | null>('applicantId', null);
+  const [applicantId, setApplicantId] = useState<number | null>(null);
+
+  // Current renewal flow step
+  const [currentStep, setCurrentStep] = useState<Step>(Step.IDENTITY_VERIFICATION);
+
+  // Handler for going to renewal step
+  const goToRenewalForm = () => {
+    setCurrentStep(Step.RENEWAL_FORM);
+  };
 
   return {
     acceptedTOSTimestamp,
     setAcceptedTOSTimestamp,
     applicantId,
     setApplicantId,
+    currentStep,
+    goToRenewalForm,
   };
 };
 
