@@ -58,6 +58,16 @@ export const formatFullName = (...args: Array<string | null | undefined>): strin
 };
 
 /**
+ * Format Canadian street address
+ * @param addressLine1 Address line 1
+ * @param addressLine2 Address line 2
+ * @returns Formatted Canadian street address
+ */
+export const formatStreetAddress = (addressLine1: string, addressLine2: string | null): string => {
+  return addressLine2 ? `${addressLine2} - ${addressLine1}` : addressLine1;
+};
+
+/**
  * Format Canadian address. Province and country can be omitted
  * @param addressLine1 Address line 1
  * @param addressLine2 Address line 2

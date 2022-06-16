@@ -14,11 +14,11 @@ import {
   ModalFooter,
   useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
-import Request from '@containers/Request'; // Request container
+import RenewalFlow from '@containers/RenewalFlow'; // Request container
 
 export default function TOSModal() {
   // TOS acceptance timestamp
-  const { setAcceptedTOSTimestamp } = Request.useContainer();
+  const { setAcceptedTOSTimestamp } = RenewalFlow.useContainer();
 
   // Modal state and close callback
   const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true });

@@ -31,3 +31,6 @@ export enum Step {
   IDENTITY_VERIFICATION,
   RENEWAL_FORM,
 }
+
+/** Donation amount type */
+export type DonationAmount = 0 | 5 | 10 | 25 | 50 | 75 | 100;
