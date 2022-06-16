@@ -206,7 +206,7 @@ export const paymentInformationMutationSchema = paymentInformationSchema.shape({
 export const reasonForReplacementFormSchema = object({
   reason: mixed<ReasonForReplacement>()
     .oneOf(Object.values(ReasonForReplacement))
-    .required('Please select reason for replacement'), // TODO: consider making this optional??
+    .required('Please select reason for replacement'),
   lostTimestamp: date()
     .nullable()
     .default(null)

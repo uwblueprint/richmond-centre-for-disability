@@ -49,6 +49,7 @@ import {
   applicantFacingRenewalMutationSchema,
   createNewRequestFormSchema,
   paymentInformationMutationSchema,
+  renewalRequestFormSchema,
   renewalRequestMutationSchema,
 } from '@lib/applications/validation';
 import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
@@ -59,6 +60,7 @@ import { guardianInformationSchema } from '@lib/guardian/validation';
 import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import moment from 'moment';
 import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
+import { replacementFormSchema } from '@lib/applications/validation';
 
 /**
  * Query an application by ID
@@ -233,19 +235,25 @@ export const createNewApplication: Resolver<
   const { input } = args;
 
   const {
-    phone,
+    applicantId,
     dateOfBirth,
+    donationAmount,
     gender,
-    otherGender,
-    postalCode,
-    disability,
     disabilityCertificationDate,
     patientCondition,
     mobilityAids,
-    otherMobilityAids,
     otherPatientCondition,
     temporaryPermitExpiry,
     physicianFirstName,
+    ...data
+  } = input;
+
+  const {
+    phone,
+    otherGender,
+    postalCode,
+    disability,
+    otherMobilityAids,
     physicianLastName,
     physicianMspNumber,
     physicianPhone,
@@ -269,11 +277,8 @@ export const createNewApplication: Resolver<
     requiresWiderParkingSpace,
     requiresWiderParkingSpaceReason,
     otherRequiresWiderParkingSpaceReason,
-    donationAmount,
     shippingPostalCode,
     billingPostalCode,
-    applicantId,
-    ...data
   } = input;
 
   const permitHolder = {
@@ -475,6 +480,15 @@ export const createRenewalApplication: Resolver<
 
   const {
     applicantId,
+    postalCode,
+    donationAmount,
+    shippingPostalCode,
+    billingPostalCode,
+    phone,
+    ...data
+  } = input;
+
+  const {
     physicianFirstName,
     physicianLastName,
     physicianMspNumber,
@@ -488,19 +502,14 @@ export const createRenewalApplication: Resolver<
     requiresWiderParkingSpace,
     requiresWiderParkingSpaceReason,
     otherRequiresWiderParkingSpaceReason,
-    donationAmount,
-    shippingPostalCode,
-    billingPostalCode,
     firstName,
     middleName,
     lastName,
-    phone,
     email,
     receiveEmailUpdates,
     addressLine1,
     addressLine2,
     city,
-    postalCode,
     paymentMethod,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
@@ -516,7 +525,10 @@ export const createRenewalApplication: Resolver<
     billingCity,
     billingProvince,
     billingCountry,
-    ...data
+    shopifyConfirmationNumber,
+    shopifyOrderNumber,
+    shopifyPaymentStatus,
+    paidThroughShopify,
   } = input;
 
   const permitHolder = {
@@ -575,11 +587,16 @@ export const createRenewalApplication: Resolver<
   try {
     await renewalRequestMutationSchema.validate({
       applicantId,
+      paidThroughShopify,
+      shopifyPaymentStatus,
+      shopifyConfirmationNumber,
+      shopifyOrderNumber,
+    });
+    await renewalRequestFormSchema.validate({
       permitHolder,
       doctorInformation,
       additionalInformation,
       paymentInformation,
-      ...data,
     });
   } catch (err) {
     if (err instanceof ValidationError) {
@@ -602,30 +619,7 @@ export const createRenewalApplication: Resolver<
         type: 'RENEWAL',
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
-        firstName,
-        middleName,
-        lastName,
         phone: stripPhoneNumber(phone),
-        email,
-        receiveEmailUpdates,
-        addressLine1,
-        addressLine2,
-        city,
-        paymentMethod,
-        shippingAddressSameAsHomeAddress,
-        shippingFullName,
-        shippingAddressLine1,
-        shippingAddressLine2,
-        shippingCity,
-        shippingProvince,
-        shippingCountry,
-        billingAddressSameAsHomeAddress,
-        billingFullName,
-        billingAddressLine1,
-        billingAddressLine2,
-        billingCity,
-        billingProvince,
-        billingCountry,
         ...data,
         postalCode: stripPostalCode(postalCode),
         shippingPostalCode: shippingPostalCode && stripPostalCode(shippingPostalCode),
@@ -886,10 +880,31 @@ export const createReplacementApplication: Resolver<
     applicantId,
     phone,
     postalCode,
-
-    // Payment Information Fields
-    paymentMethod,
+    reason,
+    lostTimestamp,
+    lostLocation,
+    stolenPoliceFileNumber,
+    stolenJurisdiction,
+    stolenPoliceOfficerName,
+    eventDescription,
     donationAmount,
+    shippingPostalCode,
+    billingPostalCode,
+    ...data
+  } = input;
+
+  const {
+    // Remaining Permit Holder Information Fields
+    firstName,
+    lastName,
+    middleName,
+    email,
+    addressLine1,
+    addressLine2,
+    city,
+
+    // Remaining Payment Information Fields
+    paymentMethod,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
     shippingAddressLine1,
@@ -897,23 +912,12 @@ export const createReplacementApplication: Resolver<
     shippingCity,
     shippingProvince,
     shippingCountry,
-    shippingPostalCode,
     billingAddressSameAsHomeAddress,
     billingAddressLine1,
     billingAddressLine2,
     billingCity,
     billingProvince,
     billingCountry,
-    billingPostalCode,
-
-    // Reason for Replacement Fields
-    reason,
-    lostTimestamp,
-    lostLocation,
-    eventDescription,
-    stolenPoliceFileNumber,
-    stolenJurisdiction,
-    stolenPoliceOfficerName,
   } = input;
 
   if (!process.env.PROCESSING_FEE) {
