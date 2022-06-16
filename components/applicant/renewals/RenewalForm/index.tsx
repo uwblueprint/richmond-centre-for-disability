@@ -1,6 +1,19 @@
 import { useState, FC } from 'react'; // React
 import { useMutation } from '@apollo/client'; // Apollo Client
-import { Flex, Box, GridItem, Text, Button, Checkbox, useToast } from '@chakra-ui/react'; // Chakra UI
+import {
+  Flex,
+  Box,
+  GridItem,
+  Text,
+  Button,
+  Checkbox,
+  useToast,
+  Alert,
+  AlertTitle,
+  AlertDescription,
+  AlertIcon,
+  VStack,
+} from '@chakra-ui/react'; // Chakra UI
 import { Step, Steps } from 'chakra-ui-steps'; // Chakra UI Steps
 import {
   CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION,
@@ -151,34 +164,47 @@ const RenewalForm: FC = () => {
           <DonationSection />
         </Step>
         <Step label={`Review Request`}>
-          <ReviewSection />
-          <Box marginTop="24px" marginBottom="40px">
-            <Text
-              as="h4"
-              textStyle="body-bold"
-              textAlign="left"
-              marginBottom="12px"
-            >{`Please check to confirm the following statements before you proceed:`}</Text>
-            <Checkbox
-              textAlign="left"
-              isChecked={certified}
-              onChange={event => setCertified(event.target.checked)}
-            >
-              {`I certify that I am the holder of the accessible parking pass for which this
+          <VStack align="flex-start" spacing="32px">
+            <ReviewSection />
+            <Box>
+              <Text
+                as="h4"
+                textStyle="body-bold"
+                textAlign="left"
+                marginBottom="12px"
+              >{`Please check to confirm the following statements before you proceed:`}</Text>
+              <Checkbox
+                textAlign="left"
+                isChecked={certified}
+                onChange={event => setCertified(event.target.checked)}
+              >
+                {`I certify that I am the holder of the accessible parking pass for which this
   application for renewal is submitted, and that I have personally provided all of the
   information required in this application.`}
-            </Checkbox>
-          </Box>
-          <ValidationErrorAlert error={error} />
-          <Flex width="100%" justifyContent="flex-end">
-            <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
-            <Button
-              variant="solid"
-              onClick={handleSubmit}
-              loading={loading}
-              disabled={loading || !applicantId || !certified}
-            >{`Proceed to payment`}</Button>
-          </Flex>
+              </Checkbox>
+            </Box>
+            <ValidationErrorAlert error={error} />
+            <Alert status="info">
+              <AlertIcon />
+              <VStack align="flex-start" spacing="0">
+                <AlertTitle>Redirection to Shopify Checkout</AlertTitle>
+                <AlertDescription textAlign="left">
+                  When clicking “Proceed to payment”, you will be redirected to Shopify checkout to
+                  process the payment for your Permit Renewal. In order to finish and submit your
+                  application, you have to checkout.
+                </AlertDescription>
+              </VStack>
+            </Alert>
+            <Flex width="100%" justifyContent="flex-end">
+              <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
+              <Button
+                variant="solid"
+                onClick={handleSubmit}
+                loading={loading}
+                disabled={loading || !applicantId || !certified}
+              >{`Proceed to payment`}</Button>
+            </Flex>
+          </VStack>
         </Step>
       </Steps>
     </GridItem>
