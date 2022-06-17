@@ -49,7 +49,6 @@ import {
   applicantFacingRenewalMutationSchema,
   createNewRequestFormSchema,
   paymentInformationMutationSchema,
-  renewalRequestFormSchema,
   renewalRequestMutationSchema,
 } from '@lib/applications/validation';
 import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
@@ -235,25 +234,19 @@ export const createNewApplication: Resolver<
   const { input } = args;
 
   const {
-    applicantId,
-    dateOfBirth,
-    donationAmount,
-    gender,
-    disabilityCertificationDate,
-    patientCondition,
-    mobilityAids,
-    otherPatientCondition,
-    temporaryPermitExpiry,
-    physicianFirstName,
-    ...data
-  } = input;
-
-  const {
     phone,
+    dateOfBirth,
+    gender,
     otherGender,
     postalCode,
     disability,
+    disabilityCertificationDate,
+    patientCondition,
+    mobilityAids,
     otherMobilityAids,
+    otherPatientCondition,
+    temporaryPermitExpiry,
+    physicianFirstName,
     physicianLastName,
     physicianMspNumber,
     physicianPhone,
@@ -277,8 +270,11 @@ export const createNewApplication: Resolver<
     requiresWiderParkingSpace,
     requiresWiderParkingSpaceReason,
     otherRequiresWiderParkingSpaceReason,
+    donationAmount,
     shippingPostalCode,
     billingPostalCode,
+    applicantId,
+    ...data
   } = input;
 
   const permitHolder = {
@@ -480,15 +476,8 @@ export const createRenewalApplication: Resolver<
 
   const {
     applicantId,
-    postalCode,
-    donationAmount,
-    shippingPostalCode,
-    billingPostalCode,
     phone,
-    ...data
-  } = input;
-
-  const {
+    postalCode,
     physicianFirstName,
     physicianLastName,
     physicianMspNumber,
@@ -502,6 +491,17 @@ export const createRenewalApplication: Resolver<
     requiresWiderParkingSpace,
     requiresWiderParkingSpaceReason,
     otherRequiresWiderParkingSpaceReason,
+    donationAmount,
+    shippingPostalCode,
+    billingPostalCode,
+    shopifyConfirmationNumber,
+    shopifyOrderNumber,
+    shopifyPaymentStatus,
+    paidThroughShopify,
+    ...data
+  } = input;
+
+  const {
     firstName,
     middleName,
     lastName,
@@ -525,10 +525,6 @@ export const createRenewalApplication: Resolver<
     billingCity,
     billingProvince,
     billingCountry,
-    shopifyConfirmationNumber,
-    shopifyOrderNumber,
-    shopifyPaymentStatus,
-    paidThroughShopify,
   } = input;
 
   const permitHolder = {
@@ -587,16 +583,14 @@ export const createRenewalApplication: Resolver<
   try {
     await renewalRequestMutationSchema.validate({
       applicantId,
-      paidThroughShopify,
-      shopifyPaymentStatus,
-      shopifyConfirmationNumber,
-      shopifyOrderNumber,
-    });
-    await renewalRequestFormSchema.validate({
       permitHolder,
       doctorInformation,
       additionalInformation,
       paymentInformation,
+      shopifyConfirmationNumber,
+      shopifyOrderNumber,
+      shopifyPaymentStatus,
+      paidThroughShopify,
     });
   } catch (err) {
     if (err instanceof ValidationError) {
