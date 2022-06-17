@@ -461,3 +461,15 @@ export const applicantFacingRenewalMutationSchema = applicantFacingRenewalPerson
   })
   .concat(applicantFacingRenewalContactSchema)
   .concat(applicantFacingRenewalDoctorSchema);
+
+/**
+ * Applicant-facing renewal donation amount schema
+ */
+export const applicantFacingRenewalDonationSchema = object({
+  donationAmount: mixed<number>()
+    .oneOf([0, 5, 10, 25, 50, 75, 100])
+    .required('Please select a donation amount')
+    .transform((_value, originalValue) => {
+      return Number(originalValue);
+    }),
+});

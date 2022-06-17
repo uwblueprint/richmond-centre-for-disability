@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react'; // Chakra UI
+import { Text } from '@chakra-ui/react'; // Chakra UI
 
 type Props = {
   readonly name: string;
@@ -12,13 +12,11 @@ type Props = {
  */
 export default function ReviewRequestField({ name, value }: Props) {
   return (
-    <Flex justifyContent="flex-start" marginBottom="12px">
-      <Text as="h4" textStyle="body-bold" display="inline" marginRight="8px">
-        {`${name}: `}
-      </Text>
-      <Text as="p" textStyle="body-regular" display="inline">
+    <Text textAlign="left">
+      <Text as="span" textStyle="body-bold">{`${name}: `}</Text>
+      <Text as="span" textStyle="body-regular">
         {value}
       </Text>
-    </Flex>
+    </Text>
   );
 }

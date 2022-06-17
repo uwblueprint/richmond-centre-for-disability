@@ -11,7 +11,7 @@ import {
 
 type Props = TextareaProps & {
   readonly name: string;
-  readonly label: string;
+  readonly label?: string;
   readonly required?: boolean;
 };
 
@@ -21,7 +21,7 @@ const TextArea: FC<Props> = props => {
 
   return (
     <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
-      <FormLabel htmlFor={name}>{label}</FormLabel>
+      {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
       <Textarea {...textAreaProps} {...field} />
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">

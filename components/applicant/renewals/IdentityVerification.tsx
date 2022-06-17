@@ -25,7 +25,7 @@ import {
   VerifyIdentityResponse,
   getErrorMessage,
 } from '@tools/applicant/verify-identity'; // Tools
-import Request from '@containers/Request'; // Request state
+import RenewalFlow from '@containers/RenewalFlow'; // Request state
 import DateField from '@components/form/DateField';
 import TextField from '@components/form/TextField';
 import { Form, Formik } from 'formik';
@@ -36,7 +36,7 @@ import { FC, useState } from 'react';
 /** Identity verification step of APP renewal flow */
 const IdentityVerification: FC = () => {
   // Request state
-  const { acceptedTOSTimestamp, setApplicantId, goToRenewalForm } = Request.useContainer();
+  const { acceptedTOSTimestamp, setApplicantId, goToRenewalForm } = RenewalFlow.useContainer();
   const [alertError, setAlertError] = useState(''); // Error message displayed in alert
 
   // Verify identity query

@@ -7,7 +7,7 @@ export default function IncompleteSectionAlert() {
   return (
     <Alert status="error" marginBottom="24px">
       <AlertIcon />
-      <AlertTitle>
+      <AlertTitle textAlign="left">
         {`Please fill this section of the form before continuing to the next section.`}
       </AlertTitle>
     </Alert>
