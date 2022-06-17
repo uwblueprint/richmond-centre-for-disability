@@ -44,6 +44,7 @@ import {
   UpdateApplicationReasonForReplacementResult,
 } from '@lib/graphql/types';
 import { flattenApplication } from '@lib/applications/utils';
+import { requestPermitHolderInformationMutationSchema } from '@lib/applicants/validation';
 import {
   additionalQuestionsMutationSchema,
   applicantFacingRenewalMutationSchema,
@@ -52,11 +53,12 @@ import {
   renewalRequestMutationSchema,
   replacementFormSchema,
 } from '@lib/applications/validation';
-import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
-import { requestPermitHolderInformationMutationSchema } from '@lib/applicants/validation';
-import { ValidationError } from 'yup';
-import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 import { guardianInformationSchema } from '@lib/guardian/validation';
+import {
+  physicianAssessmentMutationSchema,
+  requestPhysicianInformationSchema,
+} from '@lib/physicians/validation';
+import { ValidationError } from 'yup';
 import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import moment from 'moment';
 import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
