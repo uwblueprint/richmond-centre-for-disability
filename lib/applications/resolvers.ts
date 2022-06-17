@@ -950,7 +950,7 @@ export const createReplacementApplication: Resolver<
     billingPostalCode,
   };
   const reasonForReplacement = {
-    reason,
+    reason: null,
     lostTimestamp,
     lostLocation,
     eventDescription,
@@ -1034,7 +1034,7 @@ export const createReplacementApplication: Resolver<
     }
   }
 
-  // Throw internal server error if renewal application was not created
+  // Throw internal server error if replacement application was not created
   if (!application) {
     throw new ApolloError('Application was unable to be created');
   }

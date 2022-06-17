@@ -32,7 +32,10 @@ export const requestPermitHolderInformationSchema = object({
   phone: string()
     .required('Please enter a valid phone number')
     .matches(phoneNumberRegex, 'Please enter a valid phone number in the format 000-000-0000'),
-  receiveEmailUpdates: boolean().required(),
+  receiveEmailUpdates: boolean().when('type', {
+    is: 'NEW' || 'RENEWAL',
+    then: boolean().required(),
+  }),
   addressLine1: string().required('Please enter an address'),
   addressLine2: string().nullable().default(null),
   city: string().required('Please enter a city'),
