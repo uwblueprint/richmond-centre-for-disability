@@ -50,6 +50,7 @@ import {
   createNewRequestFormSchema,
   paymentInformationMutationSchema,
   renewalRequestMutationSchema,
+  replacementFormSchema,
 } from '@lib/applications/validation';
 import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
 import { requestPermitHolderInformationMutationSchema } from '@lib/applicants/validation';
@@ -59,7 +60,6 @@ import { guardianInformationSchema } from '@lib/guardian/validation';
 import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import moment from 'moment';
 import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
-import { replacementFormSchema } from '@lib/applications/validation';
 
 /**
  * Query an application by ID
