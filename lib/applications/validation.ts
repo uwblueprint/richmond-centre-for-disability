@@ -265,6 +265,13 @@ export const editReasonForReplacementFormSchema = object({
 });
 
 /**
+ * Validation schema for reason for replacement mutation
+ */
+export const reasonForReplacementMutationSchema = reasonForReplacementFormSchema.shape({
+  id: number().positive('Invalid application ID').required('Application ID missing'),
+});
+
+/**
  * Create new request form validation schema
  */
 export const createNewRequestFormSchema = object({

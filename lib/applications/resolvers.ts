@@ -49,6 +49,7 @@ import {
   applicantFacingRenewalMutationSchema,
   createNewRequestFormSchema,
   paymentInformationMutationSchema,
+  reasonForReplacementMutationSchema,
   renewalRequestMutationSchema,
 } from '@lib/applications/validation';
 import { physicianAssessmentMutationSchema } from '@lib/physicians/validation';
@@ -1482,9 +1483,20 @@ export const updateApplicationReasonForReplacement: Resolver<
   MutationUpdateApplicationReasonForReplacementArgs,
   UpdateApplicationReasonForReplacementResult
 > = async (_parent, args, { prisma }) => {
-  // TODO: Validation
   const { input } = args;
-  const { id, ...data } = input;
+
+  try {
+    await reasonForReplacementMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+  }
+
+  const { id, ...validatedData } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -1510,7 +1522,7 @@ export const updateApplicationReasonForReplacement: Resolver<
       where: { id },
       data: {
         replacementApplication: {
-          update: data,
+          update: validatedData,
         },
       },
     });
@@ -1522,7 +1534,7 @@ export const updateApplicationReasonForReplacement: Resolver<
     throw new ApolloError('Application reason for replacement was unable to be created');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**

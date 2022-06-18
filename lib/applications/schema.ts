@@ -772,6 +772,7 @@ export default gql`
 
   type UpdateApplicationReasonForReplacementResult {
     ok: Boolean!
+    error: String
   }
 
   # Update physician assessment section of application
