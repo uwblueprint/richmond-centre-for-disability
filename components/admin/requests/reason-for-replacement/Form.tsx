@@ -109,6 +109,7 @@ export default function ReasonForReplacementForm({
                 name="reasonForReplacement.stolenPoliceFileNumber"
                 label="Police file number"
                 required
+                value={reasonForReplacement.stolenPoliceFileNumber || ''}
               />
             </Box>
 
