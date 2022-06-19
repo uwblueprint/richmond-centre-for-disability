@@ -455,11 +455,6 @@ export default gql`
     # Payment information
     paymentMethod: PaymentType!
     donationAmount: String # Input monetary value as string
-    paidThroughShopify: Boolean!
-    shopifyPaymentStatus: ShopifyPaymentStatus
-    shopifyConfirmationNumber: String
-    shopifyOrderNumber: String
-
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
     shippingFullName: String
@@ -591,6 +586,7 @@ export default gql`
   type CreateReplacementApplicationResult {
     ok: Boolean!
     applicationId: Int
+    error: String
   }
 
   # Query for many applications

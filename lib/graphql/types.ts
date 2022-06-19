@@ -347,10 +347,6 @@ export type CreateRenewalApplicationInput = {
   otherRequiresWiderParkingSpaceReason: Maybe<Scalars['String']>;
   paymentMethod: PaymentType;
   donationAmount: Maybe<Scalars['String']>;
-  paidThroughShopify: Scalars['Boolean'];
-  shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
-  shopifyConfirmationNumber: Maybe<Scalars['String']>;
-  shopifyOrderNumber: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;
@@ -419,6 +415,7 @@ export type CreateReplacementApplicationResult = {
   __typename?: 'CreateReplacementApplicationResult';
   ok: Scalars['Boolean'];
   applicationId: Maybe<Scalars['Int']>;
+  error: Maybe<Scalars['String']>;
 };
 
 

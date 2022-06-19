@@ -226,12 +226,6 @@ export default function CreateRenewal() {
               : null,
 
           ...validatedValues.paymentInformation,
-
-          // TODO: Replace with dynamic values
-          paidThroughShopify: false,
-          shopifyPaymentStatus: null,
-          shopifyConfirmationNumber: null,
-          shopifyOrderNumber: null,
         },
       },
     });

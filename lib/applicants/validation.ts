@@ -23,12 +23,19 @@ export const requestPermitHolderInformationSchema = object({
       then: mixed<Gender>().oneOf(Object.values(Gender)).required('Please select a gender'),
       otherwise: mixed<Gender>().oneOf(Object.values(Gender)).optional(),
     }),
-  otherGender: string().nullable().default(null),
+  otherGender: string().when('type', {
+    is: 'NEW',
+    then: string().nullable().default(null),
+    otherwise: string().optional(),
+  }),
   email: string().email('Please enter a valid email address').nullable().default(null),
   phone: string()
     .required('Please enter a valid phone number')
     .matches(phoneNumberRegex, 'Please enter a valid phone number in the format 000-000-0000'),
-  receiveEmailUpdates: boolean().required(),
+  receiveEmailUpdates: boolean().when('type', {
+    is: (type: ApplicationType) => type === 'NEW' || type === 'RENEWAL',
+    then: boolean().required(),
+  }),
   addressLine1: string().required('Please enter an address'),
   addressLine2: string().nullable().default(null),
   city: string().required('Please enter a city'),
