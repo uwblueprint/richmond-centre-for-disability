@@ -56,6 +56,7 @@ export const UPDATE_REASON_FOR_REPLACEMENT = gql`
   mutation UpdateReasonForReplacement($input: UpdateApplicationReasonForReplacementInput!) {
     updateApplicationReasonForReplacement(input: $input) {
       ok
+      error
     }
   }
 `;

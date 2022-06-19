@@ -35,7 +35,8 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
     UpdateReasonForReplacementResponse,
     UpdateReasonForReplacementRequest
   >(UPDATE_REASON_FOR_REPLACEMENT);
-  const handleSave = async (data: ReasonForReplacementFormData) => {
+
+  const handleSave = async (reasonForReplacement: ReasonForReplacementFormData) => {
     const {
       reason,
       lostTimestamp,
@@ -44,9 +45,9 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
       stolenPoliceFileNumber,
       stolenPoliceOfficerName,
       eventDescription,
-    } = await reasonForReplacementFormSchema.validate(data);
+    } = await reasonForReplacementFormSchema.validate(reasonForReplacement);
 
-    await updateReasonForReplacement({
+    const { data } = await updateReasonForReplacement({
       variables: {
         input: {
           id: applicationId,
@@ -62,6 +63,7 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
     });
 
     refetch();
+    return data;
   };
 
   if (!data?.application) {

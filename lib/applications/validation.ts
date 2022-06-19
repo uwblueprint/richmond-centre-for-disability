@@ -219,6 +219,9 @@ export const reasonForReplacementFormSchema = object({
         .typeError('Please enter date APP was lost')
         .max(new Date(), 'Date must be in the past')
         .required('Please enter date APP was lost'),
+      otherwise: date()
+        .transform(_ => null)
+        .nullable(),
     }),
   lostLocation: string()
     .nullable()
@@ -228,6 +231,9 @@ export const reasonForReplacementFormSchema = object({
       then: string()
         .typeError('Please enter location APP was lost')
         .required('Please enter location APP was lost'),
+      otherwise: string()
+        .transform(_ => null)
+        .nullable(),
     }),
   eventDescription: string()
     .nullable()
@@ -237,6 +243,9 @@ export const reasonForReplacementFormSchema = object({
       then: string()
         .typeError('Please enter event description')
         .required('Please enter event description'),
+      otherwise: string()
+        .transform(_ => null)
+        .nullable(),
     }),
   stolenPoliceFileNumber: number()
     .nullable()
@@ -246,15 +255,30 @@ export const reasonForReplacementFormSchema = object({
       then: number()
         .typeError('Please enter police file number')
         .required('Please enter police file number'),
+      otherwise: number()
+        .transform(_ => null)
+        .nullable(),
     }),
-  stolenJurisdiction: string().nullable().default(null).when('reason', {
-    is: 'STOLEN',
-    then: string().nullable(),
-  }),
-  stolenPoliceOfficerName: string().nullable().default(null).when('reason', {
-    is: 'STOLEN',
-    then: string().nullable(),
-  }),
+  stolenJurisdiction: string()
+    .nullable()
+    .default(null)
+    .when('reason', {
+      is: 'STOLEN',
+      then: string().nullable(),
+      otherwise: string()
+        .transform(_ => null)
+        .nullable(),
+    }),
+  stolenPoliceOfficerName: string()
+    .nullable()
+    .default(null)
+    .when('reason', {
+      is: 'STOLEN',
+      then: string().nullable(),
+      otherwise: string()
+        .transform(_ => null)
+        .nullable(),
+    }),
 });
 
 /**
@@ -262,6 +286,13 @@ export const reasonForReplacementFormSchema = object({
  */
 export const editReasonForReplacementFormSchema = object({
   reasonForReplacement: reasonForReplacementFormSchema,
+});
+
+/**
+ * Validation schema for reason for replacement mutation
+ */
+export const reasonForReplacementMutationSchema = reasonForReplacementFormSchema.shape({
+  id: number().positive('Invalid application ID').required('Application ID missing'),
 });
 
 /**
