@@ -294,7 +294,8 @@ export const renewalRequestMutationSchema = renewalRequestFormSchema.shape({
   paidThroughShopify: bool().required(),
   shopifyPaymentStatus: mixed<ShopifyPaymentStatus>()
     .oneOf([...Object.values(ShopifyPaymentStatus), null])
-    .nullable(),
+    .nullable()
+    .default(null),
   shopifyConfirmationNumber: string().nullable().default(null),
   shopifyOrderNumber: string().nullable().default(null),
 });

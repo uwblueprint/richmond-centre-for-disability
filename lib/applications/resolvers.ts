@@ -496,10 +496,6 @@ export const createRenewalApplication: Resolver<
     donationAmount,
     shippingPostalCode,
     billingPostalCode,
-    shopifyConfirmationNumber,
-    shopifyOrderNumber,
-    shopifyPaymentStatus,
-    paidThroughShopify,
     ...data
   } = input;
 
@@ -589,10 +585,7 @@ export const createRenewalApplication: Resolver<
       doctorInformation,
       additionalInformation,
       paymentInformation,
-      shopifyConfirmationNumber,
-      shopifyOrderNumber,
-      shopifyPaymentStatus,
-      paidThroughShopify,
+      paidThroughShopify: false,
     });
   } catch (err) {
     if (err instanceof ValidationError) {
@@ -892,8 +885,8 @@ export const createReplacementApplication: Resolver<
   const {
     // Remaining Permit Holder Information Fields
     firstName,
-    lastName,
     middleName,
+    lastName,
     email,
     addressLine1,
     addressLine2,
@@ -909,6 +902,7 @@ export const createReplacementApplication: Resolver<
     shippingProvince,
     shippingCountry,
     billingAddressSameAsHomeAddress,
+    billingFullName,
     billingAddressLine1,
     billingAddressLine2,
     billingCity,
@@ -942,6 +936,7 @@ export const createReplacementApplication: Resolver<
     shippingCountry,
     shippingPostalCode,
     billingAddressSameAsHomeAddress,
+    billingFullName,
     billingAddressLine1,
     billingAddressLine2,
     billingCity,
@@ -950,7 +945,7 @@ export const createReplacementApplication: Resolver<
     billingPostalCode,
   };
   const reasonForReplacement = {
-    reason: null,
+    reason,
     lostTimestamp,
     lostLocation,
     eventDescription,

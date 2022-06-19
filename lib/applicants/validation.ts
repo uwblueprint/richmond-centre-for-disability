@@ -33,7 +33,7 @@ export const requestPermitHolderInformationSchema = object({
     .required('Please enter a valid phone number')
     .matches(phoneNumberRegex, 'Please enter a valid phone number in the format 000-000-0000'),
   receiveEmailUpdates: boolean().when('type', {
-    is: 'NEW' || 'RENEWAL',
+    is: (type: ApplicationType) => type === 'NEW' || type === 'RENEWAL',
     then: boolean().required(),
   }),
   addressLine1: string().required('Please enter an address'),
