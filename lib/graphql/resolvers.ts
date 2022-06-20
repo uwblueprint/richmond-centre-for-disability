@@ -83,6 +83,7 @@ import {
   applicationProcessingWalletCardCreatedEmployeeResolver,
 } from '@lib/application-processing/field-resolvers';
 import { guardianPoaFormS3ObjectUrlResolver } from '@lib/guardian/field-resolvers';
+import { comparePhysicians } from '@lib/physicians/resolvers';
 
 /**
  * Resolver return type - accounts for extra fields
@@ -141,6 +142,9 @@ const resolvers = {
     generateApplicationsReport: authorize(generateApplicationsReport, ['SECRETARY']),
     generatePermitHoldersReport: authorize(generatePermitHoldersReport, ['SECRETARY']),
     generateAccountantReport: authorize(generateAccountantReport, [`ACCOUNTING`]),
+
+    // Physicians
+    comparePhysicians: authorize(comparePhysicians, ['SECRETARY']),
   },
   Mutation: {
     // Applicants
