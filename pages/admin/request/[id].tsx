@@ -101,6 +101,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
             <DoctorInformationCard
               applicationId={id}
               applicationCompleted={status === 'COMPLETED'}
+              applicantId={applicantId}
               editDisabled={reviewRequestCompleted || isRejected}
             />
           )}

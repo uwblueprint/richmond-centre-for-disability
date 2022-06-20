@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertIcon, HStack } from '@chakra-ui/react';
+import { Alert, AlertDescription, AlertIcon, HStack, Text } from '@chakra-ui/react';
 import { PhysicianMatchStatus } from '@lib/graphql/types';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -43,7 +43,15 @@ const PhysicianDiffAlert: FC<Props> = props => {
           <AlertIcon />
           <AlertDescription>
             This info may be outdated, find the most up to date doctor’s information associated with
-            this permit holder <Link href={`/permit-holder/${applicantId}`}>here</Link>.
+            this permit holder{' '}
+            <Link href={`/admin/permit-holder/${applicantId}`}>
+              <a target="_blank" rel="noopener noreferrer">
+                <Text as="span" color="primary" textDecoration="underline">
+                  here
+                </Text>
+              </a>
+            </Link>
+            .
           </AlertDescription>
         </HStack>
       </Alert>
