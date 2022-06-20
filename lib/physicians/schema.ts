@@ -28,7 +28,6 @@ export default gql`
     firstName: String!
     lastName: String!
     phone: String!
-    status: PhysicianStatus!
 
     # Address
     addressLine1: String!

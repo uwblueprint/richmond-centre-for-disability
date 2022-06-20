@@ -194,7 +194,6 @@ export type ComparePhysiciansInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   phone: Scalars['String'];
-  status: PhysicianStatus;
   addressLine1: Scalars['String'];
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
