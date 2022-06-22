@@ -26,6 +26,9 @@ export default gql`
       input: GeneratePermitHoldersReportInput!
     ): GeneratePermitHoldersReportResult
     generateAccountantReport(input: GenerateAccountantReportInput!): GenerateAccountantReportResult
+
+    # Physicians
+    comparePhysicians(input: ComparePhysiciansInput!): ComparePhysiciansResult
   }
 
   type Mutation {

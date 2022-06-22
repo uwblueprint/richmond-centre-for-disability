@@ -22,21 +22,30 @@ export default gql`
     postalCode: String!
   }
 
-  input UpsertPhysicianInput {
+  input ComparePhysiciansInput {
+    # General information
     mspNumber: String!
-    name: String!
+    firstName: String!
+    lastName: String!
+    phone: String!
+
+    # Address
     addressLine1: String!
     addressLine2: String
     city: String!
-    province: Province
+    province: Province!
+    country: String!
     postalCode: String!
-    phone: String!
-    status: PhysicianStatus
-    notes: String
   }
 
-  type UpsertPhysicianResult {
-    ok: Boolean!
-    physicianId: Int!
+  type ComparePhysiciansResult {
+    match: Boolean!
+    status: PhysicianMatchStatus
+    existingPhysicianData: Physician
+  }
+
+  enum PhysicianMatchStatus {
+    DOES_NOT_EXIST
+    DOES_NOT_MATCH_EXISTING
   }
 `;

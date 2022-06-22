@@ -1,10 +1,14 @@
 import { gql } from '@apollo/client';
 import {
+  ComparePhysiciansResult,
   MutationUpdateApplicationDoctorInformationArgs,
   NewApplication,
+  Physician,
   QueryApplicationArgs,
+  QueryComparePhysiciansArgs,
   RenewalApplication,
   UpdateApplicationDoctorInformationResult,
+  QueryApplicantArgs,
 } from '@lib/graphql/types'; // Physician type
 
 /** Doctor type in doctor information forms */
@@ -92,4 +96,67 @@ export type UpdateDoctorInformationRequest = MutationUpdateApplicationDoctorInfo
 
 export type UpdateDoctorInformationResponse = {
   updateApplicationDoctorInformation: UpdateApplicationDoctorInformationResult;
+};
+
+/** Compare application physician data to DB physician data */
+export const COMPARE_DOCTOR_INFORMATION = gql`
+  query CompareDoctorInformation($input: ComparePhysiciansInput!) {
+    comparePhysicians(input: $input) {
+      status
+      existingPhysicianData {
+        firstName
+        lastName
+        mspNumber
+        phone
+        addressLine1
+        addressLine2
+        city
+        province
+        country
+        postalCode
+      }
+    }
+  }
+`;
+
+export type CompareDoctorInformationRequest = QueryComparePhysiciansArgs;
+
+export type CompareDoctorInformationResponse = {
+  comparePhysicians: Pick<ComparePhysiciansResult, 'status'> & {
+    existingPhysicianData: Pick<
+      Physician,
+      | 'firstName'
+      | 'lastName'
+      | 'mspNumber'
+      | 'phone'
+      | 'addressLine1'
+      | 'addressLine2'
+      | 'city'
+      | 'province'
+      | 'country'
+      | 'postalCode'
+    >;
+  };
+};
+
+export const GET_CURRENT_PHYSICIAN_MSP_NUMBER = gql`
+  query GetCurrentPhysicianMspNumber($id: Int!) {
+    applicant(id: $id) {
+      medicalInformation {
+        physician {
+          mspNumber
+        }
+      }
+    }
+  }
+`;
+
+export type GetCurrentPhysicianMspNumberRequest = QueryApplicantArgs;
+
+export type GetCurrentPhysicianMspNumberResponse = {
+  applicant: {
+    medicalInformation: {
+      physician: Pick<Physician, 'mspNumber'>;
+    };
+  } | null;
 };

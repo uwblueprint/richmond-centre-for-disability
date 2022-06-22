@@ -18,7 +18,7 @@
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\""
   },
   "dependencies": {
-    "@apollo/client": "^3.3.19",
+    "@apollo/client": "^3.6.8",
     "@chakra-ui/icons": "^1.0.14",
     "@chakra-ui/react": "^1.6.2",
     "@emotion/react": "11",

@@ -189,6 +189,26 @@ export type ApproveApplicationResult = {
   ok: Scalars['Boolean'];
 };
 
+export type ComparePhysiciansInput = {
+  mspNumber: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  phone: Scalars['String'];
+  addressLine1: Scalars['String'];
+  addressLine2: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  province: Province;
+  country: Scalars['String'];
+  postalCode: Scalars['String'];
+};
+
+export type ComparePhysiciansResult = {
+  __typename?: 'ComparePhysiciansResult';
+  match: Scalars['Boolean'];
+  status: Maybe<PhysicianMatchStatus>;
+  existingPhysicianData: Maybe<Physician>;
+};
+
 export type CompleteApplicationInput = {
   id: Scalars['Int'];
 };
@@ -879,6 +899,10 @@ export type Physician = {
   postalCode: Scalars['String'];
 };
 
+export type PhysicianMatchStatus =
+  | 'DOES_NOT_EXIST'
+  | 'DOES_NOT_MATCH_EXISTING';
+
 export type PhysicianStatus =
   | 'ACTIVE'
   | 'INACTIVE';
@@ -909,6 +933,7 @@ export type Query = {
   generateApplicationsReport: Maybe<GenerateApplicationsReportResult>;
   generatePermitHoldersReport: Maybe<GeneratePermitHoldersReportResult>;
   generateAccountantReport: Maybe<GenerateAccountantReportResult>;
+  comparePhysicians: Maybe<ComparePhysiciansResult>;
 };
 
 
@@ -954,6 +979,11 @@ export type QueryGeneratePermitHoldersReportArgs = {
 
 export type QueryGenerateAccountantReportArgs = {
   input: GenerateAccountantReportInput;
+};
+
+
+export type QueryComparePhysiciansArgs = {
+  input: ComparePhysiciansInput;
 };
 
 export type ReasonForReplacement =
@@ -1425,25 +1455,6 @@ export type UpdateNewApplicationGeneralInformationInput = {
   addressLine2: Maybe<Scalars['String']>;
   city: Scalars['String'];
   postalCode: Scalars['String'];
-};
-
-export type UpsertPhysicianInput = {
-  mspNumber: Scalars['String'];
-  name: Scalars['String'];
-  addressLine1: Scalars['String'];
-  addressLine2: Maybe<Scalars['String']>;
-  city: Scalars['String'];
-  province: Maybe<Province>;
-  postalCode: Scalars['String'];
-  phone: Scalars['String'];
-  status: Maybe<PhysicianStatus>;
-  notes: Maybe<Scalars['String']>;
-};
-
-export type UpsertPhysicianResult = {
-  __typename?: 'UpsertPhysicianResult';
-  ok: Scalars['Boolean'];
-  physicianId: Scalars['Int'];
 };
 
 export type VerifyIdentityFailureReason =

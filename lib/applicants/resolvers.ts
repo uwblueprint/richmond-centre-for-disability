@@ -308,29 +308,38 @@ export const updateApplicantDoctorInformation: Resolver<
     }
   }
 
+  let upsertedPhysician;
   let updatedApplicant;
 
   try {
-    updatedApplicant = await prisma.applicant.update({
+    const upsertPhysician = prisma.physician.upsert({
+      where: { mspNumber },
+      create: { mspNumber, ...data },
+      update: data,
+    });
+    const updateApplicant = prisma.applicant.update({
       where: { id },
       data: {
         medicalInformation: {
           update: {
             physician: {
-              upsert: {
-                create: { mspNumber, ...data },
-                update: data,
+              connect: {
+                mspNumber,
               },
             },
           },
         },
       },
     });
+    [upsertedPhysician, updatedApplicant] = await prisma.$transaction([
+      upsertPhysician,
+      updateApplicant,
+    ]);
   } catch {
     // TODO: Handle error
   }
 
-  if (!updatedApplicant) {
+  if (!upsertedPhysician || !updatedApplicant) {
     throw new ApolloError("Applicant's physician was unable to be updated");
   }
 
