@@ -102,7 +102,6 @@ export type UpdateDoctorInformationResponse = {
 export const COMPARE_DOCTOR_INFORMATION = gql`
   query CompareDoctorInformation($input: ComparePhysiciansInput!) {
     comparePhysicians(input: $input) {
-      match
       status
       existingPhysicianData {
         firstName
@@ -123,7 +122,7 @@ export const COMPARE_DOCTOR_INFORMATION = gql`
 export type CompareDoctorInformationRequest = QueryComparePhysiciansArgs;
 
 export type CompareDoctorInformationResponse = {
-  comparePhysicians: Pick<ComparePhysiciansResult, 'match' | 'status'> & {
+  comparePhysicians: Pick<ComparePhysiciansResult, 'status'> & {
     existingPhysicianData: Pick<
       Physician,
       | 'firstName'

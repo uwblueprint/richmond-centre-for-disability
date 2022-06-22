@@ -147,6 +147,8 @@ const Card: FC<Props> = props => {
     doctorInformation,
     getCurrentPhysician,
     comparePhysicians,
+    setPhysicianDiffStatus,
+    setExistingPhysicianData,
   ]);
 
   if (!doctorInformation) {
