@@ -30,7 +30,7 @@ const Card: FC<Props> = props => {
 
   const [doctorInformation, setDoctorInformation] = useState<DoctorCardData | null>(null);
 
-  const { refetch } = useQuery<GetDoctorInformationResponse, GetDoctorInformationRequest>(
+  const { refetch, loading } = useQuery<GetDoctorInformationResponse, GetDoctorInformationRequest>(
     GET_DOCTOR_INFORMATION,
     {
       variables: { id: applicationId },
@@ -107,6 +107,7 @@ const Card: FC<Props> = props => {
           </EditDoctorInformationModal>
         )
       }
+      loading={loading}
     >
       <VStack width="100%" spacing="24px" align="left">
         <VStack spacing="12px" align="left">

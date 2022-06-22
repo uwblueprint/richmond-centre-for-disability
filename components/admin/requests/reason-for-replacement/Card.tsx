@@ -26,7 +26,7 @@ type ReplacementProps = {
 export default function ReasonForReplacementCard(props: ReplacementProps) {
   const { applicationId, isUpdated, editDisabled, isSubsection } = props;
 
-  const { data, refetch } = useQuery<
+  const { data, refetch, loading } = useQuery<
     GetReasonForReplacementResponse,
     GetReasonForReplacementRequest
   >(GET_REASON_FOR_REPLACEMENT, { variables: { id: applicationId } });
@@ -92,6 +92,7 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
           </EditReasonForReplacementModal>
         )
       }
+      loading={loading}
     >
       <SimpleGrid columns={2} spacingY="12px" spacingX="20px" templateColumns="200px 1fr">
         <InfoSection title={`Cause`}>{titlecase(reason)}</InfoSection>

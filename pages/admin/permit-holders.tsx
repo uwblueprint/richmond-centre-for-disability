@@ -68,7 +68,7 @@ const PermitHolders: NextPage = () => {
   const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
 
   // Data
-  const [permitHolderData, setPermitHolderData] = useState<Array<PermitHolderRow>>([]);
+  const [permitHolderData, setPermitHolderData] = useState<Array<PermitHolderRow> | null>(null);
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState<number>(0);
 
@@ -430,13 +430,13 @@ const PermitHolders: NextPage = () => {
                 </InputGroup>
               </Box>
             </Flex>
-            {permitHolderData && permitHolderData.length > 0 ? (
+            {!permitHolderData || permitHolderData.length > 0 ? (
               <>
                 <Table
                   columns={COLUMNS}
                   data={permitHolderData || []}
-                  loading={loading}
                   initialSort={sortOrder}
+                  loading={loading || !permitHolderData}
                   onChangeSortOrder={sortOrder => {
                     setSortOrder(sortOrder);
                   }}

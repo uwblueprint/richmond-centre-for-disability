@@ -34,45 +34,45 @@ export default function GuardianInformationCard({
 }: GuardianInformationProps) {
   const [guardian, setGuardian] = useState<GuardianCardData | null>(null);
 
-  const { refetch } = useQuery<GetGuardianInformationResponse, GetGuardianInformationRequest>(
-    GET_GUARDIAN_INFORMATION,
-    {
-      variables: { id: applicationId },
-      onCompleted: data => {
-        if (data) {
-          const {
-            firstName,
-            lastName,
-            relationship,
-            phone,
-            addressLine1,
-            city,
-            province,
-            country,
-            postalCode,
-          } = data.application;
-          // Only set guardian if mandatory fields are non-null
-          // TODO: Improve schema design by adding nesting
-          if (
-            !!firstName &&
-            !!lastName &&
-            !!relationship &&
-            !!phone &&
-            !!addressLine1 &&
-            !!city &&
-            !!province &&
-            !!country &&
-            !!postalCode
-          ) {
-            setGuardian(data.application);
-          } else {
-            setGuardian(null);
-          }
+  const { refetch, loading } = useQuery<
+    GetGuardianInformationResponse,
+    GetGuardianInformationRequest
+  >(GET_GUARDIAN_INFORMATION, {
+    variables: { id: applicationId },
+    onCompleted: data => {
+      if (data) {
+        const {
+          firstName,
+          lastName,
+          relationship,
+          phone,
+          addressLine1,
+          city,
+          province,
+          country,
+          postalCode,
+        } = data.application;
+        // Only set guardian if mandatory fields are non-null
+        // TODO: Improve schema design by adding nesting
+        if (
+          !!firstName &&
+          !!lastName &&
+          !!relationship &&
+          !!phone &&
+          !!addressLine1 &&
+          !!city &&
+          !!province &&
+          !!country &&
+          !!postalCode
+        ) {
+          setGuardian(data.application);
+        } else {
+          setGuardian(null);
         }
-      },
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+      }
+    },
+    notifyOnNetworkStatusChange: true,
+  });
 
   const [updateGuardianInformation] = useMutation<
     UpdateGuardianInformationResponse,
@@ -210,6 +210,7 @@ export default function GuardianInformationCard({
           </EditGuardianInformationModal>
         )
       }
+      loading={loading}
       divider
     >
       {guardian === null ? _renderAddGuardian() : _renderGuardianInformation(guardian)}

@@ -150,7 +150,7 @@ const Requests: NextPage = () => {
   const debouncedSearchFilter = useDebounce<string>(searchFilter, 500);
 
   // Data & pagination
-  const [requestsData, setRequestsData] = useState<Array<ApplicationRow>>([]);
+  const [requestsData, setRequestsData] = useState<Array<ApplicationRow> | null>(null);
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState(0);
 
@@ -382,13 +382,13 @@ const Requests: NextPage = () => {
                 </InputGroup>
               </Box>
             </Flex>
-            {requestsData.length > 0 ? (
+            {!requestsData || requestsData.length > 0 ? (
               <>
                 <Table
                   columns={COLUMNS}
-                  data={requestsData}
-                  loading={loading}
                   initialSort={sortOrder}
+                  data={requestsData || []}
+                  loading={loading || !requestsData}
                   onChangeSortOrder={setSortOrder}
                   onRowClick={({ id }) => router.push(`/admin/request/${id}`)}
                 />

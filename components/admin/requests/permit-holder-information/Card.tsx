@@ -49,25 +49,25 @@ const Card: FC<Props> = props => {
   const [permitHolderInformation, setPermitHolderInformation] =
     useState<PermitHolderCardData | null>(null);
 
-  const { refetch } = useQuery<GetApplicantInformationResponse, GetApplicantInformationRequest>(
-    GET_APPLICANT_INFORMATION,
-    {
-      variables: { id: applicationId },
-      onCompleted: data => {
-        if (data) {
-          if (data.application.type == 'NEW') {
-            setPermitHolderInformation({
-              ...data.application,
-              dateOfBirth: formatDateYYYYMMDD(new Date(data.application.dateOfBirth)),
-            });
-          } else {
-            setPermitHolderInformation(data.application);
-          }
+  const { refetch, loading } = useQuery<
+    GetApplicantInformationResponse,
+    GetApplicantInformationRequest
+  >(GET_APPLICANT_INFORMATION, {
+    variables: { id: applicationId },
+    onCompleted: data => {
+      if (data) {
+        if (data.application.type == 'NEW') {
+          setPermitHolderInformation({
+            ...data.application,
+            dateOfBirth: formatDateYYYYMMDD(new Date(data.application.dateOfBirth)),
+          });
+        } else {
+          setPermitHolderInformation(data.application);
         }
-      },
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+      }
+    },
+    notifyOnNetworkStatusChange: true,
+  });
 
   const [updatePermitHolderInformation] = useMutation<
     UpdatePermitHolderInformationResponse,
@@ -195,6 +195,7 @@ const Card: FC<Props> = props => {
       header={Header}
       editModal={!editDisabled && EditModal}
       isSubsection={isSubsection}
+      loading={loading}
     >
       <VStack width="100%" spacing="24px" align="left">
         {/* Permit holder information */}

@@ -54,7 +54,7 @@ type ProcessingTasksCardProps = {
  * @param applicationId Application ID
  */
 export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCardProps) {
-  const { data, refetch } = useQuery<
+  const { data, refetch, loading } = useQuery<
     GetApplicationProcessingResponse,
     GetApplicationProcessingRequest
   >(GET_APPLICATION_PROCESSING, {
@@ -204,7 +204,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
   const customerRefunded = false;
 
   return (
-    <PermitHolderInfoCard colSpan={7} header={_header}>
+    <PermitHolderInfoCard colSpan={7} header={_header} loading={loading}>
       <Divider mt="8px" />
       <VStack marginTop={5} spacing={10} alignItems="left" width="100%">
         {status === 'REJECTED' ? (
