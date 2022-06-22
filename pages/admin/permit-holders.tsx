@@ -435,12 +435,8 @@ const PermitHolders: NextPage = () => {
                 <Table
                   columns={COLUMNS}
                   data={permitHolderData || []}
-<<<<<<< HEAD
-                  loading={loading}
                   initialSort={sortOrder}
-=======
                   loading={loading || !permitHolderData}
->>>>>>> 257568a (Design Changes)
                   onChangeSortOrder={sortOrder => {
                     setSortOrder(sortOrder);
                   }}
