@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { HStack, VStack, Text, Divider, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
@@ -32,6 +32,7 @@ type Props = {
   readonly editDisabled?: boolean;
   /** Whether card is a subsection */
   readonly isSubsection?: boolean;
+  readonly setLoadingCounter: (loading: boolean) => void;
 };
 
 // TODO: Updated states
@@ -43,8 +44,14 @@ type Props = {
  * @param addressInfoUpdated Whether address information was updated
  */
 const Card: FC<Props> = props => {
-  const { applicationId, contactInfoUpdated, addressInfoUpdated, editDisabled, isSubsection } =
-    props;
+  const {
+    applicationId,
+    contactInfoUpdated,
+    addressInfoUpdated,
+    editDisabled,
+    isSubsection,
+    setLoadingCounter,
+  } = props;
 
   const [permitHolderInformation, setPermitHolderInformation] =
     useState<PermitHolderCardData | null>(null);
@@ -68,6 +75,12 @@ const Card: FC<Props> = props => {
     },
     notifyOnNetworkStatusChange: true,
   });
+  const [localLoadingState, setLocalLoadingState] = useState(false);
+
+  useEffect(() => {
+    if (localLoadingState !== loading) setLoadingCounter(loading);
+    setLocalLoadingState(loading);
+  }, [loading]);
 
   const [updatePermitHolderInformation] = useMutation<
     UpdatePermitHolderInformationResponse,

@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
-import { GridItem, VStack } from '@chakra-ui/react'; // Chakra UI
+import { Box, GridItem, VStack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import RequestHeader from '@components/admin/requests/Header'; // Request header
 import RequestFooter from '@components/admin/requests/Footer'; // Request footer
@@ -19,6 +19,8 @@ import {
 } from '@tools/admin/requests/view-request'; // Request page GraphQL queries
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
 import GuardianInformationCard from '@components/admin/requests/guardian-information/Card';
+import { useState } from 'react';
+import LoadingSpinner from '@components/admin/LoadingSpinner';
 
 type Props = {
   readonly id: string;
@@ -34,6 +36,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
   const { data } = useQuery<GetApplicationResponse, GetApplicationRequest>(GET_APPLICATION_QUERY, {
     variables: { id },
   });
+  const [loadingCounter, setLoadingCounter] = useState(0);
   // Get Permit Holder ID from Application
 
   if (!data?.application) {
@@ -78,6 +81,21 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
 
   return (
     <Layout>
+      {loadingCounter > 0 && (
+        <GridItem rowSpan={1} colSpan={12} marginTop={3} marginBottom="12px">
+          <Box
+            style={{
+              display: 'flex',
+              height: '100%',
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <LoadingSpinner />
+          </Box>
+        </GridItem>
+      )}
       <GridItem rowSpan={1} colSpan={12} marginTop={3} marginBottom="12px">
         <RequestHeader
           applicationStatus={status}
@@ -96,6 +114,9 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           <PersonalInformationCard
             applicationId={id}
             editDisabled={reviewRequestCompleted || isRejected}
+            setLoadingCounter={(loading: boolean) => {
+              setLoadingCounter(loading ? loadingCounter + 1 : loadingCounter - 1);
+            }}
           />
           {type !== 'REPLACEMENT' && (
             <DoctorInformationCard
