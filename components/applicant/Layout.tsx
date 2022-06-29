@@ -3,7 +3,19 @@ import Head from 'next/head'; // HTML head handling
 import Link from 'next/link'; // Client-side linking
 import Image from 'next/image'; // Optimized images
 
-import { Box, Flex, Grid, GridItem, Button, Center, Text, Spacer, Divider } from '@chakra-ui/react'; // Chakra UI
+import {
+  Box,
+  Flex,
+  Grid,
+  GridItem,
+  Button,
+  Center,
+  Text,
+  Spacer,
+  Divider,
+  HStack,
+  VStack,
+} from '@chakra-ui/react'; // Chakra UI
 
 type Props = {
   readonly children: ReactNode;
@@ -23,7 +35,7 @@ export default function Layout({ children, header = true, footer = true }: Props
           width="100%"
           justifyContent="center"
           paddingY="64px"
-          backgroundColor="background.grey"
+          backgroundColor="background.white"
         >
           <ApplicantGrid>{children}</ApplicantGrid>
         </Flex>
@@ -55,24 +67,26 @@ function Header() {
   return (
     <Center height="108px" width="100%" backgroundColor="background.grey">
       <ApplicantGrid alignItems="center" isContent={false}>
-        <GridItem colSpan={1}>
-          <Link href="/">
-            <Flex justifyContent="keft" cursor="pointer">
-              <Image src="/assets/logo.svg" alt="RCD Logo" height={68} width={48} priority />
-            </Flex>
-          </Link>
-        </GridItem>
-        <GridItem colSpan={9}>
-          <Text textStyle="body-bold" textAlign="left">
-            Richmond Centre for Disability
-          </Text>
-          <Text textStyle="body-regular" textAlign="left">
-            Accessible Parking Permit
-          </Text>
+        <GridItem colSpan={10}>
+          <HStack align="center" spacing="12px">
+            <Link href="/">
+              <Flex justifyContent="left" cursor="pointer">
+                <Image src="/assets/logo.svg" alt="RCD Logo" height={68} width={48} priority />
+              </Flex>
+            </Link>
+            <VStack align="flex-start" spacing="0">
+              <Text textStyle="body-bold" textAlign="left">
+                Richmond Centre for Disability
+              </Text>
+              <Text textStyle="body-regular" textAlign="left">
+                Accessible Parking Permit
+              </Text>
+            </VStack>
+          </HStack>
         </GridItem>
         <GridItem colStart={11} colSpan={2}>
           <a href="https://www.rcdrichmond.org/">
-            <Button variant="outline" size="lg">
+            <Button height="48px" px="24px" py="12px" variant="outline" size="lg">
               Go to main site
             </Button>
           </a>
@@ -156,7 +170,7 @@ function Footer() {
                 Contact Info
               </Text>
               <Text textStyle="caption">Tel: 604-232-2404</Text>
-              <a href="mailto:parkingpermit@richmond.org">
+              <a href="mailto:parkingpermit@rcdrichmond.org">
                 <Text textStyle="caption">Email: parkingpermit@rcdrichmond.org</Text>
               </a>
             </Box>
