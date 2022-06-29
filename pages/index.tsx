@@ -1,35 +1,29 @@
 import { useTranslation } from 'next-i18next'; // Translation hook
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link'; // Link
-import {
-  Text,
-  Divider,
-  GridItem,
-  Box,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  UnorderedList,
-  ListItem,
-  Button,
-} from '@chakra-ui/react'; // Chakra UI
+import { Text, Divider, GridItem, Box, UnorderedList, ListItem, Button } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/applicant/Layout'; // Layout wrapper
+import FAQs from '@components/applicant/FAQs';
 
 export default function Landing() {
   const { t } = useTranslation('common');
 
   return (
     <Layout>
-      <GridItem colSpan={8} colStart={1}>
+      <GridItem colSpan={12} colStart={1}>
         <Text as="h1" textStyle="display-xlarge" align="left">
           {t('landing')}
         </Text>
         <Text as="p" textStyle="display-small" align="left" mt="24px">
           Find the services you need related to your British Columbia accessible parking permit. You
-          may choose to use our online service or download a physical form and email, mail or drop
-          it off in person to RCD.
+          can <b>renew your permanent parking permit online</b> using the Online Renewal Service. If
+          you&apos;re{' '}
+          <b>
+            applying for a new parking permit, or need a replacement for a lost or stolen parking
+            permit
+          </b>
+          : download a physical form and email, mail or drop it off in person to RCD. For any other
+          services, such as updating your contacy information, please contact RCD.
         </Text>
       </GridItem>
       <GridItem colSpan={5} colStart={1} mt="28px" textAlign="left">
@@ -54,19 +48,21 @@ export default function Landing() {
           </ListItem>
         </UnorderedList>
         <Link href="/renew">
-          <Button
-            colorScheme="primary"
-            variant="solid"
-            fontWeight="semibold"
-            size="lg"
-            width="320px"
-            height="48px"
-            radius="6px"
-            mt="48px"
-            p="12px 25px 12px 25px"
-          >
-            <Text as="span">Renew your permit online</Text>
-          </Button>
+          <a>
+            <Button
+              colorScheme="primary"
+              variant="solid"
+              fontWeight="semibold"
+              size="lg"
+              width="320px"
+              height="48px"
+              radius="6px"
+              mt="48px"
+              p="12px 25px 12px 25px"
+            >
+              <Text as="span">Renew your permit online</Text>
+            </Button>
+          </a>
         </Link>
       </GridItem>
       <GridItem colSpan={5} colStart={7} mt="28px" textAlign="left">
@@ -80,11 +76,15 @@ export default function Landing() {
         <Text as="p" textStyle="body-regular" align="left" mt="24px">
           After completing the form, either email (
           <b>
-            <a href="mailto:parkingpermit@richmond.org">parkingpermit@rcdrichmond.org</a>
+            <a href="mailto:rcdparkingpermit@richmond.org">parkingpermit@rcdrichmond.org</a>
           </b>
           ), mail or drop it off in person to RCD!
         </Text>
-        <Link href="#">
+        <a
+          href="https://www.rcdrichmond.org/Parking/Parking%20Permit%20Application%20form_rev%202022.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Button
             colorScheme="primary"
             variant="solid"
@@ -98,8 +98,12 @@ export default function Landing() {
           >
             <Text as="span">Download new form</Text>
           </Button>
-        </Link>
-        <Link href="#">
+        </a>
+        <a
+          href="https://www.rcdrichmond.org/Parking/PermitReplacementDeclarationForm_2022%20v.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Button
             colorScheme="primary"
             variant="solid"
@@ -113,7 +117,7 @@ export default function Landing() {
           >
             <Text as="span">Download replacement form</Text>
           </Button>
-        </Link>
+        </a>
       </GridItem>
       <GridItem colSpan={12} colStart={0} mb="44px" mt="52px">
         <Divider />
@@ -126,103 +130,7 @@ export default function Landing() {
           Have any questions about our online services or our services? Look below to see some of
           the most frequently asked questions.
         </Text>
-        <Accordion allowMultiple mt="24px">
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box as="h3" flex="1" textAlign="left" textStyle="body-regular">
-                  Section Title
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel as="p" pb={4} textAlign="left">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </AccordionPanel>
-          </AccordionItem>
-
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box as="h3" flex="1" textAlign="left" textStyle="body-regular">
-                  Section Title
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel as="p" pb={4} textAlign="left">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </AccordionPanel>
-          </AccordionItem>
-
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box as="h3" flex="1" textAlign="left" textStyle="body-regular">
-                  Section Title
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel as="p" pb={4} textAlign="left">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </AccordionPanel>
-          </AccordionItem>
-
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box as="h3" flex="1" textAlign="left" textStyle="body-regular">
-                  Section Title
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel as="p" pb={4} textAlign="left">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </AccordionPanel>
-          </AccordionItem>
-
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box as="h3" flex="1" textAlign="left" textStyle="body-regular">
-                  Section Title
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel as="p" pb={4} textAlign="left">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </AccordionPanel>
-          </AccordionItem>
-
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box as="h3" flex="1" textAlign="left" textStyle="body-regular">
-                  Section Title
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel as="p" pb={4} textAlign="left">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
+        <FAQs />
       </GridItem>
       <GridItem colSpan={4} colStart={9}>
         <Box
@@ -236,9 +144,13 @@ export default function Landing() {
             Have more questions?
           </Text>
           <Text as="p" textStyle="body-regular" textAlign="left">
-            Please contact RCD via phone at <b>604-232-2404</b> or via email at{' '}
+            Please contact RCD via phone at{' '}
+            <Text as="span" fontWeight="bold" whiteSpace="nowrap">
+              604-232-2404
+            </Text>{' '}
+            or via email at{' '}
             <b>
-              <a href="mailto:parkingpermit@richmond.org">parkingpermit@rcdrichmond.org</a>
+              <a href="mailto:rcdparkingpermit@richmond.org">parkingpermit@rcdrichmond.org</a>
             </b>
           </Text>
         </Box>
