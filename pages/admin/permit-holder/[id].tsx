@@ -42,6 +42,7 @@ export default function PermitHolder({ id: idString }: Props) {
     lastName,
     status,
     inactiveReason,
+    notes,
     mostRecentApplication: currentApplication,
     permits: appHistory,
     medicalInformation,
@@ -57,6 +58,7 @@ export default function PermitHolder({ id: idString }: Props) {
             name: formatFullName(firstName, middleName, lastName),
             status,
             inactiveReason: inactiveReason || undefined,
+            notes: notes || '',
           }}
           refetch={refetch}
         />

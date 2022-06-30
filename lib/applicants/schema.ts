@@ -32,6 +32,8 @@ export default gql`
     status: ApplicantStatus!
     inactiveReason: String
 
+    notes: String
+
     mostRecentPermit: Permit
     activePermit: Permit
     permits: [Permit!]!
