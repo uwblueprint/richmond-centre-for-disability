@@ -33,14 +33,20 @@ export default function RequestFooter({
     switch (applicationStatus) {
       case 'PENDING':
         return (
-          <HStack spacing={3}>
+          <HStack spacing="20px">
             <RejectRequestModal applicationId={applicationId}>
-              <Button bg="secondary.critical" _hover={{ bg: 'secondary.criticalHover' }}>
-                Reject
+              <Button
+                height="48px"
+                bg="secondary.critical"
+                _hover={{ bg: 'secondary.criticalHover' }}
+              >
+                <Text textStyle="button-semibold">Reject request</Text>
               </Button>
             </RejectRequestModal>
             <ApproveRequestModal applicationId={applicationId}>
-              <Button>Approve</Button>
+              <Button height="48px">
+                <Text textStyle="button-semibold">Approve request</Text>
+              </Button>
             </ApproveRequestModal>
           </HStack>
         );
