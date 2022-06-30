@@ -39,8 +39,9 @@ export default function Typeahead<T extends TypeaheadModel>(props: Required<Prop
       <AsyncTypeahead
         filterBy={filterBy}
         id="async-typeahead"
+        delay={300}
         isLoading={false} // always false to hide spinner in input field when loading
-        minLength={3}
+        minLength={1}
         onSearch={onSearch}
         labelKey={labelKey}
         options={results}
