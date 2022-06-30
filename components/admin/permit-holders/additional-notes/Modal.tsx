@@ -23,9 +23,16 @@ type Props = {
   readonly notes: string;
   readonly applicantId: number;
   readonly onClose: () => void;
+  readonly refetch: () => void;
 };
 
-const AdditionalNotesModal: FC<Props> = ({ isOpen, notes: notesInput, applicantId, onClose }) => {
+const AdditionalNotesModal: FC<Props> = ({
+  isOpen,
+  notes: notesInput,
+  applicantId,
+  onClose,
+  refetch,
+}) => {
   const [notes, setNotes] = useState('');
 
   useEffect(() => {
@@ -49,6 +56,7 @@ const AdditionalNotesModal: FC<Props> = ({ isOpen, notes: notesInput, applicantI
 
   const handleSave = async () => {
     await updateApplicantNotes({ variables: { input: { id: applicantId, notes } } });
+    refetch();
     onClose();
   };
 
@@ -76,7 +84,7 @@ const AdditionalNotesModal: FC<Props> = ({ isOpen, notes: notesInput, applicantI
           <Button onClick={onClose} colorScheme="gray" variant="solid" isLoading={submitting}>
             Cancel
           </Button>
-          <Button _hover={{ bg: 'secondary.criticalHover' }} ml={'12px'} onClick={handleSave}>
+          <Button ml={'12px'} onClick={handleSave} isLoading={submitting}>
             Save Note
           </Button>
         </ModalFooter>

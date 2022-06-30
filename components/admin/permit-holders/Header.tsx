@@ -27,12 +27,13 @@ type PermitHolderHeaderProps = {
     name: string;
     status: ApplicantStatus;
     inactiveReason?: string;
+    notes: string;
   };
   readonly refetch: () => void;
 };
 
 export default function PermitHolderHeader({
-  applicant: { id, name, status, inactiveReason },
+  applicant: { id, name, status, inactiveReason, notes },
   refetch,
 }: PermitHolderHeaderProps) {
   // Set Permit Holder Inactive/Active modal state
@@ -133,9 +134,10 @@ export default function PermitHolderHeader({
       {/* Additional notes modal */}
       <AdditionalNotesModal
         isOpen={isNotesModalOpen}
-        notes=""
+        notes={notes}
         applicantId={id}
         onClose={onCloseNotesModal}
+        refetch={refetch}
       />
     </>
   );

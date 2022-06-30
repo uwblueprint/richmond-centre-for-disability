@@ -16,6 +16,7 @@ export const GET_APPLICANT_QUERY = gql`
       lastName
       status
       inactiveReason
+      notes
 
       # Medical information
       medicalInformation {
@@ -112,7 +113,7 @@ export type GetApplicantRequest = QueryApplicantArgs;
 export type GetApplicantResponse = {
   applicant: Pick<
     Applicant,
-    'firstName' | 'middleName' | 'lastName' | 'status' | 'inactiveReason'
+    'firstName' | 'middleName' | 'lastName' | 'status' | 'inactiveReason' | 'notes'
   > & {
     medicalInformation: MedicalInformationSectionData;
     guardian: GuardianInformationCardData;

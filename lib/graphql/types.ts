@@ -41,6 +41,7 @@ export type Applicant = {
   postalCode: Scalars['String'];
   status: ApplicantStatus;
   inactiveReason: Maybe<Scalars['String']>;
+  notes: Maybe<Scalars['String']>;
   mostRecentPermit: Maybe<Permit>;
   activePermit: Maybe<Permit>;
   permits: Array<Permit>;
