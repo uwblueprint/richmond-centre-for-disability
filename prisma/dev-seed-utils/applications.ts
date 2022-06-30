@@ -306,7 +306,7 @@ const applications: Array<UpsertApplication> = [
       physicianAddressLine2: null,
       physicianCity: 'Burnaby',
       physicianPostalCode: 'N1M2K3',
-      physicianPhone: '234-567-8904',
+      physicianPhone: '2345678904',
       usesAccessibleConvertedVan: true,
       accessibleConvertedVanLoadingMethod: 'END_LOADING',
       requiresWiderParkingSpace: false,
