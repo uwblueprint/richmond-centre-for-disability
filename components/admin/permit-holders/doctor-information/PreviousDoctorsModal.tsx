@@ -15,7 +15,7 @@ import Table from '@components/Table'; // Table component
 import { ReactNode } from 'react'; // React
 import { Column } from 'react-table';
 import { PreviousDoctorRow } from '@tools/admin/permit-holders/doctor-information';
-import { formatFullName } from '@lib/utils/format';
+import { formatFullName, formatPhoneNumber } from '@lib/utils/format';
 
 const COLUMNS: Array<Column<PreviousDoctorRow>> = [
   {
@@ -30,6 +30,7 @@ const COLUMNS: Array<Column<PreviousDoctorRow>> = [
     accessor: 'phone',
     disableSortBy: true,
     maxWidth: 140,
+    Cell: ({ value }) => formatPhoneNumber(value),
   },
   {
     Header: 'MSP #',

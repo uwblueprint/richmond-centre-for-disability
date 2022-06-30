@@ -72,7 +72,12 @@ export const applicantMostRecentApplicationResolver: FieldResolver<
       where: { id: parent.id },
     })
     .applications({
-      include: { newApplication: true, renewalApplication: true, replacementApplication: true },
+      include: {
+        newApplication: true,
+        renewalApplication: true,
+        replacementApplication: true,
+        permit: true,
+      },
       orderBy: { createdAt: SortOrder.DESC },
       take: 1,
     });
