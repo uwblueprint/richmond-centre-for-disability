@@ -14,7 +14,7 @@ import {
   Spinner,
   Center,
 } from '@chakra-ui/react'; // Chakra UI
-import { formatFullName } from '@lib/utils/format'; // Date formatter util
+import { formatFullName, formatPhoneNumber } from '@lib/utils/format'; // Date formatter util
 import { formatDate } from '@lib/utils/date';
 import { useQuery } from '@apollo/client';
 import {
@@ -112,7 +112,7 @@ export default function SelectedPermitHolderCard(props: SelectedPermitHolderCard
           </Box>
         </Flex>
         <Divider />
-        <VStack spacing="12px" align="left">
+        <VStack spacing="12px" align="flex-start">
           <HStack spacing="12px">
             <Text as="h4" textStyle="body-bold">
               Personal Information
@@ -126,7 +126,7 @@ export default function SelectedPermitHolderCard(props: SelectedPermitHolderCard
           </Text>
         </VStack>
         <Divider />
-        <VStack spacing="12px" align="left">
+        <VStack spacing="12px" align="flex-start">
           <HStack spacing="12px">
             <Text as="h4" textStyle="body-bold">
               Contact Information
@@ -150,11 +150,11 @@ export default function SelectedPermitHolderCard(props: SelectedPermitHolderCard
             </Link>
           </Tooltip>
           <Text as="p" textStyle="body-regular">
-            {phone}
+            {formatPhoneNumber(phone)}
           </Text>
         </VStack>
         <Divider />
-        <VStack spacing="12px" align="left">
+        <VStack spacing="12px" align="flex-start">
           <HStack spacing="12px">
             <Box>
               <Text as="h4" textStyle="body-bold">

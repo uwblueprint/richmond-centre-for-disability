@@ -329,7 +329,9 @@ export default function CreateNew() {
                 {` (User ID: `}
                 <Box as="span" color="primary">
                   <Link href={`/admin/permit-holder/${applicantId}`}>
-                    <a>{applicantId}</a>
+                    <a target="_blank" rel="noopener noreferrer">
+                      {applicantId}
+                    </a>
                   </Link>
                 </Box>
                 {`)`}
