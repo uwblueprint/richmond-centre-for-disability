@@ -137,7 +137,7 @@ const Requests: NextPage = () => {
   } = useDisclosure();
 
   // Filters
-  const [statusFilter, setStatusFilter] = useState<ApplicationStatus | null>(null);
+  const [statusFilter, setStatusFilter] = useState<ApplicationStatus | null>('PENDING');
   const [permitTypeFilter, setPermitTypeFilter] = useState<PermitType | null>(null);
   const [requestTypeFilter, setRequestTypeFilter] = useState<ApplicationType | null>(null);
   const [searchFilter, setSearchFilter] = useState<string>('');
@@ -240,7 +240,7 @@ const Requests: NextPage = () => {
           </HStack>
         </Flex>
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px" bgColor="white">
-          <Tabs marginBottom="20px">
+          <Tabs marginBottom="20px" defaultIndex={1}>
             <TabList paddingX="24px">
               <Tab
                 height="64px"
@@ -367,6 +367,13 @@ const Requests: NextPage = () => {
                     }}
                   >
                     Renewal
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setRequestTypeFilter('NEW');
+                    }}
+                  >
+                    New
                   </MenuItem>
                 </MenuList>
               </Menu>
