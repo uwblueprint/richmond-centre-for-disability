@@ -10,7 +10,7 @@ import {
   PaymentType,
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
-import { formatAddress, formatFullName } from '@lib/utils/format'; // Formatting utils
+import { formatAddress, formatFullName, formatPhoneNumber } from '@lib/utils/format'; // Formatting utils
 import { formatDateTimeYYYYMMDDHHMMSS } from '@lib/utils/date'; // Formatting utils
 import { formatDate } from '@lib/utils/date'; // Date formatter util
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
@@ -105,14 +105,16 @@ export const generatePermitHoldersReport: Resolver<
       postalCode,
       guardian,
       permits,
+      phone,
       ...applicant
     }) => {
       return {
         ...applicant,
         id,
+        phone: formatPhoneNumber(phone),
         dateOfBirth: formatDate(dateOfBirth),
         applicantName: formatFullName(firstName, middleName, lastName),
-        rcdPermitId: permits[0].rcdPermitId,
+        rcdPermitId: `#${permits[0].rcdPermitId}`,
         permitType: permits[0].type,
         homeAddress: formatAddress(addressLine1, addressLine2, city, postalCode, province),
         guardianRelationship: guardian?.relationship,
@@ -205,6 +207,7 @@ export const generateApplicationsReport: Resolver<
       donationAmount: true,
       applicant: {
         select: {
+          id: true,
           dateOfBirth: true,
         },
       },
@@ -251,6 +254,7 @@ export const generateApplicationsReport: Resolver<
 
       return {
         ...application,
+        id: applicant?.id,
         dateOfBirth: dateOfBirth && formatDate(dateOfBirth),
         applicationDate: createdAt?.toLocaleDateString('en-US', {
           year: 'numeric',
@@ -261,8 +265,10 @@ export const generateApplicationsReport: Resolver<
           timeZone: 'America/Vancouver',
         }),
         applicantName: formatFullName(firstName, middleName, lastName),
-        totalAmount: processingFee.plus(donationAmount),
-        rcdPermitId: permit?.rcdPermitId,
+        processingFee: `$${processingFee}`,
+        donationAmount: `$${donationAmount}`,
+        totalAmount: `$${processingFee.plus(donationAmount)}`,
+        rcdPermitId: permit?.rcdPermitId ? `#${permit.rcdPermitId}` : null,
       };
     }
   );

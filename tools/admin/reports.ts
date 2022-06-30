@@ -110,7 +110,7 @@ export const PERMIT_HOLDERS_COLUMNS: Array<{
   {
     name: 'Guardian/POA Address',
     value: 'GUARDIAN_POA_ADDRESS',
-    reportColumnId: 'guardianPOAAdress',
+    reportColumnId: 'guardianPOAAddress',
   },
   {
     name: 'Recent APP Number',
