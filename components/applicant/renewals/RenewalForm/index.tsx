@@ -53,8 +53,10 @@ const RenewalForm: FC = () => {
   /**  Backend form validation error */
   const [error, setError] = useState<string>('');
 
+  const [loading, setLoading] = useState(false);
+
   // Submit application mutation
-  const [submitApplication, { loading }] = useMutation<
+  const [submitApplication] = useMutation<
     CreateExternalRenewalApplicationResponse,
     CreateExternalRenewalApplicationRequest
   >(CREATE_EXTERNAL_RENEWAL_APPLICATION_MUTATION, {
@@ -82,6 +84,8 @@ const RenewalForm: FC = () => {
         description: error.message,
         isClosable: true,
       });
+
+      setLoading(false);
     },
   });
 
@@ -99,6 +103,8 @@ const RenewalForm: FC = () => {
       });
       return;
     }
+
+    setLoading(true);
 
     const { addressLine1, addressLine2, city, postalCode } = personalAddressInformation;
     const { phone, email, receiveEmailUpdates } = contactInformation;
@@ -144,9 +150,25 @@ const RenewalForm: FC = () => {
 
   return (
     <GridItem colSpan={10} colStart={2}>
-      <Text as="h1" textStyle="display-xlarge" textAlign="left" marginBottom="48px">
+      <Text as="h1" textStyle="display-xlarge" textAlign="left" marginBottom="20px">
         Renewal Form
       </Text>
+      <Alert status="info" marginBottom="48px">
+        <AlertIcon />
+        <VStack align="flex-start" spacing="0">
+          <AlertTitle>Tip</AlertTitle>
+          <AlertDescription textAlign="left">
+            If you are unsure of whether your information has changed since you last renewed or
+            applied for an Accessible Parking Permit, click the “Yes” option and provide your most
+            up-to-date information. Please contact RCD via phone at <b>604-232-2404</b> or via email
+            at{' '}
+            <a href="mailto:parkingpermit@rcdrichmond.org">
+              <b>parkingpermit@rcdrichmond.org</b>
+            </a>{' '}
+            if you require assistance.
+          </AlertDescription>
+        </VStack>
+      </Alert>
       <Steps orientation="vertical" activeStep={activeStep}>
         <Step label={`Personal Address Information`}>
           <PersonalAddressSection />

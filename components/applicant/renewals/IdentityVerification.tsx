@@ -16,6 +16,8 @@ import {
   AlertIcon,
   Alert,
   AlertDescription,
+  VStack,
+  AlertTitle,
 } from '@chakra-ui/react'; // Chakra UI
 import { InfoOutlineIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import TOSModal from '@components/applicant/renewals/TOSModal'; // TOS Modal
@@ -83,6 +85,23 @@ const IdentityVerification: FC = () => {
     <GridItem colSpan={8} colStart={3}>
       <Flex width="100%" justifyContent="flex-start">
         <Flex width="100%" flexFlow="column" alignItems="flex-start">
+          <Text as="h2" textStyle="display-medium-bold" mb="20px">
+            Renewal Form
+          </Text>
+          <Alert status="info" marginBottom="48px">
+            <AlertIcon />
+            <VStack align="flex-start" spacing="0">
+              <AlertTitle>Tip</AlertTitle>
+              <AlertDescription textAlign="left">
+                If you need assistance with your wallet card or inputting any of the information
+                below, please contact RCD via phone at <b>604-232-2404</b> or via email at{' '}
+                <a href="mailto:parkingpermit@rcdrichmond.org">
+                  <b>parkingpermit@rcdrichmond.org</b>
+                </a>
+                .
+              </AlertDescription>
+            </VStack>
+          </Alert>
           <Text as="h1" textStyle="display-xlarge" mb="20px">{`Verify your Identity`}</Text>
           <Text as="p" textStyle="body-bold" textAlign="left" marginBottom="20px">
             {`You must have a record with Richmond Centre for Disability before proceeding. Please fill
@@ -138,8 +157,11 @@ const IdentityVerification: FC = () => {
                 <Box marginBottom="20px" textAlign={'left'}>
                   <DateField name="dateOfBirth" label="Date of Birth" width="184px">
                     <FormHelperText>
-                      {`Please enter your date of birth in YYYY-MM-DD format. For example, if you were born on
-                      20th August 1950, you would enter 1950-08-20`}
+                      <Text>Please enter your date of birth in YYYY-MM-DD format.</Text>
+                      <Text>
+                        For example, if you were born on 20th August 1950, you would enter
+                        1950-08-20.
+                      </Text>
                     </FormHelperText>
                   </DateField>
                 </Box>
