@@ -60,6 +60,7 @@ export const applicationProcessingResolver: FieldResolver<
     | 'reviewRequestCompletedEmployee'
     | 'documentsUrlEmployee'
     | 'appMailedEmployee'
+    | 'paymentRefundedEmployee'
   >
 > = async (parent, _args, { prisma }) => {
   const applicationProcessing = await prisma.application

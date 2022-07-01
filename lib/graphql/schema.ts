@@ -106,6 +106,9 @@ export default gql`
     updateApplicationProcessingMailOut(
       input: UpdateApplicationProcessingMailOutInput!
     ): UpdateApplicationProcessingMailOutResult
+    updateApplicationProcessingRefundPayment(
+      input: UpdateApplicationProcessingRefundPaymentInput!
+    ): UpdateApplicationProcessingRefundPaymentResult
 
     # Employees
     createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!

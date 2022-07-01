@@ -236,6 +236,9 @@ CREATE TABLE application_processing (
   app_mailed BOOLEAN NOT NULL DEFAULT false,
   app_mailed_employee_id INTEGER,
   app_mailed_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  payment_refunded BOOLEAN NOT NULL DEFAULT false,
+  payment_refunded_employee_id INTEGER,
+  payment_refunded_updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -245,7 +248,8 @@ CREATE TABLE application_processing (
   FOREIGN KEY(review_request_completed_employee_id) REFERENCES employees(id),
   FOREIGN KEY(invoice_number) REFERENCES application_invoices(invoice_number),
   FOREIGN KEY(documents_url_employee_id) REFERENCES employees(id),
-  FOREIGN KEY(app_mailed_employee_id) REFERENCES employees(id)
+  FOREIGN KEY(app_mailed_employee_id) REFERENCES employees(id),
+  FOREIGN KEY(payment_refunded_employee_id) REFERENCES employees(id)
 );
 
 -- Create applications table

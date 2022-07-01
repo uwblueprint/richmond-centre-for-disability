@@ -133,3 +133,16 @@ export const applicationProcessingAppMailedEmployeeResolver: FieldResolver<
     .applicationProcessing()
     .appMailedEmployee();
 };
+
+/**
+ * Get the employee that refunded the APP payment (rejected APPs)
+ */
+export const applicationProcessingPaymentRefundedEmployeeResolver: FieldResolver<
+  ApplicationProcessing & { id: number },
+  Employee
+> = async (parent, _, { prisma }) => {
+  return await prisma.application
+    .findUnique({ where: { id: parent.id } })
+    .applicationProcessing()
+    .paymentRefundedEmployee();
+};

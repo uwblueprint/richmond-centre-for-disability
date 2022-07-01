@@ -141,6 +141,9 @@ export type ApplicationProcessing = {
   appMailed: Scalars['Boolean'];
   appMailedEmployee: Maybe<Employee>;
   appMailedUpdatedAt: Maybe<Scalars['Date']>;
+  paymentRefunded: Scalars['Boolean'];
+  paymentRefundedEmployee: Maybe<Employee>;
+  paymentRefundedUpdatedAt: Maybe<Scalars['Date']>;
 };
 
 export type ApplicationStatus =
@@ -589,6 +592,7 @@ export type Mutation = {
   updateApplicationProcessingGenerateInvoice: Maybe<UpdateApplicationProcessingGenerateInvoiceResult>;
   updateApplicationProcessingUploadDocuments: Maybe<UpdateApplicationProcessingUploadDocumentsResult>;
   updateApplicationProcessingMailOut: Maybe<UpdateApplicationProcessingMailOutResult>;
+  updateApplicationProcessingRefundPayment: Maybe<UpdateApplicationProcessingRefundPaymentResult>;
   createEmployee: CreateEmployeeResult;
   updateEmployee: UpdateEmployeeResult;
   deleteEmployee: DeleteEmployeeResult;
@@ -737,6 +741,11 @@ export type MutationUpdateApplicationProcessingUploadDocumentsArgs = {
 
 export type MutationUpdateApplicationProcessingMailOutArgs = {
   input: UpdateApplicationProcessingMailOutInput;
+};
+
+
+export type MutationUpdateApplicationProcessingRefundPaymentArgs = {
+  input: UpdateApplicationProcessingRefundPaymentInput;
 };
 
 
@@ -1387,6 +1396,15 @@ export type UpdateApplicationProcessingMailOutInput = {
 
 export type UpdateApplicationProcessingMailOutResult = {
   __typename?: 'UpdateApplicationProcessingMailOutResult';
+  ok: Scalars['Boolean'];
+};
+
+export type UpdateApplicationProcessingRefundPaymentInput = {
+  applicationId: Scalars['Int'];
+};
+
+export type UpdateApplicationProcessingRefundPaymentResult = {
+  __typename?: 'UpdateApplicationProcessingRefundPaymentResult';
   ok: Scalars['Boolean'];
 };
 

@@ -29,6 +29,9 @@ export default gql`
     appMailed: Boolean!
     appMailedEmployee: Employee
     appMailedUpdatedAt: Date
+    paymentRefunded: Boolean!
+    paymentRefundedEmployee: Employee
+    paymentRefundedUpdatedAt: Date
   }
 
   # Approve application
@@ -136,6 +139,15 @@ export default gql`
   }
 
   type UpdateApplicationProcessingMailOutResult {
+    ok: Boolean!
+  }
+
+  # Refund application payment (cannot undo)
+  input UpdateApplicationProcessingRefundPaymentInput {
+    applicationId: Int!
+  }
+
+  type UpdateApplicationProcessingRefundPaymentResult {
     ok: Boolean!
   }
 `;
