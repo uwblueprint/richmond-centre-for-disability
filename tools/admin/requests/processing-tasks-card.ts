@@ -19,6 +19,8 @@ import {
   Invoice,
   Employee,
   Application,
+  MutationUpdateApplicationProcessingRefundPaymentArgs,
+  UpdateApplicationProcessingRefundPaymentResult,
 } from '@lib/graphql/types';
 
 /** Get application processing */
@@ -76,6 +78,12 @@ export const GET_APPLICATION_PROCESSING = gql`
           lastName
         }
         reviewRequestCompletedUpdatedAt
+        paymentRefunded
+        paymentRefundedEmployee {
+          firstName
+          lastName
+        }
+        paymentRefundedUpdatedAt
       }
     }
   }
@@ -103,6 +111,8 @@ export type GetApplicationProcessingResponse = {
       | 'appMailedUpdatedAt'
       | 'reviewRequestCompleted'
       | 'reviewRequestCompletedUpdatedAt'
+      | 'paymentRefunded'
+      | 'paymentRefundedUpdatedAt'
     > & {
       invoice: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl' | 'updatedAt'> & {
         employee: Pick<Employee, 'firstName' | 'lastName'>;
@@ -113,6 +123,7 @@ export type GetApplicationProcessingResponse = {
       documentsUrlEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
       appMailedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
       reviewRequestCompletedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
+      paymentRefundedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
     };
   };
 };
@@ -224,4 +235,19 @@ export type MailOutRequest = MutationUpdateApplicationProcessingMailOutArgs;
 
 export type MailOutResponse = {
   updateApplicationProcessingMailOut: UpdateApplicationProcessingMailOutResult;
+};
+
+/** Refund payment APP task */
+export const REFUND_PAYMENT_MUTATION = gql`
+  mutation RefundPayment($input: UpdateApplicationProcessingRefundPaymentInput!) {
+    updateApplicationProcessingRefundPayment(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type RefundPaymentRequest = MutationUpdateApplicationProcessingRefundPaymentArgs;
+
+export type RefundPaymentResponse = {
+  updateApplicationProcessingRefundPayment: UpdateApplicationProcessingRefundPaymentResult;
 };

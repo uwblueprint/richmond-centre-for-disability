@@ -38,6 +38,9 @@ import {
   UploadDocumentsResponse,
   UploadDocumentsRequest,
   UPLOAD_DOCUMENTS_MUTATION,
+  RefundPaymentResponse,
+  RefundPaymentRequest,
+  REFUND_PAYMENT_MUTATION,
 } from '@tools/admin/requests/processing-tasks-card';
 import ReviewInformationStep from '@components/admin/requests/processing/ReviewInformationStep';
 import { clientUploadToS3, getFileName } from '@lib/utils/s3-utils';
@@ -118,6 +121,13 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
+  const [refundPayment, { loading: refundPaymentLoading }] =
+    useMutation<RefundPaymentResponse, RefundPaymentRequest>(REFUND_PAYMENT_MUTATION);
+  const handleRefundPayment = async () => {
+    await refundPayment({ variables: { input: { applicationId } } });
+    refetch();
+  };
+
   const toast = useToast();
 
   const handleSubmitDocuments = async (applicationDoc: File) => {
@@ -195,13 +205,13 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         reviewRequestCompleted,
         reviewRequestCompletedEmployee,
         reviewRequestCompletedUpdatedAt,
+        paymentRefunded,
+        paymentRefundedEmployee,
+        paymentRefundedUpdatedAt,
       },
     },
   } = data;
   const shopifyOrderUrl = `https://${process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN}/admin/orders/${shopifyConfirmationNumber}`;
-
-  /** Placeholder boolean status for customer refund */
-  const customerRefunded = false;
 
   return (
     <PermitHolderInfoCard colSpan={7} header={_header}>
@@ -233,40 +243,30 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </>
               ) : undefined
             }
-            isCompleted={false}
+            isCompleted={paymentRefunded}
             showLog={showTaskLog}
             log={
-              showTaskLog && appHolepunchedEmployee
+              showTaskLog && paymentRefundedEmployee
                 ? {
                     name: formatFullName(
-                      appHolepunchedEmployee.firstName,
-                      appHolepunchedEmployee.lastName
+                      paymentRefundedEmployee.firstName,
+                      paymentRefundedEmployee.lastName
                     ),
-                    date: appHolepunchedUpdatedAt,
+                    date: paymentRefundedUpdatedAt,
                   }
                 : null
             }
           >
-            {customerRefunded ? (
-              <Button
-                variant="ghost"
-                textDecoration="underline black"
-                // TODO: Add click handler
-                // onClick={() => {}}
-              >
-                <Text textStyle="caption" color="black">
-                  Undo
-                </Text>
-              </Button>
-            ) : (
+            {!paymentRefunded && (
               <Button
                 marginLeft="auto"
                 height="35px"
                 bg="background.gray"
                 _hover={{ bg: 'background.grayHover' }}
                 color="black"
-                // TODO: Add click handler
-                // onClick={() => {}}
+                onClick={handleRefundPayment}
+                isDisabled={refundPaymentLoading}
+                isLoading={refundPaymentLoading}
               >
                 <Text textStyle="xsmall-medium">Mark as complete</Text>
               </Button>

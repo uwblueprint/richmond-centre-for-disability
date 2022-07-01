@@ -22,6 +22,8 @@ import {
   UpdateApplicationProcessingMailOutResult,
   UpdateApplicationProcessingUploadDocumentsResult,
   UpdateApplicationProcessingReviewRequestInformationResult,
+  MutationUpdateApplicationProcessingRefundPaymentArgs,
+  UpdateApplicationProcessingRefundPaymentResult,
 } from '@lib/graphql/types';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
@@ -1021,7 +1023,51 @@ export const updateApplicationProcessingMailOut: Resolver<
   }
 
   if (!updatedApplicationProcessing) {
-    throw new ApolloError('Error assigning APP number to application');
+    throw new ApolloError('Error updating mail-out status of application');
+  }
+
+  return { ok: true };
+};
+
+/**
+ * Refund payment of rejected application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationProcessingRefundPayment: Resolver<
+  MutationUpdateApplicationProcessingRefundPaymentArgs,
+  UpdateApplicationProcessingRefundPaymentResult
+> = async (_parent, args, { prisma, session }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { applicationId } = input;
+
+  if (!session) {
+    // TODO: Create error
+    throw new ApolloError('Not authenticated');
+  }
+
+  const { id: employeeId } = session;
+
+  let updatedApplicationProcessing;
+  try {
+    updatedApplicationProcessing = await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        applicationProcessing: {
+          update: {
+            paymentRefunded: true,
+            paymentRefundedUpdatedAt: new Date(),
+            paymentRefundedEmployee: { connect: { id: employeeId } },
+          },
+        },
+      },
+    });
+  } catch {
+    // TODO: Error handling
+  }
+
+  if (!updatedApplicationProcessing) {
+    throw new ApolloError('Error updating payment refund status of application');
   }
 
   return { ok: true };

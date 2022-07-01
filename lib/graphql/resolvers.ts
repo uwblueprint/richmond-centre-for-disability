@@ -45,6 +45,7 @@ import {
   updateApplicationProcessingUploadDocuments,
   updateApplicationProcessingMailOut,
   updateApplicationProcessingReviewRequestInformation,
+  updateApplicationProcessingRefundPayment,
 } from '@lib/application-processing/resolvers'; // Application processing resolvers
 import { Context } from '@lib/graphql/context'; // Context type
 import { dateScalar } from '@lib/graphql/scalars'; // Custom date scalar implementation
@@ -79,6 +80,7 @@ import {
   applicationProcessingAppNumberEmployeeResolver,
   applicationProcessingDocumentsUrlEmployeeResolver,
   applicationProcessingInvoiceResolver,
+  applicationProcessingPaymentRefundedEmployeeResolver,
   applicationProcessingReviewRequestCompletedEmployeeResolver,
   applicationProcessingWalletCardCreatedEmployeeResolver,
 } from '@lib/application-processing/field-resolvers';
@@ -219,6 +221,9 @@ const resolvers = {
     updateApplicationProcessingMailOut: authorize(updateApplicationProcessingMailOut, [
       'SECRETARY',
     ]),
+    updateApplicationProcessingRefundPayment: authorize(updateApplicationProcessingRefundPayment, [
+      'SECRETARY',
+    ]),
 
     // Employees
     createEmployee: authorize(createEmployee),
@@ -277,6 +282,7 @@ const resolvers = {
     reviewRequestCompletedEmployee: applicationProcessingReviewRequestCompletedEmployeeResolver,
     documentsUrlEmployee: applicationProcessingDocumentsUrlEmployeeResolver,
     appMailedEmployee: applicationProcessingAppMailedEmployeeResolver,
+    paymentRefundedEmployee: applicationProcessingPaymentRefundedEmployeeResolver,
   },
 };
 
