@@ -341,7 +341,7 @@ const TRAVELLING_FAQs: ReadonlyArray<{ question: string; answer: ReactNode | str
 
 const FAQs: FC = () => {
   return (
-    <VStack align="stretch" spacing="24px" mt="24px">
+    <VStack align="stretch" spacing={{ sm: '32px', md: '24px' }} mt={{ sm: '32px', md: '24px' }}>
       <VStack align="flex-start">
         <Text as="h2" textStyle="display-small-semibold">
           Overview of the parking permit program

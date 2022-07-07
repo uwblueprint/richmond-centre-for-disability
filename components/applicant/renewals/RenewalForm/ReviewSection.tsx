@@ -29,9 +29,13 @@ const ReviewSection: FC = () => {
     <VStack align="flex-start" spacing="32px" mt="24px">
       {/* Personal address information section */}
       <VStack align="flex-start" spacing={updatedAddress ? undefined : '24px'}>
-        <Flex minWidth="700px" justifyContent="space-between">
+        <Flex minWidth={{ md: '640px' }} justifyContent="space-between">
           <Text as="h3" textStyle="heading">{`Address Information`}</Text>
-          <Button variant="outline" onClick={() => goToStep(0)}>{`Edit`}</Button>
+          <Button
+            variant="outline"
+            onClick={() => goToStep(0)}
+            display={{ sm: 'none', md: 'initial' }}
+          >{`Edit`}</Button>
         </Flex>
         {updatedAddress ? (
           <VStack align="flex-start" spacing="12px">
@@ -53,6 +57,7 @@ const ReviewSection: FC = () => {
             as="p"
             textStyle="body-regular"
             textAlign="left"
+            mb="16px"
           >{`Has not changed since last renewal.`}</Text>
         )}
       </VStack>
@@ -60,9 +65,13 @@ const ReviewSection: FC = () => {
 
       {/* Contact information section */}
       <VStack align="flex-start" spacing={updatedContactInfo ? undefined : '24px'}>
-        <Flex minWidth="700px" justifyContent="space-between">
+        <Flex minWidth={{ md: '640px' }} justifyContent="space-between">
           <Text as="h3" textStyle="heading">{`Contact Information`}</Text>
-          <Button variant="outline" onClick={() => goToStep(1)}>{`Edit`}</Button>
+          <Button
+            variant="outline"
+            onClick={() => goToStep(1)}
+            display={{ sm: 'none', md: 'initial' }}
+          >{`Edit`}</Button>
         </Flex>
         {updatedContactInfo ? (
           <VStack align="flex-start" spacing="12px">
@@ -77,6 +86,7 @@ const ReviewSection: FC = () => {
             as="p"
             textStyle="body-regular"
             textAlign="left"
+            mb="16px"
           >{`Has not changed since last renewal.`}</Text>
         )}
       </VStack>
@@ -84,9 +94,13 @@ const ReviewSection: FC = () => {
 
       {/* Doctor information section */}
       <VStack align="flex-start" spacing={updatedDoctorInfo ? undefined : '24px'}>
-        <Flex minWidth="700px" justifyContent="space-between">
+        <Flex minWidth={{ md: '640px' }} justifyContent="space-between">
           <Text as="h3" textStyle="heading">{`Doctor's Information`}</Text>
-          <Button variant="outline" onClick={() => goToStep(2)}>{`Edit`}</Button>
+          <Button
+            variant="outline"
+            onClick={() => goToStep(2)}
+            display={{ sm: 'none', md: 'initial' }}
+          >{`Edit`}</Button>
         </Flex>
         {updatedDoctorInfo ? (
           <VStack align="flex-start" spacing="12px">
@@ -124,9 +138,14 @@ const ReviewSection: FC = () => {
 
       {/* Additional information section */}
       <VStack align="flex-start">
-        <Flex minWidth="700px" justifyContent="space-between">
+        <Flex minWidth={{ md: '640px' }} justifyContent="space-between">
           <Text as="h3" textStyle="heading">{`Additional Information`}</Text>
-          <Button variant="outline" onClick={() => goToStep(3)}>{`Edit`}</Button>
+          <Button
+            variant="outline"
+            onClick={() => goToStep(3)}
+            display={{ sm: 'none', md: 'initial' }}
+            mt="16px"
+          >{`Edit`}</Button>
         </Flex>
         <VStack align="flex-start" spacing="12px">
           <VStack align="flex-start" spacing="0">
@@ -167,9 +186,13 @@ const ReviewSection: FC = () => {
 
       {/* Donation section */}
       <VStack align="flex-start">
-        <Flex minWidth="700px" justifyContent="space-between">
+        <Flex minWidth={{ md: '640px' }} justifyContent="space-between">
           <Text as="h3" textStyle="heading">{`Donation`}</Text>
-          <Button variant="outline" onClick={() => goToStep(4)}>{`Edit`}</Button>
+          <Button
+            variant="outline"
+            onClick={() => goToStep(4)}
+            display={{ sm: 'none', md: 'initial' }}
+          >{`Edit`}</Button>
         </Flex>
         <VStack align="flex-start" spacing="12px">
           <ReviewRequestField name={`Amount`} value={`$${donationAmount}`} />

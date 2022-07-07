@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Radio, VStack } from '@chakra-ui/react';
+import { Box, Button, Radio, Stack, VStack } from '@chakra-ui/react';
 import RadioGroupField from '@components/form/RadioGroupField';
 import TextArea from '@components/form/TextAreaField';
 import RenewalFlow from '@containers/RenewalFlow';
@@ -59,10 +59,10 @@ const AdditionalInformationSection: FC = () => {
                 required
                 value={Number(values.usesAccessibleConvertedVan)}
               >
-                <HStack spacing="32px">
+                <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ md: '32px' }}>
                   <Radio value={1}>{'Yes, I am'}</Radio>
                   <Radio value={0}>{'No, I am not'}</Radio>
-                </HStack>
+                </Stack>
               </RadioGroupField>
               {Number(values.usesAccessibleConvertedVan) === 1 && (
                 <RadioGroupField
@@ -71,10 +71,10 @@ const AdditionalInformationSection: FC = () => {
                   required
                   value={values.accessibleConvertedVanLoadingMethod || undefined}
                 >
-                  <HStack spacing="32px">
+                  <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ md: '32px' }}>
                     <Radio value="SIDE_LOADING">Side loading</Radio>
                     <Radio value="END_LOADING">End loading</Radio>
-                  </HStack>
+                  </Stack>
                 </RadioGroupField>
               )}
               <RadioGroupField
@@ -83,10 +83,10 @@ const AdditionalInformationSection: FC = () => {
                 required
                 value={Number(values.requiresWiderParkingSpace)}
               >
-                <HStack spacing="32px">
+                <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ md: '32px' }}>
                   <Radio value={1}>{'Yes, I do'}</Radio>
                   <Radio value={0}>{'No, I do not'}</Radio>
-                </HStack>
+                </Stack>
               </RadioGroupField>
               {Number(values.requiresWiderParkingSpace) === 1 && (
                 <RadioGroupField
@@ -95,11 +95,15 @@ const AdditionalInformationSection: FC = () => {
                   required
                   value={values.requiresWiderParkingSpaceReason || undefined}
                 >
-                  <VStack align="flex-start">
+                  <Stack
+                    align="flex-start"
+                    direction={{ sm: 'column', md: 'row' }}
+                    spacing={{ md: '32px' }}
+                  >
                     <Radio value="HAS_ACCESSIBLE_VAN">I have an accessible van</Radio>
                     <Radio value="MEDICAL_REASONS">For medical reasons</Radio>
                     <Radio value="OTHER">Other</Radio>
-                  </VStack>
+                  </Stack>
                 </RadioGroupField>
               )}
               {Number(values.requiresWiderParkingSpace) === 1 &&
@@ -108,12 +112,22 @@ const AdditionalInformationSection: FC = () => {
                 )}
             </VStack>
             {!isValid && <IncompleteSectionAlert />}
-            <Flex width="100%" justifyContent="flex-end" mt="40px">
-              <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
+            <Stack
+              width="100%"
+              direction={{ sm: 'column-reverse', md: 'row' }}
+              spacing={{ sm: '12px', md: '32px' }}
+              justifyContent="flex-end"
+              mt="40px"
+            >
+              <Button
+                variant="outline"
+                onClick={prevStep}
+                marginRight={{ md: '32px' }}
+              >{`Previous`}</Button>
               <Button variant="solid" type="submit" isDisabled={!isValid}>
                 {isReviewing ? `Review request` : `Next`}
               </Button>
-            </Flex>
+            </Stack>
           </Box>
         </Form>
       )}

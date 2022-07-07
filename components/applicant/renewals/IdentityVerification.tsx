@@ -18,6 +18,7 @@ import {
   AlertDescription,
   VStack,
   AlertTitle,
+  Stack,
 } from '@chakra-ui/react'; // Chakra UI
 import { InfoOutlineIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import TOSModal from '@components/applicant/renewals/TOSModal'; // TOS Modal
@@ -82,10 +83,14 @@ const IdentityVerification: FC = () => {
   };
 
   return (
-    <GridItem colSpan={8} colStart={3}>
+    <GridItem colSpan={{ sm: 12, md: 8 }} colStart={{ sm: 1, md: 3 }}>
       <Flex width="100%" justifyContent="flex-start">
         <Flex width="100%" flexFlow="column" alignItems="flex-start">
-          <Text as="h2" textStyle="display-medium-bold" mb="20px">
+          <Text
+            as="h2"
+            textStyle={{ sm: 'heading', md: 'display-medium-bold' }}
+            mb={{ sm: '40px', md: '48px' }}
+          >
             Renewal Form
           </Text>
           <Alert status="info" marginBottom="48px">
@@ -102,7 +107,11 @@ const IdentityVerification: FC = () => {
               </AlertDescription>
             </VStack>
           </Alert>
-          <Text as="h1" textStyle="display-xlarge" mb="20px">{`Verify your Identity`}</Text>
+          <Text
+            as="h1"
+            textStyle={{ sm: 'display-medium-bold', md: 'display-xlarge' }}
+            mb="20px"
+          >{`Verify your Identity`}</Text>
           <Text as="p" textStyle="body-bold" textAlign="left" marginBottom="20px">
             {`You must have a record with Richmond Centre for Disability before proceeding. Please fill
                 out the information below so we may validate your identity:`}
@@ -154,7 +163,7 @@ const IdentityVerification: FC = () => {
                   />
                 </Box>
 
-                <Box marginBottom="20px" textAlign={'left'}>
+                <Box marginBottom={{ sm: '40px', md: '20px' }} textAlign={'left'}>
                   <DateField name="dateOfBirth" label="Date of Birth" width="184px">
                     <FormHelperText>
                       <Text>Please enter your date of birth in YYYY-MM-DD format.</Text>
@@ -177,9 +186,14 @@ const IdentityVerification: FC = () => {
                   </Box>
                 )}
 
-                <Flex width="100%" justifyContent="flex-end">
+                <Stack
+                  width="100%"
+                  direction={{ sm: 'column-reverse', md: 'row' }}
+                  justifyContent="flex-end"
+                  spacing={{ sm: '16px', md: '12px' }}
+                >
                   <Link href="/">
-                    <Button variant="outline" marginRight="12px">{`Go back to home page`}</Button>
+                    <Button variant="outline">{`Go back to home page`}</Button>
                   </Link>
                   <Button
                     type="submit"
@@ -193,7 +207,7 @@ const IdentityVerification: FC = () => {
                       !values.dateOfBirth
                     }
                   >{`Continue`}</Button>
-                </Flex>
+                </Stack>
               </Form>
             )}
           </Formik>

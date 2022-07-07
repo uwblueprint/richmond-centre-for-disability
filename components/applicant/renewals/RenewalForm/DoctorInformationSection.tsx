@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormHelperText, HStack, Radio, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, FormHelperText, HStack, Radio, Stack, Text, VStack } from '@chakra-ui/react';
 import RadioGroupField from '@components/form/RadioGroupField';
 import TextField from '@components/form/TextField';
 import RenewalFlow from '@containers/RenewalFlow';
@@ -98,10 +98,10 @@ const DoctorInformationSection: FC = () => {
               required
               value={values.updatedDoctor === null ? undefined : Number(values.updatedDoctor)}
             >
-              <HStack spacing="32px">
+              <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ md: '32px' }}>
                 <Radio value={1}>{'Yes, I have'}</Radio>
                 <Radio value={0}>{'No, I have not'}</Radio>
-              </HStack>
+              </Stack>
             </RadioGroupField>
             {/* Conditionally render form based on whether doctor info was updated */}
             {!!Number(values.updatedDoctor) && (
@@ -146,12 +146,22 @@ const DoctorInformationSection: FC = () => {
               </Box>
             )}
             {!isValid && <IncompleteSectionAlert />}
-            <Flex width="100%" justifyContent="flex-end" mt="40px">
-              <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
+            <Stack
+              width="100%"
+              direction={{ sm: 'column-reverse', md: 'row' }}
+              spacing={{ sm: '12px', md: '32px' }}
+              justifyContent="flex-end"
+              mt="40px"
+            >
+              <Button
+                variant="outline"
+                onClick={prevStep}
+                marginRight={{ md: '32px' }}
+              >{`Previous`}</Button>
               <Button variant="solid" type="submit" isDisabled={!isValid}>
                 {isReviewing ? `Review request` : `Next`}
               </Button>
-            </Flex>
+            </Stack>
           </Box>
         </Form>
       )}

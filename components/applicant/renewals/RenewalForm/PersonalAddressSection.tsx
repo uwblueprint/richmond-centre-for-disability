@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormHelperText, HStack, Radio, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, FormHelperText, Radio, Stack, Text, VStack } from '@chakra-ui/react';
 import Link from 'next/link';
 import RadioGroupField from '@components/form/RadioGroupField';
 import TextField from '@components/form/TextField';
@@ -75,10 +75,10 @@ const PersonalAddressSection: FC = () => {
               required
               value={values.updatedAddress === null ? undefined : Number(values.updatedAddress)}
             >
-              <HStack spacing="32px">
+              <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ md: '32px' }}>
                 <Radio value={1}>{'Yes, it has'}</Radio>
                 <Radio value={0}>{'No, it has not'}</Radio>
-              </HStack>
+              </Stack>
             </RadioGroupField>
             {/* Conditionally render form based on whether address was updated */}
             {!!Number(values.updatedAddress) && (
@@ -123,18 +123,24 @@ const PersonalAddressSection: FC = () => {
               </Box>
             )}
             {!isValid && <IncompleteSectionAlert />}
-            <Flex width="100%" justifyContent="flex-end" mt="40px">
+            <Stack
+              width="100%"
+              direction={{ sm: 'column-reverse', md: 'row' }}
+              spacing={{ sm: '12px', md: '32px' }}
+              justifyContent="flex-end"
+              mt="40px"
+            >
               <Link href="/">
                 <Button
                   variant="outline"
-                  marginRight="32px"
+                  marginRight={{ md: '32px' }}
                   _hover={{ textDecoration: 'none' }}
                 >{`Go back to home page`}</Button>
               </Link>
               <Button variant="solid" type="submit" isDisabled={!isValid}>
                 {isReviewing ? `Review request` : `Next`}
               </Button>
-            </Flex>
+            </Stack>
           </Box>
         </Form>
       )}

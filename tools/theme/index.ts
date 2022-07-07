@@ -4,6 +4,7 @@ import typography from '@tools/theme/typography'; // Theme typography
 import space from '@tools/theme/spacing'; // Theme spacing
 import shadows from '@tools/theme/shadows'; // Theme shadows
 import textStyles from '@tools/theme/text-styles'; // Text styles
+import breakpoints from '@tools/theme/breakpoints'; // Breakpoints
 
 // Component styles
 import Button from '@tools/theme/components/button'; // Button styles
@@ -24,6 +25,7 @@ const theme = extendTheme({
   shadows,
   components: { Button, Form, FormLabel, Checkbox, Alert, Tabs, Badge, Steps, Table, Divider },
   textStyles,
+  breakpoints,
 });
 
 export default theme;

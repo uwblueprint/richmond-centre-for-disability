@@ -150,7 +150,12 @@ const RenewalForm: FC = () => {
 
   return (
     <GridItem colSpan={10} colStart={2}>
-      <Text as="h1" textStyle="display-xlarge" textAlign="left" marginBottom="20px">
+      <Text
+        as="h1"
+        textStyle={{ sm: 'display-medium-bold', md: 'display-xlarge' }}
+        textAlign="left"
+        marginBottom="20px"
+      >
         Renewal Form
       </Text>
       <Alert status="info" marginBottom="48px">
