@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormHelperText, HStack, Radio, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, FormHelperText, Radio, Stack, Text, VStack } from '@chakra-ui/react';
 import CheckboxField from '@components/form/CheckboxField';
 import RadioGroupField from '@components/form/RadioGroupField';
 import TextField from '@components/form/TextField';
@@ -72,10 +72,10 @@ const ContactInformationSection: FC = () => {
                 values.updatedContactInfo === null ? undefined : Number(values.updatedContactInfo)
               }
             >
-              <HStack spacing="32px">
+              <Stack direction={{ sm: 'column', md: 'row' }} spacing={{ md: '32px' }}>
                 <Radio value={1}>{`Yes, I have`}</Radio>
                 <Radio value={0}>{'No, I have not'}</Radio>
-              </HStack>
+              </Stack>
             </RadioGroupField>
             {/* Conditionally render form based on whether contact info was updated */}
             {!!Number(values.updatedContactInfo) && (
@@ -105,12 +105,18 @@ const ContactInformationSection: FC = () => {
               </Box>
             )}
             {!isValid && <IncompleteSectionAlert />}
-            <Flex width="100%" justifyContent="flex-end" mt="40px">
-              <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
+            <Stack
+              width="100%"
+              direction={{ sm: 'column-reverse', md: 'row' }}
+              justifyContent="flex-end"
+              spacing={{ sm: '12px', md: '32px' }}
+              mt="40px"
+            >
+              <Button variant="outline" onClick={prevStep}>{`Previous`}</Button>
               <Button variant="solid" isDisabled={!isValid} type="submit">
                 {isReviewing ? `Review request` : `Next`}
               </Button>
-            </Flex>
+            </Stack>
           </Box>
         </Form>
       )}

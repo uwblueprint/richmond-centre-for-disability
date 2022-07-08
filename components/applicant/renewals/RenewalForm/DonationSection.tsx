@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Radio, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Radio, Stack, Text, VStack } from '@chakra-ui/react';
 import RadioGroupField from '@components/form/RadioGroupField';
 import RenewalFlow from '@containers/RenewalFlow';
 import RenewalForm from '@containers/RenewalForm';
@@ -63,12 +63,18 @@ const DonationSection: FC = () => {
               </RadioGroupField>
             </VStack>
             {!isValid && <IncompleteSectionAlert />}
-            <Flex width="100%" justifyContent="flex-end" mt="40px">
-              <Button variant="outline" onClick={prevStep} marginRight="32px">{`Previous`}</Button>
+            <Stack
+              width="100%"
+              direction={{ sm: 'column-reverse', md: 'row' }}
+              spacing={{ sm: '12px', md: '32px' }}
+              justifyContent="flex-end"
+              mt="40px"
+            >
+              <Button variant="outline" onClick={prevStep}>{`Previous`}</Button>
               <Button variant="solid" type="submit">
                 {isReviewing ? `Review request` : `Next`}
               </Button>
-            </Flex>
+            </Stack>
           </Box>
         </Form>
       )}
