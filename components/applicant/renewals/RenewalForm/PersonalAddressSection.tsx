@@ -133,7 +133,6 @@ const PersonalAddressSection: FC = () => {
               <Link href="/">
                 <Button
                   variant="outline"
-                  marginRight={{ md: '32px' }}
                   _hover={{ textDecoration: 'none' }}
                 >{`Go back to home page`}</Button>
               </Link>

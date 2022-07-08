@@ -60,6 +60,11 @@ const ReviewSection: FC = () => {
             mb="16px"
           >{`Has not changed since last renewal.`}</Text>
         )}
+        <Button
+          variant="outline"
+          onClick={() => goToStep(0)}
+          display={{ md: 'none' }}
+        >{`Edit`}</Button>
       </VStack>
       <Divider />
 
@@ -89,6 +94,11 @@ const ReviewSection: FC = () => {
             mb="16px"
           >{`Has not changed since last renewal.`}</Text>
         )}
+        <Button
+          variant="outline"
+          onClick={() => goToStep(1)}
+          display={{ md: 'none' }}
+        >{`Edit`}</Button>
       </VStack>
       <Divider />
 
@@ -133,6 +143,11 @@ const ReviewSection: FC = () => {
             textAlign="left"
           >{`Has not changed since last renewal.`}</Text>
         )}
+        <Button
+          variant="outline"
+          onClick={() => goToStep(2)}
+          display={{ md: 'none' }}
+        >{`Edit`}</Button>
       </VStack>
       <Divider />
 
@@ -180,6 +195,12 @@ const ReviewSection: FC = () => {
               />
             )}
           </VStack>
+          <Button
+            variant="outline"
+            onClick={() => goToStep(3)}
+            display={{ md: 'none' }}
+            mt="16px"
+          >{`Edit`}</Button>
         </VStack>
       </VStack>
       <Divider />
@@ -197,6 +218,11 @@ const ReviewSection: FC = () => {
         <VStack align="flex-start" spacing="12px">
           <ReviewRequestField name={`Amount`} value={`$${donationAmount}`} />
         </VStack>
+        <Button
+          variant="outline"
+          onClick={() => goToStep(4)}
+          display={{ md: 'none' }}
+        >{`Edit`}</Button>
       </VStack>
     </VStack>
   );

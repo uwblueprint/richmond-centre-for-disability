@@ -70,11 +70,7 @@ const DonationSection: FC = () => {
               justifyContent="flex-end"
               mt="40px"
             >
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                marginRight={{ md: '32px' }}
-              >{`Previous`}</Button>
+              <Button variant="outline" onClick={prevStep}>{`Previous`}</Button>
               <Button variant="solid" type="submit">
                 {isReviewing ? `Review request` : `Next`}
               </Button>

@@ -112,11 +112,7 @@ const ContactInformationSection: FC = () => {
               spacing={{ sm: '12px', md: '32px' }}
               mt="40px"
             >
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                marginRight={{ md: '32px' }}
-              >{`Previous`}</Button>
+              <Button variant="outline" onClick={prevStep}>{`Previous`}</Button>
               <Button variant="solid" isDisabled={!isValid} type="submit">
                 {isReviewing ? `Review request` : `Next`}
               </Button>
