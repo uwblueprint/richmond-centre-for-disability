@@ -170,7 +170,7 @@ function Footer() {
               </Text>
               <Text textStyle="caption">Tel: 604-232-2404</Text>
               <a href="mailto:parkingpermit@rcdrichmond.org">
-                <Text textStyle="caption" wordBreak="break-all">
+                <Text textStyle="caption" whiteSpace="nowrap">
                   Email: parkingpermit@rcdrichmond.org
                 </Text>
               </a>

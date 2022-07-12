@@ -115,13 +115,13 @@ export default function Landing() {
               by hand, or want to request a new parking permit, please download the appropriate form
               below.
             </Text>
-            <Text as="p" textStyle="body-regular" align="left" mt="24px" wordBreak="break-all">
+            <Text as="p" textStyle="body-regular" align="left" mt="24px">
               After completing the form, either email (
-              <span style={{ wordBreak: 'break-all' }}>
-                <b>
-                  <a href="mailto:rcdparkingpermit@richmond.org">parkingpermit@rcdrichmond.org</a>
-                </b>
-              </span>
+              <a href="mailto:rcdparkingpermit@richmond.org">
+                <Text as="span" fontWeight="bold" whiteSpace="nowrap">
+                  parkingpermit@rcdrichmond.org
+                </Text>
+              </a>
               ), mail or drop it off in person to RCD!
             </Text>
           </Box>
@@ -213,11 +213,11 @@ export default function Landing() {
               604-232-2404
             </Text>{' '}
             or via email at{' '}
-            <span style={{ wordBreak: 'break-all' }}>
-              <b>
-                <a href="mailto:rcdparkingpermit@richmond.org">parkingpermit@rcdrichmond.org</a>
-              </b>
-            </span>
+            <a href="mailto:rcdparkingpermit@richmond.org">
+              <Text as="span" fontWeight="bold" whiteSpace="nowrap">
+                parkingpermit@rcdrichmond.org
+              </Text>
+            </a>
           </Text>
         </Box>
       </GridItem>
