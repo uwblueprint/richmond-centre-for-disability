@@ -160,9 +160,6 @@ const PermitHolders: NextPage = () => {
       {
         Header: 'Name',
         accessor: 'name',
-        width: 180,
-        minWidth: 180,
-        maxWidth: 180,
         sortDescFirst: true,
         Cell: ({ value: { id, firstName, middleName, lastName } }) => {
           const name = formatFullName(firstName, middleName, lastName);
@@ -190,8 +187,6 @@ const PermitHolders: NextPage = () => {
         Header: 'Date of Birth',
         accessor: 'dateOfBirth',
         disableSortBy: true,
-        width: 140,
-        maxWidth: 140,
         Cell: ({ value }) => {
           return <Text>{formatDate(value)}</Text>;
         },
@@ -200,8 +195,6 @@ const PermitHolders: NextPage = () => {
         Header: 'Home Address',
         accessor: 'homeAddress',
         disableSortBy: true,
-        width: 240,
-        minWidth: 240,
         Cell: ({ value: { addressLine1, addressLine2, city, postalCode } }) => {
           return (
             <>
@@ -214,26 +207,16 @@ const PermitHolders: NextPage = () => {
         },
       },
       {
-        Header: 'Email',
-        accessor: 'email',
-        disableSortBy: true,
-        width: 240,
-        minWidth: 240,
-      },
-      {
         Header: 'Phone #',
         accessor: 'phone',
         disableSortBy: true,
-        width: 140,
-        maxWidth: 140,
+
         Cell: ({ value }) => formatPhoneNumber(value),
       },
       {
         Header: 'Recent APP',
         accessor: 'mostRecentPermit',
         disableSortBy: true,
-        width: 140,
-        maxWidth: 140,
         Cell: ({ value: { expiryDate, rcdPermitId } }) => {
           const permitStatus = getPermitExpiryStatus(new Date(expiryDate));
           return (
@@ -254,8 +237,6 @@ const PermitHolders: NextPage = () => {
         Header: 'User Status',
         accessor: 'status',
         disableSortBy: true,
-        width: 120,
-        maxWidth: 120,
         Cell: ({ value }) => {
           return (
             value && (

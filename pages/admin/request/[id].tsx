@@ -118,7 +118,12 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           {(status === 'IN_PROGRESS' || status === 'REJECTED') && (
             <ProcessingTasksCard applicationId={id} />
           )}
-          {type === 'NEW' && <PhysicianAssessmentCard applicationId={id} />}
+          {type === 'NEW' && (
+            <PhysicianAssessmentCard
+              applicationId={id}
+              editDisabled={reviewRequestCompleted || isRejected}
+            />
+          )}
           {type === 'REPLACEMENT' && (
             <ReasonForReplacementCard
               applicationId={id}

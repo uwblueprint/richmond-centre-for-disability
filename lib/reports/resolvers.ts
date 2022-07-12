@@ -17,6 +17,7 @@ import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/repor
 import { Prisma } from '@prisma/client';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { ApolloError } from 'apollo-server-micro';
+import moment from 'moment';
 
 /**
  * Generates csv with permit holders' info, given a start date, end date, and values from
@@ -28,7 +29,7 @@ export const generatePermitHoldersReport: Resolver<
   GeneratePermitHoldersReportResult
 > = async (_, args, { prisma, session }) => {
   const {
-    input: { startDate, endDate, columns },
+    input: { startDate, endDate: inputEndDate, columns },
   } = args;
 
   const columnsSet = new Set(columns);
@@ -38,13 +39,16 @@ export const generatePermitHoldersReport: Resolver<
     throw new ApolloError('Not authenticated');
   }
 
+  // Calculate end date as beginning of the next day
+  const endDate = moment.utc(inputEndDate).add(1, 'd').toDate();
+
   const applicants = await prisma.applicant.findMany({
     where: {
       permits: {
         some: {
           expiryDate: {
             gte: startDate,
-            lte: endDate,
+            lt: endDate,
           },
         },
       },
@@ -179,7 +183,7 @@ export const generateApplicationsReport: Resolver<
   GenerateApplicationsReportResult
 > = async (_, args, { prisma, session }) => {
   const {
-    input: { startDate, endDate, columns },
+    input: { startDate, endDate: inputEndDate, columns },
   } = args;
 
   if (!session) {
@@ -189,11 +193,14 @@ export const generateApplicationsReport: Resolver<
 
   const columnsSet = new Set(columns);
 
+  // Calculate end date as beginning of the next day
+  const endDate = moment.utc(inputEndDate).add(1, 'd').toDate();
+
   const applications = await prisma.application.findMany({
     where: {
       createdAt: {
         gte: startDate,
-        lte: endDate,
+        lt: endDate,
       },
     },
     select: {
@@ -318,7 +325,7 @@ export const generateAccountantReport: Resolver<
   GenerateAccountantReportResult
 > = async (_, args, { prisma, session }) => {
   const {
-    input: { startDate, endDate },
+    input: { startDate, endDate: inputEndDate },
   } = args;
 
   if (!session) {
@@ -336,12 +343,15 @@ export const generateAccountantReport: Resolver<
     CHEQUE: 'Cheque',
   };
 
+  // Calculate end date as beginning of the next day
+  const endDate = moment.utc(inputEndDate).add(1, 'd').toDate();
+
   const paymentMethodGroups = await prisma.application.groupBy({
     by: ['paymentMethod'],
     where: {
       createdAt: {
         gte: startDate,
-        lte: endDate,
+        lt: endDate,
       },
     },
     _sum: {
@@ -374,23 +384,23 @@ export const generateAccountantReport: Resolver<
     csvAccountantReportRows.push({
       rowName: paymentTypeToString[paymentMethodGroup.paymentMethod],
       countIssued: paymentMethodGroup._count.paymentMethod,
-      processingFee: paymentMethodGroup._sum.processingFee || 0,
-      donationAmount: paymentMethodGroup._sum.donationAmount || 0,
-      totalAmount: Prisma.Decimal.add(
+      processingFee: `$${paymentMethodGroup._sum.processingFee || 0}`,
+      donationAmount: `$${paymentMethodGroup._sum.donationAmount || 0}`,
+      totalAmount: `$${Prisma.Decimal.add(
         paymentMethodGroup._sum.donationAmount || 0,
         paymentMethodGroup._sum.processingFee || 0
-      ),
+      )}`,
     });
   }
   csvAccountantReportRows.push({
     rowName: 'Total',
     countIssued: totalAggregate._count.paymentMethod || 0,
-    processingFee: totalAggregate._sum.processingFee || 0,
-    donationAmount: totalAggregate._sum.donationAmount || 0,
-    totalAmount: Prisma.Decimal.add(
+    processingFee: `$${totalAggregate._sum.processingFee || 0}`,
+    donationAmount: `$${totalAggregate._sum.donationAmount || 0}`,
+    totalAmount: `$${Prisma.Decimal.add(
       totalAggregate._sum.donationAmount || 0,
       totalAggregate._sum.processingFee || 0
-    ),
+    )}`,
   });
 
   const csvHeaders = [
