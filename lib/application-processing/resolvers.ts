@@ -550,7 +550,6 @@ export const completeApplication: Resolver<
           rcdPermitId: appNumber,
           // TODO: Replace with type of most recent permit
           type: 'PERMANENT',
-          // ? Original permit expiry or 3 years by default?
           expiryDate: getPermanentPermitExpiryDate(),
           applicant: { connect: { id: applicantId } },
           application: { connect: { id } },
@@ -610,6 +609,19 @@ export const updateApplicationProcessingAssignAppNumber: Resolver<
   });
   if (application?.applicationProcessing.reviewRequestCompleted) {
     throw new ApolloError('Cannot update APP number of already-reviewed application');
+  }
+
+  if (appNumber !== null) {
+    // Check that APP number does not exist yet
+    const existingPermit = await prisma.permit.findUnique({
+      where: { rcdPermitId: appNumber },
+    });
+
+    if (existingPermit !== null) {
+      throw new ApolloError(
+        `Could not assign APP number: a permit with APP number ${appNumber} already exists`
+      );
+    }
   }
 
   let updatedApplicationProcessing;
@@ -887,19 +899,20 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     throw new ApolloError('Error creating invoice record in DB');
   }
 
+  // file name format: PP-Receipt-P<YYYYMMDD>-<invoice number>.pdf
+  const createdAtYYYMMDD = formatDateYYYYMMDD(invoice.createdAt).replace(/-/g, '');
+  const receiptNumber = `${createdAtYYYMMDD}-${invoice.invoiceNumber}`;
+  const fileName = `PP-Receipt-P${receiptNumber}.pdf`;
+  const s3InvoiceKey = `rcd/invoices/${fileName}`;
+
   // Generate application invoice
   const pdfDoc = generateApplicationInvoicePdf(
     application,
     session,
     // TODO: Remove typecast when backend guard is implemented
     application.applicationProcessing.appNumber as number,
-    invoice.invoiceNumber
+    receiptNumber
   );
-
-  // file name format: PP-Receipt-P<YYYYMMDD>-<invoice number>.pdf
-  const createdAtYYYMMDD = formatDateYYYYMMDD(invoice.createdAt).replace(/-/g, '');
-  const fileName = `PP-Receipt-P${createdAtYYYMMDD}-${invoice.invoiceNumber}.pdf`;
-  const s3InvoiceKey = `rcd/invoices/${fileName}`;
 
   // Upload pdf to s3
   let uploadedPdf;

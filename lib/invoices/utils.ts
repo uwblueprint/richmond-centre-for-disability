@@ -10,13 +10,13 @@ import { PaymentType } from '@lib/graphql/types';
  * @param application application object
  * @param session session object containing employee information
  * @param appNumber APP (parking permit) number
- * @param invoiceNumber invoice number
+ * @param receiptNumber receipt number
  */
 export const generateApplicationInvoicePdf = (
   application: Application,
   session: Session,
   appNumber: number,
-  invoiceNumber: number
+  receiptNumber: string
 ): PDFKit.PDFDocument => {
   const {
     applicantId,
@@ -70,7 +70,7 @@ export const generateApplicationInvoicePdf = (
     applicantName,
     userNumber: applicantId,
     permitType,
-    receiptNumber: invoiceNumber,
+    receiptNumber,
     dateIssued: new Date(),
     issuedBy: employeeInitials,
     paymentItems,
@@ -96,7 +96,7 @@ const pdfDefinition = (input: {
   applicantName: string;
   userNumber: number | null;
   permitType: string;
-  receiptNumber: number;
+  receiptNumber: string;
   dateIssued: Date;
   issuedBy: string;
   paymentItems: Array<{

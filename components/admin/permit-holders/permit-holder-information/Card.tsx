@@ -26,6 +26,7 @@ import {
 import { useMutation, useQuery } from '@apollo/client';
 import Address from '@components/admin/Address';
 import { permitHolderInformationSchema } from '@lib/applicants/validation';
+import { titlecase } from '@tools/string';
 
 type PersonalInformationProps = {
   readonly applicantId: number;
@@ -138,7 +139,7 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
             Date of Birth: {formatDateYYYYMMDD(new Date(dateOfBirth))}
           </Text>
           <Text as="p" textStyle="body-regular">
-            Gender: {gender === 'OTHER' ? otherGender : gender}
+            Gender: {gender === 'OTHER' ? otherGender : titlecase(gender)}
           </Text>
         </VStack>
 

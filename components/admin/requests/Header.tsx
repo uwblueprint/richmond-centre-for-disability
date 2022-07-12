@@ -7,6 +7,7 @@ import PermitTypeBadge from '@components/admin/PermitTypeBadge';
 import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/types';
 import { titlecase } from '@tools/string';
 import { formatDateYYYYMMDD } from '@lib/utils/date';
+import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 
 type RequestHeaderProps = {
   readonly applicationType: ApplicationType;
@@ -86,7 +87,7 @@ export default function RequestHeader({
               </Text>
             )}
           </Box>
-          <Box>
+          <VStack alignItems="flex-end" spacing="0">
             <Flex alignItems="center">
               <Text textStyle="heading" as="h3" marginRight={3} textTransform="capitalize">
                 Permit Type:
@@ -94,13 +95,17 @@ export default function RequestHeader({
               <PermitTypeBadge variant={permitType} />
             </Flex>
             <HStack justifyContent="flex-end">
-              {permitType === 'TEMPORARY' && !!temporaryPermitExpiry && (
-                <Text textStyle="caption" as="p" mt="12px">
-                  This permit will expire: {formatDateYYYYMMDD(temporaryPermitExpiry)}
-                </Text>
-              )}
+              <Text textStyle="caption" as="p" mt="12px">
+                {permitType === 'TEMPORARY' && !!temporaryPermitExpiry
+                  ? `This permit will expire: ${formatDateYYYYMMDD(temporaryPermitExpiry)}`
+                  : permitType === 'PERMANENT'
+                  ? `This permit will expire: ${formatDateYYYYMMDD(
+                      getPermanentPermitExpiryDate()
+                    )} (expected)`
+                  : null}
+              </Text>
             </HStack>
-          </Box>
+          </VStack>
         </Flex>
         {applicationStatus === 'REJECTED' && (
           <Alert status="error">

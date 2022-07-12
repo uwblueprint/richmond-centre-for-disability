@@ -98,17 +98,19 @@ export default function GuardianInformationCard({
         <Text as="p" textStyle="body-regular">
           This permit holder does not have a guardian/POA
         </Text>
-        <EditGuardianInformationModal
-          guardianInformation={INITIAL_GUARDIAN_INFORMATION}
-          onSave={handleSave}
-        >
-          <Button height="50px" leftIcon={<AddIcon height="14px" width="14px" />}>
-            Add a Guardian/POA
-          </Button>
-        </EditGuardianInformationModal>
+        {!editDisabled && (
+          <EditGuardianInformationModal
+            guardianInformation={INITIAL_GUARDIAN_INFORMATION}
+            onSave={handleSave}
+          >
+            <Button height="50px" leftIcon={<AddIcon height="14px" width="14px" />}>
+              Add a Guardian/POA
+            </Button>
+          </EditGuardianInformationModal>
+        )}
       </VStack>
     );
-  }, []);
+  }, [editDisabled]);
 
   /** Render guardian information */
   const _renderGuardianInformation = useCallback((guardian: GuardianCardData) => {
