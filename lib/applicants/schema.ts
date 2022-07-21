@@ -155,6 +155,7 @@ export default gql`
     expiryDateRangeFrom: Date
     expiryDateRangeTo: Date
     search: String
+    dateOfBirth: Date
     limit: Int
     offset: Int
   }

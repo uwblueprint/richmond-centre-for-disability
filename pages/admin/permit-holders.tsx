@@ -20,6 +20,8 @@ import {
   Tooltip,
   IconButton,
   useDisclosure,
+  VStack,
+  HStack,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, WarningIcon, WarningTwoIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/admin/Layout'; // Layout component
@@ -63,6 +65,7 @@ const PermitHolders: NextPage = () => {
   const [userStatusFilter, setUserStatusFilter] = useState<ApplicantStatus | null>(null);
   const [searchFilter, setSearchFilter] = useState<string>('');
   const { dateRange, addDayToDateRange, dateRangeString } = useDateRangePicker();
+  const [dateOfBirthFilter, setDateOfBirthFilter] = useState('');
 
   // Pagination
   const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
@@ -87,6 +90,7 @@ const PermitHolders: NextPage = () => {
           expiryDateRangeFrom: dateRange.from?.getTime(),
           expiryDateRangeTo: dateRange.to?.getTime(),
           search: debouncedSearchFilter,
+          dateOfBirth: dateOfBirthFilter || null,
           offset: pageNumber * PAGE_SIZE,
           limit: PAGE_SIZE,
           order: sortOrder,
@@ -307,98 +311,9 @@ const PermitHolders: NextPage = () => {
           bg="background.white"
         >
           <Box padding="20px 24px">
-            <Flex marginBottom="20px">
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  variant="outline"
-                  rightIcon={<ChevronDownIcon />}
-                  marginRight="12px"
-                  color="text.secondary"
-                  borderColor="border.secondary"
-                  textAlign="left"
-                  width="320px"
-                >
-                  <FilterMenuSelectedText
-                    name={`Permit Status`}
-                    value={permitStatusFilter?.toLowerCase() || 'All'}
-                  />
-                </MenuButton>
-                <MenuList>
-                  <MenuItem
-                    onClick={() => {
-                      setPermitStatusFilter(null);
-                    }}
-                  >
-                    All
-                  </MenuItem>
-                  {PERMIT_STATUSES.map(({ name, value }, i) => (
-                    <MenuItem
-                      key={`dropDownItem-${i}`}
-                      onClick={() => {
-                        setPermitStatusFilter(value);
-                      }}
-                    >
-                      {name}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  variant="outline"
-                  rightIcon={<ChevronDownIcon />}
-                  marginRight="12px"
-                  color="text.secondary"
-                  borderColor="border.secondary"
-                  textAlign="left"
-                  width="260px"
-                >
-                  <FilterMenuSelectedText
-                    name={`User Status`}
-                    value={userStatusFilter?.toLowerCase() || 'All'}
-                  />
-                </MenuButton>
-                <MenuList>
-                  <MenuItem
-                    onClick={() => {
-                      setUserStatusFilter(null);
-                    }}
-                  >
-                    All
-                  </MenuItem>
-                  {USER_STATUSES.map(({ name, value }, i) => (
-                    <MenuItem
-                      key={`dropDownItem-${i}`}
-                      onClick={() => {
-                        setUserStatusFilter(value);
-                      }}
-                    >
-                      {name}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  variant="outline"
-                  rightIcon={<ChevronDownIcon />}
-                  marginRight="12px"
-                  color="text.secondary"
-                  borderColor="border.secondary"
-                  textAlign="left"
-                  width="420px"
-                >
-                  <FilterMenuSelectedText name={`Expiry date`} value={dateRangeString} />
-                </MenuButton>
-                <MenuList>
-                  <DateRangePicker dateRange={dateRange} onDateChange={addDayToDateRange} />
-                </MenuList>
-              </Menu>
-              <Box flexGrow={1}>
-                <InputGroup>
+            <VStack align="stretch" marginBottom="20px">
+              <HStack>
+                <InputGroup flex={1}>
                   <InputLeftElement pointerEvents="none">
                     <SearchIcon color="text.filler" />
                   </InputLeftElement>
@@ -409,8 +324,118 @@ const PermitHolders: NextPage = () => {
                     }}
                   />
                 </InputGroup>
-              </Box>
-            </Flex>
+                <HStack
+                  spacing="-12px"
+                  height="2.5rem"
+                  paddingLeft="16px"
+                  border="1px solid"
+                  borderColor="border.secondary"
+                  borderRadius="6px"
+                >
+                  <Text as="span" textStyle="button-semibold">
+                    Date of birth:
+                  </Text>
+                  <Input
+                    type="date"
+                    placeholder="Date of birth"
+                    fontSize="18px"
+                    width="184px"
+                    value={dateOfBirthFilter}
+                    onChange={event => setDateOfBirthFilter(event.target.value)}
+                    border="none"
+                    _focus={{ border: 'none' }}
+                  />
+                </HStack>
+              </HStack>
+              <HStack>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    flex={1}
+                    variant="outline"
+                    rightIcon={<ChevronDownIcon />}
+                    color="text.secondary"
+                    borderColor="border.secondary"
+                    textAlign="left"
+                  >
+                    <FilterMenuSelectedText
+                      name={`Permit Status`}
+                      value={permitStatusFilter?.toLowerCase() || 'All'}
+                    />
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem
+                      onClick={() => {
+                        setPermitStatusFilter(null);
+                      }}
+                    >
+                      All
+                    </MenuItem>
+                    {PERMIT_STATUSES.map(({ name, value }, i) => (
+                      <MenuItem
+                        key={`dropDownItem-${i}`}
+                        onClick={() => {
+                          setPermitStatusFilter(value);
+                        }}
+                      >
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    flex={1}
+                    variant="outline"
+                    rightIcon={<ChevronDownIcon />}
+                    color="text.secondary"
+                    borderColor="border.secondary"
+                    textAlign="left"
+                  >
+                    <FilterMenuSelectedText
+                      name={`User Status`}
+                      value={userStatusFilter?.toLowerCase() || 'All'}
+                    />
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem
+                      onClick={() => {
+                        setUserStatusFilter(null);
+                      }}
+                    >
+                      All
+                    </MenuItem>
+                    {USER_STATUSES.map(({ name, value }, i) => (
+                      <MenuItem
+                        key={`dropDownItem-${i}`}
+                        onClick={() => {
+                          setUserStatusFilter(value);
+                        }}
+                      >
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    flex={2}
+                    variant="outline"
+                    rightIcon={<ChevronDownIcon />}
+                    color="text.secondary"
+                    borderColor="border.secondary"
+                    textAlign="left"
+                  >
+                    <FilterMenuSelectedText name={`Expiry date`} value={dateRangeString} />
+                  </MenuButton>
+                  <MenuList>
+                    <DateRangePicker dateRange={dateRange} onDateChange={addDayToDateRange} />
+                  </MenuList>
+                </Menu>
+              </HStack>
+            </VStack>
             {permitHolderData && permitHolderData.length > 0 ? (
               <>
                 <Table
