@@ -62,6 +62,7 @@ export type ApplicantsFilter = {
   expiryDateRangeFrom: Maybe<Scalars['Date']>;
   expiryDateRangeTo: Maybe<Scalars['Date']>;
   search: Maybe<Scalars['String']>;
+  dateOfBirth: Maybe<Scalars['Date']>;
   limit: Maybe<Scalars['Int']>;
   offset: Maybe<Scalars['Int']>;
 };

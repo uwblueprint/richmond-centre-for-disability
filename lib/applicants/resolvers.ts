@@ -78,6 +78,7 @@ export const applicants: Resolver<
       expiryDateRangeFrom = undefined,
       expiryDateRangeTo = undefined,
       search = undefined,
+      dateOfBirth = undefined,
     } = filter;
 
     let expiryDateUpperBound,
@@ -170,6 +171,7 @@ export const applicants: Resolver<
       id: rcdUserIDSearch,
       status: userStatus || undefined,
       permits: permitFilter,
+      dateOfBirth: dateOfBirth || undefined,
       ...nameFilters,
     };
   }
