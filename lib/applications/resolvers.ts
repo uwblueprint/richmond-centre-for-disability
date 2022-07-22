@@ -1626,7 +1626,7 @@ export const updateApplicationPhysicianAssessment: Resolver<
     }
   }
 
-  const { id, mobilityAids, permitType, ...validatedData } = input;
+  const { id, patientCondition, mobilityAids, permitType, ...validatedData } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
@@ -1653,6 +1653,7 @@ export const updateApplicationPhysicianAssessment: Resolver<
       data: {
         newApplication: {
           update: {
+            patientCondition: patientCondition || [],
             mobilityAids: mobilityAids || [],
             ...validatedData,
           },
