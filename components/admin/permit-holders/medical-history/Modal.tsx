@@ -18,6 +18,7 @@ import { ReactNode } from 'react'; // React
 import { MobilityAid } from '@lib/graphql/types'; // Application type & Aid enum
 import { formatDate } from '@lib/utils/date'; // Date formatter util
 import { MedicalHistoryRow } from '@tools/admin/permit-holders/medical-history';
+import { titlecase } from '@tools/string';
 
 type MedicalHistoryModalProps = {
   details: MedicalHistoryRow['details'];
@@ -65,9 +66,15 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
             </Text>
           </ModalHeader>
           <ModalBody paddingTop="0px" paddingBottom="36px" paddingX="4px">
-            <Badge display="inline-block" backgroundColor="background.informative">
-              {patientCondition}
-            </Badge>
+            {patientCondition.map(condition => (
+              <Badge
+                key={condition}
+                display="inline-block"
+                backgroundColor="background.informative"
+              >
+                {titlecase(condition)}
+              </Badge>
+            ))}
             <Divider my="24px" />
             <Box>
               <Text as="h3" textStyle="heading" paddingBottom="20px">

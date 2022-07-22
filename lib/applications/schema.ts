@@ -95,7 +95,7 @@ export default gql`
     # Physician assessment
     disability: String!
     disabilityCertificationDate: Date!
-    patientCondition: PatientCondition!
+    patientCondition: [PatientCondition!]
     mobilityAids: [MobilityAid!]
     otherPatientCondition: String
     permitType: PermitType!
@@ -349,7 +349,7 @@ export default gql`
     # Physician assessment
     disability: String!
     disabilityCertificationDate: Date!
-    patientCondition: PatientCondition!
+    patientCondition: [PatientCondition!]
     mobilityAids: [MobilityAid!]
     otherMobilityAids: String
     otherPatientCondition: String
@@ -779,7 +779,7 @@ export default gql`
     # Physician assessment
     disability: String!
     disabilityCertificationDate: Date!
-    patientCondition: PatientCondition!
+    patientCondition: [PatientCondition!]
     mobilityAids: [MobilityAid!]
     otherPatientCondition: String
     temporaryPermitExpiry: Date

@@ -407,7 +407,7 @@ export const createNewApplication: Resolver<
             otherGender,
             disability,
             disabilityCertificationDate,
-            patientCondition,
+            patientCondition: patientCondition || [],
             mobilityAids: mobilityAids || [],
             otherMobilityAids,
             otherPatientCondition,
