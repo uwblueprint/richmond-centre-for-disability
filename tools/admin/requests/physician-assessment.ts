@@ -1,7 +1,6 @@
 import {
   NewApplication,
   PermitType,
-  PatientCondition,
   QueryApplicationArgs,
   MutationUpdateApplicationPhysicianAssessmentArgs,
   UpdateApplicationPhysicianAssessmentResult,
@@ -17,8 +16,8 @@ export type PhysicianAssessment = Pick<
   | 'temporaryPermitExpiry'
   | 'mobilityAids'
   | 'otherMobilityAids'
+  | 'patientCondition'
 > & {
-  patientCondition: PatientCondition | null;
   permitType: PermitType | null;
 };
 

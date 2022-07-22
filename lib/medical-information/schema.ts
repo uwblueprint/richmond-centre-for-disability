@@ -10,7 +10,7 @@ export default gql`
 
     disability: String!
     disabilityCertificationDate: Date!
-    patientCondition: PatientCondition!
+    patientCondition: [PatientCondition!]
     mobilityAids: [MobilityAid!]
     otherPatientCondition: String
 

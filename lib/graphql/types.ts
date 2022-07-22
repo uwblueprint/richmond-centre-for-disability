@@ -288,7 +288,7 @@ export type CreateNewApplicationInput = {
   postalCode: Scalars['String'];
   disability: Scalars['String'];
   disabilityCertificationDate: Scalars['Date'];
-  patientCondition: PatientCondition;
+  patientCondition: Maybe<Array<PatientCondition>>;
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherMobilityAids: Maybe<Scalars['String']>;
   otherPatientCondition: Maybe<Scalars['String']>;
@@ -547,7 +547,7 @@ export type MedicalInformation = {
   id: Scalars['Int'];
   disability: Scalars['String'];
   disabilityCertificationDate: Scalars['Date'];
-  patientCondition: PatientCondition;
+  patientCondition: Maybe<Array<PatientCondition>>;
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherPatientCondition: Maybe<Scalars['String']>;
   physician: Physician;
@@ -784,7 +784,7 @@ export type NewApplication = Application & {
   postalCode: Scalars['String'];
   disability: Scalars['String'];
   disabilityCertificationDate: Scalars['Date'];
-  patientCondition: PatientCondition;
+  patientCondition: Maybe<Array<PatientCondition>>;
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherPatientCondition: Maybe<Scalars['String']>;
   permitType: PermitType;
@@ -1337,7 +1337,7 @@ export type UpdateApplicationPhysicianAssessmentInput = {
   id: Scalars['Int'];
   disability: Scalars['String'];
   disabilityCertificationDate: Scalars['Date'];
-  patientCondition: PatientCondition;
+  patientCondition: Maybe<Array<PatientCondition>>;
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherPatientCondition: Maybe<Scalars['String']>;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;

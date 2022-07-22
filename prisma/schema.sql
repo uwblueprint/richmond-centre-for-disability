@@ -158,7 +158,7 @@ CREATE TABLE medical_information (
   id SERIAL PRIMARY KEY,
   disability VARCHAR(255) NOT NULL,
   disability_certification_date DATE NOT NULL,
-  patient_condition PatientCondition NOT NULL,
+  patient_condition PatientCondition ARRAY,
   mobility_aids MobilityAid ARRAY,
   other_patient_condition VARCHAR(255),
   notes TEXT,
@@ -387,7 +387,7 @@ CREATE TABLE new_applications (
   -- Physician assessment
   disability VARCHAR(255) NOT NULL,
   disability_certification_date DATE NOT NULL,
-  patient_condition PatientCondition NOT NULL,
+  patient_condition PatientCondition ARRAY,
   mobility_aids MobilityAid ARRAY,
   other_mobility_aids VARCHAR(255),
   other_patient_condition VARCHAR(255),

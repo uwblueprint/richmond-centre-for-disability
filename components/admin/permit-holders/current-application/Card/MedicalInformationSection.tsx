@@ -37,15 +37,22 @@ const MedicalInformationSection: FC<Props> = ({ medicalInformation }) => {
             <Text as="p" textStyle="body-regular">
               {disability}
             </Text>
-            <Badge bgColor="background.informative">{titlecase(patientCondition as string)}</Badge>
+
+            {patientCondition !== null
+              ? patientCondition.map(condition => (
+                  <Badge key={condition} bgColor="background.informative">
+                    {titlecase(condition)}
+                  </Badge>
+                ))
+              : 'N/A'}
           </HStack>
         </GridItem>
-        {patientCondition === 'OTHER' && (
+        {patientCondition?.includes('OTHER') && (
           <>
             {/* Condition description */}
             <GridItem>
               <Text as="p" textStyle="body-regular">
-                Condition description
+                Other condition description
               </Text>
             </GridItem>
             <GridItem>
