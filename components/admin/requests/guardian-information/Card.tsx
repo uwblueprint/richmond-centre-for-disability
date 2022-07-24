@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@tools/hooks/graphql';
 import { Box, Text, Divider, VStack, Button, Link as FileLink } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import { formatFullName, formatPhoneNumber } from '@lib/utils/format';

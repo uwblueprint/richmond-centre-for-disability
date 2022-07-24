@@ -13,7 +13,7 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@tools/hooks/graphql';
 import {
   SetApplicantAsInactiveRequest,
   SetApplicantAsInactiveResponse,
@@ -54,12 +54,6 @@ export default function SetPermitHolderToInactiveModal({
           description: `Applicant status has been set to inactive.`,
         });
       }
-    },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-      });
     },
   });
   // Close modal handler

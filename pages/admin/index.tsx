@@ -29,7 +29,7 @@ import { authorize } from '@tools/authorization'; // Page authorization
 import Table from '@components/Table'; // Table component
 import Pagination from '@components/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; //Status badge component
-import { useQuery } from '@apollo/client'; //Apollo client
+import { useQuery } from '@tools/hooks/graphql'; //Apollo client
 import { useEffect, useState } from 'react'; // React
 import {
   ApplicationRow,

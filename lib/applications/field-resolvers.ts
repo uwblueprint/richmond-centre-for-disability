@@ -62,17 +62,13 @@ export const applicationProcessingResolver: FieldResolver<
     | 'appMailedEmployee'
     | 'paymentRefundedEmployee'
   >
-> = async (parent, _args, { prisma }) => {
+> = async (parent, _args, { prisma, logger }) => {
   const applicationProcessing = await prisma.application
     .findUnique({ where: { id: parent.id } })
     .applicationProcessing();
 
   if (!applicationProcessing) {
     return null;
-  }
-
-  if (!process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) {
-    throw new ApolloError('Application document link duration not defined');
   }
 
   // Generate S3 url for documents if they have already been uploaded.
@@ -87,7 +83,9 @@ export const applicationProcessingResolver: FieldResolver<
         ),
       };
     } catch (e) {
-      throw new ApolloError(`Error generating AWS URL for application documents: ${e}`);
+      const message = `Error generating AWS URL for application documents: ${e}`;
+      logger.error(message);
+      throw new ApolloError(message);
     }
   }
 
@@ -110,11 +108,7 @@ export const applicationPermitResolver: FieldResolver<
  * @returns URL for POA form of new application
  */
 export const applicationPoaFormS3ObjectUrlResolver: FieldResolver<NewApplication, string | null> =
-  async parent => {
-    if (!process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) {
-      throw new ApolloError('Application document link duration not defined');
-    }
-
+  async (parent, _args, { logger }) => {
     if (!parent.poaFormS3ObjectKey) {
       return null;
     }
@@ -124,7 +118,9 @@ export const applicationPoaFormS3ObjectUrlResolver: FieldResolver<NewApplication
       const durationSeconds = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) * 60 * 60;
       url = getSignedUrlForS3(parent.poaFormS3ObjectKey, durationSeconds);
     } catch (e) {
-      throw new ApolloError(`Error generating AWS URL for POA form: ${e}`);
+      const message = `Error generating AWS URL for POA form: ${e}`;
+      logger.error(message);
+      throw new ApolloError(message);
     }
 
     return url;

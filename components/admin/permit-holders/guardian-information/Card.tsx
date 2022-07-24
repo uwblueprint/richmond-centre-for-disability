@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@tools/hooks/graphql';
 import { Button, Divider, VStack, Link as FileLink } from '@chakra-ui/react';
 import PermitHolderInfoCard from '@components/admin/LayoutCard';
 import {

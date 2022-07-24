@@ -77,7 +77,7 @@ export default function EditReasonForReplacementModal({
                   <ReasonForReplacementForm reasonForReplacement={values.reasonForReplacement} />
                 </ModalBody>
                 <ValidationErrorAlert error={error} />
-                <ModalFooter paddingBottom="24px" paddingTop="8px">
+                <ModalFooter paddingBottom="24px" paddingTop="8px" px="4px">
                   <Button colorScheme="gray" variant="solid" onClick={onModalClose}>
                     {'Cancel'}
                   </Button>

@@ -6,6 +6,7 @@ export const UPDATE_APPLICANT_NOTES = gql`
   mutation UpdateApplicantNotes($input: UpdateApplicantNotesInput!) {
     updateApplicantNotes(input: $input) {
       ok
+      error
     }
   }
 `;

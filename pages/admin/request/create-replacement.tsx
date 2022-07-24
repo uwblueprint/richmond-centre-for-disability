@@ -28,7 +28,7 @@ import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-r
 import ReasonForReplacementForm from '@components/admin/requests/reason-for-replacement/Form';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
-import { useLazyQuery, useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@tools/hooks/graphql';
 import { RequestFlowPageState } from '@tools/admin/requests/types';
 import {
   CREATE_REPLACEMENT_APPLICATION_MUTATION,
@@ -130,13 +130,6 @@ export default function CreateReplacement() {
           }
         }
       }
-    },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-        isClosable: true,
-      });
     },
   });
 

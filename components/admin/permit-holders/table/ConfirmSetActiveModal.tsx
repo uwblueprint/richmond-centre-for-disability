@@ -9,7 +9,7 @@ import {
   Button,
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@tools/hooks/graphql';
 import {
   SetApplicantAsActiveRequest,
   SetApplicantAsActiveResponse,
@@ -45,12 +45,6 @@ export default function SetPermitHolderToActiveModal(props: Props) {
           description: `Applicant status has been set to active.`,
         });
       }
-    },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-      });
     },
   });
 

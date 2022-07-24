@@ -15,6 +15,7 @@ export default gql`
   # TODO: Return link to AWS S3 file
   type GenerateApplicationsReportResult {
     ok: Boolean!
+    error: String
     url: String
   }
 
@@ -40,6 +41,7 @@ export default gql`
 
   type GeneratePermitHoldersReportResult {
     ok: Boolean!
+    error: String
     url: String
   }
 
@@ -67,6 +69,7 @@ export default gql`
 
   type GenerateAccountantReportResult {
     ok: Boolean!
+    error: String
     url: String
   }
 `;

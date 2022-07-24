@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next'; // Get server side props
 import { useRouter } from 'next/router'; // Next router
 import { getSession } from 'next-auth/client'; // Session management
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@tools/hooks/graphql';
 import {
   Box,
   Flex,

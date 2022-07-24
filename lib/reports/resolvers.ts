@@ -27,7 +27,7 @@ import moment from 'moment';
 export const generatePermitHoldersReport: Resolver<
   QueryGeneratePermitHoldersReportArgs,
   GeneratePermitHoldersReportResult
-> = async (_, args, { prisma, session }) => {
+> = async (_, args, { prisma, session, logger }) => {
   const {
     input: { startDate, endDate: inputEndDate, columns },
   } = args;
@@ -35,8 +35,7 @@ export const generatePermitHoldersReport: Resolver<
   const columnsSet = new Set(columns);
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated', url: null };
   }
 
   // Calculate end date as beginning of the next day
@@ -165,10 +164,13 @@ export const generatePermitHoldersReport: Resolver<
     // Generate a signed URL to access the file
     signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
   } catch (error) {
-    throw new ApolloError(`Error uploading permit holders report to AWS: ${error}`);
+    const message = `Error uploading permit holders report to AWS: ${error}`;
+    logger.error({ error: message });
+    throw new ApolloError(message);
   }
   return {
     ok: true,
+    error: null,
     url: signedUrl,
   };
 };
@@ -181,14 +183,13 @@ export const generatePermitHoldersReport: Resolver<
 export const generateApplicationsReport: Resolver<
   QueryGenerateApplicationsReportArgs,
   GenerateApplicationsReportResult
-> = async (_, args, { prisma, session }) => {
+> = async (_, args, { prisma, session, logger }) => {
   const {
     input: { startDate, endDate: inputEndDate, columns },
   } = args;
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated', url: null };
   }
 
   const columnsSet = new Set(columns);
@@ -307,11 +308,14 @@ export const generateApplicationsReport: Resolver<
     // Generate a signed URL to access the file
     signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
   } catch (error) {
-    throw new ApolloError(`Error uploading applications report to AWS: ${error}`);
+    const message = `Error uploading applications report to AWS: ${error}`;
+    logger.error({ error: message });
+    throw new ApolloError(message);
   }
 
   return {
     ok: true,
+    error: null,
     url: signedUrl,
   };
 };
@@ -323,14 +327,13 @@ export const generateApplicationsReport: Resolver<
 export const generateAccountantReport: Resolver<
   QueryGenerateAccountantReportArgs,
   GenerateAccountantReportResult
-> = async (_, args, { prisma, session }) => {
+> = async (_, args, { prisma, session, logger }) => {
   const {
     input: { startDate, endDate: inputEndDate },
   } = args;
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated', url: null };
   }
 
   const paymentTypeToString: Record<PaymentType, string> = {
@@ -434,11 +437,14 @@ export const generateAccountantReport: Resolver<
     // Generate a signed URL to access the file
     signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
   } catch (error) {
-    throw new ApolloError(`Error uploading accountant report to AWS: ${error}`);
+    const message = `Error uploading accountant report to AWS: ${error}`;
+    logger.error({ error: message });
+    throw new ApolloError(message);
   }
 
   return {
     ok: true,
+    error: null,
     url: signedUrl,
   };
 };

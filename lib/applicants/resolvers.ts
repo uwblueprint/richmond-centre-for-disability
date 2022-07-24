@@ -22,7 +22,7 @@ import {
 } from '@lib/graphql/types'; // GraphQL types
 import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
-import { PermitType } from '@prisma/client';
+import { PermitType, Prisma } from '@prisma/client';
 import { permitHolderInformationSchema, verifyIdentitySchema } from '@lib/applicants/validation';
 import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
@@ -240,7 +240,7 @@ export const applicant: Resolver<
 export const updateApplicantGeneralInformation: Resolver<
   MutationUpdateApplicantGeneralInformationArgs,
   UpdateApplicantGeneralInformationResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   const { input } = args;
 
   try {
@@ -252,6 +252,10 @@ export const updateApplicantGeneralInformation: Resolver<
         error: err.message,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Applicant was unable to be updated');
   }
 
   const { id, ...data } = input;
@@ -264,8 +268,16 @@ export const updateApplicantGeneralInformation: Resolver<
       where: { id },
       data,
     });
-  } catch {
-    // TODO: Handle error
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicant) {
@@ -282,7 +294,7 @@ export const updateApplicantGeneralInformation: Resolver<
 export const updateApplicantDoctorInformation: Resolver<
   MutationUpdateApplicantDoctorInformationArgs,
   UpdateApplicantDoctorInformationResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   const { input } = args;
   const { id, mspNumber, ...data } = input;
   const { firstName, lastName, addressLine1, addressLine2, city } = input;
@@ -308,6 +320,10 @@ export const updateApplicantDoctorInformation: Resolver<
         error: err.message,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError("Applicant's physician was unable to be updated");
   }
 
   let upsertedPhysician;
@@ -337,8 +353,16 @@ export const updateApplicantDoctorInformation: Resolver<
       upsertPhysician,
       updateApplicant,
     ]);
-  } catch {
-    // TODO: Handle error
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!upsertedPhysician || !updatedApplicant) {
@@ -355,7 +379,7 @@ export const updateApplicantDoctorInformation: Resolver<
 export const updateApplicantGuardianInformation: Resolver<
   MutationUpdateApplicantGuardianInformationArgs,
   UpdateApplicantGuardianInformationResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   const { input } = args;
 
   const {
@@ -394,6 +418,10 @@ export const updateApplicantGuardianInformation: Resolver<
         error: err.message,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError("Applicant's guardian was unable to be updated");
   }
 
   let updatedApplicant;
@@ -418,8 +446,16 @@ export const updateApplicantGuardianInformation: Resolver<
           : { upsert: { create: upsertData, update: upsertData } },
       },
     });
-  } catch {
-    // TODO: handle error
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicant) {
@@ -436,7 +472,7 @@ export const updateApplicantGuardianInformation: Resolver<
 export const setApplicantAsActive: Resolver<
   MutationSetApplicantAsActiveArgs,
   SetApplicantAsActiveResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   // TODO: Validation
   const { input } = args;
   const { id } = input;
@@ -450,15 +486,23 @@ export const setApplicantAsActive: Resolver<
         inactiveReason: null,
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicant) {
     throw new ApolloError('Unable to set applicant status to active');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -468,7 +512,7 @@ export const setApplicantAsActive: Resolver<
 export const setApplicantAsInactive: Resolver<
   MutationSetApplicantAsInactiveArgs,
   SetApplicantAsInactiveResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   // TODO: Validation
   const { input } = args;
   const { id, reason } = input;
@@ -482,15 +526,23 @@ export const setApplicantAsInactive: Resolver<
         inactiveReason: reason,
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicant) {
     throw new ApolloError('Unable to set applicant status to inactive');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -503,7 +555,7 @@ export const setApplicantAsInactive: Resolver<
 export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentityResult> = async (
   _,
   args,
-  { prisma }
+  { prisma, logger }
 ) => {
   const {
     input: { userId, phoneNumberSuffix, dateOfBirth, acceptedTos },
@@ -511,7 +563,7 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
 
   if (!verifyIdentitySchema.isValidSync({ userId, phoneNumberSuffix, dateOfBirth })) {
     // Yup validation failure
-    throw new Error('Invalid input');
+    return { ok: false, failureReason: 'BAD_INPUT', applicantId: null };
   }
 
   // Retrieve applicant with matching info
@@ -549,8 +601,16 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
 
   const mostRecentPermit = await getMostRecentPermit(applicant.id);
 
-  // Note: 30 days = 30 * 24 * 60 * 60 * 1000 milliseconds
-  if (mostRecentPermit.expiryDate.getTime() - new Date().getTime() > 30 * 24 * 60 * 60 * 1000) {
+  if (!mostRecentPermit) {
+    return {
+      ok: false,
+      failureReason: 'NO_PREVIOUS_APP',
+      applicantId: null,
+    };
+  }
+
+  // APP must expire in at most 30 days in the future
+  if (moment().add(30, 'd') < moment.utc(mostRecentPermit.expiryDate)) {
     return {
       ok: false,
       failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS',
@@ -558,7 +618,7 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     };
   }
 
-  //6 months past expiry date
+  // APP must expire at most 6 months in the past
   if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') < moment()) {
     return {
       ok: false,
@@ -587,6 +647,8 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
       },
     });
   } catch (err) {
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
     throw new ApolloError("Failed to update applicant's accepted TOS timestamp");
   }
 
@@ -604,7 +666,7 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
 export const updateApplicantNotes: Resolver<
   MutationUpdateApplicantNotesArgs,
   UpdateApplicantNotesResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   // TODO: Validation
   const { input } = args;
   const { id, notes } = input;
@@ -617,13 +679,21 @@ export const updateApplicantNotes: Resolver<
         notes: notes,
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicant) {
     throw new ApolloError('Unable to update applicant notes');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };

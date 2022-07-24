@@ -1,8 +1,8 @@
-import { Text, Divider, VStack, Button, Flex, useToast } from '@chakra-ui/react'; // Chakra UI
+import { Text, Divider, VStack, Button, Flex } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import EditDoctorInformationModal from '@components/admin/requests/doctor-information/EditModal'; // Edit doctor information modal component
 import PreviousDoctorsModal from '@components/admin/permit-holders/doctor-information/PreviousDoctorsModal'; // Previous Doctors' Information Modal
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@tools/hooks/graphql';
 import {
   DoctorFormData,
   GetDoctorInformationRequest,
@@ -31,8 +31,6 @@ type DoctorInformationProps = {
 export default function DoctorInformationCard(props: DoctorInformationProps) {
   const { applicantId, isUpdated } = props;
 
-  const toast = useToast();
-
   const { data, refetch } = useQuery<GetDoctorInformationResponse, GetDoctorInformationRequest>(
     GET_DOCTOR_INFORMATION,
     {
@@ -40,18 +38,10 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
     }
   );
 
-  const [updateDoctorInformation] = useMutation<
-    UpdateDoctorInformationResponse,
-    UpdateDoctorInformationRequest
-  >(UPDATE_DOCTOR_INFORMATION, {
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-        isClosable: true,
-      });
-    },
-  });
+  const [updateDoctorInformation] =
+    useMutation<UpdateDoctorInformationResponse, UpdateDoctorInformationRequest>(
+      UPDATE_DOCTOR_INFORMATION
+    );
   const handleSave = async (doctorFormData: DoctorFormData) => {
     const validatedData = await requestPhysicianInformationSchema.validate(doctorFormData);
 

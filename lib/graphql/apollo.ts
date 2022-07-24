@@ -2,11 +2,16 @@ import { ApolloServer, makeExecutableSchema } from 'apollo-server-micro'; // Apo
 import typeDefs from '@lib/graphql/type-defs'; // Typedefs
 import resolvers from '@lib/graphql/resolvers'; // Resolvers
 import context from '@lib/graphql/context'; // GraphQL context
+import { applyMiddleware } from 'graphql-middleware';
+import loggingMiddleware from '@lib/graphql/middleware/logging';
 
-const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers,
-});
+const schema = applyMiddleware(
+  makeExecutableSchema({
+    typeDefs,
+    resolvers,
+  }),
+  loggingMiddleware
+);
 
 export const apolloServer = new ApolloServer({
   schema,
