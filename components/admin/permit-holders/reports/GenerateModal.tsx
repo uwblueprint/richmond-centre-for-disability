@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { DownloadIcon } from '@chakra-ui/icons';
 import { GenerateReportStep, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports'; //GenerateReportStep enum
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery } from '@tools/hooks/graphql';
 import {
   GENERATE_PERMIT_HOLDERS_REPORT_QUERY,
   GeneratePermitHoldersReportRequest,

@@ -1,6 +1,6 @@
 import Link from 'next/link'; // Link
 import Image from 'next/image'; // Next Image
-import { useMutation } from '@apollo/client'; // Apollo Client
+import { useMutation } from '@tools/hooks/graphql'; // Apollo Client
 import {
   GridItem,
   Flex,

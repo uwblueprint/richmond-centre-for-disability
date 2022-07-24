@@ -23,7 +23,7 @@ import {
   UpdateApplicantGeneralInformationResponse,
   UPDATE_APPLICANT_GENERAL_INFORMATION_MUTATION,
 } from '@tools/admin/permit-holders/permit-holder-information';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@tools/hooks/graphql';
 import Address from '@components/admin/Address';
 import { permitHolderInformationSchema } from '@lib/applicants/validation';
 import { titlecase } from '@tools/string';

@@ -28,7 +28,7 @@ import { UserToDelete } from '@tools/admin/admin-management/types'; // Admin man
 import AdminModal from '@components/admin/admin-management/AdminModal'; // Admin modal component
 import { Employee, Role } from '@lib/graphql/types'; // GraphQL types
 import { SortOptions, SortOrder } from '@tools/types'; //Sorting types
-import { useMutation, useQuery } from '@apollo/client'; //Apollo client
+import { useMutation, useQuery } from '@tools/hooks/graphql'; //Apollo client
 import {
   GetEmployeesResponse,
   GET_EMPLOYEES_QUERY,

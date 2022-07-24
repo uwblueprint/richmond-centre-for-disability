@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@tools/hooks/graphql';
 import {
   Text,
   VStack,

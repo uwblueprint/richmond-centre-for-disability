@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { formatFullName, formatPhoneNumber } from '@lib/utils/format'; // Date formatter util
 import { formatDate } from '@lib/utils/date';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@tools/hooks/graphql';
 import {
   GetSelectedApplicantRequest,
   GetSelectedApplicantResponse,

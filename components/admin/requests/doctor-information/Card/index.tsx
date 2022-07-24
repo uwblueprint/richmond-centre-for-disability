@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { useQuery, useMutation, useLazyQuery } from '@apollo/client';
+import { useQuery, useMutation, useLazyQuery } from '@tools/hooks/graphql';
 import { Text, Divider, Button, VStack, Box } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import EditDoctorInformationModal from '@components/admin/requests/doctor-information/EditModal'; // Edit modal

@@ -9,7 +9,7 @@ import {
   Button,
   useToast,
 } from '@chakra-ui/react'; // Chakra UI
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@tools/hooks/graphql';
 import {
   SetApplicantAsActiveRequest,
   SetApplicantAsActiveResponse,

@@ -15,7 +15,7 @@ import {
   Stack,
 } from '@chakra-ui/react';
 import { getSession } from 'next-auth/client';
-import { useLazyQuery, useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@tools/hooks/graphql';
 
 import Layout from '@components/admin/Layout';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';

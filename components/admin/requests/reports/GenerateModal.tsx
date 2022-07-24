@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { DownloadIcon } from '@chakra-ui/icons';
 import { APPLICATIONS_COLUMNS, GenerateReportStep } from '@tools/admin/reports'; //GenerateReportStep enum
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery } from '@tools/hooks/graphql';
 import {
   GENERATE_APPLICATIONS_REPORT_QUERY,
   GenerateApplicationsReportRequest,
