@@ -13,14 +13,16 @@ import { flattenApplication } from '@lib/applications/utils';
 export const applicantMostRecentPermitResolver: FieldResolver<
   Applicant,
   Omit<Permit, 'application'>
-> = async parent => {
+> = async (parent, _args, { logger }) => {
   try {
     return await getMostRecentPermit(parent.id);
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      logger.error({ error: err.message }, 'Unknown error');
       throw new ApolloError(err.message);
     }
 
+    logger.error({ error: err }, 'Unknown error');
     throw new ApolloError('Error querying most recent permit');
   }
 };
@@ -32,14 +34,16 @@ export const applicantMostRecentPermitResolver: FieldResolver<
 export const applicantActivePermitResolver: FieldResolver<
   Applicant,
   Omit<Permit, 'application'> | null
-> = async parent => {
+> = async (parent, _args, { logger }) => {
   try {
     return await getActivePermit(parent.id);
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      logger.error({ error: err.message }, 'Unknown error');
       throw new ApolloError(err.message);
     }
 
+    logger.error({ error: err }, 'Unknown error');
     throw new ApolloError('Error querying active permit');
   }
 };

@@ -46,12 +46,6 @@ export default function SetPermitHolderToActiveModal(props: Props) {
         });
       }
     },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-      });
-    },
   });
 
   // Sets permit holder status to active and closes modal

@@ -42,6 +42,7 @@ export default gql`
 
   type ApproveApplicationResult {
     ok: Boolean!
+    error: String
   }
 
   # Reject application
@@ -55,6 +56,7 @@ export default gql`
 
   type RejectApplicationResult {
     ok: Boolean!
+    error: String
   }
 
   # Complete application
@@ -65,6 +67,7 @@ export default gql`
 
   type CompleteApplicationResult {
     ok: Boolean!
+    error: String
   }
 
   # Assign APP number to application
@@ -76,6 +79,7 @@ export default gql`
 
   type UpdateApplicationProcessingAssignAppNumberResult {
     ok: Boolean!
+    error: String
   }
 
   # Holepunch permit card
@@ -87,6 +91,7 @@ export default gql`
 
   type UpdateApplicationProcessingHolepunchParkingPermitResult {
     ok: Boolean!
+    error: String
   }
 
   # Create wallet card to mail to applicant
@@ -98,6 +103,7 @@ export default gql`
 
   type UpdateApplicationProcessingCreateWalletCardResult {
     ok: Boolean!
+    error: String
   }
 
   # Review Request Information
@@ -109,6 +115,7 @@ export default gql`
 
   type UpdateApplicationProcessingReviewRequestInformationResult {
     ok: Boolean!
+    error: String
   }
 
   # Generate invoice PDF for application
@@ -118,6 +125,7 @@ export default gql`
 
   type UpdateApplicationProcessingGenerateInvoiceResult {
     ok: Boolean!
+    error: String
   }
 
   # Upload scans of application documents
@@ -129,6 +137,7 @@ export default gql`
 
   type UpdateApplicationProcessingUploadDocumentsResult {
     ok: Boolean!
+    error: String
   }
 
   # Mail application to applicant
@@ -140,6 +149,7 @@ export default gql`
 
   type UpdateApplicationProcessingMailOutResult {
     ok: Boolean!
+    error: String
   }
 
   # Refund application payment (cannot undo)
@@ -149,5 +159,6 @@ export default gql`
 
   type UpdateApplicationProcessingRefundPaymentResult {
     ok: Boolean!
+    error: String
   }
 `;

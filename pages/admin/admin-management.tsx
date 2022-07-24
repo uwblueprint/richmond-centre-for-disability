@@ -100,13 +100,6 @@ export default function AdminManagement() {
         });
         refetch();
       },
-      onError: error => {
-        toast({
-          status: 'error',
-          description: error.message,
-          isClosable: true,
-        });
-      },
     }
   );
 
@@ -121,13 +114,6 @@ export default function AdminManagement() {
           isClosable: true,
         });
         refetch();
-      },
-      onError: error => {
-        toast({
-          status: 'error',
-          description: error.message,
-          isClosable: true,
-        });
       },
     }
   );
@@ -296,13 +282,6 @@ export default function AdminManagement() {
         }))
       );
       setRecordsCount(data.employees.totalCount);
-    },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-        isClosable: true,
-      });
     },
   });
 

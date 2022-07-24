@@ -164,13 +164,6 @@ export default function CreateRenewal() {
         }
       }
     },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-        isClosable: true,
-      });
-    },
   });
 
   /**

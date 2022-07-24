@@ -17,7 +17,7 @@ export const getActivePermit = async (applicantId: number): Promise<Permit | nul
   const activePermits = permits.filter(permit => permit.active);
 
   if (activePermits.length > 1) {
-    throw new Error('Applicant has more than one active permit');
+    throw new Error(`Applicant with ID ${applicantId} has more than one active permit`);
   }
 
   return activePermits.length > 0 ? activePermits[0] : null;
@@ -28,7 +28,7 @@ export const getActivePermit = async (applicantId: number): Promise<Permit | nul
  * @param applicantId ID of the applicant
  * @returns The most recent permit of the applicant
  */
-export const getMostRecentPermit = async (applicantId: number): Promise<Permit> => {
+export const getMostRecentPermit = async (applicantId: number): Promise<Permit | null> => {
   const permit = await prisma.applicant
     .findUnique({
       where: { id: applicantId },
@@ -39,7 +39,7 @@ export const getMostRecentPermit = async (applicantId: number): Promise<Permit> 
     });
 
   if (permit.length === 0) {
-    throw new Error('Applicant has no permit');
+    return null;
   }
 
   return permit[0];

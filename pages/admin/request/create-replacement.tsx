@@ -131,13 +131,6 @@ export default function CreateReplacement() {
         }
       }
     },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-        isClosable: true,
-      });
-    },
   });
 
   /** Handle replacement application submission */

@@ -55,12 +55,6 @@ export default function SetPermitHolderToInactiveModal({
         });
       }
     },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-      });
-    },
   });
   // Close modal handler
   const handleClose = () => {

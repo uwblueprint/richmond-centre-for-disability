@@ -133,6 +133,7 @@ export default gql`
 
   type SetApplicantAsActiveResult {
     ok: Boolean!
+    error: String
   }
 
   # Set applicant as inactive
@@ -145,6 +146,7 @@ export default gql`
 
   type SetApplicantAsInactiveResult {
     ok: Boolean!
+    error: String
   }
 
   # Query many applicants
@@ -192,6 +194,8 @@ export default gql`
     APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS
     USER_HOLDS_TEMPORARY_PERMIT
     APP_PAST_SIX_MONTHS_EXPIRED
+    BAD_INPUT
+    NO_PREVIOUS_APP
   }
 
   # Update Additional Notes for Applicant
@@ -202,5 +206,6 @@ export default gql`
 
   type UpdateApplicantNotesResult {
     ok: Boolean!
+    error: String
   }
 `;

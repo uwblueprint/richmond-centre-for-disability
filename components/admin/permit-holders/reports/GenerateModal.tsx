@@ -92,12 +92,6 @@ export default function GenerateReportModal(props: Props) {
         });
       }
     },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-      });
-    },
   });
 
   /**

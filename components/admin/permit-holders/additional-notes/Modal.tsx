@@ -1,4 +1,5 @@
-import { useMutation } from '@apollo/client';
+// import { useMutation } from '@apollo/client';
+import { useMutation } from '@tools/hooks/graphql';
 import {
   Button,
   Modal,
@@ -9,7 +10,6 @@ import {
   ModalOverlay,
   Textarea,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import {
   UpdateApplicantNotesRequest,
@@ -39,20 +39,8 @@ const AdditionalNotesModal: FC<Props> = ({
     setNotes(notesInput);
   }, [isOpen, notesInput]);
 
-  const toast = useToast();
-
-  const [updateApplicantNotes, { loading: submitting }] = useMutation<
-    UpdateApplicantNotesResponse,
-    UpdateApplicantNotesRequest
-  >(UPDATE_APPLICANT_NOTES, {
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-        isClosable: true,
-      });
-    },
-  });
+  const [updateApplicantNotes, { loading: submitting }] =
+    useMutation<UpdateApplicantNotesResponse, UpdateApplicantNotesRequest>(UPDATE_APPLICANT_NOTES);
 
   const handleSave = async () => {
     await updateApplicantNotes({ variables: { input: { id: applicantId, notes } } });

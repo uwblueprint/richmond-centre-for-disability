@@ -230,13 +230,6 @@ export default function CreateNew() {
         }
       }
     },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-        isClosable: true,
-      });
-    },
   });
 
   /**

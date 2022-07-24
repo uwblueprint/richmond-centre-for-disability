@@ -40,12 +40,6 @@ export default function Reports() {
         });
       }
     },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-      });
-    },
   });
 
   /**
