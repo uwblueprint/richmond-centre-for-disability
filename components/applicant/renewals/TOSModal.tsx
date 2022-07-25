@@ -15,6 +15,8 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
 import RenewalFlow from '@containers/RenewalFlow'; // Request container
+import { Children, ReactNode } from 'react';
+import { Link as ChakraLink } from '@chakra-ui/react';
 
 export default function TOSModal() {
   // TOS acceptance timestamp
@@ -67,9 +69,14 @@ export default function TOSModal() {
             services to those who have accepted its terms.`}
           </TOSSection>
           <TOSSection sectionTitle={`Privacy policy`}>
-            {`Before you continue using RCD Parking Permit Self-service portal, we advise you to read
-            our privacy policy [link to privacy policy] regarding our user data collection. It will
-            help you better understand our practices.`}
+            <Text as="p" textStyle="body-regular" textAlign="left">
+              Before you continue using RCD Parking Permit Self-service portal, we advise you to
+              read our{' '}
+              <Link href="/privacy-policy">
+                <ChakraLink color="primary">privacy policy</ChakraLink>
+              </Link>{' '}
+              regarding our user data collection. It will help you better understand our practices.
+            </Text>
           </TOSSection>
           <TOSSection sectionTitle={`User information`}>
             {`As a user of this website, you may be asked to provide private information. You are
@@ -134,7 +141,7 @@ export default function TOSModal() {
 
 type TOSSectionProps = {
   readonly sectionTitle: string;
-  readonly children: string | ReadonlyArray<string>;
+  readonly children: ReactNode;
   readonly isLast?: boolean;
 };
 
@@ -146,12 +153,16 @@ function TOSSection(props: TOSSectionProps) {
       <Text as="h6" textStyle="body-bold">
         {sectionTitle}
       </Text>
-      {typeof children === 'string' ? (
-        <Text as="p" textStyle="body-regular" marginBottom={isLast ? 0 : '27px'}>
-          {children}
-        </Text>
+      {Children.count(children) === 1 ? (
+        typeof children === 'string' ? (
+          <Text as="p" textStyle="body-regular" marginBottom={isLast ? 0 : '27px'}>
+            {children}
+          </Text>
+        ) : (
+          children
+        )
       ) : (
-        children.map((paragraph, i) => (
+        Children.map(children, (paragraph, i) => (
           <Text key={`paragraph-${i}`} as="p" textStyle="body-regular" marginBottom="27px">
             {paragraph}
           </Text>

@@ -1,7 +1,9 @@
 import Layout from '@components/applicant/Layout';
 import { NextPage } from 'next';
 import { GridItem, Text, VStack } from '@chakra-ui/react';
-import { FC } from 'react';
+import { Children, FC, ReactNode } from 'react';
+import Link from 'next/link';
+import { Link as ChakraLink } from '@chakra-ui/react';
 
 const TermsAndConditions: NextPage = () => {
   return (
@@ -22,9 +24,14 @@ const TermsAndConditions: NextPage = () => {
             services to those who have accepted its terms.`}
           </Section>
           <Section title={`Privacy policy`}>
-            {`Before you continue using RCD Parking Permit Self-service portal, we advise you to read
-            our privacy policy [link to privacy policy] regarding our user data collection. It will
-            help you better understand our practices.`}
+            <Text as="p" textStyle="body-regular" textAlign="left">
+              Before you continue using RCD Parking Permit Self-service portal, we advise you to
+              read our{' '}
+              <Link href="/privacy-policy">
+                <ChakraLink color="primary">privacy policy</ChakraLink>
+              </Link>{' '}
+              regarding our user data collection. It will help you better understand our practices.
+            </Text>
           </Section>
           <Section title={`User information`}>
             {`As a user of this website, you may be asked to provide private information. You are
@@ -65,7 +72,7 @@ const TermsAndConditions: NextPage = () => {
   );
 };
 
-const Section: FC<{ title: string; children: string | ReadonlyArray<string> }> = props => {
+const Section: FC<{ title: string; children: ReactNode }> = props => {
   const { title, children } = props;
 
   return (
@@ -73,13 +80,17 @@ const Section: FC<{ title: string; children: string | ReadonlyArray<string> }> =
       <Text textStyle="body-bold" textAlign="left">
         {title}
       </Text>
-      {typeof children === 'string' ? (
-        <Text as="p" textStyle="body-regular" textAlign="left">
-          {children}
-        </Text>
+      {Children.count(children) === 1 ? (
+        typeof children === 'string' ? (
+          <Text as="p" textStyle="body-regular" textAlign="left">
+            {children}
+          </Text>
+        ) : (
+          children
+        )
       ) : (
         <VStack align="flex-start" spacing="24px">
-          {children.map((paragraph, i) => (
+          {Children.map(children, (paragraph, i) => (
             <Text key={`paragraph-${i}`} as="p" textStyle="body-regular" textAlign="left">
               {paragraph}
             </Text>

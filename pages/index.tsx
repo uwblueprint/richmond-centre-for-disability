@@ -72,7 +72,7 @@ export default function Landing() {
           <VStack
             width="100%"
             alignItems={{ sm: 'center', lg: 'flex-start' }}
-            pb={{ sm: 0, lg: '80px' }}
+            pb={{ sm: 0, lg: '112px' }}
           >
             <Link href="/renew">
               <a>
