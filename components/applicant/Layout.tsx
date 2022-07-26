@@ -191,16 +191,20 @@ function Footer() {
       >
         <Text textStyle="body-regular">© 2021 Richmond Centre for Disability</Text>
         <Box>
-          <a href="#">
-            <Text display="inline-block" textStyle="body-regular" marginRight={7} color="primary">
-              Privacy Policy
-            </Text>
-          </a>
-          <a href="#">
-            <Text display="inline-block" textStyle="body-regular" color="primary">
-              Terms & Conditions
-            </Text>
-          </a>
+          <Link href="/privacy-policy">
+            <a>
+              <Text display="inline-block" textStyle="body-regular" marginRight={7} color="primary">
+                Privacy Policy
+              </Text>
+            </a>
+          </Link>
+          <Link href="/terms-and-conditions">
+            <a>
+              <Text display="inline-block" textStyle="body-regular" color="primary">
+                Terms & Conditions
+              </Text>
+            </a>
+          </Link>
         </Box>
       </Flex>
     </Center>
