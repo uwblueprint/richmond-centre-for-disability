@@ -30,6 +30,7 @@ import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { Prisma } from '@prisma/client';
 import { getMostRecentPermit } from '@lib/applicants/utils';
+import moment from 'moment';
 
 /**
  * Approve application
@@ -541,7 +542,7 @@ export const completeApplication: Resolver<
         logger.error({ error: message });
         throw new ApolloError(message);
       }
-    } else {
+    } else if (type === 'REPLACEMENT') {
       // Retrieve replacement record
       const replacementApplication = await prisma.replacementApplication.findUnique({
         where: { applicationId: id },
@@ -554,7 +555,6 @@ export const completeApplication: Resolver<
         };
       }
 
-      // TODO: Invalidate old permit
       const mostRecentPermit = await getMostRecentPermit(applicantId);
 
       if (!mostRecentPermit) {
@@ -564,7 +564,28 @@ export const completeApplication: Resolver<
         };
       }
 
-      // TODO: If new permit expiry date is identical to previous, need to verify that expiry date is in the future
+      // Verify that expiry date of permit being replaced is not in the past
+      if (moment.utc(mostRecentPermit.expiryDate) <= moment.utc()) {
+        return {
+          ok: false,
+          error: 'Cannot replace permit that has already expired',
+        };
+      }
+
+      // Invalidate old permit
+      try {
+        await prisma.permit.update({
+          where: { rcdPermitId: mostRecentPermit.rcdPermitId },
+          data: {
+            active: false,
+          },
+        });
+      } catch {
+        return {
+          ok: false,
+          error: 'Error invaliding old permit',
+        };
+      }
 
       // Update applicant
       const updateApplicantOperation = prisma.applicant.update({
@@ -587,8 +608,8 @@ export const completeApplication: Resolver<
       const createPermitOperation = prisma.permit.create({
         data: {
           rcdPermitId: appNumber,
-          type: 'PERMANENT',
-          expiryDate: getPermanentPermitExpiryDate(),
+          type: mostRecentPermit.type,
+          expiryDate: mostRecentPermit.expiryDate,
           applicant: { connect: { id: applicantId } },
           application: { connect: { id } },
         },
@@ -606,6 +627,8 @@ export const completeApplication: Resolver<
         logger.error({ error: message });
         throw new ApolloError(message);
       }
+    } else {
+      throw new Error(`Invalid application type ${type}`);
     }
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
