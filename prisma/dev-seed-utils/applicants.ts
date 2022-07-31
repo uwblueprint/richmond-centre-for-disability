@@ -33,7 +33,7 @@ const applicants: Array<UpsertApplicant> = [
     medicalInformation: {
       disability: 'Fractured knee',
       disabilityCertificationDate: new Date('2021-01-01'),
-      patientCondition: 'AFFECTS_MOBILITY',
+      patientCondition: ['AFFECTS_MOBILITY'],
       mobilityAids: [],
       otherPatientCondition: null,
       physician: {
@@ -77,7 +77,7 @@ const applicants: Array<UpsertApplicant> = [
     medicalInformation: {
       disability: 'Sprained ankle',
       disabilityCertificationDate: new Date('2021-02-02'),
-      patientCondition: 'MOBILITY_AID_REQUIRED',
+      patientCondition: ['MOBILITY_AID_REQUIRED'],
       mobilityAids: ['WALKER'],
       otherPatientCondition: null,
       physician: {
@@ -111,7 +111,7 @@ const applicants: Array<UpsertApplicant> = [
     medicalInformation: {
       disability: 'Sprained ankle',
       disabilityCertificationDate: new Date('2021-03-03'),
-      patientCondition: 'CANNOT_WALK_100M',
+      patientCondition: ['CANNOT_WALK_100M'],
       mobilityAids: ['SCOOTER', 'CANE'],
       otherPatientCondition: null,
       physician: {
@@ -156,7 +156,7 @@ const applicants: Array<UpsertApplicant> = [
     medicalInformation: {
       disability: 'Broken ankle',
       disabilityCertificationDate: new Date('2021-04-04'),
-      patientCondition: 'MOBILITY_AID_REQUIRED',
+      patientCondition: ['MOBILITY_AID_REQUIRED'],
       mobilityAids: ['WALKER'],
       otherPatientCondition: null,
       physician: {

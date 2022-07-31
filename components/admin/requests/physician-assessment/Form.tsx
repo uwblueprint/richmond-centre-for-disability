@@ -77,31 +77,30 @@ export default function PhysicianAssessmentForm({
         </Text>
 
         <Stack spacing="20px">
-          <RadioGroupField
+          <CheckboxGroupField
             name="physicianAssessment.patientCondition"
             label="Please select the condition"
             required
           >
             <Stack>
-              <Radio value={'AFFECTS_MOBILITY'}>
-                {
-                  'Applicant has a disability that affects mobility and the ability to walk specifically'
-                }
-              </Radio>
-              <Radio value={'CANNOT_WALK_100M'}>
-                {'Applicant can NOT walk 100 meters without risk to health'}
-              </Radio>
-              <Radio value={'MOBILITY_AID_REQUIRED'}>
-                {'Applicant requires the use of a mobiliy aid in order to travel any distance'}
-              </Radio>
-              <Radio value={'OTHER'}>{'Other'}</Radio>
+              <Checkbox value="AFFECTS_MOBILITY">
+                Applicant has a disability that affects mobility and the ability to walk
+                specifically
+              </Checkbox>
+              <Checkbox value="CANNOT_WALK_100M">
+                Applicant can NOT walk 100 meters without risk to health
+              </Checkbox>
+              <Checkbox value="MOBILITY_AID_REQUIRED">
+                Applicant requires the use of a mobiliy aid in order to travel any distance
+              </Checkbox>
+              <Checkbox value="OTHER">Other</Checkbox>
             </Stack>
-          </RadioGroupField>
+          </CheckboxGroupField>
 
-          {physicianAssessment.patientCondition === 'OTHER' && (
+          {physicianAssessment.patientCondition?.includes('OTHER') && (
             <TextArea
               name="physicianAssessment.otherPatientCondition"
-              label="Description"
+              label="Other condition description"
               required
             />
           )}

@@ -13,7 +13,7 @@ export type MedicalHistoryRow = {
   details: {
     disability: string;
     disabilityCertificationDate: Date;
-    patientCondition: PatientCondition;
+    patientCondition: PatientCondition[];
     mobilityAids: Array<MobilityAid>;
     notes: string | null;
   };

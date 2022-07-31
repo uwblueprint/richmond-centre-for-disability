@@ -1,14 +1,6 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Prisma } from '@prisma/client'; // Prisma client
 import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
-import {
-  ApplicantIdDoesNotExistError,
-  ApplicationFieldTooLongError,
-  EmptyFieldsMissingError,
-  ApplicationNotFoundError,
-  AppPastSixMonthsExpiredError,
-} from '@lib/applications/errors'; // Application errors
-import { ApplicantNotFoundError } from '@lib/applicants/errors'; // Applicant errors
 import { DBErrorCode, getUniqueConstraintFailedFields } from '@lib/db/errors'; // Database errors
 import { SortOrder } from '@tools/types'; // Sorting type
 import { stripPhoneNumber, stripPostalCode } from '@lib/utils/format'; // Formatting utils
@@ -233,7 +225,7 @@ export const applications: Resolver<
 export const createNewApplication: Resolver<
   MutationCreateNewApplicationArgs,
   CreateNewApplicationResult
-> = async (_, args, { prisma }) => {
+> = async (_, args, { prisma, logger }) => {
   const { input } = args;
 
   const {
@@ -376,10 +368,10 @@ export const createNewApplication: Resolver<
         error: err.message,
       };
     }
-  }
 
-  if (!process.env.PROCESSING_FEE) {
-    throw new Error('Processing fee not defined');
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Application was unable to be created');
   }
 
   let application;
@@ -407,7 +399,7 @@ export const createNewApplication: Resolver<
             otherGender,
             disability,
             disabilityCertificationDate,
-            patientCondition,
+            patientCondition: patientCondition || [],
             mobilityAids: mobilityAids || [],
             otherMobilityAids,
             otherPatientCondition,
@@ -445,14 +437,18 @@ export const createNewApplication: Resolver<
       },
     });
   } catch (err) {
-    // TODO: Handle errors
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === DBErrorCode.LengthConstraintFailed) {
-        throw new ApplicationFieldTooLongError(
-          'Length constraint failed, provided value too long for an application field.'
-        );
+        return {
+          ok: false,
+          applicationId: null,
+          error: 'Length constraint failed, provided value too long for an application field.',
+        };
       }
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   // Throw internal server error if application was not created
@@ -474,7 +470,7 @@ export const createNewApplication: Resolver<
 export const createRenewalApplication: Resolver<
   MutationCreateRenewalApplicationArgs,
   CreateRenewalApplicationResult
-> = async (_, args, { prisma }) => {
+> = async (_, args, { prisma, logger }) => {
   const { input } = args;
 
   const {
@@ -596,10 +592,10 @@ export const createRenewalApplication: Resolver<
         error: err.message,
       };
     }
-  }
 
-  if (!process.env.PROCESSING_FEE) {
-    throw new Error('Processing fee not defined');
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Renewal application was unable to be created');
   }
 
   let createdRenewalApplication;
@@ -637,8 +633,17 @@ export const createRenewalApplication: Resolver<
         applicationProcessing: { create: {} },
       },
     });
-  } catch {
-    // TODO: Handle errors
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        applicationId: null,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!createdRenewalApplication) {
@@ -656,7 +661,7 @@ export const createRenewalApplication: Resolver<
 export const createExternalRenewalApplication: Resolver<
   MutationCreateExternalRenewalApplicationArgs,
   CreateExternalRenewalApplicationResult
-> = async (_, args, { prisma }) => {
+> = async (_, args, { prisma, logger }) => {
   const { input } = args;
   const {
     applicantId,
@@ -684,10 +689,6 @@ export const createExternalRenewalApplication: Resolver<
     requiresWiderParkingSpaceReason,
     otherRequiresWiderParkingSpaceReason,
   } = input;
-
-  if (!process.env.PROCESSING_FEE) {
-    throw new Error('Processing fee not defined');
-  }
 
   try {
     await applicantFacingRenewalMutationSchema.validate({
@@ -717,13 +718,31 @@ export const createExternalRenewalApplication: Resolver<
         checkoutUrl: null,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Application was unable to be created');
   }
 
   const mostRecentPermit = await getMostRecentPermit(applicantId);
-  if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') < moment()) {
-    throw new AppPastSixMonthsExpiredError(
-      'Your permit expired over 6 months ago. Please apply for a new parking permit or contact RCD.'
-    );
+  if (!mostRecentPermit) {
+    // Applicant must have previous permit
+    return {
+      ok: false,
+      applicationId: null,
+      error:
+        'You do not have any previous permits to renew. Please apply for a new parking permit or contact RCD.',
+      checkoutUrl: null,
+    };
+  } else if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') < moment()) {
+    // Can only submit renewal application if permit expiry less than 6 months ago
+    return {
+      ok: false,
+      applicationId: null,
+      error:
+        'Your permit expired over 6 months ago. Please apply for a new parking permit or contact RCD.',
+      checkoutUrl: null,
+    };
   }
 
   // Retrieve applicant record
@@ -734,13 +753,23 @@ export const createExternalRenewalApplication: Resolver<
 
   // If applicant not found, throw error
   if (!applicant) {
-    throw new ApplicantNotFoundError(`No applicant with ID ${applicantId} was found`);
+    return {
+      ok: false,
+      applicationId: null,
+      error: `No applicant with ID ${applicantId} was found`,
+      checkoutUrl: null,
+    };
   }
 
   // TODO: Replace validation for donation amount
   const { donationAmount = 0 } = input;
   if (donationAmount !== null && ![0, 5, 10, 25, 50, 75, 100].includes(donationAmount)) {
-    throw new Error('Invalid donation amount');
+    return {
+      ok: false,
+      applicationId: null,
+      error: 'Invalid donation amount',
+      checkoutUrl: null,
+    };
   }
 
   const physician = applicant.medicalInformation.physician;
@@ -764,7 +793,7 @@ export const createExternalRenewalApplication: Resolver<
         postalCode:
           updatedAddress && postalCode ? stripPostalCode(postalCode) : applicant.postalCode,
         processingFee: process.env.PROCESSING_FEE,
-        donationAmount: 0, // ? Investigate
+        donationAmount: donationAmount || 0,
         paymentMethod: 'SHOPIFY',
         // Set shipping address to be same as home address by default
         shippingAddressSameAsHomeAddress: true,
@@ -826,13 +855,24 @@ export const createExternalRenewalApplication: Resolver<
         err.code === DBErrorCode.ForeignKeyConstraintFailed &&
         getUniqueConstraintFailedFields(err)?.includes('applicantId')
       ) {
-        throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
+        return {
+          ok: false,
+          applicationId: null,
+          error: `Applicant ID ${applicantId} does not exist`,
+          checkoutUrl: null,
+        };
       } else if (err.code === DBErrorCode.LengthConstraintFailed) {
-        throw new ApplicationFieldTooLongError(
-          'Length constraint failed, provided value too long for an application field.'
-        );
+        return {
+          ok: false,
+          applicationId: null,
+          error: 'Length constraint failed, provided value too long for an application field.',
+          checkoutUrl: null,
+        };
       }
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   // Throw internal server error if renewal application was not created
@@ -863,7 +903,7 @@ export const createExternalRenewalApplication: Resolver<
 export const createReplacementApplication: Resolver<
   MutationCreateReplacementApplicationArgs,
   CreateReplacementApplicationResult
-> = async (_, args, { prisma }) => {
+> = async (_, args, { prisma, logger }) => {
   const { input } = args;
 
   const {
@@ -911,9 +951,6 @@ export const createReplacementApplication: Resolver<
     billingCountry,
   } = input;
 
-  if (!process.env.PROCESSING_FEE) {
-    throw new Error('Processing fee not defined');
-  }
   const permitHolder = {
     firstName,
     middleName,
@@ -969,6 +1006,10 @@ export const createReplacementApplication: Resolver<
         error: err.message,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Application was unable to be created');
   }
 
   // Retrieve applicant record
@@ -976,12 +1017,14 @@ export const createReplacementApplication: Resolver<
     where: { id: applicantId },
   });
 
-  // If applicant not found, throw error
+  // If applicant not found, return error
   if (!applicant) {
-    throw new ApplicantNotFoundError(`No applicant with ID ${applicantId} was found`);
+    return {
+      ok: false,
+      applicationId: null,
+      error: `No applicant with ID ${applicantId} was found`,
+    };
   }
-
-  if (!reason) throw new EmptyFieldsMissingError('No reason for the replacement was given.');
 
   let application;
   try {
@@ -1015,19 +1058,27 @@ export const createReplacementApplication: Resolver<
       },
     });
   } catch (err) {
-    // TODO: Handle more errors
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (
         err.code === DBErrorCode.ForeignKeyConstraintFailed &&
         getUniqueConstraintFailedFields(err)?.includes('applicantId')
       ) {
-        throw new ApplicantIdDoesNotExistError(`Applicant ID ${applicantId} does not exist`);
+        return {
+          ok: false,
+          applicationId: null,
+          error: `Applicant ID ${applicantId} does not exist`,
+        };
       } else if (err.code === DBErrorCode.LengthConstraintFailed) {
-        throw new ApplicationFieldTooLongError(
-          'Length constraint failed, provided value too long for an application field.'
-        );
+        return {
+          ok: false,
+          applicationId: null,
+          error: 'Length constraint failed, provided value too long for an application field.',
+        };
       }
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   // Throw internal server error if replacement application was not created
@@ -1049,7 +1100,7 @@ export const createReplacementApplication: Resolver<
 export const updateApplicationGeneralInformation: Resolver<
   MutationUpdateApplicationGeneralInformationArgs,
   UpdateApplicationGeneralInformationResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   const { input } = args;
 
   try {
@@ -1061,6 +1112,10 @@ export const updateApplicationGeneralInformation: Resolver<
         error: err.message,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Application general information was unable to be updated');
   }
 
   const { id, receiveEmailUpdates, phone, postalCode, ...validatedData } = input;
@@ -1076,11 +1131,13 @@ export const updateApplicationGeneralInformation: Resolver<
       },
     },
   });
+
   if (!application) {
-    throw new ApplicationNotFoundError(`Application with ID ${id} not found`);
+    return { ok: false, error: `Application with ID ${id} not found` };
   }
+
   if (application.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError('Reviewed requests cannot be updated');
+    return { ok: false, error: 'Reviewed requests cannot be updated' };
   }
 
   let updatedApplication;
@@ -1095,12 +1152,20 @@ export const updateApplicationGeneralInformation: Resolver<
         ...validatedData,
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplication) {
-    throw new ApolloError('Application general information was unable to be created');
+    throw new ApolloError('Application general information was unable to be updated');
   }
 
   return { ok: true, error: null };
@@ -1113,7 +1178,7 @@ export const updateApplicationGeneralInformation: Resolver<
 export const updateNewApplicationGeneralInformation: Resolver<
   MutationUpdateNewApplicationGeneralInformationArgs,
   UpdateApplicationGeneralInformationResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   const { input } = args;
 
   try {
@@ -1125,6 +1190,10 @@ export const updateNewApplicationGeneralInformation: Resolver<
         error: err.message,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Application general information was unable to be updated');
   }
 
   const {
@@ -1149,11 +1218,13 @@ export const updateNewApplicationGeneralInformation: Resolver<
       },
     },
   });
+
   if (!application) {
-    throw new ApplicationNotFoundError(`Application with ID ${id} not found`);
+    return { ok: false, error: `Application with ID ${id} not found` };
   }
+
   if (application.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError('Reviewed requests cannot be updated');
+    return { ok: false, error: 'Reviewed requests cannot be updated' };
   }
 
   let updatedApplication;
@@ -1176,11 +1247,19 @@ export const updateNewApplicationGeneralInformation: Resolver<
       },
     });
   } catch (err) {
-    // TODO: Error handling
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplication) {
-    throw new ApolloError('Application general information was unable to be created');
+    throw new ApolloError('Application general information was unable to be updated');
   }
 
   return { ok: true, error: null };
@@ -1193,7 +1272,7 @@ export const updateNewApplicationGeneralInformation: Resolver<
 export const updateApplicationDoctorInformation: Resolver<
   MutationUpdateApplicationDoctorInformationArgs,
   UpdateApplicationDoctorInformationResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   const { input } = args;
   const {
     id,
@@ -1225,6 +1304,10 @@ export const updateApplicationDoctorInformation: Resolver<
         error: err.message,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Application doctor information was unable to be updated');
   }
 
   const application = await prisma.application.findUnique({
@@ -1240,15 +1323,22 @@ export const updateApplicationDoctorInformation: Resolver<
   });
 
   if (!application) {
-    throw new ApolloError('Application not found');
+    return { ok: false, error: 'Application not found' };
   }
 
   // Prevent reviewed requests from being updated
   if (application.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError('Reviewed requests cannot be updated');
+    return { ok: false, error: 'Reviewed requests cannot be updated' };
   }
 
   const { type } = application;
+
+  if (type === 'REPLACEMENT') {
+    return {
+      ok: false,
+      error: 'Cannot update doctor information of replacement application',
+    };
+  }
 
   let updatedApplication;
   try {
@@ -1285,8 +1375,16 @@ export const updateApplicationDoctorInformation: Resolver<
         }),
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplication) {
@@ -1303,7 +1401,7 @@ export const updateApplicationDoctorInformation: Resolver<
 export const updateApplicationGuardianInformation: Resolver<
   MutationUpdateApplicationGuardianInformationArgs,
   UpdateApplicationGuardianInformationResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   const { input } = args;
   const { id, omitGuardianPoa } = input;
 
@@ -1359,6 +1457,10 @@ export const updateApplicationGuardianInformation: Resolver<
             error: err.message,
           };
         }
+
+        // Unknown error
+        logger.error({ error: err }, 'Unknown error');
+        throw new ApolloError('Application guardian information was unable to be updated');
       }
 
       updatedApplication = await prisma.newApplication.update({
@@ -1377,8 +1479,16 @@ export const updateApplicationGuardianInformation: Resolver<
         },
       });
     }
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplication) {
@@ -1398,7 +1508,7 @@ export const updateApplicationGuardianInformation: Resolver<
 export const updateApplicationAdditionalInformation: Resolver<
   MutationUpdateApplicationAdditionalInformationArgs,
   UpdateApplicationAdditionalInformationResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   const { input } = args;
 
   try {
@@ -1410,6 +1520,10 @@ export const updateApplicationAdditionalInformation: Resolver<
         error: err.message,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Application additional information was unable to be updated');
   }
 
   const { id, ...data } = input;
@@ -1426,12 +1540,14 @@ export const updateApplicationAdditionalInformation: Resolver<
       },
     },
   });
+
   if (!application) {
-    throw new ApolloError('Application not found');
+    return { ok: false, error: 'Application not found' };
   }
+
   // Prevent reviewed requests from being updated
   if (application.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError('Reviewed requests cannot be updated');
+    return { ok: false, error: 'Reviewed requests cannot be updated' };
   }
 
   const { type } = application;
@@ -1457,14 +1573,25 @@ export const updateApplicationAdditionalInformation: Resolver<
         },
       });
     } else {
-      throw new ApolloError('Replacement application cannot have additional information updated');
+      return {
+        ok: false,
+        error: 'Replacement application cannot have additional information updated',
+      };
     }
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplication) {
-    throw new ApolloError('Application additional information was unable to be created');
+    throw new ApolloError('Application additional information was unable to be updated');
   }
 
   return { ok: true, error: null };
@@ -1477,7 +1604,7 @@ export const updateApplicationAdditionalInformation: Resolver<
 export const updateApplicationPaymentInformation: Resolver<
   MutationUpdateApplicationPaymentInformationArgs,
   UpdateApplicationPaymentInformationResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   const { input } = args;
 
   try {
@@ -1489,6 +1616,10 @@ export const updateApplicationPaymentInformation: Resolver<
         error: err.message,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Application payment information was unable to be updated');
   }
 
   const { id, donationAmount, shippingPostalCode, billingPostalCode, ...validatedData } = input;
@@ -1506,19 +1637,20 @@ export const updateApplicationPaymentInformation: Resolver<
   });
 
   if (!application) {
-    throw new ApolloError('Application does not exist');
+    return { ok: false, error: 'Application does not exist' };
   }
 
   // Prevent reviewed requests from being updated
   if (application.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError('Reviewed requests cannot be updated');
+    return { ok: false, error: 'Reviewed requests cannot be updated' };
   }
 
   // Payment info should not be updated for applications paid through Shopify
   if (application.paidThroughShopify) {
-    throw new ApolloError(
-      'Cannot update payment information for an application paid through Shopify'
-    );
+    return {
+      ok: false,
+      error: 'Cannot update payment information for an application paid through Shopify',
+    };
   }
 
   let updatedApplication;
@@ -1532,8 +1664,16 @@ export const updateApplicationPaymentInformation: Resolver<
         ...validatedData,
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplication) {
@@ -1550,7 +1690,7 @@ export const updateApplicationPaymentInformation: Resolver<
 export const updateApplicationReasonForReplacement: Resolver<
   MutationUpdateApplicationReasonForReplacementArgs,
   UpdateApplicationReasonForReplacementResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   const { input } = args;
 
   try {
@@ -1562,6 +1702,10 @@ export const updateApplicationReasonForReplacement: Resolver<
         error: err.message,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Application reason for replacement was unable to be updated');
   }
 
   const { id, ...validatedData } = input;
@@ -1570,6 +1714,7 @@ export const updateApplicationReasonForReplacement: Resolver<
   const application = await prisma.application.findUnique({
     where: { id },
     select: {
+      type: true,
       applicationProcessing: {
         select: {
           reviewRequestCompleted: true,
@@ -1577,11 +1722,17 @@ export const updateApplicationReasonForReplacement: Resolver<
       },
     },
   });
+
   if (!application) {
-    throw new ApplicationNotFoundError(`Application with ID ${id} not found`);
+    return { ok: false, error: `Application with ID ${id} not found` };
   }
+
   if (application.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError('Reviewed requests cannot be updated');
+    return { ok: false, error: 'Reviewed requests cannot be updated' };
+  }
+
+  if (application.type !== 'REPLACEMENT') {
+    return { ok: false, error: 'Application must be a replacement application' };
   }
 
   let updatedApplication;
@@ -1594,12 +1745,20 @@ export const updateApplicationReasonForReplacement: Resolver<
         },
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplication) {
-    throw new ApolloError('Application reason for replacement was unable to be created');
+    throw new ApolloError('Application reason for replacement was unable to be updated');
   }
 
   return { ok: true, error: null };
@@ -1612,7 +1771,7 @@ export const updateApplicationReasonForReplacement: Resolver<
 export const updateApplicationPhysicianAssessment: Resolver<
   MutationUpdateApplicationPhysicianAssessmentArgs,
   UpdateApplicationPhysicianAssessmentResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   const { input } = args;
 
   try {
@@ -1624,14 +1783,19 @@ export const updateApplicationPhysicianAssessment: Resolver<
         error: err.message,
       };
     }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Application physician assessment was unable to be updated');
   }
 
-  const { id, mobilityAids, permitType, ...validatedData } = input;
+  const { id, patientCondition, mobilityAids, permitType, ...validatedData } = input;
 
   // Prevent reviewed requests from being updated
   const application = await prisma.application.findUnique({
     where: { id },
     select: {
+      type: true,
       applicationProcessing: {
         select: {
           reviewRequestCompleted: true,
@@ -1639,11 +1803,17 @@ export const updateApplicationPhysicianAssessment: Resolver<
       },
     },
   });
+
   if (!application) {
-    throw new ApplicationNotFoundError(`Application with ID ${id} not found`);
+    return { ok: false, error: `Application with ID ${id} not found` };
   }
+
   if (application.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError('Reviewed requests cannot be updated');
+    return { ok: false, error: 'Reviewed requests cannot be updated' };
+  }
+
+  if (application.type !== 'NEW') {
+    return { ok: false, error: 'Application must be a new application' };
   }
 
   let updatedApplication;
@@ -1653,6 +1823,7 @@ export const updateApplicationPhysicianAssessment: Resolver<
       data: {
         newApplication: {
           update: {
+            patientCondition: patientCondition || [],
             mobilityAids: mobilityAids || [],
             ...validatedData,
           },
@@ -1660,12 +1831,20 @@ export const updateApplicationPhysicianAssessment: Resolver<
         permitType: permitType,
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplication) {
-    throw new ApolloError('Application physician assessment was unable to be created');
+    throw new ApolloError('Application physician assessment was unable to be updated');
   }
 
   return { ok: true, error: null };

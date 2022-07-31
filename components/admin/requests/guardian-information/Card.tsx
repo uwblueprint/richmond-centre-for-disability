@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@tools/hooks/graphql';
 import { Box, Text, Divider, VStack, Button, Link as FileLink } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import { formatFullName, formatPhoneNumber } from '@lib/utils/format';
@@ -98,17 +98,19 @@ export default function GuardianInformationCard({
         <Text as="p" textStyle="body-regular">
           This permit holder does not have a guardian/POA
         </Text>
-        <EditGuardianInformationModal
-          guardianInformation={INITIAL_GUARDIAN_INFORMATION}
-          onSave={handleSave}
-        >
-          <Button height="50px" leftIcon={<AddIcon height="14px" width="14px" />}>
-            Add a Guardian/POA
-          </Button>
-        </EditGuardianInformationModal>
+        {!editDisabled && (
+          <EditGuardianInformationModal
+            guardianInformation={INITIAL_GUARDIAN_INFORMATION}
+            onSave={handleSave}
+          >
+            <Button height="50px" leftIcon={<AddIcon height="14px" width="14px" />}>
+              Add a Guardian/POA
+            </Button>
+          </EditGuardianInformationModal>
+        )}
       </VStack>
     );
-  }, []);
+  }, [editDisabled]);
 
   /** Render guardian information */
   const _renderGuardianInformation = useCallback((guardian: GuardianCardData) => {

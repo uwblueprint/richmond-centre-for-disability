@@ -1,6 +1,5 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
-import { ApplicationNotFoundError } from '@lib/application-processing/errors'; // Application processing errors
 import {
   ApproveApplicationResult,
   CompleteApplicationResult,
@@ -29,6 +28,9 @@ import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { formatDateYYYYMMDD } from '@lib/utils/date';
+import { Prisma } from '@prisma/client';
+import { getMostRecentPermit } from '@lib/applicants/utils';
+import moment from 'moment';
 
 /**
  * Approve application
@@ -37,7 +39,7 @@ import { formatDateYYYYMMDD } from '@lib/utils/date';
 export const approveApplication: Resolver<
   MutationApproveApplicationArgs,
   ApproveApplicationResult
-> = async (_parent, args, { prisma }) => {
+> = async (_parent, args, { prisma, logger }) => {
   // TODO: Validation
   const { input } = args;
   const { id } = input;
@@ -54,15 +56,23 @@ export const approveApplication: Resolver<
         },
       },
     });
-  } catch {
-    // TODO: Handle errors
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplication) {
     throw new ApolloError('Unable to approve application');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -70,7 +80,7 @@ export const approveApplication: Resolver<
  * @returns Status of the operation (ok)
  */
 export const rejectApplication: Resolver<MutationRejectApplicationArgs, RejectApplicationResult> =
-  async (_parent, args, { prisma }) => {
+  async (_parent, args, { prisma, logger }) => {
     // TODO: Validation
     const { input } = args;
     const { id, reason } = input;
@@ -88,15 +98,23 @@ export const rejectApplication: Resolver<MutationRejectApplicationArgs, RejectAp
           },
         },
       });
-    } catch {
-      // TODO: Handle errors
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        return {
+          ok: false,
+          error: err.message,
+        };
+      }
+
+      // Unknown error
+      logger.error({ error: err }, 'Unknown error');
     }
 
     if (!updatedApplication) {
       throw new ApolloError('Unable to approve application');
     }
 
-    return { ok: true };
+    return { ok: true, error: null };
   };
 
 /**
@@ -109,7 +127,7 @@ export const rejectApplication: Resolver<MutationRejectApplicationArgs, RejectAp
 export const completeApplication: Resolver<
   MutationCompleteApplicationArgs,
   CompleteApplicationResult
-> = async (_, args, { prisma }) => {
+> = async (_, args, { prisma, logger }) => {
   const { input } = args;
   const { id } = input;
 
@@ -132,7 +150,10 @@ export const completeApplication: Resolver<
     });
 
     if (!application) {
-      throw new ApplicationNotFoundError(`Application with ID ${id} not found`);
+      return {
+        ok: false,
+        error: `Application with ID ${id} not found`,
+      };
     }
 
     const {
@@ -155,8 +176,7 @@ export const completeApplication: Resolver<
     } = application;
 
     if (appNumber === null) {
-      // TODO: Improve validation
-      throw new ApolloError('Missing assigned APP number');
+      return { ok: false, error: 'Missing assigned APP number' };
     }
 
     if (type === 'NEW') {
@@ -166,8 +186,7 @@ export const completeApplication: Resolver<
       });
 
       if (!newApplication) {
-        // TODO: Improve validation
-        throw new ApolloError('New application not found');
+        return { ok: false, error: 'New application not found' };
       }
 
       const {
@@ -345,7 +364,9 @@ export const completeApplication: Resolver<
           !createdPermit ||
           !completedApplicationProcessing
         ) {
-          throw new ApolloError('Error completing application');
+          const message = 'Error completing application';
+          logger.error({ error: message });
+          throw new ApolloError(message);
         }
       } else {
         // Applicant does not exist (first-time applicant)
@@ -411,7 +432,9 @@ export const completeApplication: Resolver<
           ]);
 
         if (!upsertedPhysician || !createdPermit || !completedApplicationProcessing) {
-          throw new ApolloError('Error completing application');
+          const message = 'Error completing application';
+          logger.error({ error: message });
+          throw new ApolloError(message);
         }
       }
     } else if (type === 'RENEWAL') {
@@ -421,8 +444,7 @@ export const completeApplication: Resolver<
       });
 
       if (!applicantId || !renewalApplication) {
-        // TODO: Improve validation
-        throw new ApolloError('Renewal application not found');
+        return { ok: false, error: 'Renewal application not found' };
       }
 
       const {
@@ -516,16 +538,54 @@ export const completeApplication: Resolver<
         !createdPermit ||
         !completedApplicationProcessing
       ) {
-        // TODO: Improve error handling
-        throw new ApolloError('Error completing application');
+        const message = 'Error completing application';
+        logger.error({ error: message });
+        throw new ApolloError(message);
       }
-    } else {
-      if (!applicantId) {
-        // TODO: Improve validation
-        throw new ApolloError('Replacement application not found');
+    } else if (type === 'REPLACEMENT') {
+      // Retrieve replacement record
+      const replacementApplication = await prisma.replacementApplication.findUnique({
+        where: { applicationId: id },
+      });
+
+      if (!applicantId || !replacementApplication) {
+        return {
+          ok: false,
+          error: 'Replacement application not found',
+        };
       }
 
-      // TODO: Invalidate old permit
+      const mostRecentPermit = await getMostRecentPermit(applicantId);
+
+      if (!mostRecentPermit) {
+        return {
+          ok: false,
+          error: 'Applicant does not have a previous permit to replace',
+        };
+      }
+
+      // Verify that expiry date of permit being replaced is not in the past
+      if (moment.utc(mostRecentPermit.expiryDate) <= moment.utc()) {
+        return {
+          ok: false,
+          error: 'Cannot replace permit that has already expired',
+        };
+      }
+
+      // Invalidate old permit
+      try {
+        await prisma.permit.update({
+          where: { rcdPermitId: mostRecentPermit.rcdPermitId },
+          data: {
+            active: false,
+          },
+        });
+      } catch {
+        return {
+          ok: false,
+          error: 'Error invaliding old permit',
+        };
+      }
 
       // Update applicant
       const updateApplicantOperation = prisma.applicant.update({
@@ -548,10 +608,8 @@ export const completeApplication: Resolver<
       const createPermitOperation = prisma.permit.create({
         data: {
           rcdPermitId: appNumber,
-          // TODO: Replace with type of most recent permit
-          type: 'PERMANENT',
-          // ? Original permit expiry or 3 years by default?
-          expiryDate: getPermanentPermitExpiryDate(),
+          type: mostRecentPermit.type,
+          expiryDate: mostRecentPermit.expiryDate,
           applicant: { connect: { id: applicantId } },
           application: { connect: { id } },
         },
@@ -565,17 +623,28 @@ export const completeApplication: Resolver<
         ]);
 
       if (!updatedApplicant || !createdPermit || !completedApplicationProcessing) {
-        // TODO: Improve error handling
-        throw new ApolloError('Error completing application');
+        const message = 'Error completing application';
+        logger.error({ error: message });
+        throw new ApolloError(message);
       }
+    } else {
+      throw new Error(`Invalid application type ${type}`);
     }
   } catch (err) {
-    // TODO: Improve error handling
-    throw new ApolloError(`Error completing application`);
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError(`Error completing application with ID ${id}`);
   }
 
   return {
     ok: true,
+    error: null,
   };
 };
 
@@ -586,14 +655,13 @@ export const completeApplication: Resolver<
 export const updateApplicationProcessingAssignAppNumber: Resolver<
   MutationUpdateApplicationProcessingAssignAppNumberArgs,
   UpdateApplicationProcessingAssignAppNumberResult
-> = async (_parent, args, { prisma, session }) => {
+> = async (_parent, args, { prisma, session, logger }) => {
   // TODO: Validation
   const { input } = args;
   const { applicationId, appNumber } = input;
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated' };
   }
   const { id: employeeId } = session;
 
@@ -612,6 +680,20 @@ export const updateApplicationProcessingAssignAppNumber: Resolver<
     throw new ApolloError('Cannot update APP number of already-reviewed application');
   }
 
+  if (appNumber !== null) {
+    // Check that APP number does not exist yet
+    const existingPermit = await prisma.permit.findUnique({
+      where: { rcdPermitId: appNumber },
+    });
+
+    if (existingPermit !== null) {
+      return {
+        ok: false,
+        error: `Could not assign APP number: a permit with APP number ${appNumber} already exists`,
+      };
+    }
+  }
+
   let updatedApplicationProcessing;
   try {
     updatedApplicationProcessing = await prisma.application.update({
@@ -627,15 +709,22 @@ export const updateApplicationProcessingAssignAppNumber: Resolver<
         },
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicationProcessing) {
     throw new ApolloError('Error assigning APP number to application');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -645,14 +734,13 @@ export const updateApplicationProcessingAssignAppNumber: Resolver<
 export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
   MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
   UpdateApplicationProcessingHolepunchParkingPermitResult
-> = async (_parent, args, { prisma, session }) => {
+> = async (_parent, args, { prisma, session, logger }) => {
   // TODO: Validation
   const { input } = args;
   const { applicationId, appHolepunched } = input;
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated' };
   }
   const { id: employeeId } = session;
 
@@ -668,7 +756,10 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
     },
   });
   if (application?.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError('Cannot update APP holepunched status of already-reviewed application');
+    return {
+      ok: false,
+      error: 'Cannot update APP holepunched status of already-reviewed application',
+    };
   }
 
   let updatedApplicationProcessing;
@@ -687,15 +778,22 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
         },
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicationProcessing) {
     throw new ApolloError('Error updating APP holepunched state of application');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -705,14 +803,13 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
 export const updateApplicationProcessingCreateWalletCard: Resolver<
   MutationUpdateApplicationProcessingCreateWalletCardArgs,
   UpdateApplicationProcessingCreateWalletCardResult
-> = async (_parent, args, { prisma, session }) => {
+> = async (_parent, args, { prisma, session, logger }) => {
   // TODO: Validation
   const { input } = args;
   const { applicationId, walletCardCreated } = input;
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated' };
   }
   const { id: employeeId } = session;
 
@@ -728,7 +825,10 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
     },
   });
   if (application?.applicationProcessing.reviewRequestCompleted) {
-    throw new ApolloError('Cannot update wallet card status of already-reviewed application');
+    return {
+      ok: false,
+      error: 'Cannot update wallet card status of already-reviewed application',
+    };
   }
 
   let updatedApplicationProcessing;
@@ -747,15 +847,22 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
         },
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicationProcessing) {
     throw new ApolloError('Error updating wallet card create state of application');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -765,12 +872,12 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
 export const updateApplicationProcessingReviewRequestInformation: Resolver<
   MutationUpdateApplicationProcessingReviewRequestInformationArgs,
   UpdateApplicationProcessingReviewRequestInformationResult
-> = async (_parent, args, { prisma, session }) => {
+> = async (_parent, args, { prisma, session, logger }) => {
   const { input } = args;
   const { applicationId, reviewRequestCompleted } = input;
+
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated' };
   }
   const { id: employeeId } = session;
 
@@ -793,7 +900,7 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
       !application?.applicationProcessing.appHolepunched ||
       !application?.applicationProcessing.walletCardCreated)
   ) {
-    throw new ApolloError('Prior steps incomplete');
+    return { ok: false, error: 'Prior steps incomplete' };
   }
 
   let updatedApplicationProcessing;
@@ -824,15 +931,22 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
         },
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicationProcessing) {
     throw new ApolloError('Error updating application review status');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -842,18 +956,13 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
 export const updateApplicationProcessingGenerateInvoice: Resolver<
   MutationUpdateApplicationProcessingGenerateInvoiceArgs,
   UpdateApplicationProcessingGenerateInvoiceResult
-> = async (_parent, args, { prisma, session }) => {
+> = async (_parent, args, { prisma, session, logger }) => {
   // TODO: Validation
   const { input } = args;
   const { applicationId } = input;
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
-  }
-
-  if (!process.env.INVOICE_LINK_TTL_DAYS) {
-    throw new ApolloError('Invoice link duration not defined');
+    return { ok: false, error: 'Not authenticated' };
   }
 
   // Use the application record to retrieve the applicant name, applicant ID, permit type, current date, and employee initials
@@ -863,7 +972,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
   });
 
   if (!application) {
-    throw new ApolloError('Application does not exist');
+    return { ok: false, error: 'Application does not exist' };
   }
 
   // Create invoice record in DB
@@ -884,8 +993,16 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
   }
 
   if (!invoice) {
-    throw new ApolloError('Error creating invoice record in DB');
+    const message = 'Error creating invoice record in DB';
+    logger.error({ error: message });
+    throw new ApolloError(message);
   }
+
+  // file name format: PP-Receipt-P<YYYYMMDD>-<invoice number>.pdf
+  const createdAtYYYMMDD = formatDateYYYYMMDD(invoice.createdAt).replace(/-/g, '');
+  const receiptNumber = `${createdAtYYYMMDD}-${invoice.invoiceNumber}`;
+  const fileName = `PP-Receipt-P${receiptNumber}.pdf`;
+  const s3InvoiceKey = `rcd/invoices/${fileName}`;
 
   // Generate application invoice
   const pdfDoc = generateApplicationInvoicePdf(
@@ -893,13 +1010,8 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     session,
     // TODO: Remove typecast when backend guard is implemented
     application.applicationProcessing.appNumber as number,
-    invoice.invoiceNumber
+    receiptNumber
   );
-
-  // file name format: PP-Receipt-P<YYYYMMDD>-<invoice number>.pdf
-  const createdAtYYYMMDD = formatDateYYYYMMDD(invoice.createdAt).replace(/-/g, '');
-  const fileName = `PP-Receipt-P${createdAtYYYMMDD}-${invoice.invoiceNumber}.pdf`;
-  const s3InvoiceKey = `rcd/invoices/${fileName}`;
 
   // Upload pdf to s3
   let uploadedPdf;
@@ -911,7 +1023,9 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     const durationSeconds = parseInt(process.env.INVOICE_LINK_TTL_DAYS) * 24 * 60 * 60;
     signedUrl = getSignedUrlForS3(uploadedPdf.key, durationSeconds);
   } catch (error) {
-    throw new ApolloError(`Error uploading invoice pdf to AWS: ${error}`);
+    const message = `Error uploading invoice pdf to AWS: ${error}`;
+    logger.error(message);
+    throw new ApolloError(message);
   }
 
   let updatedInvoice;
@@ -925,8 +1039,15 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
         s3ObjectUrl: signedUrl,
       },
     });
-  } catch {
-    throw new ApolloError('Error updating invoice metadata in DB');
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedInvoice) {
@@ -935,6 +1056,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
 
   return {
     ok: true,
+    error: null,
   };
 };
 
@@ -945,14 +1067,13 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
 export const updateApplicationProcessingUploadDocuments: Resolver<
   MutationUpdateApplicationProcessingUploadDocumentsArgs,
   UpdateApplicationProcessingUploadDocumentsResult
-> = async (_parent, args, { prisma, session }) => {
+> = async (_parent, args, { prisma, session, logger }) => {
   // TODO: Validation
   const { input } = args;
   const { applicationId, documentsS3ObjectKey } = input;
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated' };
   }
 
   const { id: employeeId } = session;
@@ -974,15 +1095,22 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
         },
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicationProcessing) {
     throw new ApolloError('Error attaching uploaded documents to application');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -992,14 +1120,13 @@ export const updateApplicationProcessingUploadDocuments: Resolver<
 export const updateApplicationProcessingMailOut: Resolver<
   MutationUpdateApplicationProcessingMailOutArgs,
   UpdateApplicationProcessingMailOutResult
-> = async (_parent, args, { prisma, session }) => {
+> = async (_parent, args, { prisma, session, logger }) => {
   // TODO: Validation
   const { input } = args;
   const { applicationId, appMailed } = input;
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated' };
   }
 
   const { id: employeeId } = session;
@@ -1018,15 +1145,22 @@ export const updateApplicationProcessingMailOut: Resolver<
         },
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicationProcessing) {
     throw new ApolloError('Error updating mail-out status of application');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };
 
 /**
@@ -1036,14 +1170,13 @@ export const updateApplicationProcessingMailOut: Resolver<
 export const updateApplicationProcessingRefundPayment: Resolver<
   MutationUpdateApplicationProcessingRefundPaymentArgs,
   UpdateApplicationProcessingRefundPaymentResult
-> = async (_parent, args, { prisma, session }) => {
+> = async (_parent, args, { prisma, session, logger }) => {
   // TODO: Validation
   const { input } = args;
   const { applicationId } = input;
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated' };
   }
 
   const { id: employeeId } = session;
@@ -1062,13 +1195,20 @@ export const updateApplicationProcessingRefundPayment: Resolver<
         },
       },
     });
-  } catch {
-    // TODO: Error handling
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    logger.error({ error: err }, 'Unknown error');
   }
 
   if (!updatedApplicationProcessing) {
     throw new ApolloError('Error updating payment refund status of application');
   }
 
-  return { ok: true };
+  return { ok: true, error: null };
 };

@@ -26,7 +26,8 @@
       "@pages/*": ["pages/*"],
       "@prisma/*": ["prisma/*"],
       "@public/*": ["public/*"],
-      "@tools/*": ["tools/*"]
+      "@tools/*": ["tools/*"],
+      "@logging": ["lib/utils/logging.ts"]
     },
     "incremental": true
   },

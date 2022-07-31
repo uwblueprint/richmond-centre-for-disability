@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@tools/hooks/graphql';
 import {
   Divider,
   VStack,

@@ -11,7 +11,7 @@ import ProcessingTasksCard from '@components/admin/requests/processing/TasksCard
 import PhysicianAssessmentCard from '@components/admin/requests/physician-assessment/Card'; // Physician assessment card
 import AdditionalInformationCard from '@components/admin/requests/additional-questions/Card'; // Additional Information card
 import { authorize } from '@tools/authorization'; // Page authorization
-import { useQuery } from '@apollo/client'; // Apollo Client hooks
+import { useQuery } from '@tools/hooks/graphql'; // Apollo Client hooks
 import {
   GET_APPLICATION_QUERY,
   GetApplicationRequest,
@@ -118,7 +118,12 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           {(status === 'IN_PROGRESS' || status === 'REJECTED') && (
             <ProcessingTasksCard applicationId={id} />
           )}
-          {type === 'NEW' && <PhysicianAssessmentCard applicationId={id} />}
+          {type === 'NEW' && (
+            <PhysicianAssessmentCard
+              applicationId={id}
+              editDisabled={reviewRequestCompleted || isRejected}
+            />
+          )}
           {type === 'REPLACEMENT' && (
             <ReasonForReplacementCard
               applicationId={id}

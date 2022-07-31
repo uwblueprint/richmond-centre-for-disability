@@ -62,6 +62,7 @@ export type ApplicantsFilter = {
   expiryDateRangeFrom: Maybe<Scalars['Date']>;
   expiryDateRangeTo: Maybe<Scalars['Date']>;
   search: Maybe<Scalars['String']>;
+  dateOfBirth: Maybe<Scalars['Date']>;
   limit: Maybe<Scalars['Int']>;
   offset: Maybe<Scalars['Int']>;
 };
@@ -191,6 +192,7 @@ export type ApproveApplicationInput = {
 export type ApproveApplicationResult = {
   __typename?: 'ApproveApplicationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type ComparePhysiciansInput = {
@@ -220,6 +222,7 @@ export type CompleteApplicationInput = {
 export type CompleteApplicationResult = {
   __typename?: 'CompleteApplicationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type CreateEmployeeInput = {
@@ -287,7 +290,7 @@ export type CreateNewApplicationInput = {
   postalCode: Scalars['String'];
   disability: Scalars['String'];
   disabilityCertificationDate: Scalars['Date'];
-  patientCondition: PatientCondition;
+  patientCondition: Maybe<Array<PatientCondition>>;
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherMobilityAids: Maybe<Scalars['String']>;
   otherPatientCondition: Maybe<Scalars['String']>;
@@ -487,6 +490,7 @@ export type GenerateAccountantReportInput = {
 export type GenerateAccountantReportResult = {
   __typename?: 'GenerateAccountantReportResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
   url: Maybe<Scalars['String']>;
 };
 
@@ -499,6 +503,7 @@ export type GenerateApplicationsReportInput = {
 export type GenerateApplicationsReportResult = {
   __typename?: 'GenerateApplicationsReportResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
   url: Maybe<Scalars['String']>;
 };
 
@@ -511,6 +516,7 @@ export type GeneratePermitHoldersReportInput = {
 export type GeneratePermitHoldersReportResult = {
   __typename?: 'GeneratePermitHoldersReportResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
   url: Maybe<Scalars['String']>;
 };
 
@@ -546,7 +552,7 @@ export type MedicalInformation = {
   id: Scalars['Int'];
   disability: Scalars['String'];
   disabilityCertificationDate: Scalars['Date'];
-  patientCondition: PatientCondition;
+  patientCondition: Maybe<Array<PatientCondition>>;
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherPatientCondition: Maybe<Scalars['String']>;
   physician: Physician;
@@ -783,7 +789,7 @@ export type NewApplication = Application & {
   postalCode: Scalars['String'];
   disability: Scalars['String'];
   disabilityCertificationDate: Scalars['Date'];
-  patientCondition: PatientCondition;
+  patientCondition: Maybe<Array<PatientCondition>>;
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherPatientCondition: Maybe<Scalars['String']>;
   permitType: PermitType;
@@ -1009,6 +1015,7 @@ export type RejectApplicationInput = {
 export type RejectApplicationResult = {
   __typename?: 'RejectApplicationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type RenewalApplication = Application & {
@@ -1142,6 +1149,7 @@ export type SetApplicantAsActiveInput = {
 export type SetApplicantAsActiveResult = {
   __typename?: 'SetApplicantAsActiveResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type SetApplicantAsInactiveInput = {
@@ -1152,6 +1160,7 @@ export type SetApplicantAsInactiveInput = {
 export type SetApplicantAsInactiveResult = {
   __typename?: 'SetApplicantAsInactiveResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type ShopifyPaymentStatus =
@@ -1228,6 +1237,7 @@ export type UpdateApplicantNotesInput = {
 export type UpdateApplicantNotesResult = {
   __typename?: 'UpdateApplicantNotesResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationAdditionalInformationInput = {
@@ -1336,7 +1346,7 @@ export type UpdateApplicationPhysicianAssessmentInput = {
   id: Scalars['Int'];
   disability: Scalars['String'];
   disabilityCertificationDate: Scalars['Date'];
-  patientCondition: PatientCondition;
+  patientCondition: Maybe<Array<PatientCondition>>;
   mobilityAids: Maybe<Array<MobilityAid>>;
   otherPatientCondition: Maybe<Scalars['String']>;
   temporaryPermitExpiry: Maybe<Scalars['Date']>;
@@ -1358,6 +1368,7 @@ export type UpdateApplicationProcessingAssignAppNumberInput = {
 export type UpdateApplicationProcessingAssignAppNumberResult = {
   __typename?: 'UpdateApplicationProcessingAssignAppNumberResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingCreateWalletCardInput = {
@@ -1368,6 +1379,7 @@ export type UpdateApplicationProcessingCreateWalletCardInput = {
 export type UpdateApplicationProcessingCreateWalletCardResult = {
   __typename?: 'UpdateApplicationProcessingCreateWalletCardResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingGenerateInvoiceInput = {
@@ -1377,6 +1389,7 @@ export type UpdateApplicationProcessingGenerateInvoiceInput = {
 export type UpdateApplicationProcessingGenerateInvoiceResult = {
   __typename?: 'UpdateApplicationProcessingGenerateInvoiceResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingHolepunchParkingPermitInput = {
@@ -1387,6 +1400,7 @@ export type UpdateApplicationProcessingHolepunchParkingPermitInput = {
 export type UpdateApplicationProcessingHolepunchParkingPermitResult = {
   __typename?: 'UpdateApplicationProcessingHolepunchParkingPermitResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingMailOutInput = {
@@ -1397,6 +1411,7 @@ export type UpdateApplicationProcessingMailOutInput = {
 export type UpdateApplicationProcessingMailOutResult = {
   __typename?: 'UpdateApplicationProcessingMailOutResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingRefundPaymentInput = {
@@ -1406,6 +1421,7 @@ export type UpdateApplicationProcessingRefundPaymentInput = {
 export type UpdateApplicationProcessingRefundPaymentResult = {
   __typename?: 'UpdateApplicationProcessingRefundPaymentResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingReviewRequestInformationInput = {
@@ -1416,6 +1432,7 @@ export type UpdateApplicationProcessingReviewRequestInformationInput = {
 export type UpdateApplicationProcessingReviewRequestInformationResult = {
   __typename?: 'UpdateApplicationProcessingReviewRequestInformationResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationProcessingUploadDocumentsInput = {
@@ -1426,6 +1443,7 @@ export type UpdateApplicationProcessingUploadDocumentsInput = {
 export type UpdateApplicationProcessingUploadDocumentsResult = {
   __typename?: 'UpdateApplicationProcessingUploadDocumentsResult';
   ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationReasonForReplacementInput = {
@@ -1480,7 +1498,9 @@ export type VerifyIdentityFailureReason =
   | 'IDENTITY_VERIFICATION_FAILED'
   | 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS'
   | 'USER_HOLDS_TEMPORARY_PERMIT'
-  | 'APP_PAST_SIX_MONTHS_EXPIRED';
+  | 'APP_PAST_SIX_MONTHS_EXPIRED'
+  | 'BAD_INPUT'
+  | 'NO_PREVIOUS_APP';
 
 export type VerifyIdentityInput = {
   userId: Scalars['Int'];

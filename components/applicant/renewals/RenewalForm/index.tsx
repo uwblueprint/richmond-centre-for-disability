@@ -1,5 +1,5 @@
 import { useState, FC } from 'react'; // React
-import { useMutation } from '@apollo/client'; // Apollo Client
+import { useMutation } from '@tools/hooks/graphql'; // Apollo Client
 import {
   Flex,
   Box,

@@ -5,7 +5,7 @@ import Layout from '@components/admin/Layout'; // Layout component
 import { authorize } from '@tools/authorization'; // Page authorization
 import { DownloadIcon } from '@chakra-ui/icons'; // Chakra UI icons
 import { useState } from 'react'; // React
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery } from '@tools/hooks/graphql';
 import {
   GENERATE_ACCOUNTANT_REPORT_QUERY,
   GenerateAccountantReportRequest,
@@ -39,12 +39,6 @@ export default function Reports() {
           description: `A CSV permit holders report has been successfully generated.`,
         });
       }
-    },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-      });
     },
   });
 

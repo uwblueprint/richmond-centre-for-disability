@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@tools/hooks/graphql';
 import {
   Text,
   VStack,
@@ -151,14 +151,20 @@ const Card: FC<Props> = props => {
             </Text>
           </GridItem>
           <Wrap>
-            <Badge bgColor="background.informative">{titlecase(patientCondition as string)}</Badge>
+            {patientCondition !== null
+              ? patientCondition.map(condition => (
+                  <Badge key={condition} bgColor="background.informative">
+                    {titlecase(condition)}
+                  </Badge>
+                ))
+              : 'N/A'}
           </Wrap>
-          {patientCondition === 'OTHER' && (
+          {patientCondition?.includes('OTHER') && (
             <>
               {/* Condition description */}
               <GridItem>
                 <Text as="p" textStyle="body-regular" textAlign="left">
-                  Condition description
+                  Other condition description
                 </Text>
               </GridItem>
               <GridItem>

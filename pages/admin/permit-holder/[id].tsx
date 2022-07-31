@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
-import { useQuery } from '@apollo/client'; // Apollo
+import { useQuery } from '@tools/hooks/graphql'; // Apollo
 import { GridItem, Stack } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import { authorize } from '@tools/authorization'; // Page authorization

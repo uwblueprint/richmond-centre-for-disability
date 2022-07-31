@@ -17,6 +17,7 @@ import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/repor
 import { Prisma } from '@prisma/client';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { ApolloError } from 'apollo-server-micro';
+import moment from 'moment';
 
 /**
  * Generates csv with permit holders' info, given a start date, end date, and values from
@@ -26,17 +27,19 @@ import { ApolloError } from 'apollo-server-micro';
 export const generatePermitHoldersReport: Resolver<
   QueryGeneratePermitHoldersReportArgs,
   GeneratePermitHoldersReportResult
-> = async (_, args, { prisma, session }) => {
+> = async (_, args, { prisma, session, logger }) => {
   const {
-    input: { startDate, endDate, columns },
+    input: { startDate, endDate: inputEndDate, columns },
   } = args;
 
   const columnsSet = new Set(columns);
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated', url: null };
   }
+
+  // Calculate end date as beginning of the next day
+  const endDate = moment.utc(inputEndDate).add(1, 'd').toDate();
 
   const applicants = await prisma.applicant.findMany({
     where: {
@@ -44,7 +47,7 @@ export const generatePermitHoldersReport: Resolver<
         some: {
           expiryDate: {
             gte: startDate,
-            lte: endDate,
+            lt: endDate,
           },
         },
       },
@@ -161,10 +164,13 @@ export const generatePermitHoldersReport: Resolver<
     // Generate a signed URL to access the file
     signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
   } catch (error) {
-    throw new ApolloError(`Error uploading permit holders report to AWS: ${error}`);
+    const message = `Error uploading permit holders report to AWS: ${error}`;
+    logger.error({ error: message });
+    throw new ApolloError(message);
   }
   return {
     ok: true,
+    error: null,
     url: signedUrl,
   };
 };
@@ -177,23 +183,25 @@ export const generatePermitHoldersReport: Resolver<
 export const generateApplicationsReport: Resolver<
   QueryGenerateApplicationsReportArgs,
   GenerateApplicationsReportResult
-> = async (_, args, { prisma, session }) => {
+> = async (_, args, { prisma, session, logger }) => {
   const {
-    input: { startDate, endDate, columns },
+    input: { startDate, endDate: inputEndDate, columns },
   } = args;
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated', url: null };
   }
 
   const columnsSet = new Set(columns);
+
+  // Calculate end date as beginning of the next day
+  const endDate = moment.utc(inputEndDate).add(1, 'd').toDate();
 
   const applications = await prisma.application.findMany({
     where: {
       createdAt: {
         gte: startDate,
-        lte: endDate,
+        lt: endDate,
       },
     },
     select: {
@@ -300,11 +308,14 @@ export const generateApplicationsReport: Resolver<
     // Generate a signed URL to access the file
     signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
   } catch (error) {
-    throw new ApolloError(`Error uploading applications report to AWS: ${error}`);
+    const message = `Error uploading applications report to AWS: ${error}`;
+    logger.error({ error: message });
+    throw new ApolloError(message);
   }
 
   return {
     ok: true,
+    error: null,
     url: signedUrl,
   };
 };
@@ -316,14 +327,13 @@ export const generateApplicationsReport: Resolver<
 export const generateAccountantReport: Resolver<
   QueryGenerateAccountantReportArgs,
   GenerateAccountantReportResult
-> = async (_, args, { prisma, session }) => {
+> = async (_, args, { prisma, session, logger }) => {
   const {
-    input: { startDate, endDate },
+    input: { startDate, endDate: inputEndDate },
   } = args;
 
   if (!session) {
-    // TODO: Create error
-    throw new ApolloError('Not authenticated');
+    return { ok: false, error: 'Not authenticated', url: null };
   }
 
   const paymentTypeToString: Record<PaymentType, string> = {
@@ -336,12 +346,15 @@ export const generateAccountantReport: Resolver<
     CHEQUE: 'Cheque',
   };
 
+  // Calculate end date as beginning of the next day
+  const endDate = moment.utc(inputEndDate).add(1, 'd').toDate();
+
   const paymentMethodGroups = await prisma.application.groupBy({
     by: ['paymentMethod'],
     where: {
       createdAt: {
         gte: startDate,
-        lte: endDate,
+        lt: endDate,
       },
     },
     _sum: {
@@ -374,23 +387,23 @@ export const generateAccountantReport: Resolver<
     csvAccountantReportRows.push({
       rowName: paymentTypeToString[paymentMethodGroup.paymentMethod],
       countIssued: paymentMethodGroup._count.paymentMethod,
-      processingFee: paymentMethodGroup._sum.processingFee || 0,
-      donationAmount: paymentMethodGroup._sum.donationAmount || 0,
-      totalAmount: Prisma.Decimal.add(
+      processingFee: `$${paymentMethodGroup._sum.processingFee || 0}`,
+      donationAmount: `$${paymentMethodGroup._sum.donationAmount || 0}`,
+      totalAmount: `$${Prisma.Decimal.add(
         paymentMethodGroup._sum.donationAmount || 0,
         paymentMethodGroup._sum.processingFee || 0
-      ),
+      )}`,
     });
   }
   csvAccountantReportRows.push({
     rowName: 'Total',
     countIssued: totalAggregate._count.paymentMethod || 0,
-    processingFee: totalAggregate._sum.processingFee || 0,
-    donationAmount: totalAggregate._sum.donationAmount || 0,
-    totalAmount: Prisma.Decimal.add(
+    processingFee: `$${totalAggregate._sum.processingFee || 0}`,
+    donationAmount: `$${totalAggregate._sum.donationAmount || 0}`,
+    totalAmount: `$${Prisma.Decimal.add(
       totalAggregate._sum.donationAmount || 0,
       totalAggregate._sum.processingFee || 0
-    ),
+    )}`,
   });
 
   const csvHeaders = [
@@ -424,11 +437,14 @@ export const generateAccountantReport: Resolver<
     // Generate a signed URL to access the file
     signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
   } catch (error) {
-    throw new ApolloError(`Error uploading accountant report to AWS: ${error}`);
+    const message = `Error uploading accountant report to AWS: ${error}`;
+    logger.error({ error: message });
+    throw new ApolloError(message);
   }
 
   return {
     ok: true,
+    error: null,
     url: signedUrl,
   };
 };

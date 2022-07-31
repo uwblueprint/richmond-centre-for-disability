@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'; // Apollo
+import { useQuery } from '@tools/hooks/graphql'; // Apollo
 import { Text } from '@chakra-ui/react'; //Chakra UI
 import Typeahead from '@components/Typeahead'; // Typeahead component
 import { formatFullName } from '@lib/utils/format'; // String formatter util

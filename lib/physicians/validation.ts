@@ -13,18 +13,20 @@ export const physicianAssessmentSchema = object({
     })
     .max(new Date(), 'Date must be in the past')
     .required('Please enter a valid certification date'),
-  patientCondition: mixed<PatientCondition>()
-    .oneOf(Object.values(PatientCondition))
-    .required('Please select a condition'),
+  patientCondition: array(
+    mixed<PatientCondition>()
+      .oneOf(Object.values(PatientCondition))
+      .required('Please select a condition')
+  ).required(),
   otherPatientCondition: string()
     .nullable()
     .default(null)
-    .when('patientCondition', {
-      is: 'OTHER',
-      then: string()
-        .typeError('Please enter a description for the condition')
-        .required('Please enter a description for the condition'),
-      otherwise: string().nullable().default(null),
+    .when('patientCondition', (value, _schema) => {
+      return value.includes('OTHER')
+        ? string()
+            .typeError('Please enter a description for the condition')
+            .required('Please enter a description for the condition')
+        : string().nullable().default(null);
     }),
   permitType: mixed<PermitType>()
     .oneOf(Object.values(PermitType))

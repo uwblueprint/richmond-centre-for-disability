@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@tools/hooks/graphql';
 import { Box, Text, SimpleGrid, VStack, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
 import {

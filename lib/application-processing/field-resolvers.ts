@@ -11,17 +11,13 @@ import { getSignedUrlForS3 } from '@lib/utils/s3-utils';
 export const applicationProcessingInvoiceResolver: FieldResolver<
   ApplicationProcessing & { id: number },
   Omit<Invoice, 'employee'>
-> = async (parent, _, { prisma }) => {
+> = async (parent, _, { prisma, logger }) => {
   const invoice = await prisma.applicationProcessing
     .findUnique({ where: { id: parent.id } })
     .applicationInvoice();
 
   if (!invoice) {
     return null;
-  }
-
-  if (!process.env.INVOICE_LINK_TTL_DAYS) {
-    throw new ApolloError('Invoice link duration not defined');
   }
 
   // Update the signed S3 URL if it has expired.
@@ -35,7 +31,9 @@ export const applicationProcessingInvoiceResolver: FieldResolver<
     try {
       signedUrl = getSignedUrlForS3(invoice.s3ObjectKey as string);
     } catch (error) {
-      throw new ApolloError(`Failed to get AWS invoice URL: ${error}`);
+      const message = `Failed to get AWS invoice URL: ${error}`;
+      logger.error({ error: message });
+      throw new ApolloError(message);
     }
     let updatedInvoice;
     try {
@@ -48,7 +46,9 @@ export const applicationProcessingInvoiceResolver: FieldResolver<
         },
       });
     } catch {
-      throw new ApolloError('Failed to update temporary AWS invoice URL');
+      const message = 'Failed to update temporary AWS invoice URL';
+      logger.error({ error: message });
+      throw new ApolloError(message);
     }
     return updatedInvoice;
   }

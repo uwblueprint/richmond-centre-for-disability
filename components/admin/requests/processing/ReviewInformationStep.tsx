@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@tools/hooks/graphql';
 import {
   GetReviewInformationRequest,
   GetReviewInformationResponse,
@@ -69,8 +69,8 @@ export default function ReviewInformationStep({
           <>
             <PersonalInformationCard applicationId={applicationId} editDisabled isSubsection />
             <DoctorInformationCard applicationId={applicationId} editDisabled isSubsection />
-            <AdditionalInformationCard applicationId={applicationId} isSubsection />
-            <GuardianInformationCard applicationId={applicationId} isSubsection />
+            <AdditionalInformationCard applicationId={applicationId} editDisabled isSubsection />
+            <GuardianInformationCard applicationId={applicationId} editDisabled isSubsection />
             <PaymentInformationCard applicationId={applicationId} editDisabled isSubsection />
           </>
         );
@@ -79,7 +79,7 @@ export default function ReviewInformationStep({
           <>
             <PersonalInformationCard applicationId={applicationId} editDisabled isSubsection />
             <DoctorInformationCard applicationId={applicationId} editDisabled isSubsection />
-            <AdditionalInformationCard applicationId={applicationId} isSubsection />
+            <AdditionalInformationCard applicationId={applicationId} editDisabled isSubsection />
             <PaymentInformationCard applicationId={applicationId} editDisabled isSubsection />
           </>
         );

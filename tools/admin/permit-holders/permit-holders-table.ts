@@ -25,10 +25,7 @@ export const USER_STATUSES: Array<{ name: string; value: ApplicantStatus }> = [
 ];
 
 /** Row in permit holders table */
-export type PermitHolderRow = Pick<
-  Applicant,
-  'id' | 'dateOfBirth' | 'email' | 'phone' | 'status'
-> & {
+export type PermitHolderRow = Pick<Applicant, 'id' | 'dateOfBirth' | 'phone' | 'status'> & {
   name: {
     id: number;
     firstName: string;
@@ -65,7 +62,6 @@ export const GET_PERMIT_HOLDERS_QUERY = gql`
         addressLine2
         city
         postalCode
-        email
         phone
         mostRecentPermit {
           expiryDate
@@ -93,7 +89,6 @@ export type PermitHolder = Pick<
   | 'addressLine2'
   | 'city'
   | 'postalCode'
-  | 'email'
   | 'phone'
   | 'status'
 > & {

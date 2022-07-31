@@ -12,7 +12,7 @@ import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
-import { useLazyQuery, useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@tools/hooks/graphql';
 import {
   CreateRenewalApplicationRequest,
   CreateRenewalApplicationResponse,
@@ -163,13 +163,6 @@ export default function CreateRenewal() {
           setError(error ?? '');
         }
       }
-    },
-    onError: error => {
-      toast({
-        status: 'error',
-        description: error.message,
-        isClosable: true,
-      });
     },
   });
 
