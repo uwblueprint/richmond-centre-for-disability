@@ -17,6 +17,7 @@ type RequestHeaderProps = {
   readonly paidThroughShopify?: boolean;
   readonly shopifyOrderID?: string;
   readonly shopifyOrderNumber?: string;
+  readonly permitExpiry: Date | null;
   readonly temporaryPermitExpiry: Date | null;
   readonly reasonForRejection?: string;
 };
@@ -30,6 +31,7 @@ type RequestHeaderProps = {
  * @param paidThroughShopify If the permit fee was paid through Shopify
  * @param shopifyOrderID Order ID of Shopify payment if paid through Shopify
  * @param shopifyOrderNumber Order number of Shopify payment if paid through Shopify
+ * @param permitExpiry Permit expiry if application is complete
  * @param temporaryPermitExpiry Permit expiry if application is for a temporary permit
  * @param reasonForRejection Reason for rejecting application
  */
@@ -41,11 +43,25 @@ export default function RequestHeader({
   paidThroughShopify,
   shopifyOrderID,
   shopifyOrderNumber,
+  permitExpiry,
   temporaryPermitExpiry,
   reasonForRejection,
 }: RequestHeaderProps) {
   const displayShopifyUrl = paidThroughShopify && shopifyOrderID && shopifyOrderNumber;
   const shopifyOrderUrl = `https://${process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN}/admin/orders/${shopifyOrderID}`;
+
+  let expiryDateText: string | null;
+  if (applicationStatus === 'COMPLETED' && !!permitExpiry) {
+    expiryDateText = `Expiry date: ${formatDateYYYYMMDD(permitExpiry)}`;
+  } else if (permitType === 'TEMPORARY' && !!temporaryPermitExpiry) {
+    expiryDateText = `This permit will expire: ${formatDateYYYYMMDD(temporaryPermitExpiry)}`;
+  } else if (permitType === 'PERMANENT') {
+    expiryDateText = `This permit will expire: ${formatDateYYYYMMDD(
+      getPermanentPermitExpiryDate()
+    )} (expected)`;
+  } else {
+    expiryDateText = null;
+  }
 
   return (
     <Box textAlign="left">
@@ -96,13 +112,7 @@ export default function RequestHeader({
             </Flex>
             <HStack justifyContent="flex-end">
               <Text textStyle="caption" as="p" mt="12px">
-                {permitType === 'TEMPORARY' && !!temporaryPermitExpiry
-                  ? `This permit will expire: ${formatDateYYYYMMDD(temporaryPermitExpiry)}`
-                  : permitType === 'PERMANENT'
-                  ? `This permit will expire: ${formatDateYYYYMMDD(
-                      getPermanentPermitExpiryDate()
-                    )} (expected)`
-                  : null}
+                {expiryDateText}
               </Text>
             </HStack>
           </VStack>
