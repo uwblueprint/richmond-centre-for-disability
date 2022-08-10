@@ -34,7 +34,7 @@ export const getMostRecentPermit = async (applicantId: number): Promise<Permit |
       where: { id: applicantId },
     })
     .permits({
-      orderBy: { createdAt: SortOrder.DESC },
+      orderBy: { expiryDate: SortOrder.DESC },
       take: 1,
     });
 
