@@ -40,7 +40,7 @@ const AppHistoryRecord: FC<Props> = ({ permit }) => {
               Request Type: {titlecase(type)}
             </Text>
             <Text as="p" textStyle="body-regular">
-              Expired on: {formatDate(expiryDate)}
+              Expiry date: {formatDate(expiryDate)}
             </Text>
           </HStack>
         </VStack>
