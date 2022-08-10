@@ -5,6 +5,7 @@ import crypto from 'crypto'; // Verifying Shopify Request
 import getRawBody from 'raw-body';
 import sendConfirmationEmail from '@lib/applications/sendConfirmationEmail';
 import { stripPostalCode } from '@lib/utils/format';
+import logger from '@lib/utils/logging';
 
 /**
  * Webhook to handle payment submission from Shopify
@@ -46,6 +47,7 @@ import { stripPostalCode } from '@lib/utils/format';
  */
 const paymentReceivedHandler: NextApiHandler = async (req, res) => {
   if (req.method !== 'POST') {
+    logger.error('Failed to process payment received webhook payload, method not allowed');
     return res.status(405).end('Method not allowed');
   }
 
@@ -57,6 +59,10 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     .update(rawBody)
     .digest('base64');
   if (digest !== hmacHeader) {
+    logger.error(
+      { req, rawBody },
+      `Failed to process payment received webhook payload, response did not come from Shopify`
+    );
     return res.status(401).end();
   }
 
@@ -162,6 +168,7 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     }
   } catch (err) {
     // TODO: Add some sort of logging or notification
+    logger.error({ rawBody, error: err }, `Failed to process webhook payload`);
     res.status(500).end();
   }
 
