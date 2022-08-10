@@ -5,6 +5,7 @@ import {
   Invoice,
   Applicant,
   QueryApplicationArgs,
+  Permit,
 } from '@lib/graphql/types';
 
 // Queries an Application by ID along with the associated permit, replacement, applicationProcessing, and applicant
@@ -39,6 +40,9 @@ export const GET_APPLICATION_QUERY = gql`
       }
       applicant {
         id
+      }
+      permit {
+        expiryDate
       }
     }
   }
@@ -75,5 +79,6 @@ export type GetApplicationResponse = {
     };
     applicant: Pick<Applicant, 'id'>;
     temporaryPermitExpiry?: Date;
+    permit: Pick<Permit, 'expiryDate'> | null;
   };
 };

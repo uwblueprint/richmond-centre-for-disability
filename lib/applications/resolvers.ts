@@ -74,6 +74,8 @@ export const application: Resolver<
       newApplication: true,
       renewalApplication: true,
       replacementApplication: true,
+      applicant: true,
+      permit: true,
     },
   });
 

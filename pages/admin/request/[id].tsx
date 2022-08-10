@@ -60,6 +60,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
       appMailed,
       reviewRequestCompleted,
     },
+    permit,
   } = data.application;
 
   // Whether all application processing steps are completed
@@ -87,6 +88,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           paidThroughShopify={paidThroughShopify}
           shopifyOrderID={shopifyConfirmationNumber || undefined}
           shopifyOrderNumber={shopifyOrderNumber || undefined}
+          permitExpiry={permit && permit.expiryDate}
           temporaryPermitExpiry={temporaryPermitExpiry || null}
           reasonForRejection={rejectedReason || undefined}
         />
