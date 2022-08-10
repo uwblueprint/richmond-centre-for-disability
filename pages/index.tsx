@@ -117,7 +117,7 @@ export default function Landing() {
             </Text>
             <Text as="p" textStyle="body-regular" align="left" mt="24px">
               After completing the form, either email (
-              <a href="mailto:rcdparkingpermit@richmond.org">
+              <a href="mailto:rcdparkingpermit@rcdrichmond.org">
                 <Text as="span" fontWeight="bold" whiteSpace="nowrap">
                   parkingpermit@rcdrichmond.org
                 </Text>
@@ -213,7 +213,7 @@ export default function Landing() {
               604-232-2404
             </Text>{' '}
             or via email at{' '}
-            <a href="mailto:rcdparkingpermit@richmond.org">
+            <a href="mailto:rcdparkingpermit@rcdrichmond.org">
               <Text as="span" fontWeight="bold" whiteSpace="nowrap">
                 parkingpermit@rcdrichmond.org
               </Text>
