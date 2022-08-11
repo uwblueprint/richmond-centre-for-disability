@@ -14,10 +14,12 @@ export const formatDate = (date: Date, dateInput = false): string => {
 /**
  * Format date to be in YYYY-MM-DD format
  * @param {Date} date date to be formatted
+ * @param {boolean} withTime whether to include time in formatted date
  * @returns {string} formatted date
  */
-export const formatDateYYYYMMDD = (d: Date): string => {
-  return moment.utc(d).format('YYYY-MM-DD');
+export const formatDateYYYYMMDD = (d: Date, withTime = false): string => {
+  const formatString = withTime ? 'YYYY-MM-DD, hh:mm a' : 'YYYY-MM-DD';
+  return moment.utc(d).format(formatString);
 };
 
 /**
