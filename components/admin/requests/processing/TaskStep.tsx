@@ -1,7 +1,7 @@
 import { Flex, VStack, Text, Box, Circle } from '@chakra-ui/react'; // Chakra UI
 import { CheckIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import { ReactNode } from 'react'; // React
-import { formatDateVerbose } from '@lib/utils/date';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 
 type ProcessingTaskStepProps = {
   readonly id: number;
@@ -56,7 +56,7 @@ export default function ProcessingTaskStep({
         {_description}
         {showLog && !!log && (
           <Text textStyle="xsmall" color="text.secondary">
-            completed by {log.name} on {formatDateVerbose(log.date, true)}
+            completed by {log.name} on {formatDateYYYYMMDD(log.date)}
           </Text>
         )}
       </VStack>

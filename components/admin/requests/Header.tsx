@@ -85,7 +85,8 @@ export default function RequestHeader({
             </Flex>
             <HStack spacing={3} marginTop={3}>
               <Text textStyle="caption" as="p">
-                Received on {createdAt.toDateString()} at {createdAt.toLocaleTimeString('en-CA')}
+                Received on {formatDateYYYYMMDD(createdAt)} at{' '}
+                {createdAt.toLocaleTimeString('en-CA')}
               </Text>
             </HStack>
             {displayShopifyUrl && (

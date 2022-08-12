@@ -65,7 +65,7 @@ export const APPLICATIONS_COLUMNS: Array<{
 export const PERMIT_HOLDERS_COLUMNS: Array<{
   name: string;
   value: PermitHoldersReportColumn;
-  reportColumnId: string;
+  reportColumnId: string | Array<[string, string]>;
 }> = [
   {
     name: 'User ID',
@@ -85,7 +85,13 @@ export const PERMIT_HOLDERS_COLUMNS: Array<{
   {
     name: 'Home Address',
     value: 'HOME_ADDRESS',
-    reportColumnId: 'homeAddress',
+    reportColumnId: [
+      ['Address Line 1', 'addressLine1'],
+      ['Address Line 2', 'addressLine2'],
+      ['City', 'city'],
+      ['Province', 'province'],
+      ['Postal Code', 'postalCode'],
+    ],
   },
   {
     name: 'Email',
@@ -110,7 +116,13 @@ export const PERMIT_HOLDERS_COLUMNS: Array<{
   {
     name: 'Guardian/POA Address',
     value: 'GUARDIAN_POA_ADDRESS',
-    reportColumnId: 'guardianPOAAddress',
+    reportColumnId: [
+      ['Guardian/POA Address Line 1', 'guardianAddressLine1'],
+      ['Guardian/POA Address Line 2', 'guardianAddressLine2'],
+      ['Guardian/POA City', 'guardianCity'],
+      ['Guardian/POA Province', 'guardianProvince'],
+      ['Guardian/POA Postal Code', 'guardianPostalCode'],
+    ],
   },
   {
     name: 'Recent APP Number',

@@ -18,7 +18,7 @@ import {
 } from '@tools/admin/requests/permit-holder-information'; // Applicant type
 import { getPermitExpiryStatus } from '@lib/utils/permit-expiry'; // Get variant of PermitHolderStatusBadge
 import { formatFullName, formatPhoneNumber } from '@lib/utils/format';
-import { formatDateYYYYMMDD, formatDateVerboseUTC } from '@lib/utils/date';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 import PermitHolderStatusBadge from '@components/admin/PermitHolderStatusBadge';
 import Updated from '@components/admin/Updated';
 import Address from '@components/admin/Address';
@@ -224,7 +224,7 @@ const Card: FC<Props> = props => {
             {applicant && applicant.mostRecentPermit && (
               // TODO: Fix text styles to avoid !important
               <Text as="p" textStyle="xsmall" margin="0 !important" color="secondary">
-                Expiring {formatDateVerboseUTC(applicant.mostRecentPermit.expiryDate, true, true)}
+                Expiring {formatDateYYYYMMDD(applicant.mostRecentPermit.expiryDate)}
               </Text>
             )}
           </VStack>
