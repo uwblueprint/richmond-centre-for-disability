@@ -15,7 +15,7 @@ import {
   Center,
 } from '@chakra-ui/react'; // Chakra UI
 import { formatFullName, formatPhoneNumber } from '@lib/utils/format'; // Date formatter util
-import { formatDate } from '@lib/utils/date';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { useQuery } from '@tools/hooks/graphql';
 import {
   GetSelectedApplicantRequest,
@@ -119,7 +119,7 @@ export default function SelectedPermitHolderCard(props: SelectedPermitHolderCard
             </Text>
           </HStack>
           <Text as="p" textStyle="body-regular">
-            Date of Birth: {formatDate(dateOfBirth)}
+            Date of Birth: {formatDateYYYYMMDD(dateOfBirth)}
           </Text>
           <Text as="p" textStyle="body-regular">
             Gender: {gender.toLowerCase().replace(/^\w/, c => c.toUpperCase())}

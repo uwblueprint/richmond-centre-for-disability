@@ -11,8 +11,7 @@ import {
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
 import { formatAddress, formatFullName, formatPhoneNumber } from '@lib/utils/format'; // Formatting utils
-import { formatDateTimeYYYYMMDDHHMMSS } from '@lib/utils/date'; // Formatting utils
-import { formatDate } from '@lib/utils/date'; // Date formatter util
+import { formatDateTimeYYYYMMDDHHMMSS, formatDateYYYYMMDD } from '@lib/utils/date'; // Formatting utils
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
 import { Prisma } from '@prisma/client';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
@@ -115,7 +114,7 @@ export const generatePermitHoldersReport: Resolver<
         ...applicant,
         id,
         phone: formatPhoneNumber(phone),
-        dateOfBirth: formatDate(dateOfBirth),
+        dateOfBirth: formatDateYYYYMMDD(dateOfBirth),
         applicantName: formatFullName(firstName, middleName, lastName),
         rcdPermitId: `#${permits[0].rcdPermitId}`,
         permitType: permits[0].type,
@@ -263,15 +262,8 @@ export const generateApplicationsReport: Resolver<
       return {
         ...application,
         id: applicant?.id,
-        dateOfBirth: dateOfBirth && formatDate(dateOfBirth),
-        applicationDate: createdAt?.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: 'numeric',
-          timeZone: 'America/Vancouver',
-        }),
+        dateOfBirth: dateOfBirth && formatDateYYYYMMDD(dateOfBirth),
+        applicationDate: createdAt ? formatDateYYYYMMDD(createdAt, true) : null,
         applicantName: formatFullName(firstName, middleName, lastName),
         processingFee: `$${processingFee}`,
         donationAmount: `$${donationAmount}`,
