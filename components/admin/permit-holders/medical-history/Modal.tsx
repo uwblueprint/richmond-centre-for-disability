@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react'; // Chakra UI
 import { ReactNode } from 'react'; // React
 import { MobilityAid } from '@lib/graphql/types'; // Application type & Aid enum
-import { formatDate } from '@lib/utils/date'; // Date formatter util
+import { formatDateYYYYMMDD } from '@lib/utils/date'; // Date formatter util
 import { MedicalHistoryRow } from '@tools/admin/permit-holders/medical-history';
 import { titlecase } from '@tools/string';
 
@@ -62,7 +62,7 @@ export default function MedicalHistoryModal(props: MedicalHistoryModalProps) {
             paddingX="4px"
           >
             <Text as="h2" textStyle="display-medium-bold">
-              {`${disability} (${formatDate(disabilityCertificationDate)})`}
+              {`${disability} (${formatDateYYYYMMDD(disabilityCertificationDate)})`}
             </Text>
           </ModalHeader>
           <ModalBody paddingTop="0px" paddingBottom="36px" paddingX="4px">

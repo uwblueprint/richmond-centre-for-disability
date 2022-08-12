@@ -2,7 +2,7 @@ import pdfPrinter from 'pdfmake';
 import { Application, Prisma } from '@prisma/client';
 import { Session } from 'next-auth';
 import { formatFullName, formatPostalCode } from '@lib/utils/format';
-import { formatDate } from '@lib/utils/date'; // Date formatter util
+import { formatDateYYYYMMDD } from '@lib/utils/date'; // Date formatter util
 import { PaymentType } from '@lib/graphql/types';
 
 /**
@@ -152,7 +152,7 @@ const pdfDefinition = (input: {
             [{ text: 'User No.:', alignment: 'right' }, userNumber || 'N/A'],
             [{ text: 'Permit Type:', alignment: 'right' }, permitType],
             [{ text: 'Receipt No.:', alignment: 'right' }, receiptNumber],
-            [{ text: 'Date Issued:', alignment: 'right' }, formatDate(dateIssued)],
+            [{ text: 'Date Issued:', alignment: 'right' }, formatDateYYYYMMDD(dateIssued)],
             [{ text: 'Issued By:', alignment: 'right' }, issuedBy],
           ],
         },
