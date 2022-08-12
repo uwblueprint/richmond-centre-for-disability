@@ -162,6 +162,7 @@ export const applicants: Resolver<
               lte: expiryDateRangeTo?.toISOString(),
             },
           },
+          { active: true },
         ],
       },
     };
