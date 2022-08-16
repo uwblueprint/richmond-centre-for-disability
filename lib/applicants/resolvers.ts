@@ -147,25 +147,27 @@ export const applicants: Resolver<
 
     // Permit status and expiry date range filters both look at the permit expiryDate.
     // For this reason we need to filter on expiryDate twice to take both filters in account.
-    const permitFilter = {
-      some: {
-        AND: [
-          {
-            expiryDate: {
-              gte: expiryDateLowerBound?.toISOString(),
-              lte: expiryDateUpperBound?.toISOString(),
+    const permitFilter =
+      expiryDateLowerBound || expiryDateUpperBound || expiryDateRangeFrom || expiryDateRangeTo
+        ? {
+            some: {
+              AND: [
+                {
+                  expiryDate: {
+                    gte: expiryDateLowerBound?.toISOString(),
+                    lte: expiryDateUpperBound?.toISOString(),
+                  },
+                },
+                {
+                  expiryDate: {
+                    gte: expiryDateRangeFrom?.toISOString(),
+                    lte: expiryDateRangeTo?.toISOString(),
+                  },
+                },
+              ],
             },
-          },
-          {
-            expiryDate: {
-              gte: expiryDateRangeFrom?.toISOString(),
-              lte: expiryDateRangeTo?.toISOString(),
-            },
-          },
-          { active: true },
-        ],
-      },
-    };
+          }
+        : undefined;
 
     // Update default filter since there were filter arguments
     where = {
