@@ -293,6 +293,8 @@ export const createNewApplication: Resolver<
   const physicianAssessment = {
     disability,
     disabilityCertificationDate,
+    mobilityAids,
+    otherMobilityAids,
     patientCondition,
     otherPatientCondition,
     permitType: input.permitType,
@@ -352,7 +354,6 @@ export const createNewApplication: Resolver<
     billingCountry: input.billingCountry,
     billingPostalCode,
   };
-
   try {
     await createNewRequestFormSchema.validate({
       permitHolder,
@@ -372,7 +373,7 @@ export const createNewApplication: Resolver<
     }
 
     // Unknown error
-    logger.error({ error: err }, 'Unknown error');
+    logger.error({ error: (err as any).message }, 'Unknown error');
     throw new ApolloError('Application was unable to be created');
   }
 
