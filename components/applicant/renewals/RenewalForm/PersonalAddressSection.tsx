@@ -71,7 +71,7 @@ const PersonalAddressSection: FC = () => {
             {/* Check whether applicant has updated address */}
             <RadioGroupField
               name="updatedAddress"
-              label="Has your address changed since you received your last parking pass?"
+              label="Has your address changed since you received your last parking permit?"
               required
               value={values.updatedAddress === null ? undefined : Number(values.updatedAddress)}
             >
