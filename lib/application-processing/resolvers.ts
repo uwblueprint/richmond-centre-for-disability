@@ -975,15 +975,13 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
     return { ok: false, error: 'Application does not exist' };
   }
 
-  const { applicationProcessingId } = application;
-
   // Create invoice record in DB
   let invoice;
   try {
     invoice = await prisma.applicationInvoice.create({
       data: {
         applicationProcessing: {
-          connect: { id: applicationProcessingId },
+          connect: { id: applicationId },
         },
         employee: {
           connect: { id: session.id },

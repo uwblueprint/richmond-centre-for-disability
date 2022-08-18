@@ -65,18 +65,7 @@ export const applicationProcessingResolver: FieldResolver<
 > = async (parent, _args, { prisma, logger }) => {
   const applicationProcessing = await prisma.application
     .findUnique({ where: { id: parent.id } })
-    .applicationProcessing({
-      include: {
-        appNumberEmployee: true,
-        appHolepunchedEmployee: true,
-        walletCardCreatedEmployee: true,
-        reviewRequestEmployee: true,
-        applicationInvoice: { include: { employee: true } },
-        documentsUrlEmployee: true,
-        appMailedEmployee: true,
-        paymentRefundedEmployee: true,
-      },
-    });
+    .applicationProcessing();
 
   if (!applicationProcessing) {
     return null;

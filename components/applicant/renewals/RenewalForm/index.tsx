@@ -205,7 +205,7 @@ const RenewalForm: FC = () => {
                 isChecked={certified}
                 onChange={event => setCertified(event.target.checked)}
               >
-                {`I certify that I am the holder of the accessible parking permit for which this
+                {`I certify that I am the holder of the accessible parking pass for which this
   application for renewal is submitted, and that I have personally provided all of the
   information required in this application.`}
               </Checkbox>

@@ -221,12 +221,7 @@ const PermitHolders: NextPage = () => {
         Header: 'Recent APP',
         accessor: 'mostRecentPermit',
         disableSortBy: true,
-        Cell: ({ value }) => {
-          if (!value) {
-            return 'N/A';
-          }
-
-          const { expiryDate, rcdPermitId } = value;
+        Cell: ({ value: { expiryDate, rcdPermitId } }) => {
           const permitStatus = getPermitExpiryStatus(new Date(expiryDate));
           return (
             <Flex>

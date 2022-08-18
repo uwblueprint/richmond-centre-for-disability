@@ -363,7 +363,7 @@ export const generateAccountantReport: Resolver<
     where: {
       createdAt: {
         gte: startDate,
-        lt: endDate,
+        lte: endDate,
       },
     },
     _sum: {
