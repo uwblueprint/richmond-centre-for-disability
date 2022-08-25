@@ -15,15 +15,12 @@ const schema = applyMiddleware(
 
 export const apolloServer = new ApolloServer({
   schema,
-  playground:
-    process.env.NODE_ENV === 'development'
-      ? {
-          settings: {
-            'schema.polling.enable': false, // Disable infinite schema introspection
-            'request.credentials': 'include', // Include auth token in requests
-          },
-        }
-      : false,
-  introspection: process.env.NODE_ENV === 'development',
+  playground: {
+    settings: {
+      'schema.polling.enable': false, // Disable infinite schema introspection
+      'request.credentials': 'include', // Include auth token in requests
+    },
+  },
+  introspection: process.env.NODE_ENV !== 'production',
   context,
 });
