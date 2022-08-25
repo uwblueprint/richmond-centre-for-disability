@@ -21,6 +21,5 @@ export const apolloServer = new ApolloServer({
       'request.credentials': 'include', // Include auth token in requests
     },
   },
-  introspection: process.env.NODE_ENV !== 'production',
   context,
 });
