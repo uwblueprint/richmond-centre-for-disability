@@ -1,11 +1,14 @@
 {
   "name": "with-typescript",
   "version": "1.0.0",
+  "engines": {
+    "node": "14.17.0"
+  },
   "scripts": {
     "dev": "next",
     "dev:pretty": "next | pino-pretty",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "type-check": "tsc",
     "generate-graphql-types": "node ./lib/scripts/generate-graphql-types.js",
     "reset-db": "sh lib/scripts/reset-db.sh",

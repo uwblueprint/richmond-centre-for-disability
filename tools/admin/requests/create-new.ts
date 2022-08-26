@@ -145,7 +145,7 @@ export const INITIAL_PERMIT_HOLDER_INFORMATION: NewApplicationPermitHolderInform
 // Initial data for physician assessment in application forms
 export const INITIAL_PHYSICIAN_ASSESSMENT: PhysicianAssessment = {
   disability: '',
-  patientCondition: null,
+  patientCondition: [],
   permitType: null,
   disabilityCertificationDate: '',
   otherPatientCondition: null,
