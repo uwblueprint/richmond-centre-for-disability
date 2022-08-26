@@ -1,6 +1,9 @@
 {
   "name": "with-typescript",
   "version": "1.0.0",
+  "engines": {
+    "node": "14.17.0"
+  },
   "scripts": {
     "dev": "next",
     "dev:pretty": "next | pino-pretty",
