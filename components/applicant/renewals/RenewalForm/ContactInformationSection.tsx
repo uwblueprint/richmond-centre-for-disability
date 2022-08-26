@@ -66,7 +66,7 @@ const ContactInformationSection: FC = () => {
             {/* Check whether applicant has updated contact info */}
             <RadioGroupField
               name="updatedContactInfo"
-              label="Have you changed your contact information since you received or renewed your last parking pass?"
+              label="Have you changed your contact information since you received or renewed your last parking permit?"
               required
               value={
                 values.updatedContactInfo === null ? undefined : Number(values.updatedContactInfo)
