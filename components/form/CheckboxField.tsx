@@ -13,13 +13,13 @@ const CheckboxField: FC<Props> = props => {
   const isChecked = field.value;
 
   return (
-    <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
+    <FormControl isInvalid={!!meta.error} isRequired={required}>
       <Checkbox {...field} isChecked={isChecked} {...checkboxProps}>
         {children}
       </Checkbox>
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">
-          {meta.touched && meta.error ? meta.error : null}
+          {meta.error || null}
         </Text>
       </FormErrorMessage>
     </FormControl>
