@@ -64,6 +64,7 @@ export default function EditReasonForReplacementModal({
           }}
           validationSchema={editReasonForReplacementFormSchema}
           onSubmit={handleSubmit}
+          validateOnMount
         >
           {({ values, isValid }) => (
             <Form noValidate>
