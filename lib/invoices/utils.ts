@@ -214,8 +214,9 @@ const pdfDefinition = (input: {
           `${address.city} ${address.province} ${formatPostalCode(address.postalCode)}`,
         ],
         alignment: 'left',
-        margin: [40, 170, 0, 0],
+        margin: [40, 182, 0, 0],
         fontSize: 12,
+        lineHeight: 1.5,
       },
     ],
     styles: {
