@@ -64,6 +64,7 @@ const PersonalAddressSection: FC = () => {
       }}
       validationSchema={applicantFacingRenewalPersonalAddressSchema}
       onSubmit={handleSubmit}
+      validateOnMount
     >
       {({ values, isValid }) => (
         <Form noValidate>
