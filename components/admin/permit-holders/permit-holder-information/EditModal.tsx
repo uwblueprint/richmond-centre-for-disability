@@ -76,6 +76,7 @@ export default function EditUserInformationModal({
           }}
           validationSchema={permitHolderInformationSchema}
           onSubmit={handleSubmit}
+          validateOnMount
         >
           {({ values, isValid }) => (
             <Form noValidate>

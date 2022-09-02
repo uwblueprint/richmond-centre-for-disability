@@ -63,6 +63,7 @@ export default function EditPhysicianAssessmentModal({
           }}
           validationSchema={editPhysicianAssessmentSchema}
           onSubmit={handleSubmit}
+          validateOnMount
         >
           {({ values, isValid }) => (
             <Form noValidate>

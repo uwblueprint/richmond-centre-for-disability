@@ -83,6 +83,7 @@ export default function Login() {
                   initialValues={{ email: '' }}
                   validationSchema={loginSchema}
                   onSubmit={handleSubmit}
+                  validateOnMount
                 >
                   <Form style={{ width: '100%' }}>
                     <TextField name="email" label="Email" height="51px" />

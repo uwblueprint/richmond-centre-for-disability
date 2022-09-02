@@ -224,6 +224,7 @@ export default function CreateReplacement() {
             }}
             validationSchema={replacementRequestFormSchema}
             onSubmit={handleSubmit}
+            validateOnMount
           >
             {({ values, isValid }) => (
               <Form noValidate>

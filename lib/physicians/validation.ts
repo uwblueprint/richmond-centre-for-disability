@@ -82,7 +82,7 @@ export const requestPhysicianInformationSchema = object({
   firstName: string().required('Please enter a first name'),
   lastName: string().required('Please enter a last name'),
   mspNumber: string()
-    .matches(/^\d+$/, 'Must only contain numbers')
+    .matches(/^X?\d+$/, 'Must only contain numbers')
     .required('Please enter the MSP number'),
   phone: string()
     .required('Please enter a phone number')
