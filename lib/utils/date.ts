@@ -19,7 +19,7 @@ export const formatDate = (date: Date, dateInput = false): string => {
  */
 export const formatDateYYYYMMDD = (d: Date, withTime = false): string => {
   const formatString = withTime ? 'YYYY-MM-DD, hh:mm a' : 'YYYY-MM-DD';
-  return moment.utc(d).format(formatString);
+  return moment(d).format(formatString);
 };
 
 /**
