@@ -19,6 +19,17 @@ export const formatDate = (date: Date, dateInput = false): string => {
  */
 export const formatDateYYYYMMDD = (d: Date, withTime = false): string => {
   const formatString = withTime ? 'YYYY-MM-DD, hh:mm a' : 'YYYY-MM-DD';
+  return moment.utc(d).format(formatString);
+};
+
+/**
+ * Format date to be in YYYY-MM-DD format and in local time zone
+ * @param {Date} date date to be formatted
+ * @param {boolean} withTime whether to include time in formatted date
+ * @returns {string} formatted date
+ */
+export const formatDateYYYYMMDDLocal = (d: Date, withTime = false): string => {
+  const formatString = withTime ? 'YYYY-MM-DD, hh:mm a' : 'YYYY-MM-DD';
   return moment(d).format(formatString);
 };
 
