@@ -44,6 +44,9 @@ jobs:
             - name: Install dependencies
               run: yarn
 
+            - name: Generate Prisma client
+              run: npx prisma generate
+
             - name: Linting Prettier
               run: yarn lint:prettier
 
