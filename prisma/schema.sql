@@ -58,7 +58,7 @@ CREATE TYPE ApplicationStatus as ENUM(
 );
 
 -- Create reason for replacement enum
-CREATE TYPE ReasonForReplacement as ENUM('LOST', 'STOLEN', 'OTHER');
+CREATE TYPE ReasonForReplacement as ENUM('LOST', 'STOLEN', 'MAIL_LOST', 'OTHER');
 
 -- Create permit type enum
 CREATE TYPE PermitType as ENUM('PERMANENT', 'TEMPORARY');

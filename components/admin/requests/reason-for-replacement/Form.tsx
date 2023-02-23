@@ -38,6 +38,7 @@ export default function ReasonForReplacementForm({
           <Stack>
             <Radio value={'LOST'}>{'Lost'}</Radio>
             <Radio value={'STOLEN'}>{'Stolen'}</Radio>
+            <Radio value={'MAIL_LOST'}>{'Mail Lost'}</Radio>
             <Radio value={'OTHER'}>{'Other'}</Radio>
           </Stack>
         </RadioGroupField>

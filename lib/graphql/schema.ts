@@ -190,6 +190,7 @@ export default gql`
   enum ReasonForReplacement {
     LOST
     STOLEN
+    MAIL_LOST
     OTHER
   }
 
