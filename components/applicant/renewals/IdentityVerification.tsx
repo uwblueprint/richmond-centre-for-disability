@@ -146,7 +146,7 @@ const IdentityVerification: FC = () => {
                         </PopoverContent>
                       </Popover>
                       <FormHelperText>
-                        {`You can find your user ID on the back of your wallet card. If you cannot find your
+                        {`You can find your user ID on the back of your wallet card as well as on the renewal notice. If you cannot find your
                         wallet card, please call RCD at 604-232-2404.`}
                       </FormHelperText>
                     </Flex>

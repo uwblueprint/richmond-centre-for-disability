@@ -336,6 +336,7 @@ export const createNewApplication: Resolver<
 
   const paymentInformation = {
     paymentMethod: input.paymentMethod,
+    processingFee: input.processingFee,
     donationAmount,
     shippingAddressSameAsHomeAddress: input.shippingAddressSameAsHomeAddress,
     shippingFullName: input.shippingFullName,
@@ -382,7 +383,6 @@ export const createNewApplication: Resolver<
     application = await prisma.application.create({
       data: {
         type: 'NEW',
-        processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
         // Connect to applicant if applicant exists in DB
         ...(applicantId && {
@@ -557,8 +557,11 @@ export const createRenewalApplication: Resolver<
     otherRequiresWiderParkingSpaceReason,
   };
 
+  const { processingFee } = input;
+
   const paymentInformation = {
     paymentMethod,
+    processingFee,
     donationAmount,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
@@ -606,7 +609,6 @@ export const createRenewalApplication: Resolver<
     createdRenewalApplication = await prisma.application.create({
       data: {
         type: 'RENEWAL',
-        processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
         phone: stripPhoneNumber(phone),
         ...data,
@@ -965,8 +967,12 @@ export const createReplacementApplication: Resolver<
     city,
     postalCode,
   };
+
+  const { processingFee } = input;
+
   const paymentInformation = {
     paymentMethod,
+    processingFee,
     donationAmount,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
@@ -1034,7 +1040,6 @@ export const createReplacementApplication: Resolver<
     application = await prisma.application.create({
       data: {
         type: 'REPLACEMENT',
-        processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
         phone: stripPhoneNumber(phone),
         postalCode: stripPostalCode(postalCode),

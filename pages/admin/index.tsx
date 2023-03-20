@@ -42,7 +42,7 @@ import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/typ
 import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatFullName } from '@lib/utils/format'; // String formatter util
-import { formatDateYYYYMMDD } from '@lib/utils/date'; // Date Formatter Util
+import { formatDateYYYYMMDDLocal } from '@lib/utils/date'; // Date Formatter Util
 import GenerateReportModal from '@components/admin/requests/reports/GenerateModal'; // Generate report modal
 import EmptyMessage from '@components/EmptyMessage';
 
@@ -82,7 +82,7 @@ const COLUMNS: Column<ApplicationRow>[] = [
     width: 240,
     sortDescFirst: true,
     Cell: ({ value }) => {
-      return <Text>{formatDateYYYYMMDD(value, true)}</Text>;
+      return <Text>{formatDateYYYYMMDDLocal(value, true)}</Text>;
     },
   },
   {
