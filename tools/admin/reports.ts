@@ -55,6 +55,11 @@ export const APPLICATIONS_COLUMNS: Array<{
     reportColumnId: 'donationAmount',
   },
   {
+    name: 'Refund Amount',
+    value: 'REFUND_AMOUNT',
+    reportColumnId: 'refundAmount',
+  },
+  {
     name: 'Total Amount',
     value: 'TOTAL_AMOUNT',
     reportColumnId: 'totalAmount',

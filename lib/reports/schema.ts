@@ -29,6 +29,7 @@ export default gql`
     PAYMENT_METHOD
     FEE_AMOUNT
     DONATION_AMOUNT
+    REFUND_AMOUNT
     TOTAL_AMOUNT
   }
 

@@ -357,6 +357,7 @@ export const generateAccountantReport: Resolver<
     _sum: {
       processingFee: true,
       donationAmount: true,
+      refundAmount: true,
     },
     _count: {
       paymentMethod: true,
@@ -373,6 +374,7 @@ export const generateAccountantReport: Resolver<
     _sum: {
       processingFee: true,
       donationAmount: true,
+      refundAmount: true,
     },
     _count: {
       paymentMethod: true,
@@ -399,7 +401,8 @@ export const generateAccountantReport: Resolver<
     donationAmount: `$${totalAggregate._sum.donationAmount || 0}`,
     totalAmount: `$${Prisma.Decimal.add(
       totalAggregate._sum.donationAmount || 0,
-      totalAggregate._sum.processingFee || 0
+      totalAggregate._sum.processingFee || 0,
+      -totalAggregate._sum.processingFee || 0
     )}`,
   });
 
@@ -408,6 +411,7 @@ export const generateAccountantReport: Resolver<
     { id: 'countIssued', title: 'Issued #' },
     { id: 'processingFee', title: 'Fees' },
     { id: 'donationAmount', title: 'Donation' },
+    { id: 'refundAmount', title: 'Refund' },
     { id: 'totalAmount', title: 'Total' },
   ];
 

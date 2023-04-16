@@ -177,6 +177,7 @@ export type ApplicationsReportColumn =
   | 'PAYMENT_METHOD'
   | 'FEE_AMOUNT'
   | 'DONATION_AMOUNT'
+  | 'REFUND_AMOUNT'
   | 'TOTAL_AMOUNT';
 
 export type ApplicationsResult = {
