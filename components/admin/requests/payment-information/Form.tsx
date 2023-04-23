@@ -1,19 +1,5 @@
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  Text,
-  Stack,
-  FormHelperText,
-  Radio,
-  Box,
-  InputGroup,
-  InputLeftElement,
-  Grid,
-  GridItem,
-  Divider,
-} from '@chakra-ui/react'; // Chakra UI
+import { Text, Stack, FormHelperText, Radio, Box, Grid, GridItem, Divider } from '@chakra-ui/react'; // Chakra UI
 import { PaymentType } from '@lib/graphql/types';
 import TextField from '@components/form/TextField';
 import RadioGroupField from '@components/form/RadioGroupField';
@@ -52,20 +38,7 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
           </GridItem>
 
           <GridItem>
-            <FormControl isRequired isDisabled>
-              <FormLabel>
-                {'Permit fee '}
-                <Box as="span" textStyle="body-regular">
-                  {'(fixed cost)'}
-                </Box>
-              </FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none" color="texticon.filler" fontSize="1.2em">
-                  {'$'}
-                </InputLeftElement>
-                <Input placeholder="26" />
-              </InputGroup>
-            </FormControl>
+            <TextField name="paymentInformation.processingFee" label="Permit fee" monetaryInput />
           </GridItem>
 
           <GridItem colSpan={1}>
