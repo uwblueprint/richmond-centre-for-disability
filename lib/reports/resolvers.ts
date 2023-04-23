@@ -236,7 +236,7 @@ export const generateApplicationsReport: Resolver<
     },
   });
 
-  // Formats the date fields and adds totalAmount, applicantName and rcdPermitId properties to allow for csv writing
+  // Formats the date fields and adds totalAmount, paymentRefunded, applicantName and rcdPermitId properties to allow for csv writing
   const csvApplications = applications.map(
     ({
       firstName,
@@ -346,8 +346,7 @@ export const generateAccountantReport: Resolver<
   // Calculate end date as beginning of the next day
   const endDate = moment.utc(inputEndDate).add(1, 'd').toDate();
 
-  const paymentMethodGroups = await prisma.application.groupBy({
-    by: ['paymentMethod'],
+  const paymentRequest = {
     where: {
       createdAt: {
         gte: startDate,
@@ -361,34 +360,47 @@ export const generateAccountantReport: Resolver<
     _count: {
       paymentMethod: true,
     },
-  });
+  };
 
-  const totalAggregate = await prisma.application.aggregate({
-    where: {
-      createdAt: {
-        gte: startDate,
-        lt: endDate,
-      },
-    },
-    _sum: {
-      processingFee: true,
-      donationAmount: true,
-    },
-    _count: {
-      paymentMethod: true,
-    },
-  });
+  const methodPaymentRequest = JSON.parse(JSON.stringify(paymentRequest));
+  methodPaymentRequest['by'] = ['paymentMethod'];
+  const methodRefundRequest = JSON.parse(JSON.stringify(methodPaymentRequest));
+  methodRefundRequest['where']['applicationProcessing'] = {
+    paymentRefunded: true,
+  };
+  const refundRequest = JSON.parse(JSON.stringify(paymentRequest));
+  refundRequest['where']['applicationProcessing'] = {
+    paymentRefunded: true,
+  };
+
+  const paymentMethodGroups = await prisma.application.groupBy(methodPaymentRequest);
+  const refundMethodGroups = await prisma.application.groupBy(methodRefundRequest);
+  const totalAggregate = await prisma.application.aggregate(paymentRequest);
+  const refundAggregate = await prisma.application.aggregate(refundRequest);
 
   const csvAccountantReportRows = [];
   for (const paymentMethodGroup of paymentMethodGroups) {
+    const refundMethodGroup = refundMethodGroups.find(group => {
+      return group.paymentMethod == paymentMethodGroup.paymentMethod;
+    }) || { _sum: { processingFee: 0, donationAmount: 0 } };
     csvAccountantReportRows.push({
       rowName: paymentTypeToString[paymentMethodGroup.paymentMethod],
       countIssued: paymentMethodGroup._count.paymentMethod,
       processingFee: `$${paymentMethodGroup._sum.processingFee || 0}`,
       donationAmount: `$${paymentMethodGroup._sum.donationAmount || 0}`,
+      refundAmount: `$${Prisma.Decimal.add(
+        refundMethodGroup._sum.donationAmount || 0,
+        refundMethodGroup._sum.processingFee || 0
+      )}`,
       totalAmount: `$${Prisma.Decimal.add(
-        paymentMethodGroup._sum.donationAmount || 0,
-        paymentMethodGroup._sum.processingFee || 0
+        Prisma.Decimal.add(
+          paymentMethodGroup._sum.donationAmount || 0,
+          paymentMethodGroup._sum.processingFee || 0
+        ),
+        -Prisma.Decimal.add(
+          refundMethodGroup._sum.donationAmount || 0,
+          refundMethodGroup._sum.processingFee || 0
+        )
       )}`,
     });
   }
@@ -397,9 +409,19 @@ export const generateAccountantReport: Resolver<
     countIssued: totalAggregate._count.paymentMethod || 0,
     processingFee: `$${totalAggregate._sum.processingFee || 0}`,
     donationAmount: `$${totalAggregate._sum.donationAmount || 0}`,
+    refundAmount: `$${Prisma.Decimal.add(
+      refundAggregate._sum.donationAmount || 0,
+      refundAggregate._sum.processingFee || 0
+    )}`,
     totalAmount: `$${Prisma.Decimal.add(
-      totalAggregate._sum.donationAmount || 0,
-      totalAggregate._sum.processingFee || 0
+      Prisma.Decimal.add(
+        totalAggregate._sum.donationAmount || 0,
+        totalAggregate._sum.processingFee || 0
+      ),
+      -Prisma.Decimal.add(
+        refundAggregate._sum.donationAmount || 0,
+        refundAggregate._sum.processingFee || 0
+      )
     )}`,
   });
 
@@ -408,6 +430,7 @@ export const generateAccountantReport: Resolver<
     { id: 'countIssued', title: 'Issued #' },
     { id: 'processingFee', title: 'Fees' },
     { id: 'donationAmount', title: 'Donation' },
+    { id: 'refundAmount', title: 'Refund' },
     { id: 'totalAmount', title: 'Total' },
   ];
 
