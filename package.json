@@ -13,12 +13,12 @@
     "generate-graphql-types": "node ./lib/scripts/generate-graphql-types.js",
     "reset-db": "sh lib/scripts/reset-db.sh",
     "lint": "yarn lint:prettier && yarn lint:eslint && yarn lint:tsc",
-    "lint:prettier": "prettier --check '**/*.{js,jsx,ts,tsx}'",
-    "lint:eslint": "eslint '**/*.{js,jsx,ts,tsx}' --cache --format stylish",
+    "lint:prettier": "prettier --check \"**/*.{js,jsx,ts,tsx}\"",
+    "lint:eslint": "eslint \"**/*.{js,jsx,ts,tsx}\" --cache --format stylish",
     "lint:tsc": "tsc --noemit",
     "fix": "yarn fix:eslint && yarn fix:prettier",
-    "fix:prettier": "prettier --write '**/*.{js,jsx,ts,tsx}'",
-    "fix:eslint": "eslint '**/*.{js,jsx,ts,tsx}' --format stylish --fix",
+    "fix:prettier": "prettier --write \"**/*.{js,jsx,ts,tsx}\"",
+    "fix:eslint": "eslint \"**/*.{js,jsx,ts,tsx}\" --format stylish --fix",
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\""
   },
   "dependencies": {
