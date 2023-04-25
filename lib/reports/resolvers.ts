@@ -346,7 +346,8 @@ export const generateAccountantReport: Resolver<
   // Calculate end date as beginning of the next day
   const endDate = moment.utc(inputEndDate).add(1, 'd').toDate();
 
-  const paymentRequest = {
+  const paymentMethodGroups = await prisma.application.groupBy({
+    by: ['paymentMethod'],
     where: {
       createdAt: {
         gte: startDate,
@@ -360,23 +361,61 @@ export const generateAccountantReport: Resolver<
     _count: {
       paymentMethod: true,
     },
-  };
+  });
+  const refundMethodGroups = await prisma.application.groupBy({
+    by: ['paymentMethod'],
+    where: {
+      createdAt: {
+        gte: startDate,
+        lt: endDate,
+      },
+      applicationProcessing: {
+        paymentRefunded: true,
+      },
+    },
+    _sum: {
+      processingFee: true,
+      donationAmount: true,
+    },
+    _count: {
+      paymentMethod: true,
+    },
+  });
 
-  const methodPaymentRequest = JSON.parse(JSON.stringify(paymentRequest));
-  methodPaymentRequest['by'] = ['paymentMethod'];
-  const methodRefundRequest = JSON.parse(JSON.stringify(methodPaymentRequest));
-  methodRefundRequest['where']['applicationProcessing'] = {
-    paymentRefunded: true,
-  };
-  const refundRequest = JSON.parse(JSON.stringify(paymentRequest));
-  refundRequest['where']['applicationProcessing'] = {
-    paymentRefunded: true,
-  };
+  const totalAggregate = await prisma.application.aggregate({
+    where: {
+      createdAt: {
+        gte: startDate,
+        lt: endDate,
+      },
+    },
+    _sum: {
+      processingFee: true,
+      donationAmount: true,
+    },
+    _count: {
+      paymentMethod: true,
+    },
+  });
 
-  const paymentMethodGroups = await prisma.application.groupBy(methodPaymentRequest);
-  const refundMethodGroups = await prisma.application.groupBy(methodRefundRequest);
-  const totalAggregate = await prisma.application.aggregate(paymentRequest);
-  const refundAggregate = await prisma.application.aggregate(refundRequest);
+  const refundAggregate = await prisma.application.aggregate({
+    where: {
+      createdAt: {
+        gte: startDate,
+        lt: endDate,
+      },
+      applicationProcessing: {
+        paymentRefunded: true,
+      },
+    },
+    _sum: {
+      processingFee: true,
+      donationAmount: true,
+    },
+    _count: {
+      paymentMethod: true,
+    },
+  });
 
   const csvAccountantReportRows = [];
   for (const paymentMethodGroup of paymentMethodGroups) {
@@ -385,7 +424,7 @@ export const generateAccountantReport: Resolver<
     }) || { _sum: { processingFee: 0, donationAmount: 0 } };
     csvAccountantReportRows.push({
       rowName: paymentTypeToString[paymentMethodGroup.paymentMethod],
-      countIssued: paymentMethodGroup._count.paymentMethod,
+      countIssued: paymentMethodGroup._count.paymentMethod || 0,
       processingFee: `$${paymentMethodGroup._sum.processingFee || 0}`,
       donationAmount: `$${paymentMethodGroup._sum.donationAmount || 0}`,
       refundAmount: `$${Prisma.Decimal.add(
