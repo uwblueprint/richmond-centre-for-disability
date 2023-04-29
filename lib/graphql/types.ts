@@ -321,7 +321,6 @@ export type CreateNewApplicationInput = {
   requiresWiderParkingSpaceReason: Maybe<RequiresWiderParkingSpaceReason>;
   otherRequiresWiderParkingSpaceReason: Maybe<Scalars['String']>;
   paymentMethod: PaymentType;
-  processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
@@ -374,7 +373,6 @@ export type CreateRenewalApplicationInput = {
   requiresWiderParkingSpaceReason: Maybe<RequiresWiderParkingSpaceReason>;
   otherRequiresWiderParkingSpaceReason: Maybe<Scalars['String']>;
   paymentMethod: PaymentType;
-  processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
@@ -420,7 +418,6 @@ export type CreateReplacementApplicationInput = {
   stolenPoliceOfficerName: Maybe<Scalars['String']>;
   eventDescription: Maybe<Scalars['String']>;
   paymentMethod: PaymentType;
-  processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
@@ -1320,7 +1317,6 @@ export type UpdateApplicationGuardianInformationResult = {
 export type UpdateApplicationPaymentInformationInput = {
   id: Scalars['Int'];
   paymentMethod: PaymentType;
-  processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;

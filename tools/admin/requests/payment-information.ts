@@ -12,7 +12,6 @@ import {
 export type PaymentInformationFormData = Pick<
   Application,
   | 'donationAmount'
-  | 'processingFee'
   | 'shippingAddressSameAsHomeAddress'
   | 'shippingFullName'
   | 'shippingAddressLine1'

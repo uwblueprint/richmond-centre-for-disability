@@ -23,17 +23,6 @@ export const formatDateYYYYMMDD = (d: Date, withTime = false): string => {
 };
 
 /**
- * Format date to be in YYYY-MM-DD format and in local time zone
- * @param {Date} date date to be formatted
- * @param {boolean} withTime whether to include time in formatted date
- * @returns {string} formatted date
- */
-export const formatDateYYYYMMDDLocal = (d: Date, withTime = false): string => {
-  const formatString = withTime ? 'YYYY-MM-DD, hh:mm a' : 'YYYY-MM-DD';
-  return moment(d).format(formatString);
-};
-
-/**
  * Format date to be in written in the following format: Sep 11 2021, 03:07 pm not converting to the local timezone
  * @param {Date} date date to be formatted
  * @param {boolean} omitTime whether to omit time from date (eg. Sep 11 2021)

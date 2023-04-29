@@ -59,26 +59,6 @@ const employees = [
     lastName: 'Tsai',
     email: 'carelynntsai+employee@uwblueprint.org',
   },
-  {
-    firstName: 'Leo',
-    lastName: 'Huang',
-    email: 'leohuang+employee@uwblueprint.org',
-  },
-  {
-    firstName: 'Sherry',
-    lastName: 'Li',
-    email: 'sherryli+employee@uwblueprint.org',
-  },
-  {
-    firstName: 'Chinemerem',
-    lastName: 'Chigbo',
-    email: 'chinemeremchigbo+employee@uwblueprint.org',
-  },
-  {
-    firstName: 'Adil',
-    lastName: 'Kapadia',
-    email: 'adilkapadia+employee@uwblueprint.org',
-  },
 ];
 
 /**

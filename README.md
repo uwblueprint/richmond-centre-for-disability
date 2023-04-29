@@ -52,40 +52,6 @@ applicant-facing application portal and an internal user/APP management portal.
 
 ## Run locally
 
-1. Start database
-
-```bash
-docker-compose up --build
-```
-
-2. Run the application
-
-```bash
-yarn install
-npx prisma generate
-yarn dev
-```
-
-3. Deploy prisma schema
-
-```bash
-npx prisma db push
-```
-
-4. Seed database
-
-```bash
-npx prisma db seed --preview-feature
-```
-
-5. Verify database
-
-```bash
-docker exec -it rcd_db /bin/bash -c "psql -U postgres -d rcd"
-```
-
-## Run locally (Heroku)
-
 Duplicate `.env.sample` to `.env` and configure environment variables.
 
 To deploy your database schema, run:

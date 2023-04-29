@@ -9,7 +9,6 @@ import {
   MenuItem,
   MenuList,
   Text,
-  Spacer,
   useDisclosure,
   VStack,
   Wrap,
@@ -72,42 +71,30 @@ export default function PermitHolderHeader({
                 </Wrap>
               </HStack>
               <HStack spacing="20px">
-                <Box>
-                  <Text textStyle="caption" as="p">
-                    ID: #{id}
-                  </Text>
-                </Box>
-                <Box>
-                  <Menu>
-                    <MenuButton
-                      as={Button}
-                      rightIcon={<ChevronDownIcon />}
-                      height="30px"
-                      bg="background.gray"
-                      _hover={{ bg: 'background.grayHover' }}
-                      color="black"
+                <Text textStyle="caption" as="p">
+                  ID: #{id}
+                </Text>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    rightIcon={<ChevronDownIcon />}
+                    height="30px"
+                    bg="background.gray"
+                    _hover={{ bg: 'background.grayHover' }}
+                    color="black"
+                  >
+                    <Text textStyle="caption">More Actions</Text>
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem
+                      color={status === 'ACTIVE' ? 'text.critical' : 'text.success'}
+                      textStyle="button-regular"
+                      onClick={onOpenSetPermitHolderStatusModal}
                     >
-                      <Text textStyle="caption">More Actions</Text>
-                    </MenuButton>
-                    <MenuList>
-                      <MenuItem
-                        color={status === 'ACTIVE' ? 'text.critical' : 'text.success'}
-                        textStyle="button-regular"
-                        onClick={onOpenSetPermitHolderStatusModal}
-                      >
-                        {`Set as ${status === 'ACTIVE' ? 'Inactive' : 'Active'}`}
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
-                </Box>
-                <Box>
-                  {notes && (
-                    <Text noOfLines={1}>
-                      <b>Note:</b> {notes}
-                    </Text>
-                  )}
-                </Box>
-                <Spacer />
+                      {`Set as ${status === 'ACTIVE' ? 'Inactive' : 'Active'}`}
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
               </HStack>
             </VStack>
           </Box>

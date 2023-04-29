@@ -11,11 +11,7 @@ import {
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
 import { formatFullName, formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
-import {
-  formatDateTimeYYYYMMDDHHMMSS,
-  formatDateYYYYMMDD,
-  formatDateYYYYMMDDLocal,
-} from '@lib/utils/date'; // Formatting utils
+import { formatDateTimeYYYYMMDDHHMMSS, formatDateYYYYMMDD } from '@lib/utils/date'; // Formatting utils
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
 import { Prisma } from '@prisma/client';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
@@ -85,7 +81,7 @@ export const generatePermitHoldersReport: Resolver<
       // Fetches rcdPermitId from latest permit
       permits: {
         orderBy: {
-          expiryDate: SortOrder.DESC,
+          createdAt: SortOrder.DESC,
         },
         take: 1,
         select: {
@@ -236,7 +232,7 @@ export const generateApplicationsReport: Resolver<
     },
   });
 
-  // Formats the date fields and adds totalAmount, paymentRefunded, applicantName and rcdPermitId properties to allow for csv writing
+  // Formats the date fields and adds totalAmount, applicantName and rcdPermitId properties to allow for csv writing
   const csvApplications = applications.map(
     ({
       firstName,
@@ -268,7 +264,7 @@ export const generateApplicationsReport: Resolver<
         ...application,
         id: applicant?.id,
         dateOfBirth: dateOfBirth && formatDateYYYYMMDD(dateOfBirth),
-        applicationDate: createdAt ? formatDateYYYYMMDDLocal(createdAt, true) : null,
+        applicationDate: createdAt ? formatDateYYYYMMDD(createdAt, true) : null,
         applicantName: formatFullName(firstName, middleName, lastName),
         processingFee: `$${processingFee}`,
         donationAmount: `$${donationAmount}`,
@@ -362,25 +358,6 @@ export const generateAccountantReport: Resolver<
       paymentMethod: true,
     },
   });
-  const refundMethodGroups = await prisma.application.groupBy({
-    by: ['paymentMethod'],
-    where: {
-      createdAt: {
-        gte: startDate,
-        lt: endDate,
-      },
-      applicationProcessing: {
-        paymentRefunded: true,
-      },
-    },
-    _sum: {
-      processingFee: true,
-      donationAmount: true,
-    },
-    _count: {
-      paymentMethod: true,
-    },
-  });
 
   const totalAggregate = await prisma.application.aggregate({
     where: {
@@ -398,48 +375,16 @@ export const generateAccountantReport: Resolver<
     },
   });
 
-  const refundAggregate = await prisma.application.aggregate({
-    where: {
-      createdAt: {
-        gte: startDate,
-        lt: endDate,
-      },
-      applicationProcessing: {
-        paymentRefunded: true,
-      },
-    },
-    _sum: {
-      processingFee: true,
-      donationAmount: true,
-    },
-    _count: {
-      paymentMethod: true,
-    },
-  });
-
   const csvAccountantReportRows = [];
   for (const paymentMethodGroup of paymentMethodGroups) {
-    const refundMethodGroup = refundMethodGroups.find(group => {
-      return group.paymentMethod == paymentMethodGroup.paymentMethod;
-    }) || { _sum: { processingFee: 0, donationAmount: 0 } };
     csvAccountantReportRows.push({
       rowName: paymentTypeToString[paymentMethodGroup.paymentMethod],
-      countIssued: paymentMethodGroup._count.paymentMethod || 0,
+      countIssued: paymentMethodGroup._count.paymentMethod,
       processingFee: `$${paymentMethodGroup._sum.processingFee || 0}`,
       donationAmount: `$${paymentMethodGroup._sum.donationAmount || 0}`,
-      refundAmount: `$${Prisma.Decimal.add(
-        refundMethodGroup._sum.donationAmount || 0,
-        refundMethodGroup._sum.processingFee || 0
-      )}`,
       totalAmount: `$${Prisma.Decimal.add(
-        Prisma.Decimal.add(
-          paymentMethodGroup._sum.donationAmount || 0,
-          paymentMethodGroup._sum.processingFee || 0
-        ),
-        -Prisma.Decimal.add(
-          refundMethodGroup._sum.donationAmount || 0,
-          refundMethodGroup._sum.processingFee || 0
-        )
+        paymentMethodGroup._sum.donationAmount || 0,
+        paymentMethodGroup._sum.processingFee || 0
       )}`,
     });
   }
@@ -448,19 +393,9 @@ export const generateAccountantReport: Resolver<
     countIssued: totalAggregate._count.paymentMethod || 0,
     processingFee: `$${totalAggregate._sum.processingFee || 0}`,
     donationAmount: `$${totalAggregate._sum.donationAmount || 0}`,
-    refundAmount: `$${Prisma.Decimal.add(
-      refundAggregate._sum.donationAmount || 0,
-      refundAggregate._sum.processingFee || 0
-    )}`,
     totalAmount: `$${Prisma.Decimal.add(
-      Prisma.Decimal.add(
-        totalAggregate._sum.donationAmount || 0,
-        totalAggregate._sum.processingFee || 0
-      ),
-      -Prisma.Decimal.add(
-        refundAggregate._sum.donationAmount || 0,
-        refundAggregate._sum.processingFee || 0
-      )
+      totalAggregate._sum.donationAmount || 0,
+      totalAggregate._sum.processingFee || 0
     )}`,
   });
 
@@ -469,7 +404,6 @@ export const generateAccountantReport: Resolver<
     { id: 'countIssued', title: 'Issued #' },
     { id: 'processingFee', title: 'Fees' },
     { id: 'donationAmount', title: 'Donation' },
-    { id: 'refundAmount', title: 'Refund' },
     { id: 'totalAmount', title: 'Total' },
   ];
 

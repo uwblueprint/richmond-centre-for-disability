@@ -13,7 +13,7 @@ import {
   AccessibleConvertedVanLoadingMethod,
   RequiresWiderParkingSpaceReason,
 } from '@lib/graphql/types';
-import { monetaryValueRegex, phoneNumberRegex, postalCodeRegex } from '@lib/utils/validation';
+import { phoneNumberRegex, postalCodeRegex } from '@lib/utils/validation';
 
 /**
  * Additional Questions form validation schema
@@ -75,12 +75,9 @@ export const paymentInformationSchema = object({
     .oneOf(Object.values(PaymentType))
     .required('Please select a payment method'),
   donationAmount: string()
-    .matches(monetaryValueRegex, 'Please enter a valid amount')
+    .matches(/^([0-9]+\.?[0-9]{0,2}|\.[0-9]{1,2}|)$/, 'Please enter a valid amount')
     .nullable()
     .default(null),
-  processingFee: string()
-    .matches(monetaryValueRegex, 'Please enter a valid amount')
-    .required('Please enter a permit fee'),
   shippingAddressSameAsHomeAddress: bool().default(false),
   shippingFullName: string()
     .nullable()
