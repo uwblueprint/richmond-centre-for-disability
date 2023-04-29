@@ -85,7 +85,7 @@ export const generatePermitHoldersReport: Resolver<
       // Fetches rcdPermitId from latest permit
       permits: {
         orderBy: {
-          createdAt: SortOrder.DESC,
+          expiryDate: SortOrder.DESC,
         },
         take: 1,
         select: {
