@@ -3,7 +3,7 @@ import { Box, Text, SimpleGrid, Button } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import EditReasonForReplacementModal from '@components/admin/requests/reason-for-replacement/EditModal'; // Edit modal
 import { reasonForReplacementFormSchema } from '@lib/applications/validation';
-import { formatDateYYYYMMDD } from '@lib/utils/date';
+import { formatDateYYYYMMDDLocal } from '@lib/utils/date';
 import {
   GetReasonForReplacementRequest,
   GetReasonForReplacementResponse,
@@ -97,7 +97,7 @@ export default function ReasonForReplacementCard(props: ReplacementProps) {
         <InfoSection title={`Cause`}>{titlecase(reason)}</InfoSection>
         {lostTimestamp && (
           <InfoSection title={`Event Timestamp`}>
-            {formatDateYYYYMMDD(new Date(lostTimestamp), true)}
+            {formatDateYYYYMMDDLocal(new Date(lostTimestamp), true)}
           </InfoSection>
         )}
         {lostLocation && <InfoSection title={`Location Lost`}>{lostLocation}</InfoSection>}

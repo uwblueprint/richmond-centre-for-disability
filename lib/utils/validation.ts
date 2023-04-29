@@ -7,3 +7,8 @@ export const postalCodeRegex = /(^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-
  * Regex to match phone numbers in the form '123-456-7890' and '1234567890'
  */
 export const phoneNumberRegex = /(^(\d{3}-?\d{3}-?\d{4}$))/;
+
+/**
+ * Regex to match monetary values
+ */
+export const monetaryValueRegex = /^([0-9]+\.?[0-9]{0,2}|\.[0-9]{1,2}|)$/;

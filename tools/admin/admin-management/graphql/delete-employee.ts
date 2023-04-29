@@ -1,15 +1,13 @@
 import { Employee } from '@prisma/client';
 import { gql } from '@apollo/client'; // gql tag
-import { MutationDeleteEmployeeArgs } from '@lib/graphql/types'; // GraphQL types
-
-// TODO: FIX INPUT FORMAT OF DELETE EMPLOYEE
+import { DeleteEmployeeInput } from '@lib/graphql/types'; // GraphQL types
 
 /**
  * GQL query to delete employee
  */
 export const DELETE_EMPLOYEE_MUTATION = gql`
-  mutation DeleteEmployeeMutation($id: Int!) {
-    deleteEmployee(id: $id) {
+  mutation DeleteEmployeeMutation($input: DeleteEmployeeInput!) {
+    deleteEmployee(input: $input) {
       ok
       employee {
         firstName
@@ -22,7 +20,9 @@ export const DELETE_EMPLOYEE_MUTATION = gql`
 /**
  * Input parameters for delete employee
  */
-export type DeleteEmployeeRequest = MutationDeleteEmployeeArgs;
+export type DeleteEmployeeRequest = {
+  input: DeleteEmployeeInput;
+};
 
 /**
  * Response type of delete employee

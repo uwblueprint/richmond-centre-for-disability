@@ -386,8 +386,9 @@ export default gql`
     requiresWiderParkingSpaceReason: RequiresWiderParkingSpaceReason
     otherRequiresWiderParkingSpaceReason: String
 
-    # Payment information (omit processing fee)
+    # Payment information
     paymentMethod: PaymentType!
+    processingFee: String! # Input monetary value as string
     donationAmount: String # Input monetary value as string
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -454,6 +455,7 @@ export default gql`
 
     # Payment information
     paymentMethod: PaymentType!
+    processingFee: String # Input monetary value as string
     donationAmount: String # Input monetary value as string
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -555,9 +557,9 @@ export default gql`
     stolenPoliceOfficerName: String
     eventDescription: String
 
-    # Payment information (omit processing fee)
     paymentMethod: PaymentType!
     # Input monetary value as string
+    processingFee: String!
     donationAmount: String
 
     # Shipping information
@@ -722,8 +724,9 @@ export default gql`
     # Application ID
     id: Int!
 
-    # Payment information (omit processing fee)
+    # Payment information
     paymentMethod: PaymentType!
+    processingFee: String!
     donationAmount: String
 
     # Shipping information
