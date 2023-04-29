@@ -11,11 +11,7 @@ import {
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
 import { formatFullName, formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
-import {
-  formatDateTimeYYYYMMDDHHMMSS,
-  formatDateYYYYMMDD,
-  formatDateYYYYMMDDLocal,
-} from '@lib/utils/date'; // Formatting utils
+import { formatDateTimeYYYYMMDDHHMMSS, formatDateYYYYMMDD } from '@lib/utils/date'; // Formatting utils
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
 import { Prisma } from '@prisma/client';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
@@ -268,7 +264,7 @@ export const generateApplicationsReport: Resolver<
         ...application,
         id: applicant?.id,
         dateOfBirth: dateOfBirth && formatDateYYYYMMDD(dateOfBirth),
-        applicationDate: createdAt ? formatDateYYYYMMDDLocal(createdAt, true) : null,
+        applicationDate: createdAt ? formatDateYYYYMMDD(createdAt, true) : null,
         applicantName: formatFullName(firstName, middleName, lastName),
         processingFee: `$${processingFee}`,
         donationAmount: `$${donationAmount}`,

@@ -6,7 +6,7 @@ import ShopifyBadge from '@components/admin/ShopifyBadge';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
 import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/types';
 import { titlecase } from '@tools/string';
-import { formatDateYYYYMMDD, formatDateYYYYMMDDLocal } from '@lib/utils/date';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 
 type RequestHeaderProps = {
@@ -85,7 +85,7 @@ export default function RequestHeader({
             </Flex>
             <HStack spacing={3} marginTop={3}>
               <Text textStyle="caption" as="p">
-                Received on {formatDateYYYYMMDDLocal(createdAt)} at{' '}
+                Received on {formatDateYYYYMMDD(createdAt)} at{' '}
                 {createdAt.toLocaleTimeString('en-CA')}
               </Text>
             </HStack>
