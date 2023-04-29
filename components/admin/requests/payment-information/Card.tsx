@@ -100,6 +100,7 @@ const Card: FC<Props> = props => {
             paymentInformation={{
               paymentMethod,
               donationAmount,
+              processingFee,
               shippingAddressSameAsHomeAddress,
               shippingFullName,
               shippingAddressLine1,
@@ -135,7 +136,7 @@ const Card: FC<Props> = props => {
         <SimpleGrid columns={2} spacingX="70px" spacingY="12px">
           <Box>
             <Text as="p" textStyle="body-regular" textAlign="left">
-              Permit Fee (fixed)
+              Permit Fee
             </Text>
           </Box>
           <Box>
