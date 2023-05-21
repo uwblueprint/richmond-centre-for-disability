@@ -21,7 +21,11 @@ import {
   RejectApplicationRequest,
   RejectApplicationResponse,
 } from '@tools/admin/requests/reject-request-modal';
-
+import {
+  RefundPaymentResponse,
+  RefundPaymentRequest,
+  REFUND_PAYMENT_MUTATION,
+} from '@tools/admin/requests/processing-tasks-card';
 type RejectRequestModalProps = {
   readonly applicationId: number;
   readonly children: ReactNode;
@@ -45,6 +49,16 @@ export default function RejectRequestModal({ applicationId, children }: RejectRe
   const handleRejectApplication = () => {
     rejectApplication({
       variables: { input: { id: applicationId, reason } },
+    });
+  };
+
+  const [refundPayment] = useMutation<RefundPaymentResponse, RefundPaymentRequest>(
+    REFUND_PAYMENT_MUTATION,
+    { refetchQueries: ['GetApplication'] }
+  );
+  const handleRefundPayment = () => {
+    refundPayment({
+      variables: { input: { applicationId } },
     });
   };
 
@@ -86,6 +100,7 @@ export default function RejectRequestModal({ applicationId, children }: RejectRe
             <Button
               onClick={() => {
                 handleRejectApplication();
+                handleRefundPayment();
                 onClose();
               }}
               bg="secondary.critical"
