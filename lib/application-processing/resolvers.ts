@@ -321,7 +321,7 @@ export const completeApplication: Resolver<
                 },
               },
             },
-            // If guardian information given, upsert. Otherwise, delete (SET NULL)
+            // If guardian information given, upsert.
             ...(guardian
               ? {
                   guardian: {
@@ -331,7 +331,7 @@ export const completeApplication: Resolver<
                     },
                   },
                 }
-              : { guardian: { delete: true } }),
+              : {}),
           },
         });
 
