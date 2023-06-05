@@ -328,9 +328,7 @@ const TRAVELLING_FAQs: ReadonlyArray<{ question: string; answer: ReactNode | str
           604-232-2404 and we are more than happy to help.
         </p>
         <p>
-          <NewTabLink href="https://www.rcdrichmond.org/NewsAndEvents/MovingNotice/NewLocationMap.pdf">
-            Click here
-          </NewTabLink>{' '}
+          <NewTabLink href="https://rcdrichmond.org/ContactUs/ContactUs.php">Click here</NewTabLink>{' '}
           for details on our location, directions on best ways to find us and our hours of
           operation.
         </p>
