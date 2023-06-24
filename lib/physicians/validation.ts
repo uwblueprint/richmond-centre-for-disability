@@ -81,9 +81,7 @@ export const physicianAssessmentMutationSchema = physicianAssessmentSchema.shape
 export const requestPhysicianInformationSchema = object({
   firstName: string().required('Please enter a first name'),
   lastName: string().required('Please enter a last name'),
-  mspNumber: string()
-    .matches(/^\d+$/, 'Must only contain numbers')
-    .required('Please enter the MSP number'),
+  mspNumber: string().required('Please enter the MSP number'),
   phone: string()
     .required('Please enter a phone number')
     .matches(phoneNumberRegex, 'Please enter a valid phone number in the format 000-000-0000'),
