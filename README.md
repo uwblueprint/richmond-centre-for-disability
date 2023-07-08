@@ -81,7 +81,7 @@ npx prisma db seed --preview-feature
 5. Verify database
 
 ```bash
-docker exec -it rcd_db //bin//bash -c "psql -U postgres -d rcd"
+docker exec -it rcd_db bash -c "psql -U postgres -d rcd"
 ```
 
 ## Run locally (Heroku)
