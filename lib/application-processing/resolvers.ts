@@ -331,7 +331,11 @@ export const completeApplication: Resolver<
                     },
                   },
                 }
-              : {}),
+              : {
+                  guardian: {
+                    disconnect: true,
+                  },
+                }),
           },
         });
 
