@@ -215,7 +215,7 @@ const pdfDefinition = (input: {
         ],
         absolutePosition: { x: 80, y: 740 },
         fontSize: 12,
-        lineHeight: 1.5,
+        lineHeight: 1.4,
       },
     ],
     styles: {
