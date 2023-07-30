@@ -375,7 +375,7 @@ export type CreateRenewalApplicationInput = {
   requiresWiderParkingSpaceReason: Maybe<RequiresWiderParkingSpaceReason>;
   otherRequiresWiderParkingSpaceReason: Maybe<Scalars['String']>;
   paymentMethod: PaymentType;
-  processingFee: Maybe<Scalars['String']>;
+  processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
