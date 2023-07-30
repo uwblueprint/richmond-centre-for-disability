@@ -79,6 +79,7 @@ export const applicants: Resolver<
       expiryDateRangeTo = undefined,
       search = undefined,
       dateOfBirth = undefined,
+      permitId = undefined,
     } = filter;
 
     let expiryDateUpperBound,
@@ -148,7 +149,11 @@ export const applicants: Resolver<
     // Permit status and expiry date range filters both look at the permit expiryDate.
     // For this reason we need to filter on expiryDate twice to take both filters in account.
     const permitFilter =
-      expiryDateLowerBound || expiryDateUpperBound || expiryDateRangeFrom || expiryDateRangeTo
+      expiryDateLowerBound ||
+      expiryDateUpperBound ||
+      expiryDateRangeFrom ||
+      expiryDateRangeTo ||
+      permitId
         ? {
             some: {
               AND: [
@@ -162,6 +167,11 @@ export const applicants: Resolver<
                   expiryDate: {
                     gte: expiryDateRangeFrom?.toISOString(),
                     lte: expiryDateRangeTo?.toISOString(),
+                  },
+                },
+                {
+                  rcdPermitId: {
+                    equals: permitId ?? undefined,
                   },
                 },
               ],

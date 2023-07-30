@@ -63,6 +63,7 @@ export type ApplicantsFilter = {
   expiryDateRangeTo: Maybe<Scalars['Date']>;
   search: Maybe<Scalars['String']>;
   dateOfBirth: Maybe<Scalars['Date']>;
+  permitId: Maybe<Scalars['Int']>;
   limit: Maybe<Scalars['Int']>;
   offset: Maybe<Scalars['Int']>;
 };
@@ -374,7 +375,7 @@ export type CreateRenewalApplicationInput = {
   requiresWiderParkingSpaceReason: Maybe<RequiresWiderParkingSpaceReason>;
   otherRequiresWiderParkingSpaceReason: Maybe<Scalars['String']>;
   paymentMethod: PaymentType;
-  processingFee: Scalars['String'];
+  processingFee: Maybe<Scalars['String']>;
   donationAmount: Maybe<Scalars['String']>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
