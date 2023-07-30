@@ -139,8 +139,8 @@ const OVERVIEW_FAQs: ReadonlyArray<{ question: string; answer: ReactNode | strin
           RCD will send you a Renewal Form approximately one (1) month before your permit is set to
           expire. This is applicable to all permanent permit holders. Once you receive your renewal
           notice you can renew your permit online, over the phone or by mailing in your completed
-          renewal form. There is a processing fee to renew your permit (fee is $26 as at April
-          2022). As well, we ask that you also return your expired permit.
+          renewal form. There is a processing fee to renew your permit (fee is $31 as at August
+          2023). As well, we ask that you also return your expired permit.
         </p>
         <p>
           Use the RCD Accessible Parking Permit Online Portal (online portal) to update your contact
@@ -195,8 +195,8 @@ const OVERVIEW_FAQs: ReadonlyArray<{ question: string; answer: ReactNode | strin
         <p>
           If you have lost your parking permit, please notify us right away. If you would like to
           request a replacement process, please complete the Replacement Declaration Form and we
-          will issue a replacement permit. However, there will be a processing fee (fee is $26 as at
-          April 2022). As well you are required to complete a declaration form that attests that in
+          will issue a replacement permit. However, there will be a processing fee (fee is $31 as at
+          August 2023). As well you are required to complete a declaration form that attests that in
           event that you find the lost permit you will return it to our office as the permit is no
           longer valid. Any permit holder using a permit that has been reported lost is at risk of a
           ticket or even towing of vehicle as this permit is no longer valid.{' '}
@@ -281,7 +281,7 @@ const TRAVELLING_FAQs: ReadonlyArray<{ question: string; answer: ReactNode | str
           temporary permit, you will need to present official documentation from the issuing agency
           in your country. This information is needed to help to confirm that you are a valid
           accessible parking permit holder in your home jurisdiction. There is a Canadian processing
-          fee for any permit issued (fee is $26 as at April 2022).
+          fee for any permit issued (fee is $31 as at August 2023).
         </p>
       </>
     ),
@@ -313,7 +313,7 @@ const TRAVELLING_FAQs: ReadonlyArray<{ question: string; answer: ReactNode | str
           is all done through the processing fee that you pay as well as any donations that you
           make. As well, we have an established policy that hardship assistance is available upon
           request to anyone who does not have the economic resources to cover the cost of the
-          processing fee. Processing fee is $26 as at April 2022.
+          processing fee. Processing fee is $31 as at August 2023.
         </p>
       </>
     ),
@@ -328,9 +328,7 @@ const TRAVELLING_FAQs: ReadonlyArray<{ question: string; answer: ReactNode | str
           604-232-2404 and we are more than happy to help.
         </p>
         <p>
-          <NewTabLink href="https://www.rcdrichmond.org/NewsAndEvents/MovingNotice/NewLocationMap.pdf">
-            Click here
-          </NewTabLink>{' '}
+          <NewTabLink href="https://rcdrichmond.org/ContactUs/ContactUs.php">Click here</NewTabLink>{' '}
           for details on our location, directions on best ways to find us and our hours of
           operation.
         </p>
