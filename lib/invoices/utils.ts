@@ -12,7 +12,7 @@ import { PaymentType } from '@lib/graphql/types';
  * @param appNumber APP (parking permit) number
  * @param receiptNumber receipt number
  */
-export const generateApplicationInvoicePdf = (
+export const generateApplicationInvoicePdf2 = (
   application: Application,
   session: Session,
   appNumber: number,
@@ -249,7 +249,7 @@ const applicationPdfDefinition = (input: {
  * @param session session object containing employee information
  * @param receiptNumber receipt number
  */
-export const generateDonationReceiptPdf = (
+export const generateApplicationInvoicePdf = (
   application: Application,
   session: Session,
   receiptNumber: string
@@ -387,7 +387,7 @@ const donationPdfDefinition = (input: {
                 [{ text: '' }, ''],
                 [{ text: 'Email:' }, nonNullEmail],
                 [{ text: 'Date Receipt Issued:' }, formatDateYYYYMMDD(dateIssued)],
-                [{ text: 'Location Issued:' }, 'Richmond, BC'],
+                [{ text: 'Location Receipt Issued:' }, 'Richmond, BC'],
                 [{ text: 'Authorized Signature:' }, { image: 'signature', width: 150 }],
               ],
             },
@@ -416,7 +416,7 @@ const donationPdfDefinition = (input: {
                       'Address of Appraiser:\n\n',
                     ],
                   },
-                  { image: 'stamp', width: 75 },
+                  { image: 'stamp', width: 85 },
                 ],
               ],
             },
