@@ -35,15 +35,12 @@ const useMutation = <
     onCompleted: data => {
       for (const key in data) {
         const result = data[key] as unknown as { ok: boolean; error?: string };
-        if ('ok' in result && 'error' in result) {
-          if (!result.ok) {
-            toast({
-              status: 'error',
-              description: result.error,
-              isClosable: true,
-            });
-          }
-        }
+        if (result.ok) continue;
+        toast({
+          status: 'error',
+          description: result.error,
+          isClosable: true,
+        });
       }
       options?.onCompleted && options.onCompleted(data);
     },

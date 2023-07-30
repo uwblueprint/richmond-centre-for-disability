@@ -63,9 +63,8 @@ export const applicationProcessingAppNumberEmployeeResolver: FieldResolver<
   ApplicationProcessing & { id: number },
   Employee
 > = async (parent, _, { prisma }) => {
-  return await prisma.application
+  return await prisma.applicationProcessing
     .findUnique({ where: { id: parent.id } })
-    .applicationProcessing()
     .appNumberEmployee();
 };
 
@@ -76,9 +75,8 @@ export const applicationProcessingAppHolepunchedEmployeeResolver: FieldResolver<
   ApplicationProcessing & { id: number },
   Employee
 > = async (parent, _, { prisma }) => {
-  return await prisma.application
+  return await prisma.applicationProcessing
     .findUnique({ where: { id: parent.id } })
-    .applicationProcessing()
     .appHolepunchedEmployee();
 };
 
@@ -89,9 +87,8 @@ export const applicationProcessingWalletCardCreatedEmployeeResolver: FieldResolv
   ApplicationProcessing & { id: number },
   Employee
 > = async (parent, _, { prisma }) => {
-  return await prisma.application
+  return await prisma.applicationProcessing
     .findUnique({ where: { id: parent.id } })
-    .applicationProcessing()
     .walletCardCreatedEmployee();
 };
 
@@ -102,9 +99,8 @@ export const applicationProcessingReviewRequestCompletedEmployeeResolver: FieldR
   ApplicationProcessing & { id: number },
   Employee
 > = async (parent, _, { prisma }) => {
-  return await prisma.application
+  return await prisma.applicationProcessing
     .findUnique({ where: { id: parent.id } })
-    .applicationProcessing()
     .reviewRequestEmployee();
 };
 
@@ -115,9 +111,8 @@ export const applicationProcessingDocumentsUrlEmployeeResolver: FieldResolver<
   ApplicationProcessing & { id: number },
   Employee
 > = async (parent, _, { prisma }) => {
-  return await prisma.application
+  return await prisma.applicationProcessing
     .findUnique({ where: { id: parent.id } })
-    .applicationProcessing()
     .documentsUrlEmployee();
 };
 
@@ -128,9 +123,8 @@ export const applicationProcessingAppMailedEmployeeResolver: FieldResolver<
   ApplicationProcessing & { id: number },
   Employee
 > = async (parent, _, { prisma }) => {
-  return await prisma.application
+  return await prisma.applicationProcessing
     .findUnique({ where: { id: parent.id } })
-    .applicationProcessing()
     .appMailedEmployee();
 };
 
@@ -141,8 +135,7 @@ export const applicationProcessingPaymentRefundedEmployeeResolver: FieldResolver
   ApplicationProcessing & { id: number },
   Employee
 > = async (parent, _, { prisma }) => {
-  return await prisma.application
+  return await prisma.applicationProcessing
     .findUnique({ where: { id: parent.id } })
-    .applicationProcessing()
     .paymentRefundedEmployee();
 };

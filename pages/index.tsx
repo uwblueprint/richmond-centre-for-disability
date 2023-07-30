@@ -65,7 +65,7 @@ export default function Landing() {
                 <Text as="p">Provide your date of birth</Text>
               </ListItem>
               <ListItem textAlign="left" textStyle="body-regular">
-                <Text as="p">Complete the online form and pay a $26 processing fee</Text>
+                <Text as="p">Complete the online form and pay a $31 processing fee</Text>
               </ListItem>
             </UnorderedList>
           </Box>
@@ -127,7 +127,7 @@ export default function Landing() {
           </Box>
           <VStack width="100%" alignItems={{ sm: 'center', lg: 'flex-start' }} spacing="32px">
             <a
-              href="https://www.rcdrichmond.org/Parking/Parking%20Permit%20Application%20form_rev%202022.pdf"
+              href="https://www.rcdrichmond.org/Parking/Parking_Permit_Application_Form_Fillable_2023v.pdf"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -146,7 +146,7 @@ export default function Landing() {
               </Button>
             </a>
             <a
-              href="https://www.rcdrichmond.org/Parking/PermitReplacementDeclarationForm_2022%20v.pdf"
+              href="https://www.rcdrichmond.org/Parking/Permit_Replacement_Declaration_Form_Fillable_2023v.pdf"
               target="_blank"
               rel="noopener noreferrer"
             >

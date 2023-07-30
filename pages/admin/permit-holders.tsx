@@ -66,6 +66,7 @@ const PermitHolders: NextPage = () => {
   const [searchFilter, setSearchFilter] = useState<string>('');
   const { dateRange, addDayToDateRange, dateRangeString } = useDateRangePicker();
   const [dateOfBirthFilter, setDateOfBirthFilter] = useState('');
+  const [permitIdFilter, setPermitIdFilter] = useState<number | null>(null);
 
   // Pagination
   const [sortOrder, setSortOrder] = useState<SortOptions>([['name', SortOrder.ASC]]);
@@ -91,6 +92,7 @@ const PermitHolders: NextPage = () => {
           expiryDateRangeTo: dateRange.to?.getTime(),
           search: debouncedSearchFilter,
           dateOfBirth: dateOfBirthFilter || null,
+          permitId: permitIdFilter,
           offset: pageNumber * PAGE_SIZE,
           limit: PAGE_SIZE,
           order: sortOrder,
@@ -347,6 +349,28 @@ const PermitHolders: NextPage = () => {
                     width="184px"
                     value={dateOfBirthFilter}
                     onChange={event => setDateOfBirthFilter(event.target.value)}
+                    border="none"
+                    _focus={{ border: 'none' }}
+                  />
+                </HStack>
+                <HStack
+                  spacing="-12px"
+                  height="2.5rem"
+                  paddingLeft="16px"
+                  border="1px solid"
+                  borderColor="border.secondary"
+                  borderRadius="6px"
+                >
+                  <Text as="span" textStyle="button-semibold">
+                    Permit ID:
+                  </Text>
+                  <Input
+                    type="number"
+                    placeholder="Permit ID"
+                    fontSize="18px"
+                    width="184px"
+                    value={permitIdFilter !== null ? permitIdFilter : ''}
+                    onChange={event => setPermitIdFilter(event.target.valueAsNumber)}
                     border="none"
                     _focus={{ border: 'none' }}
                   />

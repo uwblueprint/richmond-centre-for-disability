@@ -158,6 +158,7 @@ export default gql`
     expiryDateRangeTo: Date
     search: String
     dateOfBirth: Date
+    permitId: Int
     limit: Int
     offset: Int
   }

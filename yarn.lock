@@ -9322,10 +9322,10 @@ shelljs@0.8.4:
     interpret "^1.0.0"
     rechoir "^0.6.2"
 
-shopify-buy@^2.13.0:
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/shopify-buy/-/shopify-buy-2.13.0.tgz#2f066752bd9614a92faceeb5a3f870c75f88bb32"
-  integrity sha512-MueiBWvQIzpCFTp+wRQF5O1N8J9a5y88mBbhLw7x4L8x1UhiMYbjPPC02jGpHml3Lm5eu11yNZYA5TsmUDJc7A==
+shopify-buy@^2.20.0:
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/shopify-buy/-/shopify-buy-2.20.0.tgz#b6455e78c01e28b0ddca61fb0c5a15ab66720a2c"
+  integrity sha512-xe6VlqJtI/c8BYeH2hhOw7gZSsbHUeGFUwVyAzQOR422Ml4UXTFld0GcbW88tkR/Vgy2tj592EL2paCws2fZzQ==
 
 side-channel@^1.0.4:
   version "1.0.4"

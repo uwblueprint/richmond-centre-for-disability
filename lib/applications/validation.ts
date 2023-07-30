@@ -447,7 +447,6 @@ export const applicantFacingRenewalDoctorSchema = object().shape({
       is: true,
       then: string()
         .typeError('Please enter the MSP number')
-        .matches(/^\d+$/, 'Must only contain numbers')
         .required('Please enter the MSP number'),
     }),
   doctorAddressLine1: string()
