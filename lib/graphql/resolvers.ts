@@ -10,6 +10,7 @@ import {
 import {
   applicant,
   applicants,
+  deleteApplicant,
   updateApplicantGeneralInformation,
   updateApplicantDoctorInformation,
   updateApplicantGuardianInformation,
@@ -159,6 +160,7 @@ const resolvers = {
     setApplicantAsActive: authorize(setApplicantAsActive, ['SECRETARY']),
     setApplicantAsInactive: authorize(setApplicantAsInactive, ['SECRETARY']),
     verifyIdentity,
+    deleteApplicant: authorize(deleteApplicant, ['SECRETARY']),
 
     // Applications
     createNewApplication: authorize(createNewApplication, ['SECRETARY']),
