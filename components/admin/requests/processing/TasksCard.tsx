@@ -521,9 +521,65 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               )}
             </ProcessingTaskStep>
 
-            {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
+            {/* Task 6: Generate Tax Receipt */}
             <ProcessingTaskStep
               id={6}
+              label="Generate tax receipt"
+              description="Invoice number will be automatically assigned"
+              isCompleted={invoice !== null}
+              showLog={showTaskLog}
+              log={
+                showTaskLog && invoice
+                  ? {
+                      name: formatFullName(invoice.employee.firstName, invoice.employee.lastName),
+                      date: invoice.updatedAt,
+                    }
+                  : null
+              }
+            >
+              {invoice === null ? (
+                <Button
+                  marginLeft="auto"
+                  height="35px"
+                  bg="background.gray"
+                  _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
+                  disabled={!reviewRequestCompleted || generateInvoiceLoading}
+                  color="black"
+                  onClick={handleGenerateInvoice}
+                  isLoading={generateInvoiceLoading}
+                  loadingText="Generate document"
+                  fontWeight="normal"
+                  fontSize="14px"
+                >
+                  <Text textStyle="xsmall-medium">Generate document</Text>
+                </Button>
+              ) : (
+                <Tooltip
+                  hasArrow
+                  closeOnClick={false}
+                  label="Clicking on this link will open the document in a new tab"
+                  placement="bottom"
+                  bg="background.grayHover"
+                  color="black"
+                >
+                  <Link
+                    href={invoice.s3ObjectUrl as string}
+                    isExternal={true}
+                    textStyle="caption"
+                    textDecoration="underline"
+                    padding="0px 16px"
+                    color="primary"
+                  >
+                    {/* File name from the object key e.g "rcd/invoice/invoice-1.pdf" */}
+                    {invoice.s3ObjectKey && getFileName(invoice.s3ObjectKey)}
+                  </Link>
+                </Tooltip>
+              )}
+            </ProcessingTaskStep>
+
+            {/* Task 7: Upload document: Choose document (UPLOAD FILE) */}
+            <ProcessingTaskStep
+              id={7}
               label="Upload documents"
               description="Scan all documents and upload as one PDF"
               isCompleted={documentsUrl !== null}
@@ -549,9 +605,9 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
               />
             </ProcessingTaskStep>
 
-            {/* Task 7: Mail out: Mark as complete (CHECK) */}
+            {/* Task 8: Mail out: Mark as complete (CHECK) */}
             <ProcessingTaskStep
-              id={7}
+              id={8}
               label="Mail out"
               description="Include returning envelope and previous permit number"
               isCompleted={appMailed}
