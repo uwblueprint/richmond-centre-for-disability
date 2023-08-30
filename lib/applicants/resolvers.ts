@@ -750,8 +750,8 @@ export const deleteApplicant: Resolver<MutationDeleteApplicantArgs, DeleteApplic
       };
     }
 
-    logger.error({ error: err }, 'Unknown error');
-    throw new ApolloError('Unable to delete applicant');
+    logger.error({ error: err }, 'Unknown error occurred when attempting to delete applicant');
+    throw new ApolloError('Unable to delete applicant after encountering unknown error');
   }
 
   return { ok: true, error: null };
