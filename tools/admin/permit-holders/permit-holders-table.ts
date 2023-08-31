@@ -2,9 +2,11 @@ import { gql } from '@apollo/client'; // gql tag
 import {
   ApplicantsFilter,
   Applicant,
+  DeleteApplicantResult,
   Permit,
   PermitStatus,
   ApplicantStatus,
+  MutationDeleteApplicantArgs,
   MutationSetApplicantAsInactiveArgs,
   SetApplicantAsInactiveResult,
   MutationSetApplicantAsActiveArgs,
@@ -128,4 +130,18 @@ export type SetApplicantAsActiveRequest = MutationSetApplicantAsActiveArgs;
 
 export type SetApplicantAsActiveResponse = {
   setApplicantAsActive: SetApplicantAsActiveResult;
+};
+
+export const DELETE_APPLICANT = gql`
+  mutation deleteApplicant($input: DeleteApplicantInput!) {
+    deleteApplicant(input: $input) {
+      ok
+    }
+  }
+`;
+
+export type DeleteApplicantRequest = MutationDeleteApplicantArgs;
+
+export type DeleteApplicantResponse = {
+  deleteApplicant: DeleteApplicantResult;
 };
