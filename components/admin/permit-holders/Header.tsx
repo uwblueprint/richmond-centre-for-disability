@@ -49,7 +49,6 @@ export default function PermitHolderHeader({
   } = useDisclosure();
 
   // Delete applicant modal state
-  // TODO: redirect to permit holders page once applicant is deleted
   const {
     isOpen: isDeleteApplicantModalOpen,
     onOpen: onOpenDeleteApplicantModal,
