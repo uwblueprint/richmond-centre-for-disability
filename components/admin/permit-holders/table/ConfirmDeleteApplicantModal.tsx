@@ -105,7 +105,7 @@ export default function ConfirmDeleteApplicantModal({
               type="submit"
               ml={'12px'}
             >
-              {'Delete Applicant'}
+              {'Delete Permit Holder'}
             </Button>
           </ModalFooter>
         </ModalContent>
