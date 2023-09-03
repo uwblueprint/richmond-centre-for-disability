@@ -19,7 +19,6 @@ import { titlecase } from '@tools/string';
 
 type Props = {
   readonly applicationId: number;
-  readonly applicationCompleted?: boolean;
   readonly isUpdated?: boolean;
   readonly editDisabled?: boolean;
   /** Whether card is a subsection */
@@ -27,7 +26,7 @@ type Props = {
 };
 
 const Card: FC<Props> = props => {
-  const { applicationId, applicationCompleted, isUpdated, editDisabled, isSubsection } = props;
+  const { applicationId, isUpdated, editDisabled, isSubsection } = props;
 
   const [paymentInformation, setPaymentInformation] =
     useState<PaymentInformationCardData | null>(null);
@@ -125,14 +124,6 @@ const Card: FC<Props> = props => {
               <Text textStyle="body-bold">Edit</Text>
             </Button>
           </EditPaymentDetailsModal>
-        )
-      }
-      generateTaxReceipt={
-        applicationCompleted &&
-        Number(donationAmount) !== 0 && (
-          <Button color="primary" variant="ghost" textDecoration="underline">
-            <Text textStyle="body-bold">Generate Receipt</Text>
-          </Button>
         )
       }
     >

@@ -145,7 +145,6 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           )}
           <PaymentInformationCard
             applicationId={id}
-            applicationCompleted={status === 'COMPLETED'}
             editDisabled={paidThroughShopify || reviewRequestCompleted}
           />
         </VStack>
