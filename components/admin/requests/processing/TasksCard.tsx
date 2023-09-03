@@ -553,9 +553,9 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 loading={uploadDocumentsLoading}
               />
             </ProcessingTaskStep>
-            {/* Task 8: Mail out: Mark as complete (CHECK) */}
+            {/* Task 7: Mail out: Mark as complete (CHECK) */}
             <ProcessingTaskStep
-              id={8}
+              id={7}
               label="Mail out"
               description="Include returning envelope and previous permit number"
               isCompleted={appMailed}

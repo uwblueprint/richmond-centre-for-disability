@@ -6,7 +6,6 @@ type PermitHolderInfoCardProps = GridItemProps & {
   header: ReactNode;
   updated?: boolean;
   editModal?: ReactNode;
-  generateTaxReceipt?: ReactNode;
   alignGridItems?: string;
   /** Whether to show a divider under the header */
   divider?: boolean;
@@ -20,16 +19,7 @@ type PermitHolderInfoCardProps = GridItemProps & {
  * @returns custom Card.
  */
 export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
-  const {
-    children,
-    header,
-    updated,
-    editModal,
-    generateTaxReceipt,
-    alignGridItems,
-    divider,
-    isSubsection,
-  } = props;
+  const { children, header, updated, editModal, alignGridItems, divider, isSubsection } = props;
   return (
     <GridItem
       display="flex"
@@ -59,7 +49,6 @@ export default function PermitHolderInfoCard(props: PermitHolderInfoCardProps) {
         )}
         <Spacer />
         {editModal}
-        {generateTaxReceipt}
       </Flex>
       {divider && <Divider mb="20px" />}
       {children}

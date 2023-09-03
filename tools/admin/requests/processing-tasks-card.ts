@@ -118,9 +118,6 @@ export type GetApplicationProcessingResponse = {
       invoice: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl' | 'updatedAt'> & {
         employee: Pick<Employee, 'firstName' | 'lastName'>;
       };
-      taxReceipt: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl' | 'updatedAt'> & {
-        employee: Pick<Employee, 'firstName' | 'lastName'>;
-      };
       appNumberEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
       appHolepunchedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
       walletCardCreatedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
