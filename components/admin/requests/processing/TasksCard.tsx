@@ -106,8 +106,8 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
 
   const [generateInvoice, { loading: generateInvoiceLoading }] =
     useMutation<GenerateInvoiceResponse, GenerateInvoiceRequest>(GENERATE_INVOICE_MUTATION);
-  const handleGenerateInvoice = async () => {
-    await generateInvoice({ variables: { input: { applicationId } } });
+  const handleGenerateInvoice = async (isDonation: boolean) => {
+    await generateInvoice({ variables: { input: { applicationId, isDonation } } });
     refetch();
   };
 
@@ -489,7 +489,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
                   disabled={!reviewRequestCompleted || generateInvoiceLoading}
                   color="black"
-                  onClick={handleGenerateInvoice}
+                  onClick={() => handleGenerateInvoice(false)}
                   isLoading={generateInvoiceLoading}
                   loadingText="Generate document"
                   fontWeight="normal"
@@ -545,7 +545,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
                   disabled={!reviewRequestCompleted || generateInvoiceLoading}
                   color="black"
-                  onClick={handleGenerateInvoice}
+                  onClick={() => handleGenerateInvoice(true)}
                   isLoading={generateInvoiceLoading}
                   loadingText="Generate document"
                   fontWeight="normal"

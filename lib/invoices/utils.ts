@@ -12,7 +12,7 @@ import { PaymentType } from '@lib/graphql/types';
  * @param appNumber APP (parking permit) number
  * @param receiptNumber receipt number
  */
-export const generateApplicationInvoicePdf2 = (
+export const generateApplicationInvoicePdf = (
   application: Application,
   session: Session,
   appNumber: number,
@@ -247,23 +247,17 @@ const applicationPdfDefinition = (input: {
  * Generate donation receipt PDF
  * @param application application object
  * @param session session object containing employee information
+ *  @param appNumber APP (parking permit) number
  * @param receiptNumber receipt number
  */
-export const generateApplicationInvoicePdf = (
+export const generateDonationInvoicePdf = (
   application: Application,
   session: Session,
+  appNumber: number,
   receiptNumber: string
 ): PDFKit.PDFDocument => {
-  const {
-    applicantId,
-    firstName,
-    middleName,
-    lastName,
-    permitType,
-    donationAmount,
-    email,
-    createdAt,
-  } = application;
+  const { firstName, middleName, lastName, permitType, donationAmount, email, createdAt } =
+    application;
   const applicantName = formatFullName(firstName, middleName, lastName);
   const employeeInitials = `${session.firstName[0].toUpperCase()}${session.lastName[0].toUpperCase()}`;
   const nonNullEmail = email ? email : '';
@@ -288,7 +282,7 @@ export const generateApplicationInvoicePdf = (
 
   const definition = donationPdfDefinition({
     applicantName,
-    userNumber: applicantId,
+    appNumber: appNumber,
     permitType,
     receiptNumber,
     dateIssued: new Date(),
@@ -315,7 +309,7 @@ export const generateApplicationInvoicePdf = (
 /** PDF generation schema */
 const donationPdfDefinition = (input: {
   applicantName: string;
-  userNumber: number | null;
+  appNumber: number | null;
   permitType: string;
   receiptNumber: string;
   dateIssued: Date;
@@ -334,7 +328,7 @@ const donationPdfDefinition = (input: {
 }): any => {
   const {
     applicantName,
-    userNumber,
+    appNumber,
     donationAmount,
     dateIssued,
     dateDonationRecevied,
@@ -366,7 +360,7 @@ const donationPdfDefinition = (input: {
               body: [
                 [
                   { text: 'Tax Receipt #:' },
-                  `PPD_${dateIssued.getFullYear()}${dateIssued.getMonth()}${dateIssued.getDate()}_${userNumber}`,
+                  `PPD_${dateIssued.getFullYear()}${dateIssued.getMonth()}${dateIssued.getDate()}_${appNumber}`,
                 ],
                 [
                   { text: 'Donated by:' },
@@ -399,7 +393,7 @@ const donationPdfDefinition = (input: {
               heights: 20,
               body: [
                 [{ text: 'Date Donation Received:' }, formatDateYYYYMMDD(dateDonationRecevied)],
-                [{ text: 'Donor Number:' }, `P${userNumber}`],
+                [{ text: 'Donor Number:' }, `P${appNumber}`],
                 [{ text: 'Total Amount:' }, `$${donationAmount.toString()}`],
                 [{ text: 'Value of Product / Services:' }, ''],
                 [
