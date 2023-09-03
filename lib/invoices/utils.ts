@@ -256,12 +256,39 @@ export const generateDonationInvoicePdf = (
   appNumber: number,
   receiptNumber: string
 ): PDFKit.PDFDocument => {
-  const { firstName, middleName, lastName, permitType, donationAmount, email, createdAt } =
-    application;
+  const {
+    applicantId,
+    firstName,
+    middleName,
+    lastName,
+    permitType,
+    processingFee,
+    paymentMethod,
+    donationAmount,
+    email,
+    createdAt,
+  } = application;
   const applicantName = formatFullName(firstName, middleName, lastName);
   const employeeInitials = `${session.firstName[0].toUpperCase()}${session.lastName[0].toUpperCase()}`;
+  let totalAmount: Prisma.Decimal = processingFee;
   const nonNullEmail = email ? email : '';
-
+  const paymentItems = [
+    {
+      item: `PP # ${appNumber}`,
+      amount: processingFee,
+      paidBy: paymentMethod,
+      subtotal: processingFee,
+    },
+  ];
+  if (!donationAmount.equals(0)) {
+    paymentItems.push({
+      item: 'Donation',
+      amount: donationAmount,
+      paidBy: paymentMethod,
+      subtotal: donationAmount,
+    });
+    totalAmount = totalAmount.plus(donationAmount);
+  }
   const address = application.shippingAddressSameAsHomeAddress
     ? {
         addressLine1: application.addressLine1,
@@ -282,6 +309,7 @@ export const generateDonationInvoicePdf = (
 
   const definition = donationPdfDefinition({
     applicantName,
+    userNumber: applicantId,
     appNumber: appNumber,
     permitType,
     receiptNumber,
@@ -289,6 +317,8 @@ export const generateDonationInvoicePdf = (
     dateDonationRecevied: createdAt,
     issuedBy: employeeInitials,
     donationAmount,
+    paymentItems,
+    totalAmount,
     address,
     nonNullEmail,
   });
@@ -309,12 +339,20 @@ export const generateDonationInvoicePdf = (
 /** PDF generation schema */
 const donationPdfDefinition = (input: {
   applicantName: string;
+  userNumber: number | null;
   appNumber: number | null;
   permitType: string;
   receiptNumber: string;
   dateIssued: Date;
   dateDonationRecevied: Date;
   issuedBy: string;
+  paymentItems: Array<{
+    item: string;
+    amount: Prisma.Decimal;
+    paidBy: PaymentType;
+    subtotal: Prisma.Decimal;
+  }>;
+  totalAmount: Prisma.Decimal;
   donationAmount: Prisma.Decimal;
   address: {
     addressLine1: string;
@@ -328,27 +366,48 @@ const donationPdfDefinition = (input: {
 }): any => {
   const {
     applicantName,
+    userNumber,
     appNumber,
+    permitType,
+    receiptNumber,
     donationAmount,
+    totalAmount,
     dateIssued,
+    issuedBy,
     dateDonationRecevied,
+    paymentItems,
     address,
     nonNullEmail,
   } = input;
 
   return {
-    footer: {
-      text: 'For information on all registered charities in Canada under the Income Tax Act please contact: Canada Revenue Agency www.cra.gc.ca/charities-giving ',
-      style: 'footer',
+    footer: function (currentPage: number, pageCount: number) {
+      return currentPage == pageCount
+        ? {
+            text: `For information on all registered charities in Canada under the Income Tax Act please contact: Canada Revenue Agency www.cra.gc.ca/charities-giving `,
+            style: 'footer',
+          }
+        : null;
     },
-    content: [
+    content: applicationPdfDefinition({
+      applicantName,
+      userNumber,
+      permitType,
+      receiptNumber,
+      dateIssued,
+      issuedBy,
+      paymentItems,
+      totalAmount,
+      address,
+    }).content.concat([
       {
+        pageBreak: 'before',
         text: [
           { text: 'RICHMOND CENTRE FOR DISABILITY', style: 'header' },
           '\n\n',
           {
             text: `Official Donation Receipt for Income Tax Purposes - ${dateIssued.getFullYear()}`,
-            style: 'subheader',
+            style: 'subheaderDonation',
           },
         ],
       },
@@ -441,14 +500,23 @@ const donationPdfDefinition = (input: {
         margin: [0, 15, 0, 0],
         fontSize: 12,
       },
-    ],
+    ]),
     styles: {
       header: {
         fontSize: 28,
         bold: true,
         alignment: 'center',
       },
+      tableHeader: {
+        bold: true,
+        alignment: 'center',
+      },
       subheader: {
+        fontSize: 20,
+        bold: false,
+        alignment: 'center',
+      },
+      subheaderDonation: {
         fontSize: 19,
         alignment: 'center',
       },
@@ -459,9 +527,9 @@ const donationPdfDefinition = (input: {
     },
     defaultStyle: {
       font: 'Helvetica',
-      lineHeight: 1.25,
     },
     images: {
+      rcd: 'public/assets/logo.png',
       signature: 'public/assets/signature.png',
       stamp: 'public/assets/stamp.png',
     },

@@ -466,7 +466,11 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             {/* Task 5: Generate Invoice */}
             <ProcessingTaskStep
               id={5}
-              label="Generate invoice"
+              label={
+                Number(donationAmount) > 20
+                  ? 'Generate invoice and donation receipt'
+                  : 'Generate invoice'
+              }
               description="Invoice number will be automatically assigned"
               isCompleted={invoice !== null}
               showLog={showTaskLog}
