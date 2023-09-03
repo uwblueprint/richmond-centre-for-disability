@@ -247,7 +247,7 @@ const applicationPdfDefinition = (input: {
  * Generate donation receipt PDF
  * @param application application object
  * @param session session object containing employee information
- *  @param appNumber APP (parking permit) number
+ * @param appNumber APP (parking permit) number
  * @param receiptNumber receipt number
  */
 export const generateDonationInvoicePdf = (
