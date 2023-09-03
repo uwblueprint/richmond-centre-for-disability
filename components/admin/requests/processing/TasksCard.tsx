@@ -467,7 +467,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             <ProcessingTaskStep
               id={5}
               label={
-                Number(donationAmount) > 20
+                Number(donationAmount) >= 20
                   ? 'Generate invoice and donation receipt'
                   : 'Generate invoice'
               }
@@ -492,7 +492,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   disabled={!reviewRequestCompleted || generateInvoiceLoading}
                   color="black"
                   onClick={() => {
-                    Number(donationAmount) > 20
+                    Number(donationAmount) >= 20
                       ? handleGenerateInvoice(true)
                       : handleGenerateInvoice(false);
                   }}
