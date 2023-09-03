@@ -80,6 +80,7 @@ export default gql`
     updateApplicationPhysicianAssessment(
       input: UpdateApplicationPhysicianAssessmentInput!
     ): UpdateApplicationPhysicianAssessmentResult
+    deleteApplication(input: DeleteApplicationInput!): DeleteApplicationResult!
 
     # Application processing
     approveApplication(input: ApproveApplicationInput!): ApproveApplicationResult

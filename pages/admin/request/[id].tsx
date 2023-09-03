@@ -81,6 +81,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3} marginBottom="12px">
         <RequestHeader
+          id={id}
           applicationStatus={status}
           applicationType={type}
           permitType={permitType}
