@@ -184,6 +184,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
       paidThroughShopify,
       shopifyConfirmationNumber,
       shopifyOrderNumber,
+      donationAmount,
       processing: {
         status,
         appNumber,
@@ -327,7 +328,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </Button>
               ) : null}
             </ProcessingTaskStep>
-
             {/* Task 2: Hole punch parking permit: Mark as complete (CHECK) */}
             <ProcessingTaskStep
               id={2}
@@ -380,7 +380,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </Button>
               ) : null}
             </ProcessingTaskStep>
-
             {/* Task 3: Create a new wallet card: Mark as complete (CHECK) */}
             <ProcessingTaskStep
               id={3}
@@ -433,7 +432,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </Button>
               ) : null}
             </ProcessingTaskStep>
-
             {/* Task 4: Review Information: Review Information (MODAL) */}
             <ProcessingTaskStep
               id={4}
@@ -489,7 +487,11 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
                   disabled={!reviewRequestCompleted || generateInvoiceLoading}
                   color="black"
-                  onClick={() => handleGenerateInvoice(false)}
+                  onClick={() => {
+                    Number(donationAmount) > 20
+                      ? handleGenerateInvoice(true)
+                      : handleGenerateInvoice(false);
+                  }}
                   isLoading={generateInvoiceLoading}
                   loadingText="Generate document"
                   fontWeight="normal"
@@ -520,66 +522,9 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </Tooltip>
               )}
             </ProcessingTaskStep>
-
-            {/* Task 6: Generate Tax Receipt */}
+            {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
             <ProcessingTaskStep
               id={6}
-              label="Generate tax receipt"
-              description="Invoice number will be automatically assigned"
-              isCompleted={invoice !== null}
-              showLog={showTaskLog}
-              log={
-                showTaskLog && invoice
-                  ? {
-                      name: formatFullName(invoice.employee.firstName, invoice.employee.lastName),
-                      date: invoice.updatedAt,
-                    }
-                  : null
-              }
-            >
-              {invoice === null ? (
-                <Button
-                  marginLeft="auto"
-                  height="35px"
-                  bg="background.gray"
-                  _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
-                  disabled={!reviewRequestCompleted || generateInvoiceLoading}
-                  color="black"
-                  onClick={() => handleGenerateInvoice(true)}
-                  isLoading={generateInvoiceLoading}
-                  loadingText="Generate document"
-                  fontWeight="normal"
-                  fontSize="14px"
-                >
-                  <Text textStyle="xsmall-medium">Generate document</Text>
-                </Button>
-              ) : (
-                <Tooltip
-                  hasArrow
-                  closeOnClick={false}
-                  label="Clicking on this link will open the document in a new tab"
-                  placement="bottom"
-                  bg="background.grayHover"
-                  color="black"
-                >
-                  <Link
-                    href={invoice.s3ObjectUrl as string}
-                    isExternal={true}
-                    textStyle="caption"
-                    textDecoration="underline"
-                    padding="0px 16px"
-                    color="primary"
-                  >
-                    {/* File name from the object key e.g "rcd/invoice/invoice-1.pdf" */}
-                    {invoice.s3ObjectKey && getFileName(invoice.s3ObjectKey)}
-                  </Link>
-                </Tooltip>
-              )}
-            </ProcessingTaskStep>
-
-            {/* Task 7: Upload document: Choose document (UPLOAD FILE) */}
-            <ProcessingTaskStep
-              id={7}
               label="Upload documents"
               description="Scan all documents and upload as one PDF"
               isCompleted={documentsUrl !== null}
@@ -604,7 +549,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 loading={uploadDocumentsLoading}
               />
             </ProcessingTaskStep>
-
             {/* Task 8: Mail out: Mark as complete (CHECK) */}
             <ProcessingTaskStep
               id={8}
