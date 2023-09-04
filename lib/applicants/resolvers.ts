@@ -713,6 +713,11 @@ export const updateApplicantNotes: Resolver<
   return { ok: true, error: null };
 };
 
+/**
+ * Deletes the applicant with the provided ID, also deletes all associated
+ * data (permits, medical information, applications, and guardian).
+ * @returns Status of the operation (ok)
+ */
 export const deleteApplicant: Resolver<MutationDeleteApplicantArgs, DeleteApplicantResult> = async (
   _parent,
   args,
