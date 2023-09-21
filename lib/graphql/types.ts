@@ -1389,6 +1389,7 @@ export type UpdateApplicationProcessingCreateWalletCardResult = {
 
 export type UpdateApplicationProcessingGenerateInvoiceInput = {
   applicationId: Scalars['Int'];
+  isDonation: Scalars['Boolean'];
 };
 
 export type UpdateApplicationProcessingGenerateInvoiceResult = {

@@ -106,8 +106,8 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
 
   const [generateInvoice, { loading: generateInvoiceLoading }] =
     useMutation<GenerateInvoiceResponse, GenerateInvoiceRequest>(GENERATE_INVOICE_MUTATION);
-  const handleGenerateInvoice = async () => {
-    await generateInvoice({ variables: { input: { applicationId } } });
+  const handleGenerateInvoice = async (isDonation: boolean) => {
+    await generateInvoice({ variables: { input: { applicationId, isDonation } } });
     refetch();
   };
 
@@ -184,6 +184,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
       paidThroughShopify,
       shopifyConfirmationNumber,
       shopifyOrderNumber,
+      donationAmount,
       processing: {
         status,
         appNumber,
@@ -327,7 +328,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </Button>
               ) : null}
             </ProcessingTaskStep>
-
             {/* Task 2: Hole punch parking permit: Mark as complete (CHECK) */}
             <ProcessingTaskStep
               id={2}
@@ -380,7 +380,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </Button>
               ) : null}
             </ProcessingTaskStep>
-
             {/* Task 3: Create a new wallet card: Mark as complete (CHECK) */}
             <ProcessingTaskStep
               id={3}
@@ -433,7 +432,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </Button>
               ) : null}
             </ProcessingTaskStep>
-
             {/* Task 4: Review Information: Review Information (MODAL) */}
             <ProcessingTaskStep
               id={4}
@@ -468,7 +466,11 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             {/* Task 5: Generate Invoice */}
             <ProcessingTaskStep
               id={5}
-              label="Generate invoice"
+              label={
+                Number(donationAmount) >= 20
+                  ? 'Generate invoice and donation receipt'
+                  : 'Generate invoice'
+              }
               description="Invoice number will be automatically assigned"
               isCompleted={invoice !== null}
               showLog={showTaskLog}
@@ -489,7 +491,11 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
                   disabled={!reviewRequestCompleted || generateInvoiceLoading}
                   color="black"
-                  onClick={handleGenerateInvoice}
+                  onClick={() => {
+                    Number(donationAmount) >= 20
+                      ? handleGenerateInvoice(true)
+                      : handleGenerateInvoice(false);
+                  }}
                   isLoading={generateInvoiceLoading}
                   loadingText="Generate document"
                   fontWeight="normal"
@@ -520,7 +526,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </Tooltip>
               )}
             </ProcessingTaskStep>
-
             {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
             <ProcessingTaskStep
               id={6}
@@ -548,7 +553,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 loading={uploadDocumentsLoading}
               />
             </ProcessingTaskStep>
-
             {/* Task 7: Mail out: Mark as complete (CHECK) */}
             <ProcessingTaskStep
               id={7}
