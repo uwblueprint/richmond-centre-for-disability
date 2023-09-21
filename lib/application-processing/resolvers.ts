@@ -25,7 +25,7 @@ import {
   UpdateApplicationProcessingRefundPaymentResult,
 } from '@lib/graphql/types';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
-import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
+import { generateApplicationInvoicePdf, generateDonationInvoicePdf } from '@lib/invoices/utils';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { Prisma } from '@prisma/client';
@@ -963,7 +963,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
 > = async (_parent, args, { prisma, session, logger }) => {
   // TODO: Validation
   const { input } = args;
-  const { applicationId } = input;
+  const { applicationId, isDonation } = input;
 
   if (!session) {
     return { ok: false, error: 'Not authenticated' };
@@ -1011,13 +1011,21 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
   const s3InvoiceKey = `rcd/invoices/${fileName}`;
 
   // Generate application invoice
-  const pdfDoc = generateApplicationInvoicePdf(
-    application,
-    session,
-    // TODO: Remove typecast when backend guard is implemented
-    application.applicationProcessing.appNumber as number,
-    receiptNumber
-  );
+  const pdfDoc = isDonation
+    ? generateDonationInvoicePdf(
+        application,
+        session,
+        // TODO: Remove typecast when backend guard is implemented
+        application.applicationProcessing.appNumber as number,
+        receiptNumber
+      )
+    : generateApplicationInvoicePdf(
+        application,
+        session,
+        // TODO: Remove typecast when backend guard is implemented
+        application.applicationProcessing.appNumber as number,
+        receiptNumber
+      );
 
   // Upload pdf to s3
   let uploadedPdf;
