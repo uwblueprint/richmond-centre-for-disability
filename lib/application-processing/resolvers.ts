@@ -817,24 +817,6 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
   }
   const { id: employeeId } = session;
 
-  // Prevent changing wallet card creation status if review is complete
-  const application = await prisma.application.findUnique({
-    where: { id: applicationId },
-    include: {
-      applicationProcessing: {
-        select: {
-          reviewRequestCompleted: true,
-        },
-      },
-    },
-  });
-  if (application?.applicationProcessing.reviewRequestCompleted) {
-    return {
-      ok: false,
-      error: 'Cannot update wallet card status of already-reviewed application',
-    };
-  }
-
   let updatedApplicationProcessing;
   try {
     updatedApplicationProcessing = await prisma.application.update({
@@ -893,7 +875,6 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
         select: {
           appNumber: true,
           appHolepunched: true,
-          walletCardCreated: true,
         },
       },
     },
@@ -901,8 +882,7 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
   if (
     reviewRequestCompleted &&
     (!application?.applicationProcessing.appNumber ||
-      !application?.applicationProcessing.appHolepunched ||
-      !application?.applicationProcessing.walletCardCreated)
+      !application?.applicationProcessing.appHolepunched)
   ) {
     return { ok: false, error: 'Prior steps incomplete' };
   }
@@ -928,6 +908,7 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
               disconnect: true,
             },
             documentsUrlUpdatedAt: new Date(),
+            walletCardCreated: false,
             appMailed: false,
             appMailedEmployee: { disconnect: true },
             appMailedUpdatedAt: new Date(),
