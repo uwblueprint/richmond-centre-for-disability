@@ -733,6 +733,16 @@ export const deleteApplicant: Resolver<MutationDeleteApplicantArgs, DeleteApplic
       rejectOnNotFound: true,
     });
 
+    const applications = await prisma.application.findMany({
+      where: {
+        applicantId: applicant.id,
+      },
+    });
+    const applicationIds = applications.map(application => application.id);
+    const applicationProcessingIds = applications.map(
+      application => application.applicationProcessingId
+    );
+
     // Ideally, we'd cascade the delete to relations with referential actions
     // https://www.prisma.io/docs/concepts/components/prisma-schema/relations/referential-actions
     // However, that would require making a schema change which is infeasible at this time
@@ -740,11 +750,30 @@ export const deleteApplicant: Resolver<MutationDeleteApplicantArgs, DeleteApplic
       prisma.permit.deleteMany({ where: { applicantId: applicant.id } }),
       prisma.applicant.delete({ where: { id } }),
       prisma.medicalInformation.delete({ where: { id: applicant.medicalInformationId } }),
-      prisma.application.deleteMany({ where: { applicantId: applicant.id } }),
     ];
+
     if (applicant.guardianId !== null) {
       cleanupOperations.push(prisma.guardian.delete({ where: { id: applicant.guardianId } }));
     }
+
+    applicationIds.forEach(applicationId => {
+      cleanupOperations.push(prisma.newApplication.deleteMany({ where: { applicationId } }));
+      cleanupOperations.push(prisma.renewalApplication.deleteMany({ where: { applicationId } }));
+      cleanupOperations.push(
+        prisma.replacementApplication.deleteMany({ where: { applicationId } })
+      );
+      cleanupOperations.push(prisma.application.deleteMany({ where: { id: applicationId } }));
+    });
+
+    applicationProcessingIds.forEach(applicationProcessingId => {
+      cleanupOperations.push(
+        prisma.applicationProcessing.deleteMany({
+          where: {
+            id: applicationProcessingId,
+          },
+        })
+      );
+    });
 
     await prisma.$transaction(cleanupOperations);
   } catch (err) {
