@@ -74,6 +74,16 @@ export type ApplicantsResult = {
   totalCount: Scalars['Int'];
 };
 
+export type DeleteApplicationInput = {
+  id: Scalars['Int'];
+};
+
+export type DeleteApplicationResult = {
+  __typename?: 'DeleteApplicationResult';
+  ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
+};
+
 export type Application = {
   id: Scalars['Int'];
   firstName: Scalars['String'];
@@ -592,6 +602,7 @@ export type Mutation = {
   updateApplicationPaymentInformation: Maybe<UpdateApplicationPaymentInformationResult>;
   updateApplicationReasonForReplacement: Maybe<UpdateApplicationReasonForReplacementResult>;
   updateApplicationPhysicianAssessment: Maybe<UpdateApplicationPhysicianAssessmentResult>;
+  deleteApplication: DeleteApplicationResult;
   approveApplication: Maybe<ApproveApplicationResult>;
   rejectApplication: Maybe<RejectApplicationResult>;
   completeApplication: Maybe<CompleteApplicationResult>;
@@ -771,6 +782,10 @@ export type MutationUpdateEmployeeArgs = {
 
 export type MutationDeleteEmployeeArgs = {
   input: DeleteEmployeeInput;
+};
+
+export type MutationDeleteApplicationArgs = {
+  input: DeleteApplicationInput;
 };
 
 export type NewApplication = Application & {

@@ -33,6 +33,7 @@ import {
   updateApplicationPhysicianAssessment,
   updateNewApplicationGeneralInformation,
   updateApplicationGuardianInformation,
+  deleteApplication,
 } from '@lib/applications/resolvers'; // Application resolvers
 import {
   approveApplication,
@@ -189,6 +190,7 @@ const resolvers = {
     updateApplicationPhysicianAssessment: authorize(updateApplicationPhysicianAssessment, [
       'SECRETARY',
     ]),
+    deleteApplication: authorize(deleteApplication, ['SECRETARY']),
 
     // Application processing
     approveApplication: authorize(approveApplication, ['SECRETARY']),
