@@ -1,15 +1,33 @@
-import { Box, Flex, HStack, Text, Link, VStack, Alert, AlertIcon } from '@chakra-ui/react'; // Chakra UI
-import { ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
+import { useRouter } from 'next/router';
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Link,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+  useDisclosure,
+  VStack,
+} from '@chakra-ui/react'; // Chakra UI
+import { ChevronDownIcon, ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import NextLink from 'next/link'; // Link
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; // Request status badge
 import ShopifyBadge from '@components/admin/ShopifyBadge';
 import PermitTypeBadge from '@components/admin/PermitTypeBadge';
+import ConfirmDeleteRequestModal from './delete/ConfirmDeleteRequestModal';
 import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/types';
 import { titlecase } from '@tools/string';
 import { formatDateYYYYMMDD, formatDateYYYYMMDDLocal } from '@lib/utils/date';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 
 type RequestHeaderProps = {
+  readonly id: number;
   readonly applicationType: ApplicationType;
   readonly permitType: PermitType;
   readonly createdAt: Date;
@@ -24,6 +42,7 @@ type RequestHeaderProps = {
 
 /**
  * Header of View Request page
+ * @param id Application id
  * @param applicationType Type of application
  * @param permitType Type of permit
  * @param createdAt Date permit was created at
@@ -36,6 +55,7 @@ type RequestHeaderProps = {
  * @param reasonForRejection Reason for rejecting application
  */
 export default function RequestHeader({
+  id,
   applicationType,
   permitType,
   createdAt,
@@ -65,6 +85,15 @@ export default function RequestHeader({
     expiryDateText = null;
   }
 
+  const router = useRouter();
+
+  // Delete application modal state
+  const {
+    isOpen: isDeleteApplicationModalOpen,
+    onOpen: onOpenDeleteApplicationModal,
+    onClose: onCloseDeleteApplicationModal,
+  } = useDisclosure();
+
   return (
     <Box textAlign="left">
       <NextLink href="/admin" passHref>
@@ -90,6 +119,27 @@ export default function RequestHeader({
                 Received on {formatDateYYYYMMDDLocal(createdAt)} at{' '}
                 {createdAt.toLocaleTimeString('en-CA')}
               </Text>
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rightIcon={<ChevronDownIcon />}
+                  height="30px"
+                  bg="background.gray"
+                  _hover={{ bg: 'background.grayHover' }}
+                  color="black"
+                >
+                  <Text textStyle="caption">More Actions</Text>
+                </MenuButton>
+                <MenuList>
+                  <MenuItem
+                    color="text.critical"
+                    textStyle="button-regular"
+                    onClick={onOpenDeleteApplicationModal}
+                  >
+                    {'Delete Request'}
+                  </MenuItem>
+                </MenuList>
+              </Menu>
             </HStack>
             {displayShopifyUrl && (
               <Text textStyle="caption" as="p">
@@ -129,6 +179,17 @@ export default function RequestHeader({
             </Text>
           </Alert>
         )}
+        <ConfirmDeleteRequestModal
+          isOpen={isDeleteApplicationModalOpen}
+          applicationId={id}
+          refetch={() => {
+            /* Do not refetch, redirect to main page */
+          }}
+          onClose={() => {
+            onCloseDeleteApplicationModal();
+            router.push('/admin');
+          }}
+        />
       </VStack>
     </Box>
   );
