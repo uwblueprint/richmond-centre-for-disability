@@ -451,6 +451,7 @@ export const updateApplicantGuardianInformation: Resolver<
       addressLine2: addressLine2 as string | null,
       city: city as string,
       postalCode: postalCode as string,
+      poaFormS3ObjectKey: data.poaFormS3ObjectKey,
     };
 
     updatedApplicant = await prisma.applicant.update({
