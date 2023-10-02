@@ -460,6 +460,16 @@ export type CreateReplacementApplicationResult = {
 };
 
 
+export type DeleteApplicantInput = {
+  id: Scalars['Int'];
+};
+
+export type DeleteApplicantResult = {
+  __typename?: 'DeleteApplicantResult';
+  ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
+};
+
 export type DeleteEmployeeInput = {
   id: Scalars['Int'];
 };
@@ -590,6 +600,7 @@ export type Mutation = {
   setApplicantAsInactive: Maybe<SetApplicantAsInactiveResult>;
   verifyIdentity: VerifyIdentityResult;
   updateApplicantNotes: UpdateApplicantNotesResult;
+  deleteApplicant: DeleteApplicantResult;
   createNewApplication: Maybe<CreateNewApplicationResult>;
   createRenewalApplication: Maybe<CreateRenewalApplicationResult>;
   createExternalRenewalApplication: CreateExternalRenewalApplicationResult;
@@ -652,6 +663,11 @@ export type MutationVerifyIdentityArgs = {
 
 export type MutationUpdateApplicantNotesArgs = {
   input: UpdateApplicantNotesInput;
+};
+
+
+export type MutationDeleteApplicantArgs = {
+  input: DeleteApplicantInput;
 };
 
 
