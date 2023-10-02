@@ -209,4 +209,15 @@ export default gql`
     ok: Boolean!
     error: String
   }
+
+  # Delete applicant
+  input DeleteApplicantInput {
+    # Applicant ID
+    id: Int!
+  }
+
+  type DeleteApplicantResult {
+    ok: Boolean!
+    error: String
+  }
 `;
