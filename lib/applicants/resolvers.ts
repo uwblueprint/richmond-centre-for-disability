@@ -314,8 +314,8 @@ export const updateApplicantDoctorInformation: Resolver<
   const { id, mspNumber, ...data } = input;
   const { firstName, lastName, addressLine1, addressLine2, city } = input;
 
-  const phone = stripPhoneNumber(data.phone);
-  const postalCode = stripPostalCode(data.postalCode);
+  const phone = data.phone ? stripPhoneNumber(data.phone) : null;
+  const postalCode = data.postalCode ? stripPostalCode(data.postalCode) : null;
 
   try {
     await requestPhysicianInformationSchema.validate({
@@ -345,10 +345,19 @@ export const updateApplicantDoctorInformation: Resolver<
   let updatedApplicant;
 
   try {
+    const upsertData = {
+      firstName: firstName as string,
+      lastName: lastName as string,
+      phone: phone as string,
+      addressLine1: addressLine1 as string,
+      addressLine2: addressLine2 as string | null,
+      city: city as string,
+      postalCode: postalCode as string,
+    };
     const upsertPhysician = prisma.physician.upsert({
       where: { mspNumber },
-      create: { mspNumber, ...data },
-      update: data,
+      create: { mspNumber, ...upsertData },
+      update: upsertData,
     });
     const updateApplicant = prisma.applicant.update({
       where: { id },
