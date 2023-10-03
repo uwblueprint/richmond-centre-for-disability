@@ -13,7 +13,7 @@ import {
   UpdateDoctorInformationResponse,
   UPDATE_DOCTOR_INFORMATION,
 } from '@tools/admin/permit-holders/doctor-information';
-import { formatFullName, formatPhoneNumber, stripPostalCode } from '@lib/utils/format';
+import { formatFullName, formatPhoneNumber } from '@lib/utils/format';
 import Address from '@components/admin/Address';
 import { useMemo } from 'react';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
@@ -43,7 +43,6 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
       UPDATE_DOCTOR_INFORMATION
     );
   const handleSave = async (doctorFormData: DoctorFormData) => {
-    doctorFormData.postalCode = stripPostalCode(doctorFormData.postalCode);
     const validatedData = await requestPhysicianInformationSchema.validate(doctorFormData);
 
     const { data } = await updateDoctorInformation({
