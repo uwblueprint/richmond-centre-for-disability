@@ -33,7 +33,7 @@ const AppHistoryRecord: FC<Props> = ({ permit }) => {
             <Text as="h3" textStyle="heading">
               Permit {rcdPermitId}
             </Text>
-            <PermitTypeBadge variant={permitType || 'PERMANENT'} />
+            <PermitTypeBadge variant={permitType} />
           </HStack>
           <HStack spacing="20px">
             <Text as="p" textStyle="body-regular">
