@@ -10,6 +10,7 @@ import {
 import {
   applicant,
   applicants,
+  deleteApplicant,
   updateApplicantGeneralInformation,
   updateApplicantDoctorInformation,
   updateApplicantGuardianInformation,
@@ -33,6 +34,7 @@ import {
   updateApplicationPhysicianAssessment,
   updateNewApplicationGeneralInformation,
   updateApplicationGuardianInformation,
+  deleteApplication,
 } from '@lib/applications/resolvers'; // Application resolvers
 import {
   approveApplication,
@@ -159,6 +161,7 @@ const resolvers = {
     setApplicantAsActive: authorize(setApplicantAsActive, ['SECRETARY']),
     setApplicantAsInactive: authorize(setApplicantAsInactive, ['SECRETARY']),
     verifyIdentity,
+    deleteApplicant: authorize(deleteApplicant, ['SECRETARY']),
 
     // Applications
     createNewApplication: authorize(createNewApplication, ['SECRETARY']),
@@ -189,6 +192,7 @@ const resolvers = {
     updateApplicationPhysicianAssessment: authorize(updateApplicationPhysicianAssessment, [
       'SECRETARY',
     ]),
+    deleteApplication: authorize(deleteApplication, ['SECRETARY']),
 
     // Application processing
     approveApplication: authorize(approveApplication, ['SECRETARY']),

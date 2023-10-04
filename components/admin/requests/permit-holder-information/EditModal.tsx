@@ -79,6 +79,7 @@ export default function EditPermitHolderInformationModal({
           initialValues={{ permitHolder: { ...permitHolderInformation } }}
           validationSchema={editRequestPermitHolderInformationSchema}
           onSubmit={handleSubmit}
+          validateOnMount
         >
           {({ values, isValid }) => (
             <Form style={{ width: '100%' }} noValidate>

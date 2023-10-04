@@ -87,6 +87,7 @@ const DoctorInformationSection: FC = () => {
       }}
       validationSchema={applicantFacingRenewalDoctorSchema}
       onSubmit={handleSubmit}
+      validateOnMount
     >
       {({ values, isValid }) => (
         <Form noValidate>

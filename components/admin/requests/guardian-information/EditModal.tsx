@@ -136,6 +136,7 @@ const EditGuardianInformationModal: FC<Props> = ({ children, guardianInformation
           }}
           validationSchema={editGuardianInformationSchema}
           onSubmit={handleSubmit}
+          validateOnMount
         >
           {({ values, isValid }) => (
             <Form style={{ width: '100%' }} noValidate>

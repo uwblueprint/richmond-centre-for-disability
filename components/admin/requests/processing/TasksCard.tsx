@@ -106,8 +106,8 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
 
   const [generateInvoice, { loading: generateInvoiceLoading }] =
     useMutation<GenerateInvoiceResponse, GenerateInvoiceRequest>(GENERATE_INVOICE_MUTATION);
-  const handleGenerateInvoice = async () => {
-    await generateInvoice({ variables: { input: { applicationId } } });
+  const handleGenerateInvoice = async (isDonation: boolean) => {
+    await generateInvoice({ variables: { input: { applicationId, isDonation } } });
     refetch();
   };
 
@@ -184,6 +184,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
       paidThroughShopify,
       shopifyConfirmationNumber,
       shopifyOrderNumber,
+      donationAmount,
       processing: {
         status,
         appNumber,
@@ -327,7 +328,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </Button>
               ) : null}
             </ProcessingTaskStep>
-
             {/* Task 2: Hole punch parking permit: Mark as complete (CHECK) */}
             <ProcessingTaskStep
               id={2}
@@ -380,63 +380,9 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </Button>
               ) : null}
             </ProcessingTaskStep>
-
-            {/* Task 3: Create a new wallet card: Mark as complete (CHECK) */}
+            {/* Task 3: Review Information: Review Information (MODAL) */}
             <ProcessingTaskStep
               id={3}
-              label="Create a new wallet card"
-              description="Include permit number, expiry date, full name and birth month"
-              isCompleted={walletCardCreated}
-              showLog={showTaskLog}
-              log={
-                showTaskLog && walletCardCreatedEmployee
-                  ? {
-                      name: formatFullName(
-                        walletCardCreatedEmployee.firstName,
-                        walletCardCreatedEmployee.lastName
-                      ),
-                      date: walletCardCreatedUpdatedAt,
-                    }
-                  : null
-              }
-            >
-              {walletCardCreated && !reviewRequestCompleted ? (
-                <Button
-                  variant="ghost"
-                  textDecoration="underline black"
-                  onClick={() => handleCreateWalletCard(false)}
-                  isDisabled={createWalletCardLoading}
-                  isLoading={createWalletCardLoading}
-                  loadingText="Undo"
-                  fontWeight="normal"
-                  fontSize="14px"
-                >
-                  <Text textStyle="caption" color="black">
-                    Undo
-                  </Text>
-                </Button>
-              ) : !walletCardCreated && !reviewRequestCompleted ? (
-                <Button
-                  marginLeft="auto"
-                  height="35px"
-                  bg="background.gray"
-                  _hover={{ bg: 'background.grayHover' }}
-                  color="black"
-                  onClick={() => handleCreateWalletCard(true)}
-                  isDisabled={createWalletCardLoading}
-                  isLoading={createWalletCardLoading}
-                  loadingText="Mark as complete"
-                  fontWeight="normal"
-                  fontSize="14px"
-                >
-                  <Text textStyle="xsmall-medium">Mark as complete</Text>
-                </Button>
-              ) : null}
-            </ProcessingTaskStep>
-
-            {/* Task 4: Review Information: Review Information (MODAL) */}
-            <ProcessingTaskStep
-              id={4}
               label={'Review request information'}
               description="Editing will be disabled upon completion of this step"
               isCompleted={reviewRequestCompleted}
@@ -455,7 +401,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             >
               <ReviewInformationStep
                 isCompleted={reviewRequestCompleted}
-                isDisabled={!appNumber || !appHolepunched || !walletCardCreated}
+                isDisabled={!appNumber || !appHolepunched}
                 applicationId={applicationId}
                 onConfirmed={() => handleReviewRequestInformation(true)}
                 onUndo={() => {
@@ -464,11 +410,14 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 loading={reviewRequestInformationLoading}
               />
             </ProcessingTaskStep>
-
-            {/* Task 5: Generate Invoice */}
+            {/* Task 4: Generate Invoice */}
             <ProcessingTaskStep
-              id={5}
-              label="Generate invoice"
+              id={4}
+              label={
+                Number(donationAmount) >= 20
+                  ? 'Generate invoice and donation receipt'
+                  : 'Generate invoice'
+              }
               description="Invoice number will be automatically assigned"
               isCompleted={invoice !== null}
               showLog={showTaskLog}
@@ -487,9 +436,13 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   height="35px"
                   bg="background.gray"
                   _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
-                  disabled={!reviewRequestCompleted || generateInvoiceLoading}
                   color="black"
-                  onClick={handleGenerateInvoice}
+                  onClick={() => {
+                    Number(donationAmount) >= 20
+                      ? handleGenerateInvoice(true)
+                      : handleGenerateInvoice(false);
+                  }}
+                  isDisabled={!reviewRequestCompleted || generateInvoiceLoading}
                   isLoading={generateInvoiceLoading}
                   loadingText="Generate document"
                   fontWeight="normal"
@@ -520,10 +473,9 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 </Tooltip>
               )}
             </ProcessingTaskStep>
-
-            {/* Task 6: Upload document: Choose document (UPLOAD FILE) */}
+            {/* Task 5: Upload document: Choose document (UPLOAD FILE) */}
             <ProcessingTaskStep
-              id={6}
+              id={5}
               label="Upload documents"
               description="Scan all documents and upload as one PDF"
               isCompleted={documentsUrl !== null}
@@ -548,7 +500,58 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 loading={uploadDocumentsLoading}
               />
             </ProcessingTaskStep>
-
+            {/* Task 6: Create a new wallet card: Mark as complete (CHECK) */}
+            <ProcessingTaskStep
+              id={6}
+              label="Create a new wallet card"
+              description="Include permit number, expiry date, full name and birth month"
+              isCompleted={walletCardCreated}
+              showLog={showTaskLog}
+              log={
+                showTaskLog && walletCardCreatedEmployee
+                  ? {
+                      name: formatFullName(
+                        walletCardCreatedEmployee.firstName,
+                        walletCardCreatedEmployee.lastName
+                      ),
+                      date: walletCardCreatedUpdatedAt,
+                    }
+                  : null
+              }
+            >
+              {walletCardCreated ? (
+                <Button
+                  variant="ghost"
+                  textDecoration="underline black"
+                  onClick={() => handleCreateWalletCard(false)}
+                  isDisabled={createWalletCardLoading}
+                  isLoading={createWalletCardLoading}
+                  loadingText="Undo"
+                  fontWeight="normal"
+                  fontSize="14px"
+                >
+                  <Text textStyle="caption" color="black">
+                    Undo
+                  </Text>
+                </Button>
+              ) : (
+                <Button
+                  marginLeft="auto"
+                  height="35px"
+                  bg="background.gray"
+                  _hover={documentsUrl === null ? undefined : { bg: 'background.grayHover' }}
+                  color="black"
+                  onClick={() => handleCreateWalletCard(true)}
+                  isDisabled={documentsUrl === null || createWalletCardLoading}
+                  isLoading={createWalletCardLoading}
+                  loadingText="Mark as complete"
+                  fontWeight="normal"
+                  fontSize="14px"
+                >
+                  <Text textStyle="xsmall-medium">Mark as complete</Text>
+                </Button>
+              )}
+            </ProcessingTaskStep>
             {/* Task 7: Mail out: Mark as complete (CHECK) */}
             <ProcessingTaskStep
               id={7}
@@ -570,7 +573,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   variant="ghost"
                   textDecoration="underline black"
                   onClick={() => handleMailOut(false)}
-                  disabled={mailOutLoading}
+                  isDisabled={mailOutLoading}
                   isLoading={mailOutLoading}
                   loadingText="Undo"
                   fontWeight="normal"
@@ -585,10 +588,10 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   marginLeft="auto"
                   height="35px"
                   bg="background.gray"
-                  _hover={documentsUrl === null ? undefined : { bg: 'background.grayHover' }}
+                  _hover={!walletCardCreated ? undefined : { bg: 'background.grayHover' }}
                   color="black"
-                  disabled={documentsUrl === null || mailOutLoading}
                   onClick={() => handleMailOut(true)}
+                  isDisabled={!walletCardCreated || mailOutLoading}
                   isLoading={mailOutLoading}
                   loadingText="Mark as complete"
                   fontWeight="normal"

@@ -48,6 +48,7 @@ const AdditionalInformationSection: FC = () => {
       initialValues={{ ...additionalInformation }}
       validationSchema={additionalQuestionsSchema}
       onSubmit={handleSubmit}
+      validateOnMount
     >
       {({ values, isValid }) => (
         <Form noValidate>

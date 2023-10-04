@@ -80,6 +80,7 @@ export default function EditDoctorInformationModal({
           initialValues={{ doctorInformation }}
           validationSchema={editPhysicianInformationSchema}
           onSubmit={handleSubmit}
+          validateOnMount
         >
           {({ isValid }) => (
             <Form style={{ width: '100%' }} noValidate>

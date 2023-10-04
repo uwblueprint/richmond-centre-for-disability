@@ -40,6 +40,9 @@ export const GET_APPLICATION_QUERY = gql`
       }
       applicant {
         id
+        mostRecentPermit {
+          expiryDate
+        }
       }
       permit {
         expiryDate
@@ -77,7 +80,9 @@ export type GetApplicationResponse = {
     > & {
       invoice: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl'>;
     };
-    applicant: Pick<Applicant, 'id'>;
+    applicant: Pick<Applicant, 'id'> & {
+      mostRecentPermit: Pick<Permit, 'expiryDate'> | null;
+    };
     temporaryPermitExpiry?: Date;
     permit: Pick<Permit, 'expiryDate'> | null;
   };

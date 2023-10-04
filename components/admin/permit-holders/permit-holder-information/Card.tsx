@@ -139,7 +139,7 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
             Date of Birth: {formatDateYYYYMMDD(new Date(dateOfBirth))}
           </Text>
           <Text as="p" textStyle="body-regular">
-            Gender: {gender === 'OTHER' ? otherGender : titlecase(gender)}
+            Gender: {gender === 'OTHER' && otherGender ? otherGender : titlecase(gender)}
           </Text>
         </VStack>
 
