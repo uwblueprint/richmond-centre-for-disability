@@ -14,9 +14,11 @@ import {
   Employee,
   MutationCreateEmployeeArgs,
   MutationDeleteEmployeeArgs,
+  MutationSetEmployeeAsActiveArgs,
   MutationUpdateEmployeeArgs,
   QueryEmployeeArgs,
   QueryEmployeesArgs,
+  SetEmployeeAsActiveResult,
   UpdateEmployeeResult,
 } from '@lib/graphql/types';
 
@@ -211,5 +213,36 @@ export const deleteEmployee: Resolver<MutationDeleteEmployeeArgs, DeleteEmployee
     }
   }
   if (!updatedEmployee) throw new ApolloError('Employee was unable to be deleted');
+  return { ok: true, employee: updatedEmployee };
+};
+
+/**
+ * Set an employee as active
+ * @returns status of operation (ok) and updated employee
+ */
+export const setEmployeeAsActive: Resolver<
+  MutationSetEmployeeAsActiveArgs,
+  SetEmployeeAsActiveResult
+> = async (_, args, { prisma }) => {
+  const id = args.input.id;
+
+  let updatedEmployee;
+  try {
+    updatedEmployee = await prisma.employee.update({
+      where: { id },
+      data: { active: true },
+    });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === DBErrorCode.RecordNotFound) {
+        throw new EmployeeNotFoundError(`Employee with ID ${id} not found`);
+      }
+    }
+  }
+
+  if (!updatedEmployee) {
+    throw new ApolloError('Unable to set employee as active.');
+  }
+
   return { ok: true, employee: updatedEmployee };
 };

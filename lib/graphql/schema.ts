@@ -116,6 +116,7 @@ export default gql`
     createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
     updateEmployee(input: UpdateEmployeeInput!): UpdateEmployeeResult!
     deleteEmployee(input: DeleteEmployeeInput!): DeleteEmployeeResult!
+    setEmployeeAsActive(input: SetEmployeeAsActiveInput!): SetEmployeeAsActiveResult!
   }
 
   # Scalars

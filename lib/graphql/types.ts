@@ -74,16 +74,6 @@ export type ApplicantsResult = {
   totalCount: Scalars['Int'];
 };
 
-export type DeleteApplicationInput = {
-  id: Scalars['Int'];
-};
-
-export type DeleteApplicationResult = {
-  __typename?: 'DeleteApplicationResult';
-  ok: Scalars['Boolean'];
-  error: Maybe<Scalars['String']>;
-};
-
 export type Application = {
   id: Scalars['Int'];
   firstName: Scalars['String'];
@@ -470,6 +460,16 @@ export type DeleteApplicantResult = {
   error: Maybe<Scalars['String']>;
 };
 
+export type DeleteApplicationInput = {
+  id: Scalars['Int'];
+};
+
+export type DeleteApplicationResult = {
+  __typename?: 'DeleteApplicationResult';
+  ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
+};
+
 export type DeleteEmployeeInput = {
   id: Scalars['Int'];
 };
@@ -628,6 +628,7 @@ export type Mutation = {
   createEmployee: CreateEmployeeResult;
   updateEmployee: UpdateEmployeeResult;
   deleteEmployee: DeleteEmployeeResult;
+  setEmployeeAsActive: SetEmployeeAsActiveResult;
 };
 
 
@@ -731,6 +732,11 @@ export type MutationUpdateApplicationPhysicianAssessmentArgs = {
 };
 
 
+export type MutationDeleteApplicationArgs = {
+  input: DeleteApplicationInput;
+};
+
+
 export type MutationApproveApplicationArgs = {
   input: ApproveApplicationInput;
 };
@@ -800,8 +806,9 @@ export type MutationDeleteEmployeeArgs = {
   input: DeleteEmployeeInput;
 };
 
-export type MutationDeleteApplicationArgs = {
-  input: DeleteApplicationInput;
+
+export type MutationSetEmployeeAsActiveArgs = {
+  input: SetEmployeeAsActiveInput;
 };
 
 export type NewApplication = Application & {
@@ -1196,6 +1203,16 @@ export type SetApplicantAsInactiveResult = {
   __typename?: 'SetApplicantAsInactiveResult';
   ok: Scalars['Boolean'];
   error: Maybe<Scalars['String']>;
+};
+
+export type SetEmployeeAsActiveInput = {
+  id: Scalars['Int'];
+};
+
+export type SetEmployeeAsActiveResult = {
+  __typename?: 'SetEmployeeAsActiveResult';
+  ok: Scalars['Boolean'];
+  employee: Employee;
 };
 
 export type ShopifyPaymentStatus =
