@@ -224,18 +224,18 @@ export const setEmployeeAsActive: Resolver<
   MutationSetEmployeeAsActiveArgs,
   SetEmployeeAsActiveResult
 > = async (_, args, { prisma }) => {
-  const id = args.input.id;
+  const email = args.input.email;
 
   let updatedEmployee;
   try {
     updatedEmployee = await prisma.employee.update({
-      where: { id },
+      where: { email },
       data: { active: true },
     });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === DBErrorCode.RecordNotFound) {
-        throw new EmployeeNotFoundError(`Employee with ID ${id} not found`);
+        throw new EmployeeNotFoundError(`Employee with email ${email} not found`);
       }
     }
   }

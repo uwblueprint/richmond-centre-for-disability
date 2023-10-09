@@ -59,7 +59,7 @@ export default gql`
   }
 
   input SetEmployeeAsActiveInput {
-    id: Int!
+    email: String!
   }
 
   type SetEmployeeAsActiveResult {

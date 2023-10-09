@@ -1206,7 +1206,7 @@ export type SetApplicantAsInactiveResult = {
 };
 
 export type SetEmployeeAsActiveInput = {
-  id: Scalars['Int'];
+  email: Scalars['String'];
 };
 
 export type SetEmployeeAsActiveResult = {
