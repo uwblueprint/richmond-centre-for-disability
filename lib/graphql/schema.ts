@@ -46,6 +46,7 @@ export default gql`
     setApplicantAsInactive(input: SetApplicantAsInactiveInput!): SetApplicantAsInactiveResult
     verifyIdentity(input: VerifyIdentityInput!): VerifyIdentityResult!
     updateApplicantNotes(input: UpdateApplicantNotesInput!): UpdateApplicantNotesResult!
+    deleteApplicant(input: DeleteApplicantInput!): DeleteApplicantResult!
 
     # Applications
     createNewApplication(input: CreateNewApplicationInput!): CreateNewApplicationResult
@@ -80,6 +81,7 @@ export default gql`
     updateApplicationPhysicianAssessment(
       input: UpdateApplicationPhysicianAssessmentInput!
     ): UpdateApplicationPhysicianAssessmentResult
+    deleteApplication(input: DeleteApplicationInput!): DeleteApplicationResult!
 
     # Application processing
     approveApplication(input: ApproveApplicationInput!): ApproveApplicationResult
@@ -114,6 +116,7 @@ export default gql`
     createEmployee(input: CreateEmployeeInput!): CreateEmployeeResult!
     updateEmployee(input: UpdateEmployeeInput!): UpdateEmployeeResult!
     deleteEmployee(input: DeleteEmployeeInput!): DeleteEmployeeResult!
+    setEmployeeAsActive(input: SetEmployeeAsActiveInput!): SetEmployeeAsActiveResult!
   }
 
   # Scalars

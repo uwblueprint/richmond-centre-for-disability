@@ -450,6 +450,26 @@ export type CreateReplacementApplicationResult = {
 };
 
 
+export type DeleteApplicantInput = {
+  id: Scalars['Int'];
+};
+
+export type DeleteApplicantResult = {
+  __typename?: 'DeleteApplicantResult';
+  ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
+};
+
+export type DeleteApplicationInput = {
+  id: Scalars['Int'];
+};
+
+export type DeleteApplicationResult = {
+  __typename?: 'DeleteApplicationResult';
+  ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
+};
+
 export type DeleteEmployeeInput = {
   id: Scalars['Int'];
 };
@@ -580,6 +600,7 @@ export type Mutation = {
   setApplicantAsInactive: Maybe<SetApplicantAsInactiveResult>;
   verifyIdentity: VerifyIdentityResult;
   updateApplicantNotes: UpdateApplicantNotesResult;
+  deleteApplicant: DeleteApplicantResult;
   createNewApplication: Maybe<CreateNewApplicationResult>;
   createRenewalApplication: Maybe<CreateRenewalApplicationResult>;
   createExternalRenewalApplication: CreateExternalRenewalApplicationResult;
@@ -592,6 +613,7 @@ export type Mutation = {
   updateApplicationPaymentInformation: Maybe<UpdateApplicationPaymentInformationResult>;
   updateApplicationReasonForReplacement: Maybe<UpdateApplicationReasonForReplacementResult>;
   updateApplicationPhysicianAssessment: Maybe<UpdateApplicationPhysicianAssessmentResult>;
+  deleteApplication: DeleteApplicationResult;
   approveApplication: Maybe<ApproveApplicationResult>;
   rejectApplication: Maybe<RejectApplicationResult>;
   completeApplication: Maybe<CompleteApplicationResult>;
@@ -606,6 +628,7 @@ export type Mutation = {
   createEmployee: CreateEmployeeResult;
   updateEmployee: UpdateEmployeeResult;
   deleteEmployee: DeleteEmployeeResult;
+  setEmployeeAsActive: SetEmployeeAsActiveResult;
 };
 
 
@@ -641,6 +664,11 @@ export type MutationVerifyIdentityArgs = {
 
 export type MutationUpdateApplicantNotesArgs = {
   input: UpdateApplicantNotesInput;
+};
+
+
+export type MutationDeleteApplicantArgs = {
+  input: DeleteApplicantInput;
 };
 
 
@@ -701,6 +729,11 @@ export type MutationUpdateApplicationReasonForReplacementArgs = {
 
 export type MutationUpdateApplicationPhysicianAssessmentArgs = {
   input: UpdateApplicationPhysicianAssessmentInput;
+};
+
+
+export type MutationDeleteApplicationArgs = {
+  input: DeleteApplicationInput;
 };
 
 
@@ -771,6 +804,11 @@ export type MutationUpdateEmployeeArgs = {
 
 export type MutationDeleteEmployeeArgs = {
   input: DeleteEmployeeInput;
+};
+
+
+export type MutationSetEmployeeAsActiveArgs = {
+  input: SetEmployeeAsActiveInput;
 };
 
 export type NewApplication = Application & {
@@ -1167,6 +1205,16 @@ export type SetApplicantAsInactiveResult = {
   error: Maybe<Scalars['String']>;
 };
 
+export type SetEmployeeAsActiveInput = {
+  email: Scalars['String'];
+};
+
+export type SetEmployeeAsActiveResult = {
+  __typename?: 'SetEmployeeAsActiveResult';
+  ok: Scalars['Boolean'];
+  employee: Employee;
+};
+
 export type ShopifyPaymentStatus =
   | 'PENDING'
   | 'RECEIVED';
@@ -1389,6 +1437,7 @@ export type UpdateApplicationProcessingCreateWalletCardResult = {
 
 export type UpdateApplicationProcessingGenerateInvoiceInput = {
   applicationId: Scalars['Int'];
+  isDonation: Scalars['Boolean'];
 };
 
 export type UpdateApplicationProcessingGenerateInvoiceResult = {

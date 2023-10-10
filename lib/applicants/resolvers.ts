@@ -3,6 +3,8 @@ import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
 import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import {
   Applicant,
+  DeleteApplicantResult,
+  MutationDeleteApplicantArgs,
   MutationSetApplicantAsActiveArgs,
   MutationSetApplicantAsInactiveArgs,
   MutationUpdateApplicantDoctorInformationArgs,
@@ -312,8 +314,8 @@ export const updateApplicantDoctorInformation: Resolver<
   const { id, mspNumber, ...data } = input;
   const { firstName, lastName, addressLine1, addressLine2, city } = input;
 
-  const phone = stripPhoneNumber(data.phone);
-  const postalCode = stripPostalCode(data.postalCode);
+  const phone = data.phone ? stripPhoneNumber(data.phone) : null;
+  const postalCode = data.postalCode ? stripPostalCode(data.postalCode) : null;
 
   try {
     await requestPhysicianInformationSchema.validate({
@@ -343,10 +345,19 @@ export const updateApplicantDoctorInformation: Resolver<
   let updatedApplicant;
 
   try {
+    const upsertData = {
+      firstName: firstName as string,
+      lastName: lastName as string,
+      phone: phone as string,
+      addressLine1: addressLine1 as string,
+      addressLine2: addressLine2 as string | null,
+      city: city as string,
+      postalCode: postalCode as string,
+    };
     const upsertPhysician = prisma.physician.upsert({
       where: { mspNumber },
-      create: { mspNumber, ...data },
-      update: data,
+      create: { mspNumber, ...upsertData },
+      update: upsertData,
     });
     const updateApplicant = prisma.applicant.update({
       where: { id },
@@ -449,6 +460,7 @@ export const updateApplicantGuardianInformation: Resolver<
       addressLine2: addressLine2 as string | null,
       city: city as string,
       postalCode: postalCode as string,
+      poaFormS3ObjectKey: data.poaFormS3ObjectKey,
     };
 
     updatedApplicant = await prisma.applicant.update({
@@ -706,6 +718,84 @@ export const updateApplicantNotes: Resolver<
 
   if (!updatedApplicant) {
     throw new ApolloError('Unable to update applicant notes');
+  }
+
+  return { ok: true, error: null };
+};
+
+/**
+ * Deletes the applicant with the provided ID, also deletes all associated
+ * data (permits, medical information, applications, and guardian).
+ * @returns Status of the operation (ok)
+ */
+export const deleteApplicant: Resolver<MutationDeleteApplicantArgs, DeleteApplicantResult> = async (
+  _parent,
+  args,
+  { prisma, logger }
+) => {
+  const id = args.input.id;
+
+  try {
+    const applicant = await prisma.applicant.findUnique({
+      where: {
+        id,
+      },
+      rejectOnNotFound: true,
+    });
+
+    const applications = await prisma.application.findMany({
+      where: {
+        applicantId: applicant.id,
+      },
+    });
+    const applicationIds = applications.map(application => application.id);
+    const applicationProcessingIds = applications.map(
+      application => application.applicationProcessingId
+    );
+
+    // Ideally, we'd cascade the delete to relations with referential actions
+    // https://www.prisma.io/docs/concepts/components/prisma-schema/relations/referential-actions
+    // However, that would require making a schema change which is infeasible at this time
+    const cleanupOperations: any[] = [
+      prisma.permit.deleteMany({ where: { applicantId: applicant.id } }),
+      prisma.applicant.delete({ where: { id } }),
+      prisma.medicalInformation.delete({ where: { id: applicant.medicalInformationId } }),
+    ];
+
+    if (applicant.guardianId !== null) {
+      cleanupOperations.push(prisma.guardian.delete({ where: { id: applicant.guardianId } }));
+    }
+
+    applicationIds.forEach(applicationId => {
+      cleanupOperations.push(prisma.newApplication.deleteMany({ where: { applicationId } }));
+      cleanupOperations.push(prisma.renewalApplication.deleteMany({ where: { applicationId } }));
+      cleanupOperations.push(
+        prisma.replacementApplication.deleteMany({ where: { applicationId } })
+      );
+      cleanupOperations.push(prisma.application.deleteMany({ where: { id: applicationId } }));
+    });
+
+    applicationProcessingIds.forEach(applicationProcessingId => {
+      cleanupOperations.push(
+        prisma.applicationProcessing.deleteMany({
+          where: {
+            id: applicationProcessingId,
+          },
+        })
+      );
+    });
+
+    await prisma.$transaction(cleanupOperations);
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
+    }
+
+    logger.error({ error: err }, 'Unknown error occurred when attempting to delete applicant');
+    throw new ApolloError('Unable to delete applicant after encountering unknown error');
   }
 
   return { ok: true, error: null };

@@ -6,10 +6,12 @@ import {
   updateEmployee,
   employee,
   deleteEmployee,
+  setEmployeeAsActive,
 } from '@lib/employees/resolvers'; // Employee resolvers
 import {
   applicant,
   applicants,
+  deleteApplicant,
   updateApplicantGeneralInformation,
   updateApplicantDoctorInformation,
   updateApplicantGuardianInformation,
@@ -33,6 +35,7 @@ import {
   updateApplicationPhysicianAssessment,
   updateNewApplicationGeneralInformation,
   updateApplicationGuardianInformation,
+  deleteApplication,
 } from '@lib/applications/resolvers'; // Application resolvers
 import {
   approveApplication,
@@ -159,6 +162,7 @@ const resolvers = {
     setApplicantAsActive: authorize(setApplicantAsActive, ['SECRETARY']),
     setApplicantAsInactive: authorize(setApplicantAsInactive, ['SECRETARY']),
     verifyIdentity,
+    deleteApplicant: authorize(deleteApplicant, ['SECRETARY']),
 
     // Applications
     createNewApplication: authorize(createNewApplication, ['SECRETARY']),
@@ -189,6 +193,7 @@ const resolvers = {
     updateApplicationPhysicianAssessment: authorize(updateApplicationPhysicianAssessment, [
       'SECRETARY',
     ]),
+    deleteApplication: authorize(deleteApplication, ['SECRETARY']),
 
     // Application processing
     approveApplication: authorize(approveApplication, ['SECRETARY']),
@@ -229,6 +234,7 @@ const resolvers = {
     createEmployee: authorize(createEmployee),
     updateEmployee: authorize(updateEmployee),
     deleteEmployee: authorize(deleteEmployee),
+    setEmployeeAsActive: authorize(setEmployeeAsActive),
   },
   Date: dateScalar,
   Applicant: {
