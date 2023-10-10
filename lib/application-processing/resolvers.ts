@@ -25,7 +25,7 @@ import {
   UpdateApplicationProcessingRefundPaymentResult,
 } from '@lib/graphql/types';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
-import { generateApplicationInvoicePdf, generateDonationInvoicePdf } from '@lib/invoices/utils';
+import { generateApplicationInvoicePdf } from '@lib/invoices/utils';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { Prisma } from '@prisma/client';
@@ -817,6 +817,24 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
   }
   const { id: employeeId } = session;
 
+  // Prevent changing wallet card creation status if review is complete
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: {
+      applicationProcessing: {
+        select: {
+          reviewRequestCompleted: true,
+        },
+      },
+    },
+  });
+  if (application?.applicationProcessing.reviewRequestCompleted) {
+    return {
+      ok: false,
+      error: 'Cannot update wallet card status of already-reviewed application',
+    };
+  }
+
   let updatedApplicationProcessing;
   try {
     updatedApplicationProcessing = await prisma.application.update({
@@ -875,6 +893,7 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
         select: {
           appNumber: true,
           appHolepunched: true,
+          walletCardCreated: true,
         },
       },
     },
@@ -882,7 +901,8 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
   if (
     reviewRequestCompleted &&
     (!application?.applicationProcessing.appNumber ||
-      !application?.applicationProcessing.appHolepunched)
+      !application?.applicationProcessing.appHolepunched ||
+      !application?.applicationProcessing.walletCardCreated)
   ) {
     return { ok: false, error: 'Prior steps incomplete' };
   }
@@ -908,7 +928,6 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
               disconnect: true,
             },
             documentsUrlUpdatedAt: new Date(),
-            walletCardCreated: false,
             appMailed: false,
             appMailedEmployee: { disconnect: true },
             appMailedUpdatedAt: new Date(),
@@ -944,7 +963,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
 > = async (_parent, args, { prisma, session, logger }) => {
   // TODO: Validation
   const { input } = args;
-  const { applicationId, isDonation } = input;
+  const { applicationId } = input;
 
   if (!session) {
     return { ok: false, error: 'Not authenticated' };
@@ -992,21 +1011,13 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
   const s3InvoiceKey = `rcd/invoices/${fileName}`;
 
   // Generate application invoice
-  const pdfDoc = isDonation
-    ? generateDonationInvoicePdf(
-        application,
-        session,
-        // TODO: Remove typecast when backend guard is implemented
-        application.applicationProcessing.appNumber as number,
-        receiptNumber
-      )
-    : generateApplicationInvoicePdf(
-        application,
-        session,
-        // TODO: Remove typecast when backend guard is implemented
-        application.applicationProcessing.appNumber as number,
-        receiptNumber
-      );
+  const pdfDoc = generateApplicationInvoicePdf(
+    application,
+    session,
+    // TODO: Remove typecast when backend guard is implemented
+    application.applicationProcessing.appNumber as number,
+    receiptNumber
+  );
 
   // Upload pdf to s3
   let uploadedPdf;

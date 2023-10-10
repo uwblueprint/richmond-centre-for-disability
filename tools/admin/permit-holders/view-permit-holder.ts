@@ -91,7 +91,6 @@ export const GET_APPLICANT_QUERY = gql`
         application {
           id
           type
-          permitType
           processing {
             documentsUrl
             documentsS3ObjectKey
@@ -99,6 +98,9 @@ export const GET_APPLICANT_QUERY = gql`
               s3ObjectUrl
               s3ObjectKey
             }
+          }
+          ... on NewApplication {
+            permitType
           }
         }
       }

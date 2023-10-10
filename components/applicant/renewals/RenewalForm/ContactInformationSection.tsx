@@ -59,7 +59,6 @@ const ContactInformationSection: FC = () => {
       }}
       validationSchema={applicantFacingRenewalContactSchema}
       onSubmit={handleSubmit}
-      validateOnMount
     >
       {({ values, isValid }) => (
         <Form noValidate>

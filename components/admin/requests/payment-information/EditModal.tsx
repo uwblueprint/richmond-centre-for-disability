@@ -66,7 +66,6 @@ export default function EditPaymentDetailsModal({
           initialValues={{ paymentInformation }}
           validationSchema={editPaymentInformationSchema}
           onSubmit={handleSubmit}
-          validateOnMount
         >
           {({ values, isValid }) => (
             <Form style={{ width: '100%' }} noValidate>

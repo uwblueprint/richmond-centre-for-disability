@@ -61,7 +61,6 @@ export default function EditAdditionalInformationModal({
           initialValues={{ additionalInformation: additionalInformation }}
           validationSchema={editAdditionalQuestionsSchema}
           onSubmit={handleSubmit}
-          validateOnMount
         >
           {({ values, isValid }) => (
             <Form style={{ width: '100%' }} noValidate>

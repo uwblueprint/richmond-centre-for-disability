@@ -24,14 +24,14 @@ const CheckboxGroupField: FC<Props> = props => {
   };
 
   return (
-    <FormControl isInvalid={!!meta.error} isRequired={required}>
+    <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
       <FormLabel htmlFor={name}>{label}</FormLabel>
       <CheckboxGroup {...field} onChange={handleChange} {...checkboxGroupProps}>
         {children}
       </CheckboxGroup>
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">
-          {meta.error || null}
+          {meta.touched && meta.error ? meta.error : null}
         </Text>
       </FormErrorMessage>
     </FormControl>

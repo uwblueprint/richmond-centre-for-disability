@@ -124,7 +124,6 @@ const IdentityVerification: FC = () => {
             }}
             validationSchema={verifyIdentitySchema}
             onSubmit={handleSubmit}
-            validateOnMount
           >
             {({ values, isValid }) => (
               <Form style={{ width: '100%' }} noValidate>

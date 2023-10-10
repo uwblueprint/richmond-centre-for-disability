@@ -63,11 +63,6 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     permit,
   } = data.application;
 
-  // Get expiry date to display
-  const mostRecentPermitExpiryDate = data.application.applicant?.mostRecentPermit?.expiryDate;
-  const permitExpiry =
-    type === 'REPLACEMENT' ? mostRecentPermitExpiryDate : permit ? permit.expiryDate : null;
-
   // Whether all application processing steps are completed
   const allStepsCompleted = !!(
     appNumber !== null &&
@@ -86,7 +81,6 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
     <Layout>
       <GridItem rowSpan={1} colSpan={12} marginTop={3} marginBottom="12px">
         <RequestHeader
-          id={id}
           applicationStatus={status}
           applicationType={type}
           permitType={permitType}
@@ -94,7 +88,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           paidThroughShopify={paidThroughShopify}
           shopifyOrderID={shopifyConfirmationNumber || undefined}
           shopifyOrderNumber={shopifyOrderNumber || undefined}
-          permitExpiry={permitExpiry}
+          permitExpiry={permit && permit.expiryDate}
           temporaryPermitExpiry={temporaryPermitExpiry || null}
           reasonForRejection={rejectedReason || undefined}
         />

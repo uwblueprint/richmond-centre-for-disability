@@ -35,7 +35,6 @@ const DonationSection: FC = () => {
       }}
       validationSchema={applicantFacingRenewalDonationSchema}
       onSubmit={handleSubmit}
-      validateOnMount
     >
       {({ values, isValid }) => (
         <Form noValidate>

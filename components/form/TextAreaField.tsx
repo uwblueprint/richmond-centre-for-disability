@@ -20,12 +20,12 @@ const TextArea: FC<Props> = props => {
   const [field, meta] = useField(name);
 
   return (
-    <FormControl isInvalid={!!meta.error} isRequired={required}>
+    <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
       {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
       <Textarea {...textAreaProps} {...field} />
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">
-          {meta.error || null}
+          {meta.touched && meta.error ? meta.error : null}
         </Text>
       </FormErrorMessage>
     </FormControl>

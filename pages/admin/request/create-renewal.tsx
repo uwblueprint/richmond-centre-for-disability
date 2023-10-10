@@ -283,7 +283,6 @@ export default function CreateRenewal() {
             }}
             validationSchema={renewalRequestFormSchema}
             onSubmit={handleSubmit}
-            validateOnMount
           >
             {({ values, isValid }) => (
               <Form noValidate>

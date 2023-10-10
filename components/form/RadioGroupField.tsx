@@ -24,14 +24,14 @@ const RadioGroupField: FC<Props> = props => {
   };
 
   return (
-    <FormControl isInvalid={!!meta.error} isRequired={required}>
+    <FormControl isInvalid={!!meta.error && meta.touched} isRequired={required}>
       {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
       <RadioGroup id={name} {...field} onChange={handleChange} {...radioGroupProps}>
         {children}
       </RadioGroup>
       <FormErrorMessage>
         <Text as="span" textStyle="body-regular">
-          {meta.error || null}
+          {meta.touched && meta.error ? meta.error : null}
         </Text>
       </FormErrorMessage>
     </FormControl>

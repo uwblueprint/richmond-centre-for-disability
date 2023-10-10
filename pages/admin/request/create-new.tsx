@@ -447,7 +447,6 @@ export default function CreateNew() {
             }}
             validationSchema={createNewRequestFormSchema}
             onSubmit={handleSubmit}
-            validateOnMount
           >
             {({ values, isValid }) => (
               <Form noValidate>

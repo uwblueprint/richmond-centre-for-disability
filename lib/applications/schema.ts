@@ -794,15 +794,4 @@ export default gql`
     ok: Boolean!
     error: String
   }
-
-  # Delete application
-  input DeleteApplicationInput {
-    # Application ID
-    id: Int!
-  }
-
-  type DeleteApplicationResult {
-    ok: Boolean!
-    error: String
-  }
 `;
