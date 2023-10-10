@@ -57,4 +57,13 @@ export default gql`
     result: [Employee!]!
     totalCount: Int!
   }
+
+  input SetEmployeeAsActiveInput {
+    email: String!
+  }
+
+  type SetEmployeeAsActiveResult {
+    ok: Boolean!
+    employee: Employee!
+  }
 `;

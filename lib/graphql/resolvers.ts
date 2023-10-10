@@ -6,6 +6,7 @@ import {
   updateEmployee,
   employee,
   deleteEmployee,
+  setEmployeeAsActive,
 } from '@lib/employees/resolvers'; // Employee resolvers
 import {
   applicant,
@@ -233,6 +234,7 @@ const resolvers = {
     createEmployee: authorize(createEmployee),
     updateEmployee: authorize(updateEmployee),
     deleteEmployee: authorize(deleteEmployee),
+    setEmployeeAsActive: authorize(setEmployeeAsActive),
   },
   Date: dateScalar,
   Applicant: {
