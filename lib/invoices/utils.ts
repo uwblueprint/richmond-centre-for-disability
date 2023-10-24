@@ -454,7 +454,7 @@ const donationPdfDefinition = (input: {
                 [{ text: 'Date Donation Received:' }, formatDateYYYYMMDD(dateDonationRecevied)],
                 [{ text: 'Donor Number:' }, `P${appNumber}`],
                 [{ text: 'Total Amount:' }, `$${donationAmount.toString()}`],
-                [{ text: 'Value of Product / Services:' }, ''],
+                [{ text: 'Value of Product / Services:\n' }, ''],
                 [
                   { text: 'Eligible Amount of Donation for Tax Purposes:' },
                   `$${donationAmount.toString()}`,
@@ -481,14 +481,14 @@ const donationPdfDefinition = (input: {
       },
       {
         text: [
-          `Dear ${applicantName}\n\n`,
+          `Dear ${applicantName}\n\n\n`,
           'On behalf of the Richmond Centre for Disability (RCD), we would like to extend our sincere and\n',
           'heartfelt thanks and appreciation for your donation. Please find your official tax receipt enclosed.\n\n',
           'Through RCD services and support, we have seen the lives of people with disabilities and their\n',
           'families changed for the better. Your generosity does make a difference in the delivery of much\n',
           'coveted services to people with disabilities. The work being undertaken through the RCD is only\n',
-          'possible because of caring people like you.\n\n',
-          'Thank you again for your valued support.\n\n',
+          'possible because of caring people like you.\n\n\n',
+          'Thank you again for your valued support.\n\n\n',
           'Sincerely,\n\n\n',
           'RICHMOND CENTRE FOR DISABILITY\n',
           '(Charity Number: 88832-8432-RR0001)\n',
@@ -527,6 +527,7 @@ const donationPdfDefinition = (input: {
     },
     defaultStyle: {
       font: 'Helvetica',
+      lineHeight: 1.4,
     },
     images: {
       rcd: 'public/assets/logo.png',
