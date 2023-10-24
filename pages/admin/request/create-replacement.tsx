@@ -69,6 +69,8 @@ export default function CreateReplacement() {
 
   const toast = useToast();
   const router = useRouter();
+  const ZERO_REPLACEMENT_FEE_PAYMENT_DETAILS = INITIAL_PAYMENT_DETAILS;
+  ZERO_REPLACEMENT_FEE_PAYMENT_DETAILS.processingFee = '0';
 
   // Get applicant autofill information
   const [getApplicant] = useLazyQuery<GetSelectedApplicantResponse, GetSelectedApplicantRequest>(
@@ -219,7 +221,7 @@ export default function CreateReplacement() {
                 type: 'REPLACEMENT',
                 receiveEmailUpdates: false,
               },
-              paymentInformation: INITIAL_PAYMENT_DETAILS,
+              paymentInformation: ZERO_REPLACEMENT_FEE_PAYMENT_DETAILS,
               reasonForReplacement: INITIAL_REASON_FOR_REPLACEMENT,
             }}
             validationSchema={replacementRequestFormSchema}
