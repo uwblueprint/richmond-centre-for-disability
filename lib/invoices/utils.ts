@@ -404,57 +404,74 @@ const donationPdfDefinition = (input: {
         pageBreak: 'before',
         text: [
           { text: 'RICHMOND CENTRE FOR DISABILITY', style: 'header' },
-          '\n\n',
+          '\n',
           {
             text: `Official Donation Receipt for Income Tax Purposes - ${dateIssued.getFullYear()}`,
-            style: 'subheaderDonation',
+            style: 'subheader',
           },
         ],
       },
+
       {
         columns: [
           {
-            table: {
-              heights: 20,
-              body: [
-                [
-                  { text: 'Tax Receipt #:' },
-                  `PPD_${dateIssued.getFullYear()}${dateIssued.getMonth()}${dateIssued.getDate()}_${appNumber}`,
-                ],
-                [
-                  { text: 'Donated by:' },
-                  {
-                    text: [
-                      `${applicantName}\n`,
-                      `${address.addressLine2 ? `${address.addressLine2} - ` : ''}${
-                        address.addressLine1
-                      }\n`,
-                      `${address.city} ${address.province} ${formatPostalCode(address.postalCode)}`,
+            stack: [
+              {
+                table: {
+                  heights: 18,
+                  body: [
+                    [
+                      { text: 'Tax Receipt #:' },
+                      `PPD_${dateIssued.getFullYear()}${dateIssued.getMonth()}${dateIssued.getDate()}_${appNumber}`,
                     ],
-                    fontSize: 12,
-                    lineHeight: 1.5,
-                  },
-                ],
-                [{ text: '' }, ''],
-                [{ text: '' }, ''],
-                [{ text: '' }, ''],
-                [{ text: 'Email:' }, nonNullEmail],
-                [{ text: 'Date Receipt Issued:' }, formatDateYYYYMMDD(dateIssued)],
-                [{ text: 'Location Receipt Issued:' }, 'Richmond, BC'],
-                [{ text: 'Authorized Signature:' }, { image: 'signature', width: 150 }],
-              ],
-            },
-            layout: 'noBorders',
-            margin: [0, 0, 20, 0],
+                    [
+                      { text: 'Donated by:' },
+                      {
+                        text: [
+                          `${applicantName}\n`,
+                          `${address.addressLine2 ? `${address.addressLine2} - ` : ''}${
+                            address.addressLine1
+                          }\n`,
+                          `${address.city} ${address.province} ${formatPostalCode(
+                            address.postalCode
+                          )}`,
+                        ],
+                        lineHeight: 1.4,
+                      },
+                    ],
+                  ],
+                },
+                layout: 'noBorders',
+                margin: [0, 0, 0, 40],
+              },
+              {
+                text: [`Email: ${nonNullEmail}`],
+                margin: [0, 0, 0, 8],
+              },
+              {
+                table: {
+                  heights: 18,
+                  body: [
+                    [{ text: 'Date Receipt Issued:' }, formatDateYYYYMMDD(dateIssued)],
+                    [{ text: 'Location Receipt Issued:' }, 'Richmond, BC'],
+                  ],
+                },
+                margin: [0, 0, 0, 15],
+                layout: 'noBorders',
+              },
+              { image: 'signature', width: 200, margin: [0, 0, 0, 5] },
+              { text: 'Authorized Signature:' },
+            ],
           },
+
           {
             table: {
-              heights: 20,
+              heights: 18,
               body: [
                 [{ text: 'Date Donation Received:' }, formatDateYYYYMMDD(dateDonationRecevied)],
                 [{ text: 'Donor Number:' }, `P${appNumber}`],
                 [{ text: 'Total Amount:' }, `$${donationAmount.toString()}`],
-                [{ text: 'Value of Product / Services:\n' }, ''],
+                [{ text: 'Value of Product / Services:\n\n' }, ''],
                 [
                   { text: 'Eligible Amount of Donation for Tax Purposes:' },
                   `$${donationAmount.toString()}`,
@@ -469,15 +486,15 @@ const donationPdfDefinition = (input: {
                       'Address of Appraiser:\n\n',
                     ],
                   },
-                  { image: 'stamp', width: 85 },
+                  { image: 'stamp', width: 80 },
                 ],
               ],
             },
             layout: 'noBorders',
-            margin: [20, 0, 0, 0],
+            margin: [15, 0, 0, 0],
           },
         ],
-        margin: [0, 35, 0, 25],
+        margin: [0, 25, 0, 0],
       },
       {
         text: [
@@ -498,36 +515,32 @@ const donationPdfDefinition = (input: {
           'Website:www.rcdrichmond.org\n',
         ],
         margin: [0, 15, 0, 0],
-        fontSize: 12,
       },
     ]),
     styles: {
       header: {
-        fontSize: 28,
+        fontSize: 25.5,
         bold: true,
         alignment: 'center',
+        lineHeight: 1.5,
       },
       tableHeader: {
         bold: true,
         alignment: 'center',
       },
       subheader: {
-        fontSize: 20,
-        bold: false,
-        alignment: 'center',
-      },
-      subheaderDonation: {
-        fontSize: 19,
+        fontSize: 17.5,
         alignment: 'center',
       },
       footer: {
-        fontSize: 8,
+        fontSize: 7.5,
         alignment: 'center',
       },
     },
     defaultStyle: {
       font: 'Helvetica',
-      lineHeight: 1.4,
+      fontSize: 11,
+      lineHeight: 1.2,
     },
     images: {
       rcd: 'public/assets/logo.png',
