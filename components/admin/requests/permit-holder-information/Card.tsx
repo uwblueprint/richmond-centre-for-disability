@@ -94,8 +94,6 @@ const Card: FC<Props> = props => {
       | null;
     if (type === 'NEW') {
       const validatedData = await permitHolderInformationSchema.validate(permitHolderData);
-      // TODO: Remove this once schema is updated
-      validatedData.otherGender = '';
 
       ({ data } = await updateNewPermitHolderInformation({
         variables: { input: { id: applicationId, ...validatedData } },
