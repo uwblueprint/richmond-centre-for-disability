@@ -1,18 +1,20 @@
 import { phoneNumberRegex, postalCodeRegex } from '@lib/utils/validation';
 import { MobilityAid, PatientCondition, PermitType } from '@prisma/client';
-import { date, mixed, object, string, array, number } from 'yup';
+import { date, lazy, mixed, object, string, array, number } from 'yup';
 
 /**
  * Validation schema for physician assessment form
  */
 export const physicianAssessmentSchema = object({
   disability: string().required('Please enter a disabling condition'),
-  disabilityCertificationDate: date()
-    .transform((_value, originalValue) => {
-      return new Date(originalValue);
-    })
-    .max(new Date(), 'Date must be in the past')
-    .required('Please enter a valid certification date'),
+  disabilityCertificationDate: lazy(() =>
+    date()
+      .transform((_value, originalValue) => {
+        return new Date(originalValue);
+      })
+      .max(new Date(), 'Date must be in the past')
+      .required('Please enter a valid certification date')
+  ),
   patientCondition: array(
     mixed<PatientCondition>()
       .oneOf(Object.values(PatientCondition))
