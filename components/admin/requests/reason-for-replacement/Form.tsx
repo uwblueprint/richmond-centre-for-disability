@@ -36,8 +36,22 @@ export default function ReasonForReplacementForm({
       <Box paddingBottom="24px">
         <RadioGroupField name="reasonForReplacement.reason" label="Reason" required>
           <Stack>
-            <Radio value={'LOST'}>{'Lost'}</Radio>
-            <Radio value={'STOLEN'}>{'Stolen'}</Radio>
+            <Radio
+              value={'LOST'}
+              onChange={() => {
+                setFieldValue('paymentInformation.processingFee', '31');
+              }}
+            >
+              {'Lost'}
+            </Radio>
+            <Radio
+              value={'STOLEN'}
+              onChange={() => {
+                setFieldValue('paymentInformation.processingFee', '31');
+              }}
+            >
+              {'Stolen'}
+            </Radio>
             <Radio
               value={'OTHER'}
               onChange={() => {
