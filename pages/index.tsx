@@ -10,6 +10,9 @@ import {
   ListItem,
   Button,
   VStack,
+  Alert,
+  AlertDescription,
+  AlertIcon,
 } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/applicant/Layout'; // Layout wrapper
 import FAQs from '@components/applicant/FAQs';
@@ -19,6 +22,17 @@ export default function Landing() {
 
   return (
     <Layout>
+      {Date.now() < new Date('2023-11-23T06:00:00.000Z').getTime() && (
+        <GridItem colSpan={12} colStart={1}>
+          <Alert status="warning" variant="top-accent">
+            <AlertIcon />
+            <AlertDescription>
+              Please note that this site will be offline for planned maintenance on Nov 22, 2023
+              from 7:00pm to 10:00pm PST. We apologize for any inconvenience.
+            </AlertDescription>
+          </Alert>
+        </GridItem>
+      )}
       <GridItem colSpan={12} colStart={1}>
         <Text as="h1" textStyle={{ sm: 'display-large', md: 'display-xlarge' }} align="left">
           {t('landing')}
