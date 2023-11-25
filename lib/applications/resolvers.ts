@@ -1192,7 +1192,7 @@ export const updateNewApplicationGeneralInformation: Resolver<
   const { input } = args;
 
   try {
-    await requestPermitHolderInformationMutationSchema.validate(input);
+    await requestPermitHolderInformationMutationSchema.validate({ type: 'NEW', ...input });
   } catch (err) {
     if (err instanceof ValidationError) {
       return {
