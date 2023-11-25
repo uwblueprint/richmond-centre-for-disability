@@ -69,7 +69,7 @@ yarn dev
 3. Deploy prisma schema
 
 ```bash
-npx prisma db push
+npx prisma migrate deploy
 ```
 
 4. Seed database
