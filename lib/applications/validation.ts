@@ -8,12 +8,13 @@ import {
   requestPhysicianInformationSchema,
 } from '@lib/physicians/validation';
 import { PaymentType, Province, ReasonForReplacement, ShopifyPaymentStatus } from '@prisma/client';
-import { bool, date, mixed, number, object, string } from 'yup';
+import { bool, date, lazy, mixed, number, object, string } from 'yup';
 import {
   AccessibleConvertedVanLoadingMethod,
   RequiresWiderParkingSpaceReason,
 } from '@lib/graphql/types';
 import { monetaryValueRegex, phoneNumberRegex, postalCodeRegex } from '@lib/utils/validation';
+import moment from 'moment';
 
 /**
  * Additional Questions form validation schema
@@ -215,13 +216,16 @@ export const reasonForReplacementFormSchema = object({
     .default(null)
     .when('reason', {
       is: 'LOST',
-      then: date()
-        .transform((_value, originalValue) => {
-          return new Date(originalValue);
-        })
-        .typeError('Please enter date APP was lost')
-        .max(new Date(), 'Date must be in the past')
-        .required('Please enter date APP was lost'),
+      then: lazy(() =>
+        date()
+          .transform((_value, originalValue) => {
+            // convert YYYY-MM-DD string in local timezone to a Date object in UTC
+            return moment.utc(moment(originalValue).toDate()).toDate();
+          })
+          .typeError('Please enter date APP was lost')
+          .max(new Date(), 'Date must be in the past')
+          .required('Please enter date APP was lost')
+      ),
       otherwise: date()
         .transform(_ => null)
         .nullable(),
