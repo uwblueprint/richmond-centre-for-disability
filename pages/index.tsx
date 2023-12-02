@@ -22,13 +22,15 @@ export default function Landing() {
 
   return (
     <Layout>
-      {Date.now() < new Date('2023-11-23T06:00:00.000Z').getTime() && (
+      {Date.now() < new Date('2024-01-02T08:00:00.000Z').getTime() && (
         <GridItem colSpan={12} colStart={1}>
           <Alert status="warning" variant="top-accent">
             <AlertIcon />
             <AlertDescription>
-              Please note that this site will be offline for planned maintenance on Nov 22, 2023
-              from 7:00pm to 10:00pm PST. We apologize for any inconvenience.
+              Please note that the RCD office will be closed between Dec 18 and Jan 1 and will
+              resume regular business hours on Jan 2. We will process applications received during
+              the holidays, but all other services will be unavailable. We apologize for any
+              inconvenience.
             </AlertDescription>
           </Alert>
         </GridItem>
