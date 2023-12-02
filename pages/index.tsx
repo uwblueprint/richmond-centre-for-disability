@@ -22,17 +22,6 @@ export default function Landing() {
 
   return (
     <Layout>
-      {Date.now() < new Date('2023-11-23T06:00:00.000Z').getTime() && (
-        <GridItem colSpan={12} colStart={1}>
-          <Alert status="warning" variant="top-accent">
-            <AlertIcon />
-            <AlertDescription>
-              Please note that this site will be offline for planned maintenance on Nov 22, 2023
-              from 7:00pm to 10:00pm PST. We apologize for any inconvenience.
-            </AlertDescription>
-          </Alert>
-        </GridItem>
-      )}
       {Date.now() < new Date('2024-01-02T08:00:00.000Z').getTime() && (
         <GridItem colSpan={12} colStart={1}>
           <Alert status="warning" variant="top-accent">
