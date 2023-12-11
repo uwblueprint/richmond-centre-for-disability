@@ -13,9 +13,10 @@ import NumberField from '@components/form/NumberField';
 import RadioGroupField from '@components/form/RadioGroupField';
 import TextArea from '@components/form/TextAreaField';
 import TextField from '@components/form/TextField';
-import { formatDate } from '@lib/utils/date'; // Date formatter util
+import { formatDateYYYYMMDDLocal } from '@lib/utils/date'; // Date formatter util
 import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-replacement';
 import { useFormikContext } from 'formik';
+import moment from 'moment';
 
 type ReasonForReplacementProps = {
   readonly reasonForReplacement: ReasonForReplacementFormData;
@@ -36,9 +37,30 @@ export default function ReasonForReplacementForm({
       <Box paddingBottom="24px">
         <RadioGroupField name="reasonForReplacement.reason" label="Reason" required>
           <Stack>
-            <Radio value={'LOST'}>{'Lost'}</Radio>
-            <Radio value={'STOLEN'}>{'Stolen'}</Radio>
-            <Radio value={'OTHER'}>{'Other'}</Radio>
+            <Radio
+              value={'LOST'}
+              onChange={() => {
+                setFieldValue('paymentInformation.processingFee', '31');
+              }}
+            >
+              {'Lost'}
+            </Radio>
+            <Radio
+              value={'STOLEN'}
+              onChange={() => {
+                setFieldValue('paymentInformation.processingFee', '31');
+              }}
+            >
+              {'Stolen'}
+            </Radio>
+            <Radio
+              value={'OTHER'}
+              onChange={() => {
+                setFieldValue('paymentInformation.processingFee', '0');
+              }}
+            >
+              {'Mail Lost'}
+            </Radio>
           </Stack>
         </RadioGroupField>
       </Box>
@@ -54,7 +76,10 @@ export default function ReasonForReplacementForm({
                 required
                 value={
                   reasonForReplacement.lostTimestamp
-                    ? formatDate(new Date(reasonForReplacement.lostTimestamp), true)
+                    ? // lostTimestamp is the date in the LOCAL TIMEZONE, in YYYY-MM-DD format
+                      // use moment to get Date object in local timezone as
+                      // Date constructor defaults to UTC when given YYYY-MM-DD string
+                      formatDateYYYYMMDDLocal(moment(reasonForReplacement.lostTimestamp).toDate())
                     : ''
                 }
               />
@@ -70,18 +95,21 @@ export default function ReasonForReplacementForm({
               <Input
                 type="time"
                 value={
-                  new Date(reasonForReplacement.lostTimestamp).toLocaleTimeString('en-US', {
+                  moment(reasonForReplacement.lostTimestamp).toDate().toLocaleTimeString('en-US', {
                     hour12: false,
                     hour: '2-digit',
                     minute: '2-digit',
                   }) || ''
                 }
                 onChange={event => {
-                  const updatedlostTimestamp = new Date(reasonForReplacement.lostTimestamp);
-                  updatedlostTimestamp.setHours(parseInt(event.target.value.substring(0, 2)));
-                  updatedlostTimestamp.setMinutes(parseInt(event.target.value.substring(3, 5)));
+                  const updatedlostTimestamp = moment(reasonForReplacement.lostTimestamp);
+                  updatedlostTimestamp.set('hour', parseInt(event.target.value.substring(0, 2)));
+                  updatedlostTimestamp.set('minute', parseInt(event.target.value.substring(3, 5)));
 
-                  setFieldValue('reasonForReplacement.lostTimestamp', updatedlostTimestamp);
+                  setFieldValue(
+                    'reasonForReplacement.lostTimestamp',
+                    updatedlostTimestamp.toDate()
+                  );
                 }}
               />
               <FormHelperText color="text.secondary">{'Example: HH:MM AM/PM'}</FormHelperText>
