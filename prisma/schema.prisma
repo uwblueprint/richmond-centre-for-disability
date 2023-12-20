@@ -418,6 +418,7 @@ enum ApplicationStatus {
 enum ReasonForReplacement {
   LOST
   STOLEN
+  MAIL_LOST
   OTHER
 
   @@map("reasonforreplacement")
