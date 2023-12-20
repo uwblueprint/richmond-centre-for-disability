@@ -1047,6 +1047,7 @@ export type QueryComparePhysiciansArgs = {
 export type ReasonForReplacement =
   | 'LOST'
   | 'STOLEN'
+  | 'MAIL_LOST'
   | 'OTHER';
 
 export type RejectApplicationInput = {
