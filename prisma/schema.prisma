@@ -58,6 +58,10 @@ model Application {
   paymentMethod                    PaymentType             @map("payment_method")
   processingFee                    Decimal                 @map("processing_fee") @db.Money
   donationAmount                   Decimal                 @default(0.00) @map("donation_amount") @db.Money
+  paymentMethod2                   PaymentType?            @map("payment_method2")
+  processingFee2                   Decimal?                @map("processing_fee2") @db.Money
+  donationAmount2                  Decimal?                @map("donation_amount2") @db.Money
+  hasSecondPaymentMethod           Boolean                 @default(false) @map("has_second_payment_method")
   paidThroughShopify               Boolean                 @default(false) @map("paid_through_shopify")
   shopifyPaymentStatus             ShopifyPaymentStatus?   @default(PENDING) @map("shopify_payment_status")
   shopifyConfirmationNumber        String?                 @unique @map("shopify_confirmation_number") @db.VarChar(255)
