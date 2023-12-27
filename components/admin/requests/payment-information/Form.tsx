@@ -56,6 +56,57 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
             />
           </GridItem>
         </Grid>
+
+        <CheckboxField
+          name="paymentInformation.hasSecondPaymentMethod"
+          paddingTop="24px"
+          paddingBottom="24px"
+        >
+          {'Add a second payment method'}
+        </CheckboxField>
+
+        {paymentInformation.hasSecondPaymentMethod && (
+          <Grid templateColumns="repeat(2, 1fr)" rowGap={'24px'}>
+            <GridItem rowSpan={2} colSpan={1}>
+              <RadioGroupField
+                name="paymentInformation.paymentMethod2"
+                label="Second payment method"
+              >
+                <Stack>
+                  <Radio value={'MASTERCARD' as PaymentType}>{'Mastercard'}</Radio>
+                  <Radio value={'VISA' as PaymentType}>{'Visa'}</Radio>
+                  <Radio value={'DEBIT' as PaymentType}>{'Debit'}</Radio>
+                  <Radio value={'CASH' as PaymentType}>{'Cash'}</Radio>
+                  <Radio value={'CHEQUE' as PaymentType}>{'Cheque'}</Radio>
+                  <Radio value={'ETRANSFER' as PaymentType}>{'E-transfer'}</Radio>
+                </Stack>
+              </RadioGroupField>
+            </GridItem>
+
+            <GridItem>
+              <TextField
+                name="paymentInformation.processingFee2"
+                label="Permit fee"
+                monetaryInput
+              />
+            </GridItem>
+
+            <GridItem colSpan={1}>
+              <TextField
+                name="paymentInformation.donationAmount2"
+                label={
+                  <>
+                    {'Donation '}
+                    <Box as="span" textStyle="body-regular" fontSize="sm">
+                      {'(optional)'}
+                    </Box>
+                  </>
+                }
+                monetaryInput
+              />
+            </GridItem>
+          </Grid>
+        )}
       </Box>
 
       <Divider />
