@@ -57,12 +57,9 @@ jobs:
               run: yarn build
             
             - name: Create and populate .env file
-              env:
-                DATABASE_URL: ${{ secrets.DATABASE_URL }}
               run: |
                 touch .env
-                echo DATABASE_URL="$DATABASE_URL" >> .env
-                echo "cat .env"
+                echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
                 cat .env
 
             - name: Apply all pending migrations to the database
