@@ -59,7 +59,7 @@ jobs:
             - name: Create and populate .env file
               run: |
                 touch .env
-                echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
+                echo DATABASE_URL="postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:${{ secrets.PGPORT }}/${{ secrets.POSTGRES_DB }}" > .env
                 cat .env
 
             - name: Apply all pending migrations to the database
