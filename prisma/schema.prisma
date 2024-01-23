@@ -418,7 +418,6 @@ enum ApplicationStatus {
 enum ReasonForReplacement {
   LOST
   STOLEN
-  MAIL_LOST
   OTHER
   MAIL_LOST
 
