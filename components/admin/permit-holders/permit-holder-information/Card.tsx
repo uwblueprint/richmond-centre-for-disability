@@ -37,8 +37,9 @@ export default function PermitHolderInformationCard(props: PersonalInformationPr
 
   const toast = useToast();
 
-  const [permitHolderInformation, setPermitHolderInformation] =
-    useState<ApplicantCardData | null>(null);
+  const [permitHolderInformation, setPermitHolderInformation] = useState<ApplicantCardData | null>(
+    null
+  );
 
   const { refetch } = useQuery<GetApplicantResponse, GetApplicantRequest>(GET_APPLICANT_QUERY, {
     variables: { id: applicantId },

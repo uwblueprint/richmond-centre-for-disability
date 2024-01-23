@@ -79,43 +79,45 @@ export const approveApplication: Resolver<
  * Reject application
  * @returns Status of the operation (ok)
  */
-export const rejectApplication: Resolver<MutationRejectApplicationArgs, RejectApplicationResult> =
-  async (_parent, args, { prisma, logger }) => {
-    // TODO: Validation
-    const { input } = args;
-    const { id, reason } = input;
+export const rejectApplication: Resolver<
+  MutationRejectApplicationArgs,
+  RejectApplicationResult
+> = async (_parent, args, { prisma, logger }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { id, reason } = input;
 
-    let updatedApplication;
-    try {
-      updatedApplication = await prisma.application.update({
-        where: { id },
-        data: {
-          applicationProcessing: {
-            update: {
-              status: 'REJECTED',
-              rejectedReason: reason,
-            },
+  let updatedApplication;
+  try {
+    updatedApplication = await prisma.application.update({
+      where: { id },
+      data: {
+        applicationProcessing: {
+          update: {
+            status: 'REJECTED',
+            rejectedReason: reason,
           },
         },
-      });
-    } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        return {
-          ok: false,
-          error: err.message,
-        };
-      }
-
-      // Unknown error
-      logger.error({ error: err }, 'Unknown error');
+      },
+    });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
     }
 
-    if (!updatedApplication) {
-      throw new ApolloError('Unable to approve application');
-    }
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error');
+  }
 
-    return { ok: true, error: null };
-  };
+  if (!updatedApplication) {
+    throw new ApolloError('Unable to approve application');
+  }
+
+  return { ok: true, error: null };
+};
 
 /**
  * Completes an application by setting the ApplicationStatus to COMPLETED, querying the application data,

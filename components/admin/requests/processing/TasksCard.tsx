@@ -75,10 +75,10 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
-  const [holepunchParkingPermit, { loading: holepunchParkingPermitLoading }] =
-    useMutation<HolepunchParkingPermitResponse, HolepunchParkingPermitRequest>(
-      HOLEPUNCH_APP_MUTATION
-    );
+  const [holepunchParkingPermit, { loading: holepunchParkingPermitLoading }] = useMutation<
+    HolepunchParkingPermitResponse,
+    HolepunchParkingPermitRequest
+  >(HOLEPUNCH_APP_MUTATION);
   const handleHolepunchParkingPermit = async (appHolepunched: boolean) => {
     await holepunchParkingPermit({ variables: { input: { applicationId, appHolepunched } } });
     refetch();
@@ -104,25 +104,32 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     refetch();
   };
 
-  const [generateInvoice, { loading: generateInvoiceLoading }] =
-    useMutation<GenerateInvoiceResponse, GenerateInvoiceRequest>(GENERATE_INVOICE_MUTATION);
+  const [generateInvoice, { loading: generateInvoiceLoading }] = useMutation<
+    GenerateInvoiceResponse,
+    GenerateInvoiceRequest
+  >(GENERATE_INVOICE_MUTATION);
   const handleGenerateInvoice = async (isDonation: boolean) => {
     await generateInvoice({ variables: { input: { applicationId, isDonation } } });
     refetch();
   };
 
-  const [uploadDocuments, { loading: uploadDocumentsLoading }] =
-    useMutation<UploadDocumentsResponse, UploadDocumentsRequest>(UPLOAD_DOCUMENTS_MUTATION);
+  const [uploadDocuments, { loading: uploadDocumentsLoading }] = useMutation<
+    UploadDocumentsResponse,
+    UploadDocumentsRequest
+  >(UPLOAD_DOCUMENTS_MUTATION);
 
-  const [mailOut, { loading: mailOutLoading }] =
-    useMutation<MailOutResponse, MailOutRequest>(MAIL_OUT_APP_MUTATION);
+  const [mailOut, { loading: mailOutLoading }] = useMutation<MailOutResponse, MailOutRequest>(
+    MAIL_OUT_APP_MUTATION
+  );
   const handleMailOut = async (appMailed: boolean) => {
     await mailOut({ variables: { input: { applicationId, appMailed } } });
     refetch();
   };
 
-  const [refundPayment, { loading: refundPaymentLoading }] =
-    useMutation<RefundPaymentResponse, RefundPaymentRequest>(REFUND_PAYMENT_MUTATION);
+  const [refundPayment, { loading: refundPaymentLoading }] = useMutation<
+    RefundPaymentResponse,
+    RefundPaymentRequest
+  >(REFUND_PAYMENT_MUTATION);
   const handleRefundPayment = async () => {
     await refundPayment({ variables: { input: { applicationId } } });
     refetch();

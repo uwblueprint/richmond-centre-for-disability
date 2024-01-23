@@ -39,8 +39,10 @@ const AdditionalNotesModal: FC<Props> = ({
     setNotes(notesInput);
   }, [isOpen, notesInput]);
 
-  const [updateApplicantNotes, { loading: submitting }] =
-    useMutation<UpdateApplicantNotesResponse, UpdateApplicantNotesRequest>(UPDATE_APPLICANT_NOTES);
+  const [updateApplicantNotes, { loading: submitting }] = useMutation<
+    UpdateApplicantNotesResponse,
+    UpdateApplicantNotesRequest
+  >(UPDATE_APPLICANT_NOTES);
 
   const handleSave = async () => {
     await updateApplicantNotes({ variables: { input: { id: applicantId, notes } } });

@@ -47,10 +47,13 @@ const Card: FC<Props> = props => {
 
   const [doctorInformation, setDoctorInformation] = useState<DoctorCardData | null>(null);
 
-  const [physicianDiffStatus, setPhysicianDiffStatus] =
-    useState<PhysicianMatchStatus | 'OUTDATED' | null>(null);
-  const [existingPhysicianData, setExistingPhysicianData] =
-    useState<Omit<Physician, 'status'> | null>(null);
+  const [physicianDiffStatus, setPhysicianDiffStatus] = useState<
+    PhysicianMatchStatus | 'OUTDATED' | null
+  >(null);
+  const [existingPhysicianData, setExistingPhysicianData] = useState<Omit<
+    Physician,
+    'status'
+  > | null>(null);
 
   const { refetch } = useQuery<GetDoctorInformationResponse, GetDoctorInformationRequest>(
     GET_DOCTOR_INFORMATION,
@@ -75,10 +78,10 @@ const Card: FC<Props> = props => {
     GetCurrentPhysicianMspNumberRequest
   >(GET_CURRENT_PHYSICIAN_MSP_NUMBER);
 
-  const [updateDoctorInformation] =
-    useMutation<UpdateDoctorInformationResponse, UpdateDoctorInformationRequest>(
-      UPDATE_DOCTOR_INFORMATION
-    );
+  const [updateDoctorInformation] = useMutation<
+    UpdateDoctorInformationResponse,
+    UpdateDoctorInformationRequest
+  >(UPDATE_DOCTOR_INFORMATION);
 
   useEffect(() => {
     const getPhysicianDiffStatus = async () => {

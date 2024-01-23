@@ -38,10 +38,10 @@ export default function DoctorInformationCard(props: DoctorInformationProps) {
     }
   );
 
-  const [updateDoctorInformation] =
-    useMutation<UpdateDoctorInformationResponse, UpdateDoctorInformationRequest>(
-      UPDATE_DOCTOR_INFORMATION
-    );
+  const [updateDoctorInformation] = useMutation<
+    UpdateDoctorInformationResponse,
+    UpdateDoctorInformationRequest
+  >(UPDATE_DOCTOR_INFORMATION);
   const handleSave = async (doctorFormData: DoctorFormData) => {
     const validatedData = await requestPhysicianInformationSchema.validate(doctorFormData);
 

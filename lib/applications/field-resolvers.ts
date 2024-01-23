@@ -118,21 +118,23 @@ export const applicationPermitResolver: FieldResolver<
  * Get POA form S3 object URL (new applications)
  * @returns URL for POA form of new application
  */
-export const applicationPoaFormS3ObjectUrlResolver: FieldResolver<NewApplication, string | null> =
-  async (parent, _args, { logger }) => {
-    if (!parent.poaFormS3ObjectKey) {
-      return null;
-    }
+export const applicationPoaFormS3ObjectUrlResolver: FieldResolver<
+  NewApplication,
+  string | null
+> = async (parent, _args, { logger }) => {
+  if (!parent.poaFormS3ObjectKey) {
+    return null;
+  }
 
-    let url: string;
-    try {
-      const durationSeconds = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) * 60 * 60;
-      url = getSignedUrlForS3(parent.poaFormS3ObjectKey, durationSeconds);
-    } catch (e) {
-      const message = `Error generating AWS URL for POA form: ${e}`;
-      logger.error(message);
-      throw new ApolloError(message);
-    }
+  let url: string;
+  try {
+    const durationSeconds = parseInt(process.env.APPLICATION_DOCUMENT_LINK_TTL_HOURS) * 60 * 60;
+    url = getSignedUrlForS3(parent.poaFormS3ObjectKey, durationSeconds);
+  } catch (e) {
+    const message = `Error generating AWS URL for POA form: ${e}`;
+    logger.error(message);
+    throw new ApolloError(message);
+  }
 
-    return url;
-  };
+  return url;
+};

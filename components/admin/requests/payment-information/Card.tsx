@@ -28,8 +28,9 @@ type Props = {
 const Card: FC<Props> = props => {
   const { applicationId, isUpdated, editDisabled, isSubsection } = props;
 
-  const [paymentInformation, setPaymentInformation] =
-    useState<PaymentInformationCardData | null>(null);
+  const [paymentInformation, setPaymentInformation] = useState<PaymentInformationCardData | null>(
+    null
+  );
 
   const { refetch } = useQuery<GetPaymentInformationResponse, GetPaymentInformationRequest>(
     GET_PAYMENT_INFORMATION,

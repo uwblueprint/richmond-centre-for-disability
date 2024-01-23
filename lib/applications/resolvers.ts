@@ -1864,77 +1864,79 @@ export const updateApplicationPhysicianAssessment: Resolver<
  * Delete an application
  * @returns status of operation (ok)
  */
-export const deleteApplication: Resolver<MutationDeleteApplicationArgs, DeleteApplicationResult> =
-  async (_parent, args, { prisma, logger }) => {
-    const id = args.input.id;
+export const deleteApplication: Resolver<
+  MutationDeleteApplicationArgs,
+  DeleteApplicationResult
+> = async (_parent, args, { prisma, logger }) => {
+  const id = args.input.id;
 
-    const application = await prisma.application.findUnique({
+  const application = await prisma.application.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!application) {
+    return { ok: false, error: `Application with ID ${id} not found` };
+  }
+
+  try {
+    const deleteApplicationOperation = prisma.application.deleteMany({
       where: {
         id,
       },
     });
 
-    if (!application) {
-      return { ok: false, error: `Application with ID ${id} not found` };
+    const deleteApplicationProcessingOperation = prisma.applicationProcessing.deleteMany({
+      where: {
+        id: application.applicationProcessingId,
+      },
+    });
+
+    const deleteNewApplicationOperation = prisma.newApplication.deleteMany({
+      where: {
+        applicationId: id,
+      },
+    });
+
+    const deletePermitOperation = prisma.permit.deleteMany({
+      where: {
+        applicationId: id,
+      },
+    });
+
+    const deleteRenewalApplicationOperation = prisma.renewalApplication.deleteMany({
+      where: {
+        applicationId: id,
+      },
+    });
+
+    const deleteReplacementApplicationOperation = prisma.replacementApplication.deleteMany({
+      where: {
+        applicationId: id,
+      },
+    });
+
+    await prisma.$transaction([
+      deleteNewApplicationOperation,
+      deleteRenewalApplicationOperation,
+      deleteReplacementApplicationOperation,
+      deletePermitOperation,
+      deleteApplicationOperation,
+      deleteApplicationProcessingOperation,
+    ]);
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      return {
+        ok: false,
+        error: err.message,
+      };
     }
 
-    try {
-      const deleteApplicationOperation = prisma.application.deleteMany({
-        where: {
-          id,
-        },
-      });
+    // Unknown error
+    logger.error({ error: err }, 'Unknown error occurred when attempting to delete application');
+    throw new ApolloError('Unable to delete application after encountering unknown error');
+  }
 
-      const deleteApplicationProcessingOperation = prisma.applicationProcessing.deleteMany({
-        where: {
-          id: application.applicationProcessingId,
-        },
-      });
-
-      const deleteNewApplicationOperation = prisma.newApplication.deleteMany({
-        where: {
-          applicationId: id,
-        },
-      });
-
-      const deletePermitOperation = prisma.permit.deleteMany({
-        where: {
-          applicationId: id,
-        },
-      });
-
-      const deleteRenewalApplicationOperation = prisma.renewalApplication.deleteMany({
-        where: {
-          applicationId: id,
-        },
-      });
-
-      const deleteReplacementApplicationOperation = prisma.replacementApplication.deleteMany({
-        where: {
-          applicationId: id,
-        },
-      });
-
-      await prisma.$transaction([
-        deleteNewApplicationOperation,
-        deleteRenewalApplicationOperation,
-        deleteReplacementApplicationOperation,
-        deletePermitOperation,
-        deleteApplicationOperation,
-        deleteApplicationProcessingOperation,
-      ]);
-    } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        return {
-          ok: false,
-          error: err.message,
-        };
-      }
-
-      // Unknown error
-      logger.error({ error: err }, 'Unknown error occurred when attempting to delete application');
-      throw new ApolloError('Unable to delete application after encountering unknown error');
-    }
-
-    return { ok: true, error: null };
-  };
+  return { ok: true, error: null };
+};
