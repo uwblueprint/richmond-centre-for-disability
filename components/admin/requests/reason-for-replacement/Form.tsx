@@ -56,7 +56,7 @@ export default function ReasonForReplacementForm({
             <Radio
               value={'MAIL_LOST'}
               onChange={() => {
-                setFieldValue('paymentInformation.processingFee', '31');
+                setFieldValue('paymentInformation.processingFee', '0');
               }}
             >
               {'Mail Lost'}
@@ -67,7 +67,7 @@ export default function ReasonForReplacementForm({
                 setFieldValue('paymentInformation.processingFee', '0');
               }}
             >
-              {'Mail Lost'}
+              {'Other'}
             </Radio>
             <Radio
               value={'OTHER'}
