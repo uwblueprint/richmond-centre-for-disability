@@ -63,7 +63,9 @@ export const PoaFormUploadField: FC<Props> = ({
         {'Upload POA File'}
       </Text>
       <Text color="text.secondary">
-        {'Only ONE file can be added. Files must be .pdf and can be a maximum of 5MB in size.'}{' '}
+        {
+          'Only ONE file can be added. Files must have .pdf extension (lowercase) and can be a maximum of 5MB in size.'
+        }{' '}
       </Text>
       {(file || initialFileUrl) && (
         <>
