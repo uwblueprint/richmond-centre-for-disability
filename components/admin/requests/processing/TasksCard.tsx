@@ -332,7 +332,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             <ProcessingTaskStep
               id={2}
               label="Hole punch parking permit"
-              description="Gender, Expiry Year and Month"
+              description="Expiry Year and Month"
               isCompleted={appHolepunched}
               showLog={showTaskLog}
               log={
