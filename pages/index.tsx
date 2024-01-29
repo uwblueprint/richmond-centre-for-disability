@@ -10,9 +10,6 @@ import {
   ListItem,
   Button,
   VStack,
-  Alert,
-  AlertDescription,
-  AlertIcon,
 } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/applicant/Layout'; // Layout wrapper
 import FAQs from '@components/applicant/FAQs';
@@ -22,19 +19,6 @@ export default function Landing() {
 
   return (
     <Layout>
-      {Date.now() < new Date('2024-01-02T08:00:00.000Z').getTime() && (
-        <GridItem colSpan={12} colStart={1}>
-          <Alert status="warning" variant="top-accent">
-            <AlertIcon />
-            <AlertDescription>
-              Please note that the RCD office will be closed between Dec 18 and Jan 1 and will
-              resume regular business hours on Jan 2. We will process applications received during
-              the holidays, but all other services will be unavailable. We apologize for any
-              inconvenience.
-            </AlertDescription>
-          </Alert>
-        </GridItem>
-      )}
       <GridItem colSpan={12} colStart={1}>
         <Text as="h1" textStyle={{ sm: 'display-large', md: 'display-xlarge' }} align="left">
           {t('landing')}
