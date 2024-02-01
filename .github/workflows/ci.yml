@@ -1,4 +1,5 @@
 name: ci
+
 on:
     push:
         branches:
@@ -8,23 +9,29 @@ on:
         branches:
             - main
             - staging
+
 jobs:
     ci:
         runs-on: ${{ matrix.os }}
+
         strategy:
             matrix:
                 os: [ubuntu-20.04]
                 node: [14.17.0]
+
         steps:
             - name: Checkout
               uses: actions/checkout@main
+
             - name: Setup node env
               uses: actions/setup-node@v2.1.2
               with:
                   node-version: ${{ matrix.node }}
+
             - name: Get yarn cache directory path
               id: yarn-cache-dir-path
               run: echo "::set-output name=dir::$(yarn cache dir)"
+
             - name: Cache node_modules
               uses: actions/cache@v2
               id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
@@ -33,12 +40,16 @@ jobs:
                   key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
                   restore-keys: |
                       ${{ runner.os }}-yarn-
+
             - name: Install dependencies
               run: yarn
+
             - name: Linting Prettier
               run: yarn lint:prettier
+
             - name: Linting ESlint
               run: yarn lint:eslint
+
             - name: Linting TypeScript
               run: yarn lint:tsc
 
