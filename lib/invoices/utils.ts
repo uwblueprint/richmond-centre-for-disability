@@ -519,7 +519,7 @@ const donationPdfDefinition = (input: {
     ]),
     styles: {
       header: {
-        fontSize: 25.5,
+        fontSize: 25,
         bold: true,
         alignment: 'center',
         lineHeight: 1.5,
