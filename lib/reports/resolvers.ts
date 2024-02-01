@@ -334,6 +334,7 @@ export const generateAccountantReport: Resolver<
   }
 
   const paymentTypeToString: Record<PaymentType, string> = {
+    AMEX: 'American Express (Office)',
     MASTERCARD: 'Mastercard (Office)',
     VISA: 'Visa (Office)',
     CASH: 'Cash',

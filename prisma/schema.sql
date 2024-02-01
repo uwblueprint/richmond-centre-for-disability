@@ -20,6 +20,7 @@ CREATE TYPE Province as ENUM(
 
 -- Create payment type enum
 CREATE TYPE PaymentType as ENUM(
+  'AMEX',
   'MASTERCARD',
   'VISA',
   'ETRANSFER',
