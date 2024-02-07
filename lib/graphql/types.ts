@@ -902,6 +902,7 @@ export type PatientCondition =
   | 'OTHER';
 
 export type PaymentType =
+  | 'AMEX'
   | 'MASTERCARD'
   | 'VISA'
   | 'ETRANSFER'
