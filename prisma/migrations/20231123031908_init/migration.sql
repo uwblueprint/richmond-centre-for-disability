@@ -5,7 +5,7 @@ CREATE TYPE "applicantstatus" AS ENUM ('ACTIVE', 'INACTIVE');
 CREATE TYPE "gender" AS ENUM ('MALE', 'FEMALE', 'OTHER');
 
 -- CreateEnum
-CREATE TYPE "paymenttype" AS ENUM ('MASTERCARD', 'VISA', 'ETRANSFER', 'CASH', 'CHEQUE', 'DEBIT', 'SHOPIFY');
+CREATE TYPE "paymenttype" AS ENUM ('AMEX', 'MASTERCARD', 'VISA', 'ETRANSFER', 'CASH', 'CHEQUE', 'DEBIT', 'SHOPIFY');
 
 -- CreateEnum
 CREATE TYPE "physicianstatus" AS ENUM ('ACTIVE', 'INACTIVE');

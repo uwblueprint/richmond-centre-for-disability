@@ -357,6 +357,7 @@ enum Gender {
 }
 
 enum PaymentType {
+  AMEX
   MASTERCARD
   VISA
   ETRANSFER
