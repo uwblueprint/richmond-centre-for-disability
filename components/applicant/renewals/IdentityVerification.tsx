@@ -167,10 +167,10 @@ const IdentityVerification: FC = () => {
                 <Box marginBottom={{ sm: '40px', md: '20px' }} textAlign={'left'}>
                   <DateField name="dateOfBirth" label="Date of Birth" width="184px">
                     <FormHelperText>
-                      <Text>Please enter your date of birth in YYYY-MM-DD format.</Text>
                       <Text>
-                        For example, if you were born on 20th August 1950, you would enter
-                        1950-08-20.
+                        If you are on a mobile device, please use the date picker to select your
+                        date of birth. You can click on the year and month at the top of the pop-up
+                        calendar to change them.
                       </Text>
                     </FormHelperText>
                   </DateField>
