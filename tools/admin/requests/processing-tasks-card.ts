@@ -31,7 +31,7 @@ export const GET_APPLICATION_PROCESSING = gql`
       shopifyConfirmationNumber
       shopifyOrderNumber
       donationAmount
-      donationAmount2
+      secondDonationAmount
       processing {
         status
         appNumber
@@ -100,7 +100,7 @@ export type GetApplicationProcessingResponse = {
     | 'shopifyConfirmationNumber'
     | 'shopifyOrderNumber'
     | 'donationAmount'
-    | 'donationAmount2'
+    | 'secondDonationAmount'
   > & {
     processing: Pick<
       ApplicationProcessing,

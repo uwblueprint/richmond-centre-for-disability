@@ -34,9 +34,9 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
     donationAmount: String! # Return monetary value as string
-    paymentMethod2: PaymentType
-    processingFee2: String # Return monetary value as string
-    donationAmount2: String # Return monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Return monetary value as string
+    secondDonationAmount: String # Return monetary value as string
     hasSecondPaymentMethod: Boolean!
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
@@ -144,9 +144,9 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
     donationAmount: String! # Return monetary value as string
-    paymentMethod2: PaymentType
-    processingFee2: String # Return monetary value as string
-    donationAmount2: String # Return monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Return monetary value as string
+    secondDonationAmount: String # Return monetary value as string
     hasSecondPaymentMethod: Boolean!
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
@@ -229,9 +229,9 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
     donationAmount: String! # Return monetary value as string
-    paymentMethod2: PaymentType
-    processingFee2: String # Return monetary value as string
-    donationAmount2: String # Return monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Return monetary value as string
+    secondDonationAmount: String # Return monetary value as string
     hasSecondPaymentMethod: Boolean!
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
@@ -295,9 +295,9 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
     donationAmount: String! # Return monetary value as string
-    paymentMethod2: PaymentType
-    processingFee2: String # Return monetary value as string
-    donationAmount2: String # Return monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Return monetary value as string
+    secondDonationAmount: String # Return monetary value as string
     hasSecondPaymentMethod: Boolean!
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
@@ -406,9 +406,9 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String! # Input monetary value as string
     donationAmount: String # Input monetary value as string
-    paymentMethod2: PaymentType
-    processingFee2: String # Input monetary value as string
-    donationAmount2: String # Input monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Input monetary value as string
+    secondDonationAmount: String # Input monetary value as string
     hasSecondPaymentMethod: Boolean!
 
     # Shipping information
@@ -478,9 +478,9 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String # Input monetary value as string
     donationAmount: String # Input monetary value as string
-    paymentMethod2: PaymentType
-    processingFee2: String # Input monetary value as string
-    donationAmount2: String # Input monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Input monetary value as string
+    secondDonationAmount: String # Input monetary value as string
     hasSecondPaymentMethod: Boolean!
 
     # Shipping information
@@ -587,9 +587,9 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String! # Input monetary value as string
     donationAmount: String # Input monetary value as string
-    paymentMethod2: PaymentType
-    processingFee2: String # Input monetary value as string
-    donationAmount2: String # Input monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Input monetary value as string
+    secondDonationAmount: String # Input monetary value as string
     hasSecondPaymentMethod: Boolean!
 
     # Shipping information
@@ -758,9 +758,9 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String!
     donationAmount: String
-    paymentMethod2: PaymentType
-    processingFee2: String
-    donationAmount2: String
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String
+    secondDonationAmount: String
     hasSecondPaymentMethod: Boolean!
 
     # Shipping information

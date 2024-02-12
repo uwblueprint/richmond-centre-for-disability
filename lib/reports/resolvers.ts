@@ -217,9 +217,9 @@ export const generateApplicationsReport: Resolver<
       paymentMethod: true,
       processingFee: true,
       donationAmount: true,
-      paymentMethod2: true,
-      processingFee2: true,
-      donationAmount2: true,
+      secondPaymentMethod: true,
+      secondProcessingFee: true,
+      secondDonationAmount: true,
       applicant: {
         select: {
           id: true,
@@ -249,8 +249,8 @@ export const generateApplicationsReport: Resolver<
       createdAt,
       processingFee,
       donationAmount,
-      processingFee2,
-      donationAmount2,
+      secondProcessingFee,
+      secondDonationAmount,
       applicant,
       newApplication,
       permit,
@@ -275,11 +275,11 @@ export const generateApplicationsReport: Resolver<
         dateOfBirth: dateOfBirth && formatDateYYYYMMDD(dateOfBirth),
         applicationDate: createdAt ? formatDateYYYYMMDDLocal(createdAt, true) : null,
         applicantName: formatFullName(firstName, middleName, lastName),
-        processingFee: `$${Prisma.Decimal.add(processingFee, processingFee2 || 0)}`,
-        donationAmount: `$${Prisma.Decimal.add(donationAmount, donationAmount2 || 0)}`,
+        processingFee: `$${Prisma.Decimal.add(processingFee, secondProcessingFee || 0)}`,
+        donationAmount: `$${Prisma.Decimal.add(donationAmount, secondDonationAmount || 0)}`,
         totalAmount: `$${Prisma.Decimal.add(
           Prisma.Decimal.add(processingFee, donationAmount),
-          Prisma.Decimal.add(processingFee2 || 0, donationAmount2 || 0)
+          Prisma.Decimal.add(secondProcessingFee || 0, secondDonationAmount || 0)
         )}`,
         rcdPermitId: permit?.rcdPermitId ? `#${permit.rcdPermitId}` : null,
       };
@@ -426,8 +426,8 @@ export const generateAccountantReport: Resolver<
     },
   });
 
-  const paymentMethodGroups2 = await prisma.application.groupBy({
-    by: ['paymentMethod2'],
+  const secondPaymentMethodGroups = await prisma.application.groupBy({
+    by: ['secondPaymentMethod'],
     where: {
       createdAt: {
         gte: startDate,
@@ -436,16 +436,16 @@ export const generateAccountantReport: Resolver<
       hasSecondPaymentMethod: true,
     },
     _sum: {
-      processingFee2: true,
-      donationAmount2: true,
+      secondProcessingFee: true,
+      secondDonationAmount: true,
     },
     _count: {
-      paymentMethod2: true,
+      secondPaymentMethod: true,
     },
   });
 
-  const refundMethodGroups2 = await prisma.application.groupBy({
-    by: ['paymentMethod2'],
+  const secondRefundMethodGroups = await prisma.application.groupBy({
+    by: ['secondPaymentMethod'],
     where: {
       createdAt: {
         gte: startDate,
@@ -457,15 +457,15 @@ export const generateAccountantReport: Resolver<
       hasSecondPaymentMethod: true,
     },
     _sum: {
-      processingFee2: true,
-      donationAmount2: true,
+      secondProcessingFee: true,
+      secondDonationAmount: true,
     },
     _count: {
-      paymentMethod2: true,
+      secondPaymentMethod: true,
     },
   });
 
-  const totalAggregate2 = await prisma.application.aggregate({
+  const secondTotalAggregate = await prisma.application.aggregate({
     where: {
       createdAt: {
         gte: startDate,
@@ -474,15 +474,15 @@ export const generateAccountantReport: Resolver<
       hasSecondPaymentMethod: true,
     },
     _sum: {
-      processingFee2: true,
-      donationAmount2: true,
+      secondProcessingFee: true,
+      secondDonationAmount: true,
     },
     _count: {
-      paymentMethod2: true,
+      secondPaymentMethod: true,
     },
   });
 
-  const refundAggregate2 = await prisma.application.aggregate({
+  const secondRefundAggregate = await prisma.application.aggregate({
     where: {
       createdAt: {
         gte: startDate,
@@ -494,11 +494,11 @@ export const generateAccountantReport: Resolver<
       hasSecondPaymentMethod: true,
     },
     _sum: {
-      processingFee2: true,
-      donationAmount2: true,
+      secondProcessingFee: true,
+      secondDonationAmount: true,
     },
     _count: {
-      paymentMethod2: true,
+      secondPaymentMethod: true,
     },
   });
 
@@ -561,20 +561,20 @@ export const generateAccountantReport: Resolver<
     );
   }
 
-  for (const paymentMethodGroup of paymentMethodGroups2) {
-    const refundMethodGroup = refundMethodGroups2.find(group => {
-      return group.paymentMethod2 == paymentMethodGroup.paymentMethod2;
-    }) || { _sum: { processingFee2: 0, donationAmount2: 0 } };
-    if (!paymentMethodGroup.paymentMethod2) {
+  for (const paymentMethodGroup of secondPaymentMethodGroups) {
+    const refundMethodGroup = secondRefundMethodGroups.find(group => {
+      return group.secondPaymentMethod == paymentMethodGroup.secondPaymentMethod;
+    }) || { _sum: { secondProcessingFee: 0, secondDonationAmount: 0 } };
+    if (!paymentMethodGroup.secondPaymentMethod) {
       continue;
     }
-    const rowName = paymentTypeToString[paymentMethodGroup.paymentMethod2];
-    const countIssued = paymentMethodGroup._count.paymentMethod2 || 0;
-    const processingFee = paymentMethodGroup._sum.processingFee2 || 0;
-    const donationAmount = paymentMethodGroup._sum.donationAmount2 || 0;
+    const rowName = paymentTypeToString[paymentMethodGroup.secondPaymentMethod];
+    const countIssued = paymentMethodGroup._count.secondPaymentMethod || 0;
+    const processingFee = paymentMethodGroup._sum.secondProcessingFee || 0;
+    const donationAmount = paymentMethodGroup._sum.secondDonationAmount || 0;
     const refundAmount = Prisma.Decimal.add(
-      refundMethodGroup._sum.processingFee2 || 0,
-      refundMethodGroup._sum.donationAmount2 || 0
+      refundMethodGroup._sum.secondProcessingFee || 0,
+      refundMethodGroup._sum.secondDonationAmount || 0
     );
     const totalAmount = Prisma.Decimal.add(
       Prisma.Decimal.add(processingFee, donationAmount),
@@ -627,14 +627,15 @@ export const generateAccountantReport: Resolver<
   }
 
   const countIssued =
-    (totalAggregate._count.paymentMethod || 0) + (totalAggregate2._count.paymentMethod2 || 0);
+    (totalAggregate._count.paymentMethod || 0) +
+    (secondTotalAggregate._count.secondPaymentMethod || 0);
   const processingFee = Prisma.Decimal.add(
     totalAggregate._sum.processingFee || 0,
-    totalAggregate2._sum.processingFee2 || 0
+    secondTotalAggregate._sum.secondProcessingFee || 0
   );
   const donationAmount = Prisma.Decimal.add(
     totalAggregate._sum.donationAmount || 0,
-    totalAggregate2._sum.donationAmount2 || 0
+    secondTotalAggregate._sum.secondDonationAmount || 0
   );
   const refundAmount = Prisma.Decimal.add(
     Prisma.Decimal.add(
@@ -642,8 +643,8 @@ export const generateAccountantReport: Resolver<
       refundAggregate._sum.donationAmount || 0
     ),
     Prisma.Decimal.add(
-      refundAggregate2._sum.donationAmount2 || 0,
-      refundAggregate2._sum.processingFee2 || 0
+      secondRefundAggregate._sum.secondDonationAmount || 0,
+      secondRefundAggregate._sum.secondProcessingFee || 0
     )
   );
   const totalAmount = Prisma.Decimal.add(

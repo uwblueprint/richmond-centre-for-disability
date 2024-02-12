@@ -82,7 +82,7 @@ export const paymentInformationSchema = object({
     .matches(monetaryValueRegex, 'Please enter a valid amount')
     .nullable()
     .default(null),
-  paymentMethod2: mixed<PaymentType>()
+  secondPaymentMethod: mixed<PaymentType>()
     .nullable()
     .default(null)
     .when('hasSecondPaymentMethod', {
@@ -93,7 +93,7 @@ export const paymentInformationSchema = object({
         .nullable()
         .default(null),
     }),
-  processingFee2: string()
+  secondProcessingFee: string()
     .nullable()
     .default(null)
     .when('hasSecondPaymentMethod', {
@@ -104,7 +104,7 @@ export const paymentInformationSchema = object({
         .nullable()
         .default(null),
     }),
-  donationAmount2: string()
+  secondDonationAmount: string()
     .nullable()
     .default(null)
     .when('hasSecondPaymentMethod', {

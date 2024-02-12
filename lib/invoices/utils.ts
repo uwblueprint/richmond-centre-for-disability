@@ -27,9 +27,9 @@ export const generateApplicationInvoicePdf = (
     processingFee,
     paymentMethod,
     donationAmount,
-    processingFee2,
-    paymentMethod2,
-    donationAmount2,
+    secondProcessingFee,
+    secondPaymentMethod,
+    secondDonationAmount,
   } = application;
   const applicantName = formatFullName(firstName, middleName, lastName);
   const employeeInitials = `${session.firstName[0].toUpperCase()}${session.lastName[0].toUpperCase()}`;
@@ -51,23 +51,23 @@ export const generateApplicationInvoicePdf = (
     });
     totalAmount = totalAmount.plus(donationAmount);
   }
-  if (paymentMethod2 && processingFee2 && !processingFee2.equals(0)) {
+  if (secondPaymentMethod && secondProcessingFee && !secondProcessingFee.equals(0)) {
     paymentItems.push({
       item: `PP # ${appNumber} second payment method`,
-      amount: processingFee2,
-      paidBy: paymentMethod2,
-      subtotal: processingFee2,
+      amount: secondProcessingFee,
+      paidBy: secondPaymentMethod,
+      subtotal: secondProcessingFee,
     });
-    totalAmount = totalAmount.plus(processingFee2);
+    totalAmount = totalAmount.plus(secondProcessingFee);
   }
-  if (paymentMethod2 && donationAmount2 && !donationAmount2.equals(0)) {
+  if (secondPaymentMethod && secondDonationAmount && !secondDonationAmount.equals(0)) {
     paymentItems.push({
       item: 'Donation second payment method',
-      amount: donationAmount2,
-      paidBy: paymentMethod2,
-      subtotal: donationAmount2,
+      amount: secondDonationAmount,
+      paidBy: secondPaymentMethod,
+      subtotal: secondDonationAmount,
     });
-    totalAmount = totalAmount.plus(donationAmount2);
+    totalAmount = totalAmount.plus(secondDonationAmount);
   }
   const address = application.shippingAddressSameAsHomeAddress
     ? {
@@ -286,9 +286,9 @@ export const generateDonationInvoicePdf = (
     processingFee,
     paymentMethod,
     donationAmount,
-    processingFee2,
-    paymentMethod2,
-    donationAmount2,
+    secondProcessingFee,
+    secondPaymentMethod,
+    secondDonationAmount,
     email,
     createdAt,
   } = application;
@@ -313,23 +313,23 @@ export const generateDonationInvoicePdf = (
     });
     totalAmount = totalAmount.plus(donationAmount);
   }
-  if (paymentMethod2 && processingFee2 && !processingFee2.equals(0)) {
+  if (secondPaymentMethod && secondProcessingFee && !secondProcessingFee.equals(0)) {
     paymentItems.push({
       item: `PP # ${appNumber} second payment method`,
-      amount: processingFee2,
-      paidBy: paymentMethod2,
-      subtotal: processingFee2,
+      amount: secondProcessingFee,
+      paidBy: secondPaymentMethod,
+      subtotal: secondProcessingFee,
     });
-    totalAmount = totalAmount.plus(processingFee2);
+    totalAmount = totalAmount.plus(secondProcessingFee);
   }
-  if (paymentMethod2 && donationAmount2 && !donationAmount2.equals(0)) {
+  if (secondPaymentMethod && secondDonationAmount && !secondDonationAmount.equals(0)) {
     paymentItems.push({
       item: 'Donation second payment method',
-      amount: donationAmount2,
-      paidBy: paymentMethod2,
-      subtotal: donationAmount2,
+      amount: secondDonationAmount,
+      paidBy: secondPaymentMethod,
+      subtotal: secondDonationAmount,
     });
-    totalAmount = totalAmount.plus(donationAmount2);
+    totalAmount = totalAmount.plus(secondDonationAmount);
   }
   const address = application.shippingAddressSameAsHomeAddress
     ? {
@@ -359,7 +359,7 @@ export const generateDonationInvoicePdf = (
     dateDonationRecevied: createdAt,
     issuedBy: employeeInitials,
     donationAmount,
-    donationAmount2,
+    secondDonationAmount,
     paymentItems,
     totalAmount,
     address,
@@ -397,7 +397,7 @@ const donationPdfDefinition = (input: {
   }>;
   totalAmount: Prisma.Decimal;
   donationAmount: Prisma.Decimal;
-  donationAmount2: Prisma.Decimal | null;
+  secondDonationAmount: Prisma.Decimal | null;
   address: {
     addressLine1: string;
     addressLine2: string | null;
@@ -415,7 +415,7 @@ const donationPdfDefinition = (input: {
     permitType,
     receiptNumber,
     donationAmount,
-    donationAmount2,
+    secondDonationAmount,
     totalAmount,
     dateIssued,
     issuedBy,
@@ -517,12 +517,12 @@ const donationPdfDefinition = (input: {
                 [{ text: 'Donor Number:' }, `P${appNumber}`],
                 [
                   { text: 'Total Amount:' },
-                  `$${donationAmount.plus(donationAmount2 || 0).toString()}`,
+                  `$${donationAmount.plus(secondDonationAmount || 0).toString()}`,
                 ],
                 [{ text: 'Value of Product / Services:\n\n' }, ''],
                 [
                   { text: 'Eligible Amount of Donation for Tax Purposes:' },
-                  `$${donationAmount.plus(donationAmount2 || 0).toString()}`,
+                  `$${donationAmount.plus(secondDonationAmount || 0).toString()}`,
                 ],
                 [{ text: '' }, ''],
                 [{ text: 'Where Applicable', bold: true }, ''],

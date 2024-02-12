@@ -185,7 +185,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
       shopifyConfirmationNumber,
       shopifyOrderNumber,
       donationAmount,
-      donationAmount2,
+      secondDonationAmount,
       processing: {
         status,
         appNumber,
@@ -415,7 +415,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             <ProcessingTaskStep
               id={4}
               label={
-                Number(donationAmount) + (Number(donationAmount2) || 0) >= 20
+                Number(donationAmount) + (Number(secondDonationAmount) || 0) >= 20
                   ? 'Generate invoice and donation receipt'
                   : 'Generate invoice'
               }
@@ -439,7 +439,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
                   color="black"
                   onClick={() => {
-                    Number(donationAmount) + (Number(donationAmount2) || 0) >= 20
+                    Number(donationAmount) + (Number(secondDonationAmount) || 0) >= 20
                       ? handleGenerateInvoice(true)
                       : handleGenerateInvoice(false);
                   }}

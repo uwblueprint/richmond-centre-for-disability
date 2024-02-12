@@ -69,7 +69,7 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
           <Grid templateColumns="repeat(2, 1fr)" rowGap={'24px'}>
             <GridItem rowSpan={2} colSpan={1}>
               <RadioGroupField
-                name="paymentInformation.paymentMethod2"
+                name="paymentInformation.secondPaymentMethod"
                 label="Second payment method"
               >
                 <Stack>
@@ -85,7 +85,7 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
 
             <GridItem>
               <TextField
-                name="paymentInformation.processingFee2"
+                name="paymentInformation.secondProcessingFee"
                 label="Permit fee"
                 monetaryInput
               />
@@ -93,7 +93,7 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
 
             <GridItem colSpan={1}>
               <TextField
-                name="paymentInformation.donationAmount2"
+                name="paymentInformation.secondDonationAmount"
                 label={
                   <>
                     {'Donation '}

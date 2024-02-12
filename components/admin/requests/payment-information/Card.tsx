@@ -69,9 +69,9 @@ const Card: FC<Props> = props => {
     paymentMethod,
     processingFee,
     donationAmount,
-    paymentMethod2,
-    processingFee2,
-    donationAmount2,
+    secondPaymentMethod,
+    secondProcessingFee,
+    secondDonationAmount,
     hasSecondPaymentMethod,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
@@ -105,9 +105,9 @@ const Card: FC<Props> = props => {
               paymentMethod,
               processingFee,
               donationAmount,
-              paymentMethod2,
-              processingFee2,
-              donationAmount2,
+              secondPaymentMethod,
+              secondProcessingFee,
+              secondDonationAmount,
               hasSecondPaymentMethod,
               shippingAddressSameAsHomeAddress,
               shippingFullName,
@@ -178,7 +178,7 @@ const Card: FC<Props> = props => {
               </Box>
               <Box>
                 <Text as="p" textStyle="body-regular" textAlign="left">
-                  ${processingFee2}
+                  ${secondProcessingFee}
                 </Text>
               </Box>
               <Box>
@@ -188,12 +188,12 @@ const Card: FC<Props> = props => {
               </Box>
               <Box>
                 <Text as="p" textStyle="body-regular" textAlign="left">
-                  ${donationAmount2}
+                  ${secondDonationAmount}
                 </Text>
               </Box>
               <Box>
                 <Text as="p" textStyle="caption" textAlign="left">
-                  Paid with {titlecase(paymentMethod2 ?? '')}
+                  Paid with {titlecase(secondPaymentMethod ?? '')}
                 </Text>
               </Box>
             </SimpleGrid>
