@@ -167,11 +167,9 @@ const IdentityVerification: FC = () => {
                 <Box marginBottom={{ sm: '40px', md: '20px' }} textAlign={'left'}>
                   <DateField name="dateOfBirth" label="Date of Birth" width="184px">
                     <FormHelperText>
-                      <Text>
-                        If you are on a mobile device, please use the date picker to select your
-                        date of birth. You can click on the year and month at the top of the pop-up
-                        calendar to change them.
-                      </Text>
+                      {
+                        'If you are on a mobile device, please use the date picker to select your date of birth. You can click on the year and month at the top of the pop-up calendar to change them.'
+                      }
                     </FormHelperText>
                   </DateField>
                 </Box>
