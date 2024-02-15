@@ -27,6 +27,9 @@ export const generateApplicationInvoicePdf = (
     processingFee,
     paymentMethod,
     donationAmount,
+    secondProcessingFee,
+    secondPaymentMethod,
+    secondDonationAmount,
   } = application;
   const applicantName = formatFullName(firstName, middleName, lastName);
   const employeeInitials = `${session.firstName[0].toUpperCase()}${session.lastName[0].toUpperCase()}`;
@@ -47,6 +50,24 @@ export const generateApplicationInvoicePdf = (
       subtotal: donationAmount,
     });
     totalAmount = totalAmount.plus(donationAmount);
+  }
+  if (secondPaymentMethod && secondProcessingFee && !secondProcessingFee.equals(0)) {
+    paymentItems.push({
+      item: `PP # ${appNumber} second payment method`,
+      amount: secondProcessingFee,
+      paidBy: secondPaymentMethod,
+      subtotal: secondProcessingFee,
+    });
+    totalAmount = totalAmount.plus(secondProcessingFee);
+  }
+  if (secondPaymentMethod && secondDonationAmount && !secondDonationAmount.equals(0)) {
+    paymentItems.push({
+      item: 'Donation second payment method',
+      amount: secondDonationAmount,
+      paidBy: secondPaymentMethod,
+      subtotal: secondDonationAmount,
+    });
+    totalAmount = totalAmount.plus(secondDonationAmount);
   }
   const address = application.shippingAddressSameAsHomeAddress
     ? {
@@ -265,6 +286,9 @@ export const generateDonationInvoicePdf = (
     processingFee,
     paymentMethod,
     donationAmount,
+    secondProcessingFee,
+    secondPaymentMethod,
+    secondDonationAmount,
     email,
     createdAt,
   } = application;
@@ -288,6 +312,24 @@ export const generateDonationInvoicePdf = (
       subtotal: donationAmount,
     });
     totalAmount = totalAmount.plus(donationAmount);
+  }
+  if (secondPaymentMethod && secondProcessingFee && !secondProcessingFee.equals(0)) {
+    paymentItems.push({
+      item: `PP # ${appNumber} second payment method`,
+      amount: secondProcessingFee,
+      paidBy: secondPaymentMethod,
+      subtotal: secondProcessingFee,
+    });
+    totalAmount = totalAmount.plus(secondProcessingFee);
+  }
+  if (secondPaymentMethod && secondDonationAmount && !secondDonationAmount.equals(0)) {
+    paymentItems.push({
+      item: 'Donation second payment method',
+      amount: secondDonationAmount,
+      paidBy: secondPaymentMethod,
+      subtotal: secondDonationAmount,
+    });
+    totalAmount = totalAmount.plus(secondDonationAmount);
   }
   const address = application.shippingAddressSameAsHomeAddress
     ? {
@@ -317,6 +359,7 @@ export const generateDonationInvoicePdf = (
     dateDonationRecevied: createdAt,
     issuedBy: employeeInitials,
     donationAmount,
+    secondDonationAmount,
     paymentItems,
     totalAmount,
     address,
@@ -354,6 +397,7 @@ const donationPdfDefinition = (input: {
   }>;
   totalAmount: Prisma.Decimal;
   donationAmount: Prisma.Decimal;
+  secondDonationAmount: Prisma.Decimal | null;
   address: {
     addressLine1: string;
     addressLine2: string | null;
@@ -371,6 +415,7 @@ const donationPdfDefinition = (input: {
     permitType,
     receiptNumber,
     donationAmount,
+    secondDonationAmount,
     totalAmount,
     dateIssued,
     issuedBy,
@@ -470,11 +515,14 @@ const donationPdfDefinition = (input: {
               body: [
                 [{ text: 'Date Donation Received:' }, formatDateYYYYMMDD(dateDonationRecevied)],
                 [{ text: 'Donor Number:' }, `P${appNumber}`],
-                [{ text: 'Total Amount:' }, `$${donationAmount.toString()}`],
+                [
+                  { text: 'Total Amount:' },
+                  `$${donationAmount.plus(secondDonationAmount || 0).toString()}`,
+                ],
                 [{ text: 'Value of Product / Services:\n\n' }, ''],
                 [
                   { text: 'Eligible Amount of Donation for Tax Purposes:' },
-                  `$${donationAmount.toString()}`,
+                  `$${donationAmount.plus(secondDonationAmount || 0).toString()}`,
                 ],
                 [{ text: '' }, ''],
                 [{ text: 'Where Applicable', bold: true }, ''],

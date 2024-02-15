@@ -92,6 +92,10 @@ export type Application = {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Scalars['String'];
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
@@ -324,6 +328,10 @@ export type CreateNewApplicationInput = {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;
@@ -377,6 +385,10 @@ export type CreateRenewalApplicationInput = {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;
@@ -423,6 +435,10 @@ export type CreateReplacementApplicationInput = {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;
@@ -868,6 +884,10 @@ export type NewApplication = Application & {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Scalars['String'];
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
@@ -1095,6 +1115,10 @@ export type RenewalApplication = Application & {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Scalars['String'];
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
@@ -1141,6 +1165,10 @@ export type ReplacementApplication = Application & {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Scalars['String'];
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
@@ -1372,6 +1400,10 @@ export type UpdateApplicationPaymentInformationInput = {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;

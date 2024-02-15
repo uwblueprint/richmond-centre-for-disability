@@ -270,11 +270,16 @@ export const createNewApplication: Resolver<
     requiresWiderParkingSpaceReason,
     otherRequiresWiderParkingSpaceReason,
     donationAmount,
+    secondPaymentMethod,
+    secondProcessingFee,
+    secondDonationAmount,
     shippingPostalCode,
     billingPostalCode,
     applicantId,
     ...data
   } = input;
+
+  const { hasSecondPaymentMethod } = input;
 
   const permitHolder = {
     firstName: input.firstName,
@@ -340,6 +345,10 @@ export const createNewApplication: Resolver<
     paymentMethod: input.paymentMethod,
     processingFee: input.processingFee,
     donationAmount,
+    secondPaymentMethod,
+    secondProcessingFee,
+    secondDonationAmount,
+    hasSecondPaymentMethod: input.hasSecondPaymentMethod,
     shippingAddressSameAsHomeAddress: input.shippingAddressSameAsHomeAddress,
     shippingFullName: input.shippingFullName,
     shippingAddressLine1: input.shippingAddressLine1,
@@ -386,6 +395,9 @@ export const createNewApplication: Resolver<
       data: {
         type: 'NEW',
         donationAmount: donationAmount || 0,
+        secondPaymentMethod: hasSecondPaymentMethod ? secondPaymentMethod : null,
+        secondProcessingFee: hasSecondPaymentMethod ? secondProcessingFee || 0 : null,
+        secondDonationAmount: hasSecondPaymentMethod ? secondDonationAmount || 0 : null,
         // Connect to applicant if applicant exists in DB
         ...(applicantId && {
           applicant: {
@@ -496,6 +508,9 @@ export const createRenewalApplication: Resolver<
     requiresWiderParkingSpaceReason,
     otherRequiresWiderParkingSpaceReason,
     donationAmount,
+    secondPaymentMethod,
+    secondProcessingFee,
+    secondDonationAmount,
     shippingPostalCode,
     billingPostalCode,
     ...data
@@ -511,6 +526,8 @@ export const createRenewalApplication: Resolver<
     addressLine2,
     city,
     paymentMethod,
+    processingFee,
+    hasSecondPaymentMethod,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
     shippingAddressLine1,
@@ -559,12 +576,14 @@ export const createRenewalApplication: Resolver<
     otherRequiresWiderParkingSpaceReason,
   };
 
-  const { processingFee } = input;
-
   const paymentInformation = {
     paymentMethod,
     processingFee,
     donationAmount,
+    secondPaymentMethod,
+    secondProcessingFee,
+    secondDonationAmount,
+    hasSecondPaymentMethod,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
     shippingAddressLine1,
@@ -612,6 +631,9 @@ export const createRenewalApplication: Resolver<
       data: {
         type: 'RENEWAL',
         donationAmount: donationAmount || 0,
+        secondPaymentMethod: hasSecondPaymentMethod ? secondPaymentMethod : null,
+        secondProcessingFee: hasSecondPaymentMethod ? secondProcessingFee || 0 : null,
+        secondDonationAmount: hasSecondPaymentMethod ? secondDonationAmount || 0 : null,
         phone: stripPhoneNumber(phone),
         ...data,
         postalCode: stripPostalCode(postalCode),
@@ -799,9 +821,13 @@ export const createExternalRenewalApplication: Resolver<
         city: updatedAddress && city ? city : applicant.city,
         postalCode:
           updatedAddress && postalCode ? stripPostalCode(postalCode) : applicant.postalCode,
+        paymentMethod: 'SHOPIFY',
         processingFee: process.env.PROCESSING_FEE,
         donationAmount: donationAmount || 0,
-        paymentMethod: 'SHOPIFY',
+        secondPaymentMethod: null,
+        secondProcessingFee: null,
+        secondDonationAmount: null,
+        hasSecondPaymentMethod: false,
         // Set shipping address to be same as home address by default
         shippingAddressSameAsHomeAddress: true,
         shippingFullName: null,
@@ -925,6 +951,9 @@ export const createReplacementApplication: Resolver<
     stolenPoliceOfficerName,
     eventDescription,
     donationAmount,
+    secondPaymentMethod,
+    secondProcessingFee,
+    secondDonationAmount,
     shippingPostalCode,
     billingPostalCode,
     ...data
@@ -942,6 +971,8 @@ export const createReplacementApplication: Resolver<
 
     // Remaining Payment Information Fields
     paymentMethod,
+    processingFee,
+    hasSecondPaymentMethod,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
     shippingAddressLine1,
@@ -970,12 +1001,14 @@ export const createReplacementApplication: Resolver<
     postalCode,
   };
 
-  const { processingFee } = input;
-
   const paymentInformation = {
     paymentMethod,
     processingFee,
     donationAmount,
+    secondPaymentMethod,
+    secondProcessingFee,
+    secondDonationAmount,
+    hasSecondPaymentMethod,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
     shippingAddressLine1,
@@ -1043,6 +1076,9 @@ export const createReplacementApplication: Resolver<
       data: {
         type: 'REPLACEMENT',
         donationAmount: donationAmount || 0,
+        secondPaymentMethod: hasSecondPaymentMethod ? secondPaymentMethod : null,
+        secondProcessingFee: hasSecondPaymentMethod ? secondProcessingFee || 0 : null,
+        secondDonationAmount: hasSecondPaymentMethod ? secondDonationAmount || 0 : null,
         phone: stripPhoneNumber(phone),
         postalCode: stripPostalCode(postalCode),
         shippingPostalCode: shippingPostalCode && stripPostalCode(shippingPostalCode),
@@ -1632,7 +1668,18 @@ export const updateApplicationPaymentInformation: Resolver<
     throw new ApolloError('Application payment information was unable to be updated');
   }
 
-  const { id, donationAmount, shippingPostalCode, billingPostalCode, ...validatedData } = input;
+  const {
+    id,
+    donationAmount,
+    secondPaymentMethod,
+    secondProcessingFee,
+    secondDonationAmount,
+    shippingPostalCode,
+    billingPostalCode,
+    ...validatedData
+  } = input;
+
+  const { hasSecondPaymentMethod } = input;
 
   const application = await prisma.application.findUnique({
     where: { id },
@@ -1669,6 +1716,9 @@ export const updateApplicationPaymentInformation: Resolver<
       where: { id },
       data: {
         donationAmount: donationAmount || 0,
+        secondPaymentMethod: hasSecondPaymentMethod ? secondPaymentMethod : null,
+        secondProcessingFee: hasSecondPaymentMethod ? secondProcessingFee || 0 : null,
+        secondDonationAmount: hasSecondPaymentMethod ? secondDonationAmount || 0 : null,
         shippingPostalCode: shippingPostalCode && stripPostalCode(shippingPostalCode),
         billingPostalCode: billingPostalCode && stripPostalCode(billingPostalCode),
         ...validatedData,
