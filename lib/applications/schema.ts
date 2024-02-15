@@ -34,6 +34,10 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
     donationAmount: String! # Return monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Return monetary value as string
+    secondDonationAmount: String # Return monetary value as string
+    hasSecondPaymentMethod: Boolean!
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
@@ -140,6 +144,10 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
     donationAmount: String! # Return monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Return monetary value as string
+    secondDonationAmount: String # Return monetary value as string
+    hasSecondPaymentMethod: Boolean!
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
@@ -221,6 +229,10 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
     donationAmount: String! # Return monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Return monetary value as string
+    secondDonationAmount: String # Return monetary value as string
+    hasSecondPaymentMethod: Boolean!
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
@@ -283,6 +295,10 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String! # Return monetary value as string
     donationAmount: String! # Return monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Return monetary value as string
+    secondDonationAmount: String # Return monetary value as string
+    hasSecondPaymentMethod: Boolean!
     paidThroughShopify: Boolean!
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
@@ -390,6 +406,11 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String! # Input monetary value as string
     donationAmount: String # Input monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Input monetary value as string
+    secondDonationAmount: String # Input monetary value as string
+    hasSecondPaymentMethod: Boolean!
+
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
     shippingFullName: String
@@ -457,6 +478,11 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String # Input monetary value as string
     donationAmount: String # Input monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Input monetary value as string
+    secondDonationAmount: String # Input monetary value as string
+    hasSecondPaymentMethod: Boolean!
+
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
     shippingFullName: String
@@ -557,10 +583,14 @@ export default gql`
     stolenPoliceOfficerName: String
     eventDescription: String
 
+    # Payment information
     paymentMethod: PaymentType!
-    # Input monetary value as string
-    processingFee: String!
-    donationAmount: String
+    processingFee: String! # Input monetary value as string
+    donationAmount: String # Input monetary value as string
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String # Input monetary value as string
+    secondDonationAmount: String # Input monetary value as string
+    hasSecondPaymentMethod: Boolean!
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -728,6 +758,10 @@ export default gql`
     paymentMethod: PaymentType!
     processingFee: String!
     donationAmount: String
+    secondPaymentMethod: PaymentType
+    secondProcessingFee: String
+    secondDonationAmount: String
+    hasSecondPaymentMethod: Boolean!
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
