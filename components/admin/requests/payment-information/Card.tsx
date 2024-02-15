@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { useQuery, useMutation } from '@tools/hooks/graphql';
-import { Box, Text, Divider, SimpleGrid, VStack, Button } from '@chakra-ui/react'; // Chakra UI
+import { Box, Text, Divider, SimpleGrid, VStack, Button, HStack } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card component
 import EditPaymentDetailsModal from '@components/admin/requests/payment-information/EditModal'; // Edit modal
 import {
@@ -69,6 +69,10 @@ const Card: FC<Props> = props => {
     paymentMethod,
     processingFee,
     donationAmount,
+    secondPaymentMethod,
+    secondProcessingFee,
+    secondDonationAmount,
+    hasSecondPaymentMethod,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
     shippingAddressLine1,
@@ -99,8 +103,12 @@ const Card: FC<Props> = props => {
           <EditPaymentDetailsModal
             paymentInformation={{
               paymentMethod,
-              donationAmount,
               processingFee,
+              donationAmount,
+              secondPaymentMethod,
+              secondProcessingFee,
+              secondDonationAmount,
+              hasSecondPaymentMethod,
               shippingAddressSameAsHomeAddress,
               shippingFullName,
               shippingAddressLine1,
@@ -133,33 +141,64 @@ const Card: FC<Props> = props => {
             Fees
           </Text>
         </Box>
-        <SimpleGrid columns={2} spacingX="70px" spacingY="12px">
-          <Box>
-            <Text as="p" textStyle="body-regular" textAlign="left">
-              Permit Fee
-            </Text>
-          </Box>
-          <Box>
-            <Text as="p" textStyle="body-regular" textAlign="left">
-              ${processingFee}
-            </Text>
-          </Box>
-          <Box>
-            <Text as="p" textStyle="body-regular" textAlign="left">
-              Donation
-            </Text>
-          </Box>
-          <Box>
-            <Text as="p" textStyle="body-regular" textAlign="left">
-              ${donationAmount}
-            </Text>
-          </Box>
-          <Box>
-            <Text as="p" textStyle="caption" textAlign="left">
-              Paid with {titlecase(paymentMethod)}
-            </Text>
-          </Box>
-        </SimpleGrid>
+        <HStack>
+          <SimpleGrid columns={2} spacingX="70px" spacingY="12px">
+            <Box>
+              <Text as="p" textStyle="body-regular" textAlign="left">
+                Permit Fee
+              </Text>
+            </Box>
+            <Box>
+              <Text as="p" textStyle="body-regular" textAlign="left">
+                ${processingFee}
+              </Text>
+            </Box>
+            <Box>
+              <Text as="p" textStyle="body-regular" textAlign="left">
+                Donation
+              </Text>
+            </Box>
+            <Box>
+              <Text as="p" textStyle="body-regular" textAlign="left">
+                ${donationAmount}
+              </Text>
+            </Box>
+            <Box>
+              <Text as="p" textStyle="caption" textAlign="left">
+                Paid with {titlecase(paymentMethod)}
+              </Text>
+            </Box>
+          </SimpleGrid>
+          {hasSecondPaymentMethod && (
+            <SimpleGrid columns={2} spacingX="70px" spacingY="12px">
+              <Box>
+                <Text as="p" textStyle="body-regular" textAlign="left">
+                  Permit Fee
+                </Text>
+              </Box>
+              <Box>
+                <Text as="p" textStyle="body-regular" textAlign="left">
+                  ${secondProcessingFee}
+                </Text>
+              </Box>
+              <Box>
+                <Text as="p" textStyle="body-regular" textAlign="left">
+                  Donation
+                </Text>
+              </Box>
+              <Box>
+                <Text as="p" textStyle="body-regular" textAlign="left">
+                  ${secondDonationAmount}
+                </Text>
+              </Box>
+              <Box>
+                <Text as="p" textStyle="caption" textAlign="left">
+                  Paid with {titlecase(secondPaymentMethod ?? '')}
+                </Text>
+              </Box>
+            </SimpleGrid>
+          )}
+        </HStack>
       </VStack>
       <Divider mt="20px" />
       <SimpleGrid columns={2} spacingX="150px" spacingY="12px" pt="20px">
