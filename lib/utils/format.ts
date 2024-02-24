@@ -75,7 +75,7 @@ export const formatStreetAddress = (addressLine1: string, addressLine2: string |
  * @param postalCode Postal code
  * @param province Province (optional)
  * @param country Country (optional)
- * @returns Formatted Canadian address
+ * @returns Formatted Canadian address in one line
  */
 export const formatAddress = (
   addressLine1: string,
@@ -85,9 +85,9 @@ export const formatAddress = (
   province?: Province,
   country?: string
 ): string => {
-  return `${addressLine2 ? `${addressLine2} - ${addressLine1}` : addressLine1}
-${province ? `${city} ${province}` : city}
-${country || ''}
-${postalCode}
-  `;
+  const streetAddress = formatStreetAddress(addressLine1, addressLine2);
+  const postalCodeFormatted = formatPostalCode(postalCode);
+  const provinceFormatted = province ? `, ${province}` : '';
+  const countryFormatted = country ? `, ${country}` : '';
+  return `${streetAddress}, ${city}${provinceFormatted} ${postalCodeFormatted}${countryFormatted}`;
 };
