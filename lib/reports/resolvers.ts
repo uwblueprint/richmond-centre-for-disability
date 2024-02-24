@@ -91,6 +91,7 @@ export const generatePermitHoldersReport: Resolver<
         select: {
           rcdPermitId: true,
           type: true,
+          expiryDate: true,
         },
       },
     },
@@ -124,6 +125,7 @@ export const generatePermitHoldersReport: Resolver<
         phone: formatPhoneNumber(phone),
         rcdPermitId: `#${permits[0].rcdPermitId}`,
         permitType: permits[0].type,
+        permitExpiryDate: formatDateYYYYMMDD(permits[0].expiryDate),
         guardianRelationship: guardian?.relationship,
         guardianPOAName:
           guardian && formatFullName(guardian.firstName, guardian.middleName, guardian.lastName),

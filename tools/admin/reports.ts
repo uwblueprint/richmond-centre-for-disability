@@ -128,6 +128,11 @@ export const PERMIT_HOLDERS_COLUMNS: Array<{
     reportColumnId: 'permitType',
   },
   {
+    name: 'Recent APP Expiry Date',
+    value: 'RECENT_APP_EXPIRY_DATE',
+    reportColumnId: 'permitExpiryDate',
+  },
+  {
     name: 'User Status',
     value: 'USER_STATUS',
     reportColumnId: 'status',
