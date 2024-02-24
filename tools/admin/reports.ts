@@ -83,6 +83,11 @@ export const PERMIT_HOLDERS_COLUMNS: Array<{
     reportColumnId: 'dateOfBirth',
   },
   {
+    name: 'Applicant Age',
+    value: 'APPLICANT_AGE',
+    reportColumnId: 'age',
+  },
+  {
     name: 'Home Address',
     value: 'HOME_ADDRESS',
     reportColumnId: 'homeAddress',

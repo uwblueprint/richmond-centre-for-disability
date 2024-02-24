@@ -119,6 +119,7 @@ export const generatePermitHoldersReport: Resolver<
         id,
         applicantName: formatFullName(firstName, middleName, lastName),
         dateOfBirth: formatDateYYYYMMDD(dateOfBirth),
+        age: moment().diff(dateOfBirth, 'years'),
         homeAddress: formatAddress(addressLine1, addressLine2, city, postalCode, province),
         phone: formatPhoneNumber(phone),
         rcdPermitId: `#${permits[0].rcdPermitId}`,

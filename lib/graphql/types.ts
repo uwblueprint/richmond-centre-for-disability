@@ -944,6 +944,7 @@ export type PermitHoldersReportColumn =
   | 'USER_ID'
   | 'APPLICANT_NAME'
   | 'APPLICANT_DATE_OF_BIRTH'
+  | 'APPLICANT_AGE'
   | 'HOME_ADDRESS'
   | 'EMAIL'
   | 'PHONE_NUMBER'
