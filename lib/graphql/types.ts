@@ -182,6 +182,9 @@ export type ApplicationsReportColumn =
   | 'PAYMENT_METHOD'
   | 'FEE_AMOUNT'
   | 'DONATION_AMOUNT'
+  | 'SECOND_PAYMENT_METHOD'
+  | 'SECOND_FEE_AMOUNT'
+  | 'SECOND_DONATION_AMOUNT'
   | 'TOTAL_AMOUNT';
 
 export type ApplicationsResult = {

@@ -275,8 +275,10 @@ export const generateApplicationsReport: Resolver<
         dateOfBirth: dateOfBirth && formatDateYYYYMMDD(dateOfBirth),
         applicationDate: createdAt ? formatDateYYYYMMDDLocal(createdAt, true) : null,
         applicantName: formatFullName(firstName, middleName, lastName),
-        processingFee: `$${Prisma.Decimal.add(processingFee, secondProcessingFee || 0)}`,
-        donationAmount: `$${Prisma.Decimal.add(donationAmount, secondDonationAmount || 0)}`,
+        processingFee: `$${processingFee}`,
+        donationAmount: `$${donationAmount}`,
+        secondProcessingFee: `$${secondProcessingFee || 0}`,
+        secondDonationAmount: `$${secondDonationAmount || 0}`,
         totalAmount: `$${Prisma.Decimal.add(
           Prisma.Decimal.add(processingFee, donationAmount),
           Prisma.Decimal.add(secondProcessingFee || 0, secondDonationAmount || 0)
