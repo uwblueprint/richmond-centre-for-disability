@@ -10,7 +10,7 @@ import {
   PaymentType,
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
-import { formatFullName, formatPhoneNumber, formatPostalCode } from '@lib/utils/format'; // Formatting utils
+import { formatAddress, formatFullName, formatPhoneNumber } from '@lib/utils/format'; // Formatting utils
 import {
   formatDateTimeYYYYMMDDHHMMSS,
   formatDateYYYYMMDD,
@@ -91,6 +91,7 @@ export const generatePermitHoldersReport: Resolver<
         select: {
           rcdPermitId: true,
           type: true,
+          expiryDate: true,
         },
       },
     },
@@ -103,8 +104,12 @@ export const generatePermitHoldersReport: Resolver<
       firstName,
       middleName,
       lastName,
-      postalCode,
       dateOfBirth,
+      addressLine1,
+      addressLine2,
+      city,
+      province,
+      postalCode,
       guardian,
       permits,
       phone,
@@ -113,36 +118,33 @@ export const generatePermitHoldersReport: Resolver<
       return {
         ...applicant,
         id,
-        phone: formatPhoneNumber(phone),
-        dateOfBirth: formatDateYYYYMMDD(dateOfBirth),
         applicantName: formatFullName(firstName, middleName, lastName),
-        postalCode: formatPostalCode(postalCode),
+        dateOfBirth: formatDateYYYYMMDD(dateOfBirth),
+        age: moment().diff(dateOfBirth, 'years'),
+        homeAddress: formatAddress(addressLine1, addressLine2, city, postalCode, province),
+        phone: formatPhoneNumber(phone),
         rcdPermitId: `#${permits[0].rcdPermitId}`,
         permitType: permits[0].type,
+        permitExpiryDate: formatDateYYYYMMDD(permits[0].expiryDate),
         guardianRelationship: guardian?.relationship,
         guardianPOAName:
           guardian && formatFullName(guardian.firstName, guardian.middleName, guardian.lastName),
-        guardianAddressLine1: guardian && guardian.addressLine1,
-        guardianAddressLine2: guardian && guardian.addressLine2,
-        guardianCity: guardian && guardian.city,
-        guardianPostalCode:
-          guardian && guardian.postalCode && formatPostalCode(guardian.postalCode),
-        guardianProvince: guardian && guardian.province,
+        guardianAddress:
+          guardian &&
+          formatAddress(
+            guardian.addressLine1,
+            guardian.addressLine2,
+            guardian.city,
+            guardian.postalCode,
+            guardian.province
+          ),
       };
     }
   );
 
-  const filteredColumns = PERMIT_HOLDERS_COLUMNS.filter(({ value }) => columnsSet.has(value));
-  const csvHeaders: Array<{ id: string; title: string }> = [];
-  for (const { name, reportColumnId } of filteredColumns) {
-    if (typeof reportColumnId === 'string') {
-      csvHeaders.push({ id: reportColumnId, title: name });
-    } else {
-      for (const [columnLabel, columnId] of reportColumnId) {
-        csvHeaders.push({ id: columnId, title: columnLabel });
-      }
-    }
-  }
+  const csvHeaders = PERMIT_HOLDERS_COLUMNS.filter(({ value }) => columnsSet.has(value)).map(
+    ({ name, reportColumnId }) => ({ id: reportColumnId, title: name })
+  );
 
   // Generate CSV string from csv object.
   const csvStringifier = createObjectCsvStringifier({
