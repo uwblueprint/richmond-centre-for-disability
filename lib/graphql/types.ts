@@ -947,6 +947,7 @@ export type PermitHoldersReportColumn =
   | 'USER_ID'
   | 'APPLICANT_NAME'
   | 'APPLICANT_DATE_OF_BIRTH'
+  | 'APPLICANT_AGE'
   | 'HOME_ADDRESS'
   | 'EMAIL'
   | 'PHONE_NUMBER'
@@ -955,6 +956,7 @@ export type PermitHoldersReportColumn =
   | 'GUARDIAN_POA_ADDRESS'
   | 'RECENT_APP_NUMBER'
   | 'RECENT_APP_TYPE'
+  | 'RECENT_APP_EXPIRY_DATE'
   | 'USER_STATUS';
 
 export type PermitStatus =
