@@ -59,6 +59,7 @@ const DonationSection: FC = () => {
                   <Radio value={50}>$50</Radio>
                   <Radio value={75}>$75</Radio>
                   <Radio value={100}>$100</Radio>
+                  <Radio value={200}>$200</Radio>
                   <Radio value={0}>No Donation</Radio>
                 </VStack>
               </RadioGroupField>

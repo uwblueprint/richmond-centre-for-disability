@@ -4,7 +4,7 @@ import Client from 'shopify-buy';
  * Possible donation amounts in dollars,
  * configured in env variable (SHOPIFY_DONATION_PRODUCT_IDS)
  */
-export type DonationAmount = 0 | 5 | 10 | 25 | 50 | 75 | 100;
+export type DonationAmount = 0 | 5 | 10 | 25 | 50 | 75 | 100 | 200;
 
 /**
  * ShopifyCheckout class
@@ -53,7 +53,7 @@ export class ShopifyCheckout {
   /**
    * Set up Shopify checkout and get the checkout URL
    * @param applicationId Application ID to be paid for
-   * @param donationAmount Donation amount in dollars (5, 10, 25, 50, 75, 100), default 0
+   * @param donationAmount Donation amount in dollars (5, 10, 25, 50, 75, 100, 200), default 0
    * @returns Shopify checkout URL
    */
   async setUpCheckout(applicationId: number, donationAmount: DonationAmount = 0): Promise<string> {

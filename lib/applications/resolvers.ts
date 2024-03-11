@@ -792,7 +792,7 @@ export const createExternalRenewalApplication: Resolver<
 
   // TODO: Replace validation for donation amount
   const { donationAmount = 0 } = input;
-  if (donationAmount !== null && ![0, 5, 10, 25, 50, 75, 100].includes(donationAmount)) {
+  if (donationAmount !== null && ![0, 5, 10, 25, 50, 75, 100, 200].includes(donationAmount)) {
     return {
       ok: false,
       applicationId: null,
