@@ -467,7 +467,9 @@ const donationPdfDefinition = (input: {
                   body: [
                     [
                       { text: 'Tax Receipt #:' },
-                      `PPD_${dateIssued.getFullYear()}${dateIssued.getMonth()}${dateIssued.getDate()}_${appNumber}`,
+                      `PPD_${dateIssued.getFullYear()}` +
+                        `${('0' + (dateIssued.getMonth() + 1)).slice(-2)}` +
+                        `${dateIssued.getDate()}_${appNumber}`,
                     ],
                     [
                       { text: 'Donated by:' },
