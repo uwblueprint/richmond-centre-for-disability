@@ -10,7 +10,12 @@ import {
   PaymentType,
 } from '@lib/graphql/types';
 import { SortOrder } from '@tools/types';
-import { formatAddress, formatFullName, formatPhoneNumber } from '@lib/utils/format'; // Formatting utils
+import {
+  formatFullName,
+  formatPhoneNumber,
+  formatPostalCode,
+  formatStreetAddress,
+} from '@lib/utils/format'; // Formatting utils
 import {
   formatDateTimeYYYYMMDDHHMMSS,
   formatDateYYYYMMDD,
@@ -121,7 +126,7 @@ export const generatePermitHoldersReport: Resolver<
         applicantName: formatFullName(firstName, middleName, lastName),
         dateOfBirth: formatDateYYYYMMDD(dateOfBirth),
         age: moment().diff(dateOfBirth, 'years'),
-        homeAddress: formatAddress(addressLine1, addressLine2, city, postalCode, province),
+        address: formatStreetAddress(addressLine1, addressLine2),
         phone: formatPhoneNumber(phone),
         rcdPermitId: `#${permits[0].rcdPermitId}`,
         permitType: permits[0].type,
@@ -130,21 +135,26 @@ export const generatePermitHoldersReport: Resolver<
         guardianPOAName:
           guardian && formatFullName(guardian.firstName, guardian.middleName, guardian.lastName),
         guardianAddress:
-          guardian &&
-          formatAddress(
-            guardian.addressLine1,
-            guardian.addressLine2,
-            guardian.city,
-            guardian.postalCode,
-            guardian.province
-          ),
+          guardian && formatStreetAddress(guardian.addressLine1, guardian.addressLine2),
+        guardianCity: guardian && guardian.city,
+        guardianPostalCode:
+          guardian && guardian.postalCode && formatPostalCode(guardian.postalCode),
+        guardianProvince: guardian && guardian.province,
       };
     }
   );
 
-  const csvHeaders = PERMIT_HOLDERS_COLUMNS.filter(({ value }) => columnsSet.has(value)).map(
-    ({ name, reportColumnId }) => ({ id: reportColumnId, title: name })
-  );
+  const filteredColumns = PERMIT_HOLDERS_COLUMNS.filter(({ value }) => columnsSet.has(value));
+  const csvHeaders: Array<{ id: string; title: string }> = [];
+  for (const { name, reportColumnId } of filteredColumns) {
+    if (typeof reportColumnId === 'string') {
+      csvHeaders.push({ id: reportColumnId, title: name });
+    } else {
+      for (const [columnLabel, columnId] of reportColumnId) {
+        csvHeaders.push({ id: columnId, title: columnLabel });
+      }
+    }
+  }
 
   // Generate CSV string from csv object.
   const csvStringifier = createObjectCsvStringifier({
