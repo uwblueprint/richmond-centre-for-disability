@@ -425,6 +425,10 @@ const donationPdfDefinition = (input: {
     nonNullEmail,
   } = input;
 
+  const zeroPad = (num: number) => {
+    return ('0' + num.toString()).slice(-2);
+  };
+
   return {
     footer: function (currentPage: number, pageCount: number) {
       return currentPage == pageCount
@@ -468,8 +472,8 @@ const donationPdfDefinition = (input: {
                     [
                       { text: 'Tax Receipt #:' },
                       `PPD_${dateIssued.getFullYear()}` +
-                        `${('0' + (dateIssued.getMonth() + 1)).slice(-2)}` +
-                        `${dateIssued.getDate()}_${appNumber}`,
+                        `${zeroPad(dateIssued.getMonth() + 1)}` +
+                        `${zeroPad(dateIssued.getDate())}_${appNumber}`,
                     ],
                     [
                       { text: 'Donated by:' },
