@@ -119,7 +119,7 @@ function Footer() {
                 Location
               </Text>
               <Text textStyle="caption">
-                #842 - 5300, No.3 Rd
+                #968 - 5300, No.3 Rd
                 <br />
                 Lansdowne Centre
                 <br />
