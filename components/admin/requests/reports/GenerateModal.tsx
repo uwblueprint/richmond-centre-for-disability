@@ -127,7 +127,7 @@ export default function GenerateReportModal(props: Props) {
       <Modal isOpen={isOpen} onClose={handleClose} isCentered size={'xl'}>
         <ModalOverlay />
         {step === GenerateReportStep.SelectColumns ? (
-          <ModalContent paddingLeft="16px" maxWidth="45rem" maxHeight="600px" paddingRight="16px">
+          <ModalContent paddingLeft="16px" maxWidth="45rem" maxHeight="700px" paddingRight="16px">
             <ModalHeader paddingTop="24px" paddingBottom="12px">
               <Text textStyle="display-medium-bold">Requests Report</Text>
             </ModalHeader>
@@ -205,7 +205,7 @@ export default function GenerateReportModal(props: Props) {
             </ModalFooter>
           </ModalContent>
         ) : step === GenerateReportStep.Export ? (
-          <ModalContent paddingLeft="16px" maxWidth="46rem" maxHeight="438px" paddingRight="16px">
+          <ModalContent paddingLeft="16px" maxWidth="46rem" maxHeight="500px" paddingRight="16px">
             <ModalHeader paddingTop="24px" paddingBottom="0px">
               <Stack direction="row">
                 <Text textStyle="display-medium-bold" paddingRight="10px">

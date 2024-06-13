@@ -185,7 +185,9 @@ export type ApplicationsReportColumn =
   | 'SECOND_PAYMENT_METHOD'
   | 'SECOND_FEE_AMOUNT'
   | 'SECOND_DONATION_AMOUNT'
-  | 'TOTAL_AMOUNT';
+  | 'TOTAL_AMOUNT'
+  | 'INVOICE_RECEIPT_NUMBER'
+  | 'TAX_RECEIPT_NUMBER';
 
 export type ApplicationsResult = {
   __typename?: 'ApplicationsResult';

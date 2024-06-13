@@ -74,6 +74,16 @@ export const APPLICATIONS_COLUMNS: Array<{
     value: 'TOTAL_AMOUNT',
     reportColumnId: 'totalAmount',
   },
+  {
+    name: 'Invoice Receipt #',
+    value: 'INVOICE_RECEIPT_NUMBER',
+    reportColumnId: 'invoiceReceiptNumber',
+  },
+  {
+    name: 'Tax Receipt #',
+    value: 'TAX_RECEIPT_NUMBER',
+    reportColumnId: 'taxReceiptNumber',
+  },
 ];
 
 /** Ordered array of permit holders column names and values */
