@@ -75,13 +75,46 @@ export const paymentInformationSchema = object({
   paymentMethod: mixed<PaymentType>()
     .oneOf(Object.values(PaymentType))
     .required('Please select a payment method'),
+  processingFee: string()
+    .matches(monetaryValueRegex, 'Please enter a valid amount')
+    .required('Please enter a permit fee'),
   donationAmount: string()
     .matches(monetaryValueRegex, 'Please enter a valid amount')
     .nullable()
     .default(null),
-  processingFee: string()
-    .matches(monetaryValueRegex, 'Please enter a valid amount')
-    .required('Please enter a permit fee'),
+  secondPaymentMethod: mixed<PaymentType>()
+    .nullable()
+    .default(null)
+    .when('hasSecondPaymentMethod', {
+      is: true,
+      then: mixed<PaymentType>()
+        .oneOf(Object.values(PaymentType))
+        .required('Please select a payment method')
+        .nullable()
+        .default(null),
+    }),
+  secondProcessingFee: string()
+    .nullable()
+    .default(null)
+    .when('hasSecondPaymentMethod', {
+      is: true,
+      then: string()
+        .matches(monetaryValueRegex, 'Please enter a valid amount')
+        .required('Please enter a permit fee')
+        .nullable()
+        .default(null),
+    }),
+  secondDonationAmount: string()
+    .nullable()
+    .default(null)
+    .when('hasSecondPaymentMethod', {
+      is: true,
+      then: string()
+        .matches(monetaryValueRegex, 'Please enter a valid amount')
+        .nullable()
+        .default(null),
+    }),
+  hasSecondPaymentMethod: bool().default(false),
   shippingAddressSameAsHomeAddress: bool().default(false),
   shippingFullName: string()
     .nullable()

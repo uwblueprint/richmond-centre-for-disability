@@ -77,6 +77,8 @@ type CsvRow = {
  */
 function getPaymentMethod(paymentMethod: string): PaymentType {
   switch (paymentMethod) {
+    case 'AMEX':
+      return PaymentType.Amex;
     case 'MC':
       return PaymentType.Mastercard;
     case 'VISA':

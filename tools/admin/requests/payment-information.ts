@@ -12,7 +12,10 @@ import {
 export type PaymentInformationFormData = Pick<
   Application,
   | 'donationAmount'
+  | 'secondDonationAmount'
   | 'processingFee'
+  | 'secondProcessingFee'
+  | 'hasSecondPaymentMethod'
   | 'shippingAddressSameAsHomeAddress'
   | 'shippingFullName'
   | 'shippingAddressLine1'
@@ -29,6 +32,7 @@ export type PaymentInformationFormData = Pick<
   | 'billingPostalCode'
 > & {
   paymentMethod: PaymentType | null;
+  secondPaymentMethod: PaymentType | null;
   shippingProvince: Province | null;
   billingProvince: Province | null;
 };
@@ -39,6 +43,10 @@ export type PaymentInformationCardData = Pick<
   | 'paymentMethod'
   | 'processingFee'
   | 'donationAmount'
+  | 'secondPaymentMethod'
+  | 'secondProcessingFee'
+  | 'secondDonationAmount'
+  | 'hasSecondPaymentMethod'
   | 'shippingAddressSameAsHomeAddress'
   | 'shippingFullName'
   | 'shippingAddressLine1'
@@ -65,6 +73,10 @@ export const GET_PAYMENT_INFORMATION = gql`
       paymentMethod
       processingFee
       donationAmount
+      secondPaymentMethod
+      secondProcessingFee
+      secondDonationAmount
+      hasSecondPaymentMethod
       shippingAddressSameAsHomeAddress
       shippingFullName
       shippingAddressLine1

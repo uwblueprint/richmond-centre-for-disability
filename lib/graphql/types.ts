@@ -92,6 +92,10 @@ export type Application = {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Scalars['String'];
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
@@ -178,6 +182,9 @@ export type ApplicationsReportColumn =
   | 'PAYMENT_METHOD'
   | 'FEE_AMOUNT'
   | 'DONATION_AMOUNT'
+  | 'SECOND_PAYMENT_METHOD'
+  | 'SECOND_FEE_AMOUNT'
+  | 'SECOND_DONATION_AMOUNT'
   | 'TOTAL_AMOUNT';
 
 export type ApplicationsResult = {
@@ -324,6 +331,10 @@ export type CreateNewApplicationInput = {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;
@@ -377,6 +388,10 @@ export type CreateRenewalApplicationInput = {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;
@@ -423,6 +438,10 @@ export type CreateReplacementApplicationInput = {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;
@@ -868,6 +887,10 @@ export type NewApplication = Application & {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Scalars['String'];
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
@@ -902,6 +925,7 @@ export type PatientCondition =
   | 'OTHER';
 
 export type PaymentType =
+  | 'AMEX'
   | 'MASTERCARD'
   | 'VISA'
   | 'ETRANSFER'
@@ -923,6 +947,7 @@ export type PermitHoldersReportColumn =
   | 'USER_ID'
   | 'APPLICANT_NAME'
   | 'APPLICANT_DATE_OF_BIRTH'
+  | 'APPLICANT_AGE'
   | 'HOME_ADDRESS'
   | 'EMAIL'
   | 'PHONE_NUMBER'
@@ -931,6 +956,7 @@ export type PermitHoldersReportColumn =
   | 'GUARDIAN_POA_ADDRESS'
   | 'RECENT_APP_NUMBER'
   | 'RECENT_APP_TYPE'
+  | 'RECENT_APP_EXPIRY_DATE'
   | 'USER_STATUS';
 
 export type PermitStatus =
@@ -1095,6 +1121,10 @@ export type RenewalApplication = Application & {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Scalars['String'];
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
@@ -1141,6 +1171,10 @@ export type ReplacementApplication = Application & {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Scalars['String'];
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   paidThroughShopify: Scalars['Boolean'];
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
@@ -1372,6 +1406,10 @@ export type UpdateApplicationPaymentInformationInput = {
   paymentMethod: PaymentType;
   processingFee: Scalars['String'];
   donationAmount: Maybe<Scalars['String']>;
+  secondPaymentMethod: Maybe<PaymentType>;
+  secondProcessingFee: Maybe<Scalars['String']>;
+  secondDonationAmount: Maybe<Scalars['String']>;
+  hasSecondPaymentMethod: Scalars['Boolean'];
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Maybe<Scalars['String']>;
   shippingAddressLine1: Maybe<Scalars['String']>;

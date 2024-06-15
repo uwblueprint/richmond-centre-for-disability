@@ -148,6 +148,7 @@ export default gql`
   }
 
   enum PaymentType {
+    AMEX
     MASTERCARD
     VISA
     ETRANSFER

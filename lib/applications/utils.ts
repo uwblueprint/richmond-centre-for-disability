@@ -2,6 +2,7 @@ import { ApolloError } from 'apollo-server-micro';
 import {
   Application,
   NewApplication,
+  PaymentType,
   RenewalApplication,
   ReplacementApplication,
 } from '@prisma/client';
@@ -43,10 +44,20 @@ export const flattenApplication = (
     renewalApplication: RenewalApplication | null;
     replacementApplication: ReplacementApplication | null;
   }
-): Omit<Application, 'processingFee' | 'donationAmount'> &
+): Omit<
+  Application,
+  | 'processingFee'
+  | 'donationAmount'
+  | 'secondPaymentMethod'
+  | 'secondProcessingFee'
+  | 'secondDonationAmount'
+> &
   (NewApplication | RenewalApplication | ReplacementApplication) & {
     processingFee: string;
     donationAmount: string;
+    secondPaymentMethod: PaymentType | null;
+    secondProcessingFee: string | null;
+    secondDonationAmount: string | null;
   } & BillingAddress &
   ShippingAddress => {
   const {
@@ -62,10 +73,14 @@ export const flattenApplication = (
     postalCode,
     shippingAddressSameAsHomeAddress,
     billingAddressSameAsHomeAddress,
+    hasSecondPaymentMethod,
   } = application;
   const {
     processingFee,
     donationAmount,
+    secondPaymentMethod,
+    secondProcessingFee,
+    secondDonationAmount,
     shippingFullName,
     shippingAddressLine1,
     shippingAddressLine2,
@@ -167,6 +182,17 @@ export const flattenApplication = (
       ...newApplication,
       processingFee: processingFee.toString(),
       donationAmount: donationAmount.toString(),
+      secondPaymentMethod: hasSecondPaymentMethod ? secondPaymentMethod : null,
+      secondProcessingFee: hasSecondPaymentMethod
+        ? secondProcessingFee
+          ? secondProcessingFee.toString()
+          : '0'
+        : null,
+      secondDonationAmount: hasSecondPaymentMethod
+        ? secondDonationAmount
+          ? secondDonationAmount.toString()
+          : '0'
+        : null,
     };
   } else if (type === 'RENEWAL') {
     if (!renewalApplication) {
@@ -179,6 +205,17 @@ export const flattenApplication = (
       ...renewalApplication,
       processingFee: processingFee.toString(),
       donationAmount: donationAmount.toString(),
+      secondPaymentMethod: hasSecondPaymentMethod ? secondPaymentMethod : null,
+      secondProcessingFee: hasSecondPaymentMethod
+        ? secondProcessingFee
+          ? secondProcessingFee.toString()
+          : '0'
+        : null,
+      secondDonationAmount: hasSecondPaymentMethod
+        ? secondDonationAmount
+          ? secondDonationAmount.toString()
+          : '0'
+        : null,
     };
   }
 
@@ -192,5 +229,16 @@ export const flattenApplication = (
     ...replacementApplication,
     processingFee: processingFee.toString(),
     donationAmount: donationAmount.toString(),
+    secondPaymentMethod: hasSecondPaymentMethod ? secondPaymentMethod : null,
+    secondProcessingFee: hasSecondPaymentMethod
+      ? secondProcessingFee
+        ? secondProcessingFee.toString()
+        : '0'
+      : null,
+    secondDonationAmount: hasSecondPaymentMethod
+      ? secondDonationAmount
+        ? secondDonationAmount.toString()
+        : '0'
+      : null,
   };
 };

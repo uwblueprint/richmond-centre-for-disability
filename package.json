@@ -8,7 +8,7 @@
     "dev": "next",
     "dev:pretty": "next | pino-pretty",
     "build": "next build",
-    "start": "next start -p $PORT",
+    "start": "prisma migrate deploy && prisma generate && next start -p $PORT",
     "type-check": "tsc",
     "generate-graphql-types": "node ./lib/scripts/generate-graphql-types.js",
     "reset-db": "sh lib/scripts/reset-db.sh",

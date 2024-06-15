@@ -55,6 +55,21 @@ export const APPLICATIONS_COLUMNS: Array<{
     reportColumnId: 'donationAmount',
   },
   {
+    name: 'Second Payment Method',
+    value: 'SECOND_PAYMENT_METHOD',
+    reportColumnId: 'secondPaymentMethod',
+  },
+  {
+    name: 'Second Fee Amount',
+    value: 'SECOND_FEE_AMOUNT',
+    reportColumnId: 'secondProcessingFee',
+  },
+  {
+    name: 'Second Donation Amount',
+    value: 'SECOND_DONATION_AMOUNT',
+    reportColumnId: 'secondDonationAmount',
+  },
+  {
     name: 'Total Amount',
     value: 'TOTAL_AMOUNT',
     reportColumnId: 'totalAmount',
@@ -83,11 +98,15 @@ export const PERMIT_HOLDERS_COLUMNS: Array<{
     reportColumnId: 'dateOfBirth',
   },
   {
+    name: 'Applicant Age',
+    value: 'APPLICANT_AGE',
+    reportColumnId: 'age',
+  },
+  {
     name: 'Home Address',
     value: 'HOME_ADDRESS',
     reportColumnId: [
-      ['Address Line 1', 'addressLine1'],
-      ['Address Line 2', 'addressLine2'],
+      ['Address', 'address'],
       ['City', 'city'],
       ['Province', 'province'],
       ['Postal Code', 'postalCode'],
@@ -117,8 +136,7 @@ export const PERMIT_HOLDERS_COLUMNS: Array<{
     name: 'Guardian/POA Address',
     value: 'GUARDIAN_POA_ADDRESS',
     reportColumnId: [
-      ['Guardian/POA Address Line 1', 'guardianAddressLine1'],
-      ['Guardian/POA Address Line 2', 'guardianAddressLine2'],
+      ['Guardian/POA Address', 'guardianAddress'],
       ['Guardian/POA City', 'guardianCity'],
       ['Guardian/POA Province', 'guardianProvince'],
       ['Guardian/POA Postal Code', 'guardianPostalCode'],
@@ -133,6 +151,11 @@ export const PERMIT_HOLDERS_COLUMNS: Array<{
     name: 'Recent APP Type',
     value: 'RECENT_APP_TYPE',
     reportColumnId: 'permitType',
+  },
+  {
+    name: 'Recent APP Expiry Date',
+    value: 'RECENT_APP_EXPIRY_DATE',
+    reportColumnId: 'permitExpiryDate',
   },
   {
     name: 'User Status',
