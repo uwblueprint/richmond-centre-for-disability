@@ -54,12 +54,20 @@ export default function ReasonForReplacementForm({
               {'Stolen'}
             </Radio>
             <Radio
-              value={'OTHER'}
+              value={'MAIL_LOST'}
               onChange={() => {
                 setFieldValue('paymentInformation.processingFee', '0');
               }}
             >
               {'Mail Lost'}
+            </Radio>
+            <Radio
+              value={'OTHER'}
+              onChange={() => {
+                setFieldValue('paymentInformation.processingFee', '0');
+              }}
+            >
+              {'Other'}
             </Radio>
           </Stack>
         </RadioGroupField>
