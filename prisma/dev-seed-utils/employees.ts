@@ -84,6 +84,16 @@ const employees = [
     lastName: 'Moraes',
     email: 'keanejonathan3+employee@gmail.com',
   },
+  {
+    firstName: 'Matthew',
+    lastName: 'Wang',
+    email: 'matthewwang+employee@uwblueprint.org',
+  },
+  {
+    firstName: 'Sharujan',
+    lastName: 'Sreekaran',
+    email: 'sharujansreekaran+employee@uwblueprint.org',
+  },
 ];
 
 /**
