@@ -222,7 +222,7 @@ const applicationPdfDefinition = (input: {
       {
         text: [
           'Tel: 604-232-2404, Fax: 604-232-2415 Web: www.rcdrichmond.org\n',
-          '#842 - 5300, No.3 RD Lansdowne Centre Richmond BC V6X 2X9',
+          '#968 - 5300, No.3 RD Lansdowne Centre Richmond BC V6X 2X9',
         ],
         alignment: 'center',
         margin: [0, 15, 0, 0],
@@ -563,7 +563,7 @@ const donationPdfDefinition = (input: {
           'Sincerely,\n\n\n',
           'RICHMOND CENTRE FOR DISABILITY\n',
           '(Charity Number: 88832-8432-RR0001)\n',
-          '#842 - 5300 No. 3 Road\n',
+          '#968 - 5300 No. 3 Road\n',
           'Richmond, BC V6x 2X9\n',
           'Tel: 604-232-2404\n',
           'Website:www.rcdrichmond.org\n',
