@@ -33,6 +33,8 @@ export default gql`
     SECOND_FEE_AMOUNT
     SECOND_DONATION_AMOUNT
     TOTAL_AMOUNT
+    INVOICE_RECEIPT_NUMBER
+    TAX_RECEIPT_NUMBER
   }
 
   # Generate permit holders report
