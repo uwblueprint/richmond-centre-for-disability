@@ -538,7 +538,7 @@ export const applicantFacingRenewalMutationSchema = applicantFacingRenewalPerson
  */
 export const applicantFacingRenewalDonationSchema = object({
   donationAmount: mixed<number>()
-    .oneOf([0, 5, 10, 25, 50, 75, 100])
+    .oneOf([0, 5, 10, 25, 50, 75, 100, 200])
     .required('Please select a donation amount')
     .transform((_value, originalValue) => {
       return Number(originalValue);
