@@ -237,6 +237,12 @@ export const generateApplicationsReport: Resolver<
           dateOfBirth: true,
         },
       },
+      applicationProcessing: {
+        select: {
+          appNumber: true,
+          invoiceNumber: true,
+        },
+      },
       newApplication: {
         select: {
           dateOfBirth: true,
@@ -263,6 +269,7 @@ export const generateApplicationsReport: Resolver<
       secondProcessingFee,
       secondDonationAmount,
       applicant,
+      applicationProcessing: { appNumber, invoiceNumber } = {},
       newApplication,
       permit,
       ...application
@@ -283,9 +290,10 @@ export const generateApplicationsReport: Resolver<
       return {
         ...application,
         id: applicant?.id,
-        dateOfBirth: dateOfBirth && formatDateYYYYMMDD(dateOfBirth),
-        applicationDate: createdAt ? formatDateYYYYMMDDLocal(createdAt, true) : null,
         applicantName: formatFullName(firstName, middleName, lastName),
+        dateOfBirth: dateOfBirth && formatDateYYYYMMDD(dateOfBirth),
+        rcdPermitId: permit?.rcdPermitId ? `#${permit.rcdPermitId}` : null,
+        applicationDate: createdAt ? formatDateYYYYMMDDLocal(createdAt, true) : null,
         processingFee: `$${processingFee}`,
         donationAmount: `$${donationAmount}`,
         secondProcessingFee: `$${secondProcessingFee || 0}`,
@@ -294,7 +302,14 @@ export const generateApplicationsReport: Resolver<
           Prisma.Decimal.add(processingFee, donationAmount),
           Prisma.Decimal.add(secondProcessingFee || 0, secondDonationAmount || 0)
         )}`,
-        rcdPermitId: permit?.rcdPermitId ? `#${permit.rcdPermitId}` : null,
+        invoiceReceiptNumber:
+          createdAt && invoiceNumber
+            ? `${formatDateYYYYMMDD(createdAt).replace(/-/g, '')}-${invoiceNumber}`
+            : null,
+        taxReceiptNumber:
+          createdAt && appNumber
+            ? `PPD_${formatDateYYYYMMDD(createdAt).replace(/-/g, '')}_${appNumber}`
+            : null,
       };
     }
   );
