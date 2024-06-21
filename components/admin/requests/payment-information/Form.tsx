@@ -74,6 +74,7 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
                 label="Second payment method"
               >
                 <Stack>
+                  <Radio value={'AMEX' as PaymentType}>{'American Express'}</Radio>
                   <Radio value={'MASTERCARD' as PaymentType}>{'Mastercard'}</Radio>
                   <Radio value={'VISA' as PaymentType}>{'Visa'}</Radio>
                   <Radio value={'DEBIT' as PaymentType}>{'Debit'}</Radio>
