@@ -72,16 +72,24 @@ yarn dev
 npx prisma migrate deploy
 ```
 
-4. Seed database
+4. Reset and seed database (ensure node is v14.17.0 or else it will stall)
 
 ```bash
-npx prisma db seed --preview-feature
+npx prisma migrate reset
 ```
 
 5. Verify database
 
 ```bash
 docker exec -it rcd_db bash -c "psql -U postgres -d rcd"
+```
+
+## Migrations
+
+To create a new migration (after making changes to the Prisma schema):
+
+```bash
+npx prisma migrate dev --name <migration-name> --create-only
 ```
 
 ## Run locally (Heroku)
