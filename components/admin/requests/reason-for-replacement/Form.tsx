@@ -70,14 +70,6 @@ export default function ReasonForReplacementForm({
             >
               {'Other'}
             </Radio>
-            <Radio
-              value={'OTHER'}
-              onChange={() => {
-                setFieldValue('paymentInformation.processingFee', '0');
-              }}
-            >
-              {'Other'}
-            </Radio>
           </Stack>
         </RadioGroupField>
       </Box>
