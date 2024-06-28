@@ -75,6 +75,11 @@ const employees = [
     email: 'chinemeremchigbo+employee@uwblueprint.org',
   },
   {
+    firstName: 'Bowen',
+    lastName: 'Zhu',
+    email: 'bowenzhu+employee@uwblueprint.org',
+  },
+  {
     firstName: 'Adil',
     lastName: 'Kapadia',
     email: 'adilkapadia+employee@uwblueprint.org',
