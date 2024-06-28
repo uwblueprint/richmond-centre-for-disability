@@ -25,6 +25,8 @@ export default function PaymentDetailsForm({ paymentInformation }: PaymentDetail
               name="paymentInformation.paymentMethod"
               label="Payment method"
               required
+              // Set default value to the payment method if paymentMethod is set in the form data
+              defaultValue={paymentInformation.paymentMethod || undefined}
             >
               <Stack>
                 <Radio value={'AMEX' as PaymentType}>{'American Express'}</Radio>
