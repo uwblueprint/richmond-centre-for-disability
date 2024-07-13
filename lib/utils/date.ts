@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 /**
  * Format date to be in MM/DD/YYYY format and in UTC time zone to avoid the date being set back by a day

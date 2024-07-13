@@ -45,6 +45,7 @@
     "graphql-middleware": "^6.1.31",
     "mime-types": "^2.1.35",
     "moment": "^2.29.3",
+    "moment-timezone": "^0.5.45",
     "next": "12",
     "next-auth": "^3.26.1",
     "next-i18next": "^8.3.0",
