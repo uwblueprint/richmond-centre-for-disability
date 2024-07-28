@@ -187,7 +187,7 @@ const PermitHolders: NextPage = () => {
                   maxWidth="180"
                   whiteSpace="nowrap"
                   textOverflow="ellipsis"
-                  overflow="hidden"
+                  overflow="clip visible"
                   mb="4px"
                 >
                   {name}
