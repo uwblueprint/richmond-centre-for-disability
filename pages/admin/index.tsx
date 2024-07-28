@@ -60,7 +60,7 @@ const COLUMNS: Column<ApplicationRow>[] = [
               maxWidth="280"
               whiteSpace="nowrap"
               textOverflow="ellipsis"
-              overflow="hidden"
+              overflow="clip visible"
               mb="4px"
             >
               {name}
