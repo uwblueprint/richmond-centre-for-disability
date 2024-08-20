@@ -107,7 +107,7 @@ const employees = [
   {
     firstName: 'Jennifer',
     lastName: 'Chen',
-    email: 'jenn.chenn93+employee@gmail.com',
+    email: 'jenniferchen+employee@uwblueprint.org',
   },
 ];
 
