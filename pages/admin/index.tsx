@@ -71,7 +71,7 @@ export const getTabIndex = (routerQuery: RouterQuery): number => {
   }
 };
 
-const tabIndexToStatus: { [key: number]: string } = {
+const tabIndexToStatus: { [key: number]: ApplicationStatus | 'ALL' } = {
   0: 'ALL',
   1: 'PENDING',
   2: 'IN_PROGRESS',
