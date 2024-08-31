@@ -46,6 +46,39 @@ import { formatDateYYYYMMDDLocal } from '@lib/utils/date'; // Date Formatter Uti
 import GenerateReportModal from '@components/admin/requests/reports/GenerateModal'; // Generate report modal
 import EmptyMessage from '@components/EmptyMessage';
 
+interface RouterQuery {
+  tab?: string;
+}
+
+export const getTabIndex = (routerQuery: RouterQuery): number => {
+  if (routerQuery === undefined || routerQuery.tab === undefined) {
+    return 1;
+  }
+  const tabName = routerQuery.tab;
+  switch (tabName) {
+    case 'ALL':
+      return 0;
+    case 'PENDING':
+      return 1;
+    case 'IN_PROGRESS':
+      return 2;
+    case 'COMPLETED':
+      return 3;
+    case 'REJECTED':
+      return 4;
+    default:
+      return 1;
+  }
+};
+
+const tabIndexToStatus: { [key: number]: string } = {
+  0: 'ALL',
+  1: 'PENDING',
+  2: 'IN_PROGRESS',
+  3: 'COMPLETED',
+  4: 'REJECTED',
+};
+
 // Placeholder columns
 const COLUMNS: Column<ApplicationRow>[] = [
   {
@@ -128,6 +161,7 @@ const PAGE_SIZE = 20;
 const Requests: NextPage = () => {
   // Router
   const router = useRouter();
+  const routerQuery: RouterQuery = router.query;
 
   //Generate report modal
   const {
@@ -153,6 +187,20 @@ const Requests: NextPage = () => {
   const [requestsData, setRequestsData] = useState<Array<ApplicationRow>>([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [recordsCount, setRecordsCount] = useState(0);
+
+  // Tabs
+  const [tabIndex, setTabIndex] = useState(0);
+  const getTabFromRoute = (): number => {
+    const index = getTabIndex(routerQuery);
+    setTabIndex(index);
+    return index;
+  };
+
+  const handleTabChange = () => {
+    const status = tabIndexToStatus[tabIndex];
+    setStatusFilter(status === 'ALL' ? null : status);
+    router.push({ query: { tab: status } });
+  };
 
   // Make query to applications resolver
   const { refetch, loading } = useQuery<GetApplicationsResponse, GetApplicationsRequest>(
@@ -200,6 +248,16 @@ const Requests: NextPage = () => {
     }
   );
 
+  // Determine the active tab on page load based on the route
+  useEffect(() => {
+    getTabFromRoute();
+  }, []);
+
+  useEffect(() => {
+    if (tabIndex === null) return;
+    handleTabChange();
+  }, [tabIndex]);
+
   // Set page number to 0 after every filter or sort change
   useEffect(() => {
     setPageNumber(0);
@@ -240,48 +298,19 @@ const Requests: NextPage = () => {
           </HStack>
         </Flex>
         <Box border="1px solid" borderColor="border.secondary" borderRadius="12px" bgColor="white">
-          <Tabs marginBottom="20px" defaultIndex={1}>
-            <TabList paddingX="24px">
-              <Tab
-                height="64px"
-                onClick={() => {
-                  setStatusFilter(null);
-                }}
-              >
-                All
-              </Tab>
-              <Tab
-                height="64px"
-                onClick={() => {
-                  setStatusFilter('PENDING');
-                }}
-              >
-                Pending
-              </Tab>
-              <Tab
-                height="64px"
-                onClick={() => {
-                  setStatusFilter('IN_PROGRESS');
-                }}
-              >
-                In Progress
-              </Tab>
-              <Tab
-                height="64px"
-                onClick={() => {
-                  setStatusFilter('COMPLETED');
-                }}
-              >
-                Completed
-              </Tab>
-              <Tab
-                height="64px"
-                onClick={() => {
-                  setStatusFilter('REJECTED');
-                }}
-              >
-                Rejected
-              </Tab>
+          <Tabs
+            marginBottom="20px"
+            index={tabIndex}
+            onChange={index => {
+              setTabIndex(index);
+            }}
+          >
+            <TabList paddingX="24px" defaultIndex={1}>
+              <Tab height="64px">All</Tab>
+              <Tab height="64px">Pending</Tab>
+              <Tab height="64px">In Progress</Tab>
+              <Tab height="64px">Completed</Tab>
+              <Tab height="64px">Rejected</Tab>
             </TabList>
           </Tabs>
           <Box padding="0 24px">
@@ -397,7 +426,9 @@ const Requests: NextPage = () => {
                   loading={loading}
                   initialSort={sortOrder}
                   onChangeSortOrder={setSortOrder}
-                  onRowClick={({ id }) => router.push(`/admin/request/${id}`)}
+                  onRowClick={({ id }) =>
+                    router.push(`/admin/request/${id}?origin=${tabIndexToStatus[tabIndex]}`)
+                  }
                 />
                 <Flex justifyContent="flex-end">
                   <Pagination
