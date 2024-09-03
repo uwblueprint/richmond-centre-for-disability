@@ -200,7 +200,7 @@ const OVERVIEW_FAQs: ReadonlyArray<{ question: string; answer: ReactNode | strin
           event that you find the lost permit you will return it to our office as the permit is no
           longer valid. Any permit holder using a permit that has been reported lost is at risk of a
           ticket or even towing of vehicle as this permit is no longer valid.{' '}
-          <NewTabLink href="https://www.rcdrichmond.org/Parking/PermitReplacementDeclarationForm_2022%20v.pdf">
+          <NewTabLink href="https://www.rcdrichmond.org/Parking/Permit_Replacement_Declaration_Form_Fillable_2024v.pdf">
             Click here
           </NewTabLink>{' '}
           to download the Replacement Declaration Form.
@@ -220,7 +220,7 @@ const OVERVIEW_FAQs: ReadonlyArray<{ question: string; answer: ReactNode | strin
         <p>
           The police will also give you an incident or case number to include with your request for
           a Replacement Permit.{' '}
-          <NewTabLink href="https://www.rcdrichmond.org/Parking/PermitReplacementDeclarationForm_2022%20v.pdf">
+          <NewTabLink href="https://www.rcdrichmond.org/Parking/Permit_Replacement_Declaration_Form_Fillable_2024v.pdf">
             Click here
           </NewTabLink>{' '}
           to download the Replacement Declaration Form.
