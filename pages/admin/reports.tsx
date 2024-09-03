@@ -42,6 +42,7 @@ export default function Reports() {
     GenerateAccountantReportResponse,
     GenerateAccountantReportRequest
   >(GENERATE_ACCOUNTANT_REPORT_QUERY, {
+    fetchPolicy: 'network-only',
     onCompleted: data => {
       if (data.generateAccountantReport.ok && !!data.generateAccountantReport.url) {
         const link = document.createElement('a');
