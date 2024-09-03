@@ -195,14 +195,14 @@ export default function CreateRenewal() {
         input: {
           applicantId,
           ...permitHolder,
-          physicianFirstName: doctorInformation.firstName,
-          physicianLastName: doctorInformation.lastName,
-          physicianMspNumber: doctorInformation.mspNumber,
-          physicianPhone: doctorInformation.phone,
-          physicianAddressLine1: doctorInformation.addressLine1,
-          physicianAddressLine2: doctorInformation.addressLine2,
-          physicianCity: doctorInformation.city,
-          physicianPostalCode: doctorInformation.postalCode,
+          physicianFirstName: values.doctorInformation.firstName,
+          physicianLastName: values.doctorInformation.lastName,
+          physicianMspNumber: values.doctorInformation.mspNumber,
+          physicianPhone: values.doctorInformation.phone,
+          physicianAddressLine1: values.doctorInformation.addressLine1,
+          physicianAddressLine2: values.doctorInformation.addressLine2,
+          physicianCity: values.doctorInformation.city,
+          physicianPostalCode: values.doctorInformation.postalCode,
 
           ...additionalInformation,
           accessibleConvertedVanLoadingMethod: additionalInformation.usesAccessibleConvertedVan
