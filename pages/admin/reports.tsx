@@ -1,6 +1,16 @@
 import { GetServerSideProps } from 'next'; // Get server side props
 import { getSession } from 'next-auth/client'; // Session management
-import { Text, GridItem, Box, Flex, Input, Button, Spinner, useToast } from '@chakra-ui/react'; // Chakra UI
+import {
+  Text,
+  GridItem,
+  Box,
+  Flex,
+  Input,
+  Button,
+  Spinner,
+  useToast,
+  useDisclosure,
+} from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import { authorize } from '@tools/authorization'; // Page authorization
 import { DownloadIcon } from '@chakra-ui/icons'; // Chakra UI icons
@@ -12,9 +22,16 @@ import {
   GenerateAccountantReportResponse,
 } from '@tools/admin/permit-holders/graphql/generate-report';
 import EmptyMessage from '@components/EmptyMessage';
+import GenerateReportModal from '@components/admin/requests/reports/GenerateModal'; // Generate report modal
 
 // Internal home page
 export default function Reports() {
+  //Generate report modal
+  const {
+    isOpen: isGenerateReportModalOpen,
+    onOpen: onOpenGenerateReportModal,
+    onClose: onCloseGenerateReportModal,
+  } = useDisclosure();
   // const { dateRange, addDayToDateRange, dateRangeString } = useDateRangePicker();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -25,6 +42,7 @@ export default function Reports() {
     GenerateAccountantReportResponse,
     GenerateAccountantReportRequest
   >(GENERATE_ACCOUNTANT_REPORT_QUERY, {
+    fetchPolicy: 'network-only',
     onCompleted: data => {
       if (data.generateAccountantReport.ok && !!data.generateAccountantReport.url) {
         const link = document.createElement('a');
@@ -61,6 +79,9 @@ export default function Reports() {
       <GridItem colSpan={12}>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Accountant Reports</Text>
+          <Button height="48px" variant="outline" onClick={onOpenGenerateReportModal}>
+            Generate a Report
+          </Button>
         </Flex>
         <Box
           border="1px solid"
@@ -139,6 +160,10 @@ export default function Reports() {
           </Box>
         </Box>
       </GridItem>
+      <GenerateReportModal
+        isOpen={isGenerateReportModalOpen}
+        onClose={onCloseGenerateReportModal}
+      />
     </Layout>
   );
 }

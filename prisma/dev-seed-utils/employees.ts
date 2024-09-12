@@ -75,6 +75,11 @@ const employees = [
     email: 'chinemeremchigbo+employee@uwblueprint.org',
   },
   {
+    firstName: 'Bowen',
+    lastName: 'Zhu',
+    email: 'bowenzhu+employee@uwblueprint.org',
+  },
+  {
     firstName: 'Adil',
     lastName: 'Kapadia',
     email: 'adilkapadia+employee@uwblueprint.org',
@@ -93,6 +98,16 @@ const employees = [
     firstName: 'Sharujan',
     lastName: 'Sreekaran',
     email: 'sharujansreekaran+employee@uwblueprint.org',
+  },
+  {
+    firstName: 'Jenny',
+    lastName: 'Vong',
+    email: 'jennyvong+employee@uwblueprint.org',
+  },
+  {
+    firstName: 'Jennifer',
+    lastName: 'Chen',
+    email: 'jenniferchen+employee@uwblueprint.org',
   },
 ];
 

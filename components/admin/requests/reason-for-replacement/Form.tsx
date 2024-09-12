@@ -57,6 +57,7 @@ export default function ReasonForReplacementForm({
               value={'MAIL_LOST'}
               onChange={() => {
                 setFieldValue('paymentInformation.processingFee', '0');
+                setFieldValue('paymentInformation.paymentMethod', 'CASH');
               }}
             >
               {'Mail Lost'}

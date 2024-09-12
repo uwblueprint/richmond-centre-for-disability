@@ -21,7 +21,6 @@ import {
   Wrap,
   Tooltip,
   HStack,
-  useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
 import { ChevronDownIcon, SearchIcon, AddIcon } from '@chakra-ui/icons'; // Chakra UI Icons
 import Layout from '@components/admin/Layout'; // Layout component
@@ -43,7 +42,6 @@ import useDebounce from '@tools/hooks/useDebounce'; // Debounce hook
 import { Column } from 'react-table';
 import { formatFullName } from '@lib/utils/format'; // String formatter util
 import { formatDateYYYYMMDDLocal } from '@lib/utils/date'; // Date Formatter Util
-import GenerateReportModal from '@components/admin/requests/reports/GenerateModal'; // Generate report modal
 import EmptyMessage from '@components/EmptyMessage';
 
 // Placeholder columns
@@ -60,7 +58,7 @@ const COLUMNS: Column<ApplicationRow>[] = [
               maxWidth="280"
               whiteSpace="nowrap"
               textOverflow="ellipsis"
-              overflow="hidden"
+              overflow="clip visible"
               mb="4px"
             >
               {name}
@@ -128,13 +126,6 @@ const PAGE_SIZE = 20;
 const Requests: NextPage = () => {
   // Router
   const router = useRouter();
-
-  //Generate report modal
-  const {
-    isOpen: isGenerateReportModalOpen,
-    onOpen: onOpenGenerateReportModal,
-    onClose: onCloseGenerateReportModal,
-  } = useDisclosure();
 
   // Filters
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | null>('PENDING');
@@ -212,9 +203,6 @@ const Requests: NextPage = () => {
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Requests</Text>
           <HStack spacing="12px">
-            <Button height="48px" variant="outline" onClick={onOpenGenerateReportModal}>
-              Generate a Report
-            </Button>
             <Menu>
               <MenuButton
                 as={Button}
@@ -417,10 +405,6 @@ const Requests: NextPage = () => {
           </Box>
         </Box>
       </GridItem>
-      <GenerateReportModal
-        isOpen={isGenerateReportModalOpen}
-        onClose={onCloseGenerateReportModal}
-      />
     </Layout>
   );
 };
