@@ -116,6 +116,7 @@ model Employee {
   refundedPaymentApplicationProcessings   ApplicationProcessing[] @relation("application_processing_payment_refunded_employee_idToemployees")
   reviewRequestApplicationProcessings     ApplicationProcessing[] @relation("application_processing_review_request_completed_employee_idToemployees")
   createdWalletCardApplicationProcessings ApplicationProcessing[] @relation("application_processing_wallet_card_created_employee_idToemployees")
+  createdWalletCard                       WalletCard?             @relation("wallet_cardToemployees")
 
   @@map("employees")
 }
@@ -215,7 +216,8 @@ model ApplicationProcessing {
   appHolepunched                   Boolean             @default(false) @map("app_holepunched")
   appHolepunchedEmployeeId         Int?                @map("app_holepunched_employee_id")
   appHolepunchedUpdatedAt          DateTime            @default(now()) @map("app_holepunched_updated_at") @db.Timestamptz(6)
-  walletCardCreated                Boolean             @default(false) @map("wallet_card_created")
+  walletCardNumber                 Int?                @unique @map("wallet_number")
+  walletCardCreated                WalletCard?         @relation("wallet_cardToapplication_processing", fields: [walletCardNumber], references: [walletNumber])
   walletCardCreatedEmployeeId      Int?                @map("wallet_card_created_employee_id")
   walletCardCreatedUpdatedAt       DateTime            @default(now()) @map("wallet_card_created_updated_at") @db.Timestamptz(6)
   reviewRequestCompleted           Boolean             @default(false) @map("review_request_completed")
@@ -343,6 +345,19 @@ model ApplicationInvoice {
   applicationProcessing ApplicationProcessing? @relation("application_invoicesToapplication_processing")
 
   @@map("application_invoices")
+}
+
+model WalletCard {
+  walletNumber          Int                    @id @default(autoincrement()) @map("wallet_number")
+  s3ObjectKey           String?                @map("s3_object_key") @db.VarChar(255)
+  s3ObjectUrl           String?                @map("s3_object_url")
+  employeeId            Int                    @map("employee_id")
+  createdAt             DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
+  employee              Employee               @relation("wallet_cardToemployees", fields: [employeeId], references: [id])
+  applicationProcessing ApplicationProcessing? @relation("wallet_cardToapplication_processing")
+
+  @@map("wallet_card")
 }
 
 enum ApplicantStatus {
