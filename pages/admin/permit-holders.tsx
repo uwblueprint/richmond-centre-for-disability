@@ -494,6 +494,14 @@ const PermitHolders: NextPage = () => {
             </VStack>
             {permitHolderData && permitHolderData.length > 0 ? (
               <>
+                <Flex justifyContent="flex-end">
+                  <Pagination
+                    pageNumber={pageNumber}
+                    pageSize={PAGE_SIZE}
+                    totalCount={recordsCount}
+                    onPageChange={setPageNumber}
+                  />
+                </Flex>
                 <Table
                   columns={COLUMNS}
                   data={permitHolderData || []}
