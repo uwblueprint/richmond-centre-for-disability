@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import { ChevronDownIcon, ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import {
   Alert,
   AlertIcon,
@@ -9,20 +9,18 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Text,
   Spacer,
+  Text,
   useDisclosure,
   VStack,
   Wrap,
 } from '@chakra-ui/react'; // Chakra UI
-import { ChevronDownIcon, ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
-import Link from 'next/link'; // Link
-import { ApplicantStatus } from '@lib/graphql/types';
 import PermitHolderStatusBadge from '@components/admin/PermitHolderStatusBadge';
-import ConfirmDeleteApplicantModal from '@components/admin/permit-holders/table/ConfirmDeleteApplicantModal';
-import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/table/ConfirmSetInactiveModal';
-import SetPermitHolderToActiveModal from '@components/admin/permit-holders/table/ConfirmSetActiveModal';
 import AdditionalNotesModal from '@components/admin/permit-holders/additional-notes/Modal';
+import SetPermitHolderToActiveModal from '@components/admin/permit-holders/table/ConfirmSetActiveModal';
+import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/table/ConfirmSetInactiveModal';
+import { ApplicantStatus } from '@lib/graphql/types';
+import Link from 'next/link'; // Link
 
 type PermitHolderHeaderProps = {
   readonly applicant: {
@@ -39,20 +37,11 @@ export default function PermitHolderHeader({
   applicant: { id, name, status, inactiveReason, notes },
   refetch,
 }: PermitHolderHeaderProps) {
-  const router = useRouter();
-
   // Set Permit Holder Inactive/Active modal state
   const {
     isOpen: isSetPermitHolderStatusModalOpen,
     onOpen: onOpenSetPermitHolderStatusModal,
     onClose: onCloseSetPermitHolderStatusModal,
-  } = useDisclosure();
-
-  // Delete applicant modal state
-  const {
-    isOpen: isDeleteApplicantModalOpen,
-    onOpen: onOpenDeleteApplicantModal,
-    onClose: onCloseDeleteApplicantModal,
   } = useDisclosure();
 
   // Additional notes modal state
@@ -108,13 +97,6 @@ export default function PermitHolderHeader({
                       >
                         {`Set as ${status === 'ACTIVE' ? 'Inactive' : 'Active'}`}
                       </MenuItem>
-                      <MenuItem
-                        color="text.critical"
-                        textStyle="button-regular"
-                        onClick={onOpenDeleteApplicantModal}
-                      >
-                        {'Delete Permit Holder'}
-                      </MenuItem>
                     </MenuList>
                   </Menu>
                 </Box>
@@ -161,17 +143,6 @@ export default function PermitHolderHeader({
           onClose={onCloseSetPermitHolderStatusModal}
         />
       )}
-      <ConfirmDeleteApplicantModal
-        isOpen={isDeleteApplicantModalOpen}
-        applicantId={id}
-        refetch={() => {
-          /* Do not refetch, redirect to permit holders page */
-        }}
-        onClose={() => {
-          onCloseDeleteApplicantModal();
-          router.push('/admin/permit-holders');
-        }}
-      />
 
       {/* Additional notes modal */}
       <AdditionalNotesModal
