@@ -47,7 +47,6 @@ import useDebounce from '@tools/hooks/useDebounce'; // Debouncer
 import { useEffect } from 'react'; // React
 import { formatFullName, formatPhoneNumber } from '@lib/utils/format'; // String formatter util
 import { formatDateYYYYMMDD } from '@lib/utils/date'; // Date formatter util
-import ConfirmDeleteApplicantModal from '@components/admin/permit-holders/table/ConfirmDeleteApplicantModal';
 import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/table/ConfirmSetInactiveModal'; // Set Permit Holder To Inactive modal
 import SetPermitHolderToActiveModal from '@components/admin/permit-holders/table/ConfirmSetActiveModal'; // Set Permit Holder To Active modal
 import GenerateReportModal from '@components/admin/permit-holders/reports/GenerateModal'; // Generate report modal
@@ -158,19 +157,9 @@ const PermitHolders: NextPage = () => {
     onClose: onCloseGenerateReportModal,
   } = useDisclosure();
 
-  // Delete applicant modal state
-  const {
-    isOpen: isDeleteApplicantModalOpen,
-    onOpen: onOpenDeleteApplicantModal,
-    onClose: onCloseDeleteApplicantModal,
-  } = useDisclosure();
-
   // Sets the data required for the Set Permit Holder Inactive/Active modals
   const [permitHolderToUpdateStatus, setPermitHolderToUpdateStatus] =
     useState<PermitHolderToUpdateStatus>();
-
-  // Applicant ID of the permit holder to delete
-  const [permitHolderToDelete, setPermitHolderToDelete] = useState<number>();
 
   const COLUMNS = useMemo<Column<PermitHolderRow>[]>(
     () => [
@@ -301,17 +290,6 @@ const PermitHolders: NextPage = () => {
                 >
                   {`Set as ${status === 'ACTIVE' ? 'Inactive' : 'Active'}`}
                 </MenuItem>
-                <MenuItem
-                  color="text.critical"
-                  textStyle="button-regular"
-                  onClick={event => {
-                    event.stopPropagation();
-                    setPermitHolderToDelete(id);
-                    onOpenDeleteApplicantModal();
-                  }}
-                >
-                  {'Delete Permit Holder'}
-                </MenuItem>
               </MenuList>
             </Menu>
           );
@@ -321,12 +299,7 @@ const PermitHolders: NextPage = () => {
         maxWidth: 120,
       },
     ],
-    [
-      setPermitHolderToUpdateStatus,
-      onOpenSetPermitHolderStatusModal,
-      setPermitHolderToDelete,
-      onOpenDeleteApplicantModal,
-    ]
+    [setPermitHolderToUpdateStatus, onOpenSetPermitHolderStatusModal]
   );
 
   return (
@@ -536,14 +509,6 @@ const PermitHolders: NextPage = () => {
           applicantId={permitHolderToUpdateStatus.id}
           refetch={refetch}
           onClose={onCloseSetPermitHolderStatusModal}
-        />
-      )}
-      {permitHolderToDelete !== undefined && (
-        <ConfirmDeleteApplicantModal
-          isOpen={isDeleteApplicantModalOpen}
-          applicantId={permitHolderToDelete}
-          refetch={refetch}
-          onClose={onCloseDeleteApplicantModal}
         />
       )}
       <GenerateReportModal
