@@ -18,6 +18,7 @@ import {
 import { ChevronDownIcon, ChevronLeftIcon } from '@chakra-ui/icons'; // Chakra UI icon
 import Link from 'next/link'; // Link
 import { ApplicantStatus } from '@lib/graphql/types';
+import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 import PermitHolderStatusBadge from '@components/admin/PermitHolderStatusBadge';
 import ConfirmDeleteApplicantModal from '@components/admin/permit-holders/table/ConfirmDeleteApplicantModal';
 import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/table/ConfirmSetInactiveModal';
@@ -31,12 +32,13 @@ type PermitHolderHeaderProps = {
     status: ApplicantStatus;
     inactiveReason?: string;
     notes: string;
+    mostRecentApplication: CurrentApplication | null;
   };
   readonly refetch: () => void;
 };
 
 export default function PermitHolderHeader({
-  applicant: { id, name, status, inactiveReason, notes },
+  applicant: { id, name, status, inactiveReason, notes, mostRecentApplication },
   refetch,
 }: PermitHolderHeaderProps) {
   const router = useRouter();
@@ -108,13 +110,15 @@ export default function PermitHolderHeader({
                       >
                         {`Set as ${status === 'ACTIVE' ? 'Inactive' : 'Active'}`}
                       </MenuItem>
-                      <MenuItem
-                        color="text.critical"
-                        textStyle="button-regular"
-                        onClick={onOpenDeleteApplicantModal}
-                      >
-                        {'Delete Permit Holder'}
-                      </MenuItem>
+                      {mostRecentApplication?.processing?.status == 'COMPLETED' ? null : (
+                        <MenuItem
+                          color="text.critical"
+                          textStyle="button-regular"
+                          onClick={onOpenDeleteApplicantModal}
+                        >
+                          {'Delete Permit Holder'}
+                        </MenuItem>
+                      )}
                     </MenuList>
                   </Menu>
                 </Box>

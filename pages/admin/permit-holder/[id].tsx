@@ -59,6 +59,7 @@ export default function PermitHolder({ id: idString }: Props) {
             status,
             inactiveReason: inactiveReason || undefined,
             notes: notes || '',
+            mostRecentApplication: currentApplication,
           }}
           refetch={refetch}
         />
