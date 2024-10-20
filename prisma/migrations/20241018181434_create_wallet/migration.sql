@@ -20,9 +20,6 @@ CREATE TABLE "wallet_card" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "wallet_card_employee_id_unique" ON "wallet_card"("employee_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "application_processing.wallet_number_unique" ON "application_processing"("wallet_number");
 
 -- AddForeignKey
