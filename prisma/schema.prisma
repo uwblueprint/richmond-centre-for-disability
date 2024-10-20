@@ -116,7 +116,7 @@ model Employee {
   refundedPaymentApplicationProcessings   ApplicationProcessing[] @relation("application_processing_payment_refunded_employee_idToemployees")
   reviewRequestApplicationProcessings     ApplicationProcessing[] @relation("application_processing_review_request_completed_employee_idToemployees")
   createdWalletCardApplicationProcessings ApplicationProcessing[] @relation("application_processing_wallet_card_created_employee_idToemployees")
-  createdWalletCard                       WalletCard?             @relation("wallet_cardToemployees")
+  createdWalletCards                      WalletCard[]            @relation("wallet_cardToemployees")
 
   @@map("employees")
 }
