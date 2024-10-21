@@ -549,7 +549,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   fontWeight="normal"
                   fontSize="14px"
                 >
-                  <Text textStyle="xsmall-medium">Mark as complete</Text>
+                  <Text textStyle="xsmall-medium">Generate Wallet Card</Text>
                 </Button>
               )}
             </ProcessingTaskStep>
