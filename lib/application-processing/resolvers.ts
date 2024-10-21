@@ -31,6 +31,7 @@ import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { Prisma } from '@prisma/client';
 import { getMostRecentPermit } from '@lib/applicants/utils';
 import moment from 'moment';
+import { generateWalletCard } from '@lib/wallet/utils';
 
 /**
  * Approve application
@@ -818,7 +819,79 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
   const { id: employeeId } = session;
 
   let updatedApplicationProcessing;
+  let updatedWalletCard;
   try {
+    // Create Wallet Card Record in DB
+    let createdWallet;
+    try {
+      if (walletCardCreated) {
+        createdWallet = await prisma.walletCard.create({
+          data: {
+            applicationProcessing: {
+              connect: { id: applicationId },
+            },
+            employee: {
+              connect: { id: employeeId },
+            },
+          },
+        });
+      }
+    } catch (err) {
+      logger.error({ error: err }, 'Error created wallet record in DB');
+    }
+
+    if (walletCardCreated && !createdWallet) {
+      const message = "Couldn't create wallet record in DB";
+      logger.error({ error: message });
+      throw new ApolloError(message);
+    }
+
+    const walletPdf = createdWallet ? generateWalletCard() : null;
+
+    if (walletPdf && createdWallet) {
+      // Generate File Name and S3 Key
+      const createdAtYYYMMDD = formatDateYYYYMMDD(createdWallet.createdAt).replace(/-/g, '');
+      const receiptNumber = `${createdAtYYYMMDD}-${createdWallet.walletNumber}`;
+      const fileName = `Wallet-${receiptNumber}.pdf`;
+      const s3InvoiceKey = `rcd/wallets/${fileName}`;
+
+      // Upload pdf to s3
+      let uploadedPdf;
+      let signedUrl;
+      try {
+        // Upload file to s3
+        uploadedPdf = await serverUploadToS3(walletPdf, s3InvoiceKey);
+        // Generate a signed URL to access the file
+        // TODO: Have seperate TTL for Created Wallet
+        const durationSeconds = parseInt(process.env.INVOICE_LINK_TTL_DAYS) * 24 * 60 * 60;
+        signedUrl = getSignedUrlForS3(uploadedPdf.key, durationSeconds);
+      } catch (error) {
+        const message = `Error uploading invoice pdf to AWS: ${error}`;
+        logger.error(message);
+        throw new ApolloError(message);
+      }
+
+      // Update created wallet to have S3 info
+      try {
+        updatedWalletCard = await prisma.walletCard.update({
+          where: {
+            walletNumber: createdWallet.walletNumber,
+          },
+          data: {
+            s3ObjectKey: uploadedPdf.key,
+            s3ObjectUrl: signedUrl,
+          },
+        });
+      } catch (err) {
+        if (err instanceof Prisma.PrismaClientKnownRequestError) {
+          return {
+            ok: false,
+            error: err.message,
+          };
+        }
+      }
+    }
+
     updatedApplicationProcessing = await prisma.application.update({
       where: { id: applicationId },
       data: {
@@ -842,6 +915,10 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
     }
 
     logger.error({ error: err }, 'Unknown error');
+  }
+
+  if (!updatedWalletCard) {
+    throw new ApolloError('Error updating Wallet Card record in DB');
   }
 
   if (!updatedApplicationProcessing) {
