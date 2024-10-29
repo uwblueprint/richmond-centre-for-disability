@@ -18,6 +18,7 @@ export default gql`
     walletCardCreated: Boolean!
     walletCardCreatedEmployee: Employee
     walletCardCreatedUpdatedAt: Date
+    walletCard: WalletCard
     reviewRequestCompleted: Boolean!
     reviewRequestCompletedEmployee: Employee
     reviewRequestCompletedUpdatedAt: Date

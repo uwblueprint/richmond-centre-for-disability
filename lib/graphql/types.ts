@@ -136,6 +136,7 @@ export type ApplicationProcessing = {
   walletCardCreated: Scalars['Boolean'];
   walletCardCreatedEmployee: Maybe<Employee>;
   walletCardCreatedUpdatedAt: Maybe<Scalars['Date']>;
+  walletCard: Maybe<WalletCard>;
   reviewRequestCompleted: Scalars['Boolean'];
   reviewRequestCompletedEmployee: Maybe<Employee>;
   reviewRequestCompletedUpdatedAt: Maybe<Scalars['Date']>;
@@ -388,7 +389,7 @@ export type CreateRenewalApplicationInput = {
   requiresWiderParkingSpaceReason: Maybe<RequiresWiderParkingSpaceReason>;
   otherRequiresWiderParkingSpaceReason: Maybe<Scalars['String']>;
   paymentMethod: PaymentType;
-  processingFee: Scalars['String'];
+  processingFee: Maybe<Scalars['String']>;
   donationAmount: Maybe<Scalars['String']>;
   secondPaymentMethod: Maybe<PaymentType>;
   secondProcessingFee: Maybe<Scalars['String']>;
@@ -1609,4 +1610,14 @@ export type VerifyIdentityResult = {
   ok: Scalars['Boolean'];
   failureReason: Maybe<VerifyIdentityFailureReason>;
   applicantId: Maybe<Scalars['Int']>;
+};
+
+export type WalletCard = {
+  __typename?: 'WalletCard';
+  walletNumber: Scalars['Int'];
+  s3ObjectKey: Maybe<Scalars['String']>;
+  s3ObjectUrl: Maybe<Scalars['String']>;
+  employee: Employee;
+  createdAt: Scalars['Date'];
+  updatedAt: Scalars['Date'];
 };

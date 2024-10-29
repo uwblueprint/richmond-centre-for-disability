@@ -1,7 +1,7 @@
 import logger from '@lib/utils/logging';
 import PdfPrinter from 'pdfmake';
 
-const walletPdfDefinition = () => {
+const walletCardPdfDefinition = () => {
   const PTS_TO_INCH = 72;
   return {
     content: [
@@ -29,7 +29,7 @@ export const generateWalletCard = (): PDFKit.PDFDocument | null => {
         bolditalics: 'Helvetica-BoldOblique',
       },
     });
-    const documentDef = walletPdfDefinition();
+    const documentDef = walletCardPdfDefinition();
     pdfDoc = printer.createPdfKitDocument(documentDef);
     pdfDoc.end();
   } catch (err) {
