@@ -2,7 +2,6 @@ import { StackDivider, VStack } from '@chakra-ui/react'; // Chakra UI
 import PermitHolderInfoCard from '@components/admin/LayoutCard'; // Custom Card Component
 import { PermitRecord } from '@tools/admin/permit-holders/app-history';
 import AppHistoryRecord from '@components/admin/permit-holders/app-history/Card/AppHistoryRecord';
-import { Permit } from '@lib/graphql/types';
 
 type Props = {
   readonly appHistory: ReadonlyArray<PermitRecord>;
@@ -21,7 +20,7 @@ export default function AppHistoryCard({ appHistory }: Props) {
       >
         {appHistory
           .slice()
-          .sort(function (a: Permit, b: Permit) {
+          .sort(function (a: PermitRecord, b: PermitRecord) {
             const aCreated = a.application.createdAt;
             const bCreated = b.application.createdAt;
             return aCreated < bCreated ? 1 : aCreated > bCreated ? -1 : 0;
