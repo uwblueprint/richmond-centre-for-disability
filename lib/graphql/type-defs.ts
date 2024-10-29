@@ -9,6 +9,7 @@ import permitsSchema from '@lib/permits/schema'; // Permits schema
 import physiciansSchema from '@lib/physicians/schema'; // Physicians schema
 import reportsSchema from '@lib/reports/schema'; // Reports schema
 import invoicesSchema from '@lib/invoices/schema'; // Invoices schema
+import walletCardSchema from '@lib/walletCard/schema'; // WalletCard Schema
 
 // Merge schemas
 const typeDefs = [
@@ -23,6 +24,7 @@ const typeDefs = [
   physiciansSchema,
   reportsSchema,
   invoicesSchema,
+  walletCardSchema,
 ];
 
 export default typeDefs;
