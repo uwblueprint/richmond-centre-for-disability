@@ -197,6 +197,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         walletCardCreated,
         walletCardCreatedEmployee,
         walletCardCreatedUpdatedAt,
+        walletCard,
         invoice,
         documentsUrl,
         documentsUrlEmployee,
@@ -520,22 +521,28 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   : null
               }
             >
-              {walletCardCreated ? (
-                <Button
-                  variant="ghost"
-                  textDecoration="underline black"
-                  onClick={() => handleCreateWalletCard(false)}
-                  isDisabled={createWalletCardLoading}
-                  isLoading={createWalletCardLoading}
-                  loadingText="Undo"
-                  fontWeight="normal"
-                  fontSize="14px"
-                >
-                  <Text textStyle="caption" color="black">
-                    Undo
-                  </Text>
-                </Button>
-              ) : (
+              {walletCard ? (
+                  <Tooltip
+                    hasArrow
+                    closeOnClick={false}
+                    label="Clicking on this link will open the document in a new tab"
+                    placement="bottom"
+                    bg="background.grayHover"
+                    color="black"
+                  >
+                    <Link
+                      href={walletCard.s3ObjectUrl as string}
+                      isExternal={true}
+                      textStyle="caption"
+                      textDecoration="underline"
+                      padding="0px 16px"
+                      color="primary"
+                    >
+                      {/* File name from the object key e.g "rcd/wallet/...pdf" */}
+                      {walletCard.s3ObjectKey && getFileName(walletCard.s3ObjectKey)}
+                    </Link>
+                  </Tooltip>
+                ) : (
                 <Button
                   marginLeft="auto"
                   height="35px"

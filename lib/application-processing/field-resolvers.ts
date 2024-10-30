@@ -1,7 +1,8 @@
 import { ApolloError } from 'apollo-server-micro';
 import { FieldResolver } from '@lib/graphql/resolvers';
 import { ApplicationProcessing, Employee, Invoice } from '@lib/graphql/types';
-import { getSignedUrlForS3 } from '@lib/utils/s3-utils';
+import { getSignedUrlForS3, refreshS3SignedUrl } from '@lib/utils/s3-utils';
+import { WalletCard } from '@prisma/client';
 
 /**
  * Get the invoice generated in application processing step.
@@ -55,6 +56,56 @@ export const applicationProcessingInvoiceResolver: FieldResolver<
 
   return invoice;
 };
+
+
+/**
+ * Get the walletCard generated in application processing step.
+ * Refresh temporary s3 invoice url if it has expired.
+ * @returns generated Wallet Card object
+ */
+export const applicationProcessingWalletCardResolver: FieldResolver<
+  ApplicationProcessing & { id: number },
+  Omit<WalletCard, 'employee'>
+> = async (parent, _, { prisma, logger }) => {
+  const walletCard = await prisma.applicationProcessing
+    .findUnique({ where: { id: parent.id } })
+    .walletCard();
+
+  if (!walletCard) {
+    return null;
+  }
+
+  // Update the signed S3 URL if it has expired.
+  let signedUrl;
+  try {
+    signedUrl = refreshS3SignedUrl(walletCard.s3ObjectKey, walletCard.s3ObjectUrl, walletCard.updatedAt.getTime());
+  } catch (error) {
+    const message = `Failed to get AWS wallet card URL: ${error}`;
+    logger.error({ error: message });
+    throw new ApolloError(message);
+  }
+  // If S3 Url was updated
+  if (walletCard.s3ObjectUrl !== signedUrl) {
+    let updatedWalletCard;
+    try {
+      updatedWalletCard = await prisma.walletCard.update({
+        where: {
+          walletNumber: walletCard.walletNumber,
+        },
+        data: {
+          s3ObjectUrl: signedUrl,
+        },
+      });
+    } catch {
+      const message = 'Failed to update temporary AWS wallet card URL';
+      logger.error({ error: message });
+      throw new ApolloError(message);
+    }
+    return updatedWalletCard;
+  }
+  return walletCard;
+};
+
 
 /**
  * Get the employee that assigned the APP number

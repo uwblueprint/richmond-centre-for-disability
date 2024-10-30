@@ -19,6 +19,7 @@ import {
   Invoice,
   Employee,
   Application,
+  WalletCard,
   MutationUpdateApplicationProcessingRefundPaymentArgs,
   UpdateApplicationProcessingRefundPaymentResult,
 } from '@lib/graphql/types';
@@ -52,6 +53,12 @@ export const GET_APPLICATION_PROCESSING = gql`
           lastName
         }
         walletCardCreatedUpdatedAt
+        walletCard {
+          walletNumber
+          s3ObjectUrl
+          s3ObjectKey
+          updatedAt
+        }
         invoice {
           invoiceNumber
           s3ObjectUrl
@@ -123,6 +130,7 @@ export type GetApplicationProcessingResponse = {
       invoice: Pick<Invoice, 'invoiceNumber' | 's3ObjectKey' | 's3ObjectUrl' | 'updatedAt'> & {
         employee: Pick<Employee, 'firstName' | 'lastName'>;
       };
+      walletCard: Pick<WalletCard, 'walletNumber' | 's3ObjectKey' | 's3ObjectUrl' | 'updatedAt'> | null;
       appNumberEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
       appHolepunchedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
       walletCardCreatedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;

@@ -132,6 +132,7 @@ export const completeApplication: Resolver<
   const { input } = args;
   const { id } = input;
 
+  console.log("REACHED TESTING");
   // Set application status as COMPLETED operation
   const completeApplicationOperation = prisma.application.update({
     where: { id },
@@ -145,10 +146,12 @@ export const completeApplication: Resolver<
   });
 
   try {
+    console.log("REACHED TESTING FIND UNIQUE APPLICATION ATTEMPT");
     const application = await prisma.application.findUnique({
       where: { id },
       include: { applicationProcessing: true },
     });
+    console.log("ID: ", id);
 
     if (!application) {
       return {
@@ -465,6 +468,7 @@ export const completeApplication: Resolver<
         physicianPostalCode,
       } = renewalApplication;
 
+      console.log("BEFORE UPDATAE APPLICATION IN RENWAL");
       // Update applicant
       const updateApplicantOperation = prisma.applicant.update({
         where: { id: applicantId },
@@ -491,6 +495,7 @@ export const completeApplication: Resolver<
         },
       });
 
+      console.log("BEFORE UPSERT PHYSICSICOASON");
       // Upsert physician
       const upsertPhysicianOperation = prisma.physician.upsert({
         where: { mspNumber: physicianMspNumber },
@@ -528,7 +533,8 @@ export const completeApplication: Resolver<
           application: { connect: { id } },
         },
       });
-
+      
+      console.log("CREATED PERMIT OPERATION>!");
       const [upsertedPhysician, updatedApplicant, createdPermit, completedApplicationProcessing] =
         await prisma.$transaction([
           upsertPhysicianOperation,
@@ -536,13 +542,14 @@ export const completeApplication: Resolver<
           createPermitOperation,
           completeApplicationOperation,
         ]);
-
+      console.log("TRANSACTION OVER!!");
       if (
         !upsertedPhysician ||
         !updatedApplicant ||
         !createdPermit ||
         !completedApplicationProcessing
       ) {
+        console.log(" COUNDLNT COMPLETE APORJPEJD");
         const message = 'Error completing application';
         logger.error({ error: message });
         throw new ApolloError(message);
@@ -554,15 +561,17 @@ export const completeApplication: Resolver<
       });
 
       if (!applicantId || !replacementApplication) {
+        console.log("INTERESTING CASE!");
         return {
           ok: false,
           error: 'Replacement application not found',
         };
       }
-
+      console.log("BEFORE MOST RECENT PERMIT");
       const mostRecentPermit = await getMostRecentPermit(applicantId);
 
       if (!mostRecentPermit) {
+        console.log("NO PREVIOUS PERMIT!!");
         return {
           ok: false,
           error: 'Applicant does not have a previous permit to replace',
@@ -571,6 +580,7 @@ export const completeApplication: Resolver<
 
       // Verify that expiry date of permit being replaced is not in the past
       if (moment.utc(mostRecentPermit.expiryDate) <= moment.utc()) {
+        console.log(" EXPIRED PERMIT");
         return {
           ok: false,
           error: 'Cannot replace permit that has already expired',
@@ -586,6 +596,7 @@ export const completeApplication: Resolver<
           },
         });
       } catch {
+        console.log(" ERROR INVALIDATINGIANGO PERMIT");
         return {
           ok: false,
           error: 'Error invaliding old permit',
@@ -633,6 +644,7 @@ export const completeApplication: Resolver<
         throw new ApolloError(message);
       }
     } else {
+      console.log(" INVALID APPILCATION TYPE");
       throw new Error(`Invalid application type ${type}`);
     }
   } catch (err) {
@@ -642,10 +654,11 @@ export const completeApplication: Resolver<
         error: err.message,
       };
     }
-
+    console.log(" SKIBIDI ERROR");
     logger.error({ error: err }, 'Unknown error');
     throw new ApolloError(`Error completing application with ID ${id}`);
   }
+  console.log("COMPLETED APPLICATION!!");
 
   return {
     ok: true,
