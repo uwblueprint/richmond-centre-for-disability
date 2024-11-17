@@ -223,6 +223,12 @@ export const generateApplicationsReport: Resolver<
       firstName: true,
       middleName: true,
       lastName: true,
+      addressLine1: true,
+      addressLine2: true,
+      city: true,
+      province: true,
+      postalCode: true,
+      phone: true,
       type: true,
       createdAt: true,
       paymentMethod: true,
@@ -262,6 +268,10 @@ export const generateApplicationsReport: Resolver<
       firstName,
       middleName,
       lastName,
+      phone,
+      addressLine1,
+      addressLine2,
+      postalCode,
       type,
       createdAt,
       processingFee,
@@ -292,6 +302,9 @@ export const generateApplicationsReport: Resolver<
         id: applicant?.id,
         applicantName: formatFullName(firstName, middleName, lastName),
         dateOfBirth: dateOfBirth && formatDateYYYYMMDD(dateOfBirth),
+        address: formatStreetAddress(addressLine1, addressLine2),
+        postalCode: formatPostalCode(postalCode),
+        phone: formatPhoneNumber(phone),
         rcdPermitId: permit?.rcdPermitId ? `#${permit.rcdPermitId}` : null,
         applicationDate: createdAt ? formatDateYYYYMMDDLocal(createdAt, true) : null,
         processingFee: `$${processingFee}`,
@@ -314,9 +327,17 @@ export const generateApplicationsReport: Resolver<
     }
   );
 
-  const csvHeaders = APPLICATIONS_COLUMNS.filter(({ value }) => columnsSet.has(value)).map(
-    ({ name, reportColumnId }) => ({ id: reportColumnId, title: name })
-  );
+  const filteredColumns = APPLICATIONS_COLUMNS.filter(({ value }) => columnsSet.has(value));
+  const csvHeaders: Array<{ id: string; title: string }> = [];
+  for (const { name, reportColumnId } of filteredColumns) {
+    if (typeof reportColumnId === 'string') {
+      csvHeaders.push({ id: reportColumnId, title: name });
+    } else {
+      for (const [columnLabel, columnId] of reportColumnId) {
+        csvHeaders.push({ id: columnId, title: columnLabel });
+      }
+    }
+  }
 
   // Generate CSV string from csv object.
   const csvStringifier = createObjectCsvStringifier({
