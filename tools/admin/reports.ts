@@ -12,7 +12,7 @@ export enum GenerateReportStep {
 export const APPLICATIONS_COLUMNS: Array<{
   name: string;
   value: ApplicationsReportColumn;
-  reportColumnId: string;
+  reportColumnId: string | Array<[string, string]>;
 }> = [
   {
     name: 'User ID',
@@ -35,9 +35,24 @@ export const APPLICATIONS_COLUMNS: Array<{
     reportColumnId: 'rcdPermitId',
   },
   {
-    name: 'Application Date',
-    value: 'APPLICATION_DATE',
-    reportColumnId: 'applicationDate',
+    name: 'Phone Number',
+    value: 'PHONE_NUMBER',
+    reportColumnId: 'phone',
+  },
+  {
+    name: 'Home Address',
+    value: 'HOME_ADDRESS',
+    reportColumnId: [
+      ['Address', 'address'],
+      ['City', 'city'],
+      ['Province', 'province'],
+      ['Postal Code', 'postalCode'],
+    ],
+  },
+  {
+    name: 'Donation Amount',
+    value: 'DONATION_AMOUNT',
+    reportColumnId: 'donationAmount',
   },
   {
     name: 'Payment Method',
@@ -50,9 +65,9 @@ export const APPLICATIONS_COLUMNS: Array<{
     reportColumnId: 'processingFee',
   },
   {
-    name: 'Donation Amount',
-    value: 'DONATION_AMOUNT',
-    reportColumnId: 'donationAmount',
+    name: 'Second Donation Amount',
+    value: 'SECOND_DONATION_AMOUNT',
+    reportColumnId: 'secondDonationAmount',
   },
   {
     name: 'Second Payment Method',
@@ -65,9 +80,9 @@ export const APPLICATIONS_COLUMNS: Array<{
     reportColumnId: 'secondProcessingFee',
   },
   {
-    name: 'Second Donation Amount',
-    value: 'SECOND_DONATION_AMOUNT',
-    reportColumnId: 'secondDonationAmount',
+    name: 'Application Date',
+    value: 'APPLICATION_DATE',
+    reportColumnId: 'applicationDate',
   },
   {
     name: 'Total Amount',

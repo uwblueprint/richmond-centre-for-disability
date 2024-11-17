@@ -178,6 +178,8 @@ export type ApplicationsReportColumn =
   | 'APPLICANT_NAME'
   | 'APPLICANT_DATE_OF_BIRTH'
   | 'APP_NUMBER'
+  | 'PHONE_NUMBER'
+  | 'HOME_ADDRESS'
   | 'APPLICATION_DATE'
   | 'PAYMENT_METHOD'
   | 'FEE_AMOUNT'
