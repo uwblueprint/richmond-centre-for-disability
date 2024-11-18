@@ -25,6 +25,7 @@ import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/typ
 import { titlecase } from '@tools/string';
 import { formatDateYYYYMMDD, formatDateYYYYMMDDLocal } from '@lib/utils/date';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
+import { useEffect, useState } from 'react'; // React
 
 type RequestHeaderProps = {
   readonly id: number;
@@ -87,6 +88,22 @@ export default function RequestHeader({
 
   const router = useRouter();
 
+  const [backLink, setBackLink] = useState('/admin');
+  const generateBackLink = () => {
+    let status;
+    const routerQuery = router.query;
+    if (routerQuery === undefined || routerQuery.origin === undefined) {
+      status = applicationStatus;
+    } else {
+      status = routerQuery.origin;
+    }
+    setBackLink(`/admin?tab=${status}`);
+  };
+
+  useEffect(() => {
+    generateBackLink();
+  }, []);
+
   // Delete application modal state
   const {
     isOpen: isDeleteApplicationModalOpen,
@@ -96,12 +113,13 @@ export default function RequestHeader({
 
   return (
     <Box textAlign="left">
-      <NextLink href="/admin" passHref>
+      <NextLink href={backLink} passHref>
         <Text textStyle="button-semibold" textColor="primary" as="a">
           <ChevronLeftIcon />
           All requests
         </Text>
       </NextLink>
+
       <VStack alignItems="stretch">
         <Flex marginTop={5} alignItems="baseline" justifyContent="space-between">
           <Box>

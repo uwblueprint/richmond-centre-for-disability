@@ -39,6 +39,7 @@ import {
   USER_STATUSES,
   PermitHolderToUpdateStatus,
 } from '@tools/admin/permit-holders/permit-holders-table';
+import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 import DateRangePicker from '@components/DateRangePicker'; // Day Picker component
 import useDateRangePicker from '@tools/hooks/useDateRangePicker'; // Day Picker hook
 import { SortOptions, SortOrder } from '@tools/types'; // Sorting types
@@ -273,10 +274,16 @@ const PermitHolders: NextPage = () => {
         Header: 'Actions',
         Cell: ({
           row: {
-            original: { id, status },
+            original: { id, status, mostRecentApplication },
           },
         }: {
-          row: { original: { id: number; status: ApplicantStatus } };
+          row: {
+            original: {
+              id: number;
+              status: ApplicantStatus;
+              mostRecentApplication: CurrentApplication | null;
+            };
+          };
         }) => {
           return (
             <Menu>
@@ -301,17 +308,19 @@ const PermitHolders: NextPage = () => {
                 >
                   {`Set as ${status === 'ACTIVE' ? 'Inactive' : 'Active'}`}
                 </MenuItem>
-                <MenuItem
-                  color="text.critical"
-                  textStyle="button-regular"
-                  onClick={event => {
-                    event.stopPropagation();
-                    setPermitHolderToDelete(id);
-                    onOpenDeleteApplicantModal();
-                  }}
-                >
-                  {'Delete Permit Holder'}
-                </MenuItem>
+                {mostRecentApplication?.processing?.status == 'COMPLETED' ? null : (
+                  <MenuItem
+                    color="text.critical"
+                    textStyle="button-regular"
+                    onClick={event => {
+                      event.stopPropagation();
+                      setPermitHolderToDelete(id);
+                      onOpenDeleteApplicantModal();
+                    }}
+                  >
+                    {'Delete Permit Holder'}
+                  </MenuItem>
+                )}
               </MenuList>
             </Menu>
           );
@@ -494,6 +503,14 @@ const PermitHolders: NextPage = () => {
             </VStack>
             {permitHolderData && permitHolderData.length > 0 ? (
               <>
+                <Flex justifyContent="flex-end">
+                  <Pagination
+                    pageNumber={pageNumber}
+                    pageSize={PAGE_SIZE}
+                    totalCount={recordsCount}
+                    onPageChange={setPageNumber}
+                  />
+                </Flex>
                 <Table
                   columns={COLUMNS}
                   data={permitHolderData || []}
