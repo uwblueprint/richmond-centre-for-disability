@@ -12,6 +12,7 @@ import {
   MutationSetApplicantAsActiveArgs,
   SetApplicantAsActiveResult,
 } from '@lib/graphql/types';
+import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 
 /** Array of permit statuses */
 export const PERMIT_STATUSES: Array<{ name: string; value: PermitStatus }> = [
@@ -41,6 +42,7 @@ export type PermitHolderRow = Pick<Applicant, 'id' | 'dateOfBirth' | 'phone' | '
     postalCode: string;
   };
   mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'>;
+  mostRecentApplication: CurrentApplication | null;
 };
 
 /**
@@ -70,6 +72,11 @@ export const GET_PERMIT_HOLDERS_QUERY = gql`
           rcdPermitId
         }
         status
+        mostRecentApplication {
+          processing {
+            status
+          }
+        }
       }
       totalCount
     }
@@ -95,6 +102,7 @@ export type PermitHolder = Pick<
   | 'status'
 > & {
   mostRecentPermit: Pick<Permit, 'expiryDate' | 'rcdPermitId'>;
+  mostRecentApplication: CurrentApplication | null;
 };
 
 export type GetPermitHoldersResponse = {
