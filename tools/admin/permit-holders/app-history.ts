@@ -2,7 +2,7 @@ import { Application, ApplicationProcessing, Invoice, Permit } from '@lib/graphq
 
 /** APP history entry record (API response) */
 export type AppHistoryRecord = Pick<Permit, 'rcdPermitId' | 'expiryDate'> & {
-  application: Pick<Application, 'id' | 'type' | 'permitType'> & {
+  application: Pick<Application, 'id' | 'type' | 'permitType' | 'createdAt'> & {
     processing: Pick<ApplicationProcessing, 'documentsUrl' | 'documentsS3ObjectKey'> & {
       invoice: Pick<Invoice, 's3ObjectUrl' | 's3ObjectKey'>;
     };
@@ -11,7 +11,7 @@ export type AppHistoryRecord = Pick<Permit, 'rcdPermitId' | 'expiryDate'> & {
 
 /** APP history entry row in APP history card (FE) */
 export type PermitRecord = Pick<Permit, 'rcdPermitId' | 'expiryDate'> & {
-  application: Pick<Application, 'id' | 'type' | 'permitType'> & {
+  application: Pick<Application, 'id' | 'type' | 'permitType' | 'createdAt'> & {
     processing: Pick<ApplicationProcessing, 'documentsUrl' | 'documentsS3ObjectKey'> & {
       invoice: Pick<Invoice, 's3ObjectUrl' | 's3ObjectKey'>;
     };
