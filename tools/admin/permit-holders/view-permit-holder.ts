@@ -92,6 +92,7 @@ export const GET_APPLICANT_QUERY = gql`
           id
           type
           permitType
+          createdAt
           processing {
             documentsUrl
             documentsS3ObjectKey
