@@ -326,7 +326,7 @@ model ReplacementApplication {
   stolenPoliceOfficerName String?              @map("stolen_police_officer_name") @db.VarChar(255)
   eventDescription        String?              @map("event_description")
   createdAt               DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt               DateTime             @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt               DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   application             Application          @relation("applicationsToreplacement_applications", fields: [applicationId], references: [id])
 
   @@map("replacement_applications")
