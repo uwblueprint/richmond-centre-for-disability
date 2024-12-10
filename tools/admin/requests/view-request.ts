@@ -7,6 +7,7 @@ import {
   QueryApplicationArgs,
   Permit,
 } from '@lib/graphql/types';
+import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 
 // Queries an Application by ID along with the associated permit, replacement, applicationProcessing, and applicant
 export const GET_APPLICATION_QUERY = gql`
@@ -42,6 +43,11 @@ export const GET_APPLICATION_QUERY = gql`
         id
         mostRecentPermit {
           expiryDate
+        }
+        mostRecentApplication {
+          processing {
+            status
+          }
         }
       }
       permit {
@@ -82,6 +88,7 @@ export type GetApplicationResponse = {
     };
     applicant: Pick<Applicant, 'id'> & {
       mostRecentPermit: Pick<Permit, 'expiryDate'> | null;
+      mostRecentApplication: CurrentApplication | null;
     };
     temporaryPermitExpiry?: Date;
     permit: Pick<Permit, 'expiryDate'> | null;

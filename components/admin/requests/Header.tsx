@@ -26,6 +26,7 @@ import { titlecase } from '@tools/string';
 import { formatDateYYYYMMDD, formatDateYYYYMMDDLocal } from '@lib/utils/date';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 import { useEffect, useState } from 'react'; // React
+import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 
 type RequestHeaderProps = {
   readonly id: number;
@@ -39,6 +40,7 @@ type RequestHeaderProps = {
   readonly permitExpiry: Date | null;
   readonly temporaryPermitExpiry: Date | null;
   readonly reasonForRejection?: string;
+  readonly mostRecentApplication: CurrentApplication | null;
 };
 
 /**
@@ -67,6 +69,7 @@ export default function RequestHeader({
   permitExpiry,
   temporaryPermitExpiry,
   reasonForRejection,
+  mostRecentApplication,
 }: RequestHeaderProps) {
   const displayShopifyUrl = paidThroughShopify && shopifyOrderID && shopifyOrderNumber;
   const shopifyOrderUrl = `https://${process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN}/admin/orders/${shopifyOrderID}`;
@@ -149,13 +152,15 @@ export default function RequestHeader({
                   <Text textStyle="caption">More Actions</Text>
                 </MenuButton>
                 <MenuList>
-                  <MenuItem
-                    color="text.critical"
-                    textStyle="button-regular"
-                    onClick={onOpenDeleteApplicationModal}
-                  >
-                    {'Delete Request'}
-                  </MenuItem>
+                  {mostRecentApplication?.processing?.status == 'COMPLETED' ? null : (
+                    <MenuItem
+                      color="text.critical"
+                      textStyle="button-regular"
+                      onClick={onOpenDeleteApplicationModal}
+                    >
+                      {'Delete Request'}
+                    </MenuItem>
+                  )}
                 </MenuList>
               </Menu>
             </HStack>
