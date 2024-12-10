@@ -1,5 +1,6 @@
-import { HStack, Text, IconButton } from '@chakra-ui/react'; // Chakra UI
+import { HStack, Text, IconButton, Input } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'; // Chakra UI Icons
+import { useState } from 'react';
 
 type Props = {
   readonly pageSize: number; // Number of items per page
@@ -22,12 +23,15 @@ export default function Pagination(props: Props) {
   const lowerBound = totalCount === 0 ? 0 : pageNumber * pageSize + 1; // Lower bound of current page (item #)
   const upperBound = isLastPage ? totalCount : (pageNumber + 1) * pageSize; // Upper bound of current page (item #)
 
+  const [inputValue, setInputValue] = useState<string | number>(pageNumber + 1);
+
   /**
    * Go to the next page if possible, and invoke callback if defined
    */
   const goToNextPage = () => {
     if (!isLastPage) {
       onPageChange(pageNumber + 1);
+      setInputValue(pageNumber + 2);
     }
   };
 
@@ -37,6 +41,34 @@ export default function Pagination(props: Props) {
   const goToPreviousPage = () => {
     if (!isFirstPage) {
       onPageChange(pageNumber - 1);
+      setInputValue(pageNumber);
+    }
+  };
+
+  /**
+   * Handle direct page number input
+   */
+  const handlePageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      setInputValue(value); // Allow empty string for cleared input
+    } else {
+      const numericValue = Number(value);
+      if (!isNaN(numericValue) && numericValue > 0 && numericValue <= totalPages) {
+        setInputValue(numericValue);
+      }
+    }
+  };
+
+  /**
+   * Navigate to the page number entered in the input field
+   */
+  const goToPage = () => {
+    const targetPage = Number(inputValue) - 1;
+    if (!isNaN(targetPage) && targetPage >= 0 && targetPage < totalPages) {
+      onPageChange(targetPage);
+    } else {
+      setInputValue(pageNumber + 1); // Reset input to the current page if invalid
     }
   };
 
@@ -68,6 +100,19 @@ export default function Pagination(props: Props) {
           aria-label="previous page"
           disabled={isFirstPage}
           onClick={goToPreviousPage}
+        />
+        <Input
+          value={inputValue}
+          width="50px"
+          height="24px"
+          textAlign="center"
+          onChange={handlePageInput}
+          onBlur={goToPage}
+          onKeyPress={e => {
+            if (e.key === 'Enter') {
+              goToPage();
+            }
+          }}
         />
         <IconButton
           icon={<ChevronRightIcon />}
