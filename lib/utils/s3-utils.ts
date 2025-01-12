@@ -131,3 +131,25 @@ export const getSignedUrlForS3 = (
 export const getFileName = (objectKey: string): string | undefined => {
   return objectKey.split('/').at(-1);
 };
+
+/**
+ * Update S3SignedUrl for expired S3 Object Key
+ * @param objectKey S3 object key
+ * @param s3SignedUrl Current S3 Signed Url (possibly expired)
+ * @param lastUpdatedTime Last updating time for Object Key (UTC)
+ * @returns New a valid S3 Signed Url for Object Key
+ */
+export const refreshS3SignedUrl = (
+  objectKey: string | null,
+  s3SignedUrl: string | null,
+  lastUpdatedTime: number
+) => {
+  // Get the valid duration period from env.
+  const linkDuration = parseInt(process.env.INVOICE_LINK_TTL_DAYS);
+  const DAY = 24 * 60 * 60 * 1000;
+  const daysDifference = Math.floor(new Date().getTime() / DAY) - Math.floor(lastUpdatedTime / DAY);
+  if (daysDifference > linkDuration) {
+    s3SignedUrl = getSignedUrlForS3(objectKey as string);
+  }
+  return s3SignedUrl;
+};

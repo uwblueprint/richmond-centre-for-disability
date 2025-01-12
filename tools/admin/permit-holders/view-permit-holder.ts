@@ -58,6 +58,10 @@ export const GET_APPLICANT_QUERY = gql`
             s3ObjectUrl
             s3ObjectKey
           }
+          walletCard {
+            s3ObjectUrl
+            s3ObjectKey
+          }
         }
         permit {
           expiryDate
@@ -97,6 +101,10 @@ export const GET_APPLICANT_QUERY = gql`
             documentsUrl
             documentsS3ObjectKey
             invoice {
+              s3ObjectUrl
+              s3ObjectKey
+            }
+            walletCard {
               s3ObjectUrl
               s3ObjectKey
             }

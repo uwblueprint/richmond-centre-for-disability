@@ -5,6 +5,7 @@ import {
   MedicalInformation,
   Permit,
   RenewalApplication,
+  WalletCard,
 } from '@lib/graphql/types';
 import { NewApplication } from '@prisma/client';
 
@@ -12,6 +13,7 @@ import { NewApplication } from '@prisma/client';
 export type CurrentApplication = Pick<Application, 'id' | 'permitType'> & {
   processing: Pick<ApplicationProcessing, 'status' | 'documentsUrl' | 'documentsS3ObjectKey'> & {
     invoice: Pick<Invoice, 's3ObjectUrl' | 's3ObjectKey'> | null;
+    walletCard: Pick<WalletCard, 's3ObjectUrl' | 's3ObjectKey'> | null;
   };
   permit: Pick<Permit, 'expiryDate'> | null;
 } & (
