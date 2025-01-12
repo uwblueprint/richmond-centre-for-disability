@@ -86,6 +86,7 @@ import {
   applicationProcessingPaymentRefundedEmployeeResolver,
   applicationProcessingReviewRequestCompletedEmployeeResolver,
   applicationProcessingWalletCardCreatedEmployeeResolver,
+  applicationProcessingWalletCardResolver,
 } from '@lib/application-processing/field-resolvers';
 import { guardianPoaFormS3ObjectUrlResolver } from '@lib/guardian/field-resolvers';
 import { comparePhysicians } from '@lib/physicians/resolvers';
@@ -282,6 +283,7 @@ const resolvers = {
   },
   ApplicationProcessing: {
     invoice: applicationProcessingInvoiceResolver,
+    walletCard: applicationProcessingWalletCardResolver,
     appNumberEmployee: applicationProcessingAppNumberEmployeeResolver,
     appHolepunchedEmployee: applicationProcessingAppHolepunchedEmployeeResolver,
     walletCardCreatedEmployee: applicationProcessingWalletCardCreatedEmployeeResolver,

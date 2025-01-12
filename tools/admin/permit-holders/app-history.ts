@@ -1,10 +1,17 @@
-import { Application, ApplicationProcessing, Invoice, Permit } from '@lib/graphql/types';
+import {
+  Application,
+  ApplicationProcessing,
+  Invoice,
+  Permit,
+  WalletCard,
+} from '@lib/graphql/types';
 
 /** APP history entry record (API response) */
 export type AppHistoryRecord = Pick<Permit, 'rcdPermitId' | 'expiryDate'> & {
   application: Pick<Application, 'id' | 'type' | 'permitType'> & {
     processing: Pick<ApplicationProcessing, 'documentsUrl' | 'documentsS3ObjectKey'> & {
       invoice: Pick<Invoice, 's3ObjectUrl' | 's3ObjectKey'>;
+      walletCard: Pick<WalletCard, 's3ObjectUrl' | 's3ObjectKey'>;
     };
   };
 };
@@ -14,6 +21,7 @@ export type PermitRecord = Pick<Permit, 'rcdPermitId' | 'expiryDate'> & {
   application: Pick<Application, 'id' | 'type' | 'permitType'> & {
     processing: Pick<ApplicationProcessing, 'documentsUrl' | 'documentsS3ObjectKey'> & {
       invoice: Pick<Invoice, 's3ObjectUrl' | 's3ObjectKey'>;
+      walletCard: Pick<WalletCard, 's3ObjectUrl' | 's3ObjectKey'>;
     };
   };
 };
