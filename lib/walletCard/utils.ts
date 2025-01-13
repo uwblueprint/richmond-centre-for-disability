@@ -1,10 +1,23 @@
 import logger from '@lib/utils/logging';
 import pdfPrinter from 'pdfmake';
-import fs from 'fs';
 
-const walletCardPdfDefinition = () => {
+const walletCardPdfDefinition = (
+  permitId: number,
+  permitExpiry: Date,
+  firstName: string,
+  lastName: string,
+  dateOfBirth: Date,
+  userId: number
+) => {
   const calculateTextWidth = (text: string, fontSize: number, averageCharacterWidth = 0.5) => {
     return fontSize * averageCharacterWidth * text.length;
+  };
+
+  const pad2Dig = (amount: number) => {
+    if (amount < 10) {
+      return '0' + amount.toString();
+    }
+    return amount.toString();
   };
 
   // Pixel Constants
@@ -60,17 +73,23 @@ const walletCardPdfDefinition = () => {
           {
             text: [
               { text: 'Permit # ', style: 'subheader' },
-              { text: '31571    ', style: 'subheaderB' },
-              { text: 'Expiry:  ', style: 'subheader' },
-              { text: '2027-01', style: 'subheaderB' },
+              { text: permitId.toString(), style: 'subheaderB' },
+              { text: '    Expiry:  ', style: 'subheader' },
+              {
+                text: permitExpiry.getFullYear() + '-' + pad2Dig(permitExpiry.getDate()),
+                style: 'subheaderB',
+              },
               { text: '\n\n', style: 'space' },
               { text: 'Name:  ', style: 'subheader' },
-              { text: 'Lucy Quinn  ', style: 'subheaderB' },
+              { text: firstName + ' ' + lastName, style: 'subheaderB' },
               { text: '\n\n', style: 'space' },
               { text: 'MoB:  ', style: 'subheader' },
-              { text: '1945-05    ', style: 'subheaderB' },
-              { text: 'User #  ', style: 'subheader' },
-              { text: '12342', style: 'subheaderB' },
+              {
+                text: dateOfBirth.getFullYear() + '-' + pad2Dig(dateOfBirth.getDate()),
+                style: 'subheaderB',
+              },
+              { text: '    User #  ', style: 'subheader' },
+              { text: userId.toString(), style: 'subheaderB' },
             ],
             absolutePosition: { x: boxStartX + 10, y: boxStartY + 35 },
           },
@@ -126,7 +145,14 @@ const walletCardPdfDefinition = () => {
   };
 };
 
-export const generateWalletCard = (): PDFKit.PDFDocument | null => {
+export const generateWalletCard = (
+  permitId: number,
+  permitExpiry: Date,
+  firstName: string,
+  lastName: string,
+  dateOfBirth: Date,
+  userId: number
+): PDFKit.PDFDocument | null => {
   let pdfDoc = null;
   try {
     const printer = new pdfPrinter({
@@ -137,9 +163,15 @@ export const generateWalletCard = (): PDFKit.PDFDocument | null => {
         bolditalics: 'Helvetica-BoldOblique',
       },
     });
-    const documentDef = walletCardPdfDefinition();
+    const documentDef = walletCardPdfDefinition(
+      permitId,
+      permitExpiry,
+      firstName,
+      lastName,
+      dateOfBirth,
+      userId
+    );
     pdfDoc = printer.createPdfKitDocument(documentDef);
-    pdfDoc.pipe(fs.createWriteStream('public/assets/document.pdf'));
     pdfDoc.end();
   } catch (err) {
     logger.error({ error: err }, 'Error Generating Wallet PDF: ', err);

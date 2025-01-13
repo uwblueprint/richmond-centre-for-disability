@@ -6,6 +6,7 @@ export const COMPLETE_APPLICATION_MUTATION = gql`
   mutation CompleteApplication($input: CompleteApplicationInput!) {
     completeApplication(input: $input) {
       ok
+      error
     }
   }
 `;

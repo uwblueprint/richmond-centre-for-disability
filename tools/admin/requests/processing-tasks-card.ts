@@ -150,6 +150,7 @@ export const ASSIGN_APP_NUMBER_MUTATION = gql`
   mutation AssignAppNumber($input: UpdateApplicationProcessingAssignAppNumberInput!) {
     updateApplicationProcessingAssignAppNumber(input: $input) {
       ok
+      error
     }
   }
 `;
@@ -181,6 +182,7 @@ export const CREATE_WALLET_CARD_MUTATION = gql`
   mutation CreateWalletCard($input: UpdateApplicationProcessingCreateWalletCardInput!) {
     updateApplicationProcessingCreateWalletCard(input: $input) {
       ok
+      error
     }
   }
 `;

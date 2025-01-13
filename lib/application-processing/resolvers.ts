@@ -820,6 +820,38 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
 
   let updatedApplicationProcessing;
   let updatedWalletCard;
+
+  // Use the application record to retrieve the applicant name, applicant ID, permit type, current date, and employee initials
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: { applicant: true, applicationProcessing: true, permit: true },
+  });
+
+  if (!application) {
+    return { ok: false, error: 'Application does not exist' };
+  }
+
+  // Get the applicant from the application
+  const applicant = application.applicant;
+
+  if (!applicant) {
+    return { ok: false, error: 'Applicant could not be found' };
+  }
+
+  // Get the permit from the application
+  const permit = application.permit;
+
+  if (!permit) {
+    return { ok: false, error: 'Permit could not be found' };
+  }
+
+  const permitId = permit.rcdPermitId;
+  const permitExpiry = permit.expiryDate;
+  const firstName = applicant.firstName;
+  const lastName = applicant.lastName;
+  const dateOfBirth = applicant.dateOfBirth;
+  const userId = applicant.id;
+
   try {
     // Create Wallet Card Record in DB
     let createdWalletCard;
@@ -846,7 +878,9 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
       throw new ApolloError(message);
     }
 
-    const walletCardPdf = createdWalletCard ? generateWalletCard() : null;
+    const walletCardPdf = createdWalletCard
+      ? generateWalletCard(permitId, permitExpiry, firstName, lastName, dateOfBirth, userId)
+      : null;
 
     if (walletCardPdf && createdWalletCard) {
       // Generate File Name and S3 Key
