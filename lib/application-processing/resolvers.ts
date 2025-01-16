@@ -846,7 +846,7 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
   }
 
   const permitId = permit.rcdPermitId;
-  const permitExpiry = permit.expiryDate;
+  const permitExpiry = getPermanentPermitExpiryDate();
   const firstName = applicant.firstName;
   const lastName = applicant.lastName;
   const dateOfBirth = applicant.dateOfBirth;
