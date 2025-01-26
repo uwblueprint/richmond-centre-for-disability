@@ -19,6 +19,7 @@ import {
 } from '@tools/admin/requests/view-request'; // Request page GraphQL queries
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
 import GuardianInformationCard from '@components/admin/requests/guardian-information/Card';
+import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 
 type Props = {
   readonly id: string;
@@ -65,6 +66,8 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
 
   // Get expiry date to display
   const mostRecentPermitExpiryDate = data.application.applicant?.mostRecentPermit?.expiryDate;
+  const mostRecentApplication: CurrentApplication | null =
+    data.application.applicant?.mostRecentApplication;
   const permitExpiry =
     type === 'REPLACEMENT' ? mostRecentPermitExpiryDate : permit ? permit.expiryDate : null;
 
@@ -97,6 +100,7 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
           permitExpiry={permitExpiry}
           temporaryPermitExpiry={temporaryPermitExpiry || null}
           reasonForRejection={rejectedReason || undefined}
+          mostRecentApplication={mostRecentApplication}
         />
       </GridItem>
       <GridItem colStart={1} colSpan={5} textAlign="left">
