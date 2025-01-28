@@ -20,9 +20,6 @@ import {
   GenerateInvoiceRequest,
   GenerateInvoiceResponse,
   GENERATE_INVOICE_MUTATION,
-  CreateWalletCardRequest,
-  CreateWalletCardResponse,
-  CREATE_WALLET_CARD_MUTATION,
   GetApplicationProcessingRequest,
   GetApplicationProcessingResponse,
   GET_APPLICATION_PROCESSING,
@@ -81,15 +78,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
     );
   const handleHolepunchParkingPermit = async (appHolepunched: boolean) => {
     await holepunchParkingPermit({ variables: { input: { applicationId, appHolepunched } } });
-    refetch();
-  };
-
-  const [createWalletCard, { loading: createWalletCardLoading }] = useMutation<
-    CreateWalletCardResponse,
-    CreateWalletCardRequest
-  >(CREATE_WALLET_CARD_MUTATION);
-  const handleCreateWalletCard = async (walletCardCreated: boolean) => {
-    await createWalletCard({ variables: { input: { applicationId, walletCardCreated } } });
     refetch();
   };
 
@@ -194,10 +182,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
         appHolepunched,
         appHolepunchedEmployee,
         appHolepunchedUpdatedAt,
-        walletCardCreated,
-        walletCardCreatedEmployee,
-        walletCardCreatedUpdatedAt,
-        walletCard,
         invoice,
         documentsUrl,
         documentsUrlEmployee,
@@ -502,67 +486,9 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                 loading={uploadDocumentsLoading}
               />
             </ProcessingTaskStep>
-            {/* Task 6: Create a new wallet card: Mark as complete (CHECK) */}
+            {/* Task 6: Mail out: Mark as complete (CHECK) */}
             <ProcessingTaskStep
               id={6}
-              label="Create a new wallet card"
-              description="Include permit number, expiry date, full name and birth month"
-              isCompleted={walletCardCreated}
-              showLog={showTaskLog}
-              log={
-                showTaskLog && walletCardCreatedEmployee
-                  ? {
-                      name: formatFullName(
-                        walletCardCreatedEmployee.firstName,
-                        walletCardCreatedEmployee.lastName
-                      ),
-                      date: walletCardCreatedUpdatedAt,
-                    }
-                  : null
-              }
-            >
-              {walletCard ? (
-                <Tooltip
-                  hasArrow
-                  closeOnClick={false}
-                  label="Clicking on this link will open the document in a new tab"
-                  placement="bottom"
-                  bg="background.grayHover"
-                  color="black"
-                >
-                  <Link
-                    href={walletCard.s3ObjectUrl as string}
-                    isExternal={true}
-                    textStyle="caption"
-                    textDecoration="underline"
-                    padding="0px 16px"
-                    color="primary"
-                  >
-                    {/* File name from the object key e.g "rcd/wallet/...pdf" */}
-                    {walletCard.s3ObjectKey && getFileName(walletCard.s3ObjectKey)}
-                  </Link>
-                </Tooltip>
-              ) : (
-                <Button
-                  marginLeft="auto"
-                  height="35px"
-                  bg="background.gray"
-                  _hover={documentsUrl === null ? undefined : { bg: 'background.grayHover' }}
-                  color="black"
-                  onClick={() => handleCreateWalletCard(true)}
-                  isDisabled={documentsUrl === null || createWalletCardLoading}
-                  isLoading={createWalletCardLoading}
-                  loadingText="Mark as complete"
-                  fontWeight="normal"
-                  fontSize="14px"
-                >
-                  <Text textStyle="xsmall-medium">Generate Wallet Card</Text>
-                </Button>
-              )}
-            </ProcessingTaskStep>
-            {/* Task 7: Mail out: Mark as complete (CHECK) */}
-            <ProcessingTaskStep
-              id={7}
               label="Mail out"
               description="Include returning envelope and previous permit number"
               isCompleted={appMailed}
@@ -596,10 +522,10 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   marginLeft="auto"
                   height="35px"
                   bg="background.gray"
-                  _hover={!walletCardCreated ? undefined : { bg: 'background.grayHover' }}
+                  _hover={{ bg: 'background.grayHover' }}
                   color="black"
                   onClick={() => handleMailOut(true)}
-                  isDisabled={!walletCardCreated || mailOutLoading}
+                  isDisabled={mailOutLoading}
                   isLoading={mailOutLoading}
                   loadingText="Mark as complete"
                   fontWeight="normal"
