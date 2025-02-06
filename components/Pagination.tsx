@@ -23,10 +23,12 @@ export default function Pagination(props: Props) {
   const lowerBound = totalCount === 0 ? 0 : pageNumber * pageSize + 1; // Lower bound of current page (item #)
   const upperBound = isLastPage ? totalCount : (pageNumber + 1) * pageSize; // Upper bound of current page (item #)
 
-  const [inputValue, setInputValue] = useState<string | number>(pageNumber + 1);
+  const [inputValue, setInputValue] = useState<string | number>(pageNumber + 1); // Display page number as 1-based index
 
   /**
    * Go to the next page if possible, and invoke callback if defined
+   * `pageNumber + 1` moves to the next page (zero-based index)
+   * `pageNumber + 2` updates the input field to reflect the 1-based page number
    */
   const goToNextPage = () => {
     if (!isLastPage) {
@@ -37,6 +39,8 @@ export default function Pagination(props: Props) {
 
   /**
    * Go to the previous page if possible, and invoke callback if defined
+   * `pageNumber - 1` moves to the previous page (zero-based index)
+   * `pageNumber` updates the input field to reflect the 1-based page number
    */
   const goToPreviousPage = () => {
     if (!isFirstPage) {
@@ -62,6 +66,7 @@ export default function Pagination(props: Props) {
 
   /**
    * Navigate to the page number entered in the input field
+   * Convert the 1-based user input into zero-based index
    */
   const goToPage = () => {
     const targetPage = Number(inputValue) - 1;
@@ -84,12 +89,9 @@ export default function Pagination(props: Props) {
         <Text as="p" textStyle="xsmall" display="inline">
           {totalCount !== 0 ? `${lowerBound}-${upperBound}` : 0}
         </Text>
-        <Text
-          as="p"
-          textStyle="xsmall"
-          display="inline"
-          color="texticon.secondary"
-        >{`of ${totalCount}`}</Text>
+        <Text as="p" textStyle="xsmall" display="inline" color="texticon.secondary">
+          {`of ${totalCount}`}
+        </Text>
       </HStack>
       <HStack spacing="0">
         <IconButton
@@ -114,6 +116,9 @@ export default function Pagination(props: Props) {
             }
           }}
         />
+        <Text as="p" textStyle="xsmall" display="inline" marginX="4px">
+          {` / ${totalPages}`}
+        </Text>
         <IconButton
           icon={<ChevronRightIcon />}
           height="24px"
