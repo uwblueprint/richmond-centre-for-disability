@@ -152,7 +152,7 @@ model MedicalInformation {
   notes                       String?
   physicianMspNumber          String             @map("physician_msp_number") @db.VarChar(50)
   createdAt                   DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                   DateTime           @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt                   DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   physician                   Physician          @relation("medical_informationTophysicians", fields: [physicianMspNumber], references: [mspNumber])
   applicant                   Applicant?         @relation("applicantsTomedical_information")
 
@@ -167,7 +167,7 @@ model Permit {
   applicationId Int         @unique @map("application_id")
   applicantId   Int         @map("applicant_id")
   createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt     DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   applicant     Applicant   @relation("permitsToapplicants", fields: [applicantId], references: [id])
   application   Application @relation("permitsToapplications", fields: [applicationId], references: [id])
 
@@ -200,7 +200,7 @@ model VerificationRequest {
   token      String   @unique @db.VarChar(255)
   expires    DateTime @db.Timestamptz(6)
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt  DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("verification_requests")
 }
@@ -232,7 +232,7 @@ model ApplicationProcessing {
   paymentRefundedEmployeeId        Int?                @map("payment_refunded_employee_id")
   paymentRefundedUpdatedAt         DateTime            @default(now()) @map("payment_refunded_updated_at") @db.Timestamptz(6)
   createdAt                        DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                        DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt                        DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   appHolepunchedEmployee           Employee?           @relation("application_processing_app_holepunched_employee_idToemployees", fields: [appHolepunchedEmployeeId], references: [id])
   appMailedEmployee                Employee?           @relation("application_processing_app_mailed_employee_idToemployees", fields: [appMailedEmployeeId], references: [id])
   appNumberEmployee                Employee?           @relation("application_processing_app_number_employee_idToemployees", fields: [appNumberEmployeeId], references: [id])
@@ -286,7 +286,7 @@ model NewApplication {
   requiresWiderParkingSpaceReason      RequiresWiderParkingSpaceReason?     @map("requires_wider_parking_space_reason")
   otherRequiresWiderParkingSpaceReason String?                              @map("other_requires_wider_parking_space_reason") @db.VarChar(255)
   createdAt                            DateTime                             @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                            DateTime                             @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt                            DateTime                             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   application                          Application                          @relation("applicationsTonew_applications", fields: [applicationId], references: [id])
 
   @@map("new_applications")
@@ -310,7 +310,7 @@ model RenewalApplication {
   requiresWiderParkingSpaceReason      RequiresWiderParkingSpaceReason?     @map("requires_wider_parking_space_reason")
   otherRequiresWiderParkingSpaceReason String?                              @map("other_requires_wider_parking_space_reason") @db.VarChar(255)
   createdAt                            DateTime                             @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                            DateTime                             @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt                            DateTime                             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   application                          Application                          @relation("applicationsTorenewal_applications", fields: [applicationId], references: [id])
 
   @@map("renewal_applications")
@@ -338,7 +338,7 @@ model ApplicationInvoice {
   s3ObjectUrl           String?                @map("s3_object_url")
   employeeId            Int                    @map("employee_id")
   createdAt             DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt             DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt             DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   employee              Employee               @relation("application_invoicesToemployees", fields: [employeeId], references: [id])
   applicationProcessing ApplicationProcessing? @relation("application_invoicesToapplication_processing")
 
