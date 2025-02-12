@@ -38,6 +38,15 @@ export default gql`
     postalCode: String!
   }
 
+  # Query many doctors
+  input PhysiciansFilter {
+    order: [[String!]!]
+    firstName: String!
+    lastName: String!
+    limit: Int
+    offset: Int
+  }
+
   type ComparePhysiciansResult {
     match: Boolean!
     status: PhysicianMatchStatus
