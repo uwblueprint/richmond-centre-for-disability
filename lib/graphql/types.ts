@@ -996,6 +996,21 @@ export type PhysicianStatus =
   | 'ACTIVE'
   | 'INACTIVE';
 
+export type PhysiciansFilter = {
+  order: Maybe<Array<Array<Scalars['String']>>>;
+  firstName: Maybe<Scalars['String']>;
+  lastName: Maybe<Scalars['String']>;
+  mspNumber: Maybe<Scalars['String']>;
+  limit: Maybe<Scalars['Int']>;
+  offset: Maybe<Scalars['Int']>;
+};
+
+export type PhysiciansResult = {
+  __typename?: 'PhysiciansResult';
+  result: Array<Physician>;
+  totalCount: Scalars['Int'];
+};
+
 export type Province =
   | 'BC'
   | 'AB'
@@ -1022,6 +1037,7 @@ export type Query = {
   generateApplicationsReport: Maybe<GenerateApplicationsReportResult>;
   generatePermitHoldersReport: Maybe<GeneratePermitHoldersReportResult>;
   generateAccountantReport: Maybe<GenerateAccountantReportResult>;
+  physicians: Maybe<PhysiciansResult>;
   comparePhysicians: Maybe<ComparePhysiciansResult>;
 };
 
@@ -1068,6 +1084,11 @@ export type QueryGeneratePermitHoldersReportArgs = {
 
 export type QueryGenerateAccountantReportArgs = {
   input: GenerateAccountantReportInput;
+};
+
+
+export type QueryPhysiciansArgs = {
+  filter: Maybe<PhysiciansFilter>;
 };
 
 
