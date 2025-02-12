@@ -19,11 +19,13 @@ type Props = {
 export default function DoctorTypeahead({ onSelect }: Props) {
   const [searchString, setSearchString] = useState('');
 
-  // Run the query using the current search string as the filter
+  // Run the query using the input as the filter
   const { data, loading } = useQuery<SearchDoctorsResponse, SearchDoctorsRequest>(SEARCH_DOCTORS, {
     variables: {
       filter: {
-        search: searchString,
+        mspNumber: searchString,
+        firstName: searchString,
+        lastName: searchString,
       },
     },
   });
@@ -52,7 +54,7 @@ export default function DoctorTypeahead({ onSelect }: Props) {
         );
       }}
       labelKey={(option: DoctorResult) => `${option.firstName} ${option.lastName}`}
-      results={data?.physicians.result || []}
+      results={data?.physicians?.result || []}
       onSelect={handleSelect}
       placeholder="Search by user ID, first name or last name"
     />
