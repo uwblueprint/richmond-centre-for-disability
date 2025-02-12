@@ -20,15 +20,22 @@ export default function DoctorTypeahead({ onSelect }: Props) {
   const [searchString, setSearchString] = useState('');
 
   // Run the query using the input as the filter
-  const { data, loading } = useQuery<SearchDoctorsResponse, SearchDoctorsRequest>(SEARCH_DOCTORS, {
-    variables: {
-      filter: {
-        mspNumber: searchString,
-        firstName: searchString,
-        lastName: searchString,
+  const { data, loading, error } = useQuery<SearchDoctorsResponse, SearchDoctorsRequest>(
+    SEARCH_DOCTORS,
+    {
+      variables: {
+        filter: {
+          mspNumber: searchString,
+          firstName: searchString,
+          lastName: searchString,
+        },
       },
-    },
-  });
+    }
+  );
+
+  if (error) {
+    console.error('Error fetching physicians ', error);
+  }
 
   /** Called when a physician is selected in the typeahead */
   const handleSelect = (doctor: DoctorResult | undefined) => {

@@ -3,9 +3,64 @@ import {
   ComparePhysiciansInput,
   ComparePhysiciansResult,
   QueryComparePhysiciansArgs,
+  PhysiciansFilter,
+  PhysiciansResult,
 } from '@lib/graphql/types';
 import { stripPhoneNumber, stripPostalCode } from '@lib/utils/format';
 import { Physician } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+
+/**
+ * Query and filter physicians from the database.
+ * Supports filtering by first name, last name, and MSP number.
+ * Supports pagination and sorting.
+ * @returns All physicians that match the filter(s).
+ */
+export const physicians: Resolver<{ filter: PhysiciansFilter }, PhysiciansResult> = async (
+  _parent,
+  { filter },
+  { prisma }
+) => {
+  // Create default filter
+  let where: Prisma.PhysicianWhereInput = {};
+
+  if (filter) {
+    const { firstName, lastName, mspNumber } = filter;
+
+    // Update filter based on input
+    where = {
+      ...(firstName && { firstName: { startsWith: firstName, mode: 'insensitive' } }),
+      ...(lastName && { lastName: { startsWith: lastName, mode: 'insensitive' } }),
+      ...(mspNumber && { mspNumber: { equals: mspNumber } }),
+    };
+  }
+
+  // Map the input sorting format into key-value pairs that can be used by Prisma
+  const sortingOrder: Record<string, Prisma.SortOrder> = {};
+
+  if (filter?.order) {
+    filter.order.forEach(([field, order]) => (sortingOrder[field] = order as Prisma.SortOrder));
+  }
+
+  const take = filter?.limit || undefined;
+  const skip = filter?.offset || undefined;
+
+  const totalCount = await prisma.physician.count({
+    where,
+  });
+
+  const physicians = await prisma.physician.findMany({
+    where,
+    skip,
+    take,
+    // orderBy: sortingOrder,
+  });
+
+  return {
+    result: physicians,
+    totalCount,
+  };
+};
 
 /**
  * Compare physician data passed in from UI to existing physician data in DB
