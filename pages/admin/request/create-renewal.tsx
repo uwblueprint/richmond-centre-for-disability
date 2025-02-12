@@ -12,6 +12,7 @@ import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
+import DoctorTypeahead from '@components/admin/requests/doctor-information/DoctorTypeahead';
 import { useLazyQuery, useMutation } from '@tools/hooks/graphql';
 import {
   CreateRenewalApplicationRequest,
@@ -137,6 +138,14 @@ export default function CreateRenewal() {
   const handleSelectPermitHolder = async (applicantId: number) => {
     setApplicantId(applicantId);
     getApplicant({ variables: { id: applicantId } });
+  };
+
+  /**
+   * Set and fetch data about applicant when permit holder is selected
+   */
+  const handleDoctorMsp = async (mspNumber: number) => {
+    // not necessary
+    mspNumber ? null : undefined;
   };
 
   /**
@@ -321,6 +330,7 @@ export default function CreateRenewal() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Doctor's Information`}
                     </Text>
+                    <DoctorTypeahead onSelect={handleDoctorMsp} />
                     <DoctorInformationForm />
                   </Box>
                 </GridItem>
