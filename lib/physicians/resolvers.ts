@@ -25,13 +25,11 @@ export const physicians: Resolver<{ filter: PhysiciansFilter }, PhysiciansResult
   let where: Prisma.PhysicianWhereInput = {};
 
   if (filter) {
-    const { firstName, lastName, mspNumber } = filter;
+    const { mspNumber } = filter;
 
     // Update filter based on input
     where = {
-      ...(firstName && { firstName: { startsWith: firstName, mode: 'insensitive' } }),
-      ...(lastName && { lastName: { startsWith: lastName, mode: 'insensitive' } }),
-      ...(mspNumber && { mspNumber: { equals: mspNumber } }),
+      ...(mspNumber && { mspNumber: { contains: mspNumber } }),
     };
   }
 
