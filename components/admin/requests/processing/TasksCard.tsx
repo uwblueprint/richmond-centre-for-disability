@@ -525,7 +525,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   _hover={{ bg: 'background.grayHover' }}
                   color="black"
                   onClick={() => handleMailOut(true)}
-                  isDisabled={mailOutLoading}
+                  isDisabled={documentsUrl === null || mailOutLoading}
                   isLoading={mailOutLoading}
                   loadingText="Mark as complete"
                   fontWeight="normal"
