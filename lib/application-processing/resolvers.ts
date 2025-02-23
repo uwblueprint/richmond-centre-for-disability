@@ -31,7 +31,7 @@ import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { Prisma } from '@prisma/client';
 import { getMostRecentPermit } from '@lib/applicants/utils';
 import moment from 'moment';
-import { generateWalletCard } from '@lib/walletCard/utils';
+import { generateWalletCardPDF } from '@lib/walletCard/utils';
 
 /**
  * Approve application
@@ -128,9 +128,13 @@ export const rejectApplication: Resolver<MutationRejectApplicationArgs, RejectAp
 export const completeApplication: Resolver<
   MutationCompleteApplicationArgs,
   CompleteApplicationResult
-> = async (_, args, { prisma, logger }) => {
+> = async (_, args, { prisma, logger, session }) => {
   const { input } = args;
   const { id } = input;
+
+  if (!session) {
+    return { ok: false, error: 'Not authenticated' };
+  }
 
   // Set application status as COMPLETED operation
   const completeApplicationOperation = prisma.application.update({
@@ -647,6 +651,13 @@ export const completeApplication: Resolver<
     throw new ApolloError(`Error completing application with ID ${id}`);
   }
 
+  // Generate the Wallet Card
+  const { id: employeeId } = session;
+  const walletCardResult = await createWalletCard(id, true, employeeId, prisma, logger);
+  if (!walletCardResult.ok) {
+    return walletCardResult;
+  }
+
   return {
     ok: true,
     error: null,
@@ -805,26 +816,20 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
  * Create wallet card for in-progress application
  * @returns Status of the operation (ok)
  */
-export const updateApplicationProcessingCreateWalletCard: Resolver<
-  MutationUpdateApplicationProcessingCreateWalletCardArgs,
-  UpdateApplicationProcessingCreateWalletCardResult
-> = async (_parent, args, { prisma, session, logger }) => {
-  // TODO: Validation
-  const { input } = args;
-  const { applicationId, walletCardCreated } = input;
-
-  if (!session) {
-    return { ok: false, error: 'Not authenticated' };
-  }
-  const { id: employeeId } = session;
-
+export const createWalletCard = async (
+  applicationId: number,
+  walletCardCreated: boolean,
+  employeeId: number,
+  prisma: any,
+  logger: any
+) => {
   let updatedApplicationProcessing;
   let updatedWalletCard;
 
   // Use the application record to retrieve the applicant name, applicant ID, permit type, current date, and employee initials
   const application = await prisma.application.findUnique({
     where: { id: applicationId },
-    include: { applicant: true, applicationProcessing: true, permit: true },
+    include: { applicant: true, permit: true },
   });
 
   if (!application) {
@@ -879,7 +884,7 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
     }
 
     const walletCardPdf = createdWalletCard
-      ? generateWalletCard(permitId, permitExpiry, firstName, lastName, dateOfBirth, userId)
+      ? generateWalletCardPDF(permitId, permitExpiry, firstName, lastName, dateOfBirth, userId)
       : null;
 
     if (walletCardPdf && createdWalletCard) {
@@ -960,6 +965,26 @@ export const updateApplicationProcessingCreateWalletCard: Resolver<
   }
 
   return { ok: true, error: null };
+};
+
+/**
+ * Create wallet card for in-progress application
+ * @returns Status of the operation (ok)
+ */
+export const updateApplicationProcessingCreateWalletCard: Resolver<
+  MutationUpdateApplicationProcessingCreateWalletCardArgs,
+  UpdateApplicationProcessingCreateWalletCardResult
+> = async (_parent, args, { prisma, session, logger }) => {
+  // TODO: Validation
+  const { input } = args;
+  const { applicationId, walletCardCreated } = input;
+
+  if (!session) {
+    return { ok: false, error: 'Not authenticated' };
+  }
+  const { id: employeeId } = session;
+
+  return createWalletCard(applicationId, walletCardCreated, employeeId, prisma, logger);
 };
 
 /**

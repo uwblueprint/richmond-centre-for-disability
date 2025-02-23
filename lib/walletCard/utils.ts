@@ -145,7 +145,7 @@ const walletCardPdfDefinition = (
   };
 };
 
-export const generateWalletCard = (
+export const generateWalletCardPDF = (
   permitId: number,
   permitExpiry: Date,
   firstName: string,
