@@ -656,7 +656,10 @@ export const completeApplication: Resolver<
   const { id: employeeId } = session;
   const walletCardResult = await createWalletCard(id, true, employeeId, prisma, logger);
   if (!walletCardResult.ok) {
-    return walletCardResult;
+    return {
+      ok: walletCardResult.ok,
+      error: walletCardResult.error,
+    };
   }
 
   return {

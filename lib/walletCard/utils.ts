@@ -1,5 +1,6 @@
 import logger from '@lib/utils/logging';
 import pdfPrinter from 'pdfmake';
+import { TDocumentDefinitions } from 'pdfmake/interfaces';
 
 const walletCardPdfDefinition = (
   permitId: number,
@@ -171,7 +172,7 @@ export const generateWalletCardPDF = (
       dateOfBirth,
       userId
     );
-    pdfDoc = printer.createPdfKitDocument(documentDef);
+    pdfDoc = printer.createPdfKitDocument(documentDef as TDocumentDefinitions);
     pdfDoc.end();
   } catch (err) {
     logger.error({ error: err }, 'Error Generating Wallet PDF: ', err);
