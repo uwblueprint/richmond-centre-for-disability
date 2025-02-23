@@ -28,10 +28,11 @@ import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 import { generateApplicationInvoicePdf, generateDonationInvoicePdf } from '@lib/invoices/utils';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { formatDateYYYYMMDD } from '@lib/utils/date';
-import { Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { getMostRecentPermit } from '@lib/applicants/utils';
 import moment from 'moment';
 import { generateWalletCardPDF } from '@lib/walletCard/utils';
+import { Logger } from 'pino';
 
 /**
  * Approve application
@@ -820,9 +821,9 @@ export const createWalletCard = async (
   applicationId: number,
   walletCardCreated: boolean,
   employeeId: number,
-  prisma: any,
-  logger: any
-) => {
+  prisma: PrismaClient,
+  logger: Logger
+): Promise<UpdateApplicationProcessingCreateWalletCardResult> => {
   let updatedApplicationProcessing;
   let updatedWalletCard;
 

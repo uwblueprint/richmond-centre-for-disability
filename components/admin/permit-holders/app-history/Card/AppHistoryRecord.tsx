@@ -118,7 +118,7 @@ const AppHistoryRecord: FC<Props> = ({ permit }) => {
                 Not generated yet
               </Text>
             ) : (
-              walletCard.s3ObjectKey && (
+              walletCard.s3ObjectUrl && (
                 <FileLink href={walletCard.s3ObjectUrl} target="_blank" rel="noopener noreferrer">
                   <Text as="p" textStyle="body-regular" color="primary" textDecoration="underline">
                     {!!walletCard.s3ObjectKey && getFileName(walletCard.s3ObjectKey)}
