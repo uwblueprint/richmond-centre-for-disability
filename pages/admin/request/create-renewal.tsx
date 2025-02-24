@@ -341,8 +341,14 @@ export default function CreateRenewal() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Doctor's Information`}
                     </Text>
+                    <Text textStyle="body-regular" color="text.secondary" paddingBottom="16px">
+                      Search for a doctor by MSP number or manually enter the doctor&apos;s
+                      information below
+                    </Text>
                     <DoctorTypeahead onSelect={handleDoctorMsp} />
-                    <DoctorInformationForm />
+                    <Box paddingTop="20px">
+                      <DoctorInformationForm />
+                    </Box>
                   </Box>
                 </GridItem>
                 {/* Additional Quesitons Form */}
