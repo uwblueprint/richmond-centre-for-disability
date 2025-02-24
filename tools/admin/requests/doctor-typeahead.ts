@@ -14,6 +14,13 @@ export const SEARCH_DOCTORS = gql`
         firstName
         lastName
         phone
+        addressLine1
+        addressLine2
+        city
+        province
+        country
+        postalCode
+        status
       }
     }
   }
