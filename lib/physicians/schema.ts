@@ -41,8 +41,6 @@ export default gql`
   # Query many doctors
   input PhysiciansFilter {
     order: [[String!]!]
-    firstName: String
-    lastName: String
     mspNumber: String
     limit: Int
     offset: Int

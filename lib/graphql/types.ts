@@ -998,8 +998,6 @@ export type PhysicianStatus =
 
 export type PhysiciansFilter = {
   order: Maybe<Array<Array<Scalars['String']>>>;
-  firstName: Maybe<Scalars['String']>;
-  lastName: Maybe<Scalars['String']>;
   mspNumber: Maybe<Scalars['String']>;
   limit: Maybe<Scalars['Int']>;
   offset: Maybe<Scalars['Int']>;

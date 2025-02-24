@@ -26,8 +26,6 @@ export default function DoctorTypeahead({ onSelect }: Props) {
       variables: {
         filter: {
           mspNumber: searchString,
-          firstName: searchString,
-          lastName: searchString,
         },
       },
     }

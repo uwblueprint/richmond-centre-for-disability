@@ -22,8 +22,6 @@ export const SEARCH_DOCTORS = gql`
 /** Query request variables */
 export type SearchDoctorsRequest = {
   filter: {
-    firstName?: string;
-    lastName?: string;
     mspNumber?: string;
     limit?: number;
     offset?: number;
