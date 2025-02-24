@@ -61,7 +61,7 @@ export default function DoctorTypeahead({ onSelect }: Props) {
       labelKey={(option: DoctorResult) => `${option.firstName} ${option.lastName}`}
       results={data?.physicians?.result || []}
       onSelect={handleSelect}
-      placeholder="Search by user ID, first name or last name"
+      placeholder="Search by doctor's MSP number"
     />
   );
 }
