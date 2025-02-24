@@ -40,6 +40,7 @@ import {
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
 import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
+import { DoctorResult } from '@tools/admin/requests/doctor-typeahead';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
@@ -143,9 +144,18 @@ export default function CreateRenewal() {
   /**
    * Set and fetch data about applicant when permit holder is selected
    */
-  const handleDoctorMsp = async (mspNumber: number) => {
-    // not necessary
-    mspNumber ? null : undefined;
+  const handleDoctorMsp = async (doctor: DoctorResult) => {
+    const doctorData = {
+      firstName: doctor.firstName,
+      lastName: doctor.lastName,
+      mspNumber: doctor.mspNumber,
+      phone: doctor.phone,
+      addressLine1: doctor.addressLine1,
+      addressLine2: doctor.addressLine2 || '',
+      city: doctor.city,
+      postalCode: doctor.postalCode,
+    };
+    setDoctorInformation(doctorData);
   };
 
   /**
@@ -290,6 +300,7 @@ export default function CreateRenewal() {
               additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
               paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
+            enableReinitialize={true}
             validationSchema={renewalRequestFormSchema}
             onSubmit={handleSubmit}
             validateOnMount

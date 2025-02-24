@@ -12,8 +12,8 @@ import {
 } from '@tools/admin/requests/doctor-typeahead';
 
 type Props = {
-  /** Callback when a physician is selected; passes the physician’s MSP number */
-  onSelect: (mspNumber: string) => void;
+  /** Callback when a physician is selected; passes the physician’s data */
+  onSelect: (doctor: DoctorResult) => void;
 };
 
 export default function DoctorTypeahead({ onSelect }: Props) {
@@ -38,7 +38,7 @@ export default function DoctorTypeahead({ onSelect }: Props) {
   /** Called when a physician is selected in the typeahead */
   const handleSelect = (doctor: DoctorResult | undefined) => {
     if (doctor) {
-      onSelect(doctor.mspNumber);
+      onSelect(doctor);
     }
   };
 

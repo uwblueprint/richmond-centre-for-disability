@@ -3,7 +3,19 @@ import { gql } from '@apollo/client';
 import { Physician } from '@lib/graphql/types';
 
 /** A simplified Physician type used for the typeahead result */
-export type DoctorResult = Pick<Physician, 'mspNumber' | 'firstName' | 'lastName' | 'phone'>;
+export type DoctorResult = Pick<
+  Physician,
+  | 'mspNumber'
+  | 'firstName'
+  | 'lastName'
+  | 'phone'
+  | 'addressLine1'
+  | 'addressLine2'
+  | 'city'
+  | 'province'
+  | 'country'
+  | 'postalCode'
+>;
 
 /** GraphQL query to search for physicians */
 export const SEARCH_DOCTORS = gql`
