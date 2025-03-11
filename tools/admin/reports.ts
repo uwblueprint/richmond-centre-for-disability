@@ -25,14 +25,14 @@ export const APPLICATIONS_COLUMNS: Array<{
     reportColumnId: 'applicantName',
   },
   {
-    name: 'Applicant DoB',
-    value: 'APPLICANT_DATE_OF_BIRTH',
-    reportColumnId: 'dateOfBirth',
-  },
-  {
     name: 'APP Number',
     value: 'APP_NUMBER',
     reportColumnId: 'rcdPermitId',
+  },
+  {
+    name: 'Applicant DoB',
+    value: 'APPLICANT_DATE_OF_BIRTH',
+    reportColumnId: 'dateOfBirth',
   },
   {
     name: 'Phone Number',
@@ -50,11 +50,6 @@ export const APPLICATIONS_COLUMNS: Array<{
     ],
   },
   {
-    name: 'Donation Amount',
-    value: 'DONATION_AMOUNT',
-    reportColumnId: 'donationAmount',
-  },
-  {
     name: 'Payment Method',
     value: 'PAYMENT_METHOD',
     reportColumnId: 'paymentMethod',
@@ -65,9 +60,9 @@ export const APPLICATIONS_COLUMNS: Array<{
     reportColumnId: 'processingFee',
   },
   {
-    name: 'Second Donation Amount',
-    value: 'SECOND_DONATION_AMOUNT',
-    reportColumnId: 'secondDonationAmount',
+    name: 'Donation Amount',
+    value: 'DONATION_AMOUNT',
+    reportColumnId: 'donationAmount',
   },
   {
     name: 'Second Payment Method',
@@ -80,14 +75,19 @@ export const APPLICATIONS_COLUMNS: Array<{
     reportColumnId: 'secondProcessingFee',
   },
   {
-    name: 'Application Date',
-    value: 'APPLICATION_DATE',
-    reportColumnId: 'applicationDate',
+    name: 'Second Donation Amount',
+    value: 'SECOND_DONATION_AMOUNT',
+    reportColumnId: 'secondDonationAmount',
   },
   {
     name: 'Total Amount',
     value: 'TOTAL_AMOUNT',
     reportColumnId: 'totalAmount',
+  },
+  {
+    name: 'Application Date',
+    value: 'APPLICATION_DATE',
+    reportColumnId: 'applicationDate',
   },
   {
     name: 'Invoice Receipt #',
