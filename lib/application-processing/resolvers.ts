@@ -33,6 +33,7 @@ import { getMostRecentPermit } from '@lib/applicants/utils';
 import moment from 'moment';
 import { generateWalletCardPDF } from '@lib/walletCard/utils';
 import { Logger } from 'pino';
+import { createWalletCardPDF, createWalletCardPrisma } from './utils';
 
 /**
  * Approve application
@@ -136,6 +137,7 @@ export const completeApplication: Resolver<
   if (!session) {
     return { ok: false, error: 'Not authenticated' };
   }
+  const { id: employeeId } = session;
 
   // Set application status as COMPLETED operation
   const completeApplicationOperation = prisma.application.update({
@@ -178,7 +180,7 @@ export const completeApplication: Resolver<
       postalCode,
       type,
       permitType,
-      applicationProcessing: { appNumber },
+      applicationProcessing: { appNumber, id: applicationProcessingId },
     } = application;
 
     if (appNumber === null) {
@@ -360,23 +362,52 @@ export const completeApplication: Resolver<
           },
         });
 
-        const [upsertedPhysician, updatedApplicant, createdPermit, completedApplicationProcessing] =
-          await prisma.$transaction([
-            upsertPhysicianOperation,
-            updateApplicantOperation,
-            createPermitOperation,
-            completeApplicationOperation,
-          ]);
+        const [
+          upsertedPhysician,
+          updatedApplicant,
+          createdPermit,
+          completedApplicationProcessing,
+          createdWalletCard,
+        ] = await prisma.$transaction([
+          upsertPhysicianOperation,
+          updateApplicantOperation,
+          createPermitOperation,
+          completeApplicationOperation,
+          createWalletCardPrisma(prisma, applicationProcessingId, employeeId),
+        ]);
 
         if (
           !upsertedPhysician ||
           !updatedApplicant ||
           !createdPermit ||
-          !completedApplicationProcessing
+          !completedApplicationProcessing ||
+          !createdWalletCard
         ) {
           const message = 'Error completing application';
           logger.error({ error: message });
           throw new ApolloError(message);
+        }
+
+        // Generate PDF
+        // Not part of Transaction as can't be undone
+        try {
+          const result = await createWalletCardPDF(
+            prisma,
+            logger,
+            createdWalletCard,
+            appNumber,
+            getPermanentPermitExpiryDate(),
+            firstName,
+            lastName,
+            dateOfBirth,
+            id
+          );
+          if (!result || !result.ok) {
+            logger.error({ error: 'Error creating Wallet Card PDF' });
+          }
+        } catch (err) {
+          //Since Application is still completed, don't return error
+          logger.error({ error: err });
         }
       } else {
         // Applicant does not exist (first-time applicant)
@@ -445,6 +476,38 @@ export const completeApplication: Resolver<
           const message = 'Error completing application';
           logger.error({ error: message });
           throw new ApolloError(message);
+        }
+
+        // Generate the Wallet Card
+        // Note: Didn't use transactions because this use case
+        // needs interactive transactions which isn't in prisma 2.8
+        try {
+          const walletCardDB = await createWalletCardPrisma(
+            prisma,
+            applicationProcessingId,
+            employeeId
+          );
+          if (!walletCardDB) {
+            logger.error({ error: 'Error creating Wallet Card Database' });
+          } else {
+            const result = await createWalletCardPDF(
+              prisma,
+              logger,
+              walletCardDB,
+              appNumber,
+              getPermanentPermitExpiryDate(),
+              firstName,
+              lastName,
+              dateOfBirth,
+              id
+            );
+            if (!result || !result.ok) {
+              logger.error({ error: 'Error creating Wallet Card PDF' });
+            }
+          }
+        } catch (err) {
+          //Since Application is still completed, don't return error
+          logger.error({ error: err });
         }
       }
     } else if (type === 'RENEWAL') {
@@ -534,23 +597,62 @@ export const completeApplication: Resolver<
         },
       });
 
-      const [upsertedPhysician, updatedApplicant, createdPermit, completedApplicationProcessing] =
-        await prisma.$transaction([
-          upsertPhysicianOperation,
-          updateApplicantOperation,
-          createPermitOperation,
-          completeApplicationOperation,
-        ]);
+      const [
+        upsertedPhysician,
+        updatedApplicant,
+        createdPermit,
+        completedApplicationProcessing,
+        createdWalletCard,
+      ] = await prisma.$transaction([
+        upsertPhysicianOperation,
+        updateApplicantOperation,
+        createPermitOperation,
+        completeApplicationOperation,
+        createWalletCardPrisma(prisma, applicationProcessingId, employeeId),
+      ]);
 
       if (
         !upsertedPhysician ||
         !updatedApplicant ||
         !createdPermit ||
-        !completedApplicationProcessing
+        !completedApplicationProcessing ||
+        !createdWalletCard
       ) {
         const message = 'Error completing application';
         logger.error({ error: message });
         throw new ApolloError(message);
+      }
+
+      // Generate the Wallet Card
+      // Note: Didn't use transactions because this use case
+      // needs interactive transactions which isn't in prisma 2.8
+      try {
+        const walletCardDB = await createWalletCardPrisma(
+          prisma,
+          applicationProcessingId,
+          employeeId
+        );
+        if (!walletCardDB) {
+          logger.error({ error: 'Error creating Wallet Card Database' });
+        } else {
+          const result = await createWalletCardPDF(
+            prisma,
+            logger,
+            walletCardDB,
+            createdPermit.rcdPermitId,
+            getPermanentPermitExpiryDate(),
+            firstName,
+            lastName,
+            updatedApplicant.dateOfBirth,
+            id
+          );
+          if (!result || !result.ok) {
+            logger.error({ error: 'Error creating Wallet Card PDF' });
+          }
+        }
+      } catch (err) {
+        //Since Application is still completed, don't return error
+        logger.error({ error: err });
       }
     } else if (type === 'REPLACEMENT') {
       // Retrieve replacement record
@@ -625,17 +727,55 @@ export const completeApplication: Resolver<
         },
       });
 
-      const [updatedApplicant, createdPermit, completedApplicationProcessing] =
+      const [updatedApplicant, createdPermit, completedApplicationProcessing, createdWalletCard] =
         await prisma.$transaction([
           updateApplicantOperation,
           createPermitOperation,
           completeApplicationOperation,
+          createWalletCardPrisma(prisma, applicationProcessingId, employeeId),
         ]);
 
-      if (!updatedApplicant || !createdPermit || !completedApplicationProcessing) {
+      if (
+        !updatedApplicant ||
+        !createdPermit ||
+        !completedApplicationProcessing ||
+        !createdWalletCard
+      ) {
         const message = 'Error completing application';
         logger.error({ error: message });
         throw new ApolloError(message);
+      }
+
+      // Generate the Wallet Card
+      // Note: Didn't use transactions because this use case
+      // needs interactive transactions which isn't in prisma 2.8
+      try {
+        const walletCardDB = await createWalletCardPrisma(
+          prisma,
+          applicationProcessingId,
+          employeeId
+        );
+        if (!walletCardDB) {
+          logger.error({ error: 'Error creating Wallet Card Database' });
+        } else {
+          const result = await createWalletCardPDF(
+            prisma,
+            logger,
+            walletCardDB,
+            createdPermit.rcdPermitId,
+            getPermanentPermitExpiryDate(),
+            firstName,
+            lastName,
+            updatedApplicant.dateOfBirth,
+            id
+          );
+          if (!result || !result.ok) {
+            logger.error({ error: 'Error creating Wallet Card PDF' });
+          }
+        }
+      } catch (err) {
+        //Since Application is still completed, don't return error
+        logger.error({ error: err });
       }
     } else {
       throw new Error(`Invalid application type ${type}`);
@@ -650,16 +790,6 @@ export const completeApplication: Resolver<
 
     logger.error({ error: err }, 'Unknown error');
     throw new ApolloError(`Error completing application with ID ${id}`);
-  }
-
-  // Generate the Wallet Card
-  const { id: employeeId } = session;
-  const walletCardResult = await createWalletCard(id, true, employeeId, prisma, logger);
-  if (!walletCardResult.ok) {
-    return {
-      ok: walletCardResult.ok,
-      error: walletCardResult.error,
-    };
   }
 
   return {
