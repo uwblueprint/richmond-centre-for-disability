@@ -98,14 +98,6 @@ export class ShopifyCheckout {
   }
 
   /**
-   * Encode a product/variant ID as base64 if you’re not already storing the base64 version.
-   * This is only needed if you have the numeric ID but need the global ID.
-   */
-  #encodeProductId(productId: string): string {
-    return Buffer.from(productId).toString('base64');
-  }
-
-  /**
    * Replace this with your own method of fetching the
    * "default" variant ID for a given product, or better yet:
    * store variant IDs directly in your .env if you only have 1 variant.
