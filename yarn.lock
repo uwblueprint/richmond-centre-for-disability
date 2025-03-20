@@ -1779,11 +1779,6 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@graphql-typed-document-node/core@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.2.0.tgz#5f3d96ec6b2354ad6d8a28bf216a1d97b5426861"
-  integrity sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==
-
 "@hapi/accept@5.0.2":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@hapi/accept/-/accept-5.0.2.tgz#ab7043b037e68b722f93f376afb05e85c0699523"
@@ -6001,6 +5996,15 @@ graphql-middleware@^6.1.31:
     "@graphql-tools/delegate" "^8.8.0"
     "@graphql-tools/schema" "^8.5.0"
 
+graphql-request@3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/graphql-request/-/graphql-request-3.6.0.tgz#8f2be900cf07ac87064b15601cc30e0f9a5e7d51"
+  integrity sha512-p5qIuD+gyjuOJ8z9sEcfcLVK7HUB+/88hf/xGEzX330U3L2OR1JtaupLPmd1D2V7YtqWiEnSA3tX9vqZ4eGMhA==
+  dependencies:
+    cross-fetch "^3.0.6"
+    extract-files "^9.0.0"
+    form-data "^3.0.0"
+
 graphql-request@^3.3.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/graphql-request/-/graphql-request-3.4.0.tgz#3a400cd5511eb3c064b1873afb059196bbea9c2b"
@@ -6009,13 +6013,6 @@ graphql-request@^3.3.0:
     cross-fetch "^3.0.6"
     extract-files "^9.0.0"
     form-data "^3.0.0"
-
-graphql-request@^7.1.2:
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/graphql-request/-/graphql-request-7.1.2.tgz#52d7fd6d8d08c9f0b00c84a091376ce9fbdfa945"
-  integrity sha512-+XE3iuC55C2di5ZUrB4pjgwe+nIQBuXVIK9J98wrVwojzDW3GMdSBZfxUk8l4j9TieIpjpggclxhNEU9ebGF8w==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.2.0"
 
 graphql-tag@2.12.4, graphql-tag@^2.10.1, graphql-tag@^2.11.0:
   version "2.12.4"
