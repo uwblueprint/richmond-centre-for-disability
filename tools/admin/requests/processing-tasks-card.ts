@@ -46,12 +46,6 @@ export const GET_APPLICATION_PROCESSING = gql`
           lastName
         }
         appHolepunchedUpdatedAt
-        walletCardCreated
-        walletCardCreatedEmployee {
-          firstName
-          lastName
-        }
-        walletCardCreatedUpdatedAt
         invoice {
           invoiceNumber
           s3ObjectUrl
@@ -109,8 +103,6 @@ export type GetApplicationProcessingResponse = {
       | 'appNumberUpdatedAt'
       | 'appHolepunched'
       | 'appHolepunchedUpdatedAt'
-      | 'walletCardCreated'
-      | 'walletCardCreatedUpdatedAt'
       | 'documentsUrl'
       | 'documentsUrlUpdatedAt'
       | 'appMailed'
@@ -139,6 +131,7 @@ export const ASSIGN_APP_NUMBER_MUTATION = gql`
   mutation AssignAppNumber($input: UpdateApplicationProcessingAssignAppNumberInput!) {
     updateApplicationProcessingAssignAppNumber(input: $input) {
       ok
+      error
     }
   }
 `;
@@ -170,6 +163,7 @@ export const CREATE_WALLET_CARD_MUTATION = gql`
   mutation CreateWalletCard($input: UpdateApplicationProcessingCreateWalletCardInput!) {
     updateApplicationProcessingCreateWalletCard(input: $input) {
       ok
+      error
     }
   }
 `;

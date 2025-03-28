@@ -5,6 +5,7 @@ export const APPROVE_APPLICATION_MUTATION = gql`
   mutation approveApplication($input: ApproveApplicationInput!) {
     approveApplication(input: $input) {
       ok
+      error
     }
   }
 `;
