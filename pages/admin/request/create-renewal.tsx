@@ -30,7 +30,7 @@ import {
   GET_RENEWAL_APPLICANT,
 } from '@tools/admin/requests/create-renewal';
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
-import { Form, Formik } from 'formik';
+import { Form, Formik, useFormik } from 'formik';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { renewalRequestFormSchema } from '@lib/applications/validation';
 import {
@@ -139,23 +139,6 @@ export default function CreateRenewal() {
   const handleSelectPermitHolder = async (applicantId: number) => {
     setApplicantId(applicantId);
     getApplicant({ variables: { id: applicantId } });
-  };
-
-  /**
-   * Set and fetch data about applicant when permit holder is selected
-   */
-  const handleDoctorMsp = async (doctor: DoctorResult) => {
-    const doctorData = {
-      firstName: doctor.firstName,
-      lastName: doctor.lastName,
-      mspNumber: doctor.mspNumber,
-      phone: doctor.phone,
-      addressLine1: doctor.addressLine1,
-      addressLine2: doctor.addressLine2 || '',
-      city: doctor.city,
-      postalCode: doctor.postalCode,
-    };
-    setDoctorInformation(doctorData);
   };
 
   /**
@@ -300,12 +283,12 @@ export default function CreateRenewal() {
               additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
               paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
-            enableReinitialize={true}
+            // enableReinitialize={true}
             validationSchema={renewalRequestFormSchema}
             onSubmit={handleSubmit}
             validateOnMount
           >
-            {({ values, isValid }) => (
+            {({ values, isValid, ...formik }) => (
               <Form noValidate>
                 <GridItem paddingTop="32px">
                   <Box
@@ -345,7 +328,21 @@ export default function CreateRenewal() {
                       Search for a doctor by MSP number or manually enter the doctor&apos;s
                       information below
                     </Text>
-                    <DoctorTypeahead onSelect={handleDoctorMsp} />
+                    <DoctorTypeahead
+                      onSelect={doctor => {
+                        const doctorData = {
+                          firstName: doctor.firstName,
+                          lastName: doctor.lastName,
+                          mspNumber: doctor.mspNumber,
+                          phone: doctor.phone,
+                          addressLine1: doctor.addressLine1,
+                          addressLine2: doctor.addressLine2 || '',
+                          city: doctor.city,
+                          postalCode: doctor.postalCode,
+                        };
+                        formik.setFieldValue('doctorInformation', doctorData);
+                      }}
+                    />
                     <Box paddingTop="20px">
                       <DoctorInformationForm />
                     </Box>
