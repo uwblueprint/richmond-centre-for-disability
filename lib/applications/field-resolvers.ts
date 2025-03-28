@@ -57,6 +57,7 @@ export const applicationProcessingResolver: FieldResolver<
     | 'appNumberEmployee'
     | 'appHolepunchedEmployee'
     | 'walletCardCreatedEmployee'
+    | 'walletCard'
     | 'reviewRequestCompletedEmployee'
     | 'documentsUrlEmployee'
     | 'appMailedEmployee'

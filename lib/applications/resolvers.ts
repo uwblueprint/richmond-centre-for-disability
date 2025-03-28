@@ -636,6 +636,7 @@ export const createRenewalApplication: Resolver<
         secondDonationAmount: hasSecondPaymentMethod ? secondDonationAmount || 0 : null,
         phone: stripPhoneNumber(phone),
         ...data,
+        processingFee: processingFee || 0,
         postalCode: stripPostalCode(postalCode),
         shippingPostalCode: shippingPostalCode && stripPostalCode(shippingPostalCode),
         billingPostalCode: billingPostalCode && stripPostalCode(billingPostalCode),
