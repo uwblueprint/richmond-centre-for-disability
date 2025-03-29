@@ -1,4 +1,33 @@
-import Client from 'shopify-buy';
+import { GraphQLClient, gql } from 'graphql-request';
+
+/**
+ * Response type for the product query.
+ * Adjust the fields according to the GraphQL query you’re making.
+ */
+interface ProductVariantsResponse {
+  product: {
+    variants: {
+      edges: Array<{
+        node: {
+          id: string;
+        };
+      }>;
+    };
+  };
+}
+
+/**
+ * Response type for the cartCreate mutation
+ */
+interface CartCreateResponse {
+  cartCreate: {
+    cart: {
+      id: string;
+      checkoutUrl: string;
+    } | null;
+    userErrors: Array<{ field: string[]; message: string }>;
+  };
+}
 
 /**
  * Possible donation amounts in dollars,
@@ -7,18 +36,44 @@ import Client from 'shopify-buy';
 export type DonationAmount = 0 | 5 | 10 | 25 | 50 | 75 | 100 | 200;
 
 /**
+ * Create your own GraphQL client pointing to your store’s Storefront API
+ */
+const domain = process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN as string;
+const storefrontAccessToken = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN as string;
+
+// IMPORTANT: Make sure the version here is 2024-07 or later
+const storefrontEndpoint = `https://${domain}/api/2024-07/graphql.json`;
+
+// Build a reusable GraphQL client
+const graphQLClient = new GraphQLClient(storefrontEndpoint, {
+  headers: {
+    'X-Shopify-Storefront-Access-Token': storefrontAccessToken,
+    'Content-Type': 'application/json',
+  },
+});
+
+/**
+ * GraphQL mutation to create a cart with line items.
+ * We can add one or more items in a single request.
+ */
+const CART_CREATE_MUTATION = gql`
+  mutation CartCreate($lines: [CartLineInput!]!) {
+    cartCreate(input: { lines: $lines }) {
+      cart {
+        id
+        checkoutUrl
+      }
+    }
+  }
+`;
+
+/**
  * ShopifyCheckout class
- * Initializes a Shopify checkout to pay for an APP and possible donation
+ * Creates a Shopify cart (instead of the old checkout) to pay for an APP and possible donation
  */
 export class ShopifyCheckout {
   /** Product ID of permit */
   #permitProductId = `gid://shopify/Product/${process.env.SHOPIFY_PERMIT_PRODUCT_ID}`;
-
-  /** Shopify buy client */
-  #client = Client.buildClient({
-    domain: process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN as string,
-    storefrontAccessToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN as string,
-  });
 
   /** Map of donation amount to the donation product IDs */
   #donationProducts: Record<DonationAmount, string>;
@@ -30,8 +85,9 @@ export class ShopifyCheckout {
       throw new Error('Donation products env variable not set');
     }
 
-    const donationAmountEntries = donationProductsString.split(',').map(donationAmountProductId => {
-      const [donationAmountString, productId] = donationAmountProductId.split(':');
+    // e.g. "5:1234567890,10:2345678901"
+    const donationAmountEntries = donationProductsString.split(',').map(entry => {
+      const [donationAmountString, productId] = entry.split(':');
       return [
         parseInt(donationAmountString) as DonationAmount,
         `gid://shopify/Product/${productId}`,
@@ -42,83 +98,88 @@ export class ShopifyCheckout {
   }
 
   /**
-   * Encode a product ID as a base64 string to send to Shopify
-   * @param productId Product ID
-   * @returns base64-encoded product ID
+   * Replace this with your own method of fetching the
+   * "default" variant ID for a given product, or better yet:
+   * store variant IDs directly in your .env if you only have 1 variant.
    */
-  #encodeProductId(productId: string): string {
-    return Buffer.from(productId).toString('base64');
+  async #fetchVariantIdForProduct(productGlobalId: string): Promise<string> {
+    // Minimal GraphQL product query to grab the first variant
+    const PRODUCT_QUERY = gql`
+      query ProductVariants($id: ID!) {
+        product(id: $id) {
+          variants(first: 1) {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    // Provide the ProductVariantsResponse interface as a generic
+    const data = await graphQLClient.request<ProductVariantsResponse>(PRODUCT_QUERY, {
+      id: productGlobalId,
+    });
+
+    const variantId = data.product.variants.edges[0]?.node?.id;
+    if (!variantId) {
+      throw new Error(`No variants found for product ID: ${productGlobalId}`);
+    }
+    return variantId;
   }
 
   /**
-   * Set up Shopify checkout and get the checkout URL
-   * @param applicationId Application ID to be paid for
-   * @param donationAmount Donation amount in dollars (5, 10, 25, 50, 75, 100, 200), default 0
-   * @returns Shopify checkout URL
+   * Create a cart with a permit line item, plus a donation line item if donationAmount > 0.
+   * Return the checkoutUrl from the new cart.
    */
   async setUpCheckout(applicationId: number, donationAmount: DonationAmount = 0): Promise<string> {
-    // Fetching products and creating the cart are independent so both can run in parallel.
-    const permitPromise = this.#client.product.fetch(this.#encodeProductId(this.#permitProductId));
-    const cartPromise = this.#client.checkout.create();
+    // 1) Fetch the permit variant ID
+    const permitVariantId = await this.#fetchVariantIdForProduct(this.#permitProductId);
 
-    // No donation made (only item in cart is the permit)
-    if (donationAmount === 0) {
-      // Wait for permit product and cart.
-      const [permitProduct, cart] = await Promise.all([permitPromise, cartPromise]);
+    // 2) Build the base permit line
+    const permitLine = {
+      merchandiseId: permitVariantId,
+      quantity: 1,
+      attributes: [
+        { key: '_item', value: 'permit' },
+        { key: '_applicationId', value: applicationId.toString() },
+      ],
+    };
 
-      // Add product to cart.
-      // Add custom attributes to be returned by shopify webhook
-      // Attributes with leading _ are hidden in the shopify checkout page
-      const lineItemsToAdd = [
-        {
-          variantId: permitProduct.variants[0].id,
-          quantity: 1,
-          customAttributes: [
-            { key: '_item', value: 'permit' },
-            { key: '_applicationId', value: applicationId.toString() },
-          ],
-        },
-      ];
-      await this.#client.checkout.addLineItems(cart.id, lineItemsToAdd);
+    // 3) If donation > 0, fetch donation variant & build line
+    const lines = [permitLine];
+    if (donationAmount > 0) {
+      const donationProductId = this.#donationProducts[donationAmount];
+      const donationVariantId = await this.#fetchVariantIdForProduct(donationProductId);
 
-      return cart.webUrl;
-    }
-
-    // Donation made (need to add donation product to cart)
-    const donationProductId = this.#donationProducts[donationAmount];
-    const donationPromise = this.#client.product.fetch(this.#encodeProductId(donationProductId));
-
-    // Wait for product and cart.
-    const [permitProduct, donationProduct, cart] = await Promise.all([
-      permitPromise,
-      donationPromise,
-      cartPromise,
-    ]);
-
-    // Add products to cart.
-    // Add custom attributes to be returned by shopify webhook
-    // Attributes with leading _ are hidden in the shopify checkout page
-    const lineItemsToAdd = [
-      {
-        variantId: permitProduct.variants[0].id,
+      const donationLine = {
+        merchandiseId: donationVariantId,
         quantity: 1,
-        customAttributes: [
-          { key: '_item', value: 'permit' },
-          { key: '_applicationId', value: applicationId.toString() },
-        ],
-      },
-      {
-        variantId: donationProduct.variants[0].id,
-        quantity: 1,
-        customAttributes: [
+        attributes: [
           { key: '_item', value: 'donation' },
           { key: '_applicationId', value: applicationId.toString() },
           { key: '_donationAmount', value: donationAmount.toString() },
         ],
-      },
-    ];
-    await this.#client.checkout.addLineItems(cart.id, lineItemsToAdd);
+      };
 
-    return cart.webUrl;
+      lines.push(donationLine);
+    }
+
+    // 4) Create the cart with all line items at once
+    const variables = { lines };
+    const response = await graphQLClient.request<CartCreateResponse>(
+      CART_CREATE_MUTATION,
+      variables
+    );
+
+    // Because we typed response, `response.cartCreate` is recognized in TS
+    const cart = response.cartCreate.cart;
+    if (!cart) {
+      throw new Error('Failed to create cart');
+    }
+
+    return cart.checkoutUrl;
   }
 }

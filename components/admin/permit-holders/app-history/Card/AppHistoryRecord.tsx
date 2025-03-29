@@ -20,7 +20,7 @@ const AppHistoryRecord: FC<Props> = ({ permit }) => {
       id: applicationId,
       type,
       permitType,
-      processing: { documentsUrl, documentsS3ObjectKey, invoice },
+      processing: { documentsUrl, documentsS3ObjectKey, invoice, walletCard },
     },
   } = permit;
 
@@ -102,6 +102,26 @@ const AppHistoryRecord: FC<Props> = ({ permit }) => {
                 <FileLink href={invoice.s3ObjectUrl} target="_blank" rel="noopener noreferrer">
                   <Text as="p" textStyle="body-regular" color="primary" textDecoration="underline">
                     {!!invoice.s3ObjectKey && getFileName(invoice.s3ObjectKey)}
+                  </Text>
+                </FileLink>
+              )
+            )}
+          </GridItem>
+          <GridItem>
+            <Text as="p" textStyle="body-regular">
+              Wallet Card
+            </Text>
+          </GridItem>
+          <GridItem>
+            {walletCard === null ? (
+              <Text as="p" textStyle="body-regular" color="text.filler">
+                Not generated yet
+              </Text>
+            ) : (
+              walletCard.s3ObjectUrl && (
+                <FileLink href={walletCard.s3ObjectUrl} target="_blank" rel="noopener noreferrer">
+                  <Text as="p" textStyle="body-regular" color="primary" textDecoration="underline">
+                    {!!walletCard.s3ObjectKey && getFileName(walletCard.s3ObjectKey)}
                   </Text>
                 </FileLink>
               )

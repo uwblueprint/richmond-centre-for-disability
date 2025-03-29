@@ -136,6 +136,7 @@ export type ApplicationProcessing = {
   walletCardCreated: Scalars['Boolean'];
   walletCardCreatedEmployee: Maybe<Employee>;
   walletCardCreatedUpdatedAt: Maybe<Scalars['Date']>;
+  walletCard: Maybe<WalletCard>;
   reviewRequestCompleted: Scalars['Boolean'];
   reviewRequestCompletedEmployee: Maybe<Employee>;
   reviewRequestCompletedUpdatedAt: Maybe<Scalars['Date']>;
@@ -390,7 +391,7 @@ export type CreateRenewalApplicationInput = {
   requiresWiderParkingSpaceReason: Maybe<RequiresWiderParkingSpaceReason>;
   otherRequiresWiderParkingSpaceReason: Maybe<Scalars['String']>;
   paymentMethod: PaymentType;
-  processingFee: Scalars['String'];
+  processingFee: Maybe<Scalars['String']>;
   donationAmount: Maybe<Scalars['String']>;
   secondPaymentMethod: Maybe<PaymentType>;
   secondProcessingFee: Maybe<Scalars['String']>;
@@ -995,6 +996,19 @@ export type PhysicianStatus =
   | 'ACTIVE'
   | 'INACTIVE';
 
+export type PhysiciansFilter = {
+  order: Maybe<Array<Array<Scalars['String']>>>;
+  mspNumber: Maybe<Scalars['String']>;
+  limit: Maybe<Scalars['Int']>;
+  offset: Maybe<Scalars['Int']>;
+};
+
+export type PhysiciansResult = {
+  __typename?: 'PhysiciansResult';
+  result: Array<Physician>;
+  totalCount: Scalars['Int'];
+};
+
 export type Province =
   | 'BC'
   | 'AB'
@@ -1021,6 +1035,7 @@ export type Query = {
   generateApplicationsReport: Maybe<GenerateApplicationsReportResult>;
   generatePermitHoldersReport: Maybe<GeneratePermitHoldersReportResult>;
   generateAccountantReport: Maybe<GenerateAccountantReportResult>;
+  physicians: Maybe<PhysiciansResult>;
   comparePhysicians: Maybe<ComparePhysiciansResult>;
 };
 
@@ -1067,6 +1082,11 @@ export type QueryGeneratePermitHoldersReportArgs = {
 
 export type QueryGenerateAccountantReportArgs = {
   input: GenerateAccountantReportInput;
+};
+
+
+export type QueryPhysiciansArgs = {
+  filter: Maybe<PhysiciansFilter>;
 };
 
 
@@ -1611,4 +1631,14 @@ export type VerifyIdentityResult = {
   ok: Scalars['Boolean'];
   failureReason: Maybe<VerifyIdentityFailureReason>;
   applicantId: Maybe<Scalars['Int']>;
+};
+
+export type WalletCard = {
+  __typename?: 'WalletCard';
+  walletNumber: Scalars['Int'];
+  s3ObjectKey: Maybe<Scalars['String']>;
+  s3ObjectUrl: Maybe<Scalars['String']>;
+  employee: Employee;
+  createdAt: Scalars['Date'];
+  updatedAt: Scalars['Date'];
 };
