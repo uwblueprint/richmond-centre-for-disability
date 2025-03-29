@@ -30,7 +30,7 @@ import {
   GET_RENEWAL_APPLICANT,
 } from '@tools/admin/requests/create-renewal';
 import { ApplicantFormData } from '@tools/admin/permit-holders/permit-holder-information';
-import { Form, Formik, useFormik } from 'formik';
+import { Form, Formik } from 'formik';
 import { PermitHolderFormData } from '@tools/admin/requests/permit-holder-information';
 import { renewalRequestFormSchema } from '@lib/applications/validation';
 import {
@@ -40,7 +40,6 @@ import {
 import { AdditionalInformationFormData } from '@tools/admin/requests/additional-questions';
 import { RequiresWiderParkingSpaceReason } from '@prisma/client';
 import ValidationErrorAlert from '@components/form/ValidationErrorAlert';
-import { DoctorResult } from '@tools/admin/requests/doctor-typeahead';
 
 export default function CreateRenewal() {
   const [currentPageState, setNewPageState] = useState<RequestFlowPageState>(
