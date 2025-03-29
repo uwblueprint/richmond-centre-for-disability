@@ -28,6 +28,7 @@ export default gql`
     generateAccountantReport(input: GenerateAccountantReportInput!): GenerateAccountantReportResult
 
     # Physicians
+    physicians(filter: PhysiciansFilter): PhysiciansResult
     comparePhysicians(input: ComparePhysiciansInput!): ComparePhysiciansResult
   }
 

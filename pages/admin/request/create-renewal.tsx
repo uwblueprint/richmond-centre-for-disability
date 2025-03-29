@@ -12,6 +12,7 @@ import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
+import DoctorTypeahead from '@components/admin/requests/doctor-information/DoctorTypeahead';
 import { useLazyQuery, useMutation } from '@tools/hooks/graphql';
 import {
   CreateRenewalApplicationRequest,
@@ -281,11 +282,12 @@ export default function CreateRenewal() {
               additionalInformation: INITIAL_ADDITIONAL_QUESTIONS,
               paymentInformation: INITIAL_PAYMENT_DETAILS,
             }}
+            // enableReinitialize={true}
             validationSchema={renewalRequestFormSchema}
             onSubmit={handleSubmit}
             validateOnMount
           >
-            {({ values, isValid }) => (
+            {({ values, isValid, ...formik }) => (
               <Form noValidate>
                 <GridItem paddingTop="32px">
                   <Box
@@ -321,7 +323,28 @@ export default function CreateRenewal() {
                     <Text textStyle="display-small-semibold" paddingBottom="20px">
                       {`Doctor's Information`}
                     </Text>
-                    <DoctorInformationForm />
+                    <Text textStyle="body-regular" color="text.secondary" paddingBottom="16px">
+                      Search for a doctor by MSP number or manually enter the doctor&apos;s
+                      information below
+                    </Text>
+                    <DoctorTypeahead
+                      onSelect={doctor => {
+                        const doctorData = {
+                          firstName: doctor.firstName,
+                          lastName: doctor.lastName,
+                          mspNumber: doctor.mspNumber,
+                          phone: doctor.phone,
+                          addressLine1: doctor.addressLine1,
+                          addressLine2: doctor.addressLine2 || '',
+                          city: doctor.city,
+                          postalCode: doctor.postalCode,
+                        };
+                        formik.setFieldValue('doctorInformation', doctorData);
+                      }}
+                    />
+                    <Box paddingTop="20px">
+                      <DoctorInformationForm />
+                    </Box>
                   </Box>
                 </GridItem>
                 {/* Additional Quesitons Form */}
