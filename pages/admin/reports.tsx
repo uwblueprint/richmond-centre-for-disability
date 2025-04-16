@@ -24,6 +24,7 @@ import { useState } from 'react'; // React
 // import EmptyMessage from '@components/EmptyMessage';
 // import GenerateReportModal from '@components/admin/requests/reports/GenerateModal'; // Generate report modal
 import AccountantReports from '@components/admin/reports/AccountantReport';
+import RequestReports from '@components/admin/reports/RequestReport'; // Generate report
 import PermitReports from '@components/admin/reports/PermitReport'; // Generate report
 
 // Internal home page
@@ -98,9 +99,7 @@ export default function Reports() {
             </TabList>
             <TabPanels>
               <TabPanel>{<AccountantReports />}</TabPanel>
-              <TabPanel>
-                <p>two!</p>
-              </TabPanel>
+              <TabPanel>{<RequestReports />}</TabPanel>
               <TabPanel>{<PermitReports />}</TabPanel>
             </TabPanels>
           </Tabs>
