@@ -32,14 +32,27 @@ jobs:
             run: |
               npm install -g yarn@1.22.22      
 
-          - name: Install OpenSSL 1.1
-            run: |
-              sudo apt update
-              sudo apt install -y wget
-              wget http://old-releases.ubuntu.com/ubuntu/pool/main/o/openssl1.1/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
-              sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
-              export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
-              yarn prisma generate
+              - name: Compile and Install OpenSSL 1.1.1k from Source
+              run: |
+                sudo apt update
+                sudo apt install -y build-essential checkinstall zlib1g-dev wget
+            
+                cd /usr/local/src
+                sudo wget https://www.openssl.org/source/openssl-1.1.1k.tar.gz
+                sudo tar -xf openssl-1.1.1k.tar.gz
+                cd openssl-1.1.1k
+            
+                sudo ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
+                sudo make -j$(nproc)
+                sudo make install
+            
+                # Add the new OpenSSL to the runtime library path
+                echo "/usr/local/ssl/lib" | sudo tee /etc/ld.so.conf.d/openssl-1.1.1k.conf
+                sudo ldconfig
+            
+                # Add to PATH for immediate use in CI session
+                echo "export PATH=/usr/local/ssl/bin:\$PATH" >> $GITHUB_ENV
+                echo "export LD_LIBRARY_PATH=/usr/local/ssl/lib" >> $GITHUB_ENV            
 
 
           - name: Get yarn cache directory path
