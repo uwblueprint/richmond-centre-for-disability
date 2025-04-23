@@ -34,13 +34,11 @@ jobs:
 
           - name: Install OpenSSL 1.1
             run: |
-              sudo apt update
-              sudo apt install -y wget
-              wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl1.1/libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb
-              sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb
+              sudo add-apt-repository ppa:rael-gc/rvm
+              sudo apt-get update
+              sudo apt-get install libssl1.1
               export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
               yarn prisma generate
-    
 
 
           - name: Get yarn cache directory path
