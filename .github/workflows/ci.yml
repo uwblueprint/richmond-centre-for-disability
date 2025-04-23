@@ -54,11 +54,6 @@ jobs:
           - name: Linting ESlint
             run: yarn lint:eslint
 
-          - name: Debug TypeScript version and paths
-            run: |
-              yarn tsc --version
-              yarn tsc --traceResolution
-
           - name: Linting TypeScript
             run: yarn lint:tsc
 
