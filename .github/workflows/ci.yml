@@ -1,57 +1,62 @@
 name: ci
 
 on:
-    push:
-        branches:
-            - main
-            - staging
-    pull_request:
-        branches:
-            - main
-            - staging
+  push:
+      branches:
+          - main
+          - staging
+  pull_request:
+      branches:
+          - main
+          - staging
 
 jobs:
-    ci:
-        runs-on: ${{ matrix.os }}
+  ci:
+      runs-on: ${{ matrix.os }}
 
-        strategy:
-            matrix:
-                os: [ubuntu-22.04]
-                node: [14.17.0]
+      strategy:
+          matrix:
+              os: [ubuntu-22.04]
+              node: [14.17.0]
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+      steps:
+          - name: Checkout
+            uses: actions/checkout@v4
 
-            - name: Setup node env
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ matrix.node }}
+          - name: Setup node env
+            uses: actions/setup-node@v4
+            with:
+                node-version: ${{ matrix.node }}
 
-            - name: Get yarn cache directory path
-              id: yarn-cache-dir-path
-              run: echo "dir=$(yarn cache dir)" >> $GITHUB_ENV
+          - name: Get yarn cache directory path
+            id: yarn-cache-dir-path
+            run: echo "dir=$(yarn cache dir)" >> $GITHUB_ENV
 
-            - name: Cache node_modules
-              uses: actions/cache@v4
-              id: yarn-cache
-              with:
-                  path: ${{ env.dir }}
-                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-                  restore-keys: |
-                      ${{ runner.os }}-yarn-
+          - name: Cache node_modules
+            uses: actions/cache@v4
+            id: yarn-cache
+            with:
+                path: ${{ env.dir }}
+                key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                restore-keys: |
+                    ${{ runner.os }}-yarn-
 
-            - name: Install dependencies
-              run: yarn install --frozen-lockfile
+          - name: Install dependencies
+            run: yarn install --frozen-lockfile
 
-            - name: Linting Prettier
-              run: yarn lint:prettier
+          - name: Linting Prettier
+            run: yarn lint:prettier
 
-            - name: Linting ESlint
-              run: yarn lint:eslint
+          - name: Linting ESlint
+            run: yarn lint:eslint
 
-            - name: Linting TypeScript
-              run: yarn lint:tsc
+          - name: Debug TypeScript version and paths
+            run: |
+              yarn tsc --version
+              yarn tsc --traceResolution
+              
+          - name: Linting TypeScript
+            run: yarn lint:tsc
 
-            - name: Build
-              run: yarn build
+          - name: Build
+            run: yarn build
