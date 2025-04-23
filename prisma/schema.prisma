@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl"]
 }
 
@@ -366,7 +366,7 @@ enum ApplicantStatus {
   ACTIVE
   INACTIVE
 
-   @@map("applicantstatus")
+  @@map("applicantstatus")
 }
 
 enum Gender {
@@ -374,7 +374,7 @@ enum Gender {
   FEMALE
   OTHER
 
-   @@map("gender")
+  @@map("gender")
 }
 
 enum PaymentType {
@@ -387,14 +387,14 @@ enum PaymentType {
   DEBIT
   SHOPIFY
 
-   @@map("paymenttype")
+  @@map("paymenttype")
 }
 
 enum PhysicianStatus {
   ACTIVE
   INACTIVE
 
-   @@map("physicianstatus")
+  @@map("physicianstatus")
 }
 
 enum Province {
@@ -412,7 +412,7 @@ enum Province {
   NT
   YT
 
-   @@map("province")
+  @@map("province")
 }
 
 enum Role {
@@ -420,7 +420,7 @@ enum Role {
   ACCOUNTING
   SECRETARY
 
-   @@map("role")
+  @@map("role")
 }
 
 enum ApplicationStatus {
@@ -429,7 +429,7 @@ enum ApplicationStatus {
   REJECTED
   COMPLETED
 
-   @@map("applicationstatus")
+  @@map("applicationstatus")
 }
 
 enum ReasonForReplacement {
@@ -438,21 +438,21 @@ enum ReasonForReplacement {
   OTHER
   MAIL_LOST
 
-   @@map("reasonforreplacement")
+  @@map("reasonforreplacement")
 }
 
 enum PermitType {
   PERMANENT
   TEMPORARY
 
-   @@map("permittype")
+  @@map("permittype")
 }
 
 enum AccessibleConvertedVanLoadingMethod {
   SIDE_LOADING
   END_LOADING
 
-   @@map("accessibleconvertedvanloadingmethod")
+  @@map("accessibleconvertedvanloadingmethod")
 }
 
 enum ApplicationType {
@@ -460,7 +460,7 @@ enum ApplicationType {
   RENEWAL
   REPLACEMENT
 
-   @@map("applicationtype")
+  @@map("applicationtype")
 }
 
 enum MobilityAid {
@@ -472,7 +472,7 @@ enum MobilityAid {
   CRUTCHES
   OTHERS
 
-   @@map("mobilityaid")
+  @@map("mobilityaid")
 }
 
 enum PatientCondition {
@@ -481,7 +481,7 @@ enum PatientCondition {
   CANNOT_WALK_100M
   OTHER
 
-   @@map("patientcondition")
+  @@map("patientcondition")
 }
 
 enum RequiresWiderParkingSpaceReason {
@@ -489,12 +489,12 @@ enum RequiresWiderParkingSpaceReason {
   MEDICAL_REASONS
   OTHER
 
-   @@map("requireswiderparkingspacereason")
+  @@map("requireswiderparkingspacereason")
 }
 
 enum ShopifyPaymentStatus {
   PENDING
   RECEIVED
 
-   @@map("shopifypaymentstatus")
+  @@map("shopifypaymentstatus")
 }

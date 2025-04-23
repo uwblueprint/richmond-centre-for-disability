@@ -48,7 +48,10 @@ jobs:
           - name: Install dependencies
             run: yarn install --frozen-lockfile
 
-          - name: Generate Prisma Client
+          - name: Remove node_modules/.prisma if it includes unsupported binaries
+            run: rm -rf node_modules/.prisma
+
+          - name: Generate Prisma Client for CI only
             run: yarn prisma generate
   
           - name: Linting Prettier
