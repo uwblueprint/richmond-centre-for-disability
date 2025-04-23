@@ -30,7 +30,18 @@ jobs:
 
           - name: Install Yarn 1.22.22 manually
             run: |
-              npm install -g yarn@1.22.22
+              npm install -g yarn@1.22.22      
+
+          - name: Install OpenSSL 1.1
+            run: |
+              sudo apt update
+              sudo apt install -y wget
+              wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl1.1/libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb
+              sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.22_amd64.deb
+              export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+              yarn prisma generate
+    
+
 
           - name: Get yarn cache directory path
             id: yarn-cache-dir-path
