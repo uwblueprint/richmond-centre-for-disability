@@ -47,14 +47,6 @@ jobs:
 
           - name: Install dependencies
             run: yarn install --frozen-lockfile
-
-          - name: Remove generated Prisma client
-            run: rm -rf node_modules/@prisma node_modules/.prisma
-
-          - name: Generate Prisma Client (avoid native in CI)
-            run: npx prisma generate --schema=prisma/schema.prisma
-            env:
-              PRISMA_CLI_BINARY_TARGETS: linux-musl
   
           - name: Linting Prettier
             run: yarn lint:prettier
