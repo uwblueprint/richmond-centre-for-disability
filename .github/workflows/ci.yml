@@ -28,6 +28,11 @@ jobs:
             with:
                 node-version: ${{ matrix.node }}
 
+          - name: Enable and pin Yarn version
+            run: |
+              corepack enable
+              corepack prepare yarn@1.22.22 --activate
+
           - name: Get yarn cache directory path
             id: yarn-cache-dir-path
             run: echo "dir=$(yarn cache dir)" >> $GITHUB_ENV

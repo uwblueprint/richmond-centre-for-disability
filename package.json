@@ -1,5 +1,6 @@
 {
   "name": "with-typescript",
+  "packageManager": "yarn@1.22.22",
   "version": "1.0.0",
   "engines": {
     "node": "14.17.0"
