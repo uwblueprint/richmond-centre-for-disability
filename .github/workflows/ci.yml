@@ -48,17 +48,9 @@ jobs:
           - name: Install dependencies
             run: yarn install --frozen-lockfile
 
-          - name: Environment diagnostics
-            run: |
-              node -v
-              yarn -v
-              yarn tsc --version
-              yarn eslint --version
-              uname -a
-              lsb_release -a || cat /etc/os-release
-              env | sort
-          
-
+          - name: Generate Prisma Client
+            run: yarn prisma generate
+  
           - name: Linting Prettier
             run: yarn lint:prettier
 
