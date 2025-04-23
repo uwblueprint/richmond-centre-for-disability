@@ -28,10 +28,9 @@ jobs:
             with:
                 node-version: ${{ matrix.node }}
 
-          - name: Enable and pin Yarn version
+          - name: Install Yarn 1.22.22 manually
             run: |
-              corepack enable
-              corepack prepare yarn@1.22.22 --activate
+              npm install -g yarn@1.22.22
 
           - name: Get yarn cache directory path
             id: yarn-cache-dir-path
