@@ -1,89 +1,57 @@
 name: ci
 
 on:
-  push:
-      branches:
-          - main
-          - staging
-  pull_request:
-      branches:
-          - main
-          - staging
+    push:
+        branches:
+            - main
+            - staging
+    pull_request:
+        branches:
+            - main
+            - staging
 
 jobs:
-  ci:
-      runs-on: ${{ matrix.os }}
+    ci:
+        runs-on: ${{ matrix.os }}
 
-      strategy:
-          matrix:
-              os: [ubuntu-22.04]
-              node: [14.17.0]
+        strategy:
+            matrix:
+                os: [ubuntu-20.04]
+                node: [14.17.0]
 
-      steps:
-          - name: Checkout
-            uses: actions/checkout@v4
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
 
-          - name: Setup node env
-            uses: actions/setup-node@v4
-            with:
-                node-version: ${{ matrix.node }}
+            - name: Setup node env
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node }}
 
-          - name: Install Yarn 1.22.22 manually
-            run: |
-              npm install -g yarn@1.22.22      
+            - name: Get yarn cache directory path
+              id: yarn-cache-dir-path
+              run: echo "dir=$(yarn cache dir)" >> $GITHUB_ENV
 
-          - name: Compile and Install OpenSSL 1.1.1k from Source
-            run: |
-              sudo apt update
-              sudo apt install -y build-essential checkinstall zlib1g-dev wget
-          
-              cd /usr/local/src
-              sudo wget https://www.openssl.org/source/openssl-1.1.1k.tar.gz
-              sudo tar -xf openssl-1.1.1k.tar.gz
-              cd openssl-1.1.1k
-          
-              sudo ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
-              sudo make -j$(nproc)
-              sudo make install
-          
-              # Add the new OpenSSL to the runtime library path
-              echo "/usr/local/ssl/lib" | sudo tee /etc/ld.so.conf.d/openssl-1.1.1k.conf
-              sudo ldconfig
-          
-              # Add to PATH for immediate use in CI session
-              echo "export PATH=/usr/local/ssl/bin:\$PATH" >> $GITHUB_ENV
-              echo "export LD_LIBRARY_PATH=/usr/local/ssl/lib" >> $GITHUB_ENV
+            - name: Cache node_modules
+              uses: actions/cache@v4
+              id: yarn-cache
+              with:
+                  path: ${{ env.dir }}
+                  key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-yarn-
 
-          - name: Get yarn cache directory path
-            id: yarn-cache-dir-path
-            run: echo "dir=$(yarn cache dir)" >> $GITHUB_ENV
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
 
-          - name: Cache node_modules
-            uses: actions/cache@v4
-            id: yarn-cache
-            with:
-                path: ${{ env.dir }}
-                key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-                restore-keys: |
-                    ${{ runner.os }}-yarn-
+            - name: Linting Prettier
+              run: yarn lint:prettier
 
-          - name: Install dependencies
-            run: yarn install --frozen-lockfile
+            - name: Linting ESlint
+              run: yarn lint:eslint
 
-          - name: Clean prisma engines + client
-            run: rm -rf node_modules/.prisma node_modules/@prisma
-          
-          - name: Regenerate Prisma Client (fresh)
-            run: yarn prisma generate
-                
-          - name: Linting Prettier
-            run: yarn lint:prettier
+            - name: Linting TypeScript
+              run: yarn lint:tsc
 
-          - name: Linting ESlint
-            run: yarn lint:eslint
-
-          - name: Linting TypeScript
-            run: yarn lint:tsc
-
-          - name: Build
-            run: yarn build
+            - name: Build
+              run: yarn build
