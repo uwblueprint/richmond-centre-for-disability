@@ -48,9 +48,6 @@ jobs:
           - name: Install dependencies
             run: yarn install --frozen-lockfile
 
-          - name: Remove node_modules/.prisma if it includes unsupported binaries
-            run: rm -rf node_modules/.prisma
-
           - name: Generate Prisma Client (avoid native in CI)
             run: npx prisma generate --schema=prisma/schema.prisma
             env:
