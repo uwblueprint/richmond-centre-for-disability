@@ -51,8 +51,10 @@ jobs:
           - name: Remove node_modules/.prisma if it includes unsupported binaries
             run: rm -rf node_modules/.prisma
 
-          - name: Generate Prisma Client for CI only
-            run: yarn prisma generate
+          - name: Generate Prisma Client (avoid native in CI)
+            run: npx prisma generate --schema=prisma/schema.prisma
+            env:
+              PRISMA_CLI_BINARY_TARGETS: linux-musl
   
           - name: Linting Prettier
             run: yarn lint:prettier
