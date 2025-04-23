@@ -72,9 +72,6 @@ jobs:
 
           - name: Remove generated Prisma client
             run: rm -rf node_modules/@prisma node_modules/.prisma
-
-          - name: Generate Prisma Client (avoid native in CI)
-            run: npx prisma generate --schema=prisma/schema.prisma
   
           - name: Linting Prettier
             run: yarn lint:prettier
