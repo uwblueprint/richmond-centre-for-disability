@@ -70,13 +70,11 @@ jobs:
           - name: Install dependencies
             run: yarn install --frozen-lockfile
 
-          - name: Remove generated Prisma client
-            run: rm -rf node_modules/@prisma node_modules/.prisma
-
-          - name: Generate Prisma Client
-            run: |
-              export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
-              yarn prisma generate
+          - name: Clean prisma engines + client
+            run: rm -rf node_modules/.prisma node_modules/@prisma
+          
+          - name: Regenerate Prisma Client (fresh)
+            run: yarn prisma generate
                 
           - name: Linting Prettier
             run: yarn lint:prettier
