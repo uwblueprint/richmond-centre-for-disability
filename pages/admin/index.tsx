@@ -29,7 +29,7 @@ import Table from '@components/Table'; // Table component
 import Pagination from '@components/Pagination'; // Pagination component
 import RequestStatusBadge from '@components/admin/RequestStatusBadge'; //Status badge component
 import { useQuery } from '@tools/hooks/graphql'; //Apollo client
-import { useEffect, useState } from 'react'; // React
+import { useEffect, useRef, useState, useMemo } from 'react'; // React
 import {
   ApplicationRow,
   GetApplicationsRequest,
@@ -46,27 +46,42 @@ import EmptyMessage from '@components/EmptyMessage';
 
 interface RouterQuery {
   tab?: string;
+  page?: number;
 }
 
-export const getTabIndex = (routerQuery: RouterQuery): number => {
-  if (routerQuery === undefined || routerQuery.tab === undefined) {
-    return 1;
+export const getTabPageIndex = (routerQuery: RouterQuery): [number, number] => {
+  if (
+    routerQuery === undefined ||
+    routerQuery.tab === undefined ||
+    routerQuery.page === undefined
+  ) {
+    return [1, 0];
   }
+
   const tabName = routerQuery.tab;
+  let tabIndex = 1;
+
   switch (tabName) {
     case 'ALL':
-      return 0;
+      tabIndex = 0;
+      break;
     case 'PENDING':
-      return 1;
+      tabIndex = 1;
+      break;
     case 'IN_PROGRESS':
-      return 2;
+      tabIndex = 2;
+      break;
     case 'COMPLETED':
-      return 3;
+      tabIndex = 3;
+      break;
     case 'REJECTED':
-      return 4;
+      tabIndex = 4;
+      break;
     default:
-      return 1;
+      tabIndex = 1;
   }
+
+  return [tabIndex, Number(routerQuery.page)];
 };
 
 const tabIndexToStatus: { [key: number]: ApplicationStatus | 'ALL' } = {
@@ -174,6 +189,19 @@ const Requests: NextPage = () => {
   // This will avoid firing a query for each key the user presses
   const debouncedSearchFilter = useDebounce<string>(searchFilter, 500);
 
+  const filters = useMemo(
+    () => ({
+      statusFilter,
+      permitTypeFilter,
+      requestTypeFilter,
+      searchFilter,
+      sortOrder,
+    }),
+    [statusFilter, permitTypeFilter, requestTypeFilter, searchFilter, sortOrder]
+  );
+
+  const debouncedFilters = useDebounce(filters, 500);
+
   // Data & pagination
   const [requestsData, setRequestsData] = useState<Array<ApplicationRow>>([]);
   const [pageNumber, setPageNumber] = useState(0);
@@ -181,16 +209,17 @@ const Requests: NextPage = () => {
 
   // Tabs
   const [tabIndex, setTabIndex] = useState(0);
-  const getTabFromRoute = (): number => {
-    const index = getTabIndex(routerQuery);
+  const getTabPageFromRoute = () => {
+    const [index, page] = getTabPageIndex(routerQuery);
     setTabIndex(index);
+    setPageNumber(page);
     return index;
   };
 
   const handleTabChange = () => {
     const status = tabIndexToStatus[tabIndex];
     setStatusFilter(status === 'ALL' ? null : status);
-    router.push({ query: { tab: status } });
+    router.push({ query: { tab: status, page: pageNumber } });
   };
 
   // Make query to applications resolver
@@ -239,9 +268,11 @@ const Requests: NextPage = () => {
     }
   );
 
+  const firstRender = useRef(true);
+
   // Determine the active tab on page load based on the route
   useEffect(() => {
-    getTabFromRoute();
+    getTabPageFromRoute();
   }, []);
 
   useEffect(() => {
@@ -251,9 +282,13 @@ const Requests: NextPage = () => {
 
   // Set page number to 0 after every filter or sort change
   useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return; // Skip resetting on first mount to allow resetting state
+    }
     setPageNumber(0);
     refetch();
-  }, [statusFilter, permitTypeFilter, requestTypeFilter, debouncedSearchFilter, sortOrder]);
+  }, debouncedFilters);
 
   return (
     <Layout>
@@ -291,6 +326,7 @@ const Requests: NextPage = () => {
             index={tabIndex}
             onChange={index => {
               setTabIndex(index);
+              setPageNumber(0);
             }}
           >
             <TabList paddingX="24px" defaultIndex={1}>
@@ -423,7 +459,9 @@ const Requests: NextPage = () => {
                   initialSort={sortOrder}
                   onChangeSortOrder={setSortOrder}
                   onRowClick={({ id }) =>
-                    router.push(`/admin/request/${id}?origin=${tabIndexToStatus[tabIndex]}`)
+                    router.push(
+                      `/admin/request/${id}?tab=${tabIndexToStatus[tabIndex]}&page=${pageNumber}`
+                    )
                   }
                 />
                 <Flex justifyContent="flex-end">
