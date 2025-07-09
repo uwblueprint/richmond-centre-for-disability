@@ -364,14 +364,16 @@ model WalletCard {
 enum ApplicantStatus {
   ACTIVE
   INACTIVE
-   @@map("applicantstatus")
+
+  @@map("applicantstatus")
 }
 
 enum Gender {
   MALE
   FEMALE
   OTHER
-   @@map("gender")
+
+  @@map("gender")
 }
 
 enum PaymentType {
@@ -383,13 +385,15 @@ enum PaymentType {
   CHEQUE
   DEBIT
   SHOPIFY
-   @@map("paymenttype")
+
+  @@map("paymenttype")
 }
 
 enum PhysicianStatus {
   ACTIVE
   INACTIVE
-   @@map("physicianstatus")
+
+  @@map("physicianstatus")
 }
 
 enum Province {
@@ -406,14 +410,16 @@ enum Province {
   NU
   NT
   YT
-   @@map("province")
+
+  @@map("province")
 }
 
 enum Role {
   ADMIN
   ACCOUNTING
   SECRETARY
-   @@map("role")
+
+  @@map("role")
 }
 
 enum ApplicationStatus {
@@ -421,7 +427,8 @@ enum ApplicationStatus {
   IN_PROGRESS
   REJECTED
   COMPLETED
-   @@map("applicationstatus")
+
+  @@map("applicationstatus")
 }
 
 enum ReasonForReplacement {
@@ -429,26 +436,30 @@ enum ReasonForReplacement {
   STOLEN
   OTHER
   MAIL_LOST
-   @@map("reasonforreplacement")
+
+  @@map("reasonforreplacement")
 }
 
 enum PermitType {
   PERMANENT
   TEMPORARY
-   @@map("permittype")
+
+  @@map("permittype")
 }
 
 enum AccessibleConvertedVanLoadingMethod {
   SIDE_LOADING
   END_LOADING
-   @@map("accessibleconvertedvanloadingmethod")
+
+  @@map("accessibleconvertedvanloadingmethod")
 }
 
 enum ApplicationType {
   NEW
   RENEWAL
   REPLACEMENT
-   @@map("applicationtype")
+
+  @@map("applicationtype")
 }
 
 enum MobilityAid {
@@ -459,7 +470,8 @@ enum MobilityAid {
   WALKER
   CRUTCHES
   OTHERS
-   @@map("mobilityaid")
+
+  @@map("mobilityaid")
 }
 
 enum PatientCondition {
@@ -467,18 +479,21 @@ enum PatientCondition {
   MOBILITY_AID_REQUIRED
   CANNOT_WALK_100M
   OTHER
-   @@map("patientcondition")
+
+  @@map("patientcondition")
 }
 
 enum RequiresWiderParkingSpaceReason {
   HAS_ACCESSIBLE_VAN
   MEDICAL_REASONS
   OTHER
-   @@map("requireswiderparkingspacereason")
+
+  @@map("requireswiderparkingspacereason")
 }
 
 enum ShopifyPaymentStatus {
   PENDING
   RECEIVED
-   @@map("shopifypaymentstatus")
+
+  @@map("shopifypaymentstatus")
 }
