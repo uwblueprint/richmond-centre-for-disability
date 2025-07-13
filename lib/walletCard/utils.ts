@@ -8,7 +8,7 @@ const walletCardPdfDefinition = (
   firstName: string,
   lastName: string,
   dateOfBirth: Date,
-  userId: number
+  userId: string
 ) => {
   const calculateTextWidth = (text: string, fontSize: number, averageCharacterWidth = 0.5) => {
     return fontSize * averageCharacterWidth * text.length;
@@ -86,11 +86,11 @@ const walletCardPdfDefinition = (
               { text: '\n\n', style: 'space' },
               { text: 'MoB:  ', style: 'subheader' },
               {
-                text: dateOfBirth.getFullYear() + '-' + pad2Dig(dateOfBirth.getDate()),
+                text: dateOfBirth.getFullYear() + '-' + pad2Dig(dateOfBirth.getMonth() + 1),
                 style: 'subheaderB',
               },
               { text: '    User #  ', style: 'subheader' },
-              { text: userId.toString(), style: 'subheaderB' },
+              { text: userId, style: 'subheaderB' },
             ],
             absolutePosition: { x: boxStartX + 10, y: boxStartY + 35 },
           },
@@ -143,6 +143,10 @@ const walletCardPdfDefinition = (
     images: {
       cardFront: 'public/assets/card-front.png',
     },
+    pageSize: {
+      width: 198, // 2.75 inches
+      height: 90, // 1.25 inches
+    },
   };
 };
 
@@ -152,7 +156,7 @@ export const generateWalletCardPDF = (
   firstName: string,
   lastName: string,
   dateOfBirth: Date,
-  userId: number
+  userId: string
 ): PDFKit.PDFDocument | null => {
   let pdfDoc = null;
   try {
