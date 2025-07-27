@@ -97,5 +97,8 @@
     "*.{ts,tsx}": "eslint --cache --fix",
     "*.{ts,tsx,md}": "prettier --write"
   },
+  "prisma": {
+    "seed": "yarn ts-node prisma/seed.ts"
+  },
   "license": "MIT"
 }
