@@ -1,6 +1,6 @@
 import { HStack, Text, IconButton, Input } from '@chakra-ui/react'; // Chakra UI
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'; // Chakra UI Icons
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {
   readonly pageSize: number; // Number of items per page
@@ -24,6 +24,10 @@ export default function Pagination(props: Props) {
   const upperBound = isLastPage ? totalCount : (pageNumber + 1) * pageSize; // Upper bound of current page (item #)
 
   const [inputValue, setInputValue] = useState<string | number>(pageNumber + 1); // Display page number as 1-based index
+
+  useEffect(() => {
+    setInputValue(pageNumber + 1);
+  }, [pageNumber]);
 
   /**
    * Go to the next page if possible, and invoke callback if defined
