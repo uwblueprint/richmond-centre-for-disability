@@ -10,10 +10,6 @@ const walletCardPdfDefinition = (
   dateOfBirth: Date,
   userId: string
 ) => {
-  const calculateTextWidth = (text: string, fontSize: number, averageCharacterWidth = 0.5) => {
-    return fontSize * averageCharacterWidth * text.length;
-  };
-
   const pad2Dig = (amount: number) => {
     if (amount < 10) {
       return '0' + amount.toString();
@@ -21,19 +17,11 @@ const walletCardPdfDefinition = (
     return amount.toString();
   };
 
-  // Pixel Constants
-  const MARGIN_TOP = 40;
-  const MARGIN_LEFT = 40;
+  // Pixel Constants for 2.75" x 1.25" wallet card
   const PTS_TO_INCH = 72;
-  const CARD_FRONT_HEIGHT = 2 * PTS_TO_INCH;
-  const CARD_FRONT_WIDTH = 3.5 * PTS_TO_INCH;
-  const CARD_BACK_HEIGHT = 1.5 * PTS_TO_INCH;
-  const CARD_BACK_WIDTH = 3 * PTS_TO_INCH;
-  const CARDS_SPACING = 50;
-  const HEADER_FONT_SIZE = 12;
-  const FOOTER_FONT_SIZE = 9;
-  const boxStartY = MARGIN_TOP + CARD_FRONT_HEIGHT + CARDS_SPACING;
-  const boxStartX = MARGIN_LEFT;
+  const CARD_WIDTH = 2.75 * PTS_TO_INCH; // 198 points
+  const CARD_HEIGHT = 1.25 * PTS_TO_INCH; // 90 points
+  const MARGIN = 4; // Small margin for content
 
   // Text
   const headerText = 'Richmond Centre For Disability';
@@ -41,112 +29,107 @@ const walletCardPdfDefinition = (
 
   return {
     content: [
+      // Card border
       {
-        image: 'cardFront',
-        width: CARD_FRONT_WIDTH,
-        height: CARD_FRONT_HEIGHT,
-      },
-      {
-        stack: [
+        canvas: [
           {
-            canvas: [
-              {
-                type: 'rect',
-                x: 0, // x position
-                y: 50, // y position
-                w: CARD_BACK_WIDTH, // width
-                h: CARD_BACK_HEIGHT, // height
-                r: 5, // Border radius
-                lineColor: 'black', // Border color
-                lineWidth: 1, // Border width
-              },
-            ],
-          },
-          {
-            text: [{ text: headerText, style: 'header' }],
-            absolutePosition: {
-              x:
-                boxStartX +
-                (CARD_BACK_WIDTH - calculateTextWidth(headerText, HEADER_FONT_SIZE)) / 2,
-              y: boxStartY + 14,
-            },
-          },
-          {
-            text: [
-              { text: 'Permit # ', style: 'subheader' },
-              { text: permitId.toString(), style: 'subheaderB' },
-              { text: '    Expiry:  ', style: 'subheader' },
-              {
-                text: permitExpiry.getFullYear() + '-' + pad2Dig(permitExpiry.getDate()),
-                style: 'subheaderB',
-              },
-              { text: '\n\n', style: 'space' },
-              { text: 'Name:  ', style: 'subheader' },
-              { text: firstName + ' ' + lastName, style: 'subheaderB' },
-              { text: '\n\n', style: 'space' },
-              { text: 'MoB:  ', style: 'subheader' },
-              {
-                text: dateOfBirth.getFullYear() + '-' + pad2Dig(dateOfBirth.getMonth() + 1),
-                style: 'subheaderB',
-              },
-              { text: '    User #  ', style: 'subheader' },
-              { text: userId, style: 'subheaderB' },
-            ],
-            absolutePosition: { x: boxStartX + 10, y: boxStartY + 35 },
-          },
-          {
-            text: [{ text: footerText, style: 'footer' }],
-            absolutePosition: {
-              x:
-                boxStartX +
-                (CARD_BACK_WIDTH - calculateTextWidth(footerText, FOOTER_FONT_SIZE)) / 2,
-              y: boxStartY + CARD_BACK_HEIGHT - FOOTER_FONT_SIZE - 10,
-            },
+            type: 'rect',
+            x: 1,
+            y: 1,
+            w: CARD_WIDTH - 2,
+            h: CARD_HEIGHT - 2,
+            r: 6,
+            color: 'white',
+            lineColor: 'black',
+            lineWidth: 1.5,
           },
         ],
+      },
+      // Header
+      {
+        text: headerText,
+        style: 'header',
+        absolutePosition: {
+          x: 0,
+          y: MARGIN + 3,
+        },
+        width: CARD_WIDTH,
+      },
+      // Permit information
+      {
+        text: [
+          { text: 'Permit # ', style: 'label' },
+          { text: permitId.toString(), style: 'value' },
+          { text: '    Expiry: ', style: 'label' },
+          {
+            text: permitExpiry.getFullYear() + '-' + pad2Dig(permitExpiry.getMonth() + 1),
+            style: 'value',
+          },
+        ],
+        absolutePosition: { x: MARGIN + 6, y: MARGIN + 20 },
+      },
+      // Name
+      {
+        text: [
+          { text: 'Name: ', style: 'label' },
+          { text: firstName + ' ' + lastName, style: 'value' },
+        ],
+        absolutePosition: { x: MARGIN + 6, y: MARGIN + 36 },
+      },
+      // Month of birth and User ID
+      {
+        text: [
+          { text: 'MoB: ', style: 'label' },
+          {
+            text: dateOfBirth.getFullYear() + '-' + pad2Dig(dateOfBirth.getMonth() + 1),
+            style: 'value',
+          },
+          { text: '    User # ', style: 'label' },
+          { text: userId, style: 'value' },
+        ],
+        absolutePosition: { x: MARGIN + 6, y: MARGIN + 52 },
+      },
+      // Footer
+      {
+        text: footerText,
+        style: 'footer',
+        absolutePosition: {
+          x: MARGIN,
+          y: CARD_HEIGHT - MARGIN - 11,
+        },
+        width: CARD_WIDTH - MARGIN * 2,
       },
     ],
     styles: {
       header: {
-        fontSize: HEADER_FONT_SIZE,
+        fontSize: 9,
         bold: true,
-        alignment: 'left',
+        alignment: 'center',
       },
-      subheader: {
-        fontSize: 10,
+      label: {
+        fontSize: 8,
         bold: false,
         alignment: 'left',
       },
-      subheaderB: {
-        fontSize: 10,
+      value: {
+        fontSize: 8,
         bold: true,
         alignment: 'left',
       },
       footer: {
-        fontSize: FOOTER_FONT_SIZE,
+        fontSize: 8,
         bold: false,
-        alignment: 'left',
-      },
-      space: {
-        fontSize: 9,
-        bold: false,
-        alignment: 'center',
-      },
-      tableHeader: {
-        bold: true,
         alignment: 'center',
       },
     },
     defaultStyle: {
       font: 'Helvetica',
     },
-    images: {
-      cardFront: 'public/assets/card-front.png',
-    },
     pageSize: {
-      width: 198, // 2.75 inches
-      height: 90, // 1.25 inches
+      width: CARD_WIDTH,
+      height: CARD_HEIGHT,
     },
+    pageMargins: [0, 0, 0, 0] as [number, number, number, number],
   };
 };
 
