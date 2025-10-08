@@ -288,7 +288,7 @@ const Requests: NextPage = () => {
     }
     setPageNumber(0);
     refetch();
-  }, debouncedFilters);
+  }, [debouncedFilters]);
 
   return (
     <Layout>
