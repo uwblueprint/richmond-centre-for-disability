@@ -143,7 +143,7 @@ export const refreshS3SignedUrl = (
   objectKey: string | null,
   s3SignedUrl: string | null,
   lastUpdatedTime: number
-) => {
+): string | null => {
   // Get the valid duration period from env.
   const linkDuration = parseInt(process.env.INVOICE_LINK_TTL_DAYS);
   const DAY = 24 * 60 * 60 * 1000;
