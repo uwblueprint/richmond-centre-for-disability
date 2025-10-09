@@ -59,34 +59,34 @@ ALTER TABLE "application_invoices" ADD CONSTRAINT "application_invoices_employee
 ALTER TABLE "wallet_card" ADD CONSTRAINT "wallet_card_employee_id_fkey" FOREIGN KEY ("employee_id") REFERENCES "employees"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- RenameIndex
-ALTER INDEX "applicants.guardian_id_unique" RENAME TO "applicants_guardian_id_key";
+ALTER INDEX IF EXISTS "applicants.guardian_id_unique" RENAME TO "applicants_guardian_id_key";
 
 -- RenameIndex
-ALTER INDEX "applicants.medical_information_id_unique" RENAME TO "applicants_medical_information_id_key";
+ALTER INDEX IF EXISTS "applicants.medical_information_id_unique" RENAME TO "applicants_medical_information_id_key";
 
 -- RenameIndex
-ALTER INDEX "application_processing.app_number_unique" RENAME TO "application_processing_app_number_key";
+ALTER INDEX IF EXISTS "application_processing.app_number_unique" RENAME TO "application_processing_app_number_key";
 
 -- RenameIndex
-ALTER INDEX "application_processing.invoice_number_unique" RENAME TO "application_processing_invoice_number_key";
+ALTER INDEX IF EXISTS "application_processing.invoice_number_unique" RENAME TO "application_processing_invoice_number_key";
 
 -- RenameIndex
-ALTER INDEX "application_processing.wallet_number_unique" RENAME TO "application_processing_wallet_number_key";
+ALTER INDEX IF EXISTS "application_processing.wallet_number_unique" RENAME TO "application_processing_wallet_number_key";
 
 -- RenameIndex
-ALTER INDEX "applications.application_processing_id_unique" RENAME TO "applications_application_processing_id_key";
+ALTER INDEX IF EXISTS "applications.application_processing_id_unique" RENAME TO "applications_application_processing_id_key";
 
 -- RenameIndex
-ALTER INDEX "applications.shopify_confirmation_number_unique" RENAME TO "applications_shopify_confirmation_number_key";
+ALTER INDEX IF EXISTS "applications.shopify_confirmation_number_unique" RENAME TO "applications_shopify_confirmation_number_key";
 
 -- RenameIndex
-ALTER INDEX "applications.shopify_order_number_unique" RENAME TO "applications_shopify_order_number_key";
+ALTER INDEX IF EXISTS "applications.shopify_order_number_unique" RENAME TO "applications_shopify_order_number_key";
 
 -- RenameIndex
-ALTER INDEX "employees.email_unique" RENAME TO "employees_email_key";
+ALTER INDEX IF EXISTS "employees.email_unique" RENAME TO "employees_email_key";
 
 -- RenameIndex
-ALTER INDEX "permits.application_id_unique" RENAME TO "permits_application_id_key";
+ALTER INDEX IF EXISTS "permits.application_id_unique" RENAME TO "permits_application_id_key";
 
 -- RenameIndex
-ALTER INDEX "verification_requests.token_unique" RENAME TO "verification_requests_token_key";
+ALTER INDEX IF EXISTS "verification_requests.token_unique" RENAME TO "verification_requests_token_key";
