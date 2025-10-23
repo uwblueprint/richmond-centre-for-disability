@@ -102,7 +102,10 @@ export default function RequestHeader({
     setBackLink(`/admin?tab=${status}&page=${page}`);
   };
 
-  const formatStatus = (status: string) => {
+  const formatStatus = (status: string | string[] | undefined) => {
+    if (typeof status != 'string') {
+      return '';
+    }
     if (status === 'ALL') {
       return '';
     }
