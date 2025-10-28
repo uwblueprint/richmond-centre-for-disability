@@ -1,32 +1,32 @@
 -- DropForeignKey
-ALTER TABLE "applicants" DROP CONSTRAINT "applicants_medical_information_id_fkey";
+ALTER TABLE "applicants" DROP CONSTRAINT IF EXISTS "applicants_medical_information_id_fkey";
 
 -- DropForeignKey
-ALTER TABLE "application_invoices" DROP CONSTRAINT "application_invoices_employee_id_fkey";
+ALTER TABLE "application_invoices" DROP CONSTRAINT IF EXISTS "application_invoices_employee_id_fkey";
 
 -- DropForeignKey
-ALTER TABLE "applications" DROP CONSTRAINT "applications_application_processing_id_fkey";
+ALTER TABLE "applications" DROP CONSTRAINT IF EXISTS "applications_application_processing_id_fkey";
 
 -- DropForeignKey
-ALTER TABLE "medical_information" DROP CONSTRAINT "medical_information_physician_msp_number_fkey";
+ALTER TABLE "medical_information" DROP CONSTRAINT IF EXISTS "medical_information_physician_msp_number_fkey";
 
 -- DropForeignKey
-ALTER TABLE "new_applications" DROP CONSTRAINT "new_applications_application_id_fkey";
+ALTER TABLE "new_applications" DROP CONSTRAINT IF EXISTS "new_applications_application_id_fkey";
 
 -- DropForeignKey
-ALTER TABLE "permits" DROP CONSTRAINT "permits_applicant_id_fkey";
+ALTER TABLE "permits" DROP CONSTRAINT IF EXISTS "permits_applicant_id_fkey";
 
 -- DropForeignKey
-ALTER TABLE "permits" DROP CONSTRAINT "permits_application_id_fkey";
+ALTER TABLE "permits" DROP CONSTRAINT IF EXISTS "permits_application_id_fkey";
 
 -- DropForeignKey
-ALTER TABLE "renewal_applications" DROP CONSTRAINT "renewal_applications_application_id_fkey";
+ALTER TABLE "renewal_applications" DROP CONSTRAINT IF EXISTS "renewal_applications_application_id_fkey";
 
 -- DropForeignKey
-ALTER TABLE "replacement_applications" DROP CONSTRAINT "replacement_applications_application_id_fkey";
+ALTER TABLE "replacement_applications" DROP CONSTRAINT IF EXISTS "replacement_applications_application_id_fkey";
 
 -- DropForeignKey
-ALTER TABLE "wallet_card" DROP CONSTRAINT "wallet_card_employee_id_fkey";
+ALTER TABLE "wallet_card" DROP CONSTRAINT IF EXISTS "wallet_card_employee_id_fkey";
 
 -- AddForeignKey
 ALTER TABLE "applicants" ADD CONSTRAINT "applicants_medical_information_id_fkey" FOREIGN KEY ("medical_information_id") REFERENCES "medical_information"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
