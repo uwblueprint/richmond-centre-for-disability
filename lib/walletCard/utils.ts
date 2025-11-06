@@ -100,6 +100,7 @@ const walletCardPdfDefinition = (
         width: CARD_WIDTH - MARGIN * 2,
       },
     ],
+    // Styles
     styles: {
       header: {
         fontSize: 9,
