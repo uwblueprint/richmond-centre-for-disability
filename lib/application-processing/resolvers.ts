@@ -782,7 +782,7 @@ export const completeApplication: Resolver<
             firstName,
             lastName,
             updatedApplicant.dateOfBirth,
-            id
+            id.toString()
           );
           if (!result || !result.ok) {
             logger.error({ error: 'Error creating Wallet Card PDF' });
@@ -1033,7 +1033,14 @@ export const createWalletCard = async (
     }
 
     const walletCardPdf = createdWalletCard
-      ? generateWalletCardPDF(permitId, permitExpiry, firstName, lastName, dateOfBirth, userId)
+      ? generateWalletCardPDF(
+          permitId,
+          permitExpiry,
+          firstName,
+          lastName,
+          dateOfBirth,
+          userId.toString()
+        )
       : null;
 
     if (walletCardPdf && createdWalletCard) {
