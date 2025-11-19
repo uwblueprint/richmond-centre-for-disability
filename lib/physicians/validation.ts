@@ -19,7 +19,7 @@ export const physicianAssessmentSchema = object({
     mixed<PatientCondition>()
       .oneOf(Object.values(PatientCondition))
       .required('Please select a condition')
-  ).required(),
+  ).min(1, 'Please select at least one condition'),
   otherPatientCondition: string()
     .nullable()
     .default(null)
