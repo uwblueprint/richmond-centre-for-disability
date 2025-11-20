@@ -72,7 +72,7 @@ yarn dev
 npx prisma migrate deploy
 ```
 
-4. Reset and seed database (ensure node is v14.17.0 or else it will stall)
+4. Reset and seed database (ensure node is v16.20.2 or else it will stall)
 
 ```bash
 npx prisma migrate reset
