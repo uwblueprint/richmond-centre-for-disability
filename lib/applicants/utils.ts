@@ -29,10 +29,19 @@ export const getActivePermit = async (applicantId: number): Promise<Permit | nul
  * @returns The most recent permit of the applicant
  */
 export const getMostRecentPermit = async (applicantId: number): Promise<Permit | null> => {
-  const permits = await prisma.applicant.findUnique({ where: { id: applicantId } }).permits({
-    orderBy: { createdAt: SortOrder.DESC },
-    take: 1,
-  });
+  const permit = await prisma.applicant
+    .findUnique({
+      where: { id: applicantId },
+    })
+    .permits({
+      where: { active: true },
+      orderBy: [{ expiryDate: SortOrder.DESC }, { createdAt: SortOrder.DESC }],
+      take: 1,
+    });
 
-  return permits[0] ?? null;
+  if (permit.length === 0) {
+    return null;
+  }
+
+  return permit[0];
 };
