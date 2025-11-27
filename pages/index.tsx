@@ -22,17 +22,17 @@ export default function Landing() {
 
   return (
     <Layout>
-      {Date.now() < new Date('2026-01-01T00:00:00.000Z').getTime() && (
+      {Date.now() < new Date('2026-01-05T00:00:00.000Z').getTime() && (
         <GridItem colSpan={12} colStart={1}>
           <Alert status="warning" variant="top-accent">
             <AlertIcon />
             <AlertDescription>
-              Please note that the RCD office will be closed between Dec 18 and Jan 1 and will
-              resume regular business hours on Jan 2. We will process applications received during
-              the holidays, but all other services will be unavailable. Additionally, please be
-              aware that the processing fee for online renewals will increase from $31 to $33
-              effective Jan 1; applications received before Jan 1 will be charged $31. We apologize
-              for any inconvenience.
+              RCD will be closed for the holidays between Dec 20, 2025 - Jan 4, 2026. We will not be
+              accepting or processing any permit applications at this time, but you may continue to
+              submit online permit requests and renewals. Additionally, please be aware that the
+              processing fee for online renewals will increase from $31 to $33 effective Jan 1;
+              applications received before Jan 1 will be charged $31. We apologize for any
+              inconvenience.
             </AlertDescription>
           </Alert>
         </GridItem>
