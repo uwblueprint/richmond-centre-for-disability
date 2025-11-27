@@ -400,7 +400,7 @@ export const completeApplication: Resolver<
             firstName,
             lastName,
             dateOfBirth,
-            id
+            applicantId.toString()
           );
           if (!result || !result.ok) {
             logger.error({ error: 'Error creating Wallet Card PDF' });
@@ -465,14 +465,29 @@ export const completeApplication: Resolver<
           },
         });
 
-        const [upsertedPhysician, createdPermit, completedApplicationProcessing] =
-          await prisma.$transaction([
-            upsertPhysicianOperation,
-            createPermitOperation,
-            completeApplicationOperation,
-          ]);
+        const queryApplicationOperation = prisma.application.findUnique({
+          where: { id },
+          include: { applicationProcessing: true },
+        });
 
-        if (!upsertedPhysician || !createdPermit || !completedApplicationProcessing) {
+        const [
+          upsertedPhysician,
+          createdPermit,
+          completedApplicationProcessing,
+          queriedApplication,
+        ] = await prisma.$transaction([
+          upsertPhysicianOperation,
+          createPermitOperation,
+          completeApplicationOperation,
+          queryApplicationOperation,
+        ]);
+
+        if (
+          !upsertedPhysician ||
+          !createdPermit ||
+          !completedApplicationProcessing ||
+          !queriedApplication
+        ) {
           const message = 'Error completing application';
           logger.error({ error: message });
           throw new ApolloError(message);
@@ -499,7 +514,7 @@ export const completeApplication: Resolver<
               firstName,
               lastName,
               dateOfBirth,
-              id
+              queriedApplication?.applicantId?.toString() ?? 'N/A'
             );
             if (!result || !result.ok) {
               logger.error({ error: 'Error creating Wallet Card PDF' });
@@ -644,7 +659,7 @@ export const completeApplication: Resolver<
             firstName,
             lastName,
             updatedApplicant.dateOfBirth,
-            id
+            applicantId.toString()
           );
           if (!result || !result.ok) {
             logger.error({ error: 'Error creating Wallet Card PDF' });
@@ -767,7 +782,7 @@ export const completeApplication: Resolver<
             firstName,
             lastName,
             updatedApplicant.dateOfBirth,
-            id
+            applicantId.toString()
           );
           if (!result || !result.ok) {
             logger.error({ error: 'Error creating Wallet Card PDF' });
@@ -1018,7 +1033,14 @@ export const createWalletCard = async (
     }
 
     const walletCardPdf = createdWalletCard
-      ? generateWalletCardPDF(permitId, permitExpiry, firstName, lastName, dateOfBirth, userId)
+      ? generateWalletCardPDF(
+          permitId,
+          permitExpiry,
+          firstName,
+          lastName,
+          dateOfBirth,
+          userId.toString()
+        )
       : null;
 
     if (walletCardPdf && createdWalletCard) {
