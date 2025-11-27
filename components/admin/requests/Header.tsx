@@ -93,14 +93,10 @@ export default function RequestHeader({
 
   const [backLink, setBackLink] = useState('/admin');
   const generateBackLink = () => {
-    let status;
     const routerQuery = router.query;
-    if (routerQuery === undefined || routerQuery.origin === undefined) {
-      status = applicationStatus;
-    } else {
-      status = routerQuery.origin;
-    }
-    setBackLink(`/admin?tab=${status}`);
+    const status = typeof routerQuery.tab === 'string' ? routerQuery.tab : applicationStatus;
+    const page = typeof routerQuery.page === 'string' ? routerQuery.page : '0';
+    setBackLink(`/admin?tab=${status}&page=${page}`);
   };
 
   useEffect(() => {
