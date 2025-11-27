@@ -31,7 +31,7 @@ export const createWalletCardPDF = async (
   firstName: string,
   lastName: string,
   dateOfBirth: Date,
-  userId: number
+  userId: string
 ): Promise<{ ok: boolean; error?: any }> => {
   const walletCardPdf = createdWalletCard
     ? generateWalletCardPDF(permitId, permitExpiry, firstName, lastName, dateOfBirth, userId)
