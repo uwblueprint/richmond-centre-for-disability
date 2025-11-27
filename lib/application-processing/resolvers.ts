@@ -782,7 +782,7 @@ export const completeApplication: Resolver<
             firstName,
             lastName,
             updatedApplicant.dateOfBirth,
-            id.toString()
+            applicantId.toString()
           );
           if (!result || !result.ok) {
             logger.error({ error: 'Error creating Wallet Card PDF' });
