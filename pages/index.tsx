@@ -27,12 +27,8 @@ export default function Landing() {
           <Alert status="warning" variant="top-accent">
             <AlertIcon />
             <AlertDescription>
-              RCD will be closed for the holidays between Dec 20, 2025 - Jan 4, 2026. We will not be
-              accepting or processing any permit applications at this time, but you may continue to
-              submit online permit requests and renewals. Additionally, please be aware that the
-              processing fee for online renewals will increase from $31 to $33 effective Jan 1;
-              applications received before Jan 1 will be charged $31. We apologize for any
-              inconvenience.
+              Please be aware that the processing fee for online renewals will increase from $31 to
+              $33 effective Jan 1; applications received before Jan 1 will be charged $31.
             </AlertDescription>
           </Alert>
         </GridItem>
