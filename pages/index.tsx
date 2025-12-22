@@ -10,6 +10,9 @@ import {
   ListItem,
   Button,
   VStack,
+  Alert,
+  AlertIcon,
+  AlertDescription,
 } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/applicant/Layout'; // Layout wrapper
 import FAQs from '@components/applicant/FAQs';
@@ -19,6 +22,20 @@ export default function Landing() {
 
   return (
     <Layout>
+      {Date.now() < new Date('2026-01-10T00:00:00.000Z').getTime() && (
+        <GridItem colSpan={12} colStart={1}>
+          <Alert status="warning" variant="top-accent">
+            <AlertIcon />
+            <AlertDescription textAlign="left">
+              Due to increased operational and postage expenses, RCD will implement a $33 parking
+              permit processing fee starting January 1, 2026. All applications received on or after
+              January 1st, 2026, will be processed at $33, including all permanent and temporary
+              permits (regardless of the signed date or postage date stamp). Thank you for your
+              understanding and continued support!
+            </AlertDescription>
+          </Alert>
+        </GridItem>
+      )}
       <GridItem colSpan={12} colStart={1}>
         <Text as="h1" textStyle={{ sm: 'display-large', md: 'display-xlarge' }} align="left">
           {t('landing')}
@@ -65,7 +82,10 @@ export default function Landing() {
                 <Text as="p">Provide your date of birth</Text>
               </ListItem>
               <ListItem textAlign="left" textStyle="body-regular">
-                <Text as="p">Complete the online form and pay a $31 processing fee</Text>
+                <Text as="p">
+                  Complete the online form and pay the processing fee — $31 for submissions received
+                  before Jan 1; $33 for submissions on or after Jan 1.
+                </Text>
               </ListItem>
             </UnorderedList>
           </Box>
