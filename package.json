@@ -8,7 +8,7 @@
     "dev": "next",
     "dev:pretty": "next | pino-pretty",
     "build": "next build",
-    "start": "prisma migrate deploy && prisma generate && node --optimize_for_size --max_old_space_size=460 node_modules/next/dist/bin/next start -p $PORT",
+    "start": "prisma migrate deploy && prisma generate && next start -p $PORT",
     "type-check": "tsc",
     "generate-graphql-types": "node ./lib/scripts/generate-graphql-types.js",
     "reset-db": "sh lib/scripts/reset-db.sh",
