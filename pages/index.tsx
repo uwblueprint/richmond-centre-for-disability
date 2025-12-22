@@ -22,13 +22,16 @@ export default function Landing() {
 
   return (
     <Layout>
-      {Date.now() < new Date('2026-01-05T00:00:00.000Z').getTime() && (
+      {Date.now() < new Date('2026-01-10T00:00:00.000Z').getTime() && (
         <GridItem colSpan={12} colStart={1}>
           <Alert status="warning" variant="top-accent">
             <AlertIcon />
-            <AlertDescription>
-              Please be aware that the processing fee for online renewals will increase from $31 to
-              $33 effective Jan 1; applications received before Jan 1 will be charged $31.
+            <AlertDescription textAlign="left">
+              Due to increased operational and postage expenses, RCD will implement a $33 parking
+              permit processing fee starting January 1, 2026. All applications received on or after
+              January 1st, 2026, will be processed at $33, including all permanent and temporary
+              permits (regardless of the signed date or postage date stamp). Thank you for your
+              understanding and continued support!
             </AlertDescription>
           </Alert>
         </GridItem>
