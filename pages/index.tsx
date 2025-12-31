@@ -82,10 +82,7 @@ export default function Landing() {
                 <Text as="p">Provide your date of birth</Text>
               </ListItem>
               <ListItem textAlign="left" textStyle="body-regular">
-                <Text as="p">
-                  Complete the online form and pay the processing fee — $31 for submissions received
-                  before Jan 1; $33 for submissions on or after Jan 1.
-                </Text>
+                <Text as="p">Complete the online form and pay a $33 processing fee</Text>
               </ListItem>
             </UnorderedList>
           </Box>

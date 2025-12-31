@@ -40,7 +40,7 @@ export default function ReasonForReplacementForm({
             <Radio
               value={'LOST'}
               onChange={() => {
-                setFieldValue('paymentInformation.processingFee', '31');
+                setFieldValue('paymentInformation.processingFee', '33');
               }}
             >
               {'Lost'}
@@ -48,7 +48,7 @@ export default function ReasonForReplacementForm({
             <Radio
               value={'STOLEN'}
               onChange={() => {
-                setFieldValue('paymentInformation.processingFee', '31');
+                setFieldValue('paymentInformation.processingFee', '33');
               }}
             >
               {'Stolen'}

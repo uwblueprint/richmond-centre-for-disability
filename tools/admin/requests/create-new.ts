@@ -194,7 +194,7 @@ export const INITIAL_ADDITIONAL_QUESTIONS: AdditionalInformationFormData = {
 // Initial data for payment details in application forms
 export const INITIAL_PAYMENT_DETAILS: PaymentInformationFormData = {
   paymentMethod: null,
-  processingFee: '31',
+  processingFee: '33',
   donationAmount: '',
   secondPaymentMethod: null,
   secondProcessingFee: null,
