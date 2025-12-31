@@ -13,7 +13,7 @@ import logger from '@lib/utils/logging';
  * Example request body:
     * {
     *  id: '4646400131094',
-    *  total_tip_received: '31.00',
+    *  total_tip_received: '33.00',
     *  order_id: '8',
     *  billing_address: {
     *   address1: '165 University Avenue West',
