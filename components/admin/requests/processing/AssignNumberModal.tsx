@@ -18,6 +18,7 @@ import {
 import { useState, ReactNode } from 'react'; // React
 import { formatNumberInput } from '@lib/utils/format';
 
+const MAX_APP_NUMBER = 2147483647;
 type AssignNumberModalProps = {
   readonly onAssign: (num: number) => void;
   readonly modalTitle: string;
@@ -44,13 +45,19 @@ export default function AssignNumberModal({
   const [formError, setFormError] = useState('');
 
   const validateSave = () => {
-    setFormError('');
-    const value = parseInt(formValue);
-    if (isNaN(value)) {
-      setFormError('Please enter a valid number');
-    } else {
-      onAssign(value);
+    const value = Number(formValue);
+    if (!Number.isInteger(value)) {
+      setFormError('Please enter a whole number');
+      return;
     }
+    if (Math.abs(value) > MAX_APP_NUMBER) {
+      const errorMsg = `APP number must be ${MAX_APP_NUMBER} or less`;
+      setFormError(errorMsg);
+      return;
+    }
+
+    setFormError('');
+    onAssign(value);
     onClose();
   };
 
@@ -63,11 +70,13 @@ export default function AssignNumberModal({
         <ModalContent>
           <ModalHeader>{modalTitle}</ModalHeader>
           <ModalBody>
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={!!formError}>
               <FormLabel>{fieldName}</FormLabel>
               <NumberInput
                 type="number"
                 value={formValue}
+                clampValueOnBlur={false}
+                keepWithinRange={false}
                 onChange={valueString => setFormValue(formatNumberInput(valueString))}
               >
                 <NumberInputField />
