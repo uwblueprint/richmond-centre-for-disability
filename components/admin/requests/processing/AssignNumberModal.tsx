@@ -19,6 +19,7 @@ import { useState, ReactNode } from 'react'; // React
 import { formatNumberInput } from '@lib/utils/format';
 
 const MAX_APP_NUMBER = 2147483647;
+const MIN_APP_NUMBER = 0;
 type AssignNumberModalProps = {
   readonly onAssign: (num: number) => void;
   readonly modalTitle: string;
@@ -50,7 +51,11 @@ export default function AssignNumberModal({
       setFormError('Please enter a whole number');
       return;
     }
-    if (Math.abs(value) > MAX_APP_NUMBER) {
+    if (value < MIN_APP_NUMBER) {
+      setFormError(`APP number must be ${MIN_APP_NUMBER} or greater`);
+      return;
+    }
+    if (value > MAX_APP_NUMBER) {
       const errorMsg = `APP number must be ${MAX_APP_NUMBER} or less`;
       setFormError(errorMsg);
       return;
@@ -75,6 +80,8 @@ export default function AssignNumberModal({
               <NumberInput
                 type="number"
                 value={formValue}
+                min={MIN_APP_NUMBER}
+                max={MAX_APP_NUMBER}
                 clampValueOnBlur={false}
                 keepWithinRange={false}
                 onChange={valueString => setFormValue(formatNumberInput(valueString))}
