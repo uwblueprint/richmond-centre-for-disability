@@ -7,7 +7,7 @@ import { appWithTranslation } from 'next-i18next'; // HOC for adding translation
 import { Provider } from 'next-auth/client'; // Next Auth provider
 import { useState } from 'react';
 import RenewalFlow from '@containers/RenewalFlow'; // Renewal flow state
-import '../sentry.client.config.ts'; // Sentry Client
+import '@/sentry.client.config'; // Sentry Client
 
 import theme from '@tools/theme'; // Design system theme config
 import '@fontsource/noto-sans/400.css'; // Noto sans normal
