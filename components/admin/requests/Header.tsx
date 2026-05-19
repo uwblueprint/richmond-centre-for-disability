@@ -92,11 +92,24 @@ export default function RequestHeader({
   const router = useRouter();
 
   const [backLink, setBackLink] = useState('/admin');
+  const [status, setStatus] = useState(router.query.tab);
+  const [page, setPage] = useState(router.query.page);
+
   const generateBackLink = () => {
     const routerQuery = router.query;
-    const status = typeof routerQuery.tab === 'string' ? routerQuery.tab : applicationStatus;
-    const page = typeof routerQuery.page === 'string' ? routerQuery.page : '0';
+    typeof routerQuery.tab === 'string' ? setStatus(routerQuery.tab) : setStatus(applicationStatus);
+    typeof routerQuery.page === 'string' ? setPage(routerQuery.page) : setPage('0');
     setBackLink(`/admin?tab=${status}&page=${page}`);
+  };
+
+  const formatStatus = (status: string | string[] | undefined) => {
+    if (typeof status != 'string') {
+      return '';
+    }
+    if (status === 'ALL') {
+      return '';
+    }
+    return status.toLowerCase().replace('_', ' ');
   };
 
   useEffect(() => {
@@ -115,7 +128,7 @@ export default function RequestHeader({
       <NextLink href={backLink} passHref>
         <Text textStyle="button-semibold" textColor="primary" as="a">
           <ChevronLeftIcon />
-          All requests
+          All {formatStatus(status)} requests
         </Text>
       </NextLink>
 
