@@ -5,11 +5,4 @@ const nextConfig = {
   i18n,
 };
 
-module.exports = withSentryConfig(
-  nextConfig,
-  { silent: true } // Sentry options
-);
-
-module.exports = {
-  i18n,
-};
+module.exports = withSentryConfig(nextConfig, { silent: true });
