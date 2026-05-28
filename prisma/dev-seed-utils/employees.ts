@@ -139,6 +139,11 @@ const employees = [
     lastName: 'Fu',
     email: 'jjacobfu+employee@gmail.com',
   },
+  {
+    firstName: 'Grace',
+    lastName: 'Lee',
+    email: 'jaeeungracelee+employee@gmail.com',
+  },
 ];
 
 /**
