@@ -8,7 +8,8 @@ import { FC, useMemo } from 'react';
 import Header from '@components/admin/permit-holders/current-application/Card/Header';
 import AttachedFilesSection from '@components/admin/permit-holders/current-application/Card/AttachedFilesSection';
 import MedicalInformationSection from '@components/admin/permit-holders/current-application/Card/MedicalInformationSection';
-import AdditionalInformationSection from '@components/admin/permit-holders/current-application/Card/AdditionalInformationSection';
+// HIDDEN [RCD] Remove Additional Information Section:
+// import AdditionalInformationSection from '@components/admin/permit-holders/current-application/Card/AdditionalInformationSection';
 
 type Props = {
   readonly application: CurrentApplication;
@@ -52,9 +53,11 @@ const CurrentApplicationCard: FC<Props> = ({ application, applicantMedicalInform
       <VStack width="100%" align="stretch" spacing="24px">
         <AttachedFilesSection application={application} />
         <MedicalInformationSection medicalInformation={medicalInformation} />
+        {/* HIDDEN [RCD] Remove Additional Information Section:
         {(type === 'NEW' || type === 'RENEWAL') && (
           <AdditionalInformationSection application={application} />
         )}
+        */}
       </VStack>
     </PermitHolderInfoCard>
   );

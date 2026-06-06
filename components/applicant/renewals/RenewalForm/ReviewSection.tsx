@@ -9,8 +9,9 @@ import {
 } from '@lib/utils/format';
 import { FC } from 'react';
 import ReviewRequestField from '@components/applicant/renewals/RenewalForm/ReviewRequestField';
-import { titlecase } from '@tools/string';
-import { RequiresWiderParkingSpaceReason } from '@lib/graphql/types';
+// HIDDEN [RCD] Remove Additional Information Section:
+// import { titlecase } from '@tools/string';
+// import { RequiresWiderParkingSpaceReason } from '@lib/graphql/types';
 
 const ReviewSection: FC = () => {
   const { goToStep } = RenewalFlow.useContainer();
@@ -21,7 +22,8 @@ const ReviewSection: FC = () => {
     personalAddressInformation,
     contactInformation,
     doctorInformation,
-    additionalInformation,
+    // HIDDEN [RCD] Remove Additional Information Section:
+    // additionalInformation,
     donationAmount,
   } = RenewalForm.useContainer();
 
@@ -151,7 +153,7 @@ const ReviewSection: FC = () => {
       </VStack>
       <Divider />
 
-      {/* Additional information section */}
+      {/* HIDDEN [RCD] Remove Additional Information Section:
       <VStack align="flex-start">
         <Flex minWidth={{ md: '640px' }} justifyContent="space-between">
           <Text as="h3" textStyle="heading">{`Additional Information`}</Text>
@@ -204,14 +206,18 @@ const ReviewSection: FC = () => {
         </VStack>
       </VStack>
       <Divider />
+      */}
 
       {/* Donation section */}
+      {/* HIDDEN [RCD] Remove Additional Information Section: donation step
+          shifted from index 4 to 3 because Additional Information step is
+          hidden. */}
       <VStack align="flex-start">
         <Flex minWidth={{ md: '640px' }} justifyContent="space-between">
           <Text as="h3" textStyle="heading">{`Donation`}</Text>
           <Button
             variant="outline"
-            onClick={() => goToStep(4)}
+            onClick={() => goToStep(3)}
             display={{ sm: 'none', md: 'initial' }}
           >{`Edit`}</Button>
         </Flex>
@@ -220,7 +226,7 @@ const ReviewSection: FC = () => {
         </VStack>
         <Button
           variant="outline"
-          onClick={() => goToStep(4)}
+          onClick={() => goToStep(3)}
           display={{ md: 'none' }}
         >{`Edit`}</Button>
       </VStack>
