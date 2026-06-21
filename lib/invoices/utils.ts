@@ -433,7 +433,7 @@ const donationPdfDefinition = (input: {
     footer: function (currentPage: number, pageCount: number) {
       return currentPage == pageCount
         ? {
-            text: `For information on all registered charities in Canada under the Income Tax Act please contact: Canada Revenue Agency www.cra.gc.ca/charities-giving `,
+            text: `For information on all registered charities in Canada under the Income Tax Act please contact: Canada Revenue Agency canada.ca/charities-giving `,
             style: 'footer',
           }
         : null;
@@ -451,14 +451,14 @@ const donationPdfDefinition = (input: {
     }).content.concat([
       {
         pageBreak: 'before',
-        text: [
-          { text: 'RICHMOND CENTRE FOR DISABILITY', style: 'header' },
-          '\n',
-          {
-            text: `Official Donation Receipt for Income Tax Purposes - ${dateIssued.getFullYear()}`,
-            style: 'subheader',
-          },
-        ],
+        image: 'logoNew',
+        width: 450,
+        alignment: 'center',
+        margin: [0, 0, 0, 10],
+      },
+      {
+        text: `Official Donation Receipt for Income Tax Purposes - ${dateIssued.getFullYear()}`,
+        style: 'subheader',
       },
 
       {
@@ -527,7 +527,7 @@ const donationPdfDefinition = (input: {
                 ],
                 [{ text: 'Value of Product / Services:\n\n' }, ''],
                 [
-                  { text: 'Eligible Amount of Donation for Tax Purposes:' },
+                  { text: 'Eligible Amount of Gift for Tax Purposes:' },
                   `$${donationAmount.plus(secondDonationAmount || 0).toString()}`,
                 ],
                 [{ text: '' }, ''],
@@ -540,7 +540,7 @@ const donationPdfDefinition = (input: {
                       'Address of Appraiser:\n\n',
                     ],
                   },
-                  { image: 'stamp', width: 80 },
+                  '',
                 ],
               ],
             },
@@ -553,18 +553,14 @@ const donationPdfDefinition = (input: {
       {
         text: [
           `Dear ${applicantName}\n\n\n`,
-          'On behalf of the Richmond Centre for Disability (RCD), we would like to extend our sincere and\n',
-          'heartfelt thanks and appreciation for your donation. Please find your official tax receipt enclosed.\n\n',
-          'Through RCD services and support, we have seen the lives of people with disabilities and their\n',
-          'families changed for the better. Your generosity does make a difference in the delivery of much\n',
-          'coveted services to people with disabilities. The work being undertaken through the RCD is only\n',
-          'possible because of caring people like you.\n\n\n',
-          'Thank you again for your valued support.\n\n\n',
+          'On behalf of the Richmond Centre for disABILITY (RCD), we wish to express our sincerest thanks and appreciation for your generous support. Please find enclosed your official tax receipt.\n\n',
+          "Your generosity ensures our vital programs remain available, enabling persons with a disability to live and work independently, make informed choices, and achieve full inclusion in our community. By supporting RCD, you are helping to provide the tools, training, and programs that lead to real, lasting change in someone's life.\n\n",
+          'Thank you for being part of our community. Your support is impactful and meaningful to all the people with disabilities that we serve.\n\n\n',
           'Sincerely,\n\n\n',
           'RICHMOND CENTRE FOR DISABILITY\n',
           '(Charity Number: 88832-8432-RR0001)\n',
-          '#968 - 5300 No. 3 Road\n',
-          'Richmond, BC V6x 2X9\n',
+          '#150 - 5520 McNaughton Rd.\n',
+          'Richmond, BC V6X 0X8\n',
           'Tel: 604-232-2404\n',
           'Website:www.rcdrichmond.org\n',
         ],
@@ -598,6 +594,7 @@ const donationPdfDefinition = (input: {
     },
     images: {
       rcd: 'public/assets/logo.png',
+      logoNew: 'public/assets/logo-new.jpg',
       signature: 'public/assets/signature.png',
       stamp: 'public/assets/stamp.png',
     },
