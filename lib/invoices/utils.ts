@@ -153,7 +153,8 @@ const applicationPdfDefinition = (input: {
       {
         columns: [
           {
-            image: 'rcd',
+            image: 'logoVertical',
+            width: 50,
           },
           {
             text: [
@@ -161,7 +162,7 @@ const applicationPdfDefinition = (input: {
               '\n\n',
               { text: 'Accessible Parking Permit Receipt', style: 'subheader' },
             ],
-            margin: [-200, 0, 0, 0],
+            margin: [0, 10, 0, 0],
           },
         ],
       },
@@ -222,7 +223,7 @@ const applicationPdfDefinition = (input: {
       {
         text: [
           'Tel: 604-232-2404, Fax: 604-232-2415 Web: www.rcdrichmond.org\n',
-          '#968 - 5300, No.3 RD Lansdowne Centre Richmond BC V6X 2X9',
+          '#150 - 5520 McNaughton Rd., Richmond, BC V6X 0X8',
         ],
         alignment: 'center',
         margin: [0, 15, 0, 0],
@@ -259,7 +260,7 @@ const applicationPdfDefinition = (input: {
       font: 'Helvetica',
     },
     images: {
-      rcd: 'public/assets/logo.png',
+      logoVertical: 'public/assets/logo-vertical.jpg',
     },
   };
 };
@@ -595,10 +596,9 @@ const donationPdfDefinition = (input: {
       lineHeight: 1.2,
     },
     images: {
-      rcd: 'public/assets/logo.png',
       logoNew: 'public/assets/logo-new.jpg',
+      logoVertical: 'public/assets/logo-vertical.jpg',
       signature: 'public/assets/signature.png',
-      stamp: 'public/assets/stamp.png',
     },
   };
 };
