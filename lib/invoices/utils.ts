@@ -2,7 +2,7 @@ import pdfPrinter from 'pdfmake';
 import { Application, Prisma } from '@prisma/client';
 import { Session } from 'next-auth';
 import { formatFullName, formatPostalCode } from '@lib/utils/format';
-import { formatDateYYYYMMDD } from '@lib/utils/date'; // Date formatter util
+import { formatDateYYYYMMDDLocalTimezone } from '@lib/utils/date'; // Date formatter util
 import { PaymentType } from '@lib/graphql/types';
 
 /**
@@ -173,7 +173,10 @@ const applicationPdfDefinition = (input: {
             [{ text: 'User No.:', alignment: 'right' }, userNumber || 'N/A'],
             [{ text: 'Permit Type:', alignment: 'right' }, permitType],
             [{ text: 'Receipt No.:', alignment: 'right' }, receiptNumber],
-            [{ text: 'Date Issued:', alignment: 'right' }, formatDateYYYYMMDD(dateIssued)],
+            [
+              { text: 'Date Issued:', alignment: 'right' },
+              formatDateYYYYMMDDLocalTimezone(dateIssued),
+            ],
             [{ text: 'Issued By:', alignment: 'right' }, issuedBy],
           ],
         },
@@ -503,7 +506,7 @@ const donationPdfDefinition = (input: {
                 table: {
                   heights: 18,
                   body: [
-                    [{ text: 'Date Receipt Issued:' }, formatDateYYYYMMDD(dateIssued)],
+                    [{ text: 'Date Receipt Issued:' }, formatDateYYYYMMDDLocalTimezone(dateIssued)],
                     [{ text: 'Location Receipt Issued:' }, 'Richmond, BC'],
                   ],
                 },
@@ -519,7 +522,10 @@ const donationPdfDefinition = (input: {
             table: {
               heights: 18,
               body: [
-                [{ text: 'Date Donation Received:' }, formatDateYYYYMMDD(dateDonationRecevied)],
+                [
+                  { text: 'Date Donation Received:' },
+                  formatDateYYYYMMDDLocalTimezone(dateDonationRecevied),
+                ],
                 [{ text: 'Donor Number:' }, `P${appNumber}`],
                 [
                   { text: 'Total Amount:' },

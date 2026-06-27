@@ -20,6 +20,7 @@ import {
   formatDateTimeYYYYMMDDHHMMSS,
   formatDateYYYYMMDD,
   formatDateYYYYMMDDLocal,
+  formatDateYYYYMMDDLocalTimezone,
 } from '@lib/utils/date'; // Formatting utils
 import { APPLICATIONS_COLUMNS, PERMIT_HOLDERS_COLUMNS } from '@tools/admin/reports';
 import { Prisma } from '@prisma/client';
@@ -317,11 +318,11 @@ export const generateApplicationsReport: Resolver<
         )}`,
         invoiceReceiptNumber:
           createdAt && invoiceNumber
-            ? `${formatDateYYYYMMDD(createdAt).replace(/-/g, '')}-${invoiceNumber}`
+            ? `${formatDateYYYYMMDDLocalTimezone(createdAt).replace(/-/g, '')}-${invoiceNumber}`
             : null,
         taxReceiptNumber:
           createdAt && appNumber
-            ? `PPD_${formatDateYYYYMMDD(createdAt).replace(/-/g, '')}_${appNumber}`
+            ? `PPD_${formatDateYYYYMMDDLocalTimezone(createdAt).replace(/-/g, '')}_${appNumber}`
             : null,
       };
     }
