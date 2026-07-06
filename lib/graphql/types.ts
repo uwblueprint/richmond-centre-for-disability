@@ -100,6 +100,8 @@ export type Application = {
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
   shopifyOrderNumber: Maybe<Scalars['String']>;
+  donationTaxReceiptEnabled: Scalars['Boolean'];
+  donationTaxReceipt: Maybe<DonationTaxReceipt>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];
@@ -504,6 +506,15 @@ export type DeleteEmployeeResult = {
   employee: Employee;
 };
 
+export type DonationTaxReceipt = {
+  __typename?: 'DonationTaxReceipt';
+  receiptNumber: Scalars['String'];
+  s3ObjectKey: Maybe<Scalars['String']>;
+  s3ObjectUrl: Maybe<Scalars['String']>;
+  createdAt: Scalars['Date'];
+  updatedAt: Scalars['Date'];
+};
+
 export type Employee = {
   __typename?: 'Employee';
   id: Scalars['Int'];
@@ -553,6 +564,16 @@ export type GenerateApplicationsReportResult = {
   ok: Scalars['Boolean'];
   error: Maybe<Scalars['String']>;
   url: Maybe<Scalars['String']>;
+};
+
+export type GenerateDonationTaxReceiptInput = {
+  applicationId: Scalars['Int'];
+};
+
+export type GenerateDonationTaxReceiptResult = {
+  __typename?: 'GenerateDonationTaxReceiptResult';
+  ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
 };
 
 export type GeneratePermitHoldersReportInput = {
@@ -635,6 +656,8 @@ export type Mutation = {
   updateApplicationGuardianInformation: Maybe<UpdateApplicationGuardianInformationResult>;
   updateApplicationAdditionalInformation: Maybe<UpdateApplicationAdditionalInformationResult>;
   updateApplicationPaymentInformation: Maybe<UpdateApplicationPaymentInformationResult>;
+  updateApplicationBillingInformation: Maybe<UpdateApplicationBillingInformationResult>;
+  generateDonationTaxReceipt: Maybe<GenerateDonationTaxReceiptResult>;
   updateApplicationReasonForReplacement: Maybe<UpdateApplicationReasonForReplacementResult>;
   updateApplicationPhysicianAssessment: Maybe<UpdateApplicationPhysicianAssessmentResult>;
   deleteApplication: DeleteApplicationResult;
@@ -743,6 +766,16 @@ export type MutationUpdateApplicationAdditionalInformationArgs = {
 
 export type MutationUpdateApplicationPaymentInformationArgs = {
   input: UpdateApplicationPaymentInformationInput;
+};
+
+
+export type MutationUpdateApplicationBillingInformationArgs = {
+  input: UpdateApplicationBillingInformationInput;
+};
+
+
+export type MutationGenerateDonationTaxReceiptArgs = {
+  input: GenerateDonationTaxReceiptInput;
 };
 
 
@@ -900,6 +933,8 @@ export type NewApplication = Application & {
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
   shopifyOrderNumber: Maybe<Scalars['String']>;
+  donationTaxReceiptEnabled: Scalars['Boolean'];
+  donationTaxReceipt: Maybe<DonationTaxReceipt>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];
@@ -1153,6 +1188,8 @@ export type RenewalApplication = Application & {
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
   shopifyOrderNumber: Maybe<Scalars['String']>;
+  donationTaxReceiptEnabled: Scalars['Boolean'];
+  donationTaxReceipt: Maybe<DonationTaxReceipt>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];
@@ -1203,6 +1240,8 @@ export type ReplacementApplication = Application & {
   shopifyPaymentStatus: Maybe<ShopifyPaymentStatus>;
   shopifyConfirmationNumber: Maybe<Scalars['String']>;
   shopifyOrderNumber: Maybe<Scalars['String']>;
+  donationTaxReceiptEnabled: Scalars['Boolean'];
+  donationTaxReceipt: Maybe<DonationTaxReceipt>;
   shippingAddressSameAsHomeAddress: Scalars['Boolean'];
   shippingFullName: Scalars['String'];
   shippingAddressLine1: Scalars['String'];
@@ -1366,6 +1405,24 @@ export type UpdateApplicationAdditionalInformationResult = {
   error: Maybe<Scalars['String']>;
 };
 
+export type UpdateApplicationBillingInformationInput = {
+  id: Scalars['Int'];
+  billingAddressSameAsHomeAddress: Scalars['Boolean'];
+  billingFullName: Maybe<Scalars['String']>;
+  billingAddressLine1: Maybe<Scalars['String']>;
+  billingAddressLine2: Maybe<Scalars['String']>;
+  billingCity: Maybe<Scalars['String']>;
+  billingProvince: Maybe<Province>;
+  billingCountry: Maybe<Scalars['String']>;
+  billingPostalCode: Maybe<Scalars['String']>;
+};
+
+export type UpdateApplicationBillingInformationResult = {
+  __typename?: 'UpdateApplicationBillingInformationResult';
+  ok: Scalars['Boolean'];
+  error: Maybe<Scalars['String']>;
+};
+
 export type UpdateApplicationDoctorInformationInput = {
   id: Scalars['Int'];
   firstName: Scalars['String'];
@@ -1500,7 +1557,6 @@ export type UpdateApplicationProcessingCreateWalletCardResult = {
 
 export type UpdateApplicationProcessingGenerateInvoiceInput = {
   applicationId: Scalars['Int'];
-  isDonation: Scalars['Boolean'];
 };
 
 export type UpdateApplicationProcessingGenerateInvoiceResult = {

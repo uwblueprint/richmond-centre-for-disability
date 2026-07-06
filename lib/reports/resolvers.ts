@@ -234,6 +234,7 @@ export const generateApplicationsReport: Resolver<
       paymentMethod: true,
       processingFee: true,
       donationAmount: true,
+      donationTaxReceiptEnabled: true,
       secondPaymentMethod: true,
       secondProcessingFee: true,
       secondDonationAmount: true,
@@ -247,6 +248,11 @@ export const generateApplicationsReport: Resolver<
         select: {
           appNumber: true,
           invoiceNumber: true,
+        },
+      },
+      donationTaxReceipt: {
+        select: {
+          receiptNumber: true,
         },
       },
       newApplication: {
@@ -276,10 +282,12 @@ export const generateApplicationsReport: Resolver<
       createdAt,
       processingFee,
       donationAmount,
+      donationTaxReceiptEnabled,
       secondProcessingFee,
       secondDonationAmount,
       applicant,
       applicationProcessing: { appNumber, invoiceNumber } = {},
+      donationTaxReceipt,
       newApplication,
       permit,
       ...application
@@ -320,9 +328,10 @@ export const generateApplicationsReport: Resolver<
             ? `${formatDateYYYYMMDD(createdAt).replace(/-/g, '')}-${invoiceNumber}`
             : null,
         taxReceiptNumber:
-          createdAt && appNumber
+          donationTaxReceipt?.receiptNumber ||
+          (!donationTaxReceiptEnabled && createdAt && appNumber
             ? `PPD_${formatDateYYYYMMDD(createdAt).replace(/-/g, '')}_${appNumber}`
-            : null,
+            : null),
       };
     }
   );

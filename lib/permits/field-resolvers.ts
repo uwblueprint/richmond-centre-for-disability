@@ -8,7 +8,7 @@ import { Application, Permit } from '@lib/graphql/types';
  */
 export const permitApplicationResolver: FieldResolver<
   Permit,
-  Omit<Application, 'processing' | 'applicant' | 'permit'>
+  Omit<Application, 'processing' | 'applicant' | 'permit' | 'donationTaxReceipt'>
 > = async (parent, _args, { prisma }) => {
   const application = await prisma.permit
     .findUnique({ where: { rcdPermitId: parent.rcdPermitId } })

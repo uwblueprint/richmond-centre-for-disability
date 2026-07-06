@@ -1,6 +1,12 @@
 import { ApolloError } from 'apollo-server-micro';
 import { FieldResolver } from '@lib/graphql/resolvers'; // Resolver type
-import { Applicant, Application, ApplicationProcessing, NewApplication } from '@lib/graphql/types'; // Application type
+import {
+  Applicant,
+  Application,
+  ApplicationProcessing,
+  DonationTaxReceipt,
+  NewApplication,
+} from '@lib/graphql/types'; // Application type
 import { getSignedUrlForS3 } from '@lib/utils/s3-utils';
 import { Permit } from '@prisma/client';
 
@@ -113,6 +119,43 @@ export const applicationPermitResolver: FieldResolver<
   Omit<Permit, 'application'> | null
 > = async (parent, _args, { prisma }) => {
   return await prisma.application.findUnique({ where: { id: parent.id } }).permit();
+};
+
+/**
+ * Fetch a donation tax receipt and refresh its temporary S3 URL when needed.
+ */
+export const applicationDonationTaxReceiptResolver: FieldResolver<
+  Application,
+  DonationTaxReceipt | null
+> = async (parent, _args, { prisma, logger }) => {
+  const receipt = await prisma.application
+    .findUnique({ where: { id: parent.id } })
+    .donationTaxReceipt();
+
+  if (!receipt || !receipt.s3ObjectKey) {
+    return receipt;
+  }
+
+  const linkDurationDays = parseInt(process.env.INVOICE_LINK_TTL_DAYS);
+  const dayMilliseconds = 24 * 60 * 60 * 1000;
+  const daysSinceUpdate =
+    Math.floor(Date.now() / dayMilliseconds) -
+    Math.floor(receipt.updatedAt.getTime() / dayMilliseconds);
+
+  if (daysSinceUpdate <= linkDurationDays) {
+    return receipt;
+  }
+
+  try {
+    const s3ObjectUrl = getSignedUrlForS3(receipt.s3ObjectKey);
+    return await prisma.donationTaxReceipt.update({
+      where: { applicationId: parent.id },
+      data: { s3ObjectUrl },
+    });
+  } catch (err) {
+    logger.error({ error: err }, 'Failed to refresh donation tax receipt URL');
+    throw new ApolloError('Failed to refresh donation tax receipt URL');
+  }
 };
 
 /**

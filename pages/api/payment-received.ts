@@ -149,6 +149,7 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
         shopifyOrderNumber: `${shopifyOrderNumber}`,
         paidThroughShopify: true,
         donationAmount: donationAmount,
+        donationTaxReceiptEnabled: true,
         // Billing information
         billingAddressSameAsHomeAddress: !rawBillingInformation, // Default to true if no billing address in Shopify payload
         ...billingInformation,
