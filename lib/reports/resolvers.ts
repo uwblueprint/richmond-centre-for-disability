@@ -248,6 +248,11 @@ export const generateApplicationsReport: Resolver<
         select: {
           appNumber: true,
           invoiceNumber: true,
+          applicationInvoice: {
+            select: {
+              createdAt: true,
+            },
+          },
         },
       },
       newApplication: {
@@ -280,7 +285,7 @@ export const generateApplicationsReport: Resolver<
       secondProcessingFee,
       secondDonationAmount,
       applicant,
-      applicationProcessing: { appNumber, invoiceNumber } = {},
+      applicationProcessing: { appNumber, invoiceNumber, applicationInvoice } = {},
       newApplication,
       permit,
       ...application
@@ -316,14 +321,17 @@ export const generateApplicationsReport: Resolver<
           Prisma.Decimal.add(processingFee, donationAmount),
           Prisma.Decimal.add(secondProcessingFee || 0, secondDonationAmount || 0)
         )}`,
-        invoiceReceiptNumber:
-          createdAt && invoiceNumber
-            ? `${formatDateYYYYMMDDLocalTimezone(createdAt).replace(/-/g, '')}-${invoiceNumber}`
-            : null,
-        taxReceiptNumber:
-          createdAt && appNumber
-            ? `PPD_${formatDateYYYYMMDDLocalTimezone(createdAt).replace(/-/g, '')}_${appNumber}`
-            : null,
+        invoiceReceiptNumber: invoiceNumber
+          ? `${formatDateYYYYMMDDLocalTimezone(applicationInvoice?.createdAt || createdAt).replace(
+              /-/g,
+              ''
+            )}-${invoiceNumber}`
+          : null,
+        taxReceiptNumber: appNumber
+          ? `PPD_${formatDateYYYYMMDDLocalTimezone(
+              applicationInvoice?.createdAt || createdAt
+            ).replace(/-/g, '')}_${appNumber}`
+          : null,
       };
     }
   );
