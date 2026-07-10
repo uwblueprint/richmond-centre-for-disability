@@ -9,7 +9,8 @@ import PaymentInformationCard from '@components/admin/requests/payment-informati
 import PersonalInformationCard from '@components/admin/requests/permit-holder-information/Card'; // Personal information card
 import ProcessingTasksCard from '@components/admin/requests/processing/TasksCard'; // Processing tasks card
 import PhysicianAssessmentCard from '@components/admin/requests/physician-assessment/Card'; // Physician assessment card
-import AdditionalInformationCard from '@components/admin/requests/additional-questions/Card'; // Additional Information card
+// HIDDEN [RCD] Remove Additional Information Section:
+// import AdditionalInformationCard from '@components/admin/requests/additional-questions/Card'; // Additional Information card
 import { authorize } from '@tools/authorization'; // Page authorization
 import { useQuery } from '@tools/hooks/graphql'; // Apollo Client hooks
 import {
@@ -140,12 +141,14 @@ const Request: NextPage<Props> = ({ id: idString }: Props) => {
               editDisabled={reviewRequestCompleted || isRejected}
             />
           )}
+          {/* HIDDEN [RCD] Remove Additional Information Section:
           {type !== 'REPLACEMENT' && (
             <AdditionalInformationCard
               applicationId={id}
               editDisabled={reviewRequestCompleted || isRejected}
             />
           )}
+          */}
           <PaymentInformationCard
             applicationId={id}
             editDisabled={paidThroughShopify || reviewRequestCompleted}
