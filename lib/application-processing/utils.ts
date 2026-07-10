@@ -1,4 +1,4 @@
-import { formatDateYYYYMMDD } from '@lib/utils/date';
+import { formatDateYYYYMMDDLocalTimezone } from '@lib/utils/date';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { generateWalletCardPDF } from '@lib/walletCard/utils';
 import { Prisma, PrismaClient, WalletCard } from '@prisma/client';
@@ -38,7 +38,10 @@ export const createWalletCardPDF = async (
     : null;
   if (walletCardPdf && createdWalletCard) {
     // Generate File Name and S3 Key
-    const createdAtYYYMMDD = formatDateYYYYMMDD(createdWalletCard.createdAt).replace(/-/g, '');
+    const createdAtYYYMMDD = formatDateYYYYMMDDLocalTimezone(createdWalletCard.createdAt).replace(
+      /-/g,
+      ''
+    );
     const receiptNumber = `${createdAtYYYMMDD}-${createdWalletCard.walletNumber}`;
     const fileName = `Wallet-Card-${receiptNumber}.pdf`;
     const s3WalletCardKey = `rcd/wallets/${fileName}`;

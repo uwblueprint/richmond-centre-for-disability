@@ -27,7 +27,7 @@ import {
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 import { generateApplicationInvoicePdf, generateDonationInvoicePdf } from '@lib/invoices/utils';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
-import { formatDateYYYYMMDD } from '@lib/utils/date';
+import { formatDateYYYYMMDDLocalTimezone } from '@lib/utils/date';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { getMostRecentPermit } from '@lib/applicants/utils';
 import moment from 'moment';
@@ -1045,7 +1045,10 @@ export const createWalletCard = async (
 
     if (walletCardPdf && createdWalletCard) {
       // Generate File Name and S3 Key
-      const createdAtYYYMMDD = formatDateYYYYMMDD(createdWalletCard.createdAt).replace(/-/g, '');
+      const createdAtYYYMMDD = formatDateYYYYMMDDLocalTimezone(createdWalletCard.createdAt).replace(
+        /-/g,
+        ''
+      );
       const receiptNumber = `${createdAtYYYMMDD}-${createdWalletCard.walletNumber}`;
       const fileName = `Wallet-Card-${receiptNumber}.pdf`;
       const s3WalletCardKey = `rcd/wallets/${fileName}`;
@@ -1278,7 +1281,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
   }
 
   // file name format: PP-Receipt-P<YYYYMMDD>-<invoice number>.pdf
-  const createdAtYYYMMDD = formatDateYYYYMMDD(invoice.createdAt).replace(/-/g, '');
+  const createdAtYYYMMDD = formatDateYYYYMMDDLocalTimezone(invoice.createdAt).replace(/-/g, '');
   const receiptNumber = `${createdAtYYYMMDD}-${invoice.invoiceNumber}`;
   const fileName = `PP-Receipt-P${receiptNumber}.pdf`;
   const s3InvoiceKey = `rcd/invoices/${fileName}`;
