@@ -537,7 +537,7 @@ const donationPdfDefinition = (input: {
                   {
                     text: [
                       'Description of Items Received:\n\n',
-                      'Apprasied By:\n\n',
+                      'Appraised By:\n\n',
                       'Address of Appraiser:\n\n',
                     ],
                   },
