@@ -9,7 +9,8 @@ import DoctorInformationCard from '@components/admin/requests/doctor-information
 import PaymentInformationCard from '@components/admin/requests/payment-information/Card'; // Payment information card
 import PersonalInformationCard from '@components/admin/requests/permit-holder-information/Card'; // Personal information card
 import ReasonForReplacementCard from '@components/admin/requests/reason-for-replacement/Card';
-import AdditionalInformationCard from '@components/admin/requests/additional-questions/Card';
+// HIDDEN [RCD] Remove Additional Information Section:
+// import AdditionalInformationCard from '@components/admin/requests/additional-questions/Card';
 import GuardianInformationCard from '@components/admin/requests/guardian-information/Card';
 import UndoReviewRequestModal from '@components/admin/requests/processing/UndoReviewRequestModal';
 
@@ -69,7 +70,9 @@ export default function ReviewInformationStep({
           <>
             <PersonalInformationCard applicationId={applicationId} editDisabled isSubsection />
             <DoctorInformationCard applicationId={applicationId} editDisabled isSubsection />
+            {/* HIDDEN [RCD] Remove Additional Information Section:
             <AdditionalInformationCard applicationId={applicationId} editDisabled isSubsection />
+            */}
             <GuardianInformationCard applicationId={applicationId} editDisabled isSubsection />
             <PaymentInformationCard applicationId={applicationId} editDisabled isSubsection />
           </>
@@ -79,7 +82,9 @@ export default function ReviewInformationStep({
           <>
             <PersonalInformationCard applicationId={applicationId} editDisabled isSubsection />
             <DoctorInformationCard applicationId={applicationId} editDisabled isSubsection />
+            {/* HIDDEN [RCD] Remove Additional Information Section:
             <AdditionalInformationCard applicationId={applicationId} editDisabled isSubsection />
+            */}
             <PaymentInformationCard applicationId={applicationId} editDisabled isSubsection />
           </>
         );

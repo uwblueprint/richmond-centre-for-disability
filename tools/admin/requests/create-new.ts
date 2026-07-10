@@ -182,11 +182,15 @@ export const INITIAL_GUARDIAN_INFORMATION: GuardianInformation = {
   poaFormS3ObjectUrl: '',
 };
 
-// Initial data for additional questions in application forms
+// Initial data for additional questions in application forms.
+// HIDDEN [RCD] Remove Additional Information Section: section UI is hidden in
+// admin create-new/create-renewal pages, so the booleans default to false to
+// keep the Formik schema valid without user input. Restore nulls when the UI
+// is brought back.
 export const INITIAL_ADDITIONAL_QUESTIONS: AdditionalInformationFormData = {
-  usesAccessibleConvertedVan: null,
+  usesAccessibleConvertedVan: false,
   accessibleConvertedVanLoadingMethod: null,
-  requiresWiderParkingSpace: null,
+  requiresWiderParkingSpace: false,
   requiresWiderParkingSpaceReason: null,
   otherRequiresWiderParkingSpaceReason: null,
 };

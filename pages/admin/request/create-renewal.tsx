@@ -3,7 +3,8 @@ import { Text, Box, Flex, Stack, Button, GridItem, useToast } from '@chakra-ui/r
 import { useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form'; //Doctor information form
-import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form'; //Additional questions form
+// HIDDEN [RCD] Remove Additional Information Section:
+// import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form'; //Additional questions form
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import Link from 'next/link'; // Link
@@ -347,7 +348,7 @@ export default function CreateRenewal() {
                     </Box>
                   </Box>
                 </GridItem>
-                {/* Additional Quesitons Form */}
+                {/* HIDDEN [RCD] Remove Additional Information Section:
                 <GridItem paddingTop="32px">
                   <Box
                     border="1px solid"
@@ -365,6 +366,7 @@ export default function CreateRenewal() {
                     <AdditionalQuestionsForm additionalInformation={values.additionalInformation} />
                   </Box>
                 </GridItem>
+                */}
                 {/* Payment Details Form */}
                 <GridItem paddingTop="32px" paddingBottom="68px">
                   <Box
