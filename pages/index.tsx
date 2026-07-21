@@ -144,7 +144,7 @@ export default function Landing() {
           </Box>
           <VStack width="100%" alignItems={{ sm: 'center', lg: 'flex-start' }} spacing="32px">
             <a
-              href="https://www.rcdrichmond.org/Parking/Parking_Permit_Application_Form_Fillable_2026v.pdf"
+              href="https://rcdrichmond.org/wp-content/uploads/2026/03/Parking-Permit-Application-form_New-Logo_Fillable.pdf"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -163,7 +163,7 @@ export default function Landing() {
               </Button>
             </a>
             <a
-              href="https://www.rcdrichmond.org/Parking/Permit_Replacement_Declaration_Form_Fillable_2026v.pdf"
+              href="https://rcdrichmond.org/wp-content/uploads/2026/02/PP-Replacement-Form_New-Logo_Fillable-1.pdf"
               target="_blank"
               rel="noopener noreferrer"
             >

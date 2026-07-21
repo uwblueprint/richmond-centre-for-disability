@@ -24,7 +24,8 @@ import PermitHolderInformationForm from '@components/admin/requests/permit-holde
 import PhysicianAssessmentForm from '@components/admin/requests/physician-assessment/Form';
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form';
 import GuardianInformationForm from '@components/admin/requests/guardian-information/Form';
-import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form';
+// HIDDEN [RCD] Remove Additional Information Section:
+// import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form';
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
@@ -514,6 +515,7 @@ export default function CreateNew() {
                       onUploadFile={setGuardianPOAFile}
                     />
                   </Box>
+                  {/* HIDDEN [RCD] Remove Additional Information Section:
                   <Box
                     w="100%"
                     p="40px"
@@ -528,6 +530,7 @@ export default function CreateNew() {
                     </Text>
                     <AdditionalQuestionsForm additionalInformation={values.additionalInformation} />
                   </Box>
+                  */}
                   <Box
                     w="100%"
                     p="40px"
