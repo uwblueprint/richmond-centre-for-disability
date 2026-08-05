@@ -1858,7 +1858,8 @@ export const generateDonationTaxReceipt: Resolver<
     return { ok: false, error: 'Donation must be at least $20' };
   }
 
-  if (application.paidThroughShopify && application.shopifyPaymentStatus !== 'RECEIVED') {
+  const isOnlinePayment = application.paymentMethod === 'SHOPIFY' || application.paidThroughShopify;
+  if (isOnlinePayment && application.shopifyPaymentStatus !== 'RECEIVED') {
     return { ok: false, error: 'Online payment has not been received' };
   }
 

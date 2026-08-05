@@ -135,6 +135,8 @@ const Card: FC<Props> = props => {
     secondProcessingFee,
     secondDonationAmount,
     hasSecondPaymentMethod,
+    paidThroughShopify,
+    shopifyPaymentStatus,
     shippingAddressSameAsHomeAddress,
     shippingFullName,
     shippingAddressLine1,
@@ -156,6 +158,8 @@ const Card: FC<Props> = props => {
     processing,
   } = paymentInformation;
   const totalDonation = Number(donationAmount) + (Number(secondDonationAmount) || 0);
+  const onlinePaymentPending =
+    (paymentMethod === 'SHOPIFY' || paidThroughShopify) && shopifyPaymentStatus !== 'RECEIVED';
 
   return (
     <PermitHolderInfoCard
@@ -337,6 +341,10 @@ const Card: FC<Props> = props => {
                 <Text textStyle="caption" color="text.secondary">
                   Assign an APP number before generating.
                 </Text>
+              ) : onlinePaymentPending ? (
+                <Text textStyle="caption" color="text.secondary">
+                  Online payment must be received before generating.
+                </Text>
               ) : donationTaxReceipt?.s3ObjectUrl ? (
                 <Link
                   href={donationTaxReceipt.s3ObjectUrl}
@@ -354,7 +362,7 @@ const Card: FC<Props> = props => {
                 </Text>
               )}
             </VStack>
-            {totalDonation >= 20 && processing.appNumber && (
+            {totalDonation >= 20 && processing.appNumber && !onlinePaymentPending && (
               <Button
                 onClick={handleGenerateDonationTaxReceipt}
                 isLoading={generatingDonationTaxReceipt}

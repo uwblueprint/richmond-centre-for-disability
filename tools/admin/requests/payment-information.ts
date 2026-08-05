@@ -66,6 +66,8 @@ export type PaymentInformationCardData = Pick<
   | 'secondProcessingFee'
   | 'secondDonationAmount'
   | 'hasSecondPaymentMethod'
+  | 'paidThroughShopify'
+  | 'shopifyPaymentStatus'
   | 'shippingAddressSameAsHomeAddress'
   | 'shippingFullName'
   | 'shippingAddressLine1'
@@ -103,6 +105,8 @@ export const GET_PAYMENT_INFORMATION = gql`
       secondProcessingFee
       secondDonationAmount
       hasSecondPaymentMethod
+      paidThroughShopify
+      shopifyPaymentStatus
       shippingAddressSameAsHomeAddress
       shippingFullName
       shippingAddressLine1
