@@ -26,7 +26,8 @@ import RenewalFormContainer from '@containers/RenewalForm';
 import PersonalAddressSection from './PersonalAddressSection';
 import ContactInformationSection from './ContactInformationSection';
 import DoctorInformationSection from './DoctorInformationSection';
-import AdditionalInformationSection from './AdditionalInformationSection';
+// HIDDEN [RCD] Remove Additional Information Section:
+// import AdditionalInformationSection from './AdditionalInformationSection';
 import DonationSection from './DonationSection';
 import ReviewSection from './ReviewSection';
 
@@ -184,9 +185,11 @@ const RenewalForm: FC = () => {
         <Step label={`Doctor's Information`}>
           <DoctorInformationSection />
         </Step>
+        {/* HIDDEN [RCD] Remove Additional Information Section:
         <Step label="Additional Information">
           <AdditionalInformationSection />
         </Step>
+        */}
         <Step label="Donation">
           <DonationSection />
         </Step>

@@ -64,7 +64,7 @@ import moment from 'moment';
 import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
 import { generateDonationTaxReceiptPdf, getDonationTaxReceiptRecipient } from '@lib/invoices/utils';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
-import { formatDateYYYYMMDD } from '@lib/utils/date';
+import { formatDateYYYYMMDDLocalTimezone } from '@lib/utils/date';
 
 /**
  * Query an application by ID
@@ -1876,7 +1876,7 @@ export const generateDonationTaxReceipt: Resolver<
   const dateIssued = application.donationTaxReceipt?.createdAt ?? new Date();
   const receiptNumber =
     application.donationTaxReceipt?.receiptNumber ??
-    `PPD_${formatDateYYYYMMDD(dateIssued).replace(/-/g, '')}_${appNumber}`;
+    `PPD_${formatDateYYYYMMDDLocalTimezone(dateIssued).replace(/-/g, '')}_${appNumber}`;
   const fileName = `Donation-Tax-Receipt-${receiptNumber}.pdf`;
   const s3ObjectKey = `rcd/donation-tax-receipts/${fileName}`;
 

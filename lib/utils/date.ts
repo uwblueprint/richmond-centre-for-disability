@@ -23,7 +23,8 @@ export const formatDateYYYYMMDD = (d: Date, withTime = false): string => {
 };
 
 /**
- * Format date to be in YYYY-MM-DD format and in local time zone
+ * Format date to be in YYYY-MM-DD format and in local time zone.
+ * NOTE: Use this for frontend UI displays where formatting should adapt to the client's/browser's clock.
  * @param {Date} date date to be formatted
  * @param {boolean} withTime whether to include time in formatted date
  * @returns {string} formatted date
@@ -67,4 +68,48 @@ export const formatDateVerbose = (date: Date, omitTime = false): string => {
 export const formatDateTimeYYYYMMDDHHMMSS = (d: Date): string => {
   // offset timezone to locale timezone
   return moment(d).format('YYYYMMDD-HHmmss');
+};
+
+/**
+ * Format date to be in YYYY-MM-DD format in the organization's configured local timezone (America/Vancouver).
+ * NOTE: Use this for files generated on the backend to ensure that all data is consistently generated using
+ * the organization's local business day, regardless of the server's timezone (UTC).
+ * @param {Date} d date to be formatted
+ * @param {boolean} withTime whether to include time in formatted date
+ * @returns {string} formatted date
+ */
+export const formatDateYYYYMMDDLocalTimezone = (d: Date, withTime = false): string => {
+  const timeZone = process.env.NEXT_PUBLIC_LOCAL_TIMEZONE;
+  if (!timeZone) {
+    throw new Error('NEXT_PUBLIC_LOCAL_TIMEZONE environment variable is not defined');
+  }
+
+  const options: Intl.DateTimeFormatOptions = {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  };
+
+  const formatter = new Intl.DateTimeFormat('en-US', options);
+  const parts = formatter.formatToParts(d);
+
+  const partMap: Record<string, string> = {};
+  for (const part of parts) {
+    partMap[part.type] = part.value;
+  }
+
+  const formattedDate = `${partMap.year}-${partMap.month}-${partMap.day}`;
+
+  if (withTime) {
+    const period = partMap.dayPeriod ? partMap.dayPeriod.toLowerCase() : '';
+    const hour = partMap.hour.padStart(2, '0');
+    const minute = partMap.minute.padStart(2, '0');
+    return `${formattedDate}, ${hour}:${minute} ${period}`;
+  }
+
+  return formattedDate;
 };

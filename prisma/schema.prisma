@@ -61,6 +61,7 @@ model Application {
   secondPaymentMethod              PaymentType?            @map("second_payment_method")
   secondProcessingFee              Decimal?                @map("second_processing_fee") @db.Money
   secondDonationAmount             Decimal?                @map("second_donation_amount") @db.Money
+  donationReceivedAt               DateTime?               @map("donation_received_at") @db.Timestamptz(6)
   hasSecondPaymentMethod           Boolean                 @default(false) @map("has_second_payment_method")
   paidThroughShopify               Boolean                 @default(false) @map("paid_through_shopify")
   shopifyPaymentStatus             ShopifyPaymentStatus?   @default(PENDING) @map("shopify_payment_status")

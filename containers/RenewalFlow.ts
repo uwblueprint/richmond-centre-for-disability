@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 import { createContainer } from 'unstated-next'; // Unstated Next
 
 /** Review step number */
-const REVIEW_STEP = 5;
+// HIDDEN [RCD] Remove Additional Information Section: was 5; shifted to 4
+// because the Additional Information step is hidden in RenewalForm/index.tsx.
+const REVIEW_STEP = 4;
 
 /**
  * Hook for managing the state of the overall applicant renewal request flow

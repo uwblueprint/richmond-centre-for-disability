@@ -3,6 +3,9 @@ ALTER TABLE "applications"
 ADD COLUMN "donation_tax_receipt_enabled" BOOLEAN NOT NULL DEFAULT false;
 
 ALTER TABLE "applications"
+ADD COLUMN "donation_received_at" TIMESTAMPTZ(6);
+
+ALTER TABLE "applications"
 ALTER COLUMN "donation_tax_receipt_enabled" SET DEFAULT true;
 
 CREATE TABLE "donation_tax_receipts" (

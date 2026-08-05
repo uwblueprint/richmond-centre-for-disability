@@ -115,7 +115,7 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     // Get email and first name that were inputted in original application, if exists
     const application = await prisma.application.findUnique({
       where: { id: applicationId },
-      select: { email: true, firstName: true },
+      select: { email: true, firstName: true, donationReceivedAt: true },
     });
 
     if (!application) {
@@ -149,6 +149,7 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
         shopifyOrderNumber: `${shopifyOrderNumber}`,
         paidThroughShopify: true,
         donationAmount: donationAmount,
+        donationReceivedAt: application.donationReceivedAt || new Date(),
         donationTaxReceiptEnabled: true,
         // Billing information
         billingAddressSameAsHomeAddress: !rawBillingInformation, // Default to true if no billing address in Shopify payload
