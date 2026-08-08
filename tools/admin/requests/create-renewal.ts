@@ -37,6 +37,12 @@ export const GET_RENEWAL_APPLICANT = gql`
           postalCode
         }
       }
+      mostRecentPermit {
+        rcdPermitId
+        type
+        expiryDate
+        active
+      }
     }
   }
 `;
@@ -74,6 +80,13 @@ export type GetRenewalApplicantResponse = {
         | 'postalCode'
       >;
     };
+  } & {
+    mostRecentPermit: {
+      rcdPermitId: number;
+      type: string;
+      expiryDate: string;
+      active: boolean;
+    } | null;
   };
 };
 

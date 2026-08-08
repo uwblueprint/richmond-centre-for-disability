@@ -347,6 +347,17 @@ export const completeApplication: Resolver<
           },
         });
 
+        // Deactivate existing active permits of applicant
+        const deactivatePermitsOperation = prisma.permit.updateMany({
+          where: {
+            applicantId,
+            active: true,
+          },
+          data: {
+            active: false,
+          },
+        });
+
         // Create permit
         const createPermitOperation = prisma.permit.create({
           data: {
@@ -365,12 +376,14 @@ export const completeApplication: Resolver<
         const [
           upsertedPhysician,
           updatedApplicant,
+          deactivatedPermits,
           createdPermit,
           completedApplicationProcessing,
           createdWalletCard,
         ] = await prisma.$transaction([
           upsertPhysicianOperation,
           updateApplicantOperation,
+          deactivatePermitsOperation,
           createPermitOperation,
           completeApplicationOperation,
           createWalletCardPrisma(prisma, applicationProcessingId, employeeId),
@@ -379,6 +392,7 @@ export const completeApplication: Resolver<
         if (
           !upsertedPhysician ||
           !updatedApplicant ||
+          !deactivatedPermits ||
           !createdPermit ||
           !completedApplicationProcessing ||
           !createdWalletCard
@@ -602,6 +616,17 @@ export const completeApplication: Resolver<
         },
       });
 
+      // Deactivate existing active permits of applicant
+      const deactivatePermitsOperation = prisma.permit.updateMany({
+        where: {
+          applicantId,
+          active: true,
+        },
+        data: {
+          active: false,
+        },
+      });
+
       const createPermitOperation = prisma.permit.create({
         data: {
           rcdPermitId: appNumber,
@@ -615,12 +640,14 @@ export const completeApplication: Resolver<
       const [
         upsertedPhysician,
         updatedApplicant,
+        deactivatedPermits,
         createdPermit,
         completedApplicationProcessing,
         createdWalletCard,
       ] = await prisma.$transaction([
         upsertPhysicianOperation,
         updateApplicantOperation,
+        deactivatePermitsOperation,
         createPermitOperation,
         completeApplicationOperation,
         createWalletCardPrisma(prisma, applicationProcessingId, employeeId),
@@ -629,6 +656,7 @@ export const completeApplication: Resolver<
       if (
         !upsertedPhysician ||
         !updatedApplicant ||
+        !deactivatedPermits ||
         !createdPermit ||
         !completedApplicationProcessing ||
         !createdWalletCard
@@ -699,20 +727,16 @@ export const completeApplication: Resolver<
         };
       }
 
-      // Invalidate old permit
-      try {
-        await prisma.permit.update({
-          where: { rcdPermitId: mostRecentPermit.rcdPermitId },
-          data: {
-            active: false,
-          },
-        });
-      } catch {
-        return {
-          ok: false,
-          error: 'Error invaliding old permit',
-        };
-      }
+      // Deactivate existing active permits of applicant
+      const deactivatePermitsOperation = prisma.permit.updateMany({
+        where: {
+          applicantId,
+          active: true,
+        },
+        data: {
+          active: false,
+        },
+      });
 
       // Update applicant
       const updateApplicantOperation = prisma.applicant.update({
@@ -742,16 +766,23 @@ export const completeApplication: Resolver<
         },
       });
 
-      const [updatedApplicant, createdPermit, completedApplicationProcessing, createdWalletCard] =
-        await prisma.$transaction([
-          updateApplicantOperation,
-          createPermitOperation,
-          completeApplicationOperation,
-          createWalletCardPrisma(prisma, applicationProcessingId, employeeId),
-        ]);
+      const [
+        updatedApplicant,
+        deactivatedPermits,
+        createdPermit,
+        completedApplicationProcessing,
+        createdWalletCard,
+      ] = await prisma.$transaction([
+        updateApplicantOperation,
+        deactivatePermitsOperation,
+        createPermitOperation,
+        completeApplicationOperation,
+        createWalletCardPrisma(prisma, applicationProcessingId, employeeId),
+      ]);
 
       if (
         !updatedApplicant ||
+        !deactivatedPermits ||
         !createdPermit ||
         !completedApplicationProcessing ||
         !createdWalletCard

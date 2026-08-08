@@ -54,6 +54,12 @@ export const GET_APPLICANT_NEW_REQUEST_INFO_QUERY = gql`
         city
         postalCode
       }
+      mostRecentPermit {
+        rcdPermitId
+        type
+        expiryDate
+        active
+      }
     }
   }
 `;
@@ -103,6 +109,13 @@ export type GetApplicantNewRequestInfoResponse = {
       | 'city'
       | 'postalCode'
     > | null;
+  } & {
+    mostRecentPermit: {
+      rcdPermitId: number;
+      type: string;
+      expiryDate: string;
+      active: boolean;
+    } | null;
   };
 };
 

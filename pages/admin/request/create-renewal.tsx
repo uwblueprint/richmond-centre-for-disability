@@ -1,5 +1,14 @@
 import Layout from '@components/admin/Layout'; // Layout component
-import { Text, Box, Flex, Stack, Button, GridItem, useToast } from '@chakra-ui/react'; // Chakra UI
+import {
+  Text,
+  Box,
+  Flex,
+  Stack,
+  Button,
+  GridItem,
+  useToast,
+  useDisclosure,
+} from '@chakra-ui/react'; // Chakra UI
 import { useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form'; //Doctor information form
@@ -12,6 +21,11 @@ import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
+import ActivePermitWarningModal, {
+  isActivePermit,
+  ActivePermitInfo,
+} from '@components/admin/requests/create/ActivePermitWarningModal';
+import { formatFullName } from '@lib/utils/format';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
 import DoctorTypeahead from '@components/admin/requests/doctor-information/DoctorTypeahead';
 import { useLazyQuery, useMutation } from '@tools/hooks/graphql';
@@ -85,6 +99,21 @@ export default function CreateRenewal() {
   // Router
   const router = useRouter();
 
+  // Recent permit warning modal state
+  const [warningPermit, setWarningPermit] = useState<ActivePermitInfo | null>(null);
+  const [selectedApplicantName, setSelectedApplicantName] = useState<string>('');
+  const {
+    isOpen: isWarningModalOpen,
+    onOpen: onOpenWarningModal,
+    onClose: onCloseWarningModal,
+  } = useDisclosure();
+
+  const handleCancelWarningModal = () => {
+    onCloseWarningModal();
+    setApplicantId(null);
+    setWarningPermit(null);
+  };
+
   /**
    * Get information about applicant to pre-populate form
    */
@@ -105,7 +134,14 @@ export default function CreateRenewal() {
             city,
             postalCode,
             medicalInformation: { physician },
+            mostRecentPermit,
           } = data.applicant;
+
+          if (mostRecentPermit && isActivePermit(mostRecentPermit)) {
+            setWarningPermit(mostRecentPermit);
+            setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
+            onOpenWarningModal();
+          }
           setPermitHolderInformation({
             firstName,
             middleName,
@@ -503,6 +539,13 @@ export default function CreateRenewal() {
           </Box>
         )}
       </GridItem>
+      <ActivePermitWarningModal
+        isOpen={isWarningModalOpen}
+        permit={warningPermit}
+        applicantName={selectedApplicantName}
+        onProceed={onCloseWarningModal}
+        onCancel={handleCancelWarningModal}
+      />
     </Layout>
   );
 }

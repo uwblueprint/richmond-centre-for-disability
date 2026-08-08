@@ -13,6 +13,7 @@ import {
   Spinner,
   useToast,
   Stack,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { getSession } from 'next-auth/client';
 import { useLazyQuery, useMutation } from '@tools/hooks/graphql';
@@ -29,6 +30,11 @@ import GuardianInformationForm from '@components/admin/requests/guardian-informa
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
+import ActivePermitWarningModal, {
+  isActivePermit,
+  ActivePermitInfo,
+} from '@components/admin/requests/create/ActivePermitWarningModal';
+import { formatFullName } from '@lib/utils/format';
 
 import { authorize } from '@tools/authorization';
 import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment';
@@ -85,6 +91,15 @@ export default function CreateNew() {
   // Backend form validation error
   const [error, setError] = useState<string>('');
 
+  // Recent permit warning modal state
+  const [warningPermit, setWarningPermit] = useState<ActivePermitInfo | null>(null);
+  const [selectedApplicantName, setSelectedApplicantName] = useState<string>('');
+  const {
+    isOpen: isWarningModalOpen,
+    onOpen: onOpenWarningModal,
+    onClose: onCloseWarningModal,
+  } = useDisclosure();
+
   // Toast message
   const toast = useToast();
 
@@ -99,6 +114,12 @@ export default function CreateNew() {
     setDoctorInformation(INITIAL_DOCTOR_INFORMATION);
     setGuardianInformation(INITIAL_GUARDIAN_INFORMATION);
     setGuardianPOAFile(null);
+    setWarningPermit(null);
+  };
+
+  const handleCancelWarningModal = () => {
+    onCloseWarningModal();
+    resetAllFields();
   };
 
   /**
@@ -127,7 +148,14 @@ export default function CreateNew() {
           postalCode,
           medicalInformation: { physician },
           guardian,
+          mostRecentPermit,
         } = data.applicant;
+
+        if (mostRecentPermit && isActivePermit(mostRecentPermit)) {
+          setWarningPermit(mostRecentPermit);
+          setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
+          onOpenWarningModal();
+        }
 
         // set permitHolderInformation
         setPermitHolderInformation({
@@ -658,6 +686,13 @@ export default function CreateNew() {
           </Box>
         )}
       </GridItem>
+      <ActivePermitWarningModal
+        isOpen={isWarningModalOpen}
+        permit={warningPermit}
+        applicantName={selectedApplicantName}
+        onProceed={onCloseWarningModal}
+        onCancel={handleCancelWarningModal}
+      />
     </Layout>
   );
 }
