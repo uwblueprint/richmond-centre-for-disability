@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react';
 import { formatDateYYYYMMDD } from '@lib/utils/date';
 import { titlecase } from '@tools/string';
-import { useEffect, useState } from 'react';
 
 export type ActivePermitInfo = {
   rcdPermitId: number;
@@ -54,36 +53,12 @@ export default function ActivePermitWarningModal({
   onProceed,
   onCancel,
 }: Props) {
-  const [shouldReturnFocus, setShouldReturnFocus] = useState(true);
-
-  useEffect(() => {
-    if (isOpen) {
-      setShouldReturnFocus(true);
-    }
-  }, [isOpen]);
-
   if (!permit) {
     return null;
   }
 
-  const handleProceed = () => {
-    setShouldReturnFocus(false);
-    onProceed();
-  };
-
-  const handleCancel = () => {
-    setShouldReturnFocus(true);
-    onCancel();
-  };
-
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleProceed}
-      isCentered
-      size="lg"
-      returnFocusOnClose={shouldReturnFocus}
-    >
+    <Modal isOpen={isOpen} onClose={onProceed} isCentered size="lg">
       <ModalOverlay />
       <ModalContent pt={4}>
         <ModalBody>
@@ -128,7 +103,7 @@ export default function ActivePermitWarningModal({
             _hover={{ bg: 'background.grayHover' }}
             color="black"
             marginRight={3}
-            onClick={handleCancel}
+            onClick={onCancel}
           >
             <Text textStyle="button-semibold">Cancel</Text>
           </Button>
@@ -136,7 +111,7 @@ export default function ActivePermitWarningModal({
             colorScheme="primary"
             bg="primary"
             _hover={{ bg: 'primaryHover' }}
-            onClick={handleProceed}
+            onClick={onProceed}
           >
             <Text textStyle="button-semibold">Dismiss Warning</Text>
           </Button>
