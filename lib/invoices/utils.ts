@@ -602,7 +602,7 @@ const donationPdfDefinition = (input: {
       lineHeight: 1.2,
     },
     images: {
-      logoNew: 'public/assets/logo-new.jpg',
+      logoNew: 'public/assets/logo.jpg',
       logoVertical: 'public/assets/logo-vertical.jpg',
       signature: 'public/assets/signature.png',
     },

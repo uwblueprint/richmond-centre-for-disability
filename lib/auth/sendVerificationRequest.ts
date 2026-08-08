@@ -67,10 +67,10 @@ const html = (config: EmailConfig) => {
         "
       >
         <img
-          src="https://dev.rcdrichmondapp.ca/assets/logo.png"
+          src="https://dev.rcdrichmondapp.ca/assets/logo.jpg"
           style="
-            height: 65px;
-            width: 59px;
+            height: 54px;
+            width: 200px;
             margin: 0 0 20px;
           "
           alt="Richmond Centre for Disability logo"

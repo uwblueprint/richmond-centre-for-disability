@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'; // React
 import Head from 'next/head'; // HTML head handling
-import Image from 'next/image'; // Optimized images
+import Logo from '@components/Logo'; // Optimized images
 import { useSession, signOut } from 'next-auth/client'; // Session management
 import { useRouter } from 'next/router'; // Routing
 
@@ -97,7 +97,7 @@ function Header() {
       >
         <Flex alignItems="center">
           <Box marginRight="12px">
-            <Image src="/assets/logo.svg" alt="RCD Logo" height={48} width={31} priority />
+            <Logo height={45} width={165} priority />
           </Box>
           <Box>
             <Text as="h2" textStyle="button-semibold">

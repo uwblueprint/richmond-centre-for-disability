@@ -64,10 +64,10 @@ const html = (firstName: string) => {
         "
       >
         <img
-          src="https://dev.rcdrichmondapp.ca/assets/logo.png"
+          src="https://dev.rcdrichmondapp.ca/assets/logo.jpg"
           style="
-            height: 65px;
-            width: 59px;
+            height: 54px;
+            width: 200px;
             display: block;
             margin-bottom: 20px;
             margin-left: auto;

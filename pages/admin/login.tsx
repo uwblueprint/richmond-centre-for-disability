@@ -1,6 +1,6 @@
 import { useState } from 'react'; // React
 import { GetServerSideProps } from 'next'; // Get server side props
-import Image from 'next/image';
+import Logo from '@components/Logo';
 import { getSession, signIn, SignInResponse } from 'next-auth/client'; // Session management
 import {
   Text,
@@ -70,7 +70,7 @@ export default function Login() {
         <Box width="100%" padding={14}>
           <VStack width="100%" spacing={12}>
             <VStack spacing={2}>
-              <Image src="/assets/logo.svg" height={120} width={120} />
+              <Logo height={109} width={400} />
               <Text as="h1" textStyle="display-medium" align="center">
                 Richmond Centre for Disability Employee Login
               </Text>
