@@ -81,23 +81,31 @@ function Header() {
 
   return (
     <Flex
-      height="80px"
+      minHeight="80px"
       width="100%"
       justify="center"
       backgroundColor="background.grey"
       borderBottom="1px solid"
       borderBottomColor="border.secondary"
+      paddingY={{ base: 4, md: 0 }}
     >
       <Flex
         height="100%"
         width="100%"
         maxWidth="1440px"
+        flexDirection={{ base: 'column', md: 'row' }}
         justifyContent="space-between"
-        marginX="80px"
+        alignItems="center"
+        marginX={{ base: 4, md: '80px' }}
+        gap={{ base: 4, md: 0 }}
       >
         <Flex alignItems="center">
-          <Box marginRight="12px">
-            <Logo height={45} width={165} priority />
+          <Box
+            marginRight={{ base: '6px', sm: '12px' }}
+            width={{ base: '120px', sm: '165px' }}
+            flexShrink={0}
+          >
+            <Logo height={45} width={165} priority layout="responsive" />
           </Box>
           <Box>
             <Text as="h2" textStyle="button-semibold">
@@ -208,7 +216,7 @@ function InternalGrid({
       flexGrow={1}
       width="100%"
       maxWidth="1440px"
-      marginX={isContent ? '80px' : undefined}
+      marginX={isContent ? { base: 4, md: '80px' } : undefined}
       templateColumns="repeat(12, 1fr)"
       gap="20px"
       alignItems={alignItems}
