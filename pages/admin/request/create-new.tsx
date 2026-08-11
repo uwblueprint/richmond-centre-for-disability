@@ -675,7 +675,7 @@ export default function CreateNew() {
                     height="48px"
                     width="217px"
                     type="submit"
-                    isDisabled={permitHolderExists && !applicantId}
+                    isDisabled={(permitHolderExists && !applicantId) || getApplicantLoading}
                     onClick={() => setStep(RequestFlowPageState.SubmittingRequestPage)}
                   >
                     <Text textStyle="button-semibold">Proceed to request</Text>

@@ -18,7 +18,6 @@ export type ActivePermitInfo = {
   rcdPermitId: number;
   type: string;
   expiryDate: string;
-  createdAt?: string;
   active?: boolean;
 };
 
@@ -58,7 +57,7 @@ export default function ActivePermitWarningModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onProceed} isCentered size="lg">
+    <Modal isOpen={isOpen} onClose={onCancel} isCentered size="lg">
       <ModalOverlay />
       <ModalContent pt={4}>
         <ModalBody>
@@ -83,11 +82,6 @@ export default function ActivePermitWarningModal({
               <Text textStyle="body-regular">
                 <b>Expiry Date:</b> {formatDateYYYYMMDD(new Date(permit.expiryDate))}
               </Text>
-              {permit.createdAt && (
-                <Text textStyle="body-regular">
-                  <b>Issued Date:</b> {formatDateYYYYMMDD(new Date(permit.createdAt))}
-                </Text>
-              )}
             </VStack>
 
             <Text textStyle="body-regular">

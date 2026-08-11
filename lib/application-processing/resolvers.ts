@@ -29,7 +29,7 @@ import { generateApplicationInvoicePdf, generateDonationInvoicePdf } from '@lib/
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { formatDateYYYYMMDDLocalTimezone } from '@lib/utils/date';
 import { Prisma, PrismaClient } from '@prisma/client';
-import { getMostRecentPermit } from '@lib/applicants/utils';
+import { getActivePermit } from '@lib/applicants/utils';
 import moment from 'moment';
 import { generateWalletCardPDF } from '@lib/walletCard/utils';
 import { Logger } from 'pino';
@@ -710,7 +710,7 @@ export const completeApplication: Resolver<
         };
       }
 
-      const mostRecentPermit = await getMostRecentPermit(applicantId);
+      const mostRecentPermit = await getActivePermit(applicantId);
 
       if (!mostRecentPermit) {
         return {

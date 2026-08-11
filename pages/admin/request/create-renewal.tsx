@@ -117,57 +117,57 @@ export default function CreateRenewal() {
   /**
    * Get information about applicant to pre-populate form
    */
-  const [getApplicant] = useLazyQuery<GetRenewalApplicantResponse, GetRenewalApplicantRequest>(
-    GET_RENEWAL_APPLICANT,
-    {
-      onCompleted: data => {
-        if (data) {
-          const {
-            firstName,
-            middleName,
-            lastName,
-            email,
-            phone,
-            receiveEmailUpdates,
-            addressLine1,
-            addressLine2,
-            city,
-            postalCode,
-            medicalInformation: { physician },
-            mostRecentPermit,
-          } = data.applicant;
+  const [getApplicant, { loading: getApplicantLoading }] = useLazyQuery<
+    GetRenewalApplicantResponse,
+    GetRenewalApplicantRequest
+  >(GET_RENEWAL_APPLICANT, {
+    onCompleted: data => {
+      if (data) {
+        const {
+          firstName,
+          middleName,
+          lastName,
+          email,
+          phone,
+          receiveEmailUpdates,
+          addressLine1,
+          addressLine2,
+          city,
+          postalCode,
+          medicalInformation: { physician },
+          mostRecentPermit,
+        } = data.applicant;
 
-          if (mostRecentPermit && isActivePermit(mostRecentPermit)) {
-            setWarningPermit(mostRecentPermit);
-            setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
-            onOpenWarningModal();
-          }
-          setPermitHolderInformation({
-            firstName,
-            middleName,
-            lastName,
-            email,
-            phone,
-            receiveEmailUpdates,
-            addressLine1,
-            addressLine2,
-            city,
-            postalCode,
-          });
-          setDoctorInformation({
-            firstName: physician.firstName,
-            lastName: physician.lastName,
-            mspNumber: physician.mspNumber,
-            phone: physician.phone,
-            addressLine1: physician.addressLine1,
-            addressLine2: physician.addressLine2,
-            city: physician.city,
-            postalCode: physician.postalCode,
-          });
+        if (mostRecentPermit && isActivePermit(mostRecentPermit)) {
+          setWarningPermit(mostRecentPermit);
+          setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
+          onOpenWarningModal();
         }
-      },
-    }
-  );
+        setPermitHolderInformation({
+          firstName,
+          middleName,
+          lastName,
+          email,
+          phone,
+          receiveEmailUpdates,
+          addressLine1,
+          addressLine2,
+          city,
+          postalCode,
+        });
+        setDoctorInformation({
+          firstName: physician.firstName,
+          lastName: physician.lastName,
+          mspNumber: physician.mspNumber,
+          phone: physician.phone,
+          addressLine1: physician.addressLine1,
+          addressLine2: physician.addressLine2,
+          city: physician.city,
+          postalCode: physician.postalCode,
+        });
+      }
+    },
+  });
 
   /**
    * Set and fetch data about applicant when permit holder is selected
@@ -526,7 +526,7 @@ export default function CreateRenewal() {
                         height="48px"
                         width="217px"
                         type="submit"
-                        isDisabled={!applicantId}
+                        isDisabled={!applicantId || getApplicantLoading}
                         onClick={() => setNewPageState(RequestFlowPageState.SubmittingRequestPage)}
                       >
                         <Text textStyle="button-semibold">Proceed to request</Text>

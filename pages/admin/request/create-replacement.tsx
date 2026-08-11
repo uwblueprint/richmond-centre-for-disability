@@ -92,44 +92,44 @@ export default function CreateReplacement() {
   };
 
   // Get applicant autofill information
-  const [getApplicant] = useLazyQuery<GetSelectedApplicantResponse, GetSelectedApplicantRequest>(
-    GET_SELECTED_APPLICANT_QUERY,
-    {
-      onCompleted: data => {
-        if (data) {
-          const {
-            firstName,
-            middleName,
-            lastName,
-            email,
-            phone,
-            addressLine1,
-            addressLine2,
-            city,
-            postalCode,
-            mostRecentPermit,
-          } = data.applicant;
+  const [getApplicant, { loading: getApplicantLoading }] = useLazyQuery<
+    GetSelectedApplicantResponse,
+    GetSelectedApplicantRequest
+  >(GET_SELECTED_APPLICANT_QUERY, {
+    onCompleted: data => {
+      if (data) {
+        const {
+          firstName,
+          middleName,
+          lastName,
+          email,
+          phone,
+          addressLine1,
+          addressLine2,
+          city,
+          postalCode,
+          mostRecentPermit,
+        } = data.applicant;
 
-          if (mostRecentPermit && isActivePermit(mostRecentPermit)) {
-            setWarningPermit(mostRecentPermit);
-            setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
-            onOpenWarningModal();
-          }
-          setPermitHolderInformation({
-            firstName,
-            middleName,
-            lastName,
-            email,
-            phone,
-            addressLine1,
-            addressLine2,
-            city,
-            postalCode,
-          });
+        if (mostRecentPermit && isActivePermit(mostRecentPermit)) {
+          setWarningPermit(mostRecentPermit);
+          setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
+          onOpenWarningModal();
         }
-      },
-    }
-  );
+        setPermitHolderInformation({
+          firstName,
+          middleName,
+          lastName,
+          email,
+          phone,
+          addressLine1,
+          addressLine2,
+          city,
+          postalCode,
+        });
+      }
+    },
+  });
 
   /** Update selected permit holder data on selecting option */
   const handleSelectPermitHolder = (applicantId: number) => {
@@ -420,7 +420,7 @@ export default function CreateReplacement() {
                         height="48px"
                         width="217px"
                         type="submit"
-                        isDisabled={applicantId == undefined}
+                        isDisabled={applicantId == undefined || getApplicantLoading}
                         onClick={() => setNewPageState(RequestFlowPageState.SubmittingRequestPage)}
                       >
                         <Text textStyle="button-semibold">Proceed to request</Text>

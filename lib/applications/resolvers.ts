@@ -54,7 +54,7 @@ import {
   requestPhysicianInformationSchema,
 } from '@lib/physicians/validation';
 import { ValidationError } from 'yup';
-import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
+import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
 import moment from 'moment';
 import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
 
@@ -754,7 +754,7 @@ export const createExternalRenewalApplication: Resolver<
     throw new ApolloError('Application was unable to be created');
   }
 
-  const mostRecentPermit = await getMostRecentPermit(applicantId);
+  const mostRecentPermit = await getActivePermit(applicantId);
   if (!mostRecentPermit) {
     // Applicant must have previous permit
     return {
