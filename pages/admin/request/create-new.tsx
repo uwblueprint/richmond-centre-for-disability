@@ -31,7 +31,6 @@ import PaymentDetailsForm from '@components/admin/requests/payment-information/F
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 import ActivePermitWarningModal, {
-  isActivePermit,
   ActivePermitInfo,
 } from '@components/admin/requests/create/ActivePermitWarningModal';
 import { formatFullName } from '@lib/utils/format';
@@ -117,9 +116,21 @@ export default function CreateNew() {
     setWarningPermit(null);
   };
 
+  const handleProceedWarningModal = () => {
+    onCloseWarningModal();
+    setStep(RequestFlowPageState.SubmittingRequestPage);
+  };
+
   const handleCancelWarningModal = () => {
     onCloseWarningModal();
-    resetAllFields();
+  };
+
+  const handleProceedToRequest = () => {
+    if (warningPermit) {
+      onOpenWarningModal();
+    } else {
+      setStep(RequestFlowPageState.SubmittingRequestPage);
+    }
   };
 
   /**
@@ -148,13 +159,12 @@ export default function CreateNew() {
           postalCode,
           medicalInformation: { physician },
           guardian,
-          mostRecentPermit,
+          activePermit,
         } = data.applicant;
 
-        if (mostRecentPermit && isActivePermit(mostRecentPermit)) {
-          setWarningPermit(mostRecentPermit);
+        if (activePermit) {
+          setWarningPermit(activePermit);
           setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
-          onOpenWarningModal();
         }
 
         // set permitHolderInformation
@@ -676,7 +686,7 @@ export default function CreateNew() {
                     width="217px"
                     type="submit"
                     isDisabled={(permitHolderExists && !applicantId) || getApplicantLoading}
-                    onClick={() => setStep(RequestFlowPageState.SubmittingRequestPage)}
+                    onClick={handleProceedToRequest}
                   >
                     <Text textStyle="button-semibold">Proceed to request</Text>
                   </Button>
@@ -690,7 +700,7 @@ export default function CreateNew() {
         isOpen={isWarningModalOpen}
         permit={warningPermit}
         applicantName={selectedApplicantName}
-        onProceed={onCloseWarningModal}
+        onProceed={handleProceedWarningModal}
         onCancel={handleCancelWarningModal}
       />
     </Layout>

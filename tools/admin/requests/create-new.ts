@@ -54,7 +54,7 @@ export const GET_APPLICANT_NEW_REQUEST_INFO_QUERY = gql`
         city
         postalCode
       }
-      mostRecentPermit {
+      activePermit {
         rcdPermitId
         type
         expiryDate
@@ -110,7 +110,7 @@ export type GetApplicantNewRequestInfoResponse = {
       | 'postalCode'
     > | null;
   } & {
-    mostRecentPermit: {
+    activePermit: {
       rcdPermitId: number;
       type: string;
       expiryDate: string;

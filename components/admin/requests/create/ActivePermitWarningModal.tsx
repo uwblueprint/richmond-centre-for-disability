@@ -21,19 +21,6 @@ export type ActivePermitInfo = {
   active?: boolean;
 };
 
-/**
- * Check if a permit is considered active
- * @param permit Permit details object or null
- * @returns boolean true if warning pop-up should be triggered
- */
-export const isActivePermit = (permit: ActivePermitInfo | null): boolean => {
-  if (!permit) {
-    return false;
-  }
-
-  return !!permit.active;
-};
-
 type Props = {
   readonly isOpen: boolean;
   readonly permit: ActivePermitInfo | null;
@@ -107,7 +94,7 @@ export default function ActivePermitWarningModal({
             _hover={{ bg: 'primaryHover' }}
             onClick={onProceed}
           >
-            <Text textStyle="button-semibold">Dismiss Warning</Text>
+            <Text textStyle="button-semibold">Proceed anyway</Text>
           </Button>
         </ModalFooter>
       </ModalContent>

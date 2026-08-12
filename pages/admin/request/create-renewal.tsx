@@ -22,7 +22,6 @@ import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
 import ActivePermitWarningModal, {
-  isActivePermit,
   ActivePermitInfo,
 } from '@components/admin/requests/create/ActivePermitWarningModal';
 import { formatFullName } from '@lib/utils/format';
@@ -108,10 +107,21 @@ export default function CreateRenewal() {
     onClose: onCloseWarningModal,
   } = useDisclosure();
 
+  const handleProceedWarningModal = () => {
+    onCloseWarningModal();
+    setNewPageState(RequestFlowPageState.SubmittingRequestPage);
+  };
+
   const handleCancelWarningModal = () => {
     onCloseWarningModal();
-    setApplicantId(null);
-    setWarningPermit(null);
+  };
+
+  const handleProceedToRequest = () => {
+    if (warningPermit) {
+      onOpenWarningModal();
+    } else {
+      setNewPageState(RequestFlowPageState.SubmittingRequestPage);
+    }
   };
 
   /**
@@ -135,13 +145,18 @@ export default function CreateRenewal() {
           city,
           postalCode,
           medicalInformation: { physician },
-          mostRecentPermit,
+          activePermit,
         } = data.applicant;
 
-        if (mostRecentPermit && isActivePermit(mostRecentPermit)) {
-          setWarningPermit(mostRecentPermit);
-          setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
-          onOpenWarningModal();
+        if (activePermit) {
+          const createdAtDate = new Date(activePermit.createdAt);
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+          if (createdAtDate > thirtyDaysAgo) {
+            setWarningPermit(activePermit);
+            setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
+          }
         }
         setPermitHolderInformation({
           firstName,
@@ -527,7 +542,7 @@ export default function CreateRenewal() {
                         width="217px"
                         type="submit"
                         isDisabled={!applicantId || getApplicantLoading}
-                        onClick={() => setNewPageState(RequestFlowPageState.SubmittingRequestPage)}
+                        onClick={handleProceedToRequest}
                       >
                         <Text textStyle="button-semibold">Proceed to request</Text>
                       </Button>
@@ -543,7 +558,7 @@ export default function CreateRenewal() {
         isOpen={isWarningModalOpen}
         permit={warningPermit}
         applicantName={selectedApplicantName}
-        onProceed={onCloseWarningModal}
+        onProceed={handleProceedWarningModal}
         onCancel={handleCancelWarningModal}
       />
     </Layout>

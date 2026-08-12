@@ -13,7 +13,6 @@ import {
   useToast,
   HStack,
   Spacer,
-  useDisclosure,
 } from '@chakra-ui/react'; // Chakra UI
 import Layout from '@components/admin/Layout'; // Layout component
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
@@ -23,11 +22,6 @@ import {
   GET_SELECTED_APPLICANT_QUERY,
   PermitHolderFormData,
 } from '@tools/admin/requests/permit-holder-information';
-import ActivePermitWarningModal, {
-  isActivePermit,
-  ActivePermitInfo,
-} from '@components/admin/requests/create/ActivePermitWarningModal';
-import { formatFullName } from '@lib/utils/format';
 import { PaymentInformationFormData } from '@tools/admin/requests/payment-information';
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form'; //Payment details form
 import { ReasonForReplacementFormData } from '@tools/admin/requests/reason-for-replacement';
@@ -76,21 +70,6 @@ export default function CreateReplacement() {
   const toast = useToast();
   const router = useRouter();
 
-  // Recent permit warning modal state
-  const [warningPermit, setWarningPermit] = useState<ActivePermitInfo | null>(null);
-  const [selectedApplicantName, setSelectedApplicantName] = useState<string>('');
-  const {
-    isOpen: isWarningModalOpen,
-    onOpen: onOpenWarningModal,
-    onClose: onCloseWarningModal,
-  } = useDisclosure();
-
-  const handleCancelWarningModal = () => {
-    onCloseWarningModal();
-    setApplicantId(null);
-    setWarningPermit(null);
-  };
-
   // Get applicant autofill information
   const [getApplicant, { loading: getApplicantLoading }] = useLazyQuery<
     GetSelectedApplicantResponse,
@@ -108,14 +87,7 @@ export default function CreateReplacement() {
           addressLine2,
           city,
           postalCode,
-          mostRecentPermit,
         } = data.applicant;
-
-        if (mostRecentPermit && isActivePermit(mostRecentPermit)) {
-          setWarningPermit(mostRecentPermit);
-          setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
-          onOpenWarningModal();
-        }
         setPermitHolderInformation({
           firstName,
           middleName,
@@ -433,13 +405,6 @@ export default function CreateReplacement() {
           </Box>
         )}
       </GridItem>
-      <ActivePermitWarningModal
-        isOpen={isWarningModalOpen}
-        permit={warningPermit}
-        applicantName={selectedApplicantName}
-        onProceed={onCloseWarningModal}
-        onCancel={handleCancelWarningModal}
-      />
     </Layout>
   );
 }
