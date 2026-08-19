@@ -115,7 +115,12 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
     // Get email and first name that were inputted in original application, if exists
     const application = await prisma.application.findUnique({
       where: { id: applicationId },
-      select: { email: true, firstName: true, donationReceivedAt: true },
+      select: {
+        email: true,
+        firstName: true,
+        donationReceivedAt: true,
+        shopifyPaymentStatus: true,
+      },
     });
 
     if (!application) {
@@ -140,6 +145,11 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
         }
       : {};
 
+    // Only write billing information on the first payment receipt so that replayed or
+    // delayed webhooks do not overwrite corrections made by staff
+    const paymentPreviouslyReceived =
+      application.shopifyPaymentStatus === ShopifyPaymentStatus.RECEIVED;
+
     // Update application
     await prisma.application.update({
       where: { id: applicationId },
@@ -150,10 +160,13 @@ const paymentReceivedHandler: NextApiHandler = async (req, res) => {
         paidThroughShopify: true,
         donationAmount: donationAmount,
         donationReceivedAt: application.donationReceivedAt || new Date(),
-        donationTaxReceiptEnabled: true,
         // Billing information
-        billingAddressSameAsHomeAddress: !rawBillingInformation, // Default to true if no billing address in Shopify payload
-        ...billingInformation,
+        ...(paymentPreviouslyReceived
+          ? {}
+          : {
+              billingAddressSameAsHomeAddress: !rawBillingInformation, // Default to true if no billing address in Shopify payload
+              ...billingInformation,
+            }),
       },
     });
 
