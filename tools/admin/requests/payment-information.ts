@@ -90,7 +90,10 @@ export type PaymentInformationCardData = Pick<
     DonationTaxReceipt,
     'receiptNumber' | 's3ObjectKey' | 's3ObjectUrl' | 'createdAt' | 'updatedAt'
   > | null;
-  processing: Pick<ApplicationProcessing, 'appNumber'>;
+  processing: Pick<
+    ApplicationProcessing,
+    'appNumber' | 'reviewRequestCompleted' | 'paymentRefunded'
+  >;
 };
 
 /** Get payment information of an application */
@@ -133,6 +136,8 @@ export const GET_PAYMENT_INFORMATION = gql`
       }
       processing {
         appNumber
+        reviewRequestCompleted
+        paymentRefunded
       }
     }
   }

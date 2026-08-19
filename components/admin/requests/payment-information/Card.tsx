@@ -337,9 +337,17 @@ const Card: FC<Props> = props => {
                 <Text textStyle="caption" color="text.secondary">
                   Available for donations of $20 or more.
                 </Text>
+              ) : processing.paymentRefunded ? (
+                <Text textStyle="caption" color="text.secondary">
+                  Not available for refunded payments.
+                </Text>
               ) : !processing.appNumber ? (
                 <Text textStyle="caption" color="text.secondary">
                   Assign an APP number before generating.
+                </Text>
+              ) : !processing.reviewRequestCompleted ? (
+                <Text textStyle="caption" color="text.secondary">
+                  Complete the request review before generating.
                 </Text>
               ) : onlinePaymentPending ? (
                 <Text textStyle="caption" color="text.secondary">
@@ -362,15 +370,19 @@ const Card: FC<Props> = props => {
                 </Text>
               )}
             </VStack>
-            {totalDonation >= 20 && processing.appNumber && !onlinePaymentPending && (
-              <Button
-                onClick={handleGenerateDonationTaxReceipt}
-                isLoading={generatingDonationTaxReceipt}
-                loadingText={donationTaxReceipt ? 'Reissuing' : 'Generating'}
-              >
-                {donationTaxReceipt ? 'Reissue tax receipt' : 'Generate tax receipt'}
-              </Button>
-            )}
+            {totalDonation >= 20 &&
+              !processing.paymentRefunded &&
+              processing.appNumber &&
+              processing.reviewRequestCompleted &&
+              !onlinePaymentPending && (
+                <Button
+                  onClick={handleGenerateDonationTaxReceipt}
+                  isLoading={generatingDonationTaxReceipt}
+                  loadingText={donationTaxReceipt ? 'Reissuing' : 'Generating'}
+                >
+                  {donationTaxReceipt ? 'Reissue tax receipt' : 'Generate tax receipt'}
+                </Button>
+              )}
           </HStack>
         </>
       )}

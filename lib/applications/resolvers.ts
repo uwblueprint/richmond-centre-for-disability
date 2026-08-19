@@ -1858,6 +1858,10 @@ export const generateDonationTaxReceipt: Resolver<
     return { ok: false, error: 'Donation must be at least $20' };
   }
 
+  if (application.applicationProcessing.paymentRefunded) {
+    return { ok: false, error: 'A refunded payment is not eligible for a donation tax receipt' };
+  }
+
   const isOnlinePayment = application.paymentMethod === 'SHOPIFY' || application.paidThroughShopify;
   if (isOnlinePayment && application.shopifyPaymentStatus !== 'RECEIVED') {
     return { ok: false, error: 'Online payment has not been received' };
@@ -1866,6 +1870,12 @@ export const generateDonationTaxReceipt: Resolver<
   const appNumber = application.applicationProcessing.appNumber;
   if (!appNumber) {
     return { ok: false, error: 'An APP number must be assigned before generating a receipt' };
+  }
+
+  // Payment information and APP numbers can be edited until the request review is completed,
+  // so receipts issued earlier could embed stale amounts or APP numbers
+  if (!application.applicationProcessing.reviewRequestCompleted) {
+    return { ok: false, error: 'The request review must be completed before generating a receipt' };
   }
 
   try {
