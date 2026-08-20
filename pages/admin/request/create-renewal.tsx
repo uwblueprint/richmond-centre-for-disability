@@ -1,3 +1,4 @@
+import moment from 'moment';
 import Layout from '@components/admin/Layout'; // Layout component
 import {
   Text,
@@ -21,10 +22,9 @@ import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
-import ActivePermitWarningModal, {
+import PermitWarningModal, {
   ActivePermitInfo,
-} from '@components/admin/requests/create/ActivePermitWarningModal';
-import { formatFullName } from '@lib/utils/format';
+} from '@components/admin/requests/create/PermitWarningModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
 import DoctorTypeahead from '@components/admin/requests/doctor-information/DoctorTypeahead';
 import { useLazyQuery, useMutation } from '@tools/hooks/graphql';
@@ -100,7 +100,7 @@ export default function CreateRenewal() {
 
   // Recent permit warning modal state
   const [warningPermit, setWarningPermit] = useState<ActivePermitInfo | null>(null);
-  const [selectedApplicantName, setSelectedApplicantName] = useState<string>('');
+  const [warningMessage, setWarningMessage] = useState<string>('');
   const {
     isOpen: isWarningModalOpen,
     onOpen: onOpenWarningModal,
@@ -149,13 +149,31 @@ export default function CreateRenewal() {
         } = data.applicant;
 
         if (activePermit) {
-          const createdAtDate = new Date(activePermit.createdAt);
-          const thirtyDaysAgo = new Date();
-          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          let msg = '';
+          const createdAtDate = moment(activePermit.createdAt);
+          const thirtyDaysAgo = moment().subtract(30, 'days');
 
-          if (createdAtDate > thirtyDaysAgo) {
+          if (createdAtDate.isAfter(thirtyDaysAgo)) {
+            msg = 'This permit holder was issued a permit within the last 30 days.';
+          } else if (activePermit.type === 'TEMPORARY') {
+            msg = 'This permit is a temporary permit and cannot be renewed.';
+          } else {
+            const expiryDate = moment(activePermit.expiryDate);
+            const thirtyDaysFromNow = moment().add(30, 'days');
+            const sixMonthsAgo = moment().subtract(6, 'months');
+
+            const isWithinWindow =
+              expiryDate.isSameOrBefore(thirtyDaysFromNow) &&
+              expiryDate.isSameOrAfter(sixMonthsAgo);
+
+            if (!isWithinWindow) {
+              msg = 'The current permit is outside the normal renewal window.';
+            }
+          }
+
+          if (msg) {
             setWarningPermit(activePermit);
-            setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
+            setWarningMessage(msg);
           }
         }
         setPermitHolderInformation({
@@ -554,10 +572,10 @@ export default function CreateRenewal() {
           </Box>
         )}
       </GridItem>
-      <ActivePermitWarningModal
+      <PermitWarningModal
         isOpen={isWarningModalOpen}
         permit={warningPermit}
-        applicantName={selectedApplicantName}
+        warningMessage={warningMessage}
         onProceed={handleProceedWarningModal}
         onCancel={handleCancelWarningModal}
       />

@@ -24,7 +24,7 @@ export type ActivePermitInfo = {
 type Props = {
   readonly isOpen: boolean;
   readonly permit: ActivePermitInfo | null;
-  readonly applicantName?: string;
+  readonly warningMessage: string;
   readonly onProceed: () => void;
   readonly onCancel: () => void;
 };
@@ -32,10 +32,10 @@ type Props = {
 /**
  * Warning modal displayed when staff selects a permit holder who has an active permit or recently renewed permit
  */
-export default function ActivePermitWarningModal({
+export default function PermitWarningModal({
   isOpen,
   permit,
-  applicantName,
+  warningMessage,
   onProceed,
   onCancel,
 }: Props) {
@@ -52,10 +52,7 @@ export default function ActivePermitWarningModal({
             <Alert status="warning" borderRadius="md">
               <AlertIcon />
               <Box>
-                <Text textStyle="body-bold">
-                  {applicantName ? `${applicantName} ` : 'This permit holder '}already has an active
-                  permit.
-                </Text>
+                <Text textStyle="body-bold">{warningMessage}</Text>
               </Box>
             </Alert>
 

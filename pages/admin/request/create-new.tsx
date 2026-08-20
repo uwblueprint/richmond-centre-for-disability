@@ -30,10 +30,9 @@ import GuardianInformationForm from '@components/admin/requests/guardian-informa
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
-import ActivePermitWarningModal, {
+import PermitWarningModal, {
   ActivePermitInfo,
-} from '@components/admin/requests/create/ActivePermitWarningModal';
-import { formatFullName } from '@lib/utils/format';
+} from '@components/admin/requests/create/PermitWarningModal';
 
 import { authorize } from '@tools/authorization';
 import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment';
@@ -92,7 +91,8 @@ export default function CreateNew() {
 
   // Recent permit warning modal state
   const [warningPermit, setWarningPermit] = useState<ActivePermitInfo | null>(null);
-  const [selectedApplicantName, setSelectedApplicantName] = useState<string>('');
+  const [warningMessage, setWarningMessage] = useState<string>('');
+
   const {
     isOpen: isWarningModalOpen,
     onOpen: onOpenWarningModal,
@@ -114,6 +114,7 @@ export default function CreateNew() {
     setGuardianInformation(INITIAL_GUARDIAN_INFORMATION);
     setGuardianPOAFile(null);
     setWarningPermit(null);
+    setWarningMessage('');
   };
 
   const handleProceedWarningModal = () => {
@@ -164,7 +165,7 @@ export default function CreateNew() {
 
         if (activePermit) {
           setWarningPermit(activePermit);
-          setSelectedApplicantName(formatFullName(firstName, middleName, lastName));
+          setWarningMessage('This permit holder already has an active permit.');
         }
 
         // set permitHolderInformation
@@ -696,10 +697,10 @@ export default function CreateNew() {
           </Box>
         )}
       </GridItem>
-      <ActivePermitWarningModal
+      <PermitWarningModal
         isOpen={isWarningModalOpen}
         permit={warningPermit}
-        applicantName={selectedApplicantName}
+        warningMessage={warningMessage}
         onProceed={handleProceedWarningModal}
         onCancel={handleCancelWarningModal}
       />
