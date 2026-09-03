@@ -263,7 +263,7 @@ const applicationPdfDefinition = (input: {
       font: 'Helvetica',
     },
     images: {
-      logoVertical: 'public/assets/logo-vertical.jpg',
+      logoVertical: 'public/assets/logo-vertical.png',
     },
   };
 };
@@ -602,8 +602,8 @@ const donationPdfDefinition = (input: {
       lineHeight: 1.2,
     },
     images: {
-      logoNew: 'public/assets/logo.jpg',
-      logoVertical: 'public/assets/logo-vertical.jpg',
+      logoNew: 'public/assets/logo.png',
+      logoVertical: 'public/assets/logo-vertical.png',
       signature: 'public/assets/signature.png',
     },
   };
