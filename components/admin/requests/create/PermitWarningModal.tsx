@@ -18,6 +18,7 @@ export type ActivePermitInfo = {
   rcdPermitId: number;
   type: string;
   expiryDate: string;
+  createdAt?: string;
   active?: boolean;
 };
 
@@ -25,6 +26,7 @@ type Props = {
   readonly isOpen: boolean;
   readonly permit: ActivePermitInfo | null;
   readonly warningMessage: string;
+  readonly isOverrideable?: boolean;
   readonly onProceed: () => void;
   readonly onCancel: () => void;
 };
@@ -36,6 +38,7 @@ export default function PermitWarningModal({
   isOpen,
   permit,
   warningMessage,
+  isOverrideable = true,
   onProceed,
   onCancel,
 }: Props) {
@@ -63,15 +66,22 @@ export default function PermitWarningModal({
               <Text textStyle="body-regular">
                 <b>Permit Type:</b> {titlecase(permit.type)}
               </Text>
+              {permit.createdAt && (
+                <Text textStyle="body-regular">
+                  <b>Issued Date:</b> {formatDateYYYYMMDD(new Date(permit.createdAt))}
+                </Text>
+              )}
               <Text textStyle="body-regular">
                 <b>Expiry Date:</b> {formatDateYYYYMMDD(new Date(permit.expiryDate))}
               </Text>
             </VStack>
 
-            <Text textStyle="body-regular">
-              Please confirm if you still wish to proceed with processing another permit request or
-              renewal for this permit holder.
-            </Text>
+            {isOverrideable && (
+              <Text textStyle="body-regular">
+                Please confirm if you still wish to proceed with processing another permit request
+                or renewal for this permit holder.
+              </Text>
+            )}
           </VStack>
         </ModalBody>
 
@@ -85,14 +95,16 @@ export default function PermitWarningModal({
           >
             <Text textStyle="button-semibold">Cancel</Text>
           </Button>
-          <Button
-            colorScheme="primary"
-            bg="primary"
-            _hover={{ bg: 'primaryHover' }}
-            onClick={onProceed}
-          >
-            <Text textStyle="button-semibold">Proceed anyway</Text>
-          </Button>
+          {isOverrideable && (
+            <Button
+              colorScheme="primary"
+              bg="primary"
+              _hover={{ bg: 'primaryHover' }}
+              onClick={onProceed}
+            >
+              <Text textStyle="button-semibold">Proceed anyway</Text>
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

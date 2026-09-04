@@ -153,10 +153,11 @@ export default function CreateRenewal() {
           const createdAtDate = moment(activePermit.createdAt);
           const thirtyDaysAgo = moment().subtract(30, 'days');
 
-          if (createdAtDate.isAfter(thirtyDaysAgo)) {
+          if (activePermit.type === 'TEMPORARY') {
+            msg =
+              'Temporary permits cannot be renewed. Please process either a replacement request or a new request.';
+          } else if (createdAtDate.isAfter(thirtyDaysAgo)) {
             msg = 'This permit holder was issued a permit within the last 30 days.';
-          } else if (activePermit.type === 'TEMPORARY') {
-            msg = 'This permit is a temporary permit and cannot be renewed.';
           } else {
             const expiryDate = moment(activePermit.expiryDate);
             const thirtyDaysFromNow = moment().add(30, 'days');
@@ -174,7 +175,13 @@ export default function CreateRenewal() {
           if (msg) {
             setWarningPermit(activePermit);
             setWarningMessage(msg);
+          } else {
+            setWarningPermit(null);
+            setWarningMessage('');
           }
+        } else {
+          setWarningPermit(null);
+          setWarningMessage('');
         }
         setPermitHolderInformation({
           firstName,
@@ -206,6 +213,8 @@ export default function CreateRenewal() {
    * Set and fetch data about applicant when permit holder is selected
    */
   const handleSelectPermitHolder = async (applicantId: number) => {
+    setWarningPermit(null);
+    setWarningMessage('');
     setApplicantId(applicantId);
     getApplicant({ variables: { id: applicantId } });
   };
@@ -576,6 +585,7 @@ export default function CreateRenewal() {
         isOpen={isWarningModalOpen}
         permit={warningPermit}
         warningMessage={warningMessage}
+        isOverrideable={warningPermit?.type !== 'TEMPORARY'}
         onProceed={handleProceedWarningModal}
         onCancel={handleCancelWarningModal}
       />

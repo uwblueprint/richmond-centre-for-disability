@@ -166,6 +166,9 @@ export default function CreateNew() {
         if (activePermit) {
           setWarningPermit(activePermit);
           setWarningMessage('This permit holder already has an active permit.');
+        } else {
+          setWarningPermit(null);
+          setWarningMessage('');
         }
 
         // set permitHolderInformation
@@ -238,6 +241,8 @@ export default function CreateNew() {
    * Sets and fetches permit holder data when selected from typeahead
    */
   const handleSelectPermitHolder = useCallback((applicantId: number) => {
+    setWarningPermit(null);
+    setWarningMessage('');
     setApplicantId(applicantId);
     getApplicant({
       variables: {
@@ -396,6 +401,8 @@ export default function CreateNew() {
               <RadioGroup
                 value={permitHolderExists ? 'search-existing' : 'create-new'}
                 onChange={value => {
+                  setWarningPermit(null);
+                  setWarningMessage('');
                   setPermitHolderExists(value === 'search-existing');
                   setApplicantId(null);
                 }}

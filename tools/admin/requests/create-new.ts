@@ -59,6 +59,7 @@ export const GET_APPLICANT_NEW_REQUEST_INFO_QUERY = gql`
         type
         expiryDate
         active
+        createdAt
       }
     }
   }
@@ -115,6 +116,7 @@ export type GetApplicantNewRequestInfoResponse = {
       type: string;
       expiryDate: string;
       active: boolean;
+      createdAt: string;
     } | null;
   };
 };

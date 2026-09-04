@@ -627,6 +627,15 @@ export const createRenewalApplication: Resolver<
 
   let createdRenewalApplication;
   try {
+    const mostRecentPermit = await getActivePermit(applicantId);
+    if (mostRecentPermit && mostRecentPermit.type === 'TEMPORARY') {
+      return {
+        ok: false,
+        applicationId: null,
+        error: 'Temporary permits cannot be renewed.',
+      };
+    }
+
     createdRenewalApplication = await prisma.application.create({
       data: {
         type: 'RENEWAL',
