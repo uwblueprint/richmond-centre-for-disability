@@ -44,8 +44,9 @@ const html = (config: EmailConfig) => {
   // Escape email hyperlink formatting
   const escapedEmail = `${email.replace(/\./g, '&#8203;.')}`;
 
+  const baseUrl = process.env.NEXTAUTH_URL;
+
   // HTML email template
-  // TODO: Replace logo URL with production URL
   return `
     <body
       style="
@@ -67,10 +68,10 @@ const html = (config: EmailConfig) => {
         "
       >
         <img
-          src="https://dev.rcdrichmondapp.ca/assets/logo.png"
+          src="${baseUrl}/assets/logo.png"
           style="
-            height: 65px;
-            width: 59px;
+            height: 54px;
+            width: 200px;
             margin: 0 0 20px;
           "
           alt="Richmond Centre for Disability logo"

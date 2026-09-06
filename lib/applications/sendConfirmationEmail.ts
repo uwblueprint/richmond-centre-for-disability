@@ -43,6 +43,7 @@ const text = (firstName: string) => {
 };
 
 const html = (firstName: string) => {
+  const baseUrl = process.env.NEXTAUTH_URL;
   return `
     <body
       style="
@@ -64,10 +65,10 @@ const html = (firstName: string) => {
         "
       >
         <img
-          src="https://dev.rcdrichmondapp.ca/assets/logo.png"
+          src="${baseUrl}/assets/logo.png"
           style="
-            height: 65px;
-            width: 59px;
+            height: 54px;
+            width: 200px;
             display: block;
             margin-bottom: 20px;
             margin-left: auto;
