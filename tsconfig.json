@@ -27,7 +27,8 @@
       "@prisma/*": ["prisma/*"],
       "@public/*": ["public/*"],
       "@tools/*": ["tools/*"],
-      "@logging": ["lib/utils/logging.ts"]
+      "@logging": ["lib/utils/logging.ts"],
+      "@/*": ["./*"]
     },
     "incremental": true
   },

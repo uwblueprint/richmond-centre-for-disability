@@ -1,5 +1,8 @@
 const { i18n } = require('./next-i18next.config'); // Internationalization
+const { withSentryConfig } = require('@sentry/nextjs');
 
-module.exports = {
+const nextConfig = {
   i18n,
 };
+
+module.exports = withSentryConfig(nextConfig, { silent: true });
