@@ -49,7 +49,7 @@ export default function Landing() {
             permit
           </b>
           : download a physical form and email, mail or drop it off in person to RCD. For any other
-          services, such as updating your contacy information, please contact RCD.
+          services, such as updating your contact information, please contact RCD.
         </Text>
       </GridItem>
       <GridItem

@@ -54,7 +54,7 @@ import {
   requestPhysicianInformationSchema,
 } from '@lib/physicians/validation';
 import { ValidationError } from 'yup';
-import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
+import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
 import moment from 'moment';
 import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
 
@@ -627,6 +627,15 @@ export const createRenewalApplication: Resolver<
 
   let createdRenewalApplication;
   try {
+    const mostRecentPermit = await getActivePermit(applicantId);
+    if (mostRecentPermit && mostRecentPermit.type === 'TEMPORARY') {
+      return {
+        ok: false,
+        applicationId: null,
+        error: 'Temporary permits cannot be renewed.',
+      };
+    }
+
     createdRenewalApplication = await prisma.application.create({
       data: {
         type: 'RENEWAL',
@@ -754,7 +763,7 @@ export const createExternalRenewalApplication: Resolver<
     throw new ApolloError('Application was unable to be created');
   }
 
-  const mostRecentPermit = await getMostRecentPermit(applicantId);
+  const mostRecentPermit = await getActivePermit(applicantId);
   if (!mostRecentPermit) {
     // Applicant must have previous permit
     return {

@@ -190,6 +190,12 @@ export const GET_SELECTED_APPLICANT_QUERY = gql`
       province
       country
       postalCode
+      mostRecentPermit {
+        rcdPermitId
+        type
+        expiryDate
+        active
+      }
     }
   }
 `;
@@ -214,5 +220,12 @@ export type GetSelectedApplicantResponse = {
     | 'province'
     | 'country'
     | 'postalCode'
-  >;
+  > & {
+    mostRecentPermit: {
+      rcdPermitId: number;
+      type: string;
+      expiryDate: string;
+      active: boolean;
+    } | null;
+  };
 };

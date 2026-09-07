@@ -1,6 +1,7 @@
 import prisma from '@prisma/index'; // Prisma client
 import { Permit } from '@prisma/client'; // DB types
 import { SortOrder } from '@tools/types';
+import logger from '@logging';
 
 /**
  * Get the active permit of an applicant
@@ -11,16 +12,16 @@ export const getActivePermit = async (applicantId: number): Promise<Permit | nul
   const permits = await prisma.permit.findMany({
     where: {
       applicantId,
+      active: true,
     },
+    orderBy: [{ expiryDate: SortOrder.DESC }, { createdAt: SortOrder.DESC }],
   });
 
-  const activePermits = permits.filter(permit => permit.active);
-
-  if (activePermits.length > 1) {
-    throw new Error(`Applicant with ID ${applicantId} has more than one active permit`);
+  if (permits.length > 1) {
+    logger.warn(`Applicant ${applicantId} has ${permits.length} active permits`);
   }
 
-  return activePermits.length > 0 ? activePermits[0] : null;
+  return permits.length > 0 ? permits[0] : null;
 };
 
 /**
@@ -29,19 +30,8 @@ export const getActivePermit = async (applicantId: number): Promise<Permit | nul
  * @returns The most recent permit of the applicant
  */
 export const getMostRecentPermit = async (applicantId: number): Promise<Permit | null> => {
-  const permit = await prisma.applicant
-    .findUnique({
-      where: { id: applicantId },
-    })
-    .permits({
-      where: { active: true },
-      orderBy: [{ expiryDate: SortOrder.DESC }, { createdAt: SortOrder.DESC }],
-      take: 1,
-    });
-
-  if (permit.length === 0) {
-    return null;
-  }
-
-  return permit[0];
+  return await prisma.permit.findFirst({
+    where: { applicantId },
+    orderBy: [{ expiryDate: SortOrder.DESC }, { createdAt: SortOrder.DESC }],
+  });
 };
