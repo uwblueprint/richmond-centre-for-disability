@@ -61,6 +61,7 @@ model Application {
   secondPaymentMethod              PaymentType?            @map("second_payment_method")
   secondProcessingFee              Decimal?                @map("second_processing_fee") @db.Money
   secondDonationAmount             Decimal?                @map("second_donation_amount") @db.Money
+  donationReceivedAt               DateTime?               @map("donation_received_at") @db.Timestamptz(6)
   hasSecondPaymentMethod           Boolean                 @default(false) @map("has_second_payment_method")
   paidThroughShopify               Boolean                 @default(false) @map("paid_through_shopify")
   shopifyPaymentStatus             ShopifyPaymentStatus?   @default(PENDING) @map("shopify_payment_status")
@@ -82,6 +83,7 @@ model Application {
   billingProvince                  Province?               @map("billing_province")
   billingCountry                   String?                 @map("billing_country") @db.VarChar(255)
   billingPostalCode                String?                 @map("billing_postal_code") @db.VarChar(6)
+  donationTaxReceiptEnabled        Boolean                 @default(true) @map("donation_tax_receipt_enabled")
   type                             ApplicationType
   notes                            String?
   applicantId                      Int?                    @map("applicant_id")
@@ -94,6 +96,7 @@ model Application {
   permit                           Permit?                 @relation("permitsToapplications")
   renewalApplication               RenewalApplication?     @relation("applicationsTorenewal_applications")
   replacementApplication           ReplacementApplication? @relation("applicationsToreplacement_applications")
+  donationTaxReceipt               DonationTaxReceipt?
 
   @@map("applications")
 }
@@ -117,6 +120,7 @@ model Employee {
   reviewRequestApplicationProcessings     ApplicationProcessing[] @relation("application_processing_review_request_completed_employee_idToemployees")
   createdWalletCardApplicationProcessings ApplicationProcessing[] @relation("application_processing_wallet_card_created_employee_idToemployees")
   createdWalletCards                      WalletCard[]            @relation("wallet_cardToemployees")
+  generatedDonationTaxReceipts            DonationTaxReceipt[]    @relation("donation_tax_receiptsToemployees")
 
   @@map("employees")
 }
@@ -346,6 +350,20 @@ model ApplicationInvoice {
   applicationProcessing ApplicationProcessing? @relation("application_invoicesToapplication_processing")
 
   @@map("application_invoices")
+}
+
+model DonationTaxReceipt {
+  applicationId Int         @id @map("application_id")
+  receiptNumber String      @unique @map("receipt_number") @db.VarChar(255)
+  s3ObjectKey   String?     @map("s3_object_key") @db.VarChar(255)
+  s3ObjectUrl   String?     @map("s3_object_url")
+  employeeId    Int         @map("employee_id")
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  employee      Employee    @relation("donation_tax_receiptsToemployees", fields: [employeeId], references: [id])
+
+  @@map("donation_tax_receipts")
 }
 
 model WalletCard {

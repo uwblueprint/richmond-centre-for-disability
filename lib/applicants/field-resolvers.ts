@@ -69,7 +69,7 @@ export const applicantPermitsResolver: FieldResolver<
  */
 export const applicantMostRecentApplicationResolver: FieldResolver<
   Applicant,
-  Omit<Application, 'processing' | 'applicant' | 'permit'>
+  Omit<Application, 'processing' | 'applicant' | 'permit' | 'donationTaxReceipt'>
 > = async (parent, _args, { prisma }) => {
   const mostRecentApplications = await prisma.applicant
     .findUnique({
@@ -95,7 +95,7 @@ export const applicantMostRecentApplicationResolver: FieldResolver<
  */
 export const applicantCompletedApplicationsResolver: FieldResolver<
   Applicant,
-  Array<Omit<Application, 'processing' | 'applicant' | 'permit'>>
+  Array<Omit<Application, 'processing' | 'applicant' | 'permit' | 'donationTaxReceipt'>>
 > = async (parent, _args, { prisma }) => {
   const applications = await prisma.applicant
     .findUnique({ where: { id: parent.id } })

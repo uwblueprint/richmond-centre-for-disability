@@ -11,12 +11,15 @@ import {
   CreateRenewalApplicationResult,
   CreateReplacementApplicationResult,
   DeleteApplicationResult,
+  GenerateDonationTaxReceiptResult,
+  MutationGenerateDonationTaxReceiptArgs,
   MutationCreateExternalRenewalApplicationArgs,
   MutationCreateNewApplicationArgs,
   MutationCreateRenewalApplicationArgs,
   MutationCreateReplacementApplicationArgs,
   MutationDeleteApplicationArgs,
   MutationUpdateApplicationAdditionalInformationArgs,
+  MutationUpdateApplicationBillingInformationArgs,
   MutationUpdateApplicationDoctorInformationArgs,
   MutationUpdateApplicationGeneralInformationArgs,
   MutationUpdateApplicationGuardianInformationArgs,
@@ -30,6 +33,7 @@ import {
   RenewalApplication,
   ReplacementApplication,
   UpdateApplicationAdditionalInformationResult,
+  UpdateApplicationBillingInformationResult,
   UpdateApplicationDoctorInformationResult,
   UpdateApplicationGeneralInformationResult,
   UpdateApplicationGuardianInformationResult,
@@ -42,6 +46,7 @@ import { requestPermitHolderInformationMutationSchema } from '@lib/applicants/va
 import {
   additionalQuestionsMutationSchema,
   applicantFacingRenewalMutationSchema,
+  billingInformationMutationSchema,
   createNewRequestFormSchema,
   paymentInformationMutationSchema,
   reasonForReplacementMutationSchema,
@@ -57,6 +62,9 @@ import { ValidationError } from 'yup';
 import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import moment from 'moment';
 import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
+import { generateDonationTaxReceiptPdf, getDonationTaxReceiptRecipient } from '@lib/invoices/utils';
+import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
+import { formatDateYYYYMMDDLocalTimezone } from '@lib/utils/date';
 
 /**
  * Query an application by ID
@@ -66,7 +74,7 @@ export const application: Resolver<
   QueryApplicationArgs,
   Omit<
     NewApplication | RenewalApplication | ReplacementApplication,
-    'processing' | 'applicant' | 'permit'
+    'processing' | 'applicant' | 'permit' | 'donationTaxReceipt'
   >
 > = async (_parent, args, { prisma }) => {
   const { id } = args;
@@ -109,7 +117,10 @@ export const application: Resolver<
  */
 export const applications: Resolver<
   QueryApplicationsArgs,
-  { result: Array<Omit<Application, 'processing' | 'applicant' | 'permit'>>; totalCount: number }
+  {
+    result: Array<Omit<Application, 'processing' | 'applicant' | 'permit' | 'donationTaxReceipt'>>;
+    totalCount: number;
+  }
 > = async (_parent, { filter }, { prisma }) => {
   let where = {};
   let orderBy = undefined;
@@ -1739,6 +1750,179 @@ export const updateApplicationPaymentInformation: Resolver<
 
   if (!updatedApplication) {
     throw new ApolloError('Application payment information was unable to be updated');
+  }
+
+  return { ok: true, error: null };
+};
+
+/**
+ * Update billing information independently of locked payment information.
+ */
+export const updateApplicationBillingInformation: Resolver<
+  MutationUpdateApplicationBillingInformationArgs,
+  UpdateApplicationBillingInformationResult
+> = async (_parent, args, { prisma, logger }) => {
+  const { input } = args;
+
+  try {
+    await billingInformationMutationSchema.validate(input);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      return { ok: false, error: err.message };
+    }
+
+    logger.error({ error: err }, 'Unknown error');
+    throw new ApolloError('Application billing information was unable to be updated');
+  }
+
+  const {
+    id,
+    billingAddressSameAsHomeAddress,
+    billingFullName,
+    billingAddressLine1,
+    billingAddressLine2,
+    billingCity,
+    billingProvince,
+    billingCountry,
+    billingPostalCode,
+  } = input;
+
+  const application = await prisma.application.findUnique({ where: { id } });
+  if (!application) {
+    return { ok: false, error: 'Application does not exist' };
+  }
+
+  try {
+    await prisma.application.update({
+      where: { id },
+      data: billingAddressSameAsHomeAddress
+        ? {
+            billingAddressSameAsHomeAddress: true,
+            billingFullName: null,
+            billingAddressLine1: null,
+            billingAddressLine2: null,
+            billingCity: null,
+            billingProvince: null,
+            billingCountry: null,
+            billingPostalCode: null,
+          }
+        : {
+            billingAddressSameAsHomeAddress: false,
+            billingFullName,
+            billingAddressLine1,
+            billingAddressLine2,
+            billingCity,
+            billingProvince,
+            billingCountry,
+            billingPostalCode: billingPostalCode && stripPostalCode(billingPostalCode),
+          },
+    });
+  } catch (err) {
+    logger.error({ error: err }, 'Failed to update application billing information');
+    return { ok: false, error: 'Billing information was unable to be updated' };
+  }
+
+  return { ok: true, error: null };
+};
+
+/**
+ * Generate or replace a standalone donation tax receipt.
+ */
+export const generateDonationTaxReceipt: Resolver<
+  MutationGenerateDonationTaxReceiptArgs,
+  GenerateDonationTaxReceiptResult
+> = async (_parent, args, { prisma, session, logger }) => {
+  if (!session) {
+    return { ok: false, error: 'Not authenticated' };
+  }
+
+  const { applicationId } = args.input;
+  const application = await prisma.application.findUnique({
+    where: { id: applicationId },
+    include: {
+      applicationProcessing: true,
+      donationTaxReceipt: true,
+    },
+  });
+
+  if (!application) {
+    return { ok: false, error: 'Application does not exist' };
+  }
+
+  if (!application.donationTaxReceiptEnabled) {
+    return { ok: false, error: 'Tax receipts are only available for future donations' };
+  }
+
+  const donationAmount = application.donationAmount.plus(application.secondDonationAmount || 0);
+  if (donationAmount.lessThan(20)) {
+    return { ok: false, error: 'Donation must be at least $20' };
+  }
+
+  if (application.applicationProcessing.paymentRefunded) {
+    return { ok: false, error: 'A refunded payment is not eligible for a donation tax receipt' };
+  }
+
+  const isOnlinePayment = application.paymentMethod === 'SHOPIFY' || application.paidThroughShopify;
+  if (isOnlinePayment && application.shopifyPaymentStatus !== 'RECEIVED') {
+    return { ok: false, error: 'Online payment has not been received' };
+  }
+
+  const appNumber = application.applicationProcessing.appNumber;
+  if (!appNumber) {
+    return { ok: false, error: 'An APP number must be assigned before generating a receipt' };
+  }
+
+  // Payment information and APP numbers can be edited until the request review is completed,
+  // so receipts issued earlier could embed stale amounts or APP numbers
+  if (!application.applicationProcessing.reviewRequestCompleted) {
+    return { ok: false, error: 'The request review must be completed before generating a receipt' };
+  }
+
+  try {
+    getDonationTaxReceiptRecipient(application);
+  } catch {
+    return { ok: false, error: 'Billing information is incomplete' };
+  }
+
+  const dateIssued = application.donationTaxReceipt?.createdAt ?? new Date();
+  const receiptNumber =
+    application.donationTaxReceipt?.receiptNumber ??
+    `PPD_${formatDateYYYYMMDDLocalTimezone(dateIssued).replace(/-/g, '')}_${appNumber}`;
+  const fileName = `Donation-Tax-Receipt-${receiptNumber}.pdf`;
+  const s3ObjectKey = `rcd/donation-tax-receipts/${fileName}`;
+
+  let uploadedPdf;
+  let signedUrl;
+  try {
+    const pdfDoc = generateDonationTaxReceiptPdf(application, appNumber, receiptNumber, dateIssued);
+    uploadedPdf = await serverUploadToS3(pdfDoc, s3ObjectKey);
+    const durationSeconds = parseInt(process.env.INVOICE_LINK_TTL_DAYS) * 24 * 60 * 60;
+    signedUrl = getSignedUrlForS3(uploadedPdf.key, durationSeconds);
+  } catch (err) {
+    logger.error({ error: err }, 'Failed to generate donation tax receipt');
+    return { ok: false, error: 'Donation tax receipt was unable to be generated' };
+  }
+
+  try {
+    await prisma.donationTaxReceipt.upsert({
+      where: { applicationId },
+      create: {
+        application: { connect: { id: applicationId } },
+        employee: { connect: { id: session.id } },
+        receiptNumber,
+        s3ObjectKey: uploadedPdf.key,
+        s3ObjectUrl: signedUrl,
+        createdAt: dateIssued,
+      },
+      update: {
+        employee: { connect: { id: session.id } },
+        s3ObjectKey: uploadedPdf.key,
+        s3ObjectUrl: signedUrl,
+      },
+    });
+  } catch (err) {
+    logger.error({ error: err }, 'Failed to save donation tax receipt');
+    return { ok: false, error: 'Donation tax receipt was unable to be saved' };
   }
 
   return { ok: true, error: null };

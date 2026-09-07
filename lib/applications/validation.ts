@@ -223,6 +223,18 @@ export const paymentInformationSchema = object({
     }),
 });
 
+/** Billing information validation schema */
+export const billingInformationSchema = paymentInformationSchema.pick([
+  'billingAddressSameAsHomeAddress',
+  'billingFullName',
+  'billingAddressLine1',
+  'billingAddressLine2',
+  'billingCity',
+  'billingProvince',
+  'billingCountry',
+  'billingPostalCode',
+]);
+
 /**
  * Validation schema for edit payment information form
  */
@@ -230,10 +242,20 @@ export const editPaymentInformationSchema = object({
   paymentInformation: paymentInformationSchema,
 });
 
+/** Validation schema for editing billing information */
+export const editBillingInformationSchema = object({
+  billingInformation: billingInformationSchema,
+});
+
 /**
  * Validation schema for payment information mutation
  */
 export const paymentInformationMutationSchema = paymentInformationSchema.shape({
+  id: number().positive('Invalid application ID').required('Application ID missing'),
+});
+
+/** Validation schema for billing information mutation */
+export const billingInformationMutationSchema = billingInformationSchema.shape({
   id: number().positive('Invalid application ID').required('Application ID missing'),
 });
 
