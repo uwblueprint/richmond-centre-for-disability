@@ -25,7 +25,10 @@ import {
   UpdateApplicationProcessingRefundPaymentResult,
 } from '@lib/graphql/types';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
-import { generateApplicationInvoicePdf, generateDonationInvoicePdf } from '@lib/invoices/utils';
+import {
+  generateApplicationInvoicePdf,
+  generateLegacyDonationInvoicePdf,
+} from '@lib/invoices/utils';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { formatDateYYYYMMDDLocalTimezone } from '@lib/utils/date';
 import { Prisma, PrismaClient } from '@prisma/client';
@@ -1270,7 +1273,7 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
 > = async (_parent, args, { prisma, session, logger }) => {
   // TODO: Validation
   const { input } = args;
-  const { applicationId, isDonation } = input;
+  const { applicationId } = input;
 
   if (!session) {
     return { ok: false, error: 'Not authenticated' };
@@ -1316,28 +1319,30 @@ export const updateApplicationProcessingGenerateInvoice: Resolver<
   const receiptNumber = `${createdAtYYYMMDD}-${invoice.invoiceNumber}`;
   const fileName = `PP-Receipt-P${receiptNumber}.pdf`;
   const s3InvoiceKey = `rcd/invoices/${fileName}`;
-
-  // Generate application invoice
-  const pdfDoc = isDonation
-    ? generateDonationInvoicePdf(
-        application,
-        session,
-        // TODO: Remove typecast when backend guard is implemented
-        application.applicationProcessing.appNumber as number,
-        receiptNumber
-      )
-    : generateApplicationInvoicePdf(
-        application,
-        session,
-        // TODO: Remove typecast when backend guard is implemented
-        application.applicationProcessing.appNumber as number,
-        receiptNumber
-      );
+  const appNumber = application.applicationProcessing.appNumber as number;
+  const shouldGenerateLegacyDonationReceipt =
+    !application.donationTaxReceiptEnabled &&
+    application.donationAmount.plus(application.secondDonationAmount || 0).greaterThanOrEqualTo(20);
 
   // Upload pdf to s3
   let uploadedPdf;
   let signedUrl;
   try {
+    const pdfDoc = shouldGenerateLegacyDonationReceipt
+      ? generateLegacyDonationInvoicePdf(
+          application,
+          session,
+          appNumber,
+          receiptNumber,
+          invoice.createdAt
+        )
+      : generateApplicationInvoicePdf(
+          application,
+          session,
+          appNumber,
+          receiptNumber,
+          invoice.createdAt
+        );
     // Upload file to s3
     uploadedPdf = await serverUploadToS3(pdfDoc, s3InvoiceKey);
     // Generate a signed URL to access the file
