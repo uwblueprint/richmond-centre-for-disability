@@ -1071,11 +1071,21 @@ export const createReplacementApplication: Resolver<
     };
   }
 
+  const mostRecentPermit = await getMostRecentPermit(applicantId);
+  if (!mostRecentPermit) {
+    return {
+      ok: false,
+      applicationId: null,
+      error: 'You do not have any previous permits to replace. Please contact RCD.',
+    };
+  }
+
   let application;
   try {
     application = await prisma.application.create({
       data: {
         type: 'REPLACEMENT',
+        permitType: mostRecentPermit.type,
         donationAmount: donationAmount || 0,
         secondPaymentMethod: hasSecondPaymentMethod ? secondPaymentMethod : null,
         secondProcessingFee: hasSecondPaymentMethod ? secondProcessingFee || 0 : null,
