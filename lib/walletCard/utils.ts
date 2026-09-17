@@ -1,4 +1,5 @@
 import logger from '@lib/utils/logging';
+import { PassThrough } from 'stream';
 import pdfPrinter from 'pdfmake';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 
@@ -141,8 +142,9 @@ export const generateWalletCardPDF = (
   lastName: string,
   dateOfBirth: Date,
   userId: string
-): PDFKit.PDFDocument | null => {
-  let pdfDoc = null;
+): PassThrough | null => {
+  const pdfStream = new PassThrough();
+
   try {
     const printer = new pdfPrinter({
       Helvetica: {
@@ -160,11 +162,20 @@ export const generateWalletCardPDF = (
       dateOfBirth,
       userId
     );
-    pdfDoc = printer.createPdfKitDocument(documentDef as TDocumentDefinitions);
+    const pdfDoc = printer.createPdfKitDocument(documentDef as TDocumentDefinitions);
+
+    pdfDoc.on('error', err => {
+      logger.error({ error: err }, 'Error Generating Wallet PDF');
+      pdfStream.destroy(err as Error);
+    });
+
+    pdfDoc.pipe(pdfStream);
     pdfDoc.end();
   } catch (err) {
-    logger.error({ error: err }, 'Error Generating Wallet PDF: ', err);
+    logger.error({ error: err }, 'Error Generating Wallet PDF');
+    pdfStream.destroy(err as Error);
     return null;
   }
-  return pdfDoc;
+
+  return pdfStream;
 };
