@@ -1,6 +1,6 @@
 import { useState } from 'react'; // React
 import { GetServerSideProps } from 'next'; // Get server side props
-import Image from 'next/image';
+import Logo from '@components/Logo';
 import { getSession, signIn, SignInResponse } from 'next-auth/client'; // Session management
 import {
   Text,
@@ -59,18 +59,21 @@ export default function Login() {
   const resendEmailToast = useToast();
 
   return (
-    <Center height="100vh" width="100vw">
+    <Center minHeight="100vh" width="100vw" paddingX={4} paddingY={8}>
       <Box
-        width="640px"
+        width="100%"
+        maxWidth="640px"
         borderWidth="1px"
         borderRadius="12px"
         bg="background.white"
         overflow="hidden"
       >
-        <Box width="100%" padding={14}>
-          <VStack width="100%" spacing={12}>
-            <VStack spacing={2}>
-              <Image src="/assets/logo.svg" height={120} width={120} />
+        <Box width="100%" padding={{ base: 6, sm: 14 }}>
+          <VStack width="100%" spacing={{ base: 8, sm: 12 }}>
+            <VStack spacing={2} width="100%">
+              <Box width="100%" maxWidth="400px" marginX="auto" textAlign="center">
+                <Logo height={109} width={400} layout="responsive" />
+              </Box>
               <Text as="h1" textStyle="display-medium" align="center">
                 Richmond Centre for Disability Employee Login
               </Text>
