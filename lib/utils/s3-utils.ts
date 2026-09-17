@@ -2,6 +2,22 @@ import S3, { Body } from 'aws-sdk/clients/s3';
 import { S3UploadedObject } from '@tools/types';
 import mime from 'mime-types';
 
+let serverS3Client: S3 | null = null;
+
+const getServerS3Client = (): S3 => {
+  if (!serverS3Client) {
+    serverS3Client = new S3({
+      credentials: {
+        accessKeyId: process.env.S3_UPLOAD_KEY as string,
+        secretAccessKey: process.env.S3_UPLOAD_SECRET as string,
+      },
+      region: process.env.S3_UPLOAD_REGION as string,
+    });
+  }
+
+  return serverS3Client;
+};
+
 /**
  * Helper function for server side file uploads to s3.
  * ** NOTE: This should only be called on the server side for security purposes **
@@ -13,13 +29,7 @@ export const serverUploadToS3 = async (
   body: Body,
   objectKey: string
 ): Promise<S3UploadedObject> => {
-  const s3 = new S3({
-    credentials: {
-      accessKeyId: process.env.S3_UPLOAD_KEY as string,
-      secretAccessKey: process.env.S3_UPLOAD_SECRET as string,
-    },
-    region: process.env.S3_UPLOAD_REGION as string,
-  });
+  const s3 = getServerS3Client();
 
   const contentType = mime.lookup(objectKey);
   if (!contentType) {
@@ -99,13 +109,7 @@ export const getSignedUrlForS3 = (
   duration?: number,
   autoDownload?: boolean
 ): string => {
-  const s3 = new S3({
-    credentials: {
-      accessKeyId: process.env.S3_UPLOAD_KEY as string,
-      secretAccessKey: process.env.S3_UPLOAD_SECRET as string,
-    },
-    region: process.env.S3_UPLOAD_REGION,
-  });
+  const s3 = getServerS3Client();
 
   const MAX_DURATION = 604800; // 7 days
   let expires = MAX_DURATION;
