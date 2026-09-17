@@ -54,7 +54,7 @@ import {
   requestPhysicianInformationSchema,
 } from '@lib/physicians/validation';
 import { ValidationError } from 'yup';
-import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
+import { getActivePermit, getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
 import moment from 'moment';
 import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
 
