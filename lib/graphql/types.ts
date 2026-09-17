@@ -945,6 +945,7 @@ export type Permit = {
   type: PermitType;
   expiryDate: Scalars['Date'];
   active: Scalars['Boolean'];
+  createdAt: Scalars['Date'];
   application: Application;
 };
 

@@ -13,6 +13,7 @@ import {
   Spinner,
   useToast,
   Stack,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { getSession } from 'next-auth/client';
 import { useLazyQuery, useMutation } from '@tools/hooks/graphql';
@@ -29,6 +30,9 @@ import GuardianInformationForm from '@components/admin/requests/guardian-informa
 import PaymentDetailsForm from '@components/admin/requests/payment-information/Form';
 import BackToSearchModal from '@components/admin/requests/create/BackToSearchModal';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
+import PermitWarningModal, {
+  ActivePermitInfo,
+} from '@components/admin/requests/create/PermitWarningModal';
 
 import { authorize } from '@tools/authorization';
 import { PhysicianAssessment } from '@tools/admin/requests/physician-assessment';
@@ -85,6 +89,16 @@ export default function CreateNew() {
   // Backend form validation error
   const [error, setError] = useState<string>('');
 
+  // Recent permit warning modal state
+  const [warningPermit, setWarningPermit] = useState<ActivePermitInfo | null>(null);
+  const [warningMessage, setWarningMessage] = useState<string>('');
+
+  const {
+    isOpen: isWarningModalOpen,
+    onOpen: onOpenWarningModal,
+    onClose: onCloseWarningModal,
+  } = useDisclosure();
+
   // Toast message
   const toast = useToast();
 
@@ -99,6 +113,25 @@ export default function CreateNew() {
     setDoctorInformation(INITIAL_DOCTOR_INFORMATION);
     setGuardianInformation(INITIAL_GUARDIAN_INFORMATION);
     setGuardianPOAFile(null);
+    setWarningPermit(null);
+    setWarningMessage('');
+  };
+
+  const handleProceedWarningModal = () => {
+    onCloseWarningModal();
+    setStep(RequestFlowPageState.SubmittingRequestPage);
+  };
+
+  const handleCancelWarningModal = () => {
+    onCloseWarningModal();
+  };
+
+  const handleProceedToRequest = () => {
+    if (warningPermit) {
+      onOpenWarningModal();
+    } else {
+      setStep(RequestFlowPageState.SubmittingRequestPage);
+    }
   };
 
   /**
@@ -127,7 +160,16 @@ export default function CreateNew() {
           postalCode,
           medicalInformation: { physician },
           guardian,
+          activePermit,
         } = data.applicant;
+
+        if (activePermit) {
+          setWarningPermit(activePermit);
+          setWarningMessage('This permit holder already has an active permit.');
+        } else {
+          setWarningPermit(null);
+          setWarningMessage('');
+        }
 
         // set permitHolderInformation
         setPermitHolderInformation({
@@ -199,6 +241,8 @@ export default function CreateNew() {
    * Sets and fetches permit holder data when selected from typeahead
    */
   const handleSelectPermitHolder = useCallback((applicantId: number) => {
+    setWarningPermit(null);
+    setWarningMessage('');
     setApplicantId(applicantId);
     getApplicant({
       variables: {
@@ -357,6 +401,8 @@ export default function CreateNew() {
               <RadioGroup
                 value={permitHolderExists ? 'search-existing' : 'create-new'}
                 onChange={value => {
+                  setWarningPermit(null);
+                  setWarningMessage('');
                   setPermitHolderExists(value === 'search-existing');
                   setApplicantId(null);
                 }}
@@ -647,8 +693,8 @@ export default function CreateNew() {
                     height="48px"
                     width="217px"
                     type="submit"
-                    isDisabled={permitHolderExists && !applicantId}
-                    onClick={() => setStep(RequestFlowPageState.SubmittingRequestPage)}
+                    isDisabled={(permitHolderExists && !applicantId) || getApplicantLoading}
+                    onClick={handleProceedToRequest}
                   >
                     <Text textStyle="button-semibold">Proceed to request</Text>
                   </Button>
@@ -658,6 +704,13 @@ export default function CreateNew() {
           </Box>
         )}
       </GridItem>
+      <PermitWarningModal
+        isOpen={isWarningModalOpen}
+        permit={warningPermit}
+        warningMessage={warningMessage}
+        onProceed={handleProceedWarningModal}
+        onCancel={handleCancelWarningModal}
+      />
     </Layout>
   );
 }
