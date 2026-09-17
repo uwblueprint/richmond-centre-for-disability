@@ -773,6 +773,13 @@ export const createExternalRenewalApplication: Resolver<
         'You do not have any previous permits to renew. Please apply for a new parking permit or contact RCD.',
       checkoutUrl: null,
     };
+  } else if (mostRecentPermit.type === 'TEMPORARY') {
+    return {
+      ok: false,
+      applicationId: null,
+      error: 'Temporary permits cannot be renewed.',
+      checkoutUrl: null,
+    };
   } else if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') < moment()) {
     // Can only submit renewal application if permit expiry less than 6 months ago
     return {
