@@ -149,6 +149,11 @@ const employees = [
     lastName: 'Han',
     email: 'ericahan+employee@uwblueprint.org',
   },
+  {
+    firstName: 'Navraj',
+    lastName: 'Bal',
+    email: 'balnavsingh+employee@gmail.com',
+  },
 ];
 
 /**
