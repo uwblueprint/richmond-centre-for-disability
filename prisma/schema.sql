@@ -280,6 +280,7 @@ CREATE TABLE applications (
   second_payment_method PaymentType,
   second_processing_fee MONEY,
   second_donation_amount MONEY,
+  donation_received_at TIMESTAMPTZ,
   has_second_payment_method BOOLEAN NOT NULL DEFAULT false,
   paid_through_shopify BOOLEAN NOT NULL DEFAULT false,
   shopify_payment_status ShopifyPaymentStatus DEFAULT 'PENDING',
@@ -306,6 +307,9 @@ CREATE TABLE applications (
   billing_country VARCHAR(255),
   billing_postal_code VARCHAR(6),
 
+  -- Donation tax receipt eligibility
+  donation_tax_receipt_enabled BOOLEAN NOT NULL DEFAULT true,
+
   type ApplicationType NOT NULL,
   notes TEXT,
   applicant_id INTEGER,
@@ -315,6 +319,20 @@ CREATE TABLE applications (
 
   FOREIGN KEY(applicant_id) REFERENCES applicants(id),
   FOREIGN KEY(application_processing_id) REFERENCES application_processing(id)
+);
+
+-- Create donation_tax_receipts table
+CREATE TABLE donation_tax_receipts (
+  application_id INTEGER PRIMARY KEY,
+  receipt_number VARCHAR(255) UNIQUE NOT NULL,
+  s3_object_key VARCHAR(255),
+  s3_object_url TEXT,
+  employee_id INTEGER NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY(application_id) REFERENCES applications(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY(employee_id) REFERENCES employees(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- Create permits table
