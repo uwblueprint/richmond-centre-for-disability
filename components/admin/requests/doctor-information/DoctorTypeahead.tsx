@@ -46,14 +46,14 @@ export default function DoctorTypeahead({ onSelect }: Props) {
     <Typeahead
       isLoading={loading}
       onSearch={setSearchString}
-      renderMenuItemChildren={({ firstName, lastName, phone }: DoctorResult) => {
+      renderMenuItemChildren={({ firstName, lastName, mspNumber, phone }: DoctorResult) => {
         return (
           <>
             <Text textStyle="body-regular" mt="8px" mb="4px" ml="4px">
               {formatFullName(firstName, undefined, lastName)}
             </Text>
             <Text textStyle="caption" textColor="text.secondary" mb="8px" ml="4px">
-              Phone {phone}
+              MSP {mspNumber} | Phone {phone}
             </Text>
           </>
         );

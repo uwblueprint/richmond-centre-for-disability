@@ -24,6 +24,7 @@ import SelectedPermitHolderCard from '@components/admin/requests/create/Selected
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form';
 import PhysicianAssessmentForm from '@components/admin/requests/physician-assessment/Form';
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form';
+import DoctorTypeahead from '@components/admin/requests/doctor-information/DoctorTypeahead';
 import GuardianInformationForm from '@components/admin/requests/guardian-information/Form';
 // HIDDEN [RCD] Remove Additional Information Section:
 // import AdditionalQuestionsForm from '@components/admin/requests/additional-questions/Form';
@@ -283,6 +284,7 @@ export default function CreateNew() {
   const handleSubmit = async (values: {
     permitHolder: NewApplicationPermitHolderInformation;
     physicianAssessment: PhysicianAssessment;
+    doctorInformation: DoctorFormData;
     guardianInformation: GuardianInformation;
     additionalInformation: AdditionalInformationFormData;
     paymentInformation: PaymentInformationFormData;
@@ -496,7 +498,7 @@ export default function CreateNew() {
             onSubmit={handleSubmit}
             validateOnMount
           >
-            {({ values, isValid }) => (
+            {({ values, isValid, setFieldValue }) => (
               <Form noValidate>
                 <VStack spacing="32px">
                   <Box
@@ -541,7 +543,27 @@ export default function CreateNew() {
                     <Text as="h2" textStyle="display-small-semibold" paddingBottom="20px">
                       {`Doctor's Information`}
                     </Text>
-                    <DoctorInformationForm />
+                    <Text textStyle="body-regular" color="text.secondary" paddingBottom="16px">
+                      Search for a doctor by MSP number or manually enter the doctor&apos;s
+                      information below
+                    </Text>
+                    <DoctorTypeahead
+                      onSelect={doctor => {
+                        setFieldValue('doctorInformation', {
+                          firstName: doctor.firstName,
+                          lastName: doctor.lastName,
+                          mspNumber: doctor.mspNumber,
+                          phone: doctor.phone,
+                          addressLine1: doctor.addressLine1,
+                          addressLine2: doctor.addressLine2 || '',
+                          city: doctor.city,
+                          postalCode: doctor.postalCode,
+                        });
+                      }}
+                    />
+                    <Box paddingTop="20px">
+                      <DoctorInformationForm />
+                    </Box>
                   </Box>
                   <Box
                     w="100%"
