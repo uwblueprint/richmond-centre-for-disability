@@ -1,5 +1,15 @@
+import moment from 'moment';
 import Layout from '@components/admin/Layout'; // Layout component
-import { Text, Box, Flex, Stack, Button, GridItem, useToast } from '@chakra-ui/react'; // Chakra UI
+import {
+  Text,
+  Box,
+  Flex,
+  Stack,
+  Button,
+  GridItem,
+  useToast,
+  useDisclosure,
+} from '@chakra-ui/react'; // Chakra UI
 import { useState } from 'react'; // React
 import PermitHolderInformationForm from '@components/admin/requests/permit-holder-information/Form'; //Permit holder information form
 import DoctorInformationForm from '@components/admin/requests/doctor-information/Form'; //Doctor information form
@@ -12,6 +22,9 @@ import { authorize } from '@tools/authorization';
 import { getSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import CancelCreateRequestModal from '@components/admin/requests/create/CancelModal';
+import PermitWarningModal, {
+  ActivePermitInfo,
+} from '@components/admin/requests/create/PermitWarningModal';
 import PermitHolderTypeahead from '@components/admin/permit-holders/Typeahead';
 import DoctorTypeahead from '@components/admin/requests/doctor-information/DoctorTypeahead';
 import { useLazyQuery, useMutation } from '@tools/hooks/graphql';
@@ -85,58 +98,123 @@ export default function CreateRenewal() {
   // Router
   const router = useRouter();
 
+  // Recent permit warning modal state
+  const [warningPermit, setWarningPermit] = useState<ActivePermitInfo | null>(null);
+  const [warningMessage, setWarningMessage] = useState<string>('');
+  const {
+    isOpen: isWarningModalOpen,
+    onOpen: onOpenWarningModal,
+    onClose: onCloseWarningModal,
+  } = useDisclosure();
+
+  const handleProceedWarningModal = () => {
+    onCloseWarningModal();
+    setNewPageState(RequestFlowPageState.SubmittingRequestPage);
+  };
+
+  const handleCancelWarningModal = () => {
+    onCloseWarningModal();
+  };
+
+  const handleProceedToRequest = () => {
+    if (warningPermit) {
+      onOpenWarningModal();
+    } else {
+      setNewPageState(RequestFlowPageState.SubmittingRequestPage);
+    }
+  };
+
   /**
    * Get information about applicant to pre-populate form
    */
-  const [getApplicant] = useLazyQuery<GetRenewalApplicantResponse, GetRenewalApplicantRequest>(
-    GET_RENEWAL_APPLICANT,
-    {
-      onCompleted: data => {
-        if (data) {
-          const {
-            firstName,
-            middleName,
-            lastName,
-            email,
-            phone,
-            receiveEmailUpdates,
-            addressLine1,
-            addressLine2,
-            city,
-            postalCode,
-            medicalInformation: { physician },
-          } = data.applicant;
-          setPermitHolderInformation({
-            firstName,
-            middleName,
-            lastName,
-            email,
-            phone,
-            receiveEmailUpdates,
-            addressLine1,
-            addressLine2,
-            city,
-            postalCode,
-          });
-          setDoctorInformation({
-            firstName: physician.firstName,
-            lastName: physician.lastName,
-            mspNumber: physician.mspNumber,
-            phone: physician.phone,
-            addressLine1: physician.addressLine1,
-            addressLine2: physician.addressLine2,
-            city: physician.city,
-            postalCode: physician.postalCode,
-          });
+  const [getApplicant, { loading: getApplicantLoading }] = useLazyQuery<
+    GetRenewalApplicantResponse,
+    GetRenewalApplicantRequest
+  >(GET_RENEWAL_APPLICANT, {
+    onCompleted: data => {
+      if (data) {
+        const {
+          firstName,
+          middleName,
+          lastName,
+          email,
+          phone,
+          receiveEmailUpdates,
+          addressLine1,
+          addressLine2,
+          city,
+          postalCode,
+          medicalInformation: { physician },
+          activePermit,
+        } = data.applicant;
+
+        if (activePermit) {
+          let msg = '';
+          const createdAtDate = moment(activePermit.createdAt);
+          const thirtyDaysAgo = moment().subtract(30, 'days');
+
+          if (activePermit.type === 'TEMPORARY') {
+            msg =
+              'Temporary permits cannot be renewed. Please process either a replacement request or a new request.';
+          } else if (createdAtDate.isAfter(thirtyDaysAgo)) {
+            msg = 'This permit holder was issued a permit within the last 30 days.';
+          } else {
+            const expiryDate = moment(activePermit.expiryDate);
+            const thirtyDaysFromNow = moment().add(30, 'days');
+            const sixMonthsAgo = moment().subtract(6, 'months');
+
+            const isWithinWindow =
+              expiryDate.isSameOrBefore(thirtyDaysFromNow) &&
+              expiryDate.isSameOrAfter(sixMonthsAgo);
+
+            if (!isWithinWindow) {
+              msg = 'The current permit is outside the normal renewal window.';
+            }
+          }
+
+          if (msg) {
+            setWarningPermit(activePermit);
+            setWarningMessage(msg);
+          } else {
+            setWarningPermit(null);
+            setWarningMessage('');
+          }
+        } else {
+          setWarningPermit(null);
+          setWarningMessage('');
         }
-      },
-    }
-  );
+        setPermitHolderInformation({
+          firstName,
+          middleName,
+          lastName,
+          email,
+          phone,
+          receiveEmailUpdates,
+          addressLine1,
+          addressLine2,
+          city,
+          postalCode,
+        });
+        setDoctorInformation({
+          firstName: physician.firstName,
+          lastName: physician.lastName,
+          mspNumber: physician.mspNumber,
+          phone: physician.phone,
+          addressLine1: physician.addressLine1,
+          addressLine2: physician.addressLine2,
+          city: physician.city,
+          postalCode: physician.postalCode,
+        });
+      }
+    },
+  });
 
   /**
    * Set and fetch data about applicant when permit holder is selected
    */
   const handleSelectPermitHolder = async (applicantId: number) => {
+    setWarningPermit(null);
+    setWarningMessage('');
     setApplicantId(applicantId);
     getApplicant({ variables: { id: applicantId } });
   };
@@ -490,8 +568,8 @@ export default function CreateRenewal() {
                         height="48px"
                         width="217px"
                         type="submit"
-                        isDisabled={!applicantId}
-                        onClick={() => setNewPageState(RequestFlowPageState.SubmittingRequestPage)}
+                        isDisabled={!applicantId || getApplicantLoading}
+                        onClick={handleProceedToRequest}
                       >
                         <Text textStyle="button-semibold">Proceed to request</Text>
                       </Button>
@@ -503,6 +581,14 @@ export default function CreateRenewal() {
           </Box>
         )}
       </GridItem>
+      <PermitWarningModal
+        isOpen={isWarningModalOpen}
+        permit={warningPermit}
+        warningMessage={warningMessage}
+        isOverrideable={warningPermit?.type !== 'TEMPORARY'}
+        onProceed={handleProceedWarningModal}
+        onCancel={handleCancelWarningModal}
+      />
     </Layout>
   );
 }

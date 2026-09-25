@@ -1,0 +1,112 @@
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalFooter,
+  ModalBody,
+  Button,
+  Text,
+  VStack,
+  Alert,
+  AlertIcon,
+  Box,
+} from '@chakra-ui/react';
+import { formatDateYYYYMMDD } from '@lib/utils/date';
+import { titlecase } from '@tools/string';
+
+export type ActivePermitInfo = {
+  rcdPermitId: number;
+  type: string;
+  expiryDate: string;
+  createdAt?: string;
+  active?: boolean;
+};
+
+type Props = {
+  readonly isOpen: boolean;
+  readonly permit: ActivePermitInfo | null;
+  readonly warningMessage: string;
+  readonly isOverrideable?: boolean;
+  readonly onProceed: () => void;
+  readonly onCancel: () => void;
+};
+
+/**
+ * Warning modal displayed when staff selects a permit holder who has an active permit or recently renewed permit
+ */
+export default function PermitWarningModal({
+  isOpen,
+  permit,
+  warningMessage,
+  isOverrideable = true,
+  onProceed,
+  onCancel,
+}: Props) {
+  if (!permit) {
+    return null;
+  }
+
+  return (
+    <Modal isOpen={isOpen} onClose={onCancel} isCentered size="lg">
+      <ModalOverlay />
+      <ModalContent pt={4}>
+        <ModalBody>
+          <VStack spacing={4} align="stretch">
+            <Alert status="warning" borderRadius="md">
+              <AlertIcon />
+              <Box>
+                <Text textStyle="body-bold">{warningMessage}</Text>
+              </Box>
+            </Alert>
+
+            <VStack align="stretch" spacing={2} bg="background.gray" padding={4} borderRadius="md">
+              <Text textStyle="body-regular">
+                <b>Permit Number:</b> #{permit.rcdPermitId}
+              </Text>
+              <Text textStyle="body-regular">
+                <b>Permit Type:</b> {titlecase(permit.type)}
+              </Text>
+              {permit.createdAt && (
+                <Text textStyle="body-regular">
+                  <b>Issued Date:</b> {formatDateYYYYMMDD(new Date(permit.createdAt))}
+                </Text>
+              )}
+              <Text textStyle="body-regular">
+                <b>Expiry Date:</b> {formatDateYYYYMMDD(new Date(permit.expiryDate))}
+              </Text>
+            </VStack>
+
+            {isOverrideable && (
+              <Text textStyle="body-regular">
+                Please confirm if you still wish to proceed with processing another permit request
+                or renewal for this permit holder.
+              </Text>
+            )}
+          </VStack>
+        </ModalBody>
+
+        <ModalFooter>
+          <Button
+            bg="background.gray"
+            _hover={{ bg: 'background.grayHover' }}
+            color="black"
+            marginRight={3}
+            onClick={onCancel}
+          >
+            <Text textStyle="button-semibold">Cancel</Text>
+          </Button>
+          {isOverrideable && (
+            <Button
+              colorScheme="primary"
+              bg="primary"
+              _hover={{ bg: 'primaryHover' }}
+              onClick={onProceed}
+            >
+              <Text textStyle="button-semibold">Proceed anyway</Text>
+            </Button>
+          )}
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+}
