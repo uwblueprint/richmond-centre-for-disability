@@ -1,6 +1,6 @@
 import { ApolloError } from 'apollo-server-errors'; // Apollo error
 import { Resolver } from '@lib/graphql/resolvers'; // Resolver type
-import { getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
+import { getActivePermit } from '@lib/applicants/utils'; // Applicant utils
 import {
   Applicant,
   DeleteApplicantResult,
@@ -624,7 +624,7 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     };
   }
 
-  const mostRecentPermit = await getMostRecentPermit(applicant.id);
+  const mostRecentPermit = await getActivePermit(applicant.id);
 
   if (!mostRecentPermit) {
     return {

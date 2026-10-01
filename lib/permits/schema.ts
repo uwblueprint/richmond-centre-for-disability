@@ -10,6 +10,7 @@ export default gql`
     type: PermitType!
     expiryDate: Date!
     active: Boolean!
+    createdAt: Date!
     application: Application!
   }
 `;
