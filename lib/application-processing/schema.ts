@@ -122,7 +122,6 @@ export default gql`
   # Generate invoice PDF for application
   input UpdateApplicationProcessingGenerateInvoiceInput {
     applicationId: Int!
-    isDonation: Boolean!
   }
 
   type UpdateApplicationProcessingGenerateInvoiceResult {

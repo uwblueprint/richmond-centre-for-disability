@@ -13,4 +13,12 @@ export default gql`
     createdAt: Date!
     updatedAt: Date!
   }
+
+  type DonationTaxReceipt {
+    receiptNumber: String!
+    s3ObjectKey: String
+    s3ObjectUrl: String
+    createdAt: Date!
+    updatedAt: Date!
+  }
 `;

@@ -31,6 +31,8 @@ import {
   updateApplicationDoctorInformation,
   updateApplicationAdditionalInformation,
   updateApplicationPaymentInformation,
+  updateApplicationBillingInformation,
+  generateDonationTaxReceipt,
   updateApplicationReasonForReplacement,
   updateApplicationPhysicianAssessment,
   updateNewApplicationGeneralInformation,
@@ -65,6 +67,7 @@ import {
 import {
   __resolveApplicationType,
   applicationApplicantResolver,
+  applicationDonationTaxReceiptResolver,
   applicationProcessingResolver,
   applicationPoaFormS3ObjectUrlResolver,
   applicationPermitResolver,
@@ -189,6 +192,10 @@ const resolvers = {
     updateApplicationPaymentInformation: authorize(updateApplicationPaymentInformation, [
       'SECRETARY',
     ]),
+    updateApplicationBillingInformation: authorize(updateApplicationBillingInformation, [
+      'SECRETARY',
+    ]),
+    generateDonationTaxReceipt: authorize(generateDonationTaxReceipt, ['SECRETARY']),
     updateApplicationReasonForReplacement: authorize(updateApplicationReasonForReplacement, [
       'SECRETARY',
     ]),
@@ -253,22 +260,26 @@ const resolvers = {
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
     permit: applicationPermitResolver,
+    donationTaxReceipt: applicationDonationTaxReceiptResolver,
   },
   NewApplication: {
     __resolveType: __resolveApplicationType,
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
     poaFormS3ObjectUrl: applicationPoaFormS3ObjectUrlResolver,
+    donationTaxReceipt: applicationDonationTaxReceiptResolver,
   },
   RenewalApplication: {
     __resolveType: __resolveApplicationType,
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
+    donationTaxReceipt: applicationDonationTaxReceiptResolver,
   },
   ReplacementApplication: {
     __resolveType: __resolveApplicationType,
     applicant: applicationApplicantResolver,
     processing: applicationProcessingResolver,
+    donationTaxReceipt: applicationDonationTaxReceiptResolver,
   },
   Guardian: {
     poaFormS3ObjectUrl: guardianPoaFormS3ObjectUrlResolver,

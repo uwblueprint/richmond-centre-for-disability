@@ -16,8 +16,21 @@ export const generateApplicationInvoicePdf = (
   application: Application,
   session: Session,
   appNumber: number,
-  receiptNumber: string
+  receiptNumber: string,
+  dateIssued = new Date()
 ): PDFKit.PDFDocument => {
+  return createPdfDocument(
+    getApplicationInvoicePdfDefinition(application, session, appNumber, receiptNumber, dateIssued)
+  );
+};
+
+const getApplicationInvoicePdfDefinition = (
+  application: Application,
+  session: Session,
+  appNumber: number,
+  receiptNumber: string,
+  dateIssued: Date
+): any => {
   const {
     applicantId,
     firstName,
@@ -92,12 +105,16 @@ export const generateApplicationInvoicePdf = (
     userNumber: applicantId,
     permitType,
     receiptNumber,
-    dateIssued: new Date(),
+    dateIssued,
     issuedBy: employeeInitials,
     paymentItems,
     totalAmount,
     address,
   });
+  return definition;
+};
+
+const createPdfDocument = (definition: any): PDFKit.PDFDocument => {
   const printer = new pdfPrinter({
     Helvetica: {
       normal: 'Helvetica',
@@ -268,140 +285,8 @@ const applicationPdfDefinition = (input: {
   };
 };
 
-/**
- * Generate donation receipt PDF
- * @param application application object
- * @param session session object containing employee information
- * @param appNumber APP (parking permit) number
- * @param receiptNumber receipt number
- */
-export const generateDonationInvoicePdf = (
-  application: Application,
-  session: Session,
-  appNumber: number,
-  receiptNumber: string
-): PDFKit.PDFDocument => {
-  const {
-    applicantId,
-    firstName,
-    middleName,
-    lastName,
-    permitType,
-    processingFee,
-    paymentMethod,
-    donationAmount,
-    secondProcessingFee,
-    secondPaymentMethod,
-    secondDonationAmount,
-    email,
-    createdAt,
-  } = application;
-  const applicantName = formatFullName(firstName, middleName, lastName);
-  const employeeInitials = `${session.firstName[0].toUpperCase()}${session.lastName[0].toUpperCase()}`;
-  let totalAmount: Prisma.Decimal = processingFee;
-  const nonNullEmail = email ? email : '';
-  const paymentItems = [
-    {
-      item: `PP # ${appNumber}`,
-      amount: processingFee,
-      paidBy: paymentMethod,
-      subtotal: processingFee,
-    },
-  ];
-  if (!donationAmount.equals(0)) {
-    paymentItems.push({
-      item: 'Donation',
-      amount: donationAmount,
-      paidBy: paymentMethod,
-      subtotal: donationAmount,
-    });
-    totalAmount = totalAmount.plus(donationAmount);
-  }
-  if (secondPaymentMethod && secondProcessingFee && !secondProcessingFee.equals(0)) {
-    paymentItems.push({
-      item: `PP # ${appNumber} second payment method`,
-      amount: secondProcessingFee,
-      paidBy: secondPaymentMethod,
-      subtotal: secondProcessingFee,
-    });
-    totalAmount = totalAmount.plus(secondProcessingFee);
-  }
-  if (secondPaymentMethod && secondDonationAmount && !secondDonationAmount.equals(0)) {
-    paymentItems.push({
-      item: 'Donation second payment method',
-      amount: secondDonationAmount,
-      paidBy: secondPaymentMethod,
-      subtotal: secondDonationAmount,
-    });
-    totalAmount = totalAmount.plus(secondDonationAmount);
-  }
-  const address = application.shippingAddressSameAsHomeAddress
-    ? {
-        addressLine1: application.addressLine1,
-        addressLine2: application.addressLine2,
-        city: application.city,
-        province: application.province,
-        country: application.country,
-        postalCode: application.postalCode,
-      }
-    : {
-        addressLine1: application.shippingAddressLine1 as string,
-        addressLine2: application.shippingAddressLine2,
-        city: application.shippingCity as string,
-        province: application.shippingProvince as string,
-        country: application.shippingCountry as string,
-        postalCode: application.shippingPostalCode as string,
-      };
-
-  const definition = donationPdfDefinition({
-    applicantName,
-    userNumber: applicantId,
-    appNumber: appNumber,
-    permitType,
-    receiptNumber,
-    dateIssued: new Date(),
-    dateDonationRecevied: createdAt,
-    issuedBy: employeeInitials,
-    donationAmount,
-    secondDonationAmount,
-    paymentItems,
-    totalAmount,
-    address,
-    nonNullEmail,
-  });
-  const printer = new pdfPrinter({
-    Helvetica: {
-      normal: 'Helvetica',
-      bold: 'Helvetica-Bold',
-      italics: 'Helvetica-Oblique',
-      bolditalics: 'Helvetica-BoldOblique',
-    },
-  });
-
-  const pdfDocument = printer.createPdfKitDocument(definition);
-  pdfDocument.end();
-  return pdfDocument;
-};
-
-/** PDF generation schema */
-const donationPdfDefinition = (input: {
-  applicantName: string;
-  userNumber: number | null;
-  appNumber: number | null;
-  permitType: string;
-  receiptNumber: string;
-  dateIssued: Date;
-  dateDonationRecevied: Date;
-  issuedBy: string;
-  paymentItems: Array<{
-    item: string;
-    amount: Prisma.Decimal;
-    paidBy: PaymentType;
-    subtotal: Prisma.Decimal;
-  }>;
-  totalAmount: Prisma.Decimal;
-  donationAmount: Prisma.Decimal;
-  secondDonationAmount: Prisma.Decimal | null;
+type DonationTaxReceiptRecipient = {
+  name: string;
   address: {
     addressLine1: string;
     addressLine2: string | null;
@@ -410,28 +295,149 @@ const donationPdfDefinition = (input: {
     country: string;
     postalCode: string;
   };
-  nonNullEmail: string;
+};
+
+const getDonationReceivedDate = (application: Application): Date => {
+  return application.donationReceivedAt || application.createdAt;
+};
+
+/** Resolve the legal donor identity exclusively from APPOP billing information. */
+export const getDonationTaxReceiptRecipient = (
+  application: Application
+): DonationTaxReceiptRecipient => {
+  if (application.billingAddressSameAsHomeAddress) {
+    return {
+      name: formatFullName(application.firstName, application.middleName, application.lastName),
+      address: {
+        addressLine1: application.addressLine1,
+        addressLine2: application.addressLine2,
+        city: application.city,
+        province: application.province,
+        country: application.country,
+        postalCode: application.postalCode,
+      },
+    };
+  }
+
+  if (
+    !application.billingFullName ||
+    !application.billingAddressLine1 ||
+    !application.billingCity ||
+    !application.billingProvince ||
+    !application.billingCountry ||
+    !application.billingPostalCode
+  ) {
+    throw new Error('Billing information is incomplete');
+  }
+
+  return {
+    name: application.billingFullName,
+    address: {
+      addressLine1: application.billingAddressLine1,
+      addressLine2: application.billingAddressLine2,
+      city: application.billingCity,
+      province: application.billingProvince,
+      country: application.billingCountry,
+      postalCode: application.billingPostalCode,
+    },
+  };
+};
+
+/**
+ * Preserve the bundled donation receipt for applications created before the
+ * standalone receipt flow was enabled.
+ */
+export const generateLegacyDonationInvoicePdf = (
+  application: Application,
+  session: Session,
+  appNumber: number,
+  receiptNumber: string,
+  dateIssued: Date
+): PDFKit.PDFDocument => {
+  const invoiceDefinition = getApplicationInvoicePdfDefinition(
+    application,
+    session,
+    appNumber,
+    receiptNumber,
+    dateIssued
+  );
+  const { name: donorName, address } = getDonationTaxReceiptRecipient(application);
+  const donationDefinition = donationTaxReceiptPdfDefinition({
+    donorName,
+    appNumber,
+    receiptNumber: `PPD_${formatDateYYYYMMDDLocalTimezone(dateIssued).replace(
+      /-/g,
+      ''
+    )}_${appNumber}`,
+    dateIssued,
+    dateDonationReceived: getDonationReceivedDate(application),
+    donationAmount: application.donationAmount.plus(application.secondDonationAmount || 0),
+    address,
+  });
+  const [donationFirstPage, ...donationContent] = donationDefinition.content;
+
+  return createPdfDocument({
+    ...invoiceDefinition,
+    footer: donationDefinition.footer,
+    content: [
+      ...invoiceDefinition.content,
+      { ...donationFirstPage, pageBreak: 'before' },
+      ...donationContent,
+    ],
+    styles: { ...invoiceDefinition.styles, ...donationDefinition.styles },
+    defaultStyle: donationDefinition.defaultStyle,
+    images: { ...invoiceDefinition.images, ...donationDefinition.images },
+  });
+};
+
+/**
+ * Generate a standalone donation tax receipt PDF.
+ */
+export const generateDonationTaxReceiptPdf = (
+  application: Application,
+  appNumber: number,
+  receiptNumber: string,
+  dateIssued: Date
+): PDFKit.PDFDocument => {
+  const { name: donorName, address } = getDonationTaxReceiptRecipient(application);
+  const definition = donationTaxReceiptPdfDefinition({
+    donorName,
+    appNumber,
+    receiptNumber,
+    dateIssued,
+    dateDonationReceived: getDonationReceivedDate(application),
+    donationAmount: application.donationAmount.plus(application.secondDonationAmount || 0),
+    address,
+  });
+  return createPdfDocument(definition);
+};
+
+/** PDF generation schema */
+const donationTaxReceiptPdfDefinition = (input: {
+  donorName: string;
+  appNumber: number | null;
+  receiptNumber: string;
+  dateIssued: Date;
+  dateDonationReceived: Date;
+  donationAmount: Prisma.Decimal;
+  address: {
+    addressLine1: string;
+    addressLine2: string | null;
+    city: string;
+    province: string;
+    country: string;
+    postalCode: string;
+  };
 }): any => {
   const {
-    applicantName,
-    userNumber,
+    donorName,
     appNumber,
-    permitType,
     receiptNumber,
     donationAmount,
-    secondDonationAmount,
-    totalAmount,
     dateIssued,
-    issuedBy,
-    dateDonationRecevied,
-    paymentItems,
+    dateDonationReceived,
     address,
-    nonNullEmail,
   } = input;
-
-  const zeroPad = (num: number) => {
-    return ('0' + num.toString()).slice(-2);
-  };
 
   return {
     footer: function (currentPage: number, pageCount: number) {
@@ -442,26 +448,17 @@ const donationPdfDefinition = (input: {
           }
         : null;
     },
-    content: applicationPdfDefinition({
-      applicantName,
-      userNumber,
-      permitType,
-      receiptNumber,
-      dateIssued,
-      issuedBy,
-      paymentItems,
-      totalAmount,
-      address,
-    }).content.concat([
+    content: [
       {
-        pageBreak: 'before',
         image: 'logoNew',
         width: 450,
         alignment: 'center',
         margin: [0, 0, 0, 10],
       },
       {
-        text: `Official Donation Receipt for Income Tax Purposes - ${dateIssued.getFullYear()}`,
+        text: `Official Donation Receipt for Income Tax Purposes - ${formatDateYYYYMMDDLocalTimezone(
+          dateIssued
+        ).slice(0, 4)}`,
         style: 'subheader',
       },
 
@@ -473,23 +470,19 @@ const donationPdfDefinition = (input: {
                 table: {
                   heights: 18,
                   body: [
-                    [
-                      { text: 'Tax Receipt #:' },
-                      `PPD_${dateIssued.getFullYear()}` +
-                        `${zeroPad(dateIssued.getMonth() + 1)}` +
-                        `${zeroPad(dateIssued.getDate())}_${appNumber}`,
-                    ],
+                    [{ text: 'Tax Receipt #:' }, receiptNumber],
                     [
                       { text: 'Donated by:' },
                       {
                         text: [
-                          `${applicantName}\n`,
+                          `${donorName}\n`,
                           `${address.addressLine2 ? `${address.addressLine2} - ` : ''}${
                             address.addressLine1
                           }\n`,
                           `${address.city} ${address.province} ${formatPostalCode(
                             address.postalCode
-                          )}`,
+                          )}\n`,
+                          address.country,
                         ],
                         lineHeight: 1.4,
                       },
@@ -498,10 +491,6 @@ const donationPdfDefinition = (input: {
                 },
                 layout: 'noBorders',
                 margin: [0, 0, 0, 40],
-              },
-              {
-                text: [`Email: ${nonNullEmail}`],
-                margin: [0, 0, 0, 8],
               },
               {
                 table: {
@@ -525,17 +514,15 @@ const donationPdfDefinition = (input: {
               body: [
                 [
                   { text: 'Date Donation Received:' },
-                  formatDateYYYYMMDDLocalTimezone(dateDonationRecevied),
+                  formatDateYYYYMMDDLocalTimezone(dateDonationReceived),
                 ],
                 [{ text: 'Donor Number:' }, `P${appNumber}`],
-                [
-                  { text: 'Total Amount Received:' },
-                  `$${donationAmount.plus(secondDonationAmount || 0).toString()}`,
-                ],
-                [{ text: 'Value of Product / Services:\n\n' }, ''],
+                [{ text: 'Total Amount Received:' }, `$${donationAmount.toString()}`],
+                [{ text: 'Amount of Advantage:' }, '$0.00'],
+                [{ text: 'Description of Advantage:' }, 'None'],
                 [
                   { text: 'Eligible Amount of Gift for Tax Purposes:' },
-                  `$${donationAmount.plus(secondDonationAmount || 0).toString()}`,
+                  `$${donationAmount.toString()}`,
                 ],
                 [{ text: '' }, ''],
                 [{ text: 'Where Applicable', bold: true }, ''],
@@ -559,7 +546,7 @@ const donationPdfDefinition = (input: {
       },
       {
         text: [
-          `Dear ${applicantName}\n\n\n`,
+          `Dear ${donorName}\n\n\n`,
           'On behalf of the Richmond Centre for disABILITY (RCD), we wish to express our sincerest thanks and appreciation for your generous support. Please find enclosed your official tax receipt.\n\n',
           "Your generosity ensures our vital programs remain available, enabling persons with a disability to live and work independently, make informed choices, and achieve full inclusion in our community. By supporting RCD, you are helping to provide the tools, training, and programs that lead to real, lasting change in someone's life.\n\n",
           'Thank you for being part of our community. Your support is impactful and meaningful to all the people with disabilities that we serve.\n\n\n',
@@ -575,7 +562,7 @@ const donationPdfDefinition = (input: {
         ],
         margin: [0, 15, 0, 0],
       },
-    ]),
+    ],
     styles: {
       header: {
         fontSize: 25,
