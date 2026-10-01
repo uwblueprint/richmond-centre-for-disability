@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'; // React
 import Head from 'next/head'; // HTML head handling
 import Link from 'next/link'; // Client-side linking
-import Image from 'next/image'; // Optimized images
+import Logo from '@components/Logo'; // Optimized images
 
 import {
   Box,
@@ -68,17 +68,14 @@ function Header() {
     <Center height="108px" width="100%" backgroundColor="background.grey">
       <ApplicantGrid alignItems="center">
         <GridItem colSpan={{ sm: 12, lg: 10 }}>
-          <HStack align="center" spacing="12px">
+          <HStack align="center" spacing={{ base: '8px', sm: '12px' }}>
             <Link href="/">
-              <Flex justifyContent="left" cursor="pointer">
-                <Image src="/assets/logo.svg" alt="RCD Logo" height={68} width={48} priority />
-              </Flex>
+              <Box cursor="pointer" width={{ base: '140px', sm: '221px' }} flexShrink={0}>
+                <Logo height={60} width={221} priority layout="responsive" />
+              </Box>
             </Link>
-            <VStack align="flex-start" spacing="0">
-              <Text textStyle="body-bold" textAlign="left">
-                Richmond Centre for Disability
-              </Text>
-              <Text textStyle="body-regular" textAlign="left">
+            <VStack align="flex-start" spacing="0" justifyContent="center">
+              <Text textStyle="body-bold" textAlign="left" fontSize={{ base: 'sm', sm: 'md' }}>
                 Accessible Parking Permit
               </Text>
             </VStack>
@@ -107,7 +104,7 @@ function Footer() {
     >
       <ApplicantGrid marginBottom={10}>
         <GridItem colSpan={{ sm: 12, lg: 2 }} textAlign={{ sm: 'center', lg: 'left' }}>
-          <Image src="/assets/logo.svg" alt="RCD Logo" height={92} width={82} priority />
+          <Logo height={54} width={200} priority />
           <a href="https://www.rcdrichmond.org/">
             <Text textStyle="heading">Go to main site</Text>
           </a>

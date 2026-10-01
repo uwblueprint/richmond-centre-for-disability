@@ -43,6 +43,7 @@ const text = (firstName: string) => {
 };
 
 const html = (firstName: string) => {
+  const baseUrl = process.env.NEXTAUTH_URL;
   return `
     <body
       style="
@@ -57,24 +58,23 @@ const html = (firstName: string) => {
           width: 100%;
           background-color: #0B64CC;
         "
-      />
+      ></div>
       <div
         style="
           padding: 32px 32px 40px;
         "
       >
-        <img
-          src="https://dev.rcdrichmondapp.ca/assets/logo.png"
-          style="
-            height: 65px;
-            width: 59px;
-            display: block;
-            margin-bottom: 20px;
-            margin-left: auto;
-            margin-right: auto;
-          "
-          alt="Richmond Centre for Disability logo"
-        />
+        <div style="text-align: center; margin-bottom: 40px;">
+          <img
+            src="${baseUrl}/assets/logo.png"
+            width="400"
+            style="
+              height: auto;
+              width: 400px;
+            "
+            alt="Richmond Centre for Disability logo"
+          />
+        </div>
         <div>
           <h1
             style="
