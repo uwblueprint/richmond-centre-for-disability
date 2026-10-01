@@ -489,18 +489,21 @@ export const completeApplication: Resolver<
           createdPermit,
           completedApplicationProcessing,
           queriedApplication,
+          createdWalletCard,
         ] = await prisma.$transaction([
           upsertPhysicianOperation,
           createPermitOperation,
           completeApplicationOperation,
           queryApplicationOperation,
+          createWalletCardPrisma(prisma, applicationProcessingId, employeeId),
         ]);
 
         if (
           !upsertedPhysician ||
           !createdPermit ||
           !completedApplicationProcessing ||
-          !queriedApplication
+          !queriedApplication ||
+          !createdWalletCard
         ) {
           const message = 'Error completing application';
           logger.error({ error: message });
@@ -508,21 +511,14 @@ export const completeApplication: Resolver<
         }
 
         // Generate the Wallet Card
-        // Note: Didn't use transactions because this use case
-        // needs interactive transactions which isn't in prisma 2.8
         try {
-          const walletCardDB = await createWalletCardPrisma(
-            prisma,
-            applicationProcessingId,
-            employeeId
-          );
-          if (!walletCardDB) {
+          if (!createdWalletCard) {
             logger.error({ error: 'Error creating Wallet Card Database' });
           } else {
             const result = await createWalletCardPDF(
               prisma,
               logger,
-              walletCardDB,
+              createdWalletCard,
               appNumber,
               getPermanentPermitExpiryDate(),
               firstName,
@@ -670,18 +666,13 @@ export const completeApplication: Resolver<
       // Note: Didn't use transactions because this use case
       // needs interactive transactions which isn't in prisma 2.8
       try {
-        const walletCardDB = await createWalletCardPrisma(
-          prisma,
-          applicationProcessingId,
-          employeeId
-        );
-        if (!walletCardDB) {
+        if (!createdWalletCard) {
           logger.error({ error: 'Error creating Wallet Card Database' });
         } else {
           const result = await createWalletCardPDF(
             prisma,
             logger,
-            walletCardDB,
+            createdWalletCard,
             createdPermit.rcdPermitId,
             getPermanentPermitExpiryDate(),
             firstName,
@@ -796,18 +787,13 @@ export const completeApplication: Resolver<
       // Note: Didn't use transactions because this use case
       // needs interactive transactions which isn't in prisma 2.8
       try {
-        const walletCardDB = await createWalletCardPrisma(
-          prisma,
-          applicationProcessingId,
-          employeeId
-        );
-        if (!walletCardDB) {
+        if (!createdWalletCard) {
           logger.error({ error: 'Error creating Wallet Card Database' });
         } else {
           const result = await createWalletCardPDF(
             prisma,
             logger,
-            walletCardDB,
+            createdWalletCard,
             createdPermit.rcdPermitId,
             getPermanentPermitExpiryDate(),
             firstName,
