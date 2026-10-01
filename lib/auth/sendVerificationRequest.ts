@@ -61,21 +61,23 @@ const html = (config: EmailConfig) => {
           width: 100%;
           background-color: #0B64CC;
         "
-      />
+      ></div>
       <div
         style="
           padding: 32px 32px 40px;
         "
       >
-        <img
-          src="${baseUrl}/assets/logo.png"
-          style="
-            height: 54px;
-            width: 200px;
-            margin: 0 0 20px;
-          "
-          alt="Richmond Centre for Disability logo"
-        />
+        <div style="margin-bottom: 40px;">
+          <img
+            src="${baseUrl}/assets/logo.png"
+            width="400"
+            style="
+              height: auto;
+              width: 400px;
+            "
+            alt="Richmond Centre for Disability logo"
+          />
+        </div>
         <div>
           <h1
             style="
@@ -99,21 +101,28 @@ const html = (config: EmailConfig) => {
             <br />
             and sign into RCD APP Administration Portal.
           </p>
-          <a
-            href="${url}"
-            style="
-              background-color: #0B64CC;
-              color: #ffffff;
-              padding: 12px 24px;
-              border-radius: 6px;
-              font-size: 18px;
-              font-weight: 600;
-              line-height: 150%;
-              text-decoration: none;
-            "
-          >
-            Log into RCD APP Administration Portal
-          </a>
+          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin: 0 auto;">
+            <tr>
+              <td align="center" bgcolor="#0B64CC" style="border-radius: 6px;">
+                <a
+                  href="${url}"
+                  style="
+                    background-color: #0B64CC;
+                    color: #ffffff;
+                    padding: 12px 24px;
+                    border-radius: 6px;
+                    font-size: 18px;
+                    font-weight: 600;
+                    line-height: 150%;
+                    text-decoration: none;
+                    display: inline-block;
+                  "
+                >
+                  Log into RCD APP Administration Portal
+                </a>
+              </td>
+            </tr>
+          </table>
           <p
             style="
               color: #718096;
