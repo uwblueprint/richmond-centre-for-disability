@@ -25,7 +25,6 @@ import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/typ
 import { titlecase } from '@tools/string';
 import { formatDateYYYYMMDD, formatDateYYYYMMDDLocal } from '@lib/utils/date';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
-import { useEffect, useState } from 'react'; // React
 import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 
 type RequestHeaderProps = {
@@ -91,30 +90,17 @@ export default function RequestHeader({
 
   const router = useRouter();
 
-  const [backLink, setBackLink] = useState('/admin');
-  const [status, setStatus] = useState(router.query.tab);
-  const [page, setPage] = useState(router.query.page);
+  const routerStatus =
+    typeof router.query.tab === 'string' ? router.query.tab : applicationStatus || 'PENDING';
+  const routerPage = typeof router.query.page === 'string' ? router.query.page : '0';
+  const backLink = `/admin?tab=${routerStatus}&page=${routerPage}`;
 
-  const generateBackLink = () => {
-    const routerQuery = router.query;
-    typeof routerQuery.tab === 'string' ? setStatus(routerQuery.tab) : setStatus(applicationStatus);
-    typeof routerQuery.page === 'string' ? setPage(routerQuery.page) : setPage('0');
-    setBackLink(`/admin?tab=${status}&page=${page}`);
-  };
-
-  const formatStatus = (status: string | string[] | undefined) => {
-    if (typeof status != 'string') {
-      return '';
-    }
+  const formatStatus = (status: string) => {
     if (status === 'ALL') {
       return '';
     }
-    return status.toLowerCase().replace('_', ' ');
+    return status.toLowerCase().replace(/_/g, ' ');
   };
-
-  useEffect(() => {
-    generateBackLink();
-  }, []);
 
   // Delete application modal state
   const {
@@ -128,7 +114,7 @@ export default function RequestHeader({
       <NextLink href={backLink} passHref>
         <Text textStyle="button-semibold" textColor="primary" as="a">
           <ChevronLeftIcon />
-          All {formatStatus(status)} requests
+          All {formatStatus(routerStatus)} requests
         </Text>
       </NextLink>
 
