@@ -94,8 +94,8 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
 
   const [generateInvoice, { loading: generateInvoiceLoading }] =
     useMutation<GenerateInvoiceResponse, GenerateInvoiceRequest>(GENERATE_INVOICE_MUTATION);
-  const handleGenerateInvoice = async (isDonation: boolean) => {
-    await generateInvoice({ variables: { input: { applicationId, isDonation } } });
+  const handleGenerateInvoice = async () => {
+    await generateInvoice({ variables: { input: { applicationId } } });
     refetch();
   };
 
@@ -172,8 +172,6 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
       paidThroughShopify,
       shopifyConfirmationNumber,
       shopifyOrderNumber,
-      donationAmount,
-      secondDonationAmount,
       processing: {
         status,
         appNumber,
@@ -399,11 +397,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
             {/* Task 4: Generate Invoice */}
             <ProcessingTaskStep
               id={4}
-              label={
-                Number(donationAmount) + (Number(secondDonationAmount) || 0) >= 20
-                  ? 'Generate invoice and donation receipt'
-                  : 'Generate invoice'
-              }
+              label="Generate invoice"
               description="Invoice number will be automatically assigned"
               isCompleted={invoice !== null}
               showLog={showTaskLog}
@@ -423,11 +417,7 @@ export default function ProcessingTasksCard({ applicationId }: ProcessingTasksCa
                   bg="background.gray"
                   _hover={!reviewRequestCompleted ? undefined : { bg: 'background.grayHover' }}
                   color="black"
-                  onClick={() => {
-                    Number(donationAmount) + (Number(secondDonationAmount) || 0) >= 20
-                      ? handleGenerateInvoice(true)
-                      : handleGenerateInvoice(false);
-                  }}
+                  onClick={handleGenerateInvoice}
                   isDisabled={!reviewRequestCompleted || generateInvoiceLoading}
                   isLoading={generateInvoiceLoading}
                   loadingText="Generate document"

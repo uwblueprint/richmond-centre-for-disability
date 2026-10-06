@@ -76,6 +76,12 @@ export default gql`
     updateApplicationPaymentInformation(
       input: UpdateApplicationPaymentInformationInput!
     ): UpdateApplicationPaymentInformationResult
+    updateApplicationBillingInformation(
+      input: UpdateApplicationBillingInformationInput!
+    ): UpdateApplicationBillingInformationResult
+    generateDonationTaxReceipt(
+      input: GenerateDonationTaxReceiptInput!
+    ): GenerateDonationTaxReceiptResult
     updateApplicationReasonForReplacement(
       input: UpdateApplicationReasonForReplacementInput!
     ): UpdateApplicationReasonForReplacementResult

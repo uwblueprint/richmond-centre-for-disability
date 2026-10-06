@@ -42,6 +42,8 @@ export default gql`
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
     shopifyOrderNumber: String
+    donationTaxReceiptEnabled: Boolean!
+    donationTaxReceipt: DonationTaxReceipt
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -152,6 +154,8 @@ export default gql`
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
     shopifyOrderNumber: String
+    donationTaxReceiptEnabled: Boolean!
+    donationTaxReceipt: DonationTaxReceipt
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -237,6 +241,8 @@ export default gql`
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
     shopifyOrderNumber: String
+    donationTaxReceiptEnabled: Boolean!
+    donationTaxReceipt: DonationTaxReceipt
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -303,6 +309,8 @@ export default gql`
     shopifyPaymentStatus: ShopifyPaymentStatus
     shopifyConfirmationNumber: String
     shopifyOrderNumber: String
+    donationTaxReceiptEnabled: Boolean!
+    donationTaxReceipt: DonationTaxReceipt
 
     # Shipping information
     shippingAddressSameAsHomeAddress: Boolean!
@@ -785,6 +793,34 @@ export default gql`
   }
 
   type UpdateApplicationPaymentInformationResult {
+    ok: Boolean!
+    error: String
+  }
+
+  # Update billing information without changing locked payment details
+  input UpdateApplicationBillingInformationInput {
+    id: Int!
+    billingAddressSameAsHomeAddress: Boolean!
+    billingFullName: String
+    billingAddressLine1: String
+    billingAddressLine2: String
+    billingCity: String
+    billingProvince: Province
+    billingCountry: String
+    billingPostalCode: String
+  }
+
+  type UpdateApplicationBillingInformationResult {
+    ok: Boolean!
+    error: String
+  }
+
+  # Generate or replace a standalone donation tax receipt
+  input GenerateDonationTaxReceiptInput {
+    applicationId: Int!
+  }
+
+  type GenerateDonationTaxReceiptResult {
     ok: Boolean!
     error: String
   }
