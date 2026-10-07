@@ -1,33 +1,11 @@
 import moment from 'moment';
 
-/**
- * RCD is in Richmond, BC: every business-day decision (permit expiry, renewal windows, file dates)
- * is made on the America/Vancouver calendar, regardless of the server's or browser's timezone.
- */
+// RCD is in Richmond, BC, so business dates use Vancouver time regardless of server/browser timezone
 export const LOCAL_TIMEZONE = 'America/Vancouver';
 
-/**
- * Get the America/Vancouver calendar date of an instant.
- * Calendar dates are represented the same way Prisma returns `@db.Date` columns: a Date at UTC midnight.
- * @param {Date} instant instant to convert, default is now
- * @returns {Date} UTC-midnight Date of the Vancouver calendar date at that instant
- */
-export const getLocalCalendarDate = (instant: Date = new Date()): Date => {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: LOCAL_TIMEZONE,
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  }).formatToParts(instant);
-  const part = (type: Intl.DateTimeFormatPartTypes): number => {
-    const value = parts.find(p => p.type === type)?.value;
-    if (value === undefined) {
-      throw new Error(`Could not extract ${type} from date ${instant.toISOString()}`);
-    }
-    return parseInt(value, 10);
-  };
-  return new Date(Date.UTC(part('year'), part('month') - 1, part('day')));
-};
+/** Vancouver calendar date of an instant, as a UTC-midnight Date (like Prisma's `@db.Date` values) */
+export const getLocalCalendarDate = (instant: Date = new Date()): Date =>
+  new Date(`${formatDateYYYYMMDDLocalTimezone(instant)}T00:00:00.000Z`);
 
 /**
  * Format date to be in MM/DD/YYYY format and in UTC time zone to avoid the date being set back by a day
