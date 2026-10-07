@@ -1,6 +1,35 @@
 import moment from 'moment';
 
 /**
+ * RCD is in Richmond, BC: every business-day decision (permit expiry, renewal windows, file dates)
+ * is made on the America/Vancouver calendar, regardless of the server's or browser's timezone.
+ */
+export const LOCAL_TIMEZONE = 'America/Vancouver';
+
+/**
+ * Get the America/Vancouver calendar date of an instant.
+ * Calendar dates are represented the same way Prisma returns `@db.Date` columns: a Date at UTC midnight.
+ * @param {Date} instant instant to convert, default is now
+ * @returns {Date} UTC-midnight Date of the Vancouver calendar date at that instant
+ */
+export const getLocalCalendarDate = (instant: Date = new Date()): Date => {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: LOCAL_TIMEZONE,
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(instant);
+  const part = (type: Intl.DateTimeFormatPartTypes): number => {
+    const value = parts.find(p => p.type === type)?.value;
+    if (value === undefined) {
+      throw new Error(`Could not extract ${type} from date ${instant.toISOString()}`);
+    }
+    return parseInt(value, 10);
+  };
+  return new Date(Date.UTC(part('year'), part('month') - 1, part('day')));
+};
+
+/**
  * Format date to be in MM/DD/YYYY format and in UTC time zone to avoid the date being set back by a day
  * @param {Date} date date to be formatted
  * @param {boolean} dateInput Whether the date is being displayed in Input element of type date
@@ -71,7 +100,7 @@ export const formatDateTimeYYYYMMDDHHMMSS = (d: Date): string => {
 };
 
 /**
- * Format date to be in YYYY-MM-DD format in the organization's configured local timezone (America/Vancouver).
+ * Format date to be in YYYY-MM-DD format in the organization's local timezone (America/Vancouver).
  * NOTE: Use this for files generated on the backend to ensure that all data is consistently generated using
  * the organization's local business day, regardless of the server's timezone (UTC).
  * @param {Date} d date to be formatted
@@ -79,13 +108,8 @@ export const formatDateTimeYYYYMMDDHHMMSS = (d: Date): string => {
  * @returns {string} formatted date
  */
 export const formatDateYYYYMMDDLocalTimezone = (d: Date, withTime = false): string => {
-  const timeZone = process.env.NEXT_PUBLIC_LOCAL_TIMEZONE;
-  if (!timeZone) {
-    throw new Error('NEXT_PUBLIC_LOCAL_TIMEZONE environment variable is not defined');
-  }
-
   const options: Intl.DateTimeFormatOptions = {
-    timeZone,
+    timeZone: LOCAL_TIMEZONE,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',

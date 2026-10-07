@@ -83,7 +83,7 @@ export default function RequestHeader({
     expiryDateText = `This permit will expire: ${formatDateYYYYMMDD(permitExpiry)}`;
   } else if (permitType === 'PERMANENT') {
     expiryDateText = `This permit will expire: ${formatDateYYYYMMDD(
-      getPermanentPermitExpiryDate()
+      getPermanentPermitExpiryDate(new Date())
     )} (expected)`;
   } else {
     expiryDateText = null;
