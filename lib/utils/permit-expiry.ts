@@ -20,9 +20,9 @@ const assertCalendarDate = (date: Date): void => {
 };
 
 /** Last day of the month 3 years after the local date of completion */
-export const getPermanentPermitExpiryDate = (completedAt: Date): Date => {
+export const getPermanentPermitExpiryDate = (applicationCompletedAt: Date): Date => {
   return moment
-    .utc(getLocalCalendarDate(completedAt))
+    .utc(getLocalCalendarDate(applicationCompletedAt))
     .add(3, 'years')
     .endOf('month')
     .startOf('day')

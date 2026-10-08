@@ -139,8 +139,8 @@ export const completeApplication: Resolver<
   const { id: employeeId } = session;
 
   // Permanent NEW/RENEWAL permits expire based on the moment the request is completed
-  const completedAt = new Date();
-  const permanentPermitExpiryDate = getPermanentPermitExpiryDate(completedAt);
+  const applicationCompletedAt = new Date();
+  const permanentPermitExpiryDate = getPermanentPermitExpiryDate(applicationCompletedAt);
 
   // Set application status as COMPLETED operation
   const completeApplicationOperation = prisma.application.update({
@@ -719,7 +719,9 @@ export const completeApplication: Resolver<
       }
 
       // Verify that expiry date of permit being replaced is not in the past
-      if (isPermitExpired(mostRecentPermit.expiryDate, getLocalCalendarDate(completedAt))) {
+      if (
+        isPermitExpired(mostRecentPermit.expiryDate, getLocalCalendarDate(applicationCompletedAt))
+      ) {
         return {
           ok: false,
           error: 'Cannot replace permit that has already expired',
