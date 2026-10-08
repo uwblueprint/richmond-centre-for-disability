@@ -643,7 +643,6 @@ export type Mutation = {
   completeApplication: Maybe<CompleteApplicationResult>;
   updateApplicationProcessingAssignAppNumber: Maybe<UpdateApplicationProcessingAssignAppNumberResult>;
   updateApplicationProcessingHolepunchParkingPermit: Maybe<UpdateApplicationProcessingHolepunchParkingPermitResult>;
-  updateApplicationProcessingCreateWalletCard: Maybe<UpdateApplicationProcessingCreateWalletCardResult>;
   updateApplicationProcessingReviewRequestInformation: Maybe<UpdateApplicationProcessingReviewRequestInformationResult>;
   updateApplicationProcessingGenerateInvoice: Maybe<UpdateApplicationProcessingGenerateInvoiceResult>;
   updateApplicationProcessingUploadDocuments: Maybe<UpdateApplicationProcessingUploadDocumentsResult>;
@@ -785,10 +784,6 @@ export type MutationUpdateApplicationProcessingHolepunchParkingPermitArgs = {
   input: UpdateApplicationProcessingHolepunchParkingPermitInput;
 };
 
-
-export type MutationUpdateApplicationProcessingCreateWalletCardArgs = {
-  input: UpdateApplicationProcessingCreateWalletCardInput;
-};
 
 
 export type MutationUpdateApplicationProcessingReviewRequestInformationArgs = {
@@ -1484,17 +1479,6 @@ export type UpdateApplicationProcessingAssignAppNumberInput = {
 
 export type UpdateApplicationProcessingAssignAppNumberResult = {
   __typename?: 'UpdateApplicationProcessingAssignAppNumberResult';
-  ok: Scalars['Boolean'];
-  error: Maybe<Scalars['String']>;
-};
-
-export type UpdateApplicationProcessingCreateWalletCardInput = {
-  applicationId: Scalars['Int'];
-  walletCardCreated: Scalars['Boolean'];
-};
-
-export type UpdateApplicationProcessingCreateWalletCardResult = {
-  __typename?: 'UpdateApplicationProcessingCreateWalletCardResult';
   ok: Scalars['Boolean'];
   error: Maybe<Scalars['String']>;
 };

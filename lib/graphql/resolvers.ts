@@ -43,7 +43,6 @@ import {
   completeApplication,
   updateApplicationProcessingAssignAppNumber,
   updateApplicationProcessingHolepunchParkingPermit,
-  updateApplicationProcessingCreateWalletCard,
   updateApplicationProcessingGenerateInvoice,
   updateApplicationProcessingUploadDocuments,
   updateApplicationProcessingMailOut,
@@ -207,10 +206,6 @@ const resolvers = {
     ),
     updateApplicationProcessingHolepunchParkingPermit: authorize(
       updateApplicationProcessingHolepunchParkingPermit,
-      ['SECRETARY']
-    ),
-    updateApplicationProcessingCreateWalletCard: authorize(
-      updateApplicationProcessingCreateWalletCard,
       ['SECRETARY']
     ),
     updateApplicationProcessingReviewRequestInformation: authorize(

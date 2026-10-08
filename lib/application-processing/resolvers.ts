@@ -8,7 +8,6 @@ import {
   MutationRejectApplicationArgs,
   MutationUpdateApplicationProcessingAssignAppNumberArgs,
   MutationUpdateApplicationProcessingGenerateInvoiceArgs,
-  MutationUpdateApplicationProcessingCreateWalletCardArgs,
   MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
   MutationUpdateApplicationProcessingMailOutArgs,
   MutationUpdateApplicationProcessingUploadDocumentsArgs,
@@ -16,7 +15,6 @@ import {
   RejectApplicationResult,
   UpdateApplicationProcessingAssignAppNumberResult,
   UpdateApplicationProcessingGenerateInvoiceResult,
-  UpdateApplicationProcessingCreateWalletCardResult,
   UpdateApplicationProcessingHolepunchParkingPermitResult,
   UpdateApplicationProcessingMailOutResult,
   UpdateApplicationProcessingUploadDocumentsResult,
@@ -28,10 +26,8 @@ import { getPermanentPermitExpiryDate, isPermitExpired } from '@lib/utils/permit
 import { generateApplicationInvoicePdf, generateDonationInvoicePdf } from '@lib/invoices/utils';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { formatDateYYYYMMDDLocalTimezone, getLocalCalendarDate } from '@lib/utils/date';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { getActivePermit } from '@lib/applicants/utils';
-import { generateWalletCardPDF } from '@lib/walletCard/utils';
-import { Logger } from 'pino';
 import { createWalletCardPDF, createWalletCardPrisma } from './utils';
 
 /**
@@ -979,191 +975,6 @@ export const updateApplicationProcessingHolepunchParkingPermit: Resolver<
   }
 
   return { ok: true, error: null };
-};
-
-/**
- * Create wallet card for in-progress application
- * @returns Status of the operation (ok)
- */
-export const createWalletCard = async (
-  applicationId: number,
-  walletCardCreated: boolean,
-  employeeId: number,
-  prisma: PrismaClient,
-  logger: Logger
-): Promise<UpdateApplicationProcessingCreateWalletCardResult> => {
-  let updatedApplicationProcessing;
-  let updatedWalletCard;
-
-  // Use the application record to retrieve the applicant name, applicant ID, permit type, current date, and employee initials
-  const application = await prisma.application.findUnique({
-    where: { id: applicationId },
-    include: { applicant: true, permit: true },
-  });
-
-  if (!application) {
-    return { ok: false, error: 'Application does not exist' };
-  }
-
-  // Get the applicant from the application
-  const applicant = application.applicant;
-
-  if (!applicant) {
-    return { ok: false, error: 'Applicant could not be found' };
-  }
-
-  // Get the permit from the application
-  const permit = application.permit;
-
-  if (!permit) {
-    return { ok: false, error: 'Permit could not be found' };
-  }
-
-  const permitId = permit.rcdPermitId;
-  const permitExpiry = permit.expiryDate;
-  const firstName = applicant.firstName;
-  const lastName = applicant.lastName;
-  const dateOfBirth = applicant.dateOfBirth;
-  const userId = applicant.id;
-
-  try {
-    // Create Wallet Card Record in DB
-    let createdWalletCard;
-    try {
-      if (walletCardCreated) {
-        createdWalletCard = await prisma.walletCard.create({
-          data: {
-            applicationProcessing: {
-              connect: { id: applicationId },
-            },
-            employee: {
-              connect: { id: employeeId },
-            },
-          },
-        });
-      }
-    } catch (err) {
-      logger.error({ error: err }, 'Error created wallet record in DB');
-    }
-
-    if (walletCardCreated && !createdWalletCard) {
-      const message = "Couldn't create wallet card record in DB";
-      logger.error({ error: message });
-      throw new ApolloError(message);
-    }
-
-    const walletCardPdf = createdWalletCard
-      ? generateWalletCardPDF(
-          permitId,
-          permitExpiry,
-          firstName,
-          lastName,
-          dateOfBirth,
-          userId.toString()
-        )
-      : null;
-
-    if (walletCardPdf && createdWalletCard) {
-      // Generate File Name and S3 Key
-      const createdAtYYYMMDD = formatDateYYYYMMDDLocalTimezone(createdWalletCard.createdAt).replace(
-        /-/g,
-        ''
-      );
-      const receiptNumber = `${createdAtYYYMMDD}-${createdWalletCard.walletNumber}`;
-      const fileName = `Wallet-Card-${receiptNumber}.pdf`;
-      const s3WalletCardKey = `rcd/wallets/${fileName}`;
-
-      // Upload pdf to s3
-      let uploadedPdf;
-      let signedUrl;
-      try {
-        // Upload file to s3
-        uploadedPdf = await serverUploadToS3(walletCardPdf, s3WalletCardKey);
-        // Generate a signed URL to access the file
-        // TODO: Have seperate TTL for Created Wallet
-        const durationSeconds = parseInt(process.env.INVOICE_LINK_TTL_DAYS) * 24 * 60 * 60;
-        signedUrl = getSignedUrlForS3(uploadedPdf.key, durationSeconds);
-      } catch (error) {
-        const message = `Error uploading wallet card pdf to AWS: ${error}`;
-        logger.error(message);
-        throw new ApolloError(message);
-      }
-
-      // Update created wallet to have S3 info
-      try {
-        updatedWalletCard = await prisma.walletCard.update({
-          where: {
-            walletNumber: createdWalletCard.walletNumber,
-          },
-          data: {
-            s3ObjectKey: uploadedPdf.key,
-            s3ObjectUrl: signedUrl,
-          },
-        });
-      } catch (err) {
-        if (err instanceof Prisma.PrismaClientKnownRequestError) {
-          return {
-            ok: false,
-            error: err.message,
-          };
-        }
-      }
-    }
-
-    updatedApplicationProcessing = await prisma.application.update({
-      where: { id: applicationId },
-      data: {
-        applicationProcessing: {
-          update: {
-            walletCardCreated,
-            walletCardCreatedUpdatedAt: new Date(),
-            walletCardCreatedEmployee: walletCardCreated
-              ? { connect: { id: employeeId } }
-              : { disconnect: true },
-          },
-        },
-      },
-    });
-  } catch (err) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      return {
-        ok: false,
-        error: err.message,
-      };
-    }
-
-    logger.error({ error: err }, 'Unknown error');
-  }
-
-  if (!updatedWalletCard) {
-    throw new ApolloError('Error updating Wallet Card record in DB');
-  }
-
-  if (!updatedApplicationProcessing) {
-    throw new ApolloError('Error updating wallet card create state of application');
-  }
-
-  return { ok: true, error: null };
-};
-
-/**
- * Create wallet card for in-progress application
- * @returns Status of the operation (ok)
- */
-export const updateApplicationProcessingCreateWalletCard: Resolver<
-  MutationUpdateApplicationProcessingCreateWalletCardArgs,
-  UpdateApplicationProcessingCreateWalletCardResult
-> = async (_parent, args, { prisma, session, logger }) => {
-  // TODO: Validation
-  const { input } = args;
-  const { applicationId, walletCardCreated } = input;
-
-  if (!session) {
-    return { ok: false, error: 'Not authenticated' };
-  }
-  const { id: employeeId } = session;
-
-  return createWalletCard(applicationId, walletCardCreated, employeeId, prisma, logger);
 };
 
 /**
