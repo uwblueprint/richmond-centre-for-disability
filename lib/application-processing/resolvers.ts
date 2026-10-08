@@ -265,10 +265,15 @@ export const completeApplication: Resolver<
         guardian = undefined;
       }
 
-      const expiryDate =
-        permitType === 'TEMPORARY' && temporaryPermitExpiry
-          ? temporaryPermitExpiry
-          : permanentPermitExpiryDate;
+      let expiryDate: Date;
+      if (permitType === 'TEMPORARY') {
+        if (!temporaryPermitExpiry) {
+          return { ok: false, error: 'Temporary permit is missing an expiry date' };
+        }
+        expiryDate = temporaryPermitExpiry;
+      } else {
+        expiryDate = permanentPermitExpiryDate;
+      }
 
       // Upsert physician
       const upsertPhysicianOperation = prisma.physician.upsert({
