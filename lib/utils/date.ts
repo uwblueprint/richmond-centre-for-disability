@@ -1,9 +1,6 @@
 import moment from 'moment';
 
-// RCD is in Richmond, BC, so business dates use Vancouver time regardless of server/browser timezone
-export const LOCAL_TIMEZONE = 'America/Vancouver';
-
-/** Vancouver calendar date of an instant, as a UTC-midnight Date (like Prisma's `@db.Date` values) */
+/** Local calendar date of an instant, as a UTC-midnight Date (like Prisma's `@db.Date` values) */
 export const getLocalCalendarDate = (instant: Date = new Date()): Date =>
   new Date(`${formatDateYYYYMMDDLocalTimezone(instant)}T00:00:00.000Z`);
 
@@ -78,7 +75,7 @@ export const formatDateTimeYYYYMMDDHHMMSS = (d: Date): string => {
 };
 
 /**
- * Format date to be in YYYY-MM-DD format in the organization's local timezone (America/Vancouver).
+ * Format date to be in YYYY-MM-DD format in the organization's configured local timezone (America/Vancouver).
  * NOTE: Use this for files generated on the backend to ensure that all data is consistently generated using
  * the organization's local business day, regardless of the server's timezone (UTC).
  * @param {Date} d date to be formatted
@@ -86,8 +83,13 @@ export const formatDateTimeYYYYMMDDHHMMSS = (d: Date): string => {
  * @returns {string} formatted date
  */
 export const formatDateYYYYMMDDLocalTimezone = (d: Date, withTime = false): string => {
+  const timeZone = process.env.NEXT_PUBLIC_LOCAL_TIMEZONE;
+  if (!timeZone) {
+    throw new Error('NEXT_PUBLIC_LOCAL_TIMEZONE environment variable is not defined');
+  }
+
   const options: Intl.DateTimeFormatOptions = {
-    timeZone: LOCAL_TIMEZONE,
+    timeZone,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',

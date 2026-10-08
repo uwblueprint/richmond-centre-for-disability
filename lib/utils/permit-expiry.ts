@@ -3,7 +3,7 @@ import { getLocalCalendarDate } from '@lib/utils/date';
 import moment from 'moment';
 
 // Expiry dates are calendar dates (UTC-midnight Dates, as Prisma returns `@db.Date`) compared against
-// today's America/Vancouver date. A permit is expired on its expiry date.
+// today's local date (NEXT_PUBLIC_LOCAL_TIMEZONE). A permit is expired on its expiry date.
 
 const EXPIRING_WINDOW_DAYS = 30;
 const RENEWAL_GRACE_PERIOD_MONTHS = 6;
@@ -19,7 +19,7 @@ const assertCalendarDate = (date: Date): void => {
   }
 };
 
-/** Last day of the month 3 years after the Vancouver date of completion */
+/** Last day of the month 3 years after the local date of completion */
 export const getPermanentPermitExpiryDate = (completedAt: Date): Date => {
   return moment
     .utc(getLocalCalendarDate(completedAt))
