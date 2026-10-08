@@ -55,7 +55,7 @@ import {
 } from '@lib/physicians/validation';
 import { ValidationError } from 'yup';
 import { getActivePermit, getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
-import moment from 'moment';
+import { getRenewalWindowStatus } from '@lib/utils/permit-expiry';
 import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
 
 /**
@@ -780,7 +780,7 @@ export const createExternalRenewalApplication: Resolver<
       error: 'Temporary permits cannot be renewed.',
       checkoutUrl: null,
     };
-  } else if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') < moment()) {
+  } else if (getRenewalWindowStatus(mostRecentPermit.expiryDate) === 'TOO_LATE') {
     // Can only submit renewal application if permit expiry less than 6 months ago
     return {
       ok: false,

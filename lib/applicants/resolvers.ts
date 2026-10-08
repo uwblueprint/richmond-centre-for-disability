@@ -22,7 +22,6 @@ import {
   UpdateApplicantNotesResult,
   VerifyIdentityResult,
 } from '@lib/graphql/types'; // GraphQL types
-import { DateUtils } from 'react-day-picker'; // Date utils
 import { SortOrder } from '@tools/types'; // Sorting Type
 import { PermitType, Prisma } from '@prisma/client';
 import { permitHolderInformationSchema, verifyIdentitySchema } from '@lib/applicants/validation';
@@ -30,7 +29,7 @@ import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 import { guardianInformationSchema } from '@lib/guardian/validation';
 import { stripPhoneNumber, stripPostalCode } from '@lib/utils/format';
-import moment from 'moment';
+import { getPermitStatusFilterBounds, getRenewalWindowStatus } from '@lib/utils/permit-expiry';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -132,20 +131,10 @@ export const applicants: Resolver<
       }
     }
 
-    const TODAY = new Date();
-
     // Permit status filter depends on expiry date
-    switch (permitStatus) {
-      case 'ACTIVE':
-        expiryDateLowerBound = TODAY;
-        break;
-      case 'EXPIRED':
-        expiryDateUpperBound = TODAY;
-        break;
-      case 'EXPIRING':
-        expiryDateLowerBound = TODAY;
-        expiryDateUpperBound = DateUtils.addMonths(TODAY, 1);
-        break;
+    if (permitStatus) {
+      ({ lowerBound: expiryDateLowerBound, upperBound: expiryDateUpperBound } =
+        getPermitStatusFilterBounds(permitStatus));
     }
 
     // Permit status and expiry date range filters both look at the permit expiryDate.
@@ -634,8 +623,10 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
     };
   }
 
+  const renewalWindowStatus = getRenewalWindowStatus(mostRecentPermit.expiryDate);
+
   // APP must expire in at most 30 days in the future
-  if (moment().add(30, 'd') < moment.utc(mostRecentPermit.expiryDate)) {
+  if (renewalWindowStatus === 'TOO_EARLY') {
     return {
       ok: false,
       failureReason: 'APP_DOES_NOT_EXPIRE_WITHIN_30_DAYS',
@@ -644,7 +635,7 @@ export const verifyIdentity: Resolver<MutationVerifyIdentityArgs, VerifyIdentity
   }
 
   // APP must expire at most 6 months in the past
-  if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') < moment()) {
+  if (renewalWindowStatus === 'TOO_LATE') {
     return {
       ok: false,
       failureReason: 'APP_PAST_SIX_MONTHS_EXPIRED',

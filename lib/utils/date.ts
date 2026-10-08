@@ -1,5 +1,9 @@
 import moment from 'moment';
 
+/** Local calendar date of an instant, as a UTC-midnight Date (like Prisma's `@db.Date` values) */
+export const getLocalCalendarDate = (instant: Date = new Date()): Date =>
+  new Date(`${formatDateYYYYMMDDLocalTimezone(instant)}T00:00:00.000Z`);
+
 /**
  * Format date to be in MM/DD/YYYY format and in UTC time zone to avoid the date being set back by a day
  * @param {Date} date date to be formatted
