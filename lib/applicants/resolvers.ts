@@ -29,7 +29,7 @@ import { ValidationError } from 'yup';
 import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 import { guardianInformationSchema } from '@lib/guardian/validation';
 import { stripPhoneNumber, stripPostalCode } from '@lib/utils/format';
-import { getPermitExpiryDateBounds, getRenewalWindowStatus } from '@lib/utils/permit-expiry';
+import { getPermitStatusFilterBounds, getRenewalWindowStatus } from '@lib/utils/permit-expiry';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -134,7 +134,7 @@ export const applicants: Resolver<
     // Permit status filter depends on expiry date
     if (permitStatus) {
       ({ lowerBound: expiryDateLowerBound, upperBound: expiryDateUpperBound } =
-        getPermitExpiryDateBounds(permitStatus));
+        getPermitStatusFilterBounds(permitStatus));
     }
 
     // Permit status and expiry date range filters both look at the permit expiryDate.

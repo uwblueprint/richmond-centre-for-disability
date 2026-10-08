@@ -54,7 +54,7 @@ export const getPermitExpiryStatus = (
 };
 
 /** Inclusive expiry date bounds matching getPermitExpiryStatus, except ACTIVE also includes EXPIRING */
-export const getPermitExpiryDateBounds = (
+export const getPermitStatusFilterBounds = (
   status: PermitStatus,
   today: Date = getLocalCalendarDate()
 ): { lowerBound: Date | undefined; upperBound: Date | undefined } => {
