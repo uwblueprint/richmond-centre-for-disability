@@ -27,6 +27,9 @@ import { formatDateYYYYMMDD, formatDateYYYYMMDDLocal } from '@lib/utils/date';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
 import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
 
+// TODOL Create one list that Dashboard tabs and backlink generation can use
+const REQUEST_TABS = ['ALL', 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'REJECTED'];
+
 type RequestHeaderProps = {
   readonly id: number;
   readonly applicationType: ApplicationType;
@@ -90,9 +93,10 @@ export default function RequestHeader({
 
   const router = useRouter();
 
+  const { tab, page } = router.query;
   const routerStatus =
-    typeof router.query.tab === 'string' ? router.query.tab : applicationStatus || 'PENDING';
-  const routerPage = typeof router.query.page === 'string' ? router.query.page : '0';
+    typeof tab === 'string' && REQUEST_TABS.includes(tab) ? tab : applicationStatus || 'PENDING';
+  const routerPage = typeof page === 'string' && /^\d+$/.test(page) ? page : '0';
   const backLink = `/admin?tab=${routerStatus}&page=${routerPage}`;
 
   const formatStatus = (status: string) => {
