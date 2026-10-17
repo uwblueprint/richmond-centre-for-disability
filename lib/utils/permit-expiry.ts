@@ -3,8 +3,7 @@ import { getLocalCalendarDate } from '@lib/utils/date';
 import moment from 'moment';
 
 // Expiry dates are calendar dates (UTC-midnight Dates, as Prisma returns `@db.Date`) compared against
-// today's local date (NEXT_PUBLIC_LOCAL_TIMEZONE). Wallet cards print only the expiry year-month, so a
-// permit is valid through the end of its expiry month and expired from the 1st of the following month.
+// today's local date (NEXT_PUBLIC_LOCAL_TIMEZONE). A permit is valid through its expiry date.
 
 const EXPIRING_WINDOW_DAYS = 30;
 const RENEWAL_GRACE_PERIOD_MONTHS = 6;
@@ -18,12 +17,6 @@ const assertCalendarDate = (date: Date): void => {
   ) {
     throw new Error(`Expected a calendar date (UTC midnight), got ${date.toISOString()}`);
   }
-};
-
-/** First day on which a permit with this expiry date is expired */
-const getFirstExpiredDate = (expiryDate: Date): Date => {
-  assertCalendarDate(expiryDate);
-  return moment.utc(expiryDate).startOf('month').add(1, 'month').toDate();
 };
 
 /** Last day of the month 3 years after the local date of completion */
@@ -40,8 +33,9 @@ export const isPermitExpired = (
   expiryDate: Date,
   today: Date = getLocalCalendarDate()
 ): boolean => {
+  assertCalendarDate(expiryDate);
   assertCalendarDate(today);
-  return getFirstExpiredDate(expiryDate).getTime() <= today.getTime();
+  return expiryDate.getTime() < today.getTime();
 };
 
 export const getPermitExpiryStatus = (
@@ -52,10 +46,7 @@ export const getPermitExpiryStatus = (
     return 'EXPIRED';
   }
 
-  if (
-    moment.utc(getFirstExpiredDate(expiryDate)).diff(moment.utc(today), 'days') <=
-    EXPIRING_WINDOW_DAYS
-  ) {
+  if (moment.utc(expiryDate).diff(moment.utc(today), 'days') <= EXPIRING_WINDOW_DAYS) {
     return 'EXPIRING';
   }
 
@@ -68,23 +59,16 @@ export const getPermitStatusFilterBounds = (
   today: Date = getLocalCalendarDate()
 ): { lowerBound: Date | undefined; upperBound: Date | undefined } => {
   assertCalendarDate(today);
-  const startOfMonth = moment.utc(today).startOf('month');
-  const lastExpiringDate = moment
-    .utc(today)
-    .add(EXPIRING_WINDOW_DAYS, 'days')
-    .startOf('month')
-    .subtract(1, 'day');
-
   switch (status) {
     case 'ACTIVE':
-      return { lowerBound: startOfMonth.toDate(), upperBound: undefined };
+      return { lowerBound: today, upperBound: undefined };
     case 'EXPIRING':
-      return { lowerBound: startOfMonth.toDate(), upperBound: lastExpiringDate.toDate() };
-    case 'EXPIRED':
       return {
-        lowerBound: undefined,
-        upperBound: startOfMonth.clone().subtract(1, 'day').toDate(),
+        lowerBound: today,
+        upperBound: moment.utc(today).add(EXPIRING_WINDOW_DAYS, 'days').toDate(),
       };
+    case 'EXPIRED':
+      return { lowerBound: undefined, upperBound: moment.utc(today).subtract(1, 'day').toDate() };
     default:
       throw new Error(`Unknown permit status ${status}`);
   }
@@ -97,16 +81,16 @@ export const getRenewalWindowStatus = (
   expiryDate: Date,
   today: Date = getLocalCalendarDate()
 ): RenewalWindowStatus => {
+  assertCalendarDate(expiryDate);
   assertCalendarDate(today);
-  const firstExpiredDate = getFirstExpiredDate(expiryDate);
 
-  if (moment.utc(firstExpiredDate).diff(moment.utc(today), 'days') > EXPIRING_WINDOW_DAYS) {
+  if (moment.utc(expiryDate).diff(moment.utc(today), 'days') > EXPIRING_WINDOW_DAYS) {
     return 'TOO_EARLY';
   }
 
   if (
     moment
-      .utc(firstExpiredDate)
+      .utc(expiryDate)
       .add(RENEWAL_GRACE_PERIOD_MONTHS, 'months')
       .isSameOrBefore(moment.utc(today))
   ) {
