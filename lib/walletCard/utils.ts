@@ -63,7 +63,7 @@ const walletCardPdfDefinition = (
           { text: permitId.toString(), style: 'value' },
           { text: '    Expiry: ', style: 'label' },
           {
-            text: permitExpiry.getFullYear() + '-' + pad2Dig(permitExpiry.getMonth() + 1),
+            text: permitExpiry.getUTCFullYear() + '-' + pad2Dig(permitExpiry.getUTCMonth() + 1),
             style: 'value',
           },
         ],
@@ -82,7 +82,7 @@ const walletCardPdfDefinition = (
         text: [
           { text: 'MoB: ', style: 'label' },
           {
-            text: dateOfBirth.getFullYear() + '-' + pad2Dig(dateOfBirth.getMonth() + 1),
+            text: dateOfBirth.getUTCFullYear() + '-' + pad2Dig(dateOfBirth.getUTCMonth() + 1),
             style: 'value',
           },
           { text: '    User # ', style: 'label' },

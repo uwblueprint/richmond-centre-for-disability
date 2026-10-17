@@ -24,13 +24,12 @@ import {
   MutationUpdateApplicationProcessingRefundPaymentArgs,
   UpdateApplicationProcessingRefundPaymentResult,
 } from '@lib/graphql/types';
-import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
+import { getPermanentPermitExpiryDate, isPermitExpired } from '@lib/utils/permit-expiry';
 import { generateApplicationInvoicePdf, generateDonationInvoicePdf } from '@lib/invoices/utils';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
-import { formatDateYYYYMMDDLocalTimezone } from '@lib/utils/date';
+import { formatDateYYYYMMDDLocalTimezone, getLocalCalendarDate } from '@lib/utils/date';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { getActivePermit } from '@lib/applicants/utils';
-import moment from 'moment';
 import { generateWalletCardPDF } from '@lib/walletCard/utils';
 import { Logger } from 'pino';
 import { createWalletCardPDF, createWalletCardPrisma } from './utils';
@@ -138,6 +137,10 @@ export const completeApplication: Resolver<
     return { ok: false, error: 'Not authenticated' };
   }
   const { id: employeeId } = session;
+
+  // Permanent NEW/RENEWAL permits expire based on the moment the request is completed
+  const applicationCompletedAt = new Date();
+  const permanentPermitExpiryDate = getPermanentPermitExpiryDate(applicationCompletedAt);
 
   // Set application status as COMPLETED operation
   const completeApplicationOperation = prisma.application.update({
@@ -262,10 +265,15 @@ export const completeApplication: Resolver<
         guardian = undefined;
       }
 
-      const expiryDate =
-        permitType === 'TEMPORARY' && temporaryPermitExpiry
-          ? temporaryPermitExpiry
-          : getPermanentPermitExpiryDate();
+      let expiryDate: Date;
+      if (permitType === 'TEMPORARY') {
+        if (!temporaryPermitExpiry) {
+          return { ok: false, error: 'Temporary permit is missing an expiry date' };
+        }
+        expiryDate = temporaryPermitExpiry;
+      } else {
+        expiryDate = permanentPermitExpiryDate;
+      }
 
       // Upsert physician
       const upsertPhysicianOperation = prisma.physician.upsert({
@@ -410,7 +418,7 @@ export const completeApplication: Resolver<
             logger,
             createdWalletCard,
             appNumber,
-            getPermanentPermitExpiryDate(),
+            createdPermit.expiryDate,
             firstName,
             lastName,
             dateOfBirth,
@@ -520,7 +528,7 @@ export const completeApplication: Resolver<
               logger,
               createdWalletCard,
               appNumber,
-              getPermanentPermitExpiryDate(),
+              createdPermit.expiryDate,
               firstName,
               lastName,
               dateOfBirth,
@@ -627,7 +635,7 @@ export const completeApplication: Resolver<
         data: {
           rcdPermitId: appNumber,
           type: 'PERMANENT',
-          expiryDate: getPermanentPermitExpiryDate(),
+          expiryDate: permanentPermitExpiryDate,
           applicant: { connect: { id: applicantId } },
           application: { connect: { id } },
         },
@@ -674,7 +682,7 @@ export const completeApplication: Resolver<
             logger,
             createdWalletCard,
             createdPermit.rcdPermitId,
-            getPermanentPermitExpiryDate(),
+            createdPermit.expiryDate,
             firstName,
             lastName,
             updatedApplicant.dateOfBirth,
@@ -711,7 +719,9 @@ export const completeApplication: Resolver<
       }
 
       // Verify that expiry date of permit being replaced is not in the past
-      if (moment.utc(mostRecentPermit.expiryDate) <= moment.utc()) {
+      if (
+        isPermitExpired(mostRecentPermit.expiryDate, getLocalCalendarDate(applicationCompletedAt))
+      ) {
         return {
           ok: false,
           error: 'Cannot replace permit that has already expired',
@@ -795,7 +805,7 @@ export const completeApplication: Resolver<
             logger,
             createdWalletCard,
             createdPermit.rcdPermitId,
-            getPermanentPermitExpiryDate(),
+            createdPermit.expiryDate,
             firstName,
             lastName,
             updatedApplicant.dateOfBirth,
@@ -1017,7 +1027,7 @@ export const createWalletCard = async (
   }
 
   const permitId = permit.rcdPermitId;
-  const permitExpiry = getPermanentPermitExpiryDate();
+  const permitExpiry = permit.expiryDate;
   const firstName = applicant.firstName;
   const lastName = applicant.lastName;
   const dateOfBirth = applicant.dateOfBirth;

@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { getRenewalWindowStatus } from '@lib/utils/permit-expiry';
 import Layout from '@components/admin/Layout'; // Layout component
 import {
   Text,
@@ -158,18 +159,8 @@ export default function CreateRenewal() {
               'Temporary permits cannot be renewed. Please process either a replacement request or a new request.';
           } else if (createdAtDate.isAfter(thirtyDaysAgo)) {
             msg = 'This permit holder was issued a permit within the last 30 days.';
-          } else {
-            const expiryDate = moment(activePermit.expiryDate);
-            const thirtyDaysFromNow = moment().add(30, 'days');
-            const sixMonthsAgo = moment().subtract(6, 'months');
-
-            const isWithinWindow =
-              expiryDate.isSameOrBefore(thirtyDaysFromNow) &&
-              expiryDate.isSameOrAfter(sixMonthsAgo);
-
-            if (!isWithinWindow) {
-              msg = 'The current permit is outside the normal renewal window.';
-            }
+          } else if (getRenewalWindowStatus(new Date(activePermit.expiryDate)) !== 'OPEN') {
+            msg = 'The current permit is outside the normal renewal window.';
           }
 
           if (msg) {
