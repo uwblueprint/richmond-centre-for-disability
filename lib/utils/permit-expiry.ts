@@ -3,7 +3,7 @@ import { getLocalCalendarDate } from '@lib/utils/date';
 import moment from 'moment';
 
 // Expiry dates are calendar dates (UTC-midnight Dates, as Prisma returns `@db.Date`) compared against
-// today's local date (NEXT_PUBLIC_LOCAL_TIMEZONE). A permit is expired on its expiry date.
+// today's local date (NEXT_PUBLIC_LOCAL_TIMEZONE). A permit is valid through its expiry date.
 
 const EXPIRING_WINDOW_DAYS = 30;
 const RENEWAL_GRACE_PERIOD_MONTHS = 6;
@@ -35,7 +35,7 @@ export const isPermitExpired = (
 ): boolean => {
   assertCalendarDate(expiryDate);
   assertCalendarDate(today);
-  return expiryDate.getTime() <= today.getTime();
+  return expiryDate.getTime() < today.getTime();
 };
 
 export const getPermitExpiryStatus = (
@@ -59,18 +59,16 @@ export const getPermitStatusFilterBounds = (
   today: Date = getLocalCalendarDate()
 ): { lowerBound: Date | undefined; upperBound: Date | undefined } => {
   assertCalendarDate(today);
-  const tomorrow = moment.utc(today).add(1, 'day').toDate();
-
   switch (status) {
     case 'ACTIVE':
-      return { lowerBound: tomorrow, upperBound: undefined };
+      return { lowerBound: today, upperBound: undefined };
     case 'EXPIRING':
       return {
-        lowerBound: tomorrow,
+        lowerBound: today,
         upperBound: moment.utc(today).add(EXPIRING_WINDOW_DAYS, 'days').toDate(),
       };
     case 'EXPIRED':
-      return { lowerBound: undefined, upperBound: today };
+      return { lowerBound: undefined, upperBound: moment.utc(today).subtract(1, 'day').toDate() };
     default:
       throw new Error(`Unknown permit status ${status}`);
   }
