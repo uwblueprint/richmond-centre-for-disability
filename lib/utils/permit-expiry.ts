@@ -68,9 +68,7 @@ export const getPermitStatusFilterBounds = (
   today: Date = getLocalCalendarDate()
 ): { lowerBound: Date | undefined; upperBound: Date | undefined } => {
   assertCalendarDate(today);
-  // Unexpired iff the expiry date is in or after the current month
   const startOfMonth = moment.utc(today).startOf('month');
-  // Expiring iff it expires within the window, i.e. its expiry month is before the window's last month
   const lastExpiringDate = moment
     .utc(today)
     .add(EXPIRING_WINDOW_DAYS, 'days')
@@ -94,7 +92,7 @@ export const getPermitStatusFilterBounds = (
 
 export type RenewalWindowStatus = 'TOO_EARLY' | 'OPEN' | 'TOO_LATE';
 
-/** Renewal opens 30 days before the permit expires and closes 6 months after it expires */
+/** Renewal opens 30 days before expiry and closes 6 months after it */
 export const getRenewalWindowStatus = (
   expiryDate: Date,
   today: Date = getLocalCalendarDate()
