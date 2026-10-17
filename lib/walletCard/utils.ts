@@ -104,22 +104,22 @@ const walletCardPdfDefinition = (
     // Styles
     styles: {
       header: {
-        fontSize: 9,
+        fontSize: 18,
         bold: true,
         alignment: 'center',
       },
       label: {
-        fontSize: 8,
+        fontSize: 13,
         bold: false,
         alignment: 'left',
       },
       value: {
-        fontSize: 8,
+        fontSize: 13,
         bold: true,
         alignment: 'left',
       },
       footer: {
-        fontSize: 8,
+        fontSize: 12,
         bold: false,
         alignment: 'center',
       },
