@@ -18,14 +18,14 @@ const walletCardPdfDefinition = (
     return amount.toString();
   };
 
-  // Pixel Constants for 2.75" x 1.25" wallet card
+  // Pixel Constants for 3.75" x 1.75" wallet card
   const PTS_TO_INCH = 72;
-  const CARD_WIDTH = 2.75 * PTS_TO_INCH; // 198 points
-  const CARD_HEIGHT = 1.25 * PTS_TO_INCH; // 90 points
-  const MARGIN = 4; // Small margin for content
+  const CARD_WIDTH = 3.75 * PTS_TO_INCH; // 270 points
+  const CARD_HEIGHT = 1.75 * PTS_TO_INCH; // 126 points
+  const MARGIN = 8; // Small margin for content
 
   // Text
-  const headerText = 'Richmond Centre For Disability';
+  const headerText = 'Richmond Centre for Disability';
   const footerText = '604.232.2404  parkingpermit@rcdrichmond.org';
 
   return {
@@ -52,43 +52,47 @@ const walletCardPdfDefinition = (
         style: 'header',
         absolutePosition: {
           x: 0,
-          y: MARGIN + 3,
+          y: MARGIN,
         },
         width: CARD_WIDTH,
       },
-      // Permit information
       {
-        text: [
-          { text: 'Permit # ', style: 'label' },
-          { text: permitId.toString(), style: 'value' },
-          { text: '    Expiry: ', style: 'label' },
+        stack: [
+          // Permit information
           {
-            text: permitExpiry.getFullYear() + '-' + pad2Dig(permitExpiry.getMonth() + 1),
-            style: 'value',
+            text: [
+              { text: 'Permit # ', style: 'label' },
+              { text: permitId.toString(), style: 'value' },
+              { text: '    Expiry: ', style: 'label' },
+              {
+                text: permitExpiry.getFullYear() + '-' + pad2Dig(permitExpiry.getMonth() + 1),
+                style: 'value',
+              },
+            ],
+            margin: [0, 0, 0, 2],
+          },
+          // Name
+          {
+            text: [
+              { text: 'Name: ', style: 'label' },
+              { text: firstName + ' ' + lastName, style: 'value' },
+            ],
+            margin: [0, 0, 0, 2],
+          },
+          // Month of birth and User ID
+          {
+            text: [
+              { text: 'MoB: ', style: 'label' },
+              {
+                text: dateOfBirth.getFullYear() + '-' + pad2Dig(dateOfBirth.getMonth() + 1),
+                style: 'value',
+              },
+              { text: '    User # ', style: 'label' },
+              { text: userId, style: 'value' },
+            ],
           },
         ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 20 },
-      },
-      // Name
-      {
-        text: [
-          { text: 'Name: ', style: 'label' },
-          { text: firstName + ' ' + lastName, style: 'value' },
-        ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 36 },
-      },
-      // Month of birth and User ID
-      {
-        text: [
-          { text: 'MoB: ', style: 'label' },
-          {
-            text: dateOfBirth.getFullYear() + '-' + pad2Dig(dateOfBirth.getMonth() + 1),
-            style: 'value',
-          },
-          { text: '    User # ', style: 'label' },
-          { text: userId, style: 'value' },
-        ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 52 },
+        absolutePosition: { x: MARGIN + 6, y: MARGIN + 27 },
       },
       // Footer
       {
@@ -96,7 +100,7 @@ const walletCardPdfDefinition = (
         style: 'footer',
         absolutePosition: {
           x: MARGIN,
-          y: CARD_HEIGHT - MARGIN - 11,
+          y: CARD_HEIGHT - MARGIN - 14,
         },
         width: CARD_WIDTH - MARGIN * 2,
       },
@@ -104,22 +108,23 @@ const walletCardPdfDefinition = (
     // Styles
     styles: {
       header: {
-        fontSize: 9,
+        font: 'Times',
+        fontSize: 18,
         bold: true,
         alignment: 'center',
       },
       label: {
-        fontSize: 8,
+        fontSize: 13,
         bold: false,
         alignment: 'left',
       },
       value: {
-        fontSize: 8,
+        fontSize: 13,
         bold: true,
         alignment: 'left',
       },
       footer: {
-        fontSize: 8,
+        fontSize: 12,
         bold: false,
         alignment: 'center',
       },
@@ -152,6 +157,12 @@ export const generateWalletCardPDF = (
         bold: 'Helvetica-Bold',
         italics: 'Helvetica-Oblique',
         bolditalics: 'Helvetica-BoldOblique',
+      },
+      Times: {
+        normal: 'Times-Roman',
+        bold: 'Times-Bold',
+        italics: 'Times-Italic',
+        bolditalics: 'Times-BoldItalic',
       },
     });
     const documentDef = walletCardPdfDefinition(
