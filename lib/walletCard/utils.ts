@@ -18,15 +18,15 @@ const walletCardPdfDefinition = (
     return amount.toString();
   };
 
-  // Pixel Constants for 2.75" x 1.25" wallet card
+  // Pixel Constants for 3.375" x 2.125" wallet card
   const PTS_TO_INCH = 72;
-  const CARD_WIDTH = 2.75 * PTS_TO_INCH; // 198 points
-  const CARD_HEIGHT = 1.25 * PTS_TO_INCH; // 90 points
-  const MARGIN = 4; // Small margin for content
+  const CARD_WIDTH = 3.375 * PTS_TO_INCH; // 243 points
+  const CARD_HEIGHT = 2.125 * PTS_TO_INCH; // 153 points
+  const MARGIN = 8; // Small margin for content
 
   // Text
-  const headerText = 'Richmond Centre For Disability';
-  const footerText = '604.232.2404  parkingpermit@rcdrichmond.org';
+  const headerText = 'Richmond Centre\nFor Disability';
+  const footerText = '604.232.2404\nparkingpermit@rcdrichmond.org';
 
   return {
     content: [
@@ -52,7 +52,7 @@ const walletCardPdfDefinition = (
         style: 'header',
         absolutePosition: {
           x: 0,
-          y: MARGIN + 3,
+          y: MARGIN,
         },
         width: CARD_WIDTH,
       },
@@ -67,7 +67,7 @@ const walletCardPdfDefinition = (
             style: 'value',
           },
         ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 20 },
+        absolutePosition: { x: MARGIN + 6, y: MARGIN + 48 },
       },
       // Name
       {
@@ -75,7 +75,7 @@ const walletCardPdfDefinition = (
           { text: 'Name: ', style: 'label' },
           { text: firstName + ' ' + lastName, style: 'value' },
         ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 36 },
+        absolutePosition: { x: MARGIN + 6, y: MARGIN + 65 },
       },
       // Month of birth and User ID
       {
@@ -88,7 +88,7 @@ const walletCardPdfDefinition = (
           { text: '    User # ', style: 'label' },
           { text: userId, style: 'value' },
         ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 52 },
+        absolutePosition: { x: MARGIN + 6, y: MARGIN + 82 },
       },
       // Footer
       {
@@ -96,7 +96,7 @@ const walletCardPdfDefinition = (
         style: 'footer',
         absolutePosition: {
           x: MARGIN,
-          y: CARD_HEIGHT - MARGIN - 11,
+          y: CARD_HEIGHT - MARGIN - 28,
         },
         width: CARD_WIDTH - MARGIN * 2,
       },
@@ -104,22 +104,22 @@ const walletCardPdfDefinition = (
     // Styles
     styles: {
       header: {
-        fontSize: 9,
+        fontSize: 18,
         bold: true,
         alignment: 'center',
       },
       label: {
-        fontSize: 8,
+        fontSize: 13,
         bold: false,
         alignment: 'left',
       },
       value: {
-        fontSize: 8,
+        fontSize: 13,
         bold: true,
         alignment: 'left',
       },
       footer: {
-        fontSize: 8,
+        fontSize: 12,
         bold: false,
         alignment: 'center',
       },
