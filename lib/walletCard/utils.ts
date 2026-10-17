@@ -18,10 +18,10 @@ const walletCardPdfDefinition = (
     return amount.toString();
   };
 
-  // Pixel Constants for 2.75" x 1.25" wallet card
+  // Pixel Constants for 4" x 1.5" wallet card
   const PTS_TO_INCH = 72;
-  const CARD_WIDTH = 2.75 * PTS_TO_INCH; // 198 points
-  const CARD_HEIGHT = 1.25 * PTS_TO_INCH; // 90 points
+  const CARD_WIDTH = 4 * PTS_TO_INCH; // 288 points
+  const CARD_HEIGHT = 1.5 * PTS_TO_INCH; // 108 points
   const MARGIN = 4; // Small margin for content
 
   // Text
@@ -67,7 +67,7 @@ const walletCardPdfDefinition = (
             style: 'value',
           },
         ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 20 },
+        absolutePosition: { x: MARGIN + 6, y: MARGIN + 29 },
       },
       // Name
       {
@@ -75,7 +75,7 @@ const walletCardPdfDefinition = (
           { text: 'Name: ', style: 'label' },
           { text: firstName + ' ' + lastName, style: 'value' },
         ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 36 },
+        absolutePosition: { x: MARGIN + 6, y: MARGIN + 46 },
       },
       // Month of birth and User ID
       {
@@ -88,7 +88,7 @@ const walletCardPdfDefinition = (
           { text: '    User # ', style: 'label' },
           { text: userId, style: 'value' },
         ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 52 },
+        absolutePosition: { x: MARGIN + 6, y: MARGIN + 63 },
       },
       // Footer
       {
@@ -96,7 +96,7 @@ const walletCardPdfDefinition = (
         style: 'footer',
         absolutePosition: {
           x: MARGIN,
-          y: CARD_HEIGHT - MARGIN - 11,
+          y: CARD_HEIGHT - MARGIN - 18,
         },
         width: CARD_WIDTH - MARGIN * 2,
       },
