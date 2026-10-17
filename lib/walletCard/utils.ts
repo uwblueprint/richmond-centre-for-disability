@@ -56,39 +56,43 @@ const walletCardPdfDefinition = (
         },
         width: CARD_WIDTH,
       },
-      // Permit information
       {
-        text: [
-          { text: 'Permit # ', style: 'label' },
-          { text: permitId.toString(), style: 'value' },
-          { text: '    Expiry: ', style: 'label' },
+        stack: [
+          // Permit information
           {
-            text: permitExpiry.getFullYear() + '-' + pad2Dig(permitExpiry.getMonth() + 1),
-            style: 'value',
+            text: [
+              { text: 'Permit # ', style: 'label' },
+              { text: permitId.toString(), style: 'value' },
+              { text: '    Expiry: ', style: 'label' },
+              {
+                text: permitExpiry.getFullYear() + '-' + pad2Dig(permitExpiry.getMonth() + 1),
+                style: 'value',
+              },
+            ],
+            margin: [0, 0, 0, 1],
+          },
+          // Name
+          {
+            text: [
+              { text: 'Name: ', style: 'label' },
+              { text: firstName + ' ' + lastName, style: 'value' },
+            ],
+            margin: [0, 0, 0, 1],
+          },
+          // Month of birth and User ID
+          {
+            text: [
+              { text: 'MoB: ', style: 'label' },
+              {
+                text: dateOfBirth.getFullYear() + '-' + pad2Dig(dateOfBirth.getMonth() + 1),
+                style: 'value',
+              },
+              { text: '    User # ', style: 'label' },
+              { text: userId, style: 'value' },
+            ],
           },
         ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 48 },
-      },
-      // Name
-      {
-        text: [
-          { text: 'Name: ', style: 'label' },
-          { text: firstName + ' ' + lastName, style: 'value' },
-        ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 65 },
-      },
-      // Month of birth and User ID
-      {
-        text: [
-          { text: 'MoB: ', style: 'label' },
-          {
-            text: dateOfBirth.getFullYear() + '-' + pad2Dig(dateOfBirth.getMonth() + 1),
-            style: 'value',
-          },
-          { text: '    User # ', style: 'label' },
-          { text: userId, style: 'value' },
-        ],
-        absolutePosition: { x: MARGIN + 6, y: MARGIN + 82 },
+        absolutePosition: { x: MARGIN + 6, y: MARGIN + 44 },
       },
       // Footer
       {
@@ -96,7 +100,7 @@ const walletCardPdfDefinition = (
         style: 'footer',
         absolutePosition: {
           x: MARGIN,
-          y: CARD_HEIGHT - MARGIN - 28,
+          y: CARD_HEIGHT - MARGIN - 27,
         },
         width: CARD_WIDTH - MARGIN * 2,
       },
