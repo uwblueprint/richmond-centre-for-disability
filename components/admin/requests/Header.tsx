@@ -25,8 +25,10 @@ import { ApplicationStatus, ApplicationType, PermitType } from '@lib/graphql/typ
 import { titlecase } from '@tools/string';
 import { formatDateYYYYMMDD, formatDateYYYYMMDDLocal } from '@lib/utils/date';
 import { getPermanentPermitExpiryDate } from '@lib/utils/permit-expiry';
-import { useEffect, useState } from 'react'; // React
 import { CurrentApplication } from '@tools/admin/permit-holders/current-application';
+
+// TODOL Create one list that Dashboard tabs and backlink generation can use
+const REQUEST_TABS = ['ALL', 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'REJECTED'];
 
 type RequestHeaderProps = {
   readonly id: number;
@@ -91,17 +93,18 @@ export default function RequestHeader({
 
   const router = useRouter();
 
-  const [backLink, setBackLink] = useState('/admin');
-  const generateBackLink = () => {
-    const routerQuery = router.query;
-    const status = typeof routerQuery.tab === 'string' ? routerQuery.tab : applicationStatus;
-    const page = typeof routerQuery.page === 'string' ? routerQuery.page : '0';
-    setBackLink(`/admin?tab=${status}&page=${page}`);
-  };
+  const { tab, page } = router.query;
+  const routerStatus =
+    typeof tab === 'string' && REQUEST_TABS.includes(tab) ? tab : applicationStatus || 'PENDING';
+  const routerPage = typeof page === 'string' && /^\d+$/.test(page) ? page : '0';
+  const backLink = `/admin?tab=${routerStatus}&page=${routerPage}`;
 
-  useEffect(() => {
-    generateBackLink();
-  }, []);
+  const formatStatus = (status: string) => {
+    if (status === 'ALL') {
+      return '';
+    }
+    return status.toLowerCase().replace(/_/g, ' ');
+  };
 
   // Delete application modal state
   const {
@@ -115,7 +118,7 @@ export default function RequestHeader({
       <NextLink href={backLink} passHref>
         <Text textStyle="button-semibold" textColor="primary" as="a">
           <ChevronLeftIcon />
-          All requests
+          All {formatStatus(routerStatus)} requests
         </Text>
       </NextLink>
 
