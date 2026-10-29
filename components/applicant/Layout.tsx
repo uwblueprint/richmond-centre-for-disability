@@ -184,9 +184,7 @@ function Footer() {
         flexDirection={{ sm: 'column', md: 'initial' }}
         justifyContent="space-between"
       >
-        <Text textStyle="body-regular">
-          © {new Date().getFullYear()} Richmond Centre for Disability
-        </Text>
+        <Text textStyle="body-regular">© 2026 Richmond Centre for Disability</Text>
         <Box>
           <Link href="/privacy-policy">
             <a>
