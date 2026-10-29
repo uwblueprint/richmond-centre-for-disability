@@ -116,13 +116,11 @@ function Footer() {
                 Location
               </Text>
               <Text textStyle="caption">
-                #968 - 5300, No.3 Rd
-                <br />
-                Lansdowne Centre
+                #150 - 5520 McNaughton Rd
                 <br />
                 Richmond, BC
                 <br />
-                V6X 2X9
+                V6X 0X8
               </Text>
             </Box>
 
@@ -186,7 +184,9 @@ function Footer() {
         flexDirection={{ sm: 'column', md: 'initial' }}
         justifyContent="space-between"
       >
-        <Text textStyle="body-regular">© 2021 Richmond Centre for Disability</Text>
+        <Text textStyle="body-regular">
+          © {new Date().getFullYear()} Richmond Centre for Disability
+        </Text>
         <Box>
           <Link href="/privacy-policy">
             <a>
