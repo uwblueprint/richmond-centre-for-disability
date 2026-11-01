@@ -95,18 +95,6 @@ export default gql`
     error: String
   }
 
-  # Create wallet card to mail to applicant
-  input UpdateApplicationProcessingCreateWalletCardInput {
-    applicationId: Int!
-
-    walletCardCreated: Boolean!
-  }
-
-  type UpdateApplicationProcessingCreateWalletCardResult {
-    ok: Boolean!
-    error: String
-  }
-
   # Review Request Information
   input UpdateApplicationProcessingReviewRequestInformationInput {
     applicationId: Int!
