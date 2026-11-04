@@ -55,3 +55,30 @@ jobs:
 
             - name: Build
               run: yarn build
+
+            - name: Search pagination regressions
+              run: yarn test:search:unit
+
+    search-browser:
+        runs-on: ubuntu-22.04
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 16.20.2
+                  cache: yarn
+            - run: yarn install --frozen-lockfile
+            - name: Record application runtime
+              run: echo "RCD_NEXT_NODE=$(node -p process.execPath)" >> "$GITHUB_ENV"
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+            - name: Install isolated browser driver
+              run: npm install --prefix "$RUNNER_TEMP/rcd-search-browser" --no-save --ignore-scripts playwright-core@1.56.1
+            - name: Install Chromium
+              run: node "$RUNNER_TEMP/rcd-search-browser/node_modules/playwright-core/cli.js" install --with-deps chromium
+            - name: Search interaction regressions
+              env:
+                  RCD_PLAYWRIGHT_MODULE: ${{ runner.temp }}/rcd-search-browser/node_modules/playwright-core
+              run: node tests/browser/search.js

@@ -12,7 +12,7 @@ import { Box, Center, Divider, Text } from '@chakra-ui/layout'; // Chakra UI Lay
 import { Spinner } from '@chakra-ui/react'; //Chakra UI React
 import { HStack, IconButton, Tooltip } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Fragment } from 'react';
+import { Fragment, Ref, useRef } from 'react';
 
 // Typeahead props
 type Props<T extends TypeaheadModel> = Required<
@@ -57,11 +57,51 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
     pagination,
     id = 'async-typeahead',
   } = props;
+  const typeahead = useRef<AsyncTypeahead<T>>(null);
+  const previousPage = useRef<HTMLButtonElement>(null);
+  const nextPage = useRef<HTMLButtonElement>(null);
   const filterBy = () => true;
+  const changePage = (offset: number) => {
+    // Replacing options does not clear the widget's active item or completion hint.
+    typeahead.current?.hideMenu();
+    typeahead.current?.toggleMenu();
+    typeahead.current?.focus();
+    pagination?.onPageChange(offset);
+  };
 
   return (
-    <>
+    <Box
+      onBlurCapture={event => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          typeahead.current?.hideMenu();
+        }
+      }}
+      onKeyDownCapture={event => {
+        const firstPageButton = [previousPage.current, nextPage.current].find(
+          button => button && !button.disabled
+        );
+        if (event.key === 'Tab' && event.shiftKey && event.target === firstPageButton) {
+          event.preventDefault();
+          event.stopPropagation();
+          typeahead.current?.focus();
+        }
+        if (event.target !== typeahead.current?.getInput()) return;
+        if (isLoading && event.key === 'Enter') {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        if (event.key === 'Tab' && !event.shiftKey) {
+          if (firstPageButton) {
+            // Intercept before the widget selects a hint or dismisses its popup on Tab.
+            event.preventDefault();
+            event.stopPropagation();
+            firstPageButton.focus();
+          }
+        }
+      }}
+    >
       <AsyncTypeahead
+        ref={typeahead}
         filterBy={filterBy}
         id={id}
         delay={300}
@@ -84,15 +124,29 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
           },
         }}
         onChange={selected => {
-          onInputChange?.('');
+          if (selected.length > 0) onInputChange?.('');
           selected.length > 0 ? onSelect(selected[0]) : onSelect(undefined);
         }}
         renderMenuItemChildren={renderMenuItemChildren}
         renderMenu={(results, menuProps, props) => {
-          menuProps.text = props.text;
+          const { innerRef, style, ...listboxProps } = menuProps;
           return (
-            <Menu {...menuProps} maxHeight="none">
-              <Box maxHeight="240px" overflowY="auto">
+            <Box
+              // The v5 menu renders a div, despite its legacy ref typing declaring a ul.
+              ref={innerRef as Ref<HTMLDivElement>}
+              style={style}
+              bg="white"
+              borderWidth="1px"
+              borderColor="gray.200"
+              borderRadius="4px"
+              zIndex="dropdown"
+            >
+              <Menu
+                {...listboxProps}
+                text={props.text}
+                maxHeight="240px"
+                style={{ position: 'static', border: 0, margin: 0 }}
+              >
                 {results.length === 0 ? (
                   isLoading ? (
                     <Center height="80px">
@@ -111,28 +165,34 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
                 ) : (
                   results.map((result, index) => (
                     <Fragment key={(pagination?.offset || 0) + index}>
-                      <MenuItem option={result} position={index}>
+                      <MenuItem option={result} position={index} tabIndex={-1}>
                         {renderMenuItemChildren(result, menuProps, index)}
                       </MenuItem>
                       {index !== results.length - 1 ? <Divider /> : null}
                     </Fragment>
                   ))
                 )}
-              </Box>
+              </Menu>
               {pagination &&
                 (pagination.totalCount > pagination.pageSize || pagination.offset > 0) && (
-                  <HStack width="100%" justify="space-between" bg="white" px={2} py={1}>
+                  <HStack
+                    role="group"
+                    aria-label="Search result pages"
+                    width="100%"
+                    justify="space-between"
+                    px={2}
+                    py={1}
+                  >
                     <Tooltip label="Previous results">
                       <IconButton
+                        ref={previousPage}
                         aria-label="Previous results"
                         size="sm"
                         icon={<ChevronLeftIcon />}
                         isDisabled={isLoading || pagination.offset === 0}
                         onMouseDown={event => event.preventDefault()}
                         onClick={() =>
-                          pagination.onPageChange(
-                            Math.max(0, pagination.offset - pagination.pageSize)
-                          )
+                          changePage(Math.max(0, pagination.offset - pagination.pageSize))
                         }
                       />
                     </Tooltip>
@@ -145,6 +205,7 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
                     </Text>
                     <Tooltip label="Next results">
                       <IconButton
+                        ref={nextPage}
                         aria-label="Next results"
                         size="sm"
                         icon={<ChevronRightIcon />}
@@ -153,14 +214,12 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
                           pagination.offset + pagination.pageSize >= pagination.totalCount
                         }
                         onMouseDown={event => event.preventDefault()}
-                        onClick={() =>
-                          pagination.onPageChange(pagination.offset + pagination.pageSize)
-                        }
+                        onClick={() => changePage(pagination.offset + pagination.pageSize)}
                       />
                     </Tooltip>
                   </HStack>
                 )}
-            </Menu>
+            </Box>
           );
         }}
       />
@@ -188,6 +247,6 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
         `}
         </style>
       </Helmet>
-    </>
+    </Box>
   );
 }

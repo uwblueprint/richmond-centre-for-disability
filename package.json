@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "prisma migrate deploy && prisma generate && next start -p $PORT",
     "type-check": "tsc",
+    "test:search:unit": "node tests/search-pagination.js",
     "generate-graphql-types": "node ./lib/scripts/generate-graphql-types.js",
     "reset-db": "sh lib/scripts/reset-db.sh",
     "lint": "yarn lint:prettier && yarn lint:eslint && yarn lint:tsc",
