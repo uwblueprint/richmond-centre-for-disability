@@ -11,6 +11,7 @@ export type PermitHolderResult = Pick<
 export const SEARCH_PERMIT_HOLDERS = gql`
   query SearchPermitHolders($filter: ApplicantsFilter!) {
     applicants(filter: $filter) {
+      totalCount
       result {
         id
         firstName
@@ -22,10 +23,13 @@ export const SEARCH_PERMIT_HOLDERS = gql`
   }
 `;
 
-export type SearchPermitHoldersRequest = { filter: { search: string } };
+export type SearchPermitHoldersRequest = {
+  filter: { search: string; limit: number; offset: number };
+};
 
 export type SearchPermitHoldersResponse = {
   applicants: {
+    totalCount: number;
     result: Array<PermitHolderResult>;
   };
 };

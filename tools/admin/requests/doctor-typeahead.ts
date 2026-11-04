@@ -21,6 +21,7 @@ export type DoctorResult = Pick<
 export const SEARCH_DOCTORS = gql`
   query SearchPhysicians($filter: PhysiciansFilter!) {
     physicians(filter: $filter) {
+      totalCount
       result {
         mspNumber
         firstName
@@ -42,14 +43,15 @@ export const SEARCH_DOCTORS = gql`
 export type SearchDoctorsRequest = {
   filter: {
     mspNumber?: string;
-    limit?: number;
-    offset?: number;
+    limit: number;
+    offset: number;
   };
 };
 
 /** Query response type */
 export type SearchDoctorsResponse = {
   physicians: {
+    totalCount: number;
     result: Array<DoctorResult>;
   };
 };
