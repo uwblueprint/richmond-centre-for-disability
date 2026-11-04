@@ -53,5 +53,8 @@ jobs:
             - name: Linting TypeScript
               run: yarn lint:tsc
 
+            - name: Unit regressions
+              run: yarn test:unit
+
             - name: Build
               run: yarn build
