@@ -1,0 +1,8 @@
+{
+  "version": "12.0.3",
+  "file": "dist/server/image-optimizer.js",
+  "originalSha256": "7587678a0839f071ee8a5031012e59a32df53735f5d39e1471f1a8e44bcefba9",
+  "upstream": "https://github.com/vercel/next.js/pull/33719",
+  "before": "                mockRes._write = (chunk)=>{\n                    mockRes.write(chunk);\n                };",
+  "after": "                mockRes._write = (chunk, _encoding, callback)=>{\n                    mockRes.write(chunk);\n                    callback();\n                };"
+}

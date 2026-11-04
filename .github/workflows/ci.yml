@@ -56,5 +56,8 @@ jobs:
             - name: Unit regressions
               run: yarn test:unit
 
+            - name: Image request lifecycle regressions
+              run: yarn test:image-lifecycle
+
             - name: Build
               run: yarn build
