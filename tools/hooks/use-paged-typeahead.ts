@@ -2,7 +2,28 @@ import { useReducer, useCallback } from 'react';
 import { DocumentNode, OperationVariables } from '@apollo/client';
 import { useQuery } from '@tools/hooks/graphql';
 import { SEARCH_PAGE_SIZE } from '@lib/utils/search-limits';
-import { initialTypeaheadState, typeaheadSearchReducer } from './typeahead-state';
+
+type SearchState = { input: string; search: string; offset: number };
+const initialState: SearchState = { input: '', search: '', offset: 0 };
+type Action =
+  | { type: 'input'; value: string }
+  | { type: 'search'; value: string }
+  | { type: 'page'; offset: number };
+
+function searchReducer(state: SearchState, action: Action): SearchState {
+  switch (action.type) {
+    case 'input':
+      return { input: action.value, search: '', offset: 0 };
+    case 'search': {
+      const search = action.value.trim();
+      return search && search === state.input.trim() ? { ...state, search, offset: 0 } : state;
+    }
+    case 'page':
+      return state.search && Number.isSafeInteger(action.offset) && action.offset >= 0
+        ? { ...state, offset: action.offset }
+        : state;
+  }
+}
 
 type PagedTypeahead<TOption> = {
   results: TOption[];
@@ -24,7 +45,7 @@ export function usePagedTypeahead<TData, TVariables extends OperationVariables, 
   variablesFor: (search: string, offset: number) => TVariables,
   pageFrom: (data: TData) => { result: TOption[]; totalCount: number }
 ): PagedTypeahead<TOption> {
-  const [state, dispatch] = useReducer(typeaheadSearchReducer, initialTypeaheadState);
+  const [state, dispatch] = useReducer(searchReducer, initialState);
   const active = Boolean(state.search) && state.search === state.input.trim();
   const { data, loading, error, refetch } = useQuery<TData, TVariables>(query, {
     variables: variablesFor(state.search, state.offset),

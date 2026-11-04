@@ -10,8 +10,6 @@
     "build": "next build",
     "start": "prisma migrate deploy && prisma generate && next start -p $PORT",
     "type-check": "tsc",
-    "test:unit": "node tests/run.cjs",
-    "memory:prepare": "node tests/memory/prepare-candidate.cjs",
     "generate-graphql-types": "node ./lib/scripts/generate-graphql-types.js",
     "reset-db": "sh lib/scripts/reset-db.sh",
     "lint": "yarn lint:prettier && yarn lint:eslint && yarn lint:tsc",
@@ -88,8 +86,7 @@
     "pino-pretty": "8.1.0",
     "prettier": "2.3.0",
     "prisma": "3.15.2",
-    "ts-node": "10.0.0",
-    "tsconfig-paths": "4.2.0"
+    "ts-node": "10.0.0"
   },
   "husky": {
     "hooks": {
