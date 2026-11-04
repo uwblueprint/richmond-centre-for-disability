@@ -8,5 +8,5 @@ density without runtime image transformation.
 
 Keep `logo.png` and `logo-vertical.png` unchanged for PDF/email consumers. When replacing the brand
 artwork, regenerate and version the web derivative, verify transparency and all layouts, and update
-the narrow compatibility redirects as needed. The redirects mitigate known legacy paths, not
-arbitrary missing-image behavior.
+the narrow compatibility rewrites as needed. The rewrites mitigate known legacy paths, not arbitrary
+missing-image behavior.

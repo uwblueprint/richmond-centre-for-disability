@@ -26,7 +26,7 @@ export default async function (): Promise<void> {
     createHash('sha256').update(original).digest('hex')
   );
   const config = require('../../next.config.js');
-  const redirects = await config.redirects();
+  const redirects = (await config.rewrites()).beforeFiles;
   for (const name of ['logo.png', 'logo.svg', 'logo-web-v1.png']) {
     const rule = redirects.find(
       (item: any) =>
@@ -34,7 +34,6 @@ export default async function (): Promise<void> {
         new RegExp(`^${item.has[0].value}$`).test(`/assets/${name}`)
     );
     assert.equal(rule.destination, '/assets/logo-web-v1.png');
-    assert.equal(rule.permanent, false);
     assert.equal(new RegExp(`^${rule.has[0].value}$`).test('/assets/unrelated.png'), false);
   }
 }

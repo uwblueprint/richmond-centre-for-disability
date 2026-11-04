@@ -26,25 +26,16 @@ async function main() {
         `/_next/image?url=${encodeURIComponent(`/assets/${name}`)}&w=3840&q=75`,
         method
       );
-      assert.equal(result.status, 307);
-      const destination = new URL(result.headers.location, target);
-      assert.equal(destination.origin, target.origin);
-      assert.equal(
-        destination.pathname,
-        name === 'wallet-card-example.png'
-          ? '/assets/wallet-card-example.png'
-          : '/assets/logo-web-v1.png'
-      );
-      const asset = await request(target, destination.pathname, method);
-      assert.equal(asset.status, 200);
-      assert.match(asset.headers['content-type'], /^image\/png/);
+      assert.equal(result.status, 200);
+      assert.match(result.headers['content-type'], /^image\/png/);
+      assert.equal(result.headers['content-disposition'], undefined);
       if (method === 'GET' && name !== 'wallet-card-example.png')
-        assert.ok(asset.bytes < 100 * 1024);
-      if (method === 'HEAD') assert.equal(asset.bytes, 0);
+        assert.ok(result.bytes < 100 * 1024);
+      if (method === 'HEAD') assert.equal(result.bytes, 0);
     }
   }
-  assert.equal((await request(target, '/assets/logo.svg')).status, 307);
-  process.stdout.write('PASS built-server static images and legacy optimizer GET/HEAD redirects\n');
+  assert.equal((await request(target, '/assets/logo.svg')).status, 200);
+  process.stdout.write('PASS built-server static images and legacy optimizer GET/HEAD rewrites\n');
 }
 main().catch(error => {
   process.stderr.write(`${error.stack}\n`);
