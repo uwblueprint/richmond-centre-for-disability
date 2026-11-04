@@ -31,6 +31,7 @@ import { requestPhysicianInformationSchema } from '@lib/physicians/validation';
 import { guardianInformationSchema } from '@lib/guardian/validation';
 import { stripPhoneNumber, stripPostalCode } from '@lib/utils/format';
 import moment from 'moment';
+import { getSearchPagination } from '@lib/utils/pagination';
 
 /**
  * Query and filter RCD applicants from the internal facing app.
@@ -70,6 +71,7 @@ export const applicants: Resolver<
     totalCount: number;
   }
 > = async (_parent, { filter }, { prisma }) => {
+  const { take, skip } = getSearchPagination(filter);
   // Create default filter
   let where = {};
 
@@ -199,9 +201,6 @@ export const applicants: Resolver<
     filter.order.forEach(([field, order]) => (sortingOrder[field] = order as SortOrder));
   }
 
-  const take = filter?.limit || undefined;
-  const skip = filter?.offset || undefined;
-
   const totalCount = await prisma.applicant.count({
     where,
   });
@@ -213,6 +212,7 @@ export const applicants: Resolver<
     orderBy: [
       { firstName: sortingOrder.name || SortOrder.ASC },
       { lastName: sortingOrder.name || SortOrder.ASC },
+      { id: SortOrder.ASC },
     ],
   });
 
