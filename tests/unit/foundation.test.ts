@@ -23,7 +23,8 @@ export default async function (): Promise<void> {
     git(['config', 'user.email', 'synthetic@example.invalid']);
     git(['config', 'user.name', 'Synthetic Test']);
     fs.writeFileSync(path.join(repository, 'yarn.lock'), '# synthetic lockfile\n');
-    git(['add', 'yarn.lock']);
+    fs.writeFileSync(path.join(repository, '.env.sample'), 'SYNTHETIC_SAMPLE=not-for-build');
+    git(['add', 'yarn.lock', '.env.sample']);
     git(['commit', '-qm', 'Synthetic baseline']);
     const original = git(['rev-parse', 'HEAD']);
     fs.writeFileSync(path.join(repository, 'untracked.env'), 'MUST_NOT_BE_ARCHIVED');
@@ -32,6 +33,7 @@ export default async function (): Promise<void> {
     assert.equal(candidate.role, 'candidate');
     assert.equal(candidate.productionConnectionsAllowed, false);
     assert.equal(fs.existsSync(path.join(candidate.directory, 'app', 'untracked.env')), false);
+    assert.equal(fs.existsSync(path.join(candidate.directory, 'app', '.env.sample')), false);
     assert.equal(fs.statSync(candidate.directory).mode & 0o777, 0o700);
     assert.equal(fs.statSync(path.join(candidate.directory, 'candidate.json')).mode & 0o777, 0o600);
     assert.notEqual(prepareCandidate(repository, original, root).directory, candidate.directory);
