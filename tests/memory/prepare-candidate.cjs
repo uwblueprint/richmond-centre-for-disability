@@ -9,7 +9,8 @@ function prepareCandidate(repository, revision, temporaryRoot = os.tmpdir()) {
     throw new Error('An explicit Git revision is required');
   const git = args => execFileSync('git', ['-C', repository, ...args], { encoding: 'utf8' }).trim();
   const commit = git(['rev-parse', '--verify', `${revision}^{commit}`]);
-  const files = git(['ls-tree', '-r', '--name-only', commit]).split('\n');
+  const trackedFiles = git(['ls-tree', '-r', '--name-only', commit]).split('\n');
+  const files = trackedFiles.filter(file => file !== '.env.sample');
   if (files.some(file => /(^|\/)(\.env($|\.)|\.aws\/|node_modules\/)/.test(file))) {
     throw new Error('Refusing to archive tracked environment, credential, or dependency files');
   }
@@ -17,7 +18,7 @@ function prepareCandidate(repository, revision, temporaryRoot = os.tmpdir()) {
   const directory = fs.mkdtempSync(path.join(temporaryRoot, 'rcd-memory-candidate-'));
   fs.chmodSync(directory, 0o700);
   try {
-    const archive = execFileSync('git', ['-C', repository, 'archive', commit], {
+    const archive = execFileSync('git', ['-C', repository, 'archive', commit, '--', ...files], {
       maxBuffer: 64 * 1024 * 1024,
     });
     const source = path.join(directory, 'app');
@@ -32,6 +33,7 @@ function prepareCandidate(repository, revision, temporaryRoot = os.tmpdir()) {
       lockfileSha256: hash(fs.readFileSync(path.join(source, 'yarn.lock'))),
       preparedAt: new Date().toISOString(),
       productionConnectionsAllowed: false,
+      omittedFiles: trackedFiles.filter(file => !files.includes(file)),
     };
     fs.writeFileSync(path.join(directory, 'candidate.json'), JSON.stringify(manifest, null, 2), {
       mode: 0o600,
