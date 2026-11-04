@@ -13,7 +13,8 @@ interface LogoProps {
 export default function Logo({ height, width, priority = false, layout }: LogoProps) {
   return (
     <Image
-      src="/assets/logo.png"
+      src="/assets/logo-web-v1.png"
+      unoptimized
       alt="Richmond Centre for Disability Logo"
       height={height}
       width={width}

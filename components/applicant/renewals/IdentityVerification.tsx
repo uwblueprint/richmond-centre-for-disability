@@ -137,7 +137,12 @@ const IdentityVerification: FC = () => {
                         </PopoverTrigger>
                         <PopoverContent>
                           <PopoverBody>
-                            <Image src="/assets/wallet-card-example.png" height={200} width={320} />
+                            <Image
+                              src="/assets/wallet-card-example.png"
+                              height={200}
+                              width={320}
+                              unoptimized
+                            />
                           </PopoverBody>
                           <PopoverFooter backgroundColor="background.grayHover">
                             <Text textStyle="caption">

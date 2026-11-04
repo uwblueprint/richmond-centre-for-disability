@@ -19,7 +19,7 @@ tls.connect = denyNetwork;
 
 require('ts-node').register({
   transpileOnly: true,
-  compilerOptions: { module: 'commonjs', jsx: 'react' },
+  compilerOptions: { module: 'commonjs', jsx: 'react-jsx' },
 });
 require('tsconfig-paths/register');
 
