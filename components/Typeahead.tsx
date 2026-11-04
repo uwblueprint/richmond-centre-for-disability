@@ -11,7 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'; //Bootstrap styling
 import { Box, Center, Divider, Text } from '@chakra-ui/layout'; // Chakra UI Layout
 import { Spinner } from '@chakra-ui/react'; //Chakra UI React
 import { HStack, IconButton, Tooltip } from '@chakra-ui/react';
-import { ChevronLeftIcon, ChevronRightIcon, RepeatIcon } from '@chakra-ui/icons';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Fragment } from 'react';
 
 // Typeahead props
@@ -30,7 +30,6 @@ type Props<T extends TypeaheadModel> = Required<
   id?: string;
   onInputChange?: (value: string) => void;
   error?: boolean;
-  onRetry?: () => void;
   pagination?: {
     offset: number;
     pageSize: number;
@@ -55,7 +54,6 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
     onSelect,
     onInputChange,
     error,
-    onRetry,
     pagination,
     id = 'async-typeahead',
   } = props;
@@ -108,18 +106,6 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
                       <Text textStyle="body-regular" color="secondary">
                         {error ? 'Search unavailable.' : 'No results found.'}
                       </Text>
-                      {error && onRetry && (
-                        <Tooltip label="Retry search">
-                          <IconButton
-                            aria-label="Retry search"
-                            icon={<RepeatIcon />}
-                            size="sm"
-                            ml={2}
-                            onMouseDown={event => event.preventDefault()}
-                            onClick={onRetry}
-                          />
-                        </Tooltip>
-                      )}
                     </Center>
                   )
                 ) : (

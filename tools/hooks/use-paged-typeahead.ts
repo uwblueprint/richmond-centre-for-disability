@@ -31,7 +31,6 @@ type PagedTypeahead<TOption> = {
   error: boolean;
   onInputChange: (value: string) => void;
   onSearch: (value: string) => void;
-  onRetry: () => void;
   pagination: {
     offset: number;
     pageSize: number;
@@ -47,7 +46,7 @@ export function usePagedTypeahead<TData, TVariables extends OperationVariables, 
 ): PagedTypeahead<TOption> {
   const [state, dispatch] = useReducer(searchReducer, initialState);
   const active = Boolean(state.search) && state.search === state.input.trim();
-  const { data, loading, error, refetch } = useQuery<TData, TVariables>(query, {
+  const { data, loading, error } = useQuery<TData, TVariables>(query, {
     variables: variablesFor(state.search, state.offset),
     skip: !active,
     notifyOnNetworkStatusChange: true,
@@ -63,9 +62,6 @@ export function usePagedTypeahead<TData, TVariables extends OperationVariables, 
     error: active && Boolean(error),
     onInputChange,
     onSearch,
-    onRetry: () => {
-      if (active) void refetch().catch(() => undefined);
-    },
     pagination: {
       offset: state.offset,
       pageSize: SEARCH_PAGE_SIZE,
