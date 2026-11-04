@@ -1,7 +1,9 @@
 import logger from '@logging';
 import { IMiddleware } from 'graphql-middleware';
 
-const logRoot: IMiddleware = async (resolve, root, args, context, info) => {
+type MiddlewareResolver = Extract<IMiddleware, (...args: any[]) => any>;
+
+const logRoot: MiddlewareResolver = async (resolve, root, args, context, info) => {
   const resolverName = info.fieldName;
   const operationName = info.operation.name?.value;
   const operationLabel = operationName || resolverName;
@@ -47,7 +49,7 @@ const logRoot: IMiddleware = async (resolve, root, args, context, info) => {
   }
 };
 
-const middleware: IMiddleware = (resolve, root, args, context, info) => {
+const middleware: MiddlewareResolver = (resolve, root, args, context, info) => {
   // Nested scalar fields are often synchronous; wrapping each one creates avoidable promises.
   if (info.path.prev) return resolve(root, args, context, info);
   return logRoot(resolve, root, args, context, info);
