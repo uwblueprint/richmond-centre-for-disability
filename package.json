@@ -8,6 +8,8 @@
     "dev": "next",
     "dev:pretty": "next | pino-pretty",
     "build": "next build",
+    "prebuild": "node lib/scripts/patch-next-image.cjs",
+    "postinstall": "node lib/scripts/patch-next-image.cjs",
     "start": "prisma migrate deploy && prisma generate && next start -p $PORT",
     "type-check": "tsc",
     "generate-graphql-types": "node ./lib/scripts/generate-graphql-types.js",
