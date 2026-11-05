@@ -1,14 +1,9 @@
 import logger from '@logging';
 import { IMiddleware } from 'graphql-middleware';
 
-const middleware: IMiddleware = async (resolve, root, args, context, info) => {
-  const parentName = info.path.prev;
+type MiddlewareResolver = Extract<IMiddleware, (...args: any[]) => any>;
 
-  if (parentName) {
-    const result = await resolve(root, args, context, info);
-    return result;
-  }
-
+const logRoot: MiddlewareResolver = async (resolve, root, args, context, info) => {
   const resolverName = info.fieldName;
   const operationName = info.operation.name?.value;
   const operationLabel = operationName || resolverName;
@@ -52,6 +47,12 @@ const middleware: IMiddleware = async (resolve, root, args, context, info) => {
     );
     throw error;
   }
+};
+
+const middleware: MiddlewareResolver = (resolve, root, args, context, info) => {
+  // Nested scalar fields are often synchronous; wrapping each one creates avoidable promises.
+  if (info.path.prev) return resolve(root, args, context, info);
+  return logRoot(resolve, root, args, context, info);
 };
 
 export default middleware;
