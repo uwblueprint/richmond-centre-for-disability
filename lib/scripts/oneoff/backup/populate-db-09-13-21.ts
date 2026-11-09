@@ -181,7 +181,6 @@ function populateDb() {
       status: ApplicationStatus.Completed,
       appNumber: parseInt(data.permit_no),
       appHolepunched: true,
-      walletCardCreated: true,
       invoiceNumber: parseInt(data.receipt),
       documentUrls: [],
       appMailed: true,

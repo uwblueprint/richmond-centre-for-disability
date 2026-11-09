@@ -84,7 +84,6 @@ import {
   applicationProcessingInvoiceResolver,
   applicationProcessingPaymentRefundedEmployeeResolver,
   applicationProcessingReviewRequestCompletedEmployeeResolver,
-  applicationProcessingWalletCardCreatedEmployeeResolver,
   applicationProcessingWalletCardResolver,
 } from '@lib/application-processing/field-resolvers';
 import { guardianPoaFormS3ObjectUrlResolver } from '@lib/guardian/field-resolvers';
@@ -282,7 +281,6 @@ const resolvers = {
     walletCard: applicationProcessingWalletCardResolver,
     appNumberEmployee: applicationProcessingAppNumberEmployeeResolver,
     appHolepunchedEmployee: applicationProcessingAppHolepunchedEmployeeResolver,
-    walletCardCreatedEmployee: applicationProcessingWalletCardCreatedEmployeeResolver,
     reviewRequestCompletedEmployee: applicationProcessingReviewRequestCompletedEmployeeResolver,
     documentsUrlEmployee: applicationProcessingDocumentsUrlEmployeeResolver,
     appMailedEmployee: applicationProcessingAppMailedEmployeeResolver,

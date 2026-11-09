@@ -15,9 +15,6 @@ export default gql`
     appHolepunched: Boolean!
     appHolepunchedEmployee: Employee
     appHolepunchedUpdatedAt: Date
-    walletCardCreated: Boolean!
-    walletCardCreatedEmployee: Employee
-    walletCardCreatedUpdatedAt: Date
     walletCard: WalletCard
     reviewRequestCompleted: Boolean!
     reviewRequestCompletedEmployee: Employee

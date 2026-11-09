@@ -56,7 +56,6 @@ export const applicationProcessingResolver: FieldResolver<
     | 'invoice'
     | 'appNumberEmployee'
     | 'appHolepunchedEmployee'
-    | 'walletCardCreatedEmployee'
     | 'walletCard'
     | 'reviewRequestCompletedEmployee'
     | 'documentsUrlEmployee'
@@ -70,7 +69,6 @@ export const applicationProcessingResolver: FieldResolver<
       include: {
         appNumberEmployee: true,
         appHolepunchedEmployee: true,
-        walletCardCreatedEmployee: true,
         reviewRequestEmployee: true,
         applicationInvoice: { include: { employee: true } },
         documentsUrlEmployee: true,
