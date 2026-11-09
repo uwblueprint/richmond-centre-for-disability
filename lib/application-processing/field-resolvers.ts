@@ -134,18 +134,6 @@ export const applicationProcessingAppHolepunchedEmployeeResolver: FieldResolver<
 };
 
 /**
- * Get the employee that created the wallet card
- */
-export const applicationProcessingWalletCardCreatedEmployeeResolver: FieldResolver<
-  ApplicationProcessing & { id: number },
-  Employee
-> = async (parent, _, { prisma }) => {
-  return await prisma.applicationProcessing
-    .findUnique({ where: { id: parent.id } })
-    .walletCardCreatedEmployee();
-};
-
-/**
  * Get the employee that reviewed the request
  */
 export const applicationProcessingReviewRequestCompletedEmployeeResolver: FieldResolver<

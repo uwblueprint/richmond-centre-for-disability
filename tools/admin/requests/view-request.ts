@@ -29,7 +29,6 @@ export const GET_APPLICATION_QUERY = gql`
         rejectedReason
         appNumber
         appHolepunched
-        walletCardCreated
         invoice {
           invoiceNumber
           s3ObjectUrl
@@ -79,7 +78,6 @@ export type GetApplicationResponse = {
       | 'rejectedReason'
       | 'appNumber'
       | 'appHolepunched'
-      | 'walletCardCreated'
       | 'documentsUrl'
       | 'appMailed'
       | 'reviewRequestCompleted'

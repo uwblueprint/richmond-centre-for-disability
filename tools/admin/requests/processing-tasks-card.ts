@@ -115,7 +115,6 @@ export type GetApplicationProcessingResponse = {
       };
       appNumberEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
       appHolepunchedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
-      walletCardCreatedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
       documentsUrlEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
       appMailedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;
       reviewRequestCompletedEmployee: Pick<Employee, 'firstName' | 'lastName'> | null;

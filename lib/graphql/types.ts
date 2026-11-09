@@ -133,9 +133,6 @@ export type ApplicationProcessing = {
   appHolepunched: Scalars['Boolean'];
   appHolepunchedEmployee: Maybe<Employee>;
   appHolepunchedUpdatedAt: Maybe<Scalars['Date']>;
-  walletCardCreated: Scalars['Boolean'];
-  walletCardCreatedEmployee: Maybe<Employee>;
-  walletCardCreatedUpdatedAt: Maybe<Scalars['Date']>;
   walletCard: Maybe<WalletCard>;
   reviewRequestCompleted: Scalars['Boolean'];
   reviewRequestCompletedEmployee: Maybe<Employee>;

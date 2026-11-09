@@ -115,7 +115,6 @@ model Employee {
   setDocumentsUrlApplicationProcessings   ApplicationProcessing[] @relation("application_processing_documents_url_employee_idToemployees")
   refundedPaymentApplicationProcessings   ApplicationProcessing[] @relation("application_processing_payment_refunded_employee_idToemployees")
   reviewRequestApplicationProcessings     ApplicationProcessing[] @relation("application_processing_review_request_completed_employee_idToemployees")
-  createdWalletCardApplicationProcessings ApplicationProcessing[] @relation("application_processing_wallet_card_created_employee_idToemployees")
   createdWalletCards                      WalletCard[]            @relation("wallet_cardToemployees")
 
   @@map("employees")
@@ -217,10 +216,7 @@ model ApplicationProcessing {
   appHolepunchedEmployeeId         Int?                @map("app_holepunched_employee_id")
   appHolepunchedUpdatedAt          DateTime            @default(now()) @map("app_holepunched_updated_at") @db.Timestamptz(6)
   walletCardNumber                 Int?                @unique @map("wallet_number")
-  walletCardCreated                Boolean             @default(false) @map("wallet_card_created")
   walletCard                       WalletCard?         @relation("wallet_cardToapplication_processing", fields: [walletCardNumber], references: [walletNumber])
-  walletCardCreatedEmployeeId      Int?                @map("wallet_card_created_employee_id")
-  walletCardCreatedUpdatedAt       DateTime            @default(now()) @map("wallet_card_created_updated_at") @db.Timestamptz(6)
   reviewRequestCompleted           Boolean             @default(false) @map("review_request_completed")
   reviewRequestCompletedEmployeeId Int?                @map("review_request_completed_employee_id")
   reviewRequestCompletedUpdatedAt  DateTime            @default(now()) @map("review_request_completed_updated_at") @db.Timestamptz(6)
@@ -243,7 +239,6 @@ model ApplicationProcessing {
   applicationInvoice               ApplicationInvoice? @relation("application_invoicesToapplication_processing", fields: [invoiceNumber], references: [invoiceNumber])
   paymentRefundedEmployee          Employee?           @relation("application_processing_payment_refunded_employee_idToemployees", fields: [paymentRefundedEmployeeId], references: [id])
   reviewRequestEmployee            Employee?           @relation("application_processing_review_request_completed_employee_idToemployees", fields: [reviewRequestCompletedEmployeeId], references: [id])
-  walletCardCreatedEmployee        Employee?           @relation("application_processing_wallet_card_created_employee_idToemployees", fields: [walletCardCreatedEmployeeId], references: [id])
   application                      Application?        @relation("application_processingToapplications")
 
   @@map("application_processing")

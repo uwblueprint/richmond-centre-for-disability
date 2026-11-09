@@ -1041,7 +1041,6 @@ export const updateApplicationProcessingReviewRequestInformation: Resolver<
               disconnect: true,
             },
             documentsUrlUpdatedAt: new Date(),
-            walletCardCreated: false,
             appMailed: false,
             appMailedEmployee: { disconnect: true },
             appMailedUpdatedAt: new Date(),
