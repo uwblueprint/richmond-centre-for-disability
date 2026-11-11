@@ -1,12 +1,13 @@
 import { ApplicationsReportColumn, PermitHoldersReportColumn } from '@lib/graphql/types';
 
-/**
- * Steps when generating reports for requests and permit holders
- */
-export enum GenerateReportStep {
-  SelectColumns = 1,
-  Export = 2,
-}
+export const downloadReport = (url: string): void => {
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
 /** Ordered array of application requests column names and values */
 export const APPLICATIONS_COLUMNS: Array<{

@@ -51,7 +51,6 @@ import { formatDateYYYYMMDD } from '@lib/utils/date'; // Date formatter util
 import ConfirmDeleteApplicantModal from '@components/admin/permit-holders/table/ConfirmDeleteApplicantModal';
 import SetPermitHolderToInactiveModal from '@components/admin/permit-holders/table/ConfirmSetInactiveModal'; // Set Permit Holder To Inactive modal
 import SetPermitHolderToActiveModal from '@components/admin/permit-holders/table/ConfirmSetActiveModal'; // Set Permit Holder To Active modal
-import GenerateReportModal from '@components/admin/permit-holders/reports/GenerateModal'; // Generate report modal
 import { getPermitExpiryStatus } from '@lib/utils/permit-expiry';
 import FilterMenuSelectedText from '@components/admin/permit-holders/table/FilterMenuSelectedText';
 import EmptyMessage from '@components/EmptyMessage';
@@ -150,13 +149,6 @@ const PermitHolders: NextPage = () => {
     isOpen: isSetPermitHolderStatusModalOpen,
     onOpen: onOpenSetPermitHolderStatusModal,
     onClose: onCloseSetPermitHolderStatusModal,
-  } = useDisclosure();
-
-  //Generate report modal
-  const {
-    isOpen: isGenerateReportModalOpen,
-    onOpen: onOpenGenerateReportModal,
-    onClose: onCloseGenerateReportModal,
   } = useDisclosure();
 
   // Delete applicant modal state
@@ -343,9 +335,6 @@ const PermitHolders: NextPage = () => {
       <GridItem colSpan={12}>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="32px">
           <Text textStyle="display-xlarge">Permit Holders</Text>
-          <Button variant="outline" onClick={onOpenGenerateReportModal}>
-            Generate a Report
-          </Button>
         </Flex>
         <Box
           border="1px solid"
@@ -563,10 +552,6 @@ const PermitHolders: NextPage = () => {
           onClose={onCloseDeleteApplicantModal}
         />
       )}
-      <GenerateReportModal
-        isOpen={isGenerateReportModalOpen}
-        onClose={onCloseGenerateReportModal}
-      />
     </Layout>
   );
 };
