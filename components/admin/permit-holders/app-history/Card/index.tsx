@@ -20,11 +20,12 @@ export default function AppHistoryCard({ appHistory }: Props) {
       >
         {appHistory
           .slice()
-          .sort(function (a: PermitRecord, b: PermitRecord) {
-            const aCreated = a.application.createdAt;
-            const bCreated = b.application.createdAt;
-            return aCreated < bCreated ? 1 : aCreated > bCreated ? -1 : 0;
-          })
+          .sort(
+            (a: PermitRecord, b: PermitRecord) =>
+              new Date(b.expiryDate).getTime() - new Date(a.expiryDate).getTime() ||
+              new Date(b.application.createdAt).getTime() -
+                new Date(a.application.createdAt).getTime()
+          )
           .map(permit => (
             <AppHistoryRecord key={permit.application.id} permit={permit} />
           ))}
