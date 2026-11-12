@@ -137,7 +137,7 @@ function Header() {
                       </Tab>
                     </>
                   )}
-                  {authorize(session, ['ACCOUNTING']) && (
+                  {authorize(session, ['SECRETARY', 'ACCOUNTING']) && (
                     <Tab path={InternalPagePath.Reports}>Reports</Tab>
                   )}
                   {authorize(session, []) && (

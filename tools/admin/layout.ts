@@ -25,6 +25,9 @@ export const getTabIndex = (path: string, role: Role): number => {
     if (path === InternalPagePath.PermitHolders || path.includes(InternalPagePath.PermitHolder)) {
       return 1;
     }
+    if (path === InternalPagePath.Reports) {
+      return 2;
+    }
     return 0;
   } else if (role === 'ACCOUNTING') {
     // Accounting
