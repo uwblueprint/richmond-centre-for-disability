@@ -27,6 +27,8 @@ import { Prisma } from '@prisma/client';
 import { getSignedUrlForS3, serverUploadToS3 } from '@lib/utils/s3-utils';
 import { ApolloError } from 'apollo-server-micro';
 import moment from 'moment';
+import { randomUUID } from 'crypto';
+import { REPORT_BATCH_SIZE, uploadBatchedCsv } from './batched-csv';
 
 /**
  * Generates csv with permit holders' info, given a start date, end date, and values from
@@ -50,99 +52,105 @@ export const generatePermitHoldersReport: Resolver<
   // Calculate end date as beginning of the next day
   const endDate = moment.utc(inputEndDate).add(1, 'd').toDate();
 
-  const applicants = await prisma.applicant.findMany({
-    where: {
-      permits: {
-        some: {
-          expiryDate: {
-            gte: startDate,
-            lt: endDate,
+  const where: Prisma.ApplicantWhereInput = {
+    permits: {
+      some: {
+        expiryDate: {
+          gte: startDate,
+          lt: endDate,
+        },
+      },
+    },
+  };
+  const upperId = (
+    await prisma.applicant.findFirst({ where, select: { id: true }, orderBy: { id: 'desc' } })
+  )?.id;
+  const fetchBatch = async (afterId?: number) =>
+    upperId === undefined
+      ? []
+      : prisma.applicant.findMany({
+          where: { ...where, id: { gt: afterId, lte: upperId } },
+          take: REPORT_BATCH_SIZE,
+          orderBy: { id: 'asc' },
+          select: {
+            id: true,
+            firstName: true,
+            middleName: true,
+            lastName: true,
+            dateOfBirth: true,
+            addressLine1: true,
+            addressLine2: true,
+            city: true,
+            province: true,
+            postalCode: true,
+            email: true,
+            phone: true,
+            status: true,
+            guardian: {
+              select: {
+                firstName: true,
+                middleName: true,
+                lastName: true,
+                relationship: true,
+                addressLine1: true,
+                addressLine2: true,
+                postalCode: true,
+                city: true,
+                province: true,
+              },
+            },
+            // Fetches rcdPermitId from latest permit
+            permits: {
+              orderBy: {
+                expiryDate: SortOrder.DESC,
+              },
+              take: 1,
+              select: {
+                rcdPermitId: true,
+                type: true,
+                expiryDate: true,
+              },
+            },
           },
-        },
-      },
-    },
-    select: {
-      id: true,
-      firstName: true,
-      middleName: true,
-      lastName: true,
-      dateOfBirth: true,
-      addressLine1: true,
-      addressLine2: true,
-      city: true,
-      province: true,
-      postalCode: true,
-      email: true,
-      phone: true,
-      status: true,
-      guardian: {
-        select: {
-          firstName: true,
-          middleName: true,
-          lastName: true,
-          relationship: true,
-          addressLine1: true,
-          addressLine2: true,
-          postalCode: true,
-          city: true,
-          province: true,
-        },
-      },
-      // Fetches rcdPermitId from latest permit
-      permits: {
-        orderBy: {
-          expiryDate: SortOrder.DESC,
-        },
-        take: 1,
-        select: {
-          rcdPermitId: true,
-          type: true,
-          expiryDate: true,
-        },
-      },
-    },
-  });
+        });
 
   // Formats fields and adds properties to allow for csv writing
-  const csvApplicants = applicants.map(
-    ({
+  const formatRow = ({
+    id,
+    firstName,
+    middleName,
+    lastName,
+    dateOfBirth,
+    addressLine1,
+    addressLine2,
+    postalCode,
+    guardian,
+    permits,
+    phone,
+    ...applicant
+  }: Prisma.PromiseReturnType<typeof fetchBatch>[number]) => {
+    return {
+      ...applicant,
       id,
-      firstName,
-      middleName,
-      lastName,
-      dateOfBirth,
-      addressLine1,
-      addressLine2,
-      postalCode,
-      guardian,
-      permits,
-      phone,
-      ...applicant
-    }) => {
-      return {
-        ...applicant,
-        id,
-        applicantName: formatFullName(firstName, middleName, lastName),
-        dateOfBirth: formatDateYYYYMMDD(dateOfBirth),
-        age: moment().diff(dateOfBirth, 'years'),
-        address: formatStreetAddress(addressLine1, addressLine2),
-        postalCode: formatPostalCode(postalCode),
-        phone: formatPhoneNumber(phone),
-        rcdPermitId: `#${permits[0].rcdPermitId}`,
-        permitType: permits[0].type,
-        permitExpiryDate: formatDateYYYYMMDD(permits[0].expiryDate),
-        guardianRelationship: guardian?.relationship,
-        guardianPOAName:
-          guardian && formatFullName(guardian.firstName, guardian.middleName, guardian.lastName),
-        guardianAddress:
-          guardian && formatStreetAddress(guardian.addressLine1, guardian.addressLine2),
-        guardianCity: guardian && guardian.city,
-        guardianPostalCode:
-          guardian && guardian.postalCode && formatPostalCode(guardian.postalCode),
-        guardianProvince: guardian && guardian.province,
-      };
-    }
-  );
+      applicantName: formatFullName(firstName, middleName, lastName),
+      dateOfBirth: formatDateYYYYMMDD(dateOfBirth),
+      age: moment().diff(dateOfBirth, 'years'),
+      address: formatStreetAddress(addressLine1, addressLine2),
+      postalCode: formatPostalCode(postalCode),
+      phone: formatPhoneNumber(phone),
+      rcdPermitId: `#${permits[0].rcdPermitId}`,
+      permitType: permits[0].type,
+      permitExpiryDate: formatDateYYYYMMDD(permits[0].expiryDate),
+      guardianRelationship: guardian?.relationship,
+      guardianPOAName:
+        guardian && formatFullName(guardian.firstName, guardian.middleName, guardian.lastName),
+      guardianAddress:
+        guardian && formatStreetAddress(guardian.addressLine1, guardian.addressLine2),
+      guardianCity: guardian && guardian.city,
+      guardianPostalCode: guardian && guardian.postalCode && formatPostalCode(guardian.postalCode),
+      guardianProvince: guardian && guardian.province,
+    };
+  };
 
   const filteredColumns = PERMIT_HOLDERS_COLUMNS.filter(({ value }) => columnsSet.has(value));
   const csvHeaders: Array<{ id: string; title: string }> = [];
@@ -156,19 +164,10 @@ export const generatePermitHoldersReport: Resolver<
     }
   }
 
-  // Generate CSV string from csv object.
-  const csvStringifier = createObjectCsvStringifier({
-    header: csvHeaders,
-  });
-
-  const csvStringRecords = csvStringifier.stringifyRecords(csvApplicants);
-  const csvStringHeader = csvStringifier.getHeaderString();
-  const csvString = csvStringHeader + csvStringRecords;
-
   // CSV naming format permit-holders-report-{employeeID}-{timestamp}.csv
   const employeeID = session.id;
   const timestamp = formatDateTimeYYYYMMDDHHMMSS(new Date());
-  const fileName = `permit-holders-report-${employeeID}-${timestamp}.csv`;
+  const fileName = `permit-holders-report-${employeeID}-${timestamp}-${randomUUID()}.csv`;
   const s3ObjectKey = `rcd/reports/${fileName}`;
 
   // Upload csv to s3
@@ -176,12 +175,14 @@ export const generatePermitHoldersReport: Resolver<
   let signedUrl;
   try {
     // Upload file to s3
-    uploadedCSV = await serverUploadToS3(csvString, s3ObjectKey);
+    uploadedCSV = await uploadBatchedCsv({ headers: csvHeaders, fetchBatch, formatRow }, body =>
+      serverUploadToS3(body, s3ObjectKey)
+    );
     // Generate a signed URL to access the file
     signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
   } catch (error) {
-    const message = `Error uploading permit holders report to AWS: ${error}`;
-    logger.error({ error: message });
+    const message = 'Permit holders report generation failed';
+    logger.error({ errorType: error instanceof Error ? error.name : 'UnknownError' }, message);
     throw new ApolloError(message);
   }
   return {
@@ -213,128 +214,137 @@ export const generateApplicationsReport: Resolver<
   // Calculate end date as beginning of the next day
   const endDate = moment.utc(inputEndDate).add(1, 'd').toDate();
 
-  const applications = await prisma.application.findMany({
-    where: {
-      createdAt: {
-        gte: startDate,
-        lt: endDate,
-      },
+  const where: Prisma.ApplicationWhereInput = {
+    createdAt: {
+      gte: startDate,
+      lt: endDate,
     },
-    select: {
-      firstName: true,
-      middleName: true,
-      lastName: true,
-      addressLine1: true,
-      addressLine2: true,
-      city: true,
-      province: true,
-      postalCode: true,
-      phone: true,
-      type: true,
-      createdAt: true,
-      paymentMethod: true,
-      processingFee: true,
-      donationAmount: true,
-      secondPaymentMethod: true,
-      secondProcessingFee: true,
-      secondDonationAmount: true,
-      applicant: {
-        select: {
-          id: true,
-          dateOfBirth: true,
-        },
-      },
-      applicationProcessing: {
-        select: {
-          appNumber: true,
-          invoiceNumber: true,
-          applicationInvoice: {
-            select: {
-              createdAt: true,
+  };
+  const upperId = (
+    await prisma.application.findFirst({ where, select: { id: true }, orderBy: { id: 'desc' } })
+  )?.id;
+  const fetchBatch = async (afterId?: number) =>
+    upperId === undefined
+      ? []
+      : prisma.application.findMany({
+          where: { ...where, id: { gt: afterId, lte: upperId } },
+          take: REPORT_BATCH_SIZE,
+          orderBy: { id: 'asc' },
+          select: {
+            id: true,
+            firstName: true,
+            middleName: true,
+            lastName: true,
+            addressLine1: true,
+            addressLine2: true,
+            city: true,
+            province: true,
+            postalCode: true,
+            phone: true,
+            type: true,
+            createdAt: true,
+            paymentMethod: true,
+            processingFee: true,
+            donationAmount: true,
+            secondPaymentMethod: true,
+            secondProcessingFee: true,
+            secondDonationAmount: true,
+            applicant: {
+              select: {
+                id: true,
+                dateOfBirth: true,
+              },
+            },
+            applicationProcessing: {
+              select: {
+                appNumber: true,
+                invoiceNumber: true,
+                applicationInvoice: {
+                  select: {
+                    createdAt: true,
+                  },
+                },
+              },
+            },
+            newApplication: {
+              select: {
+                dateOfBirth: true,
+              },
+            },
+            permit: {
+              select: {
+                rcdPermitId: true,
+              },
             },
           },
-        },
-      },
-      newApplication: {
-        select: {
-          dateOfBirth: true,
-        },
-      },
-      permit: {
-        select: {
-          rcdPermitId: true,
-        },
-      },
-    },
-  });
+        });
 
   // Formats the date fields and adds totalAmount, paymentRefunded, applicantName and rcdPermitId properties to allow for csv writing
-  const csvApplications = applications.map(
-    ({
-      firstName,
-      middleName,
-      lastName,
-      phone,
-      addressLine1,
-      addressLine2,
-      postalCode,
-      type,
-      createdAt,
-      processingFee,
-      donationAmount,
-      secondProcessingFee,
-      secondDonationAmount,
-      applicant,
-      applicationProcessing: { appNumber, invoiceNumber, applicationInvoice } = {},
-      newApplication,
-      permit,
-      ...application
-    }) => {
-      let dateOfBirth: Date | null;
-      switch (type) {
-        case 'NEW':
-          dateOfBirth = newApplication?.dateOfBirth || null;
-          break;
-        case 'RENEWAL':
-        case 'REPLACEMENT':
-          dateOfBirth = applicant?.dateOfBirth || null;
-          break;
-        default:
-          dateOfBirth = null;
-      }
-
-      return {
-        ...application,
-        id: applicant?.id,
-        applicantName: formatFullName(firstName, middleName, lastName),
-        dateOfBirth: dateOfBirth && formatDateYYYYMMDD(dateOfBirth),
-        address: formatStreetAddress(addressLine1, addressLine2),
-        postalCode: formatPostalCode(postalCode),
-        phone: formatPhoneNumber(phone),
-        rcdPermitId: permit?.rcdPermitId ? `#${permit.rcdPermitId}` : null,
-        applicationDate: createdAt ? formatDateYYYYMMDDLocal(createdAt, true) : null,
-        processingFee: `$${processingFee}`,
-        donationAmount: `$${donationAmount}`,
-        secondProcessingFee: `$${secondProcessingFee || 0}`,
-        secondDonationAmount: `$${secondDonationAmount || 0}`,
-        totalAmount: `$${Prisma.Decimal.add(
-          Prisma.Decimal.add(processingFee, donationAmount),
-          Prisma.Decimal.add(secondProcessingFee || 0, secondDonationAmount || 0)
-        )}`,
-        invoiceReceiptNumber: invoiceNumber
-          ? `${formatDateYYYYMMDDLocalTimezone(applicationInvoice?.createdAt || createdAt).replace(
-              /-/g,
-              ''
-            )}-${invoiceNumber}`
-          : null,
-        taxReceiptNumber: appNumber
-          ? `PPD_${formatDateYYYYMMDDLocalTimezone(
-              applicationInvoice?.createdAt || createdAt
-            ).replace(/-/g, '')}_${appNumber}`
-          : null,
-      };
+  const formatRow = ({
+    firstName,
+    middleName,
+    lastName,
+    phone,
+    addressLine1,
+    addressLine2,
+    postalCode,
+    type,
+    createdAt,
+    processingFee,
+    donationAmount,
+    secondProcessingFee,
+    secondDonationAmount,
+    applicant,
+    applicationProcessing,
+    newApplication,
+    permit,
+    ...application
+  }: Prisma.PromiseReturnType<typeof fetchBatch>[number]) => {
+    const { appNumber, invoiceNumber, applicationInvoice } = applicationProcessing || {};
+    let dateOfBirth: Date | null;
+    switch (type) {
+      case 'NEW':
+        dateOfBirth = newApplication?.dateOfBirth || null;
+        break;
+      case 'RENEWAL':
+      case 'REPLACEMENT':
+        dateOfBirth = applicant?.dateOfBirth || null;
+        break;
+      default:
+        dateOfBirth = null;
     }
-  );
+
+    return {
+      ...application,
+      id: applicant?.id,
+      applicantName: formatFullName(firstName, middleName, lastName),
+      dateOfBirth: dateOfBirth && formatDateYYYYMMDD(dateOfBirth),
+      address: formatStreetAddress(addressLine1, addressLine2),
+      postalCode: formatPostalCode(postalCode),
+      phone: formatPhoneNumber(phone),
+      rcdPermitId: permit?.rcdPermitId ? `#${permit.rcdPermitId}` : null,
+      applicationDate: createdAt ? formatDateYYYYMMDDLocal(createdAt, true) : null,
+      processingFee: `$${processingFee}`,
+      donationAmount: `$${donationAmount}`,
+      secondProcessingFee: `$${secondProcessingFee || 0}`,
+      secondDonationAmount: `$${secondDonationAmount || 0}`,
+      totalAmount: `$${Prisma.Decimal.add(
+        Prisma.Decimal.add(processingFee, donationAmount),
+        Prisma.Decimal.add(secondProcessingFee || 0, secondDonationAmount || 0)
+      )}`,
+      invoiceReceiptNumber: invoiceNumber
+        ? `${formatDateYYYYMMDDLocalTimezone(applicationInvoice?.createdAt || createdAt).replace(
+            /-/g,
+            ''
+          )}-${invoiceNumber}`
+        : null,
+      taxReceiptNumber: appNumber
+        ? `PPD_${formatDateYYYYMMDDLocalTimezone(
+            applicationInvoice?.createdAt || createdAt
+          ).replace(/-/g, '')}_${appNumber}`
+        : null,
+    };
+  };
 
   const filteredColumns = APPLICATIONS_COLUMNS.filter(({ value }) => columnsSet.has(value));
   const csvHeaders: Array<{ id: string; title: string }> = [];
@@ -348,18 +358,10 @@ export const generateApplicationsReport: Resolver<
     }
   }
 
-  // Generate CSV string from csv object.
-  const csvStringifier = createObjectCsvStringifier({
-    header: csvHeaders,
-  });
-  const csvStringRecords = csvStringifier.stringifyRecords(csvApplications);
-  const csvStringHeader = csvStringifier.getHeaderString();
-  const csvString = csvStringHeader + csvStringRecords;
-
   // CSV naming format reports/applications-report-{employeeID}-{timestamp}.csv
   const employeeID = session.id;
   const timestamp = formatDateTimeYYYYMMDDHHMMSS(new Date());
-  const fileName = `applications-report-${employeeID}-${timestamp}.csv`;
+  const fileName = `applications-report-${employeeID}-${timestamp}-${randomUUID()}.csv`;
   const s3ObjectKey = `rcd/reports/${fileName}`;
 
   // Upload csv to s3
@@ -367,12 +369,14 @@ export const generateApplicationsReport: Resolver<
   let signedUrl;
   try {
     // Upload file to s3
-    uploadedCSV = await serverUploadToS3(csvString, s3ObjectKey);
+    uploadedCSV = await uploadBatchedCsv({ headers: csvHeaders, fetchBatch, formatRow }, body =>
+      serverUploadToS3(body, s3ObjectKey)
+    );
     // Generate a signed URL to access the file
     signedUrl = getSignedUrlForS3(uploadedCSV.key, 10, true);
   } catch (error) {
-    const message = `Error uploading applications report to AWS: ${error}`;
-    logger.error({ error: message });
+    const message = 'Applications report generation failed';
+    logger.error({ errorType: error instanceof Error ? error.name : 'UnknownError' }, message);
     throw new ApolloError(message);
   }
 
