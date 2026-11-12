@@ -55,7 +55,7 @@ import {
 } from '@lib/physicians/validation';
 import { ValidationError } from 'yup';
 import { getActivePermit, getMostRecentPermit } from '@lib/applicants/utils'; // Applicant utils
-import moment from 'moment';
+import { getRenewalWindowStatus } from '@lib/utils/permit-expiry';
 import { DonationAmount, ShopifyCheckout } from '@lib/shopify/utils';
 
 /**
@@ -780,15 +780,30 @@ export const createExternalRenewalApplication: Resolver<
       error: 'Temporary permits cannot be renewed.',
       checkoutUrl: null,
     };
-  } else if (moment.utc(mostRecentPermit.expiryDate).add(6, 'M') < moment()) {
-    // Can only submit renewal application if permit expiry less than 6 months ago
-    return {
-      ok: false,
-      applicationId: null,
-      error:
-        'Your permit expired over 6 months ago. Please apply for a new parking permit or contact RCD.',
-      checkoutUrl: null,
-    };
+  }
+
+  const renewalWindowStatus = getRenewalWindowStatus(mostRecentPermit.expiryDate);
+  switch (renewalWindowStatus) {
+    case 'OPEN':
+      break;
+    case 'TOO_EARLY':
+      return {
+        ok: false,
+        applicationId: null,
+        error:
+          'Your current permit expiry date is too far away to request a renewal. Please check back when your permit is expiring within 30 days or less.',
+        checkoutUrl: null,
+      };
+    case 'TOO_LATE':
+      return {
+        ok: false,
+        applicationId: null,
+        error:
+          'Your permit expired over 6 months ago. Please apply for a new parking permit or contact RCD.',
+        checkoutUrl: null,
+      };
+    default:
+      throw new Error(`Unknown renewal window status ${renewalWindowStatus}`);
   }
 
   // Retrieve applicant record

@@ -196,13 +196,15 @@ export default function Typeahead<T extends TypeaheadModel>(props: Props<T>) {
                         }
                       />
                     </Tooltip>
-                    <Text fontSize="sm" aria-live="polite">
-                      {isLoading
-                        ? 'Loading...'
-                        : `${pagination.offset + (results.length ? 1 : 0)}-${
-                            pagination.offset + results.length
-                          } of ${pagination.totalCount}`}
-                    </Text>
+                    {!error && (
+                      <Text fontSize="sm" aria-live="polite">
+                        {isLoading
+                          ? 'Loading...'
+                          : `${pagination.offset + (results.length ? 1 : 0)}-${
+                              pagination.offset + results.length
+                            } of ${pagination.totalCount}`}
+                      </Text>
+                    )}
                     <Tooltip label="Next results">
                       <IconButton
                         ref={nextPage}
