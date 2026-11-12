@@ -3,7 +3,6 @@ import {
   ApplicationProcessing,
   MutationUpdateApplicationProcessingAssignAppNumberArgs,
   MutationUpdateApplicationProcessingGenerateInvoiceArgs,
-  MutationUpdateApplicationProcessingCreateWalletCardArgs,
   MutationUpdateApplicationProcessingHolepunchParkingPermitArgs,
   MutationUpdateApplicationProcessingMailOutArgs,
   MutationUpdateApplicationProcessingUploadDocumentsArgs,
@@ -11,7 +10,6 @@ import {
   QueryApplicationArgs,
   UpdateApplicationProcessingAssignAppNumberResult,
   UpdateApplicationProcessingGenerateInvoiceResult,
-  UpdateApplicationProcessingCreateWalletCardResult,
   UpdateApplicationProcessingHolepunchParkingPermitResult,
   UpdateApplicationProcessingMailOutResult,
   UpdateApplicationProcessingUploadDocumentsResult,
@@ -156,22 +154,6 @@ export type HolepunchParkingPermitRequest =
 
 export type HolepunchParkingPermitResponse = {
   updateApplicationProcessingHolepunchParkingPermit: UpdateApplicationProcessingHolepunchParkingPermitResult;
-};
-
-/** Create new wallet card task */
-export const CREATE_WALLET_CARD_MUTATION = gql`
-  mutation CreateWalletCard($input: UpdateApplicationProcessingCreateWalletCardInput!) {
-    updateApplicationProcessingCreateWalletCard(input: $input) {
-      ok
-      error
-    }
-  }
-`;
-
-export type CreateWalletCardRequest = MutationUpdateApplicationProcessingCreateWalletCardArgs;
-
-export type CreateWalletCardResponse = {
-  updateApplicationProcessingCreateWalletCard: UpdateApplicationProcessingCreateWalletCardResult;
 };
 
 /** Review request information task */
