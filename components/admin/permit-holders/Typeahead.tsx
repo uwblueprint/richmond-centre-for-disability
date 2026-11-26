@@ -1,4 +1,3 @@
-import { useQuery } from '@tools/hooks/graphql'; // Apollo
 import { Text } from '@chakra-ui/react'; //Chakra UI
 import Typeahead from '@components/Typeahead'; // Typeahead component
 import { formatFullName } from '@lib/utils/format'; // String formatter util
@@ -9,7 +8,13 @@ import {
   SearchPermitHoldersResponse,
   SEARCH_PERMIT_HOLDERS,
 } from '@tools/admin/permit-holders/typeahead';
-import { useState } from 'react'; // React
+import { usePagedTypeahead } from '@tools/hooks/use-paged-typeahead';
+import { SEARCH_PAGE_SIZE } from '@lib/utils/search-limits';
+
+const variablesFor = (search: string, offset: number): SearchPermitHoldersRequest => ({
+  filter: { search, offset, limit: SEARCH_PAGE_SIZE },
+});
+const pageFrom = (data: SearchPermitHoldersResponse) => data.applicants;
 
 // Permit Holder Typeahead props
 type Props = {
@@ -22,19 +27,7 @@ type Props = {
  */
 export default function PermitHolderTypeahead(props: Props) {
   const { onSelect } = props;
-  const [searchString, setSearchString] = useState('');
-
-  // permit holders query
-  const { data, loading } = useQuery<SearchPermitHoldersResponse, SearchPermitHoldersRequest>(
-    SEARCH_PERMIT_HOLDERS,
-    {
-      variables: {
-        filter: {
-          search: searchString,
-        },
-      },
-    }
-  );
+  const search = usePagedTypeahead(SEARCH_PERMIT_HOLDERS, variablesFor, pageFrom);
 
   /** Handle selecting permit holder */
   const handleSelect = (data: PermitHolderResult | undefined) => {
@@ -45,8 +38,8 @@ export default function PermitHolderTypeahead(props: Props) {
 
   return (
     <Typeahead
-      isLoading={loading}
-      onSearch={setSearchString}
+      id="permit-holder-typeahead"
+      {...search}
       renderMenuItemChildren={({
         firstName,
         middleName,
@@ -65,7 +58,6 @@ export default function PermitHolderTypeahead(props: Props) {
         );
       }}
       labelKey={(option: PermitHolderResult) => `${option.firstName} ${option.lastName}`}
-      results={data?.applicants.result || []}
       onSelect={handleSelect}
       placeholder="Search by user ID, first name or last name"
     />

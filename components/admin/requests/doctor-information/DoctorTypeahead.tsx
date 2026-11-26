@@ -1,7 +1,5 @@
 // DoctorTypeahead.tsx
-import { useState } from 'react';
 import { Text } from '@chakra-ui/react';
-import { useQuery } from '@tools/hooks/graphql'; // your Apollo wrapper hook
 import Typeahead from '@components/Typeahead'; // generic typeahead component
 import { formatFullName } from '@lib/utils/format'; // utility to join names
 import {
@@ -10,6 +8,13 @@ import {
   SearchDoctorsResponse,
   SEARCH_DOCTORS,
 } from '@tools/admin/requests/doctor-typeahead';
+import { usePagedTypeahead } from '@tools/hooks/use-paged-typeahead';
+import { SEARCH_PAGE_SIZE } from '@lib/utils/search-limits';
+
+const variablesFor = (mspNumber: string, offset: number): SearchDoctorsRequest => ({
+  filter: { mspNumber, offset, limit: SEARCH_PAGE_SIZE },
+});
+const pageFrom = (data: SearchDoctorsResponse) => data.physicians;
 
 type Props = {
   /** Callback when a physician is selected; passes the physician’s data */
@@ -17,23 +22,7 @@ type Props = {
 };
 
 export default function DoctorTypeahead({ onSelect }: Props) {
-  const [searchString, setSearchString] = useState('');
-
-  // Run the query using the input as the filter
-  const { data, loading, error } = useQuery<SearchDoctorsResponse, SearchDoctorsRequest>(
-    SEARCH_DOCTORS,
-    {
-      variables: {
-        filter: {
-          mspNumber: searchString,
-        },
-      },
-    }
-  );
-
-  if (error) {
-    console.error('Error fetching physicians ', error);
-  }
+  const search = usePagedTypeahead(SEARCH_DOCTORS, variablesFor, pageFrom);
 
   /** Called when a physician is selected in the typeahead */
   const handleSelect = (doctor: DoctorResult | undefined) => {
@@ -44,8 +33,8 @@ export default function DoctorTypeahead({ onSelect }: Props) {
 
   return (
     <Typeahead
-      isLoading={loading}
-      onSearch={setSearchString}
+      id="physician-typeahead"
+      {...search}
       renderMenuItemChildren={({ firstName, lastName, mspNumber, phone }: DoctorResult) => {
         return (
           <>
@@ -59,7 +48,6 @@ export default function DoctorTypeahead({ onSelect }: Props) {
         );
       }}
       labelKey={(option: DoctorResult) => `${option.firstName} ${option.lastName}`}
-      results={data?.physicians?.result || []}
       onSelect={handleSelect}
       placeholder="Search by doctor's MSP number"
     />
