@@ -94,9 +94,6 @@ export default gql`
     updateApplicationProcessingHolepunchParkingPermit(
       input: UpdateApplicationProcessingHolepunchParkingPermitInput!
     ): UpdateApplicationProcessingHolepunchParkingPermitResult
-    updateApplicationProcessingCreateWalletCard(
-      input: UpdateApplicationProcessingCreateWalletCardInput!
-    ): UpdateApplicationProcessingCreateWalletCardResult
     updateApplicationProcessingReviewRequestInformation(
       input: UpdateApplicationProcessingReviewRequestInformationInput!
     ): UpdateApplicationProcessingReviewRequestInformationResult
