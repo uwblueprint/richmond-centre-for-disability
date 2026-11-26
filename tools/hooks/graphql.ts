@@ -51,10 +51,6 @@ const useMutation = <
   });
 };
 
-/**
- * Show a query's error in a toast. Several cards on a page often fail with the same error,
- * so a message that is already showing isn't shown again.
- */
 const useQueryErrorToast = () => {
   const toast = useToast();
 
