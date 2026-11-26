@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { APIRoute } from 'next-s3-upload';
 import { NextApiHandler } from 'next';
 import { getSession } from 'next-auth/client';
@@ -7,7 +8,7 @@ import { getSession } from 'next-auth/client';
 const uploadHandler = APIRoute.configure({
   key(req, filename) {
     const filePath = req.query.filePath as string;
-    return `${filePath}/${filename.replace(/\s/g, '-')}`;
+    return `${filePath}/${randomUUID()}/${filename.replace(/\s/g, '-')}`;
   },
 });
 
