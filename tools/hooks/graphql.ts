@@ -2,13 +2,17 @@ import {
   ApolloCache,
   DefaultContext,
   DocumentNode,
+  LazyQueryHookOptions,
+  LazyQueryResultTuple,
   MutationHookOptions,
   MutationTuple,
   OperationVariables,
+  QueryHookOptions,
+  QueryResult,
   TypedDocumentNode,
   useMutation as useApolloMutation,
-  useQuery,
-  useLazyQuery,
+  useQuery as useApolloQuery,
+  useLazyQuery as useApolloLazyQuery,
 } from '@apollo/client';
 import { useToast } from '@chakra-ui/react';
 
@@ -45,6 +49,42 @@ const useMutation = <
       options?.onCompleted && options.onCompleted(data);
     },
   });
+};
+
+/**
+ * Show a query's error in a toast. Several cards on a page often fail with the same error,
+ * so a message that is already showing isn't shown again.
+ */
+const useQueryErrorToast = () => {
+  const toast = useToast();
+
+  return (error: Error) => {
+    if (toast.isActive(error.message)) return;
+    toast({
+      id: error.message,
+      status: 'error',
+      description: error.message,
+      isClosable: true,
+    });
+  };
+};
+
+const useQuery = <TData = any, TVariables = OperationVariables>(
+  query: DocumentNode | TypedDocumentNode<TData, TVariables>,
+  options?: QueryHookOptions<TData, TVariables>
+): QueryResult<TData, TVariables> => {
+  const showError = useQueryErrorToast();
+
+  return useApolloQuery(query, { onError: showError, ...options });
+};
+
+const useLazyQuery = <TData = any, TVariables = OperationVariables>(
+  query: DocumentNode | TypedDocumentNode<TData, TVariables>,
+  options?: LazyQueryHookOptions<TData, TVariables>
+): LazyQueryResultTuple<TData, TVariables> => {
+  const showError = useQueryErrorToast();
+
+  return useApolloLazyQuery(query, { onError: showError, ...options });
 };
 
 export { useQuery, useLazyQuery, useMutation };
