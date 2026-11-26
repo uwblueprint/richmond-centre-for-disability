@@ -29,7 +29,7 @@ export default function RenewalsReport() {
 
   return (
     <ReportForm
-      description="Permit holders with a permit expiring in the date range, for renewal follow-up. This was previously the Permit Holders report."
+      description="Permit holders with a permit expiring in the date range, for renewal follow-up."
       dateLabel="Expiry Date"
       columns={PERMIT_HOLDERS_COLUMNS}
       loading={loading}
